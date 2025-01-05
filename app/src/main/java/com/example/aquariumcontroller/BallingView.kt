@@ -23,7 +23,6 @@ fun BallingView(navHostController: NavHostController?) {
             Column {
                 MainDropdownMenu(
                     navHostController,
-                    true,
                     ViewNavigationRoutes.balling
                 )
                 Text(text = "Balling")

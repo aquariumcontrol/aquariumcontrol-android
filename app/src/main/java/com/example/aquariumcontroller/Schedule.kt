@@ -23,7 +23,6 @@ fun ScheduleView(navHostController: NavHostController?) {
             Column {
                 MainDropdownMenu(
                     navHostController,
-                    true,
                     ViewNavigationRoutes.schedule
                 )
                 Text(text = "Schedule")

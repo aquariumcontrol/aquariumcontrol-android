@@ -23,7 +23,6 @@ fun VentilationView(navHostController: NavHostController?) {
             Column {
                 MainDropdownMenu(
                     navHostController,
-                    true,
                     ViewNavigationRoutes.ventilation
                 )
                 Text(text = "Ventilation")

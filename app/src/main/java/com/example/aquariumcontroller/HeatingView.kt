@@ -23,7 +23,6 @@ fun HeatingView(navHostController: NavHostController?) {
             Column {
                 MainDropdownMenu(
                     navHostController,
-                    true,
                     ViewNavigationRoutes.heating
                 )
                 Text(text = "Heating")

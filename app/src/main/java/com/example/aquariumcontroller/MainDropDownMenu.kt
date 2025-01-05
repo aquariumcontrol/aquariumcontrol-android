@@ -29,15 +29,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
 fun MainDropdownMenu(
     navHostController: NavHostController?,
-    controllerSelected: Boolean,
     navigationRouteSource: String
 ) {
+    val viewModel: MainViewModel = viewModel(
+        factory = MainViewModelFactory
+    )
+
     var expanded by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
@@ -65,7 +69,7 @@ fun MainDropdownMenu(
                         contentDescription = "Settings"
                     )
                 },
-                enabled = controllerSelected && navigationRouteSource != ViewNavigationRoutes.timeData
+                enabled = viewModel.controllerIsLoaded && navigationRouteSource != ViewNavigationRoutes.timeData
             )
             DropdownMenuItem(
                 text = { Text("Fresh water refill") },
@@ -78,7 +82,7 @@ fun MainDropdownMenu(
                         contentDescription = "Settings"
                     )
                 },
-                enabled = controllerSelected && navigationRouteSource != ViewNavigationRoutes.refill
+                enabled = viewModel.controllerIsLoaded && navigationRouteSource != ViewNavigationRoutes.refill
             )
             DropdownMenuItem(
                 text = { Text("Feed") },
@@ -91,7 +95,7 @@ fun MainDropdownMenu(
                         contentDescription = "Settings"
                     )
                 },
-                enabled = controllerSelected && navigationRouteSource != ViewNavigationRoutes.feed
+                enabled = viewModel.controllerIsLoaded && navigationRouteSource != ViewNavigationRoutes.feed
             )
             DropdownMenuItem(
                 text = { Text("Heating") },
@@ -104,7 +108,7 @@ fun MainDropdownMenu(
                         contentDescription = "Settings"
                     )
                 },
-                enabled = controllerSelected && navigationRouteSource != ViewNavigationRoutes.heating
+                enabled = viewModel.controllerIsLoaded && navigationRouteSource != ViewNavigationRoutes.heating
             )
             DropdownMenuItem(
                 text = { Text("Ventilation") },
@@ -117,7 +121,7 @@ fun MainDropdownMenu(
                         contentDescription = "Settings"
                     )
                 },
-                enabled = controllerSelected && navigationRouteSource != ViewNavigationRoutes.ventilation
+                enabled = viewModel.controllerIsLoaded && navigationRouteSource != ViewNavigationRoutes.ventilation
 
             )
             DropdownMenuItem(
@@ -131,7 +135,7 @@ fun MainDropdownMenu(
                         contentDescription = "Settings"
                     )
                 },
-                enabled = controllerSelected && navigationRouteSource != ViewNavigationRoutes.schedule
+                enabled = viewModel.controllerIsLoaded && navigationRouteSource != ViewNavigationRoutes.schedule
             )
             HorizontalDivider()
             DropdownMenuItem(
@@ -168,6 +172,6 @@ fun MainDropdownMenu(
 @Composable
 fun MainDropdownMenuPreview() {
     AquariumControllerTheme {
-        MainDropdownMenu(null, true, ViewNavigationRoutes.controllerSelection)
+        MainDropdownMenu(null, ViewNavigationRoutes.controllerSelection)
     }
 }

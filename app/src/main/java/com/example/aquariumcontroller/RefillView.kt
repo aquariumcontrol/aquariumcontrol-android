@@ -23,7 +23,6 @@ fun RefillView(navHostController: NavHostController?) {
             Column {
                 MainDropdownMenu(
                     navHostController,
-                    true,
                     ViewNavigationRoutes.refill
                 )
                 Text(text = "Refill")

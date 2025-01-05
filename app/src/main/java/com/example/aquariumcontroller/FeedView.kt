@@ -23,7 +23,6 @@ fun FeedView(navHostController: NavHostController?) {
             Column {
                 MainDropdownMenu(
                     navHostController,
-                    true,
                     ViewNavigationRoutes.feed
                 )
                 Text(text = "Feed")

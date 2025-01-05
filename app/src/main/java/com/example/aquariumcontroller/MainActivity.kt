@@ -3,6 +3,7 @@ package com.example.aquariumcontroller
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.lifecycle.ViewModelStore
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -10,13 +11,15 @@ import androidx.navigation.compose.rememberNavController
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             val navHostController = rememberNavController()
             NavHost(
                 navController = navHostController,
                 startDestination = ViewNavigationRoutes.controllerSelection,
                 builder = {
-                    composable(ViewNavigationRoutes.controllerSelection) {
+                    composable(ViewNavigationRoutes.controllerSelection)
+                    {
                         ControllerSelectionView(navHostController)
                     }
                     composable(ViewNavigationRoutes.feed) {

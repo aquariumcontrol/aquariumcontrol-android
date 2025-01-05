@@ -23,7 +23,6 @@ fun InfoView(navHostController: NavHostController?) {
             Column {
                 MainDropdownMenu(
                     navHostController,
-                    true,
                     ViewNavigationRoutes.info
                 )
                 Text(text = "Info")

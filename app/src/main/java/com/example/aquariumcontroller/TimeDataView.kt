@@ -23,7 +23,6 @@ fun TimeDataView(navHostController: NavHostController?) {
             Column {
                 MainDropdownMenu(
                     navHostController,
-                    true,
                     ViewNavigationRoutes.timeData
                 )
                 Text(text = "TimeData")
