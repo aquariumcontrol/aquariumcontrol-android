@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">AquariumController</string>
+    <string name="ListOfControllers">List of controllers</string>
+    <string name="DefaultServerProfileTitle">Default controller:</string>
+    <string name="DefaultServerProfileContent">NA</string>
+    <string name="ServerProfileNameExample">ExampleProfileName</string>
+    <string name="ServerAddressExample">servername.domainname.com</string>
+    <string name="ServerPortExample">80</string>
+    <string name="ServerUserExample">exampleUserName</string>
+    <string name="AddServerProfileFragmentTitle">Add controller profile</string>
+    <string name="CreateControllerProfileButtonText">Create controller profile</string>
+    <string name="IsDefaultServerProfile">App shall use this profile as default</string>
+    <string name="ControllerPasswordTitle">Password:</string>
+    <string name="ControllerUser">User name:</string>
+    <string name="ControllerAddress">Hostname (IP or DNS name):</string>
+    <string name="ControllerProfileName">Profile name:</string>
 </resources>

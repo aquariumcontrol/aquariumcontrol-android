@@ -10,4 +10,5 @@ object ViewNavigationRoutes {
     var timeData = "timeData"
     var controllerSelection = "controllerSelection"
     var info = "info"
+    var controllerAdd = "controllerAdd"
 }

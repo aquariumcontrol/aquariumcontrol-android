@@ -13,7 +13,7 @@ import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
-fun BallingView(navHostController: NavHostController?) {
+fun FeedScreen(navHostController: NavHostController?) {
     AquariumControllerTheme {
         // A surface container using the 'background' color from the theme
         Surface(
@@ -21,11 +21,11 @@ fun BallingView(navHostController: NavHostController?) {
             color = MaterialTheme.colorScheme.background
         ) {
             Column {
-                MainDropdownMenu(
+                MainDropdownMenuScreen(
                     navHostController,
-                    ViewNavigationRoutes.balling
+                    ViewNavigationRoutes.feed
                 )
-                Text(text = "Balling")
+                Text(text = "Feed")
                 Button(onClick = { }) {
                     Text(text = "OK")
                 }
@@ -36,8 +36,8 @@ fun BallingView(navHostController: NavHostController?) {
 
 @Preview(showBackground = true)
 @Composable
-fun BallingViewPreview() {
+fun FeedViewPreview() {
     AquariumControllerTheme {
-        BallingView(null)
+        FeedScreen(null)
     }
 }

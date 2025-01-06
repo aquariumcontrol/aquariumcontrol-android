@@ -3,7 +3,6 @@ package com.example.aquariumcontroller
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.lifecycle.ViewModelStore
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -20,31 +19,35 @@ class MainActivity : ComponentActivity() {
                 builder = {
                     composable(ViewNavigationRoutes.controllerSelection)
                     {
-                        ControllerSelectionView(navHostController)
+                        ControllerSelectionScreen(navHostController)
+                    }
+                    composable(ViewNavigationRoutes.controllerAdd)
+                    {
+                        ControllerAddScreen(navHostController)
                     }
                     composable(ViewNavigationRoutes.feed) {
-                        FeedView(navHostController)
+                        FeedScreen(navHostController)
                     }
                     composable(ViewNavigationRoutes.balling) {
-                        BallingView(navHostController)
+                        BallingScreen(navHostController)
                     }
                     composable(ViewNavigationRoutes.refill) {
-                        RefillView(navHostController)
+                        RefillScreen(navHostController)
                     }
                     composable(ViewNavigationRoutes.heating) {
-                        HeatingView(navHostController)
+                        HeatingScreen(navHostController)
                     }
                     composable(ViewNavigationRoutes.ventilation) {
-                        VentilationView(navHostController)
+                        VentilationScreen(navHostController)
                     }
                     composable(ViewNavigationRoutes.timeData) {
-                        TimeDataView(navHostController)
+                        TimeDataScreen(navHostController)
                     }
                     composable(ViewNavigationRoutes.schedule) {
-                        ScheduleView(navHostController)
+                        ScheduleScreen(navHostController)
                     }
                     composable(ViewNavigationRoutes.info) {
-                        InfoView(navHostController)
+                        InfoScreen(navHostController)
                     }
                 }
             )

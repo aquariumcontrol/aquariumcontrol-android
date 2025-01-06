@@ -13,7 +13,7 @@ import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
-fun InfoView(navHostController: NavHostController?) {
+fun HeatingScreen(navHostController: NavHostController?) {
     AquariumControllerTheme {
         // A surface container using the 'background' color from the theme
         Surface(
@@ -21,11 +21,11 @@ fun InfoView(navHostController: NavHostController?) {
             color = MaterialTheme.colorScheme.background
         ) {
             Column {
-                MainDropdownMenu(
+                MainDropdownMenuScreen(
                     navHostController,
-                    ViewNavigationRoutes.info
+                    ViewNavigationRoutes.heating
                 )
-                Text(text = "Info")
+                Text(text = "Heating")
                 Button(onClick = { }) {
                     Text(text = "OK")
                 }
@@ -36,8 +36,8 @@ fun InfoView(navHostController: NavHostController?) {
 
 @Preview(showBackground = true)
 @Composable
-fun InfoViewPreview() {
+fun HeatingViewPreview() {
     AquariumControllerTheme {
-        InfoView(null)
+        HeatingScreen(null)
     }
 }

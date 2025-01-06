@@ -13,7 +13,7 @@ import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
-fun RefillView(navHostController: NavHostController?) {
+fun TimeDataScreen(navHostController: NavHostController?) {
     AquariumControllerTheme {
         // A surface container using the 'background' color from the theme
         Surface(
@@ -21,11 +21,11 @@ fun RefillView(navHostController: NavHostController?) {
             color = MaterialTheme.colorScheme.background
         ) {
             Column {
-                MainDropdownMenu(
+                MainDropdownMenuScreen(
                     navHostController,
-                    ViewNavigationRoutes.refill
+                    ViewNavigationRoutes.timeData
                 )
-                Text(text = "Refill")
+                Text(text = "TimeData")
                 Button(onClick = { }) {
                     Text(text = "OK")
                 }
@@ -36,8 +36,8 @@ fun RefillView(navHostController: NavHostController?) {
 
 @Preview(showBackground = true)
 @Composable
-fun RefillViewPreview() {
+fun TimeDataViewPreview() {
     AquariumControllerTheme {
-        RefillView(null)
+        TimeDataScreen(null)
     }
 }

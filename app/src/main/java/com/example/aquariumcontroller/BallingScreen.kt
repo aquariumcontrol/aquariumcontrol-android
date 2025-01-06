@@ -13,7 +13,7 @@ import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
-fun TimeDataView(navHostController: NavHostController?) {
+fun BallingScreen(navHostController: NavHostController?) {
     AquariumControllerTheme {
         // A surface container using the 'background' color from the theme
         Surface(
@@ -21,11 +21,11 @@ fun TimeDataView(navHostController: NavHostController?) {
             color = MaterialTheme.colorScheme.background
         ) {
             Column {
-                MainDropdownMenu(
+                MainDropdownMenuScreen(
                     navHostController,
-                    ViewNavigationRoutes.timeData
+                    ViewNavigationRoutes.balling
                 )
-                Text(text = "TimeData")
+                Text(text = "Balling")
                 Button(onClick = { }) {
                     Text(text = "OK")
                 }
@@ -36,8 +36,8 @@ fun TimeDataView(navHostController: NavHostController?) {
 
 @Preview(showBackground = true)
 @Composable
-fun TimeDataViewPreview() {
+fun BallingViewPreview() {
     AquariumControllerTheme {
-        TimeDataView(null)
+        BallingScreen(null)
     }
 }

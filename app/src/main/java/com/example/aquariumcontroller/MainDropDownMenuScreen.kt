@@ -34,7 +34,7 @@ import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
-fun MainDropdownMenu(
+fun MainDropdownMenuScreen(
     navHostController: NavHostController?,
     navigationRouteSource: String
 ) {
@@ -172,6 +172,6 @@ fun MainDropdownMenu(
 @Composable
 fun MainDropdownMenuPreview() {
     AquariumControllerTheme {
-        MainDropdownMenu(null, ViewNavigationRoutes.controllerSelection)
+        MainDropdownMenuScreen(null, ViewNavigationRoutes.controllerSelection)
     }
 }
