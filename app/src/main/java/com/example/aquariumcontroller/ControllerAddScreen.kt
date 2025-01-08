@@ -11,10 +11,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -25,20 +21,11 @@ import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
-fun ControllerAddScreen(navHostController: NavHostController?) {
-    val stringResourceServerProfileNameExample: String = stringResource(id = R.string.ServerProfileNameExample)
-    val stringResourceServerAddressExample: String = stringResource(id = R.string.ServerAddressExample)
-    val stringResourceServerPortExample: String = stringResource(id = R.string.ServerPortExample)
-    val stringResourceServerUserExample: String = stringResource(id = R.string.ServerUserExample)
-    val stringResourceServerPasswordExample: String = ""
-
-    var profileName by remember { mutableStateOf(stringResourceServerProfileNameExample) }
-    var serverAddress by remember { mutableStateOf(stringResourceServerAddressExample) }
-    var serverPort by remember { mutableStateOf(stringResourceServerPortExample) }
-    var serverUser by remember { mutableStateOf(stringResourceServerUserExample) }
-    var serverPassword by remember { mutableStateOf(stringResourceServerPasswordExample) }
-    var isDefaultProfile by remember { mutableStateOf(false) }
-
+fun ControllerAddScreen(
+    navHostController: NavHostController?,
+    state: ControllerState,
+    onEvent: (ControllerEvent) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -52,33 +39,40 @@ fun ControllerAddScreen(navHostController: NavHostController?) {
         )
 
         OutlinedTextField(
-            value = profileName,
-            onValueChange = { profileName = it },
-            label = { Text(stringResource(id = R.string.ControllerProfileName)) },
-            modifier = Modifier.fillMaxWidth()
+            value = state.controllerProfileName,
+            onValueChange = {
+                onEvent(ControllerEvent.SetControllerProfileName(it))
+            },
+            modifier = Modifier.fillMaxWidth(),
         )
 
         OutlinedTextField(
-            value = serverAddress,
-            onValueChange = { serverAddress = it },
+            value = state.controllerProfileAddress,
+            onValueChange = {
+                onEvent(ControllerEvent.SetControllerAddress(it))
+            },
             label = { Text(stringResource(id = R.string.ControllerAddress)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp)
         )
 
-        OutlinedTextField(
-            value = serverPort,
-            onValueChange = { serverPort = it },
-            label = { Text(stringResource(id = R.string.ControllerAddress)) },
+        NumericOutlinedTextField(
+            value = state.controllerProfilePort.toString(),
+            onValueChange = {
+                onEvent(ControllerEvent.SetControllerPort(it))
+            },
+            label = stringResource(id = R.string.ControllerPort),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp)
         )
 
         OutlinedTextField(
-            value = serverUser,
-            onValueChange = { serverUser = it },
+            value = state.controllerProfileUser,
+            onValueChange = {
+                onEvent(ControllerEvent.SetControllerUser(it))
+            },
             label = { Text(stringResource(id = R.string.ControllerUser)) },
             modifier = Modifier
                 .fillMaxWidth()
@@ -86,8 +80,10 @@ fun ControllerAddScreen(navHostController: NavHostController?) {
         )
 
         OutlinedTextField(
-            value = serverPassword,
-            onValueChange = { serverPassword = it },
+            value = state.controllerProfilePassword,
+            onValueChange = {
+                onEvent(ControllerEvent.SetControllerPassword(it))
+            },
             label = { Text(stringResource(id = R.string.ControllerPasswordTitle)) },
             visualTransformation = PasswordVisualTransformation(), // Hide password
             modifier = Modifier
@@ -102,8 +98,8 @@ fun ControllerAddScreen(navHostController: NavHostController?) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Switch(
-                checked = isDefaultProfile,
-                onCheckedChange = { isDefaultProfile = it }
+                checked = state.controllerProfileIsDefault,
+                onCheckedChange = { onEvent(ControllerEvent.SetControllerIsDefault(it)) }
             )
             Text(
                 text = stringResource(id = R.string.IsDefaultServerProfile),
@@ -113,7 +109,7 @@ fun ControllerAddScreen(navHostController: NavHostController?) {
 
         Button(
             onClick = {
-                // @todo: create entry in local repository
+                onEvent(ControllerEvent.AddControllerProfile)
                 navHostController?.navigate(ViewNavigationRoutes.controllerSelection)
             },
             modifier = Modifier
@@ -129,6 +125,6 @@ fun ControllerAddScreen(navHostController: NavHostController?) {
 @Composable
 fun ControllerAddViewPreview() {
     AquariumControllerTheme {
-        ControllerAddScreen(null)
+        ControllerAddScreen(null, ControllerState(), {})
     }
 }

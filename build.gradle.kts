@@ -9,4 +9,8 @@ buildscript {
     extra.apply {
         set("room_version", "2.6.0")
     }
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.20") // Update version here
+        // ... other dependencies ...
+    }
 }

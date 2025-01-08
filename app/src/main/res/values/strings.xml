@@ -14,4 +14,5 @@
     <string name="ControllerUser">User name:</string>
     <string name="ControllerAddress">Hostname (IP or DNS name):</string>
     <string name="ControllerProfileName">Profile name:</string>
+    <string name="ControllerPort">Port number</string>
 </resources>

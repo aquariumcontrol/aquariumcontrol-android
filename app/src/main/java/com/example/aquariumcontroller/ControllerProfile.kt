@@ -14,29 +14,21 @@ data class ControllerProfile(
     var id: Long = 0,
 
     @ColumnInfo(name = "name")
-    var controllerProfileName: String = "null",
+    var name: String = "null",
 
     @ColumnInfo(name = "address")
-    var controllerAddress: String = "null",
+    var address: String = "null",
+
+    @ColumnInfo(name = "port")
+    var port: Int = 80,
 
     @ColumnInfo(name = "user")
-    var username: String = "null",
+    var user: String = "null",
 
     @ColumnInfo(name = "password")
     var password: String = "null",
 
     @ColumnInfo(name = "isdefault")
-    var isDefaultControllerProfile: Boolean? = null
+    var isDefault: Boolean? = null
 ) : Serializable {
-
-    @Ignore
-    private var userCredentialsVerified = false
-
-    fun isUserCredentialsVerified(): Boolean {
-        return userCredentialsVerified
-    }
-
-    fun setUserCredentialsVerified(userCredentialsVerified: Boolean) {
-        this.userCredentialsVerified = userCredentialsVerified
-    }
 }
