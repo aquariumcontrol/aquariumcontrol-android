@@ -1,7 +1,7 @@
 package com.example.aquariumcontroller
 
 data class ControllerState (
-    val controllerProfileList: List<ControllerProfile> = emptyList(),
+    var controllerProfileList: List<ControllerProfile> = emptyList(),
     val controllerProfileName: String = "",
     val controllerProfileAddress: String = "",
     val controllerProfilePort: Int = 0,

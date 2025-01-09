@@ -10,7 +10,7 @@ interface ControllerProfileDao {
     @androidx.room.Upsert()
     suspend fun upsertControllerProfile(ControllerProfile: ControllerProfile): Long
 
-    @androidx.room.Query("SELECT * FROM ${ControllerProfileDatabase.TABLE_NAME_CONTROLLER_LIST}")
+    @androidx.room.Query("SELECT * FROM ${ControllerProfileDatabase.TABLE_NAME_CONTROLLER_LIST} ORDER BY isdefault DESC")
     fun getAllControllerProfiles(): Flow<List<ControllerProfile>>
 
     @androidx.room.Query("SELECT * FROM ${ControllerProfileDatabase.TABLE_NAME_CONTROLLER_LIST} WHERE isdefault = :isDefault LIMIT 1")

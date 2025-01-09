@@ -1,13 +1,21 @@
 package com.example.aquariumcontroller
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -18,15 +26,23 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
-fun ControllerSelectionScreen(navHostController: NavHostController?) {
+fun ControllerSelectionScreen(
+    navHostController: NavHostController?,
+    state: ControllerState,
+    onEvent: (ControllerEvent) -> Unit
+) {
 
     val viewModel: MainViewModel = viewModel(
         factory = MainViewModelFactory
@@ -51,12 +67,13 @@ fun ControllerSelectionScreen(navHostController: NavHostController?) {
                         )
                     }
                 }
-            ) { innerPadding->
+            ) { innerPadding ->
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding),
-                    horizontalAlignment = Alignment.CenterHorizontally) {
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     MainDropdownMenuScreen(
                         navHostController,
                         ViewNavigationRoutes.controllerSelection
@@ -66,28 +83,126 @@ fun ControllerSelectionScreen(navHostController: NavHostController?) {
                         style = MaterialTheme.typography.headlineLarge,
                         modifier = Modifier.padding(16.dp)
                     )
-                    // @todo: Replace with your LazyColumn implementation for the RecyclerView
+
                     LazyColumn(
                         modifier = Modifier
                             .padding(16.dp)
                             .wrapContentSize()
                     ) {
-                        // Your items here
-                    }
-                    Row(
-                        modifier = Modifier
-                            .padding(top = 16.dp)
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.DefaultServerProfileTitle),
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(horizontal = 8.dp)
-                        )
-                        Text(
-                            text = stringResource(id = R.string.DefaultServerProfileContent),
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(horizontal = 8.dp)
-                        )
+                        items(state.controllerProfileList) { controllerProfile ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .border(
+                                        border = BorderStroke(
+                                            1.dp,
+                                            MaterialTheme.colorScheme.onSurface
+                                        )
+                                    )
+                                    .padding(8.dp)
+                            ) {
+                                Column(
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                    ) {
+                                        Column(
+                                            modifier = Modifier.weight(1f)
+                                        ) {
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(top = 8.dp),
+                                                horizontalArrangement = Arrangement.Start
+                                            ) {
+                                                Text(
+                                                    text = controllerProfile.name,
+                                                    fontSize = 24.sp,
+                                                    style = TextStyle(fontWeight = FontWeight.Bold)
+                                                )
+                                            }
+                                        }
+                                        Column(
+                                            modifier = Modifier.weight(1f)
+                                        ) {
+                                            Row(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                horizontalArrangement = Arrangement.End,
+                                            ) {
+                                                Button(
+                                                    modifier = Modifier.padding(end = 4.dp),
+                                                    onClick = {
+                                                    onEvent(
+                                                        ControllerEvent.DeleteControllerProfile(
+                                                            controllerProfile
+                                                        )
+                                                    )
+                                                }) {
+                                                    Icon(
+                                                        imageVector = Icons.Outlined.Edit,
+                                                        contentDescription = "Edit"
+                                                    )
+                                                }
+                                                Button(
+                                                    onClick = {
+                                                    onEvent(
+                                                        ControllerEvent.DeleteControllerProfile(
+                                                            controllerProfile
+                                                        )
+                                                    )
+                                                }) {
+                                                    Icon(
+                                                        imageVector = Icons.Outlined.Delete,
+                                                        contentDescription = "Delete"
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                    Text(
+                                        text = "Address: " + controllerProfile.address,
+                                        fontSize = 12.sp
+                                    )
+                                    Text(
+                                        text = "Port: " + controllerProfile.port,
+                                        fontSize = 12.sp
+                                    )
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                    )
+                                    {
+                                        Column(
+                                            modifier = Modifier.weight(1f)
+                                        ) {
+                                            Row(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                horizontalArrangement = Arrangement.Start
+                                            ) {
+                                                Text(
+                                                    text = "User: " + controllerProfile.user,
+                                                    fontSize = 12.sp,
+                                                )
+                                            }
+                                        }
+                                        Column(
+                                            modifier = Modifier.weight(1f)
+                                        ) {
+                                            Row(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                horizontalArrangement = Arrangement.End
+                                            ) {
+                                                Text(
+                                                    text = "Password: " + controllerProfile.password,
+                                                    fontSize = 12.sp,
+                                                )
+                                            }
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
                     }
                     // @todo: remove the button:
                     Button(onClick = { viewModel.controllerIsLoaded = true }) {
@@ -102,7 +217,32 @@ fun ControllerSelectionScreen(navHostController: NavHostController?) {
 @Preview(showBackground = true)
 @Composable
 fun ControllerSelectionViewPreview() {
+    val mockControllerProfile1 = ControllerProfile(
+        name = "Controller 1",
+        address = "192.168.1.1",
+        port = 80,
+        user = "user",
+        password = "password",
+        isDefault = true
+    )
+    val mockControllerProfile2 = ControllerProfile(
+        name = "Controller 2",
+        address = "servername.external.com",
+        port = 80,
+        user = "userXYZ",
+        password = "passwordXYZ",
+        isDefault = false
+    )
+
+    val controllerProfileList = listOf(
+        mockControllerProfile1, mockControllerProfile2
+    )
+
+    val mockControllerState = ControllerState()
+    mockControllerState.controllerProfileList = controllerProfileList
+
     AquariumControllerTheme {
-        ControllerSelectionScreen(null)
+        ControllerSelectionScreen(null, mockControllerState, {})
     }
 }
+

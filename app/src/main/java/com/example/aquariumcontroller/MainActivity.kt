@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
                 builder = {
                     composable(ViewNavigationRoutes.controllerSelection)
                     {
-                        ControllerSelectionScreen(navHostController)
+                        ControllerSelectionScreen(navHostController, state = state, onEvent = controllerViewModel::onEvent)
                     }
                     composable(ViewNavigationRoutes.controllerAdd)
                     {
