@@ -12,13 +12,13 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun NumericOutlinedTextField(
-    value: String,
+    value: Int,
     onValueChange: (String) -> Unit,
     label: String,
     modifier: Modifier = Modifier
 ) {
     var textFieldValueState by remember {
-        mutableStateOf(TextFieldValue(value))
+        mutableStateOf(TextFieldValue(value.toString()))
     }
 
     OutlinedTextField(

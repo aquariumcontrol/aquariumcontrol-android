@@ -15,4 +15,6 @@
     <string name="ControllerAddress">Hostname (IP or DNS name):</string>
     <string name="ControllerProfileName">Profile name:</string>
     <string name="ControllerPort">Port number</string>
+    <string name="EditServerProfileFragmentTitle">Edit controller profile</string>
+    <string name="UpdateControllerProfileButtonText">Update controller profile</string>
 </resources>

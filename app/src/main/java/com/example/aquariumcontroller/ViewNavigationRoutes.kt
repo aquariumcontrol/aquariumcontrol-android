@@ -11,4 +11,5 @@ object ViewNavigationRoutes {
     var controllerSelection = "controllerSelection"
     var info = "info"
     var controllerAdd = "controllerAdd"
+    var controllerEdit = "controllerEdit"
 }

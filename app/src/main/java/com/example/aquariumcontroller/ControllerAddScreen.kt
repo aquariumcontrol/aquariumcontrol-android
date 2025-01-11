@@ -58,7 +58,7 @@ fun ControllerAddScreen(
         )
 
         NumericOutlinedTextField(
-            value = state.controllerProfilePort.toString(),
+            value = state.controllerProfilePort,
             onValueChange = {
                 onEvent(ControllerEvent.SetControllerPort(it))
             },

@@ -52,6 +52,14 @@ class MainActivity : ComponentActivity() {
                     {
                         ControllerAddScreen(navHostController, state = state, onEvent = controllerViewModel::onEvent)
                     }
+                    composable(ViewNavigationRoutes.controllerEdit)
+                    {
+                        ControllerEditScreen(
+                            navHostController,
+                            state = state,
+                            onEvent = controllerViewModel::onEvent
+                        )
+                    }
                     composable(ViewNavigationRoutes.feed) {
                         FeedScreen(navHostController)
                     }
