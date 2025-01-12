@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.net.InetAddress
 import kotlin.text.matches
 
 class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
@@ -42,7 +41,6 @@ class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
                 )
                 controllerProfile.isDefault = controllerProfileIsDefault
 
-                Log.d("ControllerViewModel", "Adding controller profile: $controllerProfile")
                 viewModelScope.launch {
                     dao.upsertControllerProfile(controllerProfile)
                 }
@@ -87,10 +85,6 @@ class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
             }
 
             is ControllerEvent.SetControllerAddress -> {
-                Log.d(
-                    "ControllerViewModel",
-                    "Setting controller address: ${event.controllerAddress}"
-                )
                 _state.update {
                     it.copy(
                         controllerProfileAddress = event.controllerAddress
@@ -118,10 +112,6 @@ class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
             }
 
             is ControllerEvent.SetControllerPassword -> {
-                Log.d(
-                    "ControllerViewModel",
-                    "Setting controller password: ${event.controllerPassword}"
-                )
                 _state.update {
                     it.copy(
                         controllerProfilePassword = event.controllerPassword
@@ -141,17 +131,11 @@ class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
                                 controllerProfilePort = event.controllerPort.toInt()
                             )
                         }
-                    } else {
-                        Log.d(
-                            "ControllerViewModel",
-                            "Invalid controller port: ${event.controllerPort}"
-                        )
                     }
                 }
             }
 
             is ControllerEvent.SetControllerUser -> {
-                Log.d("ControllerViewModel", "Setting controller user: ${event.controllerUser}")
                 _state.update {
                     it.copy(
                         controllerProfileUser = event.controllerUser
@@ -160,10 +144,6 @@ class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
             }
 
             is ControllerEvent.SelectControllerProfile -> {
-                Log.d(
-                    "ControllerViewModel",
-                    "Selecting controller profile: ${event.controllerProfile}"
-                )
                 _state.update {
                     it.copy(
                         controllerProfileId = event.controllerProfile.id,
@@ -178,6 +158,21 @@ class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
         }
     }
 
+    /**
+     * Checks if the provided string is not empty and compatible to
+     * IPv4 address, IPv6 address or DNS hostname.
+     *
+     * @param address The string to check
+     * - IPv4 Address:
+     * Four decimal numbers (0-255) separated by dots (.).
+     * Example: 192.168.1.100
+     * - IPv6 Address:
+     * Eight groups of hexadecimal numbers (0-FFFF) separated by colons (:).
+     * Can contain leading zeros and double colons (::) to represent consecutive groups of zeros.
+     * Example: 2001:0db8:85a3:0000:0000:8a2e:0370:7334, 2001:db8::1
+     * - DNS Hostname:
+     * Example: www.example.com, my-server.example.org, localhost
+     */
     private fun isHostName(address: String): Boolean {
         if (address.isBlank()) {
             return false
@@ -197,6 +192,11 @@ class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
         }
     }
 
+    /**
+     * Checks if the provided port number is valid.
+     *
+     * @param port The port number to check
+     */
     private fun isValidPortNumber(port: Int): Boolean {
         return port in 0..65535
     }
