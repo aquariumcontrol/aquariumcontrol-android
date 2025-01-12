@@ -1,10 +1,8 @@
-package com.example.aquariumcontroller
+package com.example.aquariumcontroller.controller
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import com.example.aquariumcontroller.serverprofile.ControllerProfileDatabase
 import java.io.Serializable
 
 @Entity(tableName = ControllerProfileDatabase.TABLE_NAME_CONTROLLER_LIST)

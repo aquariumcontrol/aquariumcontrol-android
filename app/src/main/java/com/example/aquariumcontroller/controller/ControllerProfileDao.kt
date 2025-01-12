@@ -1,8 +1,5 @@
-package com.example.aquariumcontroller
+package com.example.aquariumcontroller.controller
 
-import androidx.lifecycle.LiveData
-import androidx.room.*
-import com.example.aquariumcontroller.serverprofile.ControllerProfileDatabase
 import kotlinx.coroutines.flow.Flow
 
 @androidx.room.Dao

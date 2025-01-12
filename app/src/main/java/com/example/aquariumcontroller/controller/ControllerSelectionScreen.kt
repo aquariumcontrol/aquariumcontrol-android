@@ -1,4 +1,4 @@
-package com.example.aquariumcontroller
+package com.example.aquariumcontroller.controller
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
@@ -33,6 +33,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.aquariumcontroller.MainDropdownMenuScreen
+import com.example.aquariumcontroller.MainViewModel
+import com.example.aquariumcontroller.MainViewModelFactory
+import com.example.aquariumcontroller.R
+import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
@@ -132,9 +137,13 @@ fun ControllerSelectionScreen(
                                                     modifier = Modifier.padding(end = 4.dp),
                                                     onClick = {
                                                         onEvent(
-                                                            ControllerEvent.SelectControllerProfile(controllerProfile)
+                                                            ControllerEvent.SelectControllerProfile(
+                                                                controllerProfile
+                                                            )
                                                         )
-                                                        navHostController?.navigate(ViewNavigationRoutes.controllerEdit)
+                                                        navHostController?.navigate(
+                                                            ViewNavigationRoutes.controllerEdit
+                                                        )
                                                     },
                                                 ) {
                                                     Icon(
@@ -147,7 +156,7 @@ fun ControllerSelectionScreen(
                                                         onEvent(
                                                             ControllerEvent.DeleteControllerProfile(
                                                                 controllerProfile
-                                                        )
+                                                            )
                                                     )
                                                 }) {
                                                     Icon(

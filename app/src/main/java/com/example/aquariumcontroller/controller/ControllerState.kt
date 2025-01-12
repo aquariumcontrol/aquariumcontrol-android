@@ -1,4 +1,4 @@
-package com.example.aquariumcontroller
+package com.example.aquariumcontroller.controller
 
 data class ControllerState (
     var controllerProfileList: List<ControllerProfile> = emptyList(),

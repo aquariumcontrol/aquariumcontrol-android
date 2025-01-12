@@ -12,7 +12,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
-import com.example.aquariumcontroller.serverprofile.ControllerProfileDatabase
+import com.example.aquariumcontroller.controller.ControllerAddScreen
+import com.example.aquariumcontroller.controller.ControllerEditScreen
+import com.example.aquariumcontroller.controller.ControllerProfileDatabase
+import com.example.aquariumcontroller.controller.ControllerSelectionScreen
+import com.example.aquariumcontroller.controller.ControllerViewModel
 
 class MainActivity : ComponentActivity() {
 

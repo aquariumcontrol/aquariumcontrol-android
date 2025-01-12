@@ -1,4 +1,4 @@
-package com.example.aquariumcontroller
+package com.example.aquariumcontroller.controller
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +18,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.aquariumcontroller.NumericOutlinedTextField
+import com.example.aquariumcontroller.R
+import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable

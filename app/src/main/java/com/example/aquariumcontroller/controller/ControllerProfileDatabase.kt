@@ -1,11 +1,9 @@
-package com.example.aquariumcontroller.serverprofile
+package com.example.aquariumcontroller.controller
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.aquariumcontroller.ControllerProfile
-import com.example.aquariumcontroller.ControllerProfileDao
 
 @Database(entities = [ControllerProfile::class], version = 1, exportSchema = false)
 abstract class ControllerProfileDatabase : RoomDatabase() {

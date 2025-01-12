@@ -1,4 +1,4 @@
-package com.example.aquariumcontroller
+package com.example.aquariumcontroller.controller
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

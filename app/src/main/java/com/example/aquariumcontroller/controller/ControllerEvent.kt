@@ -1,4 +1,4 @@
-package com.example.aquariumcontroller
+package com.example.aquariumcontroller.controller
 
 sealed interface ControllerEvent {
     data object AddControllerProfile : ControllerEvent
