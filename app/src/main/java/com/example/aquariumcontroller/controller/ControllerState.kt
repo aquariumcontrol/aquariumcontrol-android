@@ -9,4 +9,5 @@ data class ControllerState (
     val controllerProfileUser: String = "",
     val controllerProfilePassword: String = "",
     val controllerProfileIsDefault: Boolean = false,
+    val validControllerAddress: Boolean = true
 )

@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.net.InetAddress
+import kotlin.text.matches
 
 class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
 
@@ -94,6 +96,17 @@ class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
                         controllerProfileAddress = event.controllerAddress
                     )
                 }
+                if (isHostName(event.controllerAddress)) {
+                    Log.d(
+                        "ControllerViewModel",
+                        "Invalid controller address: ${event.controllerAddress}"
+                    )
+                }
+                _state.update {
+                    it.copy(
+                        validControllerAddress = isHostName(event.controllerAddress)
+                    )
+                }
             }
 
             is ControllerEvent.SetControllerIsDefault -> {
@@ -117,11 +130,23 @@ class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
             }
 
             is ControllerEvent.SetControllerPort -> {
-                Log.d("ControllerViewModel", "Setting controller port: ${event.controllerPort}")
-                _state.update {
-                    it.copy(
-                        controllerProfilePort = event.controllerPort.toInt()
-                    )
+                if (event.controllerPort.isNotEmpty()) {
+                    if (isValidPortNumber(event.controllerPort.toInt())) {
+                        Log.d(
+                            "ControllerViewModel",
+                            "Setting controller port: ${event.controllerPort}"
+                        )
+                        _state.update {
+                            it.copy(
+                                controllerProfilePort = event.controllerPort.toInt()
+                            )
+                        }
+                    } else {
+                        Log.d(
+                            "ControllerViewModel",
+                            "Invalid controller port: ${event.controllerPort}"
+                        )
+                    }
                 }
             }
 
@@ -135,7 +160,10 @@ class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
             }
 
             is ControllerEvent.SelectControllerProfile -> {
-                Log.d("ControllerViewModel", "Selecting controller profile: ${event.controllerProfile}")
+                Log.d(
+                    "ControllerViewModel",
+                    "Selecting controller profile: ${event.controllerProfile}"
+                )
                 _state.update {
                     it.copy(
                         controllerProfileId = event.controllerProfile.id,
@@ -148,5 +176,28 @@ class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
                 }
             }
         }
+    }
+
+    private fun isHostName(address: String): Boolean {
+        if (address.isBlank()) {
+            return false
+        } else {
+            val ipv4Regex =
+                "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\$".toRegex()
+            val ipv6Regex = "^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\$".toRegex()
+            val ipv6CompressedRegex =
+                "^(([0-9a-fA-F]{1,4}:){0,1}(([0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4})?::([0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4})?\$".toRegex()
+            val dnsRegex =
+                "^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}\$".toRegex()
+
+            return address.matches(ipv4Regex) ||
+                    address.matches(ipv6Regex) ||
+                    address.matches(ipv6CompressedRegex) ||
+                    address.matches(dnsRegex)
+        }
+    }
+
+    private fun isValidPortNumber(port: Int): Boolean {
+        return port in 0..65535
     }
 }

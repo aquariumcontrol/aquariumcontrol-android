@@ -117,6 +117,7 @@ fun ControllerEditScreen(
                 onEvent(ControllerEvent.UpdateControllerProfile)
                 navHostController?.navigate(ViewNavigationRoutes.controllerSelection)
             },
+            enabled = state.controllerProfileName.isNotBlank() && state.validControllerAddress,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp)
