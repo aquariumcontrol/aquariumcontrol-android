@@ -42,6 +42,9 @@ class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
                 controllerProfile.isDefault = controllerProfileIsDefault
 
                 viewModelScope.launch {
+                    if (controllerProfileIsDefault) {
+                        dao.resetDefaultControllerProfile()
+                    }
                     dao.upsertControllerProfile(controllerProfile)
                 }
             }
@@ -64,8 +67,10 @@ class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
                 )
                 controllerProfile.isDefault = controllerProfileIsDefault
 
-                Log.d("ControllerViewModel", "Updating controller profile: $controllerProfile")
                 viewModelScope.launch {
+                    if (controllerProfileIsDefault) {
+                        dao.resetDefaultControllerProfile()
+                    }
                     dao.upsertControllerProfile(controllerProfile)
                 }
             }
