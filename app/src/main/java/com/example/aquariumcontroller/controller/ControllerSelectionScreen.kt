@@ -1,21 +1,13 @@
 package com.example.aquariumcontroller.controller
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -26,11 +18,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.MainDropdownMenuScreen
@@ -93,127 +82,13 @@ fun ControllerSelectionScreen(
                             .wrapContentSize()
                     ) {
                         items(state.controllerProfileList) { controllerProfile ->
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .border(
-                                        border = BorderStroke(
-                                            1.dp,
-                                            MaterialTheme.colorScheme.onSurface
-                                        )
-                                    )
-                                    .padding(8.dp)
-                            ) {
-                                Column(
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                    ) {
-                                        Column(
-                                            modifier = Modifier.weight(1f)
-                                        ) {
-                                            Row(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(top = 8.dp),
-                                                horizontalArrangement = Arrangement.Start
-                                            ) {
-                                                Text(
-                                                    text = controllerProfile.name,
-                                                    fontSize = 24.sp,
-                                                    style = TextStyle(fontWeight = FontWeight.Bold)
-                                                )
-                                            }
-                                        }
-                                        Column(
-                                            modifier = Modifier.weight(1f)
-                                        ) {
-                                            Row(
-                                                modifier = Modifier.fillMaxWidth(),
-                                                horizontalArrangement = Arrangement.End,
-                                            ) {
-                                                Button(
-                                                    modifier = Modifier.padding(end = 4.dp),
-                                                    onClick = {
-                                                        onEvent(
-                                                            ControllerEvent.SelectControllerProfile(
-                                                                controllerProfile
-                                                            )
-                                                        )
-                                                        navHostController?.navigate(
-                                                            ViewNavigationRoutes.controllerEdit
-                                                        )
-                                                    },
-                                                ) {
-                                                    Icon(
-                                                        imageVector = Icons.Outlined.Edit,
-                                                        contentDescription = "Edit"
-                                                    )
-                                                }
-                                                Button(
-                                                    onClick = {
-                                                        onEvent(
-                                                            ControllerEvent.DeleteControllerProfile(
-                                                                controllerProfile
-                                                            )
-                                                    )
-                                                }) {
-                                                    Icon(
-                                                        imageVector = Icons.Outlined.Delete,
-                                                        contentDescription = "Delete"
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    }
-                                    Text(
-                                        text = "Address: " + controllerProfile.address,
-                                        fontSize = 12.sp
-                                    )
-                                    Text(
-                                        text = "Port: " + controllerProfile.port,
-                                        fontSize = 12.sp
-                                    )
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                    )
-                                    {
-                                        Column(
-                                            modifier = Modifier.weight(1f)
-                                        ) {
-                                            Row(
-                                                modifier = Modifier.fillMaxWidth(),
-                                                horizontalArrangement = Arrangement.Start
-                                            ) {
-                                                Text(
-                                                    text = "User: " + controllerProfile.user,
-                                                    fontSize = 12.sp,
-                                                )
-                                            }
-                                        }
-                                        Column(
-                                            modifier = Modifier.weight(1f)
-                                        ) {
-                                            Row(
-                                                modifier = Modifier.fillMaxWidth(),
-                                                horizontalArrangement = Arrangement.End
-                                            ) {
-                                                Text(
-                                                    text = "Password: " + controllerProfile.password,
-                                                    fontSize = 12.sp,
-                                                )
-                                            }
-                                        }
-
-                                    }
-                                }
-                            }
+                            ControllerProfileScreen(
+                                navHostController,
+                                state,
+                                onEvent,
+                                controllerProfile
+                            )
                         }
-                    }
-                    // @todo: remove the button:
-                    Button(onClick = { viewModel.controllerIsLoaded = true }) {
-                        Text(text = "OK")
                     }
                 }
             }
@@ -223,7 +98,7 @@ fun ControllerSelectionScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun ControllerSelectionViewPreview() {
+fun ControllerSelectionScreenPreview() {
     val mockControllerProfile1 = ControllerProfile(
         name = "Controller 1",
         address = "192.168.1.1",
