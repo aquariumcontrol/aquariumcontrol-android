@@ -17,4 +17,10 @@
     <string name="ControllerPort">Port number</string>
     <string name="EditServerProfileFragmentTitle">Edit controller profile</string>
     <string name="UpdateControllerProfileButtonText">Update controller profile</string>
+    <string name="RefillControl">Refill Control</string>
+    <string name="ViewRefillEvents24h">View refill events of last 24h</string>
+    <string name="ViewRefillEvents7d">View refill events of last 7 days</string>
+    <string name="StartRefillControl">Start refill control</string>
+    <string name="StopRefillControl">Stop refill control</string>
+    <string name="ResetErrors">Reset all errors</string>
 </resources>
