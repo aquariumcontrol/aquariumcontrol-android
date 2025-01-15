@@ -38,7 +38,7 @@ fun MainDropdownMenuScreen(
     navHostController: NavHostController?,
     navigationRouteSource: String
 ) {
-    val viewModel: MainViewModel = viewModel(
+    val mainViewModel: MainViewModel = viewModel(
         factory = MainViewModelFactory
     )
 
@@ -69,7 +69,7 @@ fun MainDropdownMenuScreen(
                         contentDescription = "Settings"
                     )
                 },
-                enabled = viewModel.controllerIsLoaded && navigationRouteSource != ViewNavigationRoutes.timeData
+                enabled = mainViewModel.isControllerLoaded() && navigationRouteSource != ViewNavigationRoutes.timeData
             )
             DropdownMenuItem(
                 text = { Text("Fresh water refill") },
@@ -82,7 +82,7 @@ fun MainDropdownMenuScreen(
                         contentDescription = "Settings"
                     )
                 },
-                enabled = viewModel.controllerIsLoaded && navigationRouteSource != ViewNavigationRoutes.refill
+                enabled = mainViewModel.isControllerLoaded() && navigationRouteSource != ViewNavigationRoutes.refill
             )
             DropdownMenuItem(
                 text = { Text("Feed") },
@@ -95,7 +95,7 @@ fun MainDropdownMenuScreen(
                         contentDescription = "Settings"
                     )
                 },
-                enabled = viewModel.controllerIsLoaded && navigationRouteSource != ViewNavigationRoutes.feed
+                enabled = mainViewModel.isControllerLoaded() && navigationRouteSource != ViewNavigationRoutes.feed
             )
             DropdownMenuItem(
                 text = { Text("Heating") },
@@ -108,7 +108,7 @@ fun MainDropdownMenuScreen(
                         contentDescription = "Settings"
                     )
                 },
-                enabled = viewModel.controllerIsLoaded && navigationRouteSource != ViewNavigationRoutes.heating
+                enabled = mainViewModel.isControllerLoaded() && navigationRouteSource != ViewNavigationRoutes.heating
             )
             DropdownMenuItem(
                 text = { Text("Ventilation") },
@@ -121,7 +121,7 @@ fun MainDropdownMenuScreen(
                         contentDescription = "Settings"
                     )
                 },
-                enabled = viewModel.controllerIsLoaded && navigationRouteSource != ViewNavigationRoutes.ventilation
+                enabled = mainViewModel.isControllerLoaded() && navigationRouteSource != ViewNavigationRoutes.ventilation
 
             )
             DropdownMenuItem(
@@ -135,7 +135,7 @@ fun MainDropdownMenuScreen(
                         contentDescription = "Settings"
                     )
                 },
-                enabled = viewModel.controllerIsLoaded && navigationRouteSource != ViewNavigationRoutes.schedule
+                enabled = mainViewModel.isControllerLoaded() && navigationRouteSource != ViewNavigationRoutes.schedule
             )
             HorizontalDivider()
             DropdownMenuItem(

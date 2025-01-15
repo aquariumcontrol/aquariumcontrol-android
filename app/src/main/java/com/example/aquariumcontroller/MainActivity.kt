@@ -17,8 +17,10 @@ import com.example.aquariumcontroller.controller.ControllerEditScreen
 import com.example.aquariumcontroller.controller.ControllerProfileDatabase
 import com.example.aquariumcontroller.controller.ControllerSelectionScreen
 import com.example.aquariumcontroller.controller.ControllerViewModel
+import com.example.aquariumcontroller.refill.RefillHistoryScreen
 import com.example.aquariumcontroller.refill.RefillScreen
 
+@Suppress("UNCHECKED_CAST")
 class MainActivity : ComponentActivity() {
 
     private val db by lazy {
@@ -73,6 +75,12 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(ViewNavigationRoutes.refill) {
                         RefillScreen(navHostController)
+                    }
+                    composable(ViewNavigationRoutes.refillHistory24h) {
+                        RefillHistoryScreen(navHostController, false)
+                    }
+                    composable(ViewNavigationRoutes.refillHistory7d) {
+                        RefillHistoryScreen(navHostController, true)
                     }
                     composable(ViewNavigationRoutes.heating) {
                         HeatingScreen(navHostController)

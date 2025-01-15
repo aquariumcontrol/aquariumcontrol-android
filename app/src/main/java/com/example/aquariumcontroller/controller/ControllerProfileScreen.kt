@@ -1,7 +1,9 @@
 package com.example.aquariumcontroller.controller
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,17 +23,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.aquariumcontroller.MainViewModel
+import com.example.aquariumcontroller.MainViewModelFactory
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
 fun ControllerProfileScreen(
     navHostController: NavHostController?,
-    state: ControllerState,
     onEvent: (ControllerEvent) -> Unit,
     controllerProfile: ControllerProfile
 ) {
+    val mainViewModel: MainViewModel = viewModel(
+        factory = MainViewModelFactory
+    )
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -44,13 +52,19 @@ fun ControllerProfileScreen(
             .padding(8.dp)
     ) {
         Column(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .weight(1f)
+                .clickable {
+                    mainViewModel.updateSelectedControllerProfile(controllerProfile)
+                }
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth(),
             ) {
                 Column(
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
                 ) {
                     Row(
                         modifier = Modifier
@@ -162,9 +176,7 @@ fun ControllerProfileScreenPreview() {
         isDefault = true
     )
 
-    val mockControllerState = ControllerState()
-
     AquariumControllerTheme {
-        ControllerProfileScreen(null, mockControllerState, {}, mockControllerProfile1)
+        ControllerProfileScreen(null, {}, mockControllerProfile1)
     }
 }

@@ -62,7 +62,7 @@ fun RefillScreen(navHostController: NavHostController?) {
                                     .fillMaxWidth()
                                     .padding(horizontal = 8.dp),
                                 onClick = {
-                                    // @todo: add action
+                                    navHostController?.navigate(ViewNavigationRoutes.refillHistory24h)
                                 },
                             ) {
                                 Text(
@@ -75,7 +75,7 @@ fun RefillScreen(navHostController: NavHostController?) {
                                     .fillMaxWidth()
                                     .padding(horizontal = 8.dp),
                                 onClick = {
-                                    // @todo: add action
+                                    navHostController?.navigate(ViewNavigationRoutes.refillHistory7d)
                                 },
                             ) {
                                 Text(
@@ -132,7 +132,7 @@ fun RefillScreen(navHostController: NavHostController?) {
 
 @Preview(showBackground = true)
 @Composable
-fun RefillViewPreview() {
+fun RefillScreenPreview() {
     AquariumControllerTheme {
         RefillScreen(null)
     }

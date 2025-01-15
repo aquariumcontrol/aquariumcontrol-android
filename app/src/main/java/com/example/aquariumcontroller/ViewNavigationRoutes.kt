@@ -4,6 +4,8 @@ object ViewNavigationRoutes {
     var feed = "feed"
     var balling = "balling"
     var refill = "refill"
+    var refillHistory24h = "refillHistory24h"
+    var refillHistory7d = "refillHistory7d"
     var ventilation = "ventilation"
     var heating = "heating"
     var schedule = "schedule"

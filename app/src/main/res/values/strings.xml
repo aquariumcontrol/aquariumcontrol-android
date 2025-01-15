@@ -23,4 +23,6 @@
     <string name="StartRefillControl">Start refill control</string>
     <string name="StopRefillControl">Stop refill control</string>
     <string name="ResetErrors">Reset all errors</string>
+    <string name="RefillEventsLast7Days">Refill events of last 7 days</string>
+    <string name="RefillEventsLast24h">Refill events of last 24h</string>
 </resources>

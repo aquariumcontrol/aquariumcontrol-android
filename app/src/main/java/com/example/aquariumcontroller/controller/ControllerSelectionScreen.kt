@@ -32,7 +32,6 @@ fun ControllerSelectionScreen(
     state: ControllerState,
     onEvent: (ControllerEvent) -> Unit
 ) {
-
     AquariumControllerTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -77,7 +76,6 @@ fun ControllerSelectionScreen(
                         items(state.controllerProfileList) { controllerProfile ->
                             ControllerProfileScreen(
                                 navHostController,
-                                state,
                                 onEvent,
                                 controllerProfile
                             )
