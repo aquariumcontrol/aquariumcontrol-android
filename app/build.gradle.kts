@@ -1,7 +1,11 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+//    id("com.android.application")
+//    id("org.jetbrains.kotlin.android")
+    //kotlin("plugin.serialization")
     //id("org.jetbrains.kotlin.android") version "1.9.20-1.0.14"
+    id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp") version "1.9.20-1.0.14"
 }
 
@@ -65,6 +69,13 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.espresso.core)
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.22")
+    //implementation(libs.kotlinx.serialization.json)
+    //implementation(libs.okhttp)
+    //implementation(libs.kotlin.stdlib.jdk8)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -79,4 +90,5 @@ dependencies {
     ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
     implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")
 
+    //implementation(libs.kotlinx.serialization.json) // Use the latest version
 }

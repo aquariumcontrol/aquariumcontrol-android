@@ -15,5 +15,9 @@ class MainViewModel: ViewModel() {
         return selectedController != null
     }
 
+    fun getControllerAddress(): String? {
+        return selectedController?.address
+    }
+
     private var selectedController: ControllerProfile? by mutableStateOf(null)
 }

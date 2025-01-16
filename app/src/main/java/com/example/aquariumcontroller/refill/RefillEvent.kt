@@ -1,50 +1,38 @@
 package com.example.aquariumcontroller.refill
 
 import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.annotation.VisibleForTesting
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import org.json.JSONException
 import org.json.JSONObject
 import java.sql.Timestamp
-import java.text.DateFormat
-import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
-class RefillEvent {
-
-    var timestamp: Timestamp? = null
-    var duration: Int? = null
-    var volume: Double? = null
-
-    constructor(jsonObject: JSONObject?) {
-        if (jsonObject != null) {
-            try {
-                timestamp = Timestamp.valueOf(jsonObject.getString("Timestamp"))
-                duration = jsonObject.getInt("Duration")
-                volume = jsonObject.getDouble("Volume")
-                //int errorCode = jsonObject.getInt("errorCode");
-            } catch (e: JSONException) {
-                e.printStackTrace()
-            }
-        }
+@Serializable
+data class RefillEvent(
+    @SerialName("Timestamp")
+    val timestamp: String,
+    @SerialName("Duration")
+    val duration: Double,
+    @SerialName("Volume")
+    val volume: Double
+) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun toRefillEvent(): RefillEvent {
+        val fixedDateTime = LocalDateTime.parse(timestamp.replace(" ", "T"))
+        val zonedDateTime = ZonedDateTime.of(fixedDateTime, ZoneId.systemDefault())
+        val fixedTimestamp = Timestamp.from(zonedDateTime.toInstant())
+        return RefillEvent(fixedTimestamp.toString(), duration, volume)
     }
 
-    @VisibleForTesting
-    constructor(timestamp: Timestamp, duration: Int, volume: Double) {
-        this.timestamp = timestamp
-        this.duration = duration
-        this.volume = volume
-    }
-
-    @SuppressLint("SimpleDateFormat")
-    fun getTimestamp(): String {
-        val df: DateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        return df.format(timestamp)
-    }
-
-    fun getDuration(): String {
-        return "$duration"
-    }
-
-    fun getVolume(): String {
-        return "%.2f".format(volume)
-    }
+    constructor(timestamp: Timestamp, duration: Double, volume: Double) : this(
+        timestamp.toString(),
+        duration,
+        volume
+    )
 }

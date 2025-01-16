@@ -17,10 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import java.sql.Timestamp
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
 
 @Composable
 fun RefillEventScreen(
@@ -45,7 +41,7 @@ fun RefillEventScreen(
                 fontSize = 12.sp
             )
             Text(
-                text = refillEvent.getTimestamp(),
+                text = refillEvent.timestamp,
                 fontSize = 12.sp
             )
         }
@@ -53,11 +49,11 @@ fun RefillEventScreen(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = "Duration: " + refillEvent.getDuration() + " seconds",
+                text = "Duration: ${"%.1f".format(refillEvent.duration)} seconds",
                 fontSize = 12.sp
             )
             Text(
-                text = "Volume: " + refillEvent.getVolume() + " Liters",
+                text = "Volume: ${"%.2f".format(refillEvent.volume)} Liters",
                 fontSize = 12.sp
             )
         }
@@ -72,7 +68,7 @@ fun RefillEventPreviewScreen() {
 
     val mockEvent = RefillEvent(
         timestamp = fixedTimestamp,
-        duration = 60,
+        duration = 60.0,
         volume = 10.0
     )
 
