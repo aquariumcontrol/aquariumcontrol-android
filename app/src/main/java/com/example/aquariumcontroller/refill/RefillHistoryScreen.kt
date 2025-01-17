@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.minus
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.aquariumcontroller.ApiUrls
 import com.example.aquariumcontroller.MainDropdownMenuScreen
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.MainViewModelFactory
@@ -51,9 +52,10 @@ fun RefillHistoryScreen(
 
     var refillEvents by remember { mutableStateOf<List<RefillEvent>?>(mockRefillEvents) }
 
-    val url =
-        "http://${mainViewModel.getControllerAddress()}/aquarium-web/api/v01/getRefillEvents24h.php"
-
+    val url = when {
+        showFullWeek -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.REFILL_EVENTS_URL_7D
+        else -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.REFILL_EVENTS_URL_24H
+    }
     val reader = RefillEventReader(url)
 
     LaunchedEffect(Unit) {
@@ -131,8 +133,7 @@ fun RefillHistoryScreen(
                                     )
                                 )
                             }
-                        }
-                        else {
+                        } else {
                             Text(
                                 text = "Controller not loaded.",
                                 style = TextStyle(
