@@ -17,6 +17,7 @@ symbolProcessingApi = "1.8.21-1.0.11"
 kotlinxSerializationJson = "1.8.0"
 okhttp = "4.12.0"
 kotlinStdlibJdk8 = "2.0.21"
+tracingPerfettoHandshake = "1.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -42,6 +43,7 @@ symbol-processing-api = { module = "com.google.devtools.ksp:symbol-processing-ap
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 kotlin-stdlib-jdk8 = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8", version.ref = "kotlinStdlibJdk8" }
+androidx-tracing-perfetto-handshake = { group = "androidx.tracing", name = "tracing-perfetto-handshake", version.ref = "tracingPerfettoHandshake" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

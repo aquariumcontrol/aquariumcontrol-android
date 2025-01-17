@@ -73,6 +73,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.22")
+    implementation(libs.androidx.tracing.perfetto.handshake)
     //implementation(libs.kotlinx.serialization.json)
     //implementation(libs.okhttp)
     //implementation(libs.kotlin.stdlib.jdk8)

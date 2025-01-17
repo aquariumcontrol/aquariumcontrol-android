@@ -1,7 +1,6 @@
 package com.example.aquariumcontroller.refill
 
 import android.util.Log
-import androidx.collection.emptyLongSet
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,7 +24,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.minus
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -53,8 +51,8 @@ fun RefillHistoryScreen(
     var refillEvents by remember { mutableStateOf<List<RefillEvent>?>(mockRefillEvents) }
 
     val url = when {
-        showFullWeek -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.REFILL_EVENTS_URL_7D
-        else -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.REFILL_EVENTS_URL_24H
+        showFullWeek -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.REFILL_GET_EVENTS_7D
+        else -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.REFILL_GET_EVENTS_24H
     }
     val reader = RefillEventReader(url)
 

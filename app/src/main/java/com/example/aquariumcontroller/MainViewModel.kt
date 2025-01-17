@@ -19,5 +19,13 @@ class MainViewModel: ViewModel() {
         return selectedController?.address
     }
 
+    fun getControllerUser(): String? {
+        return selectedController?.user
+    }
+
+    fun getControllerPassword(): String? {
+        return selectedController?.password
+    }
+
     private var selectedController: ControllerProfile? by mutableStateOf(null)
 }
