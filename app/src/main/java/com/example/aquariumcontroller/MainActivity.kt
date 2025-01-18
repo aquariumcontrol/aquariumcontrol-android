@@ -77,7 +77,7 @@ class MainActivity : ComponentActivity() {
                         FeedScreen(navHostController)
                     }
                     composable(ViewNavigationRoutes.balling) {
-                        BallingScreen(navHostController)
+                        BallingScreen(navHostController, null)
                     }
                     composable(ViewNavigationRoutes.ballingHistory24h) {
                         BallingHistoryScreen(navHostController, false, null)

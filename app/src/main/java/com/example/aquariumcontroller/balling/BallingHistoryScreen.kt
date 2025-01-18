@@ -36,7 +36,6 @@ import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.sql.Timestamp
 
 @Composable
 fun BallingHistoryScreen(
@@ -48,7 +47,7 @@ fun BallingHistoryScreen(
         factory = MainViewModelFactory
     )
 
-    var BallingEvents by remember { mutableStateOf(mockBallingEvents) }
+    var ballingEvents by remember { mutableStateOf(mockBallingEvents) }
 
     val url = when {
         showFullWeek -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.BALLING_GET_EVENTS_7D
@@ -58,7 +57,7 @@ fun BallingHistoryScreen(
 
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
-            BallingEvents = reader.readBallingEvents()
+            ballingEvents = reader.readBallingEvents()
         }
     }
 
@@ -95,7 +94,7 @@ fun BallingHistoryScreen(
                     ) {
                         if (mainViewModel.isControllerLoaded() || mockBallingEvents != null) {
                             if (mainViewModel.getControllerAddress() != null || mockBallingEvents != null) {
-                                if (BallingEvents == null) {
+                                if (ballingEvents == null) {
                                     Text(
                                         text = "Loading Balling dosing events...",
                                         style = TextStyle(
@@ -103,7 +102,7 @@ fun BallingHistoryScreen(
                                             fontWeight = FontWeight.Bold
                                         )
                                     )
-                                } else if (BallingEvents!!.isEmpty()) {
+                                } else if (ballingEvents!!.isEmpty()) {
                                     Text(
                                         text = "No Balling events found.",
                                         style = TextStyle(
@@ -113,10 +112,10 @@ fun BallingHistoryScreen(
                                     )
                                 } else {
                                     LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                        items(BallingEvents!!) { BallingEvent ->
+                                        items(ballingEvents!!) { BallingEvent ->
                                             Log.d(
                                                 this::class.simpleName,
-                                                "Balling dosing events found: ${BallingEvents!!.size}"
+                                                "Balling dosing events found: ${ballingEvents!!.size}"
                                             )
                                             BallingEventScreen(BallingEvent)
                                         }

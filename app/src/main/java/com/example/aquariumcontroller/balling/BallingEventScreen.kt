@@ -20,7 +20,7 @@ import java.sql.Timestamp
 
 @Composable
 fun BallingEventScreen(
-    BallingEvent: BallingEvent
+    ballingEvent: BallingEvent
 ) {
     Row(
         modifier = Modifier
@@ -41,7 +41,7 @@ fun BallingEventScreen(
                 fontSize = 12.sp
             )
             Text(
-                text = BallingEvent.timestamp,
+                text = ballingEvent.timestamp,
                 fontSize = 12.sp
             )
         }
@@ -49,15 +49,15 @@ fun BallingEventScreen(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = "Pump ID: ${BallingEvent.pumpId}",
+                text = "Pump ID: ${ballingEvent.pumpId}",
                 fontSize = 12.sp
             )
             Text(
-                text = "Dosing volume: ${"%.2f".format(BallingEvent.volume)} ml",
+                text = "Dosing volume: ${"%.2f".format(ballingEvent.volume)} ml",
                 fontSize = 12.sp
             )
             Text(
-                text = "Label: ${BallingEvent.label}",
+                text = "Label: ${ballingEvent.label}",
                 fontSize = 12.sp
             )
         }
