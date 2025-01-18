@@ -14,6 +14,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
+import com.example.aquariumcontroller.balling.BallingHistoryScreen
+import com.example.aquariumcontroller.balling.BallingScreen
 import com.example.aquariumcontroller.controller.ControllerAddScreen
 import com.example.aquariumcontroller.controller.ControllerEditScreen
 import com.example.aquariumcontroller.controller.ControllerProfileDatabase
@@ -76,6 +78,12 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(ViewNavigationRoutes.balling) {
                         BallingScreen(navHostController)
+                    }
+                    composable(ViewNavigationRoutes.ballingHistory24h) {
+                        BallingHistoryScreen(navHostController, false, null)
+                    }
+                    composable(ViewNavigationRoutes.ballingHistory7d) {
+                        BallingHistoryScreen(navHostController, true, null)
                     }
                     composable(ViewNavigationRoutes.refill) {
                         RefillScreen(navHostController)

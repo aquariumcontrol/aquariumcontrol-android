@@ -97,7 +97,7 @@ class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
                 }
                 if (isHostName(event.controllerAddress)) {
                     Log.d(
-                        "ControllerViewModel",
+                        this::class.simpleName,
                         "Invalid controller address: ${event.controllerAddress}"
                     )
                 }
@@ -128,7 +128,7 @@ class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
                 if (event.controllerPort.isNotEmpty()) {
                     if (isValidPortNumber(event.controllerPort.toInt())) {
                         Log.d(
-                            "ControllerViewModel",
+                            this::class.simpleName,
                             "Setting controller port: ${event.controllerPort}"
                         )
                         _state.update {

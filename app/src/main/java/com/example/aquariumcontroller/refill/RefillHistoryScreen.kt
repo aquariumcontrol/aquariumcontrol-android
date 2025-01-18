@@ -115,7 +115,7 @@ fun RefillHistoryScreen(
                                     LazyColumn(modifier = Modifier.fillMaxSize()) {
                                         items(refillEvents!!) { refillEvent ->
                                             Log.d(
-                                                "RefillHistoryScreen",
+                                                this::class.simpleName,
                                                 "Refill events found: ${refillEvents!!.size}"
                                             )
                                             RefillEventScreen(refillEvent)

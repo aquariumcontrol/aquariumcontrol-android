@@ -45,7 +45,7 @@ fun ControllerEditScreen(
         OutlinedTextField(
             value = state.controllerProfileName,
             onValueChange = {
-                Log.d("ControllerEditScreen", "Setting controller profile name: $it")
+                Log.d(this::class.simpleName, "Setting controller profile name: $it")
                 onEvent(ControllerEvent.SetControllerProfileName(it))
             },
             modifier = Modifier.fillMaxWidth(),

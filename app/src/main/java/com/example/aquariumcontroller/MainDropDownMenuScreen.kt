@@ -12,6 +12,7 @@ import androidx.compose.material.icons.outlined.DeviceThermostat
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.LineAxis
 import androidx.compose.material.icons.outlined.Schedule
+import androidx.compose.material.icons.outlined.Science
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Stars
 import androidx.compose.material.icons.outlined.WaterDrop
@@ -84,6 +85,19 @@ fun MainDropdownMenuScreen(
                     )
                 },
                 enabled = mainViewModel.isControllerLoaded() && navigationRouteSource != ViewNavigationRoutes.timeData
+            )
+            DropdownMenuItem(
+                text = { Text("Balling mineral dosing") },
+                onClick = {
+                    navHostController?.navigate(ViewNavigationRoutes.balling)
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Outlined.Science,
+                        contentDescription = "Settings"
+                    )
+                },
+                enabled = mainViewModel.isControllerLoaded() && navigationRouteSource != ViewNavigationRoutes.balling
             )
             DropdownMenuItem(
                 text = { Text("Fresh water refill") },

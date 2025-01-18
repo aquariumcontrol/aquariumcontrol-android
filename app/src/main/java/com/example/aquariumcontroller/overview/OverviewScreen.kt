@@ -90,7 +90,7 @@ fun OverviewScreen(
     // This will be called when the user pulls down the list
     fun refresh() = coroutineScope.launch {
         refreshing = true
-        Log.d("OverviewScreen", "Refreshing")
+        Log.d(this::class.simpleName, "Refreshing")
         /*
         val overviewDataReader = OverviewDataReader(url).also {
             overviewData = it.readOverviewData()

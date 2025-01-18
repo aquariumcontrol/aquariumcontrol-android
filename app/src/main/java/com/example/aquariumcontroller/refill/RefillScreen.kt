@@ -63,7 +63,6 @@ fun callWebApi(
                     "proper configuration of user and password",
             Toast.LENGTH_SHORT
         ).show()
-        Log.d("RefillScreen", "Toasting...")
     }
 
 }
