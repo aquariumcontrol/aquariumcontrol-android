@@ -22,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,6 +40,8 @@ import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.controller.ControllerProfile
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -49,6 +52,7 @@ fun OverviewScreen(
     mockController: ControllerProfile?,
     mockOverviewData: OverviewData?
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val mainViewModel: MainViewModel = viewModel(
         factory = MainViewModelFactory
     )
@@ -58,7 +62,7 @@ fun OverviewScreen(
     val controllerUsername: String?
     val controllerPassword: String?
     val controllerPort: Int?
-
+    val url: String?
     var overviewData by remember { mutableStateOf(mockOverviewData) }
     var refreshing by remember { mutableStateOf(false) }
 
@@ -68,7 +72,7 @@ fun OverviewScreen(
         controllerUsername = mainViewModel.getControllerUser()
         controllerPassword = mainViewModel.getControllerPassword()
         controllerPort = mainViewModel.getControllerPort()
-        val url = "http://" + mainViewModel.getControllerAddress() + ApiUrls.OVERVIEW_GET_DATA
+        url = "http://" + mainViewModel.getControllerAddress() + ApiUrls.OVERVIEW_GET_DATA
         val overviewDataReader = OverviewDataReader(url)
         LaunchedEffect(Unit) {
             withContext(Dispatchers.IO) {
@@ -84,9 +88,13 @@ fun OverviewScreen(
     }
 
     // This will be called when the user pulls down the list
-    fun refresh() = run {
+    fun refresh() = coroutineScope.launch {
         refreshing = true
         Log.d("OverviewScreen", "Refreshing")
+        /*
+        val overviewDataReader = OverviewDataReader(url).also {
+            overviewData = it.readOverviewData()
+        }*/
         refreshing = false
     }
 
@@ -319,8 +327,8 @@ fun OverviewScreen(
                         }
                     }
                 }
-                PullRefreshIndicator(refreshing, state)
             }
+            PullRefreshIndicator(refreshing, state)
         }
     }
 }
