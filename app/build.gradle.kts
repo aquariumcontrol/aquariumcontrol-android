@@ -92,4 +92,7 @@ dependencies {
     implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")
 
     //implementation(libs.kotlinx.serialization.json) // Use the latest version
+
+    // for pull refresh
+    implementation("androidx.compose.material:material:1.7.6")
 }

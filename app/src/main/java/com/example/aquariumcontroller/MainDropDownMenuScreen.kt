@@ -13,6 +13,7 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.LineAxis
 import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Stars
 import androidx.compose.material.icons.outlined.WaterDrop
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -58,6 +59,19 @@ fun MainDropdownMenuScreen(
             expanded = expanded,
             onDismissRequest = { expanded = false },
         ) {
+            DropdownMenuItem(
+                text = { Text("Overview") },
+                onClick = {
+                    navHostController?.navigate(ViewNavigationRoutes.overView)
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Outlined.Stars,
+                        contentDescription = "Overview"
+                    )
+                },
+                enabled = mainViewModel.isControllerLoaded() && navigationRouteSource != ViewNavigationRoutes.overView
+            )
             DropdownMenuItem(
                 text = { Text("Display Data") },
                 onClick = {

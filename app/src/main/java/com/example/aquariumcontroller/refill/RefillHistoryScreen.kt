@@ -42,13 +42,13 @@ import java.sql.Timestamp
 fun RefillHistoryScreen(
     navHostController: NavHostController?,
     showFullWeek: Boolean,
-    mockRefillEvents: List<RefillEvent>? = null
+    mockRefillEvents: List<RefillEvent>?
 ) {
     val mainViewModel: MainViewModel = viewModel(
         factory = MainViewModelFactory
     )
 
-    var refillEvents by remember { mutableStateOf<List<RefillEvent>?>(mockRefillEvents) }
+    var refillEvents by remember { mutableStateOf(mockRefillEvents) }
 
     val url = when {
         showFullWeek -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.REFILL_GET_EVENTS_7D

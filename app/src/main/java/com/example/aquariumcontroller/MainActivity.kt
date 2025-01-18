@@ -1,9 +1,11 @@
 package com.example.aquariumcontroller
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
@@ -17,6 +19,7 @@ import com.example.aquariumcontroller.controller.ControllerEditScreen
 import com.example.aquariumcontroller.controller.ControllerProfileDatabase
 import com.example.aquariumcontroller.controller.ControllerSelectionScreen
 import com.example.aquariumcontroller.controller.ControllerViewModel
+import com.example.aquariumcontroller.overview.OverviewScreen
 import com.example.aquariumcontroller.refill.RefillHistoryScreen
 import com.example.aquariumcontroller.refill.RefillScreen
 
@@ -41,6 +44,7 @@ class MainActivity : ComponentActivity() {
         }
     )
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -77,10 +81,10 @@ class MainActivity : ComponentActivity() {
                         RefillScreen(navHostController)
                     }
                     composable(ViewNavigationRoutes.refillHistory24h) {
-                        RefillHistoryScreen(navHostController, false)
+                        RefillHistoryScreen(navHostController, false, null)
                     }
                     composable(ViewNavigationRoutes.refillHistory7d) {
-                        RefillHistoryScreen(navHostController, true)
+                        RefillHistoryScreen(navHostController, true, null)
                     }
                     composable(ViewNavigationRoutes.heating) {
                         HeatingScreen(navHostController)
@@ -96,6 +100,9 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(ViewNavigationRoutes.info) {
                         InfoScreen(navHostController)
+                    }
+                    composable(ViewNavigationRoutes.overView) {
+                        OverviewScreen(navHostController, null, null)
                     }
                 }
             )

@@ -25,4 +25,5 @@
     <string name="ResetErrors">Reset all errors</string>
     <string name="RefillEventsLast7Days">Refill events of last 7 days</string>
     <string name="RefillEventsLast24h">Refill events of last 24h</string>
+    <string name="Overview">Overview</string>
 </resources>

@@ -27,5 +27,12 @@ class MainViewModel: ViewModel() {
         return selectedController?.password
     }
 
+    fun getControllerPort(): Int? {
+        return selectedController?.port
+    }
+
+    fun getControllerName(): String? {
+        return selectedController?.name
+    }
     private var selectedController: ControllerProfile? by mutableStateOf(null)
 }
