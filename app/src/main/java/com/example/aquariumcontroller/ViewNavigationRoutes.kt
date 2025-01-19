@@ -5,6 +5,7 @@ object ViewNavigationRoutes {
     var balling = "balling"
     var ballingHistory24h = "ballingHistory24h"
     var ballingHistory7d = "ballingHistory7d"
+    var ballingEdit = "ballingEdit"
     var refill = "refill"
     var refillHistory24h = "refillHistory24h"
     var refillHistory7d = "refillHistory7d"

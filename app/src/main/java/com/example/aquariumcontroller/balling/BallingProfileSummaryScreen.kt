@@ -17,10 +17,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.example.aquariumcontroller.MainViewModel
+import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
-fun BallingProfileScreen(
+fun BallingProfileSummaryScreen(
+    navHostController: NavHostController? = null,
+    mainViewModel: MainViewModel? = null,
     ballingProfile: BallingProfile
 ) {
     Row(
@@ -35,6 +40,8 @@ fun BallingProfileScreen(
             .padding(8.dp)
             .clickable {
                 Log.d("BallingProfileScreen", "Clicked on {${ballingProfile.label}}")
+                mainViewModel?.updateSelectedBallingProfile(ballingProfile)
+                navHostController?.navigate(ViewNavigationRoutes.ballingEdit)
             }
     ) {
         Column(
@@ -68,7 +75,7 @@ fun BallingProfileScreen(
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
-fun BallingProfilePreviewScreen() {
+fun BallingProfileSummaryPreviewScreen() {
     val mockBallingProfile = BallingProfile(
         pumpId = 1,
         volume = 1.5,
@@ -76,6 +83,10 @@ fun BallingProfilePreviewScreen() {
     )
 
     AquariumControllerTheme {
-        BallingProfileScreen(mockBallingProfile)
+        BallingProfileSummaryScreen(
+            navHostController = null,
+            mainViewModel = null,
+            ballingProfile = mockBallingProfile
+        )
     }
 }

@@ -1,6 +1,5 @@
 package com.example.aquariumcontroller.balling
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,7 +29,6 @@ import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.MainViewModelFactory
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
-import com.example.aquariumcontroller.refill.RefillEventScreen
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -63,6 +61,11 @@ fun BallingScreen(navHostController: NavHostController?, mockBallingProfiles: Li
                     navHostController,
                     ViewNavigationRoutes.balling
                 )
+                Text(
+                    text = stringResource(id = R.string.BallingMineralDosingControl),
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(16.dp)
+                )
                 Button(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -92,7 +95,11 @@ fun BallingScreen(navHostController: NavHostController?, mockBallingProfiles: Li
                 if (ballingProfiles != null) {
                     LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
                         items(ballingProfiles!!) { ballingProfile ->
-                            BallingProfileScreen(ballingProfile)
+                            BallingProfileSummaryScreen(
+                                navHostController = navHostController,
+                                mainViewModel = mainViewModel,
+                                ballingProfile = ballingProfile
+                            )
                         }
                     }
                 }

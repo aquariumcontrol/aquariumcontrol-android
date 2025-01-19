@@ -30,4 +30,6 @@
     <string name="BallingEventsLast24h">Balling dosing events of last 24h</string>
     <string name="ViewBallingEvents24h">View balling dosing events of last 24h</string>
     <string name="ViewBallingEvents7d">View balling dosing events of last 7 days</string>
+    <string name="BallingMineralDosingControl">Balling Mineral Dosing Control</string>
+    <string name="UpdateDosingValue">Update Dosing Value</string>
 </resources>

@@ -1,29 +1,28 @@
 package com.example.aquariumcontroller
 
-import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import java.io.IOException
 
 class PostRequest {
     private val client = OkHttpClient()
-    private val jsonMediaType = "application/json; charset=utf-8".toMediaType()
 
-    suspend fun postData(url: String, username: String, password: String): Result<String> {
-        val jsonBody = """
-            {
-                "username": "$username",
-                "password": "$password"
-            }
-        """.trimIndent()
+    fun postData(
+        url: String,
+        username: String,
+        password: String,
+    ): Result<String> {
 
-        val requestBody = jsonBody.toRequestBody(jsonMediaType)
+        val formBody = FormBody.Builder()
+            .add(ApiParams.POST_PARAM_USERNAME, username)
+            .add(ApiParams.POST_PARAM_PASSWORD, password)
+            .build()
 
         val request = Request.Builder()
             .url(url)
-            .post(requestBody)
+            .post(formBody)
             .build()
 
         return try {

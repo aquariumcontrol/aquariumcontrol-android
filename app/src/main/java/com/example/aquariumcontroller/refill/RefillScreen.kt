@@ -32,40 +32,11 @@ import com.example.aquariumcontroller.PostRequest
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
+import com.example.aquariumcontroller.webApiPostRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
-fun callWebApi(
-    apiUrl: String,
-    mainViewModel: MainViewModel,
-    coroutineScope: CoroutineScope,
-    postRequest: PostRequest,
-    context: Context
-) {
-    val user = mainViewModel.getControllerUser()
-    val password = mainViewModel.getControllerPassword()
-
-    if (user != null && password != null) {
-        val url =
-            "http://" + mainViewModel.getControllerAddress() + apiUrl
-
-        coroutineScope.launch {
-            withContext(Dispatchers.IO) {
-                postRequest.postData(url, user, password)
-            }
-        }
-    } else {
-        Toast.makeText(
-            context,
-            "Currently selected controller does not have " +
-                    "proper configuration of user and password",
-            Toast.LENGTH_SHORT
-        ).show()
-    }
-
-}
 
 @Composable
 fun RefillScreen(navHostController: NavHostController?) {
@@ -143,7 +114,7 @@ fun RefillScreen(navHostController: NavHostController?) {
                                     .fillMaxWidth()
                                     .padding(horizontal = 8.dp),
                                 onClick = {
-                                    callWebApi(
+                                    webApiPostRequest(
                                         mainViewModel = mainViewModel,
                                         apiUrl = ApiUrls.REFILL_POST_CONTROL_START,
                                         coroutineScope = coroutineScope,
@@ -162,7 +133,7 @@ fun RefillScreen(navHostController: NavHostController?) {
                                     .fillMaxWidth()
                                     .padding(horizontal = 8.dp),
                                 onClick = {
-                                    callWebApi(
+                                    webApiPostRequest(
                                         mainViewModel = mainViewModel,
                                         apiUrl = ApiUrls.REFILL_POST_CONTROL_STOP,
                                         coroutineScope = coroutineScope,
@@ -181,7 +152,7 @@ fun RefillScreen(navHostController: NavHostController?) {
                                     .fillMaxWidth()
                                     .padding(horizontal = 8.dp),
                                 onClick = {
-                                    callWebApi(
+                                    webApiPostRequest(
                                         mainViewModel = mainViewModel,
                                         apiUrl = ApiUrls.REFILL_POST_CONTROL_RESET,
                                         coroutineScope = coroutineScope,

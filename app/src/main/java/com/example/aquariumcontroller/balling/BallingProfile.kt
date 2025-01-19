@@ -8,7 +8,7 @@ data class BallingProfile(
     @SerialName("pumpid")
     val pumpId: Int,
     @SerialName("dosingvolume")
-    val volume: Double,
+    var volume: Double,
     @SerialName("label")
     val label: String
 )
