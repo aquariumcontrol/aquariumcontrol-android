@@ -41,19 +41,19 @@ import kotlinx.coroutines.withContext
 fun BallingHistoryScreen(
     navHostController: NavHostController?,
     showFullWeek: Boolean,
-    mockBallingEvents: List<BallingEvent>?
+    mockBallingHistoryDosingEvents: List<BallingHistoryDosingEvent>?
 ) {
     val mainViewModel: MainViewModel = viewModel(
         factory = MainViewModelFactory
     )
 
-    var ballingEvents by remember { mutableStateOf(mockBallingEvents) }
+    var ballingEvents by remember { mutableStateOf(mockBallingHistoryDosingEvents) }
 
     val url = when {
         showFullWeek -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.BALLING_GET_EVENTS_7D
         else -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.BALLING_GET_EVENTS_24H
     }
-    val reader = BallingEventReader(url)
+    val reader = BallingHistoryEventReader(url)
 
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
@@ -92,8 +92,8 @@ fun BallingHistoryScreen(
                             .fillMaxSize()
                             .padding(16.dp)
                     ) {
-                        if (mainViewModel.isControllerLoaded() || mockBallingEvents != null) {
-                            if (mainViewModel.getControllerAddress() != null || mockBallingEvents != null) {
+                        if (mainViewModel.isControllerLoaded() || mockBallingHistoryDosingEvents != null) {
+                            if (mainViewModel.getControllerAddress() != null || mockBallingHistoryDosingEvents != null) {
                                 if (ballingEvents == null) {
                                     Text(
                                         text = "Loading Balling dosing events...",
@@ -117,7 +117,7 @@ fun BallingHistoryScreen(
                                                 this::class.simpleName,
                                                 "Balling dosing events found: ${ballingEvents!!.size}"
                                             )
-                                            BallingEventScreen(BallingEvent)
+                                            BallingHistoryEventScreen(BallingEvent)
                                         }
                                     }
                                 }
@@ -150,13 +150,13 @@ fun BallingHistoryScreen(
 @Composable
 fun BallingHistoryPreview() {
     val mockEvents = listOf(
-        BallingEvent(
+        BallingHistoryDosingEvent(
             timestamp = "2025-01-18 12:00:00",
             pumpId = 1,
             volume = 1.5,
             label = "MockDosingUnit 1"
         ),
-        BallingEvent(
+        BallingHistoryDosingEvent(
             timestamp = "2025-01-18 12:00:00",
             pumpId = 2,
             volume = 2.5,

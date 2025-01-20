@@ -19,8 +19,8 @@ import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import java.sql.Timestamp
 
 @Composable
-fun BallingEventScreen(
-    ballingEvent: BallingEvent
+fun BallingHistoryEventScreen(
+    ballingHistoryDosingEvent: BallingHistoryDosingEvent
 ) {
     Row(
         modifier = Modifier
@@ -41,7 +41,7 @@ fun BallingEventScreen(
                 fontSize = 12.sp
             )
             Text(
-                text = ballingEvent.timestamp,
+                text = ballingHistoryDosingEvent.timestamp,
                 fontSize = 12.sp
             )
         }
@@ -49,15 +49,15 @@ fun BallingEventScreen(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = "Pump ID: ${ballingEvent.pumpId}",
+                text = "Pump ID: ${ballingHistoryDosingEvent.pumpId}",
                 fontSize = 12.sp
             )
             Text(
-                text = "Dosing volume: ${"%.2f".format(ballingEvent.volume)} ml",
+                text = "Dosing volume: ${"%.2f".format(ballingHistoryDosingEvent.volume)} ml",
                 fontSize = 12.sp
             )
             Text(
-                text = "Label: ${ballingEvent.label}",
+                text = "Label: ${ballingHistoryDosingEvent.label}",
                 fontSize = 12.sp
             )
         }
@@ -70,7 +70,7 @@ fun BallingEventScreen(
 fun BallingEventPreviewScreen() {
     val fixedTimestamp = Timestamp(0L)
 
-    val mockEvent = BallingEvent(
+    val mockEvent = BallingHistoryDosingEvent(
         timestamp = "2025-01-18 12:00:00",
         pumpId = 1,
         volume = 1.5,
@@ -78,6 +78,6 @@ fun BallingEventPreviewScreen() {
     )
 
     AquariumControllerTheme {
-        BallingEventScreen(mockEvent)
+        BallingHistoryEventScreen(mockEvent)
     }
 }

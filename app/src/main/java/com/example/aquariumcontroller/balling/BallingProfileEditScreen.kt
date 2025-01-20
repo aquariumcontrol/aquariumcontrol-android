@@ -18,10 +18,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -54,6 +52,10 @@ fun BallingProfileEditScreen(
         factory = MainViewModelFactory
     )
 
+    val ballingProfileViewModel: BallingProfileViewModel = viewModel(
+        factory = BallingProfileViewModelFactory
+    )
+
     val postRequest = PostRequest()
 
     val context = LocalContext.current
@@ -61,14 +63,14 @@ fun BallingProfileEditScreen(
     // Create a CoroutineScope that follows this composable's lifecycle
     val coroutineScope = rememberCoroutineScope()
 
-
-    var sliderPositionDosingVolume by remember {
-        mutableFloatStateOf(
-            (mockBallingProfile?.volume
-                ?: mainViewModel.getSelectedBallingProfileVolume()!!).toFloat()
-        )
-    }
-
+    val initialDosingVolume = (mockBallingProfile?.volume
+        ?: mainViewModel.getSelectedBallingProfileVolume()!!)
+    val sliderPositionNewDosingVolume by ballingProfileViewModel.ballingNewDosingVolume.observeAsState(
+        initial = initialDosingVolume
+    )
+    val ballingConfirmedDosingVolume by ballingProfileViewModel.ballingConfirmedDosingVolume.observeAsState(
+        initial = initialDosingVolume
+    )
     AquariumControllerTheme {
         // A surface container using the 'background' color from the theme
         Surface(
@@ -130,20 +132,21 @@ fun BallingProfileEditScreen(
                         Text(
                             text = "Dosing volume: ${
                                 "%.2f".format(
-                                    mockBallingProfile?.volume ?: mainViewModel.getSelectedBallingProfileVolume()
+                                    ballingConfirmedDosingVolume
                                 )
                             } ml",
                             fontSize = 12.sp
                         )
                     }
                 }
-                Slider(value = sliderPositionDosingVolume,
+                Slider(value = sliderPositionNewDosingVolume.toFloat(),
                     modifier = Modifier.padding(16.dp),
                     onValueChange = {
-                        sliderPositionDosingVolume = it
+                        ballingProfileViewModel.onVolumeChange(it.toDouble())
+                        ballingProfileViewModel.onVolumeChange(it.toDouble())
                     })
                 Text(
-                    text = "New Dosing volume: ${"%.2f".format(sliderPositionDosingVolume)} ml",
+                    text = "New Dosing volume: ${"%.2f".format(sliderPositionNewDosingVolume)} ml",
                     fontSize = 12.sp,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
@@ -164,10 +167,13 @@ fun BallingProfileEditScreen(
                             optionalGetParams = mapOf(
                                 ApiParams.PUMP_ID to mainViewModel.getSelectedBallingProfilePumpId()
                                     .toString(),
-                                ApiParams.DOSING_VOLUME to sliderPositionDosingVolume.toString()
+                                ApiParams.DOSING_VOLUME to sliderPositionNewDosingVolume.toString()
                             )
                         )
-                        mainViewModel.updateSelectedBallingProfileVolume(sliderPositionDosingVolume)
+                        mainViewModel.updateSelectedBallingProfileVolume(
+                            sliderPositionNewDosingVolume.toFloat()
+                        )
+                        ballingProfileViewModel.onConfirmDosing()
                     },
                 ) {
                     Text(

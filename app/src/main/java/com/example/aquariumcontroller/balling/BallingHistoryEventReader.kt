@@ -1,16 +1,15 @@
 package com.example.aquariumcontroller.balling
 
 import android.util.Log
-import com.example.aquariumcontroller.refill.RefillEvent
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
 
-class BallingEventReader(private val url: String) {
+class BallingHistoryEventReader(private val url: String) {
     private val client = OkHttpClient()
     private val json = Json { ignoreUnknownKeys = true }
 
-    fun readBallingEvents(): List<BallingEvent>? {
+    fun readBallingEvents(): List<BallingHistoryDosingEvent>? {
         val request = Request.Builder()
             .url(url)
             .build()
@@ -22,7 +21,7 @@ class BallingEventReader(private val url: String) {
                 val responseBody = response.body?.string()
                 Log.d(this::class.simpleName, "Response successful: $responseBody")
                 responseBody?.let {
-                    json.decodeFromString<List<BallingEvent>>(it)
+                    json.decodeFromString<List<BallingHistoryDosingEvent>>(it)
                 }
             } else {
                 Log.d(this::class.simpleName, "Error: ${response.code} - ${response.message}")

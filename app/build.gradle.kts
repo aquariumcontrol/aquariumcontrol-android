@@ -74,6 +74,7 @@ dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.22")
     implementation(libs.androidx.tracing.perfetto.handshake)
+    implementation(libs.androidx.runtime.livedata)
     //implementation(libs.kotlinx.serialization.json)
     //implementation(libs.okhttp)
     //implementation(libs.kotlin.stdlib.jdk8)
