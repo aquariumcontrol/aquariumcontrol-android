@@ -6,6 +6,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 
 class BallingHistoryEventReader(private val url: String) {
+    // This class will read the Balling dosing events from the server using a GET request.
     private val client = OkHttpClient()
     private val json = Json { ignoreUnknownKeys = true }
 

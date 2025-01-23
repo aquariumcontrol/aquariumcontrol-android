@@ -1,16 +1,14 @@
-package com.example.aquariumcontroller.balling
+package com.example.aquariumcontroller.balling.edit
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.aquariumcontroller.ApiParams
-import com.example.aquariumcontroller.ApiUrls
-import com.example.aquariumcontroller.MainViewModel
-import com.example.aquariumcontroller.webApiPostRequest
+import com.example.aquariumcontroller.balling.BallingProfile
 
 class BallingProfileEditViewModel(
     private val ballingProfile: BallingProfile,
 ) : ViewModel() {
+    // This class will allow the user to edit the Balling dosing profile.
     private val _ballingNewDosingVolume = MutableLiveData<Double>()
     private val _ballingConfirmedDosingVolume = MutableLiveData<Double>()
 

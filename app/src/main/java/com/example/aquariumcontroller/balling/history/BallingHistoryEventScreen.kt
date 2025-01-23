@@ -22,6 +22,7 @@ import java.sql.Timestamp
 fun BallingHistoryEventScreen(
     ballingHistoryDosingEvent: BallingHistoryDosingEvent
 ) {
+    // This screen displays one Balling dosing event.
     Row(
         modifier = Modifier
             .fillMaxWidth()

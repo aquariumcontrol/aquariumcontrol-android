@@ -44,6 +44,8 @@ fun BallingHistoryScreen(
     mockBallingHistoryDosingEvents: List<BallingHistoryDosingEvent>? = null,
     mainViewModel: MainViewModel? = null
 ) {
+    // This screen will only display the different Balling dosing events.
+    // Hence, there is no need to have a view model.
     var ballingEvents by remember { mutableStateOf(mockBallingHistoryDosingEvents) }
 
     val isControllerLoaded = mainViewModel?.isControllerLoaded() ?: false

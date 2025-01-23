@@ -28,6 +28,8 @@ fun BallingProfileSummaryScreen(
     mainViewModel: MainViewModel? = null,
     ballingProfile: BallingProfile
 ) {
+    // This screen displays one Balling dosing profile.
+    // When the user clicks on the profile, the BallingProfileEditScreen is displayed.
     Row(
         modifier = Modifier
             .fillMaxWidth()

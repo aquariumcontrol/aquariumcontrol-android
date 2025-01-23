@@ -1,4 +1,4 @@
-package com.example.aquariumcontroller.balling
+package com.example.aquariumcontroller.balling.edit
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -35,6 +35,7 @@ import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.PostRequest
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
+import com.example.aquariumcontroller.balling.BallingProfile
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import com.example.aquariumcontroller.webApiPostRequest
 
@@ -44,6 +45,7 @@ fun BallingProfileEditScreen(
     ballingProfile: BallingProfile,
     mainViewModel: MainViewModel? = null,
 ) {
+    // This screen will allow the user to edit the Balling dosing profile.
     val ballingProfileEditViewModel: BallingProfileEditViewModel = viewModel(
         factory = BallingProfileEditViewModelFactory(ballingProfile)
     )

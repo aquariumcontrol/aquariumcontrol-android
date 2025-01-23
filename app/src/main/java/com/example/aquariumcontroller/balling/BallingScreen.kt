@@ -37,6 +37,11 @@ fun BallingScreen(
     mainViewModel: MainViewModel? = null,
     mockBallingProfiles: List<BallingProfile>? = null
 ) {
+    // This screen displays
+    // - a button for visualizing all Balling dosing events of the last 24h
+    // - a button for visualizing all Balling dosing events of the last 7 days
+    // - all Balling profiles downloaded from the controller
+
     var ballingProfiles by remember { mutableStateOf(mockBallingProfiles) }
 
     if (mainViewModel != null) {

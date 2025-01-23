@@ -16,7 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
 import com.example.aquariumcontroller.balling.history.BallingHistoryScreen
-import com.example.aquariumcontroller.balling.BallingProfileEditScreen
+import com.example.aquariumcontroller.balling.edit.BallingProfileEditScreen
 import com.example.aquariumcontroller.balling.BallingScreen
 import com.example.aquariumcontroller.controller.ControllerAddScreen
 import com.example.aquariumcontroller.controller.ControllerEditScreen
@@ -112,14 +112,14 @@ class MainActivity : ComponentActivity() {
                         BallingHistoryScreen(navHostController = navHostController, showFullWeek = false, mainViewModel = mainViewModel)
                     }
                     composable(ViewNavigationRoutes.ballingHistory7d) {
-                        BallingHistoryScreen(navHostController, true, null)
+                        BallingHistoryScreen(navHostController = navHostController, showFullWeek = true, mainViewModel = mainViewModel)
                     }
                     composable(ViewNavigationRoutes.ballingEdit) {
                         if (mainViewModel.getMySelectedBallingProfile() != null) {
                             BallingProfileEditScreen(
-                                navHostController,
-                                mainViewModel.getMySelectedBallingProfile()!!,
-                                mainViewModel
+                                navHostController = navHostController,
+                                ballingProfile = mainViewModel.getMySelectedBallingProfile()!!,
+                                mainViewModel = mainViewModel
                             )
                         } else {
                             Log.d(
