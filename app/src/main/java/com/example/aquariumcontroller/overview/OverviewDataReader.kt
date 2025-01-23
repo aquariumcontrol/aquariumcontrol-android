@@ -6,13 +6,9 @@ import androidx.annotation.RequiresApi
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import java.sql.Timestamp
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 
 class OverviewDataReader(private val url: String) {
+    // This class reads the overview data from the server using a GET request.
 
     private val client = OkHttpClient()
     private val json = Json { ignoreUnknownKeys = true }

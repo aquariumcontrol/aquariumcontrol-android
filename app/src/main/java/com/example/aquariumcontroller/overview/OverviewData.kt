@@ -1,6 +1,7 @@
 package com.example.aquariumcontroller.overview
 
 data class OverviewData(
+    // This class represents the data that is displayed on the overview screen.
     val timestamp: String,
     val temperatureWater: Double,
     val temperatureWaterFiltered: Double,

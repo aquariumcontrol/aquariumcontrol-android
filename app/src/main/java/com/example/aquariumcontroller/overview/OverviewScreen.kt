@@ -50,6 +50,8 @@ fun OverviewScreen(
     mockOverviewData: OverviewData? = null,
     mainViewModel: MainViewModel? = null,
 ) {
+    // This screen displays the overview data of the aquarium.
+
     val coroutineScope = rememberCoroutineScope()
 
     val controllerProfileName: String?
