@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 
 @androidx.room.Dao
 interface ControllerProfileDao {
+    // This interface defines the data access object for the controller profile database.
     @androidx.room.Upsert
     suspend fun upsertControllerProfile(controllerProfile: ControllerProfile): Long
 

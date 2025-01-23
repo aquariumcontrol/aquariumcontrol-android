@@ -25,10 +25,11 @@ import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
 fun ControllerAddScreen(
-    navHostController: NavHostController?,
+    navHostController: NavHostController? = null,
     state: ControllerState,
     onEvent: (ControllerEvent) -> Unit,
 ) {
+    // This screen displays a form for adding a new controller profile.
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -129,6 +130,6 @@ fun ControllerAddScreen(
 @Composable
 fun ControllerAddViewPreview() {
     AquariumControllerTheme {
-        ControllerAddScreen(null, ControllerState(), {})
+        ControllerAddScreen(state = ControllerState(), onEvent = {})
     }
 }

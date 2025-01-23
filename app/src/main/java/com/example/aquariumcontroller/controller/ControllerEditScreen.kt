@@ -26,10 +26,11 @@ import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
 fun ControllerEditScreen(
-    navHostController: NavHostController?,
+    navHostController: NavHostController? = null,
     state: ControllerState,
     onEvent: (ControllerEvent) -> Unit
 ) {
+    // This screen displays a form for editing an existing controller profile.
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -141,6 +142,6 @@ fun ControllerEditViewPreview() {
     )
 
     AquariumControllerTheme {
-        ControllerEditScreen(null, mockControllerState, {})
+        ControllerEditScreen(state = mockControllerState, onEvent = {})
     }
 }

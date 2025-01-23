@@ -34,6 +34,7 @@ fun ControllerSelectionScreen(
     onEvent: (ControllerEvent) -> Unit,
     mainViewModel: MainViewModel? = null
 ) {
+    // This screen displays a list of controller profiles.
     AquariumControllerTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),

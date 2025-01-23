@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import kotlin.text.matches
 
 class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
-
+    // This class represents the view model for the controller screen.
     private val _controllerProfiles = dao.getAllControllerProfiles()
     private val _state = MutableStateFlow(ControllerState())
 

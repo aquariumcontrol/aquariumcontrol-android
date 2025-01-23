@@ -7,6 +7,7 @@ import java.io.Serializable
 
 @Entity(tableName = ControllerProfileDatabase.TABLE_NAME_CONTROLLER_LIST)
 data class ControllerProfile(
+    // This class represents a controller profile.
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     var id: Long = 0,

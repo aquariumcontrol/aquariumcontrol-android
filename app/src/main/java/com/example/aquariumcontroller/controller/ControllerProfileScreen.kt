@@ -34,6 +34,7 @@ fun ControllerProfileScreen(
     controllerProfile: ControllerProfile,
     mainViewModel: MainViewModel? = null
 ) {
+    // This screen displays a single controller profile.
     Row(
         modifier = Modifier
             .fillMaxWidth()

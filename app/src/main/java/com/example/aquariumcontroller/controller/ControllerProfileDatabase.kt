@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 
 @Database(entities = [ControllerProfile::class], version = 1, exportSchema = false)
 abstract class ControllerProfileDatabase : RoomDatabase() {
+    // This class defines the database for the controller profile.
 
     abstract fun controllerProfileDao(): ControllerProfileDao
 

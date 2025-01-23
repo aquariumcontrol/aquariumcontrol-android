@@ -1,6 +1,7 @@
 package com.example.aquariumcontroller.controller
 
 data class ControllerState (
+    // This class represents the state of the controller screen.
     var controllerProfileList: List<ControllerProfile> = emptyList(),
     val controllerProfileId: Long = 0,
     val controllerProfileName: String = "",
