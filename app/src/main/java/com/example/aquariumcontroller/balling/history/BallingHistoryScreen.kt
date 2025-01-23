@@ -25,12 +25,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.ApiUrls
 import com.example.aquariumcontroller.MainDropdownMenuScreen
 import com.example.aquariumcontroller.MainViewModel
-import com.example.aquariumcontroller.MainViewModelFactory
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
