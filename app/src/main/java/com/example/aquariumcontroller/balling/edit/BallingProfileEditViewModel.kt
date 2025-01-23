@@ -15,6 +15,10 @@ class BallingProfileEditViewModel(
     val ballingNewDosingVolume: LiveData<Double> = _ballingNewDosingVolume
     val ballingConfirmedDosingVolume: LiveData<Double> = _ballingConfirmedDosingVolume
 
+    init {
+        _ballingNewDosingVolume.value = ballingProfile.volume
+    }
+
     fun onVolumeChange(volume: Double) {
         _ballingNewDosingVolume.value = volume
     }

@@ -2,7 +2,6 @@ package com.example.aquariumcontroller
 
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -15,17 +14,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
-import com.example.aquariumcontroller.balling.history.BallingHistoryScreen
-import com.example.aquariumcontroller.balling.edit.BallingProfileEditScreen
 import com.example.aquariumcontroller.balling.BallingScreen
+import com.example.aquariumcontroller.balling.edit.BallingProfileEditScreen
+import com.example.aquariumcontroller.balling.history.BallingHistoryScreen
 import com.example.aquariumcontroller.controller.ControllerAddScreen
 import com.example.aquariumcontroller.controller.ControllerEditScreen
 import com.example.aquariumcontroller.controller.ControllerProfileDatabase
 import com.example.aquariumcontroller.controller.ControllerSelectionScreen
 import com.example.aquariumcontroller.controller.ControllerViewModel
 import com.example.aquariumcontroller.overview.OverviewScreen
-import com.example.aquariumcontroller.refill.history.RefillHistoryScreen
 import com.example.aquariumcontroller.refill.RefillScreen
+import com.example.aquariumcontroller.refill.history.RefillHistoryScreen
 
 @Suppress("UNCHECKED_CAST")
 class MainActivity : ComponentActivity() {
@@ -84,7 +83,6 @@ class MainActivity : ComponentActivity() {
                             navHostController = navHostController,
                             state = state,
                             onEvent = controllerViewModel::onEvent,
-                            // todo: add main view model as parameter
                         )
                     }
                     composable(ViewNavigationRoutes.controllerEdit)
@@ -93,7 +91,6 @@ class MainActivity : ComponentActivity() {
                             navHostController = navHostController,
                             state = state,
                             onEvent = controllerViewModel::onEvent,
-                            // todo: add main view model as parameter
                         )
                     }
                     composable(ViewNavigationRoutes.feed) {
@@ -109,10 +106,18 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(ViewNavigationRoutes.ballingHistory24h) {
-                        BallingHistoryScreen(navHostController = navHostController, showFullWeek = false, mainViewModel = mainViewModel)
+                        BallingHistoryScreen(
+                            navHostController = navHostController,
+                            showFullWeek = false,
+                            mainViewModel = mainViewModel
+                        )
                     }
                     composable(ViewNavigationRoutes.ballingHistory7d) {
-                        BallingHistoryScreen(navHostController = navHostController, showFullWeek = true, mainViewModel = mainViewModel)
+                        BallingHistoryScreen(
+                            navHostController = navHostController,
+                            showFullWeek = true,
+                            mainViewModel = mainViewModel
+                        )
                     }
                     composable(ViewNavigationRoutes.ballingEdit) {
                         if (mainViewModel.getMySelectedBallingProfile() != null) {
@@ -121,36 +126,57 @@ class MainActivity : ComponentActivity() {
                                 ballingProfile = mainViewModel.getMySelectedBallingProfile()!!,
                                 mainViewModel = mainViewModel
                             )
-                        } else {
-                            Log.d(
-                                "MainActivity",
-                                "preventing navigation to BallingProfileEditScreen: No balling profile selected"
-                            )
                         }
                     }
                     composable(ViewNavigationRoutes.refill) {
-                        RefillScreen(navHostController)
+                        RefillScreen(
+                            navHostController = navHostController,
+                            mainViewModel = mainViewModel
+                        )
                     }
                     composable(ViewNavigationRoutes.refillHistory24h) {
-                        RefillHistoryScreen(navHostController, showFullWeek =  false, mainViewModel = mainViewModel)
+                        RefillHistoryScreen(
+                            navHostController = navHostController,
+                            showFullWeek = false,
+                            mainViewModel = mainViewModel
+                        )
                     }
                     composable(ViewNavigationRoutes.refillHistory7d) {
-                        RefillHistoryScreen(navHostController, showFullWeek = true, mainViewModel = mainViewModel)
+                        RefillHistoryScreen(
+                            navHostController = navHostController,
+                            showFullWeek = true,
+                            mainViewModel = mainViewModel
+                        )
                     }
                     composable(ViewNavigationRoutes.heating) {
-                        HeatingScreen(navHostController)
+                        HeatingScreen(
+                            navHostController = navHostController,
+                            mainViewModel = mainViewModel
+                        )
                     }
                     composable(ViewNavigationRoutes.ventilation) {
-                        VentilationScreen(navHostController)
+                        VentilationScreen(
+                            navHostController = navHostController,
+                            mainViewModel = mainViewModel
+                        )
                     }
                     composable(ViewNavigationRoutes.timeData) {
-                        TimeDataScreen(navHostController)
+                        TimeDataScreen(
+                            navHostController = navHostController,
+                            mainViewModel = mainViewModel
+                        )
                     }
                     composable(ViewNavigationRoutes.schedule) {
-                        ScheduleScreen(navHostController)
+                        ScheduleScreen(
+                            navHostController = navHostController,
+                            mainViewModel = mainViewModel
+                        )
                     }
                     composable(ViewNavigationRoutes.info) {
-                        InfoScreen(navHostController)
+                        InfoScreen(
+                            navHostController = navHostController,
+                            mainViewModel = mainViewModel
+                        )
                     }
                     composable(ViewNavigationRoutes.overView) {
                         OverviewScreen(

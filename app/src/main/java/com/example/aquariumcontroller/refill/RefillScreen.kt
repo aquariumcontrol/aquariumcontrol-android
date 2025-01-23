@@ -1,5 +1,6 @@
 package com.example.aquariumcontroller.refill
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,7 +45,7 @@ fun RefillScreen(
     val postRequest = PostRequest()
     val isControllerLoaded = mainViewModel?.isControllerLoaded() ?: false
     val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
-    val context = LocalContext.current
+    val context = LocalContext.current // context for web API request and Toasts
 
     // Create a CoroutineScope that follows this composable's lifecycle
     val coroutineScope = rememberCoroutineScope()
@@ -121,6 +122,12 @@ fun RefillScreen(
                                             postRequest = postRequest,
                                             context = context,
                                         )
+                                        // Show the Toast after the API call
+                                        Toast.makeText(
+                                            context,
+                                            "Sent request to controller for starting refill control",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
                                 },
                             ) {
@@ -142,6 +149,12 @@ fun RefillScreen(
                                             postRequest = postRequest,
                                             context = context,
                                         )
+                                        // Show the Toast after the API call
+                                        Toast.makeText(
+                                            context,
+                                            "Sent request to controller for stopping refill control",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
                                 },
                             ) {
@@ -163,6 +176,12 @@ fun RefillScreen(
                                             postRequest = postRequest,
                                             context = context,
                                         )
+                                        // Show the Toast after the API call
+                                        Toast.makeText(
+                                            context,
+                                            "Sent request to controller for resetting errors",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
                                 },
                             ) {

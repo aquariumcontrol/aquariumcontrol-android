@@ -1,6 +1,7 @@
 package com.example.aquariumcontroller.balling.edit
 
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
@@ -52,7 +53,7 @@ fun BallingProfileEditScreen(
 
     val postRequest = PostRequest()
 
-    val context = LocalContext.current
+    val context = LocalContext.current // context for web API request and Toasts
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -156,6 +157,13 @@ fun BallingProfileEditScreen(
                                     ApiParams.DOSING_VOLUME to ballingProfile.volume.toString()
                                 )
                             )
+                            // Show the Toast after the API call
+                            Toast.makeText(
+                                context,
+                                "Sent request to controller for updating dosing volume",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
                         }
                     },
                 ) {
