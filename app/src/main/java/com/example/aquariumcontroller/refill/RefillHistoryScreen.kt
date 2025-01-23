@@ -75,8 +75,9 @@ fun RefillHistoryScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     MainDropdownMenuScreen(
-                        navHostController,
-                        ViewNavigationRoutes.refill
+                        navHostController = navHostController,
+                        navigationRouteSource = ViewNavigationRoutes.refill,
+                        mainViewModel = mainViewModel
                     )
                     val headlineText: String =
                         if (showFullWeek) {

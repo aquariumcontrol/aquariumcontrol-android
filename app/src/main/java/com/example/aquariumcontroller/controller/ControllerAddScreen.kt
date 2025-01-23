@@ -27,7 +27,7 @@ import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 fun ControllerAddScreen(
     navHostController: NavHostController?,
     state: ControllerState,
-    onEvent: (ControllerEvent) -> Unit
+    onEvent: (ControllerEvent) -> Unit,
 ) {
     Column(
         modifier = Modifier

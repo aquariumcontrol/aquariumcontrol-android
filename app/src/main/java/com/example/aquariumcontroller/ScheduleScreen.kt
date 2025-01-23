@@ -13,7 +13,10 @@ import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
-fun ScheduleScreen(navHostController: NavHostController?) {
+fun ScheduleScreen(
+    navHostController: NavHostController? = null,
+    mainViewModel: MainViewModel? = null
+) {
     AquariumControllerTheme {
         // A surface container using the 'background' color from the theme
         Surface(
@@ -22,8 +25,9 @@ fun ScheduleScreen(navHostController: NavHostController?) {
         ) {
             Column {
                 MainDropdownMenuScreen(
-                    navHostController,
-                    ViewNavigationRoutes.schedule
+                    navHostController = navHostController,
+                    navigationRouteSource = ViewNavigationRoutes.schedule,
+                    mainViewModel = mainViewModel
                 )
                 Text(text = "Schedule")
                 Button(onClick = { }) {
@@ -38,6 +42,6 @@ fun ScheduleScreen(navHostController: NavHostController?) {
 @Composable
 fun ScheduleViewPreview() {
     AquariumControllerTheme {
-        ScheduleScreen(null)
+        ScheduleScreen()
     }
 }

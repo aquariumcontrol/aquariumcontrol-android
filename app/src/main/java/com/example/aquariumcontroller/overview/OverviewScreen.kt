@@ -29,18 +29,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.ApiUrls
 import com.example.aquariumcontroller.MainDropdownMenuScreen
 import com.example.aquariumcontroller.MainViewModel
-import com.example.aquariumcontroller.MainViewModelFactory
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.controller.ControllerProfile
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -48,14 +45,12 @@ import kotlinx.coroutines.withContext
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun OverviewScreen(
-    navHostController: NavHostController?,
-    mockController: ControllerProfile?,
-    mockOverviewData: OverviewData?
+    navHostController: NavHostController? = null,
+    mockController: ControllerProfile? = null,
+    mockOverviewData: OverviewData? = null,
+    mainViewModel: MainViewModel? = null,
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val mainViewModel: MainViewModel = viewModel(
-        factory = MainViewModelFactory
-    )
 
     val controllerProfileName: String?
     val controllerAddress: String?
@@ -67,7 +62,7 @@ fun OverviewScreen(
     var refreshing by remember { mutableStateOf(false) }
 
     if (mockController == null) {
-        controllerProfileName = mainViewModel.getControllerName()
+        controllerProfileName = mainViewModel!!.getControllerName()
         controllerAddress = mainViewModel.getControllerAddress()
         controllerUsername = mainViewModel.getControllerUser()
         controllerPassword = mainViewModel.getControllerPassword()
@@ -109,8 +104,9 @@ fun OverviewScreen(
             Box(Modifier.pullRefresh(state)) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     MainDropdownMenuScreen(
-                        navHostController,
-                        ViewNavigationRoutes.overView
+                        navHostController = navHostController,
+                        navigationRouteSource = ViewNavigationRoutes.overView,
+                        mainViewModel = mainViewModel
                     )
                     Text(
                         text = stringResource(id = R.string.Overview),
@@ -362,6 +358,6 @@ fun OverviewViewPreview() {
     )
 
     AquariumControllerTheme {
-        OverviewScreen(null, mockControllerProfile, mockOverviewData)
+        OverviewScreen(mockController = mockControllerProfile, mockOverviewData = mockOverviewData)
     }
 }

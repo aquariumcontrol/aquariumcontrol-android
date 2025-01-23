@@ -1,11 +1,9 @@
 package com.example.aquariumcontroller.balling
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,42 +32,33 @@ import com.example.aquariumcontroller.ApiParams
 import com.example.aquariumcontroller.ApiUrls
 import com.example.aquariumcontroller.MainDropdownMenuScreen
 import com.example.aquariumcontroller.MainViewModel
-import com.example.aquariumcontroller.MainViewModelFactory
 import com.example.aquariumcontroller.PostRequest
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import com.example.aquariumcontroller.webApiPostRequest
 
-private const val s = "pumpId"
-
 @Composable
 fun BallingProfileEditScreen(
     navHostController: NavHostController?,
-    mockBallingProfile: BallingProfile? = null,
+    ballingProfile: BallingProfile,
+    mainViewModel: MainViewModel? = null,
 ) {
-    val mainViewModel: MainViewModel = viewModel(
-        factory = MainViewModelFactory
-    )
-
-    val ballingProfileViewModel: BallingProfileViewModel = viewModel(
-        factory = BallingProfileViewModelFactory
+    val ballingProfileEditViewModel: BallingProfileEditViewModel = viewModel(
+        factory = BallingProfileEditViewModelFactory(ballingProfile)
     )
 
     val postRequest = PostRequest()
 
     val context = LocalContext.current
 
-    // Create a CoroutineScope that follows this composable's lifecycle
     val coroutineScope = rememberCoroutineScope()
 
-    val initialDosingVolume = (mockBallingProfile?.volume
-        ?: mainViewModel.getSelectedBallingProfileVolume()!!)
-    val sliderPositionNewDosingVolume by ballingProfileViewModel.ballingNewDosingVolume.observeAsState(
-        initial = initialDosingVolume
+    val sliderPositionNewDosingVolume by ballingProfileEditViewModel.ballingNewDosingVolume.observeAsState(
+        initial = ballingProfile.volume
     )
-    val ballingConfirmedDosingVolume by ballingProfileViewModel.ballingConfirmedDosingVolume.observeAsState(
-        initial = initialDosingVolume
+    val ballingConfirmedDosingVolume by ballingProfileEditViewModel.ballingConfirmedDosingVolume.observeAsState(
+        initial = ballingProfile.volume
     )
     AquariumControllerTheme {
         // A surface container using the 'background' color from the theme
@@ -81,8 +70,9 @@ fun BallingProfileEditScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 MainDropdownMenuScreen(
-                    navHostController,
-                    ViewNavigationRoutes.balling
+                    navHostController = navHostController,
+                    navigationRouteSource = ViewNavigationRoutes.balling,
+                    mainViewModel = mainViewModel
                 )
                 Text(
                     text = stringResource(id = R.string.BallingMineralDosingControl),
@@ -99,12 +89,6 @@ fun BallingProfileEditScreen(
                             )
                         )
                         .padding(8.dp)
-                        .clickable {
-                            Log.d(
-                                "BallingProfileScreen",
-                                "Clicked on {${mainViewModel.getSelectedBallingProfileLabel()}}"
-                            )
-                        }
                 ) {
                     Column(
                         modifier = Modifier
@@ -115,8 +99,7 @@ fun BallingProfileEditScreen(
                             fontSize = 12.sp
                         )
                         Text(
-                            text = (mockBallingProfile?.label
-                                ?: mainViewModel.getSelectedBallingProfileLabel()!!),
+                            text = (ballingProfile.label),
                             fontSize = 12.sp
                         )
                     }
@@ -125,7 +108,7 @@ fun BallingProfileEditScreen(
                     ) {
                         Text(
                             text = "Pump ID: ${
-                                mockBallingProfile?.pumpId ?: mainViewModel.getSelectedBallingProfilePumpId()
+                                ballingProfile.pumpId
                             }",
                             fontSize = 12.sp
                         )
@@ -142,8 +125,7 @@ fun BallingProfileEditScreen(
                 Slider(value = sliderPositionNewDosingVolume.toFloat(),
                     modifier = Modifier.padding(16.dp),
                     onValueChange = {
-                        ballingProfileViewModel.onVolumeChange(it.toDouble())
-                        ballingProfileViewModel.onVolumeChange(it.toDouble())
+                        ballingProfileEditViewModel.onVolumeChange(it.toDouble())
                     })
                 Text(
                     text = "New Dosing volume: ${"%.2f".format(sliderPositionNewDosingVolume)} ml",
@@ -158,22 +140,21 @@ fun BallingProfileEditScreen(
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp),
                     onClick = {
-                        webApiPostRequest(
-                            mainViewModel = mainViewModel,
-                            apiUrl = ApiUrls.BALLING_POST_SET_VALS,
-                            coroutineScope = coroutineScope,
-                            postRequest = postRequest,
-                            context = context,
-                            optionalGetParams = mapOf(
-                                ApiParams.PUMP_ID to mainViewModel.getSelectedBallingProfilePumpId()
-                                    .toString(),
-                                ApiParams.DOSING_VOLUME to sliderPositionNewDosingVolume.toString()
+                        ballingProfileEditViewModel.onConfirmDosing()
+                        if (mainViewModel != null) {
+                            webApiPostRequest(
+                                mainViewModel = mainViewModel,
+                                apiUrl = ApiUrls.BALLING_POST_SET_VALS,
+                                coroutineScope = coroutineScope,
+                                postRequest = postRequest,
+                                context = context,
+                                optionalGetParams = mapOf(
+                                    ApiParams.PUMP_ID to ballingProfile.pumpId
+                                        .toString(),
+                                    ApiParams.DOSING_VOLUME to ballingProfile.volume.toString()
+                                )
                             )
-                        )
-                        mainViewModel.updateSelectedBallingProfileVolume(
-                            sliderPositionNewDosingVolume.toFloat()
-                        )
-                        ballingProfileViewModel.onConfirmDosing()
+                        }
                     },
                 ) {
                     Text(
@@ -198,8 +179,8 @@ fun BallingProfileEditPreviewScreen() {
 
     AquariumControllerTheme {
         BallingProfileEditScreen(
-            mockBallingProfile = mockBallingProfile,
-            navHostController = null
+            navHostController = null,
+            ballingProfile = mockBallingProfile,
         )
     }
 }

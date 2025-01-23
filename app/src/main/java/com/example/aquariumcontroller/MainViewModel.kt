@@ -15,18 +15,7 @@ class MainViewModel: ViewModel() {
 
     fun updateSelectedBallingProfile(ballingProfile: BallingProfile) {
         selectedBallingProfile = ballingProfile
-    }
-
-    fun getSelectedBallingProfileLabel(): String? {
-        return selectedBallingProfile?.label
-    }
-
-    fun getSelectedBallingProfileVolume(): Double? {
-        return selectedBallingProfile?.volume
-    }
-
-    fun getSelectedBallingProfilePumpId(): Int? {
-        return selectedBallingProfile?.pumpId
+        Log.d("MainViewModel", "Selected balling profile: ${ballingProfile.label}")
     }
 
     fun isControllerLoaded(): Boolean {
@@ -53,14 +42,11 @@ class MainViewModel: ViewModel() {
         return selectedController?.name
     }
 
-    fun updateSelectedBallingProfileVolume(sliderPositionDosingVolume: Float) {
-        if (selectedBallingProfile != null) {
-            selectedBallingProfile!!.volume = sliderPositionDosingVolume.toDouble()
-            Log.d(this::class.simpleName, "updateSelectedBallingProfileVolume: " + selectedBallingProfile!!.volume)
-        }
-    }
-
     private var selectedController: ControllerProfile? by mutableStateOf(null)
+
+    fun getMySelectedBallingProfile(): BallingProfile? {
+        return selectedBallingProfile
+    }
 
     private var selectedBallingProfile: BallingProfile? by mutableStateOf(null)
 }

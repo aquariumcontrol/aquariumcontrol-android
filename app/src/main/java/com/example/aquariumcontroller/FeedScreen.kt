@@ -13,7 +13,7 @@ import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
-fun FeedScreen(navHostController: NavHostController?) {
+fun FeedScreen(navHostController: NavHostController? = null, mainViewModel: MainViewModel? = null) {
     AquariumControllerTheme {
         // A surface container using the 'background' color from the theme
         Surface(
@@ -22,8 +22,9 @@ fun FeedScreen(navHostController: NavHostController?) {
         ) {
             Column {
                 MainDropdownMenuScreen(
-                    navHostController,
-                    ViewNavigationRoutes.feed
+                    navHostController = navHostController,
+                    navigationRouteSource = ViewNavigationRoutes.feed,
+                    mainViewModel = mainViewModel
                 )
                 Text(text = "Feed")
                 Button(onClick = { }) {
@@ -38,6 +39,6 @@ fun FeedScreen(navHostController: NavHostController?) {
 @Composable
 fun FeedViewPreview() {
     AquariumControllerTheme {
-        FeedScreen(null)
+        FeedScreen()
     }
 }

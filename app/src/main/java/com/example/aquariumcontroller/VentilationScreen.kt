@@ -13,7 +13,10 @@ import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
-fun VentilationScreen(navHostController: NavHostController?) {
+fun VentilationScreen(
+    navHostController: NavHostController? = null,
+    mainViewModel: MainViewModel? = null
+) {
     AquariumControllerTheme {
         // A surface container using the 'background' color from the theme
         Surface(
@@ -22,8 +25,9 @@ fun VentilationScreen(navHostController: NavHostController?) {
         ) {
             Column {
                 MainDropdownMenuScreen(
-                    navHostController,
-                    ViewNavigationRoutes.ventilation
+                    navHostController = navHostController,
+                    navigationRouteSource = ViewNavigationRoutes.ventilation,
+                    mainViewModel = mainViewModel
                 )
                 Text(text = "Ventilation")
                 Button(onClick = { }) {
@@ -38,6 +42,6 @@ fun VentilationScreen(navHostController: NavHostController?) {
 @Composable
 fun VentilationViewPreview() {
     AquariumControllerTheme {
-        VentilationScreen(null)
+        VentilationScreen()
     }
 }

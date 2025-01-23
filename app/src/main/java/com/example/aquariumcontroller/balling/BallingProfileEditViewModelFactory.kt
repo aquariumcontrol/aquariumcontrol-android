@@ -1,17 +1,18 @@
 package com.example.aquariumcontroller.balling
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.aquariumcontroller.MainViewModel
 import javax.inject.Singleton
 
 @Singleton
-object BallingProfileViewModelFactory : ViewModelProvider.Factory {
-    private val viewModel = BallingProfileViewModel()
+class BallingProfileEditViewModelFactory(
+    ballingProfile: BallingProfile,
+) : ViewModelProvider.Factory {
+    private val viewModel = BallingProfileEditViewModel(ballingProfile)
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        Log.d("BallingProfileViewModelFactory", "create")
         return viewModel as T
     }
 }

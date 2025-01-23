@@ -1,4 +1,4 @@
-package com.example.aquariumcontroller.balling
+package com.example.aquariumcontroller.balling.history
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -68,8 +68,6 @@ fun BallingHistoryEventScreen(
 @Preview(showBackground = true)
 @Composable
 fun BallingEventPreviewScreen() {
-    val fixedTimestamp = Timestamp(0L)
-
     val mockEvent = BallingHistoryDosingEvent(
         timestamp = "2025-01-18 12:00:00",
         pumpId = 1,

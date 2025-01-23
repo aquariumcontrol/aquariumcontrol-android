@@ -22,23 +22,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.MainViewModel
-import com.example.aquariumcontroller.MainViewModelFactory
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
 fun ControllerProfileScreen(
-    navHostController: NavHostController?,
+    navHostController: NavHostController? = null,
     onEvent: (ControllerEvent) -> Unit,
-    controllerProfile: ControllerProfile
+    controllerProfile: ControllerProfile,
+    mainViewModel: MainViewModel? = null
 ) {
-    val mainViewModel: MainViewModel = viewModel(
-        factory = MainViewModelFactory
-    )
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -54,8 +49,10 @@ fun ControllerProfileScreen(
             modifier = Modifier
                 .weight(1f)
                 .clickable {
-                    mainViewModel.updateSelectedControllerProfile(controllerProfile)
-                    navHostController?.navigate(ViewNavigationRoutes.overView)
+                    if (mainViewModel != null) {
+                        mainViewModel.updateSelectedControllerProfile(controllerProfile)
+                        navHostController?.navigate(ViewNavigationRoutes.overView)
+                    }
                 }
         ) {
             Row(
@@ -177,6 +174,6 @@ fun ControllerProfileScreenPreview() {
     )
 
     AquariumControllerTheme {
-        ControllerProfileScreen(null, {}, mockControllerProfile1)
+        ControllerProfileScreen(onEvent = {}, controllerProfile = mockControllerProfile1)
     }
 }

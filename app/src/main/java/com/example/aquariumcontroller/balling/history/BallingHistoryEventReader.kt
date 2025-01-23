@@ -1,4 +1,4 @@
-package com.example.aquariumcontroller.balling
+package com.example.aquariumcontroller.balling.history
 
 import android.util.Log
 import kotlinx.serialization.json.Json

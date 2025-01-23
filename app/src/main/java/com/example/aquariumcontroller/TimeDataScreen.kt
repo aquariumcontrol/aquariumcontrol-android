@@ -13,7 +13,10 @@ import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
-fun TimeDataScreen(navHostController: NavHostController?) {
+fun TimeDataScreen(
+    navHostController: NavHostController? = null,
+    mainViewModel: MainViewModel? = null
+) {
     AquariumControllerTheme {
         // A surface container using the 'background' color from the theme
         Surface(
@@ -22,8 +25,9 @@ fun TimeDataScreen(navHostController: NavHostController?) {
         ) {
             Column {
                 MainDropdownMenuScreen(
-                    navHostController,
-                    ViewNavigationRoutes.timeData
+                    navHostController = navHostController,
+                    navigationRouteSource = ViewNavigationRoutes.timeData,
+                    mainViewModel = mainViewModel
                 )
                 Text(text = "TimeData")
                 Button(onClick = { }) {
@@ -38,6 +42,6 @@ fun TimeDataScreen(navHostController: NavHostController?) {
 @Composable
 fun TimeDataViewPreview() {
     AquariumControllerTheme {
-        TimeDataScreen(null)
+        TimeDataScreen()
     }
 }

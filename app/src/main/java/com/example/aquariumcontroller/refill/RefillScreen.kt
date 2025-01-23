@@ -1,8 +1,5 @@
 package com.example.aquariumcontroller.refill
 
-import android.content.Context
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,28 +19,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.ApiUrls
 import com.example.aquariumcontroller.MainDropdownMenuScreen
 import com.example.aquariumcontroller.MainViewModel
-import com.example.aquariumcontroller.MainViewModelFactory
 import com.example.aquariumcontroller.PostRequest
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import com.example.aquariumcontroller.webApiPostRequest
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @Composable
-fun RefillScreen(navHostController: NavHostController?) {
-    val mainViewModel: MainViewModel = viewModel(
-        factory = MainViewModelFactory
-    )
-
+fun RefillScreen(
+    navHostController: NavHostController? = null,
+    mainViewModel: MainViewModel? = null
+) {
     val postRequest = PostRequest()
 
     val context = LocalContext.current
@@ -65,8 +55,9 @@ fun RefillScreen(navHostController: NavHostController?) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     MainDropdownMenuScreen(
-                        navHostController,
-                        ViewNavigationRoutes.refill
+                        navHostController = navHostController,
+                        navigationRouteSource = ViewNavigationRoutes.refill,
+                        mainViewModel = mainViewModel
                     )
                     Text(
                         text = stringResource(id = R.string.RefillControl),
@@ -114,13 +105,15 @@ fun RefillScreen(navHostController: NavHostController?) {
                                     .fillMaxWidth()
                                     .padding(horizontal = 8.dp),
                                 onClick = {
-                                    webApiPostRequest(
-                                        mainViewModel = mainViewModel,
-                                        apiUrl = ApiUrls.REFILL_POST_CONTROL_START,
-                                        coroutineScope = coroutineScope,
-                                        postRequest = postRequest,
-                                        context = context,
-                                    )
+                                    if (mainViewModel != null) {
+                                        webApiPostRequest(
+                                            mainViewModel = mainViewModel,
+                                            apiUrl = ApiUrls.REFILL_POST_CONTROL_START,
+                                            coroutineScope = coroutineScope,
+                                            postRequest = postRequest,
+                                            context = context,
+                                        )
+                                    }
                                 },
                             ) {
                                 Text(
@@ -133,13 +126,15 @@ fun RefillScreen(navHostController: NavHostController?) {
                                     .fillMaxWidth()
                                     .padding(horizontal = 8.dp),
                                 onClick = {
-                                    webApiPostRequest(
-                                        mainViewModel = mainViewModel,
-                                        apiUrl = ApiUrls.REFILL_POST_CONTROL_STOP,
-                                        coroutineScope = coroutineScope,
-                                        postRequest = postRequest,
-                                        context = context,
-                                    )
+                                    if (mainViewModel != null) {
+                                        webApiPostRequest(
+                                            mainViewModel = mainViewModel,
+                                            apiUrl = ApiUrls.REFILL_POST_CONTROL_STOP,
+                                            coroutineScope = coroutineScope,
+                                            postRequest = postRequest,
+                                            context = context,
+                                        )
+                                    }
                                 },
                             ) {
                                 Text(
@@ -152,13 +147,15 @@ fun RefillScreen(navHostController: NavHostController?) {
                                     .fillMaxWidth()
                                     .padding(horizontal = 8.dp),
                                 onClick = {
-                                    webApiPostRequest(
-                                        mainViewModel = mainViewModel,
-                                        apiUrl = ApiUrls.REFILL_POST_CONTROL_RESET,
-                                        coroutineScope = coroutineScope,
-                                        postRequest = postRequest,
-                                        context = context,
-                                    )
+                                    if (mainViewModel != null) {
+                                        webApiPostRequest(
+                                            mainViewModel = mainViewModel,
+                                            apiUrl = ApiUrls.REFILL_POST_CONTROL_RESET,
+                                            coroutineScope = coroutineScope,
+                                            postRequest = postRequest,
+                                            context = context,
+                                        )
+                                    }
                                 },
                             ) {
                                 Text(
@@ -178,6 +175,6 @@ fun RefillScreen(navHostController: NavHostController?) {
 @Composable
 fun RefillScreenPreview() {
     AquariumControllerTheme {
-        RefillScreen(null)
+        RefillScreen()
     }
 }

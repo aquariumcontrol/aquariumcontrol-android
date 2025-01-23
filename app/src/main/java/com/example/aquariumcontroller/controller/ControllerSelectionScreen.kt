@@ -22,15 +22,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.MainDropdownMenuScreen
+import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
 fun ControllerSelectionScreen(
-    navHostController: NavHostController?,
+    navHostController: NavHostController? = null,
     state: ControllerState,
-    onEvent: (ControllerEvent) -> Unit
+    onEvent: (ControllerEvent) -> Unit,
+    mainViewModel: MainViewModel? = null
 ) {
     AquariumControllerTheme {
         Surface(
@@ -59,8 +61,9 @@ fun ControllerSelectionScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     MainDropdownMenuScreen(
-                        navHostController,
-                        ViewNavigationRoutes.controllerSelection
+                        navHostController = navHostController,
+                        navigationRouteSource = ViewNavigationRoutes.controllerSelection,
+                        mainViewModel = mainViewModel
                     )
                     Text(
                         text = stringResource(id = R.string.ListOfControllers),
@@ -77,7 +80,8 @@ fun ControllerSelectionScreen(
                             ControllerProfileScreen(
                                 navHostController,
                                 onEvent,
-                                controllerProfile
+                                controllerProfile,
+                                mainViewModel
                             )
                         }
                     }
@@ -115,7 +119,7 @@ fun ControllerSelectionScreenPreview() {
     mockControllerState.controllerProfileList = controllerProfileList
 
     AquariumControllerTheme {
-        ControllerSelectionScreen(null, mockControllerState, {})
+        ControllerSelectionScreen(state = mockControllerState, onEvent = {})
     }
 }
 

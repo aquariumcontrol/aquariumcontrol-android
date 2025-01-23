@@ -1,4 +1,4 @@
-package com.example.aquariumcontroller.balling
+package com.example.aquariumcontroller.balling.history
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column
@@ -39,25 +39,28 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun BallingHistoryScreen(
-    navHostController: NavHostController?,
+    navHostController: NavHostController? = null,
     showFullWeek: Boolean,
-    mockBallingHistoryDosingEvents: List<BallingHistoryDosingEvent>?
+    mockBallingHistoryDosingEvents: List<BallingHistoryDosingEvent>? = null,
+    mainViewModel: MainViewModel? = null
 ) {
-    val mainViewModel: MainViewModel = viewModel(
-        factory = MainViewModelFactory
-    )
-
     var ballingEvents by remember { mutableStateOf(mockBallingHistoryDosingEvents) }
 
-    val url = when {
-        showFullWeek -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.BALLING_GET_EVENTS_7D
-        else -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.BALLING_GET_EVENTS_24H
-    }
-    val reader = BallingHistoryEventReader(url)
+    val isControllerLoaded = mainViewModel?.isControllerLoaded() ?: false
 
-    LaunchedEffect(Unit) {
-        withContext(Dispatchers.IO) {
-            ballingEvents = reader.readBallingEvents()
+    val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
+
+    if (mainViewModel != null) {
+        val url = when {
+            showFullWeek -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.BALLING_GET_EVENTS_7D
+            else -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.BALLING_GET_EVENTS_24H
+        }
+        val reader = BallingHistoryEventReader(url)
+
+        LaunchedEffect(Unit) {
+            withContext(Dispatchers.IO) {
+                ballingEvents = reader.readBallingEvents()
+            }
         }
     }
 
@@ -74,8 +77,9 @@ fun BallingHistoryScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     MainDropdownMenuScreen(
-                        navHostController,
-                        ViewNavigationRoutes.balling
+                        navHostController = navHostController,
+                        navigationRouteSource = ViewNavigationRoutes.balling,
+                        mainViewModel = mainViewModel
                     )
                     val headlineText: String =
                         if (showFullWeek) {
@@ -92,8 +96,8 @@ fun BallingHistoryScreen(
                             .fillMaxSize()
                             .padding(16.dp)
                     ) {
-                        if (mainViewModel.isControllerLoaded() || mockBallingHistoryDosingEvents != null) {
-                            if (mainViewModel.getControllerAddress() != null || mockBallingHistoryDosingEvents != null) {
+                        if (isControllerLoaded || mockBallingHistoryDosingEvents != null) {
+                            if (isControllerAddressValid || mockBallingHistoryDosingEvents != null) {
                                 if (ballingEvents == null) {
                                     Text(
                                         text = "Loading Balling dosing events...",
@@ -112,12 +116,12 @@ fun BallingHistoryScreen(
                                     )
                                 } else {
                                     LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                        items(ballingEvents!!) { BallingEvent ->
+                                        items(ballingEvents!!) { ballingEvent ->
                                             Log.d(
                                                 this::class.simpleName,
                                                 "Balling dosing events found: ${ballingEvents!!.size}"
                                             )
-                                            BallingHistoryEventScreen(BallingEvent)
+                                            BallingHistoryEventScreen(ballingEvent)
                                         }
                                     }
                                 }
@@ -165,6 +169,6 @@ fun BallingHistoryPreview() {
     )
 
     AquariumControllerTheme {
-        BallingHistoryScreen(null, false, mockEvents)
+        BallingHistoryScreen(showFullWeek = false, mockBallingHistoryDosingEvents = mockEvents)
     }
 }

@@ -31,18 +31,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
 fun MainDropdownMenuScreen(
-    navHostController: NavHostController?,
-    navigationRouteSource: String
+    navHostController: NavHostController? = null,
+    navigationRouteSource: String,
+    mainViewModel: MainViewModel? = null
 ) {
-    val mainViewModel: MainViewModel = viewModel(
-        factory = MainViewModelFactory
-    )
+    val isControllerLoaded = mainViewModel?.isControllerLoaded() ?: false
 
     var expanded by remember { mutableStateOf(false) }
     Box(
@@ -71,7 +69,7 @@ fun MainDropdownMenuScreen(
                         contentDescription = "Overview"
                     )
                 },
-                enabled = mainViewModel.isControllerLoaded() && navigationRouteSource != ViewNavigationRoutes.overView
+                enabled = isControllerLoaded && navigationRouteSource != ViewNavigationRoutes.overView
             )
             DropdownMenuItem(
                 text = { Text("Display Data") },
@@ -84,7 +82,7 @@ fun MainDropdownMenuScreen(
                         contentDescription = "Settings"
                     )
                 },
-                enabled = mainViewModel.isControllerLoaded() && navigationRouteSource != ViewNavigationRoutes.timeData
+                enabled = isControllerLoaded && navigationRouteSource != ViewNavigationRoutes.timeData
             )
             DropdownMenuItem(
                 text = { Text("Balling mineral dosing") },
@@ -97,7 +95,7 @@ fun MainDropdownMenuScreen(
                         contentDescription = "Settings"
                     )
                 },
-                enabled = mainViewModel.isControllerLoaded() && navigationRouteSource != ViewNavigationRoutes.balling
+                enabled = isControllerLoaded && navigationRouteSource != ViewNavigationRoutes.balling
             )
             DropdownMenuItem(
                 text = { Text("Fresh water refill") },
@@ -110,7 +108,7 @@ fun MainDropdownMenuScreen(
                         contentDescription = "Settings"
                     )
                 },
-                enabled = mainViewModel.isControllerLoaded() && navigationRouteSource != ViewNavigationRoutes.refill
+                enabled = isControllerLoaded && navigationRouteSource != ViewNavigationRoutes.refill
             )
             DropdownMenuItem(
                 text = { Text("Feed") },
@@ -123,7 +121,7 @@ fun MainDropdownMenuScreen(
                         contentDescription = "Settings"
                     )
                 },
-                enabled = mainViewModel.isControllerLoaded() && navigationRouteSource != ViewNavigationRoutes.feed
+                enabled = isControllerLoaded && navigationRouteSource != ViewNavigationRoutes.feed
             )
             DropdownMenuItem(
                 text = { Text("Heating") },
@@ -136,7 +134,7 @@ fun MainDropdownMenuScreen(
                         contentDescription = "Settings"
                     )
                 },
-                enabled = mainViewModel.isControllerLoaded() && navigationRouteSource != ViewNavigationRoutes.heating
+                enabled = isControllerLoaded && navigationRouteSource != ViewNavigationRoutes.heating
             )
             DropdownMenuItem(
                 text = { Text("Ventilation") },
@@ -149,7 +147,7 @@ fun MainDropdownMenuScreen(
                         contentDescription = "Settings"
                     )
                 },
-                enabled = mainViewModel.isControllerLoaded() && navigationRouteSource != ViewNavigationRoutes.ventilation
+                enabled = isControllerLoaded && navigationRouteSource != ViewNavigationRoutes.ventilation
 
             )
             DropdownMenuItem(
@@ -163,7 +161,7 @@ fun MainDropdownMenuScreen(
                         contentDescription = "Settings"
                     )
                 },
-                enabled = mainViewModel.isControllerLoaded() && navigationRouteSource != ViewNavigationRoutes.schedule
+                enabled = isControllerLoaded && navigationRouteSource != ViewNavigationRoutes.schedule
             )
             HorizontalDivider()
             DropdownMenuItem(
@@ -200,6 +198,6 @@ fun MainDropdownMenuScreen(
 @Composable
 fun MainDropdownMenuPreview() {
     AquariumControllerTheme {
-        MainDropdownMenuScreen(null, ViewNavigationRoutes.controllerSelection)
+        MainDropdownMenuScreen(navigationRouteSource = ViewNavigationRoutes.controllerSelection)
     }
 }

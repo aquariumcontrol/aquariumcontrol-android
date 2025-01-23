@@ -21,12 +21,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.ApiUrls
 import com.example.aquariumcontroller.MainDropdownMenuScreen
 import com.example.aquariumcontroller.MainViewModel
-import com.example.aquariumcontroller.MainViewModelFactory
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
@@ -34,19 +32,21 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Composable
-fun BallingScreen(navHostController: NavHostController?, mockBallingProfiles: List<BallingProfile>?) {
-    val mainViewModel: MainViewModel = viewModel(
-        factory = MainViewModelFactory
-    )
-
+fun BallingScreen(
+    navHostController: NavHostController? = null,
+    mainViewModel: MainViewModel? = null,
+    mockBallingProfiles: List<BallingProfile>? = null
+) {
     var ballingProfiles by remember { mutableStateOf(mockBallingProfiles) }
 
-    val url = "http://" + mainViewModel.getControllerAddress() + ApiUrls.BALLING_GET_SET_VALS
-    val reader = BallingProfileReader(url)
+    if (mainViewModel != null) {
+        val url = "http://" + mainViewModel.getControllerAddress() + ApiUrls.BALLING_GET_SET_VALS
+        val reader = BallingProfileReader(url)
 
-    LaunchedEffect(Unit) {
-        withContext(Dispatchers.IO) {
-            ballingProfiles = reader.readBallingProfiles()
+        LaunchedEffect(Unit) {
+            withContext(Dispatchers.IO) {
+                ballingProfiles = reader.readBallingProfiles()
+            }
         }
     }
 
@@ -58,8 +58,9 @@ fun BallingScreen(navHostController: NavHostController?, mockBallingProfiles: Li
         ) {
             Column {
                 MainDropdownMenuScreen(
-                    navHostController,
-                    ViewNavigationRoutes.balling
+                    navHostController = navHostController,
+                    navigationRouteSource = ViewNavigationRoutes.balling,
+                    mainViewModel = mainViewModel
                 )
                 Text(
                     text = stringResource(id = R.string.BallingMineralDosingControl),
@@ -116,6 +117,6 @@ fun BallingViewPreview() {
     val mockBallingProfiles = listOf(mockBallingProfile1, mockBallingProfile2)
 
     AquariumControllerTheme {
-        BallingScreen(null, mockBallingProfiles)
+        BallingScreen(mockBallingProfiles = mockBallingProfiles)
     }
 }
