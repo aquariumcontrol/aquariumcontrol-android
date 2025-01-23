@@ -50,7 +50,7 @@ fun BallingHistoryScreen(
 
     val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
 
-    if (mainViewModel != null) {
+    if ((mainViewModel != null) && (isControllerAddressValid)) {
         val url = when {
             showFullWeek -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.BALLING_GET_EVENTS_7D
             else -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.BALLING_GET_EVENTS_24H

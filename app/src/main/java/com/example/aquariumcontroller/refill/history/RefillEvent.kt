@@ -1,4 +1,4 @@
-package com.example.aquariumcontroller.refill
+package com.example.aquariumcontroller.refill.history
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -13,7 +13,7 @@ data class RefillEvent(
     @SerialName("Volume")
     val volume: Double
 ) {
-
+    // This class is used to represent a refill event.
     constructor(timestamp: Timestamp, duration: Double, volume: Double) : this(
         timestamp.toString(),
         duration,

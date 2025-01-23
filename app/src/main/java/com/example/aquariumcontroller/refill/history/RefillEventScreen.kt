@@ -1,4 +1,4 @@
-package com.example.aquariumcontroller.refill
+package com.example.aquariumcontroller.refill.history
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -22,6 +22,7 @@ import java.sql.Timestamp
 fun RefillEventScreen(
     refillEvent: RefillEvent
 ) {
+    // This screen displays a refill event.
     Row(
         modifier = Modifier
             .fillMaxWidth()

@@ -1,4 +1,4 @@
-package com.example.aquariumcontroller.refill
+package com.example.aquariumcontroller.refill.history
 
 import android.util.Log
 import kotlinx.serialization.json.Json
@@ -7,7 +7,7 @@ import okhttp3.Request
 
 
 class RefillEventReader(private val url: String) {
-
+    // This class reads the refill events from the server using a GET request.
     private val client = OkHttpClient()
     private val json = Json { ignoreUnknownKeys = true }
 

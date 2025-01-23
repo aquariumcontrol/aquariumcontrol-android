@@ -1,4 +1,4 @@
-package com.example.aquariumcontroller.refill
+package com.example.aquariumcontroller.refill.history
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column
@@ -25,12 +25,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.ApiUrls
 import com.example.aquariumcontroller.MainDropdownMenuScreen
 import com.example.aquariumcontroller.MainViewModel
-import com.example.aquariumcontroller.MainViewModelFactory
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
@@ -40,25 +38,30 @@ import java.sql.Timestamp
 
 @Composable
 fun RefillHistoryScreen(
-    navHostController: NavHostController?,
+    navHostController: NavHostController? = null,
     showFullWeek: Boolean,
-    mockRefillEvents: List<RefillEvent>?
+    mockRefillEvents: List<RefillEvent>? = null,
+    mainViewModel: MainViewModel? = null
 ) {
-    val mainViewModel: MainViewModel = viewModel(
-        factory = MainViewModelFactory
-    )
+    // This screen displays a list of refill events downloaded from the server using a GET request.
 
     var refillEvents by remember { mutableStateOf(mockRefillEvents) }
 
-    val url = when {
-        showFullWeek -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.REFILL_GET_EVENTS_7D
-        else -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.REFILL_GET_EVENTS_24H
-    }
-    val reader = RefillEventReader(url)
+    val isControllerLoaded = mainViewModel?.isControllerLoaded() ?: false
 
-    LaunchedEffect(Unit) {
-        withContext(Dispatchers.IO) {
-            refillEvents = reader.readRefillEvents()
+    val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
+
+    if ((mainViewModel != null) && (isControllerAddressValid)) {
+        val url = when {
+            showFullWeek -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.REFILL_GET_EVENTS_7D
+            else -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.REFILL_GET_EVENTS_24H
+        }
+        val reader = RefillEventReader(url)
+
+        LaunchedEffect(Unit) {
+            withContext(Dispatchers.IO) {
+                refillEvents = reader.readRefillEvents()
+            }
         }
     }
 
@@ -94,8 +97,8 @@ fun RefillHistoryScreen(
                             .fillMaxSize()
                             .padding(16.dp)
                     ) {
-                        if (mainViewModel.isControllerLoaded() || mockRefillEvents != null) {
-                            if (mainViewModel.getControllerAddress() != null || mockRefillEvents != null) {
+                        if (isControllerLoaded || mockRefillEvents != null) {
+                            if (isControllerAddressValid || mockRefillEvents != null) {
                                 if (refillEvents == null) {
                                     Text(
                                         text = "Loading refill events...",
@@ -165,6 +168,6 @@ fun RefillHistoryPreview() {
     )
 
     AquariumControllerTheme {
-        RefillHistoryScreen(null, true, mockEvents)
+        RefillHistoryScreen(showFullWeek = true, mockRefillEvents = mockEvents)
     }
 }

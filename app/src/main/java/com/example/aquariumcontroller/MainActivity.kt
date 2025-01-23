@@ -24,7 +24,7 @@ import com.example.aquariumcontroller.controller.ControllerProfileDatabase
 import com.example.aquariumcontroller.controller.ControllerSelectionScreen
 import com.example.aquariumcontroller.controller.ControllerViewModel
 import com.example.aquariumcontroller.overview.OverviewScreen
-import com.example.aquariumcontroller.refill.RefillHistoryScreen
+import com.example.aquariumcontroller.refill.history.RefillHistoryScreen
 import com.example.aquariumcontroller.refill.RefillScreen
 
 @Suppress("UNCHECKED_CAST")
@@ -132,10 +132,10 @@ class MainActivity : ComponentActivity() {
                         RefillScreen(navHostController)
                     }
                     composable(ViewNavigationRoutes.refillHistory24h) {
-                        RefillHistoryScreen(navHostController, false, null)
+                        RefillHistoryScreen(navHostController, showFullWeek =  false, mainViewModel = mainViewModel)
                     }
                     composable(ViewNavigationRoutes.refillHistory7d) {
-                        RefillHistoryScreen(navHostController, true, null)
+                        RefillHistoryScreen(navHostController, showFullWeek = true, mainViewModel = mainViewModel)
                     }
                     composable(ViewNavigationRoutes.heating) {
                         HeatingScreen(navHostController)
