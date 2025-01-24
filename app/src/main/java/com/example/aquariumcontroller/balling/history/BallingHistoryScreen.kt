@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.ApiUrls
-import com.example.aquariumcontroller.MainDropdownMenuScreen
+import com.example.aquariumcontroller.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
@@ -76,7 +76,7 @@ fun BallingHistoryScreen(
                         .padding(innerPadding),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    MainDropdownMenuScreen(
+                    MainDropdownMenuComposable(
                         navHostController = navHostController,
                         navigationRouteSource = ViewNavigationRoutes.balling,
                         mainViewModel = mainViewModel
@@ -121,7 +121,7 @@ fun BallingHistoryScreen(
                                                 this::class.simpleName,
                                                 "Balling dosing events found: ${ballingEvents!!.size}"
                                             )
-                                            BallingHistoryEventScreen(ballingEvent)
+                                            BallingHistoryEventComposable(ballingEvent)
                                         }
                                     }
                                 }

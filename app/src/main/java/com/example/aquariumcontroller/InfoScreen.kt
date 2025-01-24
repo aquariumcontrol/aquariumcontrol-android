@@ -21,7 +21,7 @@ fun InfoScreen(navHostController: NavHostController? = null, mainViewModel: Main
             color = MaterialTheme.colorScheme.background
         ) {
             Column {
-                MainDropdownMenuScreen(
+                MainDropdownMenuComposable(
                     navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.info,
                     mainViewModel = mainViewModel

@@ -1,4 +1,4 @@
-package com.example.aquariumcontroller.refill.history
+package com.example.aquariumcontroller.balling.history
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -16,13 +16,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
-import java.sql.Timestamp
 
 @Composable
-fun RefillEventScreen(
-    refillEvent: RefillEvent
+fun BallingHistoryEventComposable(
+    ballingHistoryDosingEvent: BallingHistoryDosingEvent
 ) {
-    // This screen displays a refill event.
+    // This screen displays one Balling dosing event.
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -42,7 +41,7 @@ fun RefillEventScreen(
                 fontSize = 12.sp
             )
             Text(
-                text = refillEvent.timestamp,
+                text = ballingHistoryDosingEvent.timestamp,
                 fontSize = 12.sp
             )
         }
@@ -50,11 +49,15 @@ fun RefillEventScreen(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = "Duration: ${"%.1f".format(refillEvent.duration)} seconds",
+                text = "Pump ID: ${ballingHistoryDosingEvent.pumpId}",
                 fontSize = 12.sp
             )
             Text(
-                text = "Volume: ${"%.2f".format(refillEvent.volume)} Liters",
+                text = "Dosing volume: ${"%.2f".format(ballingHistoryDosingEvent.volume)} ml",
+                fontSize = 12.sp
+            )
+            Text(
+                text = "Label: ${ballingHistoryDosingEvent.label}",
                 fontSize = 12.sp
             )
         }
@@ -64,16 +67,15 @@ fun RefillEventScreen(
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
-fun RefillEventPreviewScreen() {
-    val fixedTimestamp = Timestamp(0L)
-
-    val mockEvent = RefillEvent(
-        timestamp = fixedTimestamp,
-        duration = 60.0,
-        volume = 10.0
+fun BallingEventPreviewScreen() {
+    val mockEvent = BallingHistoryDosingEvent(
+        timestamp = "2025-01-18 12:00:00",
+        pumpId = 1,
+        volume = 1.5,
+        label = "MockDosingUnit 1"
     )
 
     AquariumControllerTheme {
-        RefillEventScreen(mockEvent)
+        BallingHistoryEventComposable(mockEvent)
     }
 }

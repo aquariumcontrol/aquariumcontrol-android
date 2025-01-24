@@ -1,0 +1,114 @@
+package com.example.aquariumcontroller.feed.edit
+
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
+
+@Composable
+fun FeedProfileEditMenuComposable(items: List<FeedProfileEditMenuItem>) {
+    LazyColumn(modifier = Modifier.heightIn(max = 20000.dp)) {
+        items(items) { item ->
+            FeedProfileEditMenuItemComposable(item)
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun FeedProfileEditMenuPreviewComposable() {
+
+    val mockFeedProfileEditMenuItemSkimmer = FeedProfileEditMenuItem(
+        id = 1,
+        text = "Skimmer",
+        isToggleButton = true,
+        children = emptyList(),
+    )
+    val mockFeedProfileEditMenuItemMainPump1 = FeedProfileEditMenuItem(
+        id = 2,
+        text = "Main pump 1",
+        isToggleButton = true,
+        children = emptyList(),
+    )
+    val mockFeedProfileEditMenuItemMainPump2 = FeedProfileEditMenuItem(
+        id = 3,
+        text = "Main pump 2",
+        isToggleButton = true,
+        children = emptyList(),
+    )
+    val mockFeedProfileEditMenuItemAuxPump1 = FeedProfileEditMenuItem(
+        id = 4,
+        text = "Aux. pump 1",
+        isToggleButton = true,
+        children = emptyList(),
+    )
+    val mockFeedProfileEditMenuItemAuxPump2 = FeedProfileEditMenuItem(
+        id = 5,
+        text = "Aux. pump 2",
+        isToggleButton = true,
+        children = emptyList(),
+    )
+
+    val mockFeedProfileEditMenuItemPause = FeedProfileEditMenuItem(
+        id = 6,
+        text = "Pause",
+        isToggleButton = false,
+        children = listOf(
+            mockFeedProfileEditMenuItemSkimmer,
+            mockFeedProfileEditMenuItemMainPump1,
+            mockFeedProfileEditMenuItemMainPump2,
+            mockFeedProfileEditMenuItemAuxPump1,
+            mockFeedProfileEditMenuItemAuxPump2
+        )
+    )
+
+    val mockFeedProfileEditMenuItemFeed = FeedProfileEditMenuItem(
+        id = 7,
+        text = "Feed",
+        isToggleButton = false,
+        children = listOf(
+            mockFeedProfileEditMenuItemSkimmer,
+            mockFeedProfileEditMenuItemMainPump1,
+            mockFeedProfileEditMenuItemMainPump2,
+            mockFeedProfileEditMenuItemAuxPump1,
+            mockFeedProfileEditMenuItemAuxPump2
+        )
+    )
+
+    val mockFeedProfileEditMenuItemPhase1 = FeedProfileEditMenuItem(
+        id = 8,
+        text = "Phase 1",
+        isToggleButton = false,
+        children = listOf(
+            mockFeedProfileEditMenuItemPause,
+            mockFeedProfileEditMenuItemFeed
+        )
+    )
+
+    val mockFeedProfileEditMenuItemPhase2 = FeedProfileEditMenuItem(
+        id = 8,
+        text = "Phase 2",
+        isToggleButton = false,
+        children = listOf(
+            mockFeedProfileEditMenuItemPause,
+            mockFeedProfileEditMenuItemFeed
+        ),
+    )
+
+    mockFeedProfileEditMenuItemPhase1.isExpanded.value = true
+    mockFeedProfileEditMenuItemPhase2.isExpanded.value = true
+    mockFeedProfileEditMenuItemPause.isExpanded.value = true
+
+    AquariumControllerTheme {
+        FeedProfileEditMenuComposable(
+            listOf(
+                mockFeedProfileEditMenuItemPhase1,
+                mockFeedProfileEditMenuItemPhase2
+            )
+        )
+    }
+}

@@ -11,7 +11,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.Modifier
 
 @Composable
-fun NumericOutlinedTextField(
+fun NumericOutlinedTextFieldComposable(
     value: Int,
     onValueChange: (String) -> Unit,
     label: String,

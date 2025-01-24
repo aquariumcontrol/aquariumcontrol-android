@@ -24,7 +24,7 @@ fun TimeDataScreen(
             color = MaterialTheme.colorScheme.background
         ) {
             Column {
-                MainDropdownMenuScreen(
+                MainDropdownMenuComposable(
                     navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.timeData,
                     mainViewModel = mainViewModel

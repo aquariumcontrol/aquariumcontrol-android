@@ -24,7 +24,7 @@ fun VentilationScreen(
             color = MaterialTheme.colorScheme.background
         ) {
             Column {
-                MainDropdownMenuScreen(
+                MainDropdownMenuComposable(
                     navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.ventilation,
                     mainViewModel = mainViewModel

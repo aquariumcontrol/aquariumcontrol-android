@@ -1,9 +1,11 @@
-package com.example.aquariumcontroller.balling.history
+package com.example.aquariumcontroller.balling
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,13 +17,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.example.aquariumcontroller.MainViewModel
+import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
-fun BallingHistoryEventScreen(
-    ballingHistoryDosingEvent: BallingHistoryDosingEvent
+fun BallingProfileSummaryComposable(
+    navHostController: NavHostController? = null,
+    mainViewModel: MainViewModel? = null,
+    ballingProfile: BallingProfile
 ) {
-    // This screen displays one Balling dosing event.
+    // This composable displays one Balling dosing profile.
+    // When the user clicks on the profile, the BallingProfileEditScreen is displayed.
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -32,16 +40,22 @@ fun BallingHistoryEventScreen(
                 )
             )
             .padding(8.dp)
+            .clickable {
+                Log.d("BallingProfileSummaryScreen", "Clicked on {${ballingProfile.label}}")
+                mainViewModel?.updateSelectedBallingProfile(ballingProfile)
+                navHostController?.navigate(ViewNavigationRoutes.ballingEdit)
+            }
     ) {
         Column(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .weight(1f)
         ) {
             Text(
-                text = "Timestamp",
+                text = "Balling dosing profile:",
                 fontSize = 12.sp
             )
             Text(
-                text = ballingHistoryDosingEvent.timestamp,
+                text = ballingProfile.label,
                 fontSize = 12.sp
             )
         }
@@ -49,15 +63,11 @@ fun BallingHistoryEventScreen(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = "Pump ID: ${ballingHistoryDosingEvent.pumpId}",
+                text = "Pump ID: ${ballingProfile.pumpId}",
                 fontSize = 12.sp
             )
             Text(
-                text = "Dosing volume: ${"%.2f".format(ballingHistoryDosingEvent.volume)} ml",
-                fontSize = 12.sp
-            )
-            Text(
-                text = "Label: ${ballingHistoryDosingEvent.label}",
+                text = "Dosing volume: ${"%.2f".format(ballingProfile.volume)} ml",
                 fontSize = 12.sp
             )
         }
@@ -67,15 +77,18 @@ fun BallingHistoryEventScreen(
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
-fun BallingEventPreviewScreen() {
-    val mockEvent = BallingHistoryDosingEvent(
-        timestamp = "2025-01-18 12:00:00",
+fun BallingProfileSummaryPreviewScreen() {
+    val mockBallingProfile = BallingProfile(
         pumpId = 1,
         volume = 1.5,
-        label = "MockDosingUnit 1"
+        label = "MockDosingUnit 1",
     )
 
     AquariumControllerTheme {
-        BallingHistoryEventScreen(mockEvent)
+        BallingProfileSummaryComposable(
+            navHostController = null,
+            mainViewModel = null,
+            ballingProfile = mockBallingProfile
+        )
     }
 }

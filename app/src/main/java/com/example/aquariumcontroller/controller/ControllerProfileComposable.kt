@@ -28,13 +28,13 @@ import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
-fun ControllerProfileScreen(
+fun ControllerProfileComposable(
     navHostController: NavHostController? = null,
     onEvent: (ControllerEvent) -> Unit,
     controllerProfile: ControllerProfile,
     mainViewModel: MainViewModel? = null
 ) {
-    // This screen displays a single controller profile.
+    // This composable displays a single controller profile.
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -175,6 +175,6 @@ fun ControllerProfileScreenPreview() {
     )
 
     AquariumControllerTheme {
-        ControllerProfileScreen(onEvent = {}, controllerProfile = mockControllerProfile1)
+        ControllerProfileComposable(onEvent = {}, controllerProfile = mockControllerProfile1)
     }
 }

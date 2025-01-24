@@ -21,7 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.aquariumcontroller.MainDropdownMenuScreen
+import com.example.aquariumcontroller.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
@@ -61,7 +61,7 @@ fun ControllerSelectionScreen(
                         .padding(innerPadding),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    MainDropdownMenuScreen(
+                    MainDropdownMenuComposable(
                         navHostController = navHostController,
                         navigationRouteSource = ViewNavigationRoutes.controllerSelection,
                         mainViewModel = mainViewModel
@@ -78,7 +78,7 @@ fun ControllerSelectionScreen(
                             .wrapContentSize()
                     ) {
                         items(state.controllerProfileList) { controllerProfile ->
-                            ControllerProfileScreen(
+                            ControllerProfileComposable(
                                 navHostController,
                                 onEvent,
                                 controllerProfile,

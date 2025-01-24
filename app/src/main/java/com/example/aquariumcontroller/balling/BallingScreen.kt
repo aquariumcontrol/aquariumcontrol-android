@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.ApiUrls
-import com.example.aquariumcontroller.MainDropdownMenuScreen
+import com.example.aquariumcontroller.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
@@ -65,7 +65,7 @@ fun BallingScreen(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                MainDropdownMenuScreen(
+                MainDropdownMenuComposable(
                     navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.balling,
                     mainViewModel = mainViewModel
@@ -106,7 +106,7 @@ fun BallingScreen(
                         .fillMaxSize()
                         .padding(16.dp)) {
                         items(ballingProfiles!!) { ballingProfile ->
-                            BallingProfileSummaryScreen(
+                            BallingProfileSummaryComposable(
                                 navHostController = navHostController,
                                 mainViewModel = mainViewModel,
                                 ballingProfile = ballingProfile

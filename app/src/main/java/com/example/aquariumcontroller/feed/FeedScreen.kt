@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.ApiUrls
-import com.example.aquariumcontroller.MainDropdownMenuScreen
+import com.example.aquariumcontroller.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
@@ -69,7 +69,7 @@ fun FeedScreen(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                MainDropdownMenuScreen(
+                MainDropdownMenuComposable(
                     navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.feed,
                     mainViewModel = mainViewModel
@@ -110,7 +110,7 @@ fun FeedScreen(
                         .fillMaxSize()
                         .padding(16.dp)) {
                         items(feedProfiles!!) { feedProfile ->
-                            FeedProfileSummaryScreen(
+                            FeedProfileSummaryComposable(
                                 navHostController = navHostController,
                                 mainViewModel = mainViewModel,
                                 feedProfile = feedProfile

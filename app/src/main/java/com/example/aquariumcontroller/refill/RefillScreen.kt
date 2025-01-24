@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.ApiUrls
-import com.example.aquariumcontroller.MainDropdownMenuScreen
+import com.example.aquariumcontroller.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.PostRequest
 import com.example.aquariumcontroller.R
@@ -63,7 +63,7 @@ fun RefillScreen(
                         .padding(innerPadding),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    MainDropdownMenuScreen(
+                    MainDropdownMenuComposable(
                         navHostController = navHostController,
                         navigationRouteSource = ViewNavigationRoutes.refill,
                         mainViewModel = mainViewModel

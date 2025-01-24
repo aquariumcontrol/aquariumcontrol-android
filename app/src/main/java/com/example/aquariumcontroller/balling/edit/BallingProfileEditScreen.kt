@@ -31,7 +31,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.ApiParams
 import com.example.aquariumcontroller.ApiUrls
-import com.example.aquariumcontroller.MainDropdownMenuScreen
+import com.example.aquariumcontroller.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.PostRequest
 import com.example.aquariumcontroller.R
@@ -72,7 +72,7 @@ fun BallingProfileEditScreen(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                MainDropdownMenuScreen(
+                MainDropdownMenuComposable(
                     navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.balling,
                     mainViewModel = mainViewModel

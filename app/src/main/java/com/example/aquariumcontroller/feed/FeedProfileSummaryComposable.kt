@@ -1,4 +1,4 @@
-package com.example.aquariumcontroller.balling
+package com.example.aquariumcontroller.feed
 
 import android.os.Build
 import android.util.Log
@@ -19,17 +19,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.MainViewModel
-import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
-fun BallingProfileSummaryScreen(
+fun FeedProfileSummaryComposable(
     navHostController: NavHostController? = null,
     mainViewModel: MainViewModel? = null,
-    ballingProfile: BallingProfile
+    feedProfile: FeedProfile
 ) {
-    // This screen displays one Balling dosing profile.
-    // When the user clicks on the profile, the BallingProfileEditScreen is displayed.
+    // This composable displays one Feed dosing profile.
+    // When the user clicks on the profile, the FeedProfileEditScreen is displayed.
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -41,9 +40,11 @@ fun BallingProfileSummaryScreen(
             )
             .padding(8.dp)
             .clickable {
-                Log.d("BallingProfileSummaryScreen", "Clicked on {${ballingProfile.label}}")
-                mainViewModel?.updateSelectedBallingProfile(ballingProfile)
-                navHostController?.navigate(ViewNavigationRoutes.ballingEdit)
+                Log.d("FeedProfileSummaryScreen", "Clicked on {${feedProfile.profileName}}")
+                // todo: add view model functionality
+                // mainViewModel?.updateSelectedFeedProfile(FeedProfile)
+                // todo: add navigation
+                // navHostController?.navigate(ViewNavigationRoutes.FeedEdit)
             }
     ) {
         Column(
@@ -51,23 +52,16 @@ fun BallingProfileSummaryScreen(
                 .weight(1f)
         ) {
             Text(
-                text = "Balling dosing profile:",
-                fontSize = 12.sp
-            )
-            Text(
-                text = ballingProfile.label,
+                text = "ID: ${feedProfile.profileID}",
                 fontSize = 12.sp
             )
         }
+
         Column(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = "Pump ID: ${ballingProfile.pumpId}",
-                fontSize = 12.sp
-            )
-            Text(
-                text = "Dosing volume: ${"%.2f".format(ballingProfile.volume)} ml",
+                text = "Name: ${feedProfile.profileName}",
                 fontSize = 12.sp
             )
         }
@@ -77,18 +71,16 @@ fun BallingProfileSummaryScreen(
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
-fun BallingProfileSummaryPreviewScreen() {
-    val mockBallingProfile = BallingProfile(
-        pumpId = 1,
-        volume = 1.5,
-        label = "MockDosingUnit 1",
-    )
+fun FeedProfileSummaryPreviewScreen() {
+    val mockFeedProfileImport = FeedProfileImport()
+    mockFeedProfileImport.profileId = 1
+    mockFeedProfileImport.profileName = "Test Profile"
+
+    val mockFeedProfile = FeedProfile(mockFeedProfileImport)
 
     AquariumControllerTheme {
-        BallingProfileSummaryScreen(
-            navHostController = null,
-            mainViewModel = null,
-            ballingProfile = mockBallingProfile
+        FeedProfileSummaryComposable(
+            feedProfile = mockFeedProfile,
         )
     }
 }

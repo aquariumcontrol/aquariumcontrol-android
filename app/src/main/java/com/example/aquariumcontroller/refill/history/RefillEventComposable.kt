@@ -1,4 +1,4 @@
-package com.example.aquariumcontroller.feed.history
+package com.example.aquariumcontroller.refill.history
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -16,12 +16,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
+import java.sql.Timestamp
 
 @Composable
-fun FeedHistoryEventScreen(
-    feedHistoryEvent: FeedHistoryEvent
+fun RefillEventComposable(
+    refillEvent: RefillEvent
 ) {
-    // This screen displays one feed dosing event.
+    // This composable displays a refill event.
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -41,7 +42,7 @@ fun FeedHistoryEventScreen(
                 fontSize = 12.sp
             )
             Text(
-                text = feedHistoryEvent.timestamp,
+                text = refillEvent.timestamp,
                 fontSize = 12.sp
             )
         }
@@ -49,11 +50,11 @@ fun FeedHistoryEventScreen(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = "Timestamp: ${feedHistoryEvent.timestamp}",
+                text = "Duration: ${"%.1f".format(refillEvent.duration)} seconds",
                 fontSize = 12.sp
             )
             Text(
-                text = "Name: ${feedHistoryEvent.profileName} ml",
+                text = "Volume: ${"%.2f".format(refillEvent.volume)} Liters",
                 fontSize = 12.sp
             )
         }
@@ -63,15 +64,16 @@ fun FeedHistoryEventScreen(
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
-fun FeedEventPreviewScreen() {
-    val mockEvent = FeedHistoryEvent(
-        timestamp = "2025-01-18 12:00:00",
-        feederOnTime = 20000,
-        profileName = "Mock feed profile 1",
-        idx = 1
+fun RefillEventPreviewScreen() {
+    val fixedTimestamp = Timestamp(0L)
+
+    val mockEvent = RefillEvent(
+        timestamp = fixedTimestamp,
+        duration = 60.0,
+        volume = 10.0
     )
 
     AquariumControllerTheme {
-        FeedHistoryEventScreen(mockEvent)
+        RefillEventComposable(mockEvent)
     }
 }

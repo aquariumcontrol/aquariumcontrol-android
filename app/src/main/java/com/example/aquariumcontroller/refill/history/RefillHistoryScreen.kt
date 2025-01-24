@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.ApiUrls
-import com.example.aquariumcontroller.MainDropdownMenuScreen
+import com.example.aquariumcontroller.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
@@ -77,7 +77,7 @@ fun RefillHistoryScreen(
                         .padding(innerPadding),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    MainDropdownMenuScreen(
+                    MainDropdownMenuComposable(
                         navHostController = navHostController,
                         navigationRouteSource = ViewNavigationRoutes.refill,
                         mainViewModel = mainViewModel
@@ -122,7 +122,7 @@ fun RefillHistoryScreen(
                                                 this::class.simpleName,
                                                 "Refill events found: ${refillEvents!!.size}"
                                             )
-                                            RefillEventScreen(refillEvent)
+                                            RefillEventComposable(refillEvent)
                                         }
                                     }
                                 }
