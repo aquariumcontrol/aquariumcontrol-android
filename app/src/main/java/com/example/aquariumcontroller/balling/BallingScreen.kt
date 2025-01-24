@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,7 +62,9 @@ fun BallingScreen(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Column {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 MainDropdownMenuScreen(
                     navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.balling,
@@ -99,7 +102,9 @@ fun BallingScreen(
                     )
                 }
                 if (ballingProfiles != null) {
-                    LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+                    LazyColumn(modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)) {
                         items(ballingProfiles!!) { ballingProfile ->
                             BallingProfileSummaryScreen(
                                 navHostController = navHostController,

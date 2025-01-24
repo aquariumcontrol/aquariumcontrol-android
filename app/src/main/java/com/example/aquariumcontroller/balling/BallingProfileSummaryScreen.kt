@@ -41,7 +41,7 @@ fun BallingProfileSummaryScreen(
             )
             .padding(8.dp)
             .clickable {
-                Log.d("BallingProfileScreen", "Clicked on {${ballingProfile.label}}")
+                Log.d("BallingProfileSummaryScreen", "Clicked on {${ballingProfile.label}}")
                 mainViewModel?.updateSelectedBallingProfile(ballingProfile)
                 navHostController?.navigate(ViewNavigationRoutes.ballingEdit)
             }

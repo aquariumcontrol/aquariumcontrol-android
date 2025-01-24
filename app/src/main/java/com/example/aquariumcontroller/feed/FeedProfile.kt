@@ -1,8 +1,8 @@
 package com.example.aquariumcontroller.feed
 
 class FeedProfile(feedProfileImport: FeedProfileImport) {
-    private var profileID: Int = 0
-    private var profileName: String = ""
+    var profileID: Int = 0
+    var profileName: String = ""
     private var feedProfilePhases: List<FeedProfilePhase> = listOf()
 
     init {

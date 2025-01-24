@@ -1,10 +1,14 @@
 package com.example.aquariumcontroller.feed
 
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 class FeedProfileImport {
-    @SerialName("ProfileID") val profileId: Int = 0
-    @SerialName("ProfileName") val profileName: String = ""
+    @SerialName("ProfileID")
+    var profileId: Int = 0
+    @SerialName("ProfileName")
+    var profileName: String = ""
     
     // Phase #1
     @SerialName("Pause01Duration") val pause01duration: Int = 0

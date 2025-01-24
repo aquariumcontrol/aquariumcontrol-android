@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -15,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,8 +28,6 @@ import com.example.aquariumcontroller.MainDropdownMenuScreen
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
-import com.example.aquariumcontroller.balling.BallingProfileReader
-import com.example.aquariumcontroller.balling.BallingProfileSummaryScreen
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -52,7 +52,10 @@ fun FeedScreen(
 
         LaunchedEffect(Unit) {
             withContext(Dispatchers.IO) {
-                feedProfiles = reader.readFeedProfiles()
+                val feedProfileImports = reader.readFeedProfiles()
+                if (feedProfileImports != null) {
+                    feedProfiles = feedProfileImports.toFeedProfileList()
+                }
             }
         }
     }
@@ -63,7 +66,9 @@ fun FeedScreen(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Column {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 MainDropdownMenuScreen(
                     navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.feed,
@@ -72,7 +77,7 @@ fun FeedScreen(
                 Text(
                     text = stringResource(id = R.string.FeedControl),
                     style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(16.dp),
                 )
                 Button(
                     modifier = Modifier
@@ -105,10 +110,10 @@ fun FeedScreen(
                         .fillMaxSize()
                         .padding(16.dp)) {
                         items(feedProfiles!!) { feedProfile ->
-                            BallingProfileSummaryScreen(
+                            FeedProfileSummaryScreen(
                                 navHostController = navHostController,
                                 mainViewModel = mainViewModel,
-                                ballingProfile = feedProfile
+                                feedProfile = feedProfile
                             )
                         }
                     }
@@ -121,7 +126,20 @@ fun FeedScreen(
 @Preview(showBackground = true)
 @Composable
 fun FeedViewPreview() {
+    val mockFeedProfileImport1 = FeedProfileImport()
+    mockFeedProfileImport1.profileId = 1
+    mockFeedProfileImport1.profileName = "Test Profile 1"
+
+    val mockFeedProfileImport2 = FeedProfileImport()
+    mockFeedProfileImport2.profileId = 2
+    mockFeedProfileImport2.profileName = "Test Profile 2"
+
+    val mockFeedProfile1 = FeedProfile(mockFeedProfileImport1)
+    val mockFeedProfile2 = FeedProfile(mockFeedProfileImport2)
+
+    val mockFeedProfiles = listOf(mockFeedProfile1, mockFeedProfile2)
+
     AquariumControllerTheme {
-        FeedScreen()
+        FeedScreen(mockFeedProfiles = mockFeedProfiles)
     }
 }
