@@ -35,6 +35,6 @@
     <string name="FeedControl">Feed Control</string>
     <string name="ViewFeedEvents24h">View feed events of last 24h</string>
     <string name="ViewFeedEvents7d">View feed events of last 7 days</string>
-    <string name="FeedEventsLast7Days">Feed events of the last 24h</string>
-    <string name="FeEventsLast24h">Feed events of the last 7 days</string>
+    <string name="FeedEventsLast7Days">Feed events of the last 7 days</string>
+    <string name="FeedEventsLast24h">Feed events of last 24h</string>
 </resources>

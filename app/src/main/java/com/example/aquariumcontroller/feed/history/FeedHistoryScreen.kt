@@ -31,7 +31,6 @@ import com.example.aquariumcontroller.MainDropdownMenuScreen
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
-import com.example.aquariumcontroller.feed.history.FeedHistoryEvent
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -86,7 +85,7 @@ fun FeedHistoryScreen(
                         if (showFullWeek) {
                             stringResource(R.string.FeedEventsLast7Days)
                         } else {
-                            stringResource(R.string.FeEventsLast24h)
+                            stringResource(R.string.FeedEventsLast24h)
                         }
                     Text(
                         text = headlineText,

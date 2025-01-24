@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.aquariumcontroller.feed.history.FeedHistoryEvent
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
@@ -54,7 +53,7 @@ fun FeedHistoryEventScreen(
                 fontSize = 12.sp
             )
             Text(
-                text = "Name: ${"%.2f".format(feedHistoryEvent.profileName)} ml",
+                text = "Name: ${feedHistoryEvent.profileName} ml",
                 fontSize = 12.sp
             )
         }
