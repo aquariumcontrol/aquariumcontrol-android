@@ -34,8 +34,8 @@ import kotlinx.coroutines.withContext
 @Composable
 fun BallingScreen(
     navHostController: NavHostController? = null,
-    mainViewModel: MainViewModel? = null,
-    mockBallingProfiles: List<BallingProfile>? = null
+    mockBallingProfiles: List<BallingProfile>? = null,
+    mainViewModel: MainViewModel? = null
 ) {
     // This screen displays
     // - a button for visualizing all Balling dosing events of the last 24h
