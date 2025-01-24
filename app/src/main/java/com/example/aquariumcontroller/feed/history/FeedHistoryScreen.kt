@@ -1,4 +1,4 @@
-package com.example.aquariumcontroller.balling.history
+package com.example.aquariumcontroller.feed.history
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column
@@ -31,7 +31,7 @@ import com.example.aquariumcontroller.MainDropdownMenuScreen
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
-import com.example.aquariumcontroller.feed.history.FeedHistoryEventReader
+import com.example.aquariumcontroller.feed.history.FeedHistoryEvent
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -43,7 +43,7 @@ fun FeedHistoryScreen(
     mockFeedHistoryEvents: List<FeedHistoryEvent>? = null,
     mainViewModel: MainViewModel? = null
 ) {
-    // This screen will only display the different Balling dosing events.
+    // This screen will only display the different feed events.
     // Hence, there is no need to have a view model.
     var feedEvents by remember { mutableStateOf(mockFeedHistoryEvents) }
 

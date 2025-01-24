@@ -17,7 +17,7 @@ import androidx.room.Room
 import com.example.aquariumcontroller.balling.BallingScreen
 import com.example.aquariumcontroller.balling.edit.BallingProfileEditScreen
 import com.example.aquariumcontroller.balling.history.BallingHistoryScreen
-import com.example.aquariumcontroller.balling.history.FeedHistoryScreen
+import com.example.aquariumcontroller.feed.history.FeedHistoryScreen
 import com.example.aquariumcontroller.controller.ControllerAddScreen
 import com.example.aquariumcontroller.controller.ControllerEditScreen
 import com.example.aquariumcontroller.controller.ControllerProfileDatabase

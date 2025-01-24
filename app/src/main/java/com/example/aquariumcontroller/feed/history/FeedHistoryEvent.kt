@@ -1,4 +1,4 @@
-package com.example.aquariumcontroller.balling.history
+package com.example.aquariumcontroller.feed.history
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

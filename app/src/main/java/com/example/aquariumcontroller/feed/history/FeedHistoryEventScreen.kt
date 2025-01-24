@@ -1,4 +1,4 @@
-package com.example.aquariumcontroller.balling.history
+package com.example.aquariumcontroller.feed.history
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -15,13 +15,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.aquariumcontroller.feed.history.FeedHistoryEvent
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
 fun FeedHistoryEventScreen(
     feedHistoryEvent: FeedHistoryEvent
 ) {
-    // This screen displays one Balling dosing event.
+    // This screen displays one feed dosing event.
     Row(
         modifier = Modifier
             .fillMaxWidth()

@@ -1,7 +1,6 @@
 package com.example.aquariumcontroller.feed.history
 
 import android.util.Log
-import com.example.aquariumcontroller.balling.history.FeedHistoryEvent
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
