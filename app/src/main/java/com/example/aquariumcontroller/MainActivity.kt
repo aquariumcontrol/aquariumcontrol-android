@@ -22,6 +22,7 @@ import com.example.aquariumcontroller.controller.ControllerEditScreen
 import com.example.aquariumcontroller.controller.ControllerProfileDatabase
 import com.example.aquariumcontroller.controller.ControllerSelectionScreen
 import com.example.aquariumcontroller.controller.ControllerViewModel
+import com.example.aquariumcontroller.feed.FeedScreen
 import com.example.aquariumcontroller.overview.OverviewScreen
 import com.example.aquariumcontroller.refill.RefillScreen
 import com.example.aquariumcontroller.refill.history.RefillHistoryScreen
