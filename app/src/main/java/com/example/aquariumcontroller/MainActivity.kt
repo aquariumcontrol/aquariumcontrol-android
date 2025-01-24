@@ -17,6 +17,7 @@ import androidx.room.Room
 import com.example.aquariumcontroller.balling.BallingScreen
 import com.example.aquariumcontroller.balling.edit.BallingProfileEditScreen
 import com.example.aquariumcontroller.balling.history.BallingHistoryScreen
+import com.example.aquariumcontroller.balling.history.FeedHistoryScreen
 import com.example.aquariumcontroller.controller.ControllerAddScreen
 import com.example.aquariumcontroller.controller.ControllerEditScreen
 import com.example.aquariumcontroller.controller.ControllerProfileDatabase
@@ -97,6 +98,20 @@ class MainActivity : ComponentActivity() {
                     composable(ViewNavigationRoutes.feed) {
                         FeedScreen(
                             navHostController = navHostController,
+                            mainViewModel = mainViewModel
+                        )
+                    }
+                    composable(ViewNavigationRoutes.feedHistory24h) {
+                        FeedHistoryScreen(
+                            navHostController = navHostController,
+                            showFullWeek = false,
+                            mainViewModel = mainViewModel
+                        )
+                    }
+                    composable(ViewNavigationRoutes.feedHistory7d) {
+                        FeedHistoryScreen(
+                            navHostController = navHostController,
+                            showFullWeek = true,
                             mainViewModel = mainViewModel
                         )
                     }
