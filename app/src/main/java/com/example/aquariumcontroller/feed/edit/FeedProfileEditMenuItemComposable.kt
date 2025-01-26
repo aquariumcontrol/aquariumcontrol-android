@@ -1,5 +1,6 @@
 package com.example.aquariumcontroller.feed.edit
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,34 +12,74 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.aquariumcontroller.NumericDoubleOutlinedTextFieldComposable
+import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
-fun FeedProfileEditMenuItemComposable(item: FeedProfileEditMenuItem) {
+fun FeedProfileEditMenuItemComposable(feedProfileEditMenuItem: FeedProfileEditMenuItem,
+                                      feedProfileEditViewModel: FeedProfileEditViewModel? = null) {
     Row(
         modifier = Modifier
             .clickable {
-                if (item.children.isNotEmpty()) {
-                    item.isExpanded.value = !item.isExpanded.value
+                if (feedProfileEditMenuItem.children.isNotEmpty()) {
+                    feedProfileEditMenuItem.isExpanded.value = !feedProfileEditMenuItem.isExpanded.value
                 }
             }
-            .padding(start = (item.level * 16).dp, top = 8.dp, bottom = 8.dp), // Indentation        verticalAlignment = Alignment.CenterVertically
+            .padding(start = (feedProfileEditMenuItem.level * 16).dp, top = 8.dp, bottom = 8.dp), // Indentation        verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(item.text)
+        Text(feedProfileEditMenuItem.text, Modifier.padding(top = 8.dp))
         Spacer(Modifier.weight(1f))
-        if (item.children.isNotEmpty()) {
+        if (feedProfileEditMenuItem.children.isNotEmpty() && !feedProfileEditMenuItem.isExpanded.value) {
             // Icon to indicate expandability
             Icon(imageVector = Icons.Default.MoreVert, contentDescription = "More options")
         }
-        if (item.isToggleButton) {
-            Switch(checked = item.isChecked.value, onCheckedChange = { item.isChecked.value = it })
+        if (feedProfileEditMenuItem.isToggleButton) {
+            Switch(
+                checked = feedProfileEditMenuItem.isChecked.value,
+                onCheckedChange = {
+                    feedProfileEditMenuItem.isChecked.value = it
+                    if (feedProfileEditViewModel != null) {
+                        when (feedProfileEditMenuItem.toggleButtonType) {
+                            FeedProfileEditToggleButtonType.Skimmer -> {
+                                feedProfileEditViewModel.updateSkimmer(feedProfileEditMenuItem.id, it)
+                            }
+                            FeedProfileEditToggleButtonType.MainPump1 -> {
+                                feedProfileEditViewModel.updateMainPump1(feedProfileEditMenuItem.id, it)
+                            }
+                            FeedProfileEditToggleButtonType.MainPump2 -> {
+                                feedProfileEditViewModel.updateMainPump2(feedProfileEditMenuItem.id, it)
+                            }
+                            FeedProfileEditToggleButtonType.AuxPump1 -> {
+                                feedProfileEditViewModel.updateAuxPump1(feedProfileEditMenuItem.id, it)
+                            }
+                            FeedProfileEditToggleButtonType.AuxPump2 -> {
+                                feedProfileEditViewModel.updateAuxPump2(feedProfileEditMenuItem.id, it)
+                            }
+                            null -> { /* do nothing */ }
+                        }
+                    }
+                })
+        }
+        if (feedProfileEditMenuItem.isNumericInput) {
+            // Numeric input field
+            NumericDoubleOutlinedTextFieldComposable(
+                value = feedProfileEditMenuItem.inputValue.value,
+                onValueChange = {
+                    Log.d("FeedProfileEditMenuItemComposable", "onValueChange called with value: $it")
+                },
+                label = stringResource(id = R.string.DurationInSeconds),
+                modifier = Modifier
+                    .padding(top = 16.dp)
+            )
         }
     }
-    if (item.isExpanded.value) {
+    if (feedProfileEditMenuItem.isExpanded.value) {
         FeedProfileEditMenuComposable(
-            feedProfileEditMenuItems = item.children
+            feedProfileEditMenuItems = feedProfileEditMenuItem.children
         )
     }
 }
@@ -64,6 +105,8 @@ fun FeedProfileEditMenuItemPreviewComposable() {
     )
 
     AquariumControllerTheme {
-        FeedProfileEditMenuItemComposable(mockFeedProfileEditMenuItem2)
+        FeedProfileEditMenuItemComposable(
+            feedProfileEditMenuItem = mockFeedProfileEditMenuItem2
+        )
     }
 }

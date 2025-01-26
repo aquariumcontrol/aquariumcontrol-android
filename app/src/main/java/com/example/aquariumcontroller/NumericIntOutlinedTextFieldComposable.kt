@@ -11,7 +11,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.Modifier
 
 @Composable
-fun NumericOutlinedTextFieldComposable(
+fun NumericIntOutlinedTextFieldComposable(
     value: Int,
     onValueChange: (String) -> Unit,
     label: String,
@@ -24,9 +24,9 @@ fun NumericOutlinedTextFieldComposable(
     OutlinedTextField(
         value = textFieldValueState,
         onValueChange = { newTextFieldValue ->
-            val numericValue = newTextFieldValue.text.filter { it.isDigit() }
-            textFieldValueState = newTextFieldValue.copy(text = numericValue)
-            onValueChange(numericValue)
+            val newValue = newTextFieldValue.text.filter { it.isDigit() }
+            textFieldValueState = newTextFieldValue.copy(text = newValue)
+            onValueChange(newValue)
         },
         label = { Text(label) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),

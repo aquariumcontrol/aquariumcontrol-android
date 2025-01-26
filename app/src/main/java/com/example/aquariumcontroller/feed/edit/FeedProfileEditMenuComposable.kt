@@ -11,11 +11,12 @@ import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
 fun FeedProfileEditMenuComposable(
-    feedProfileEditMenuItems: List<FeedProfileEditMenuItem>) {
+    feedProfileEditMenuItems: List<FeedProfileEditMenuItem>,
+    feedProfileEditViewModel: FeedProfileEditViewModel? = null) {
 
     LazyColumn(modifier = Modifier.heightIn(max = 20000.dp)) {
         items(feedProfileEditMenuItems) { item ->
-            FeedProfileEditMenuItemComposable(item)
+            FeedProfileEditMenuItemComposable(item, feedProfileEditViewModel)
         }
     }
 }
