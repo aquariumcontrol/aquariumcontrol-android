@@ -1,5 +1,6 @@
 package com.example.aquariumcontroller
 
+import FeedProfileEditScreen
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -113,6 +114,13 @@ class MainActivity : ComponentActivity() {
                             navHostController = navHostController,
                             showFullWeek = true,
                             mainViewModel = mainViewModel
+                        )
+                    }
+                    composable(ViewNavigationRoutes.feedEdit) {
+                        FeedProfileEditScreen(
+                            navHostController = navHostController,
+                            mainViewModel = mainViewModel,
+                            feedProfile = mainViewModel.getMySelectedFeedProfile()!!
                         )
                     }
                     composable(ViewNavigationRoutes.balling) {

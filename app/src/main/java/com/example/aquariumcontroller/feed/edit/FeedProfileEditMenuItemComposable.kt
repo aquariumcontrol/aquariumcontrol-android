@@ -10,7 +10,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,8 +24,7 @@ fun FeedProfileEditMenuItemComposable(item: FeedProfileEditMenuItem) {
                     item.isExpanded.value = !item.isExpanded.value
                 }
             }
-            .padding(8.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(start = (item.level * 16).dp, top = 8.dp, bottom = 8.dp), // Indentation        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(item.text)
         Spacer(Modifier.weight(1f))
@@ -39,7 +37,9 @@ fun FeedProfileEditMenuItemComposable(item: FeedProfileEditMenuItem) {
         }
     }
     if (item.isExpanded.value) {
-        FeedProfileEditMenuComposable(items = item.children)
+        FeedProfileEditMenuComposable(
+            feedProfileEditMenuItems = item.children
+        )
     }
 }
 
@@ -49,6 +49,7 @@ fun FeedProfileEditMenuItemPreviewComposable() {
 
     val mockFeedProfileEditMenuItem1 = FeedProfileEditMenuItem(
         id = 1,
+        level = 1,
         text = "Preview",
         isToggleButton = true,
         children = emptyList(),
@@ -56,6 +57,7 @@ fun FeedProfileEditMenuItemPreviewComposable() {
 
     val mockFeedProfileEditMenuItem2 = FeedProfileEditMenuItem(
         id = 1,
+        level = 2,
         text = "Preview",
         isToggleButton = true,
         children = listOf(mockFeedProfileEditMenuItem1),

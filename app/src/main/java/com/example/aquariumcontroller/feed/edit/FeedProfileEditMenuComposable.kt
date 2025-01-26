@@ -10,9 +10,11 @@ import androidx.compose.ui.unit.dp
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
-fun FeedProfileEditMenuComposable(items: List<FeedProfileEditMenuItem>) {
+fun FeedProfileEditMenuComposable(
+    feedProfileEditMenuItems: List<FeedProfileEditMenuItem>) {
+
     LazyColumn(modifier = Modifier.heightIn(max = 20000.dp)) {
-        items(items) { item ->
+        items(feedProfileEditMenuItems) { item ->
             FeedProfileEditMenuItemComposable(item)
         }
     }
@@ -24,30 +26,35 @@ fun FeedProfileEditMenuPreviewComposable() {
 
     val mockFeedProfileEditMenuItemSkimmer = FeedProfileEditMenuItem(
         id = 1,
+        level = 3,
         text = "Skimmer",
         isToggleButton = true,
         children = emptyList(),
     )
     val mockFeedProfileEditMenuItemMainPump1 = FeedProfileEditMenuItem(
         id = 2,
+        level = 3,
         text = "Main pump 1",
         isToggleButton = true,
         children = emptyList(),
     )
     val mockFeedProfileEditMenuItemMainPump2 = FeedProfileEditMenuItem(
         id = 3,
+        level = 3,
         text = "Main pump 2",
         isToggleButton = true,
         children = emptyList(),
     )
     val mockFeedProfileEditMenuItemAuxPump1 = FeedProfileEditMenuItem(
         id = 4,
+        level = 3,
         text = "Aux. pump 1",
         isToggleButton = true,
         children = emptyList(),
     )
     val mockFeedProfileEditMenuItemAuxPump2 = FeedProfileEditMenuItem(
         id = 5,
+        level = 3,
         text = "Aux. pump 2",
         isToggleButton = true,
         children = emptyList(),
@@ -55,6 +62,7 @@ fun FeedProfileEditMenuPreviewComposable() {
 
     val mockFeedProfileEditMenuItemPause = FeedProfileEditMenuItem(
         id = 6,
+        level = 2,
         text = "Pause",
         isToggleButton = false,
         children = listOf(
@@ -68,6 +76,7 @@ fun FeedProfileEditMenuPreviewComposable() {
 
     val mockFeedProfileEditMenuItemFeed = FeedProfileEditMenuItem(
         id = 7,
+        level = 2,
         text = "Feed",
         isToggleButton = false,
         children = listOf(
@@ -81,6 +90,7 @@ fun FeedProfileEditMenuPreviewComposable() {
 
     val mockFeedProfileEditMenuItemPhase1 = FeedProfileEditMenuItem(
         id = 8,
+        level = 1,
         text = "Phase 1",
         isToggleButton = false,
         children = listOf(
@@ -91,6 +101,7 @@ fun FeedProfileEditMenuPreviewComposable() {
 
     val mockFeedProfileEditMenuItemPhase2 = FeedProfileEditMenuItem(
         id = 8,
+        level = 1,
         text = "Phase 2",
         isToggleButton = false,
         children = listOf(

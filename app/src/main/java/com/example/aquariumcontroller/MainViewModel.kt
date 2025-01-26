@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.aquariumcontroller.balling.BallingProfile
 import com.example.aquariumcontroller.controller.ControllerProfile
+import com.example.aquariumcontroller.feed.FeedProfile
 
 class MainViewModel: ViewModel() {
     fun updateSelectedControllerProfile(controllerProfile: ControllerProfile) {
@@ -49,4 +50,14 @@ class MainViewModel: ViewModel() {
     }
 
     private var selectedBallingProfile: BallingProfile? by mutableStateOf(null)
+
+    fun getMySelectedFeedProfile(): FeedProfile? {
+        return selectedFeedProfile
+    }
+
+    fun updateSelectedFeedProfile(feedProfile: FeedProfile) {
+        selectedFeedProfile = feedProfile
+    }
+
+    private var selectedFeedProfile: FeedProfile? by mutableStateOf(null)
 }

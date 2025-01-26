@@ -3,7 +3,7 @@ package com.example.aquariumcontroller.feed
 class FeedProfile(feedProfileImport: FeedProfileImport) {
     var profileID: Int = 0
     var profileName: String = ""
-    private var feedProfilePhases: List<FeedProfilePhase> = listOf()
+    public var feedProfilePhases: List<FeedProfilePhase> = listOf()
 
     init {
         this.profileID = feedProfileImport.profileId

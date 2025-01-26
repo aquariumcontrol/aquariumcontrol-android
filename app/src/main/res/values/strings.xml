@@ -37,4 +37,7 @@
     <string name="ViewFeedEvents7d">View feed events of last 7 days</string>
     <string name="FeedEventsLast7Days">Feed events of the last 7 days</string>
     <string name="FeedEventsLast24h">Feed events of last 24h</string>
+    <string name="FeedProfileEditing">Feed profile editing</string>
+    <string name="UpdateFeedProfile">Update feed profile</string>
+    <string name="DeleteFeedProfile">Delete feed profile</string>
 </resources>

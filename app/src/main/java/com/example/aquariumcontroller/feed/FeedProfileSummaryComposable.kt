@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.MainViewModel
+import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
@@ -41,10 +42,8 @@ fun FeedProfileSummaryComposable(
             .padding(8.dp)
             .clickable {
                 Log.d("FeedProfileSummaryScreen", "Clicked on {${feedProfile.profileName}}")
-                // todo: add view model functionality
-                // mainViewModel?.updateSelectedFeedProfile(FeedProfile)
-                // todo: add navigation
-                // navHostController?.navigate(ViewNavigationRoutes.FeedEdit)
+                mainViewModel?.updateSelectedFeedProfile(feedProfile)
+                navHostController?.navigate(ViewNavigationRoutes.feedEdit)
             }
     ) {
         Column(
