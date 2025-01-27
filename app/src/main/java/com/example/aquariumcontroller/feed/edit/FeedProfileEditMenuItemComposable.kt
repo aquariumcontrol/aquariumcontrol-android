@@ -74,12 +74,17 @@ fun FeedProfileEditMenuItemComposable(feedProfileEditMenuItem: FeedProfileEditMe
             // Numeric input field
             NumericDoubleOutlinedTextFieldComposable(
                 value = feedProfileEditMenuItem.inputValue.value,
-                onValueChange = {
+                onValueChange = { newStringValue ->
+                    val newNumericValue = newStringValue.toDouble()
                     if (feedProfileEditViewModel == null) {
                         Log.d("FeedProfileEditMenuItemComposable", "no view model available")
                     }
+                    else {
+                        Log.d("FeedProfileEditMenuItemComposable", "setting model to $newNumericValue")
+                    }
+                    feedProfileEditMenuItem.inputValue.value = newStringValue.toDouble()
                     feedProfileEditViewModel?.updatePhaseDuration(
-                        feedProfileEditMenuItem.id, feedProfileEditMenuItem.inputValue.value
+                        feedProfileEditMenuItem.id, newNumericValue
                     )
                 },
                 label = stringResource(id = R.string.DurationInSeconds),

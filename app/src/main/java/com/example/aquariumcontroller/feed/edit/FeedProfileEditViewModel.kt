@@ -181,7 +181,7 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
     }
 
     fun updatePhaseDuration(phaseIndex: Int, newDuration: Double) {
-        Log.d("FeedProfileEditViewModel", "Updating phase duration: $phaseIndex to $newDuration")
+        Log.d("FeedProfileEditViewModel", "Updating phase($phaseIndex) duration to $newDuration")
         myFeedProfile.feedProfilePhases[phaseIndex].duration = newDuration
     }
 
