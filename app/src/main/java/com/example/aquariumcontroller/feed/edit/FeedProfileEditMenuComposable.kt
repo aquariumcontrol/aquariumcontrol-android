@@ -1,5 +1,6 @@
 package com.example.aquariumcontroller.feed.edit
 
+import android.util.Log
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,6 +15,12 @@ fun FeedProfileEditMenuComposable(
     feedProfileEditMenuItems: List<FeedProfileEditMenuItem>,
     feedProfileEditViewModel: FeedProfileEditViewModel? = null) {
 
+    if (feedProfileEditViewModel == null) {
+        Log.d("FeedProfileEditMenuComposable", "no view model available")
+    }
+    else {
+        Log.d("FeedProfileEditMenuComposable", "called with view model ")
+    }
     LazyColumn(modifier = Modifier.heightIn(max = 20000.dp)) {
         items(feedProfileEditMenuItems) { item ->
             FeedProfileEditMenuItemComposable(item, feedProfileEditViewModel)

@@ -1,5 +1,6 @@
 package com.example.aquariumcontroller.feed.edit
 
+import android.util.Log
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -180,6 +181,7 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
     }
 
     fun updatePhaseDuration(phaseIndex: Int, newDuration: Double) {
+        Log.d("FeedProfileEditViewModel", "Updating phase duration: $phaseIndex to $newDuration")
         myFeedProfile.feedProfilePhases[phaseIndex].duration = newDuration
     }
 

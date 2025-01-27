@@ -1,3 +1,4 @@
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -90,7 +91,10 @@ fun FeedProfileEditScreen(
                         fontSize = 16.sp
                     )
                 }
-                FeedProfileEditMenuComposable(feedProfileEditViewModel.phaseMenuItems)
+                FeedProfileEditMenuComposable(
+                    feedProfileEditMenuItems = feedProfileEditViewModel.phaseMenuItems,
+                    feedProfileEditViewModel = feedProfileEditViewModel
+                )
             }
         }
     }

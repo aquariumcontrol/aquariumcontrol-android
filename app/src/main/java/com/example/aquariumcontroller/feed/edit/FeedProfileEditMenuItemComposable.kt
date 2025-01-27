@@ -22,6 +22,12 @@ import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 @Composable
 fun FeedProfileEditMenuItemComposable(feedProfileEditMenuItem: FeedProfileEditMenuItem,
                                       feedProfileEditViewModel: FeedProfileEditViewModel? = null) {
+    if (feedProfileEditViewModel == null) {
+        Log.d("FeedProfileEditMenuItemComposable", "called without view model")
+    }
+    else {
+        Log.d("FeedProfileEditMenuItemComposable", "called with view model")
+    }
     Row(
         modifier = Modifier
             .clickable {
@@ -69,7 +75,12 @@ fun FeedProfileEditMenuItemComposable(feedProfileEditMenuItem: FeedProfileEditMe
             NumericDoubleOutlinedTextFieldComposable(
                 value = feedProfileEditMenuItem.inputValue.value,
                 onValueChange = {
-                    Log.d("FeedProfileEditMenuItemComposable", "onValueChange called with value: $it")
+                    if (feedProfileEditViewModel == null) {
+                        Log.d("FeedProfileEditMenuItemComposable", "no view model available")
+                    }
+                    feedProfileEditViewModel?.updatePhaseDuration(
+                        feedProfileEditMenuItem.id, feedProfileEditMenuItem.inputValue.value
+                    )
                 },
                 label = stringResource(id = R.string.DurationInSeconds),
                 modifier = Modifier
@@ -79,7 +90,9 @@ fun FeedProfileEditMenuItemComposable(feedProfileEditMenuItem: FeedProfileEditMe
     }
     if (feedProfileEditMenuItem.isExpanded.value) {
         FeedProfileEditMenuComposable(
-            feedProfileEditMenuItems = feedProfileEditMenuItem.children
+            feedProfileEditMenuItems = feedProfileEditMenuItem.children,
+            feedProfileEditViewModel = feedProfileEditViewModel
+
         )
     }
 }
