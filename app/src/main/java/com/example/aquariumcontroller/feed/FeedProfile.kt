@@ -4,6 +4,7 @@ class FeedProfile(feedProfileImport: FeedProfileImport) {
     var profileID: Int = 0
     var profileName: String = ""
     public var feedProfilePhases: List<FeedProfilePhase> = listOf()
+    private var feedProfilePhasesBackup: List<FeedProfilePhase> = listOf()
 
     init {
         this.profileID = feedProfileImport.profileId
@@ -251,5 +252,32 @@ class FeedProfile(feedProfileImport: FeedProfileImport) {
             pause10,
             feed10
         )
+
+        this.feedProfilePhasesBackup = listOf(
+            pause01,
+            feed01,
+            pause02,
+            feed02,
+            pause03,
+            feed03,
+            pause04,
+            feed04,
+            pause05,
+            feed05,
+            pause06,
+            feed06,
+            pause07,
+            feed07,
+            pause08,
+            feed08,
+            pause09,
+            feed09,
+            pause10,
+            feed10
+        )
+    }
+
+    public fun resetFeedProfile() {
+        feedProfilePhases = feedProfilePhasesBackup.toMutableList()
     }
 }

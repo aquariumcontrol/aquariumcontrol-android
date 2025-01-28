@@ -118,9 +118,9 @@ fun FeedProfileEditMenuPreviewComposable() {
         ),
     )
 
-    mockFeedProfileEditMenuItemPhase1.isExpanded.value = true
-    mockFeedProfileEditMenuItemPhase2.isExpanded.value = true
-    mockFeedProfileEditMenuItemPause.isExpanded.value = true
+    mockFeedProfileEditMenuItemPhase1.updateIsExpanded(true)
+    mockFeedProfileEditMenuItemPhase2.updateIsExpanded(true)
+    mockFeedProfileEditMenuItemPause.updateIsExpanded(true)
 
     AquariumControllerTheme {
         FeedProfileEditMenuComposable(

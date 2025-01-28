@@ -69,11 +69,23 @@ fun FeedProfileEditScreen(
                         .padding(horizontal = 8.dp),
                     onClick = {
                         // todo: add update feed profile functionality
-                        navHostController?.navigate(ViewNavigationRoutes.feed)
                     },
                 ) {
                     Text(
                         text = stringResource(id = R.string.UpdateFeedProfile),
+                        fontSize = 16.sp
+                    )
+                }
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
+                    onClick = {
+                        feedProfileEditViewModel.resetFeedProfile()
+                    },
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.ResetFeedProfile),
                         fontSize = 16.sp
                     )
                 }

@@ -41,4 +41,6 @@
     <string name="UpdateFeedProfile">Update feed profile</string>
     <string name="DeleteFeedProfile">Delete feed profile</string>
     <string name="DurationInSeconds">Duration in seconds</string>
+    <string name="ReloadFeedProfile">Reload feed profile</string>
+    <string name="ResetFeedProfile">Reset changes to feed profile</string>
 </resources>
