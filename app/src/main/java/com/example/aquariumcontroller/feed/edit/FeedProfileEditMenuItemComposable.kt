@@ -11,9 +11,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,7 +45,7 @@ fun FeedProfileEditMenuItemComposable(feedProfileEditMenuItem: FeedProfileEditMe
         }
         if (feedProfileEditMenuItem.isToggleButton) {
             Switch(
-                checked = feedProfileEditMenuItem.isChecked.value!!,
+                checked = feedProfileEditMenuItem.isChecked.value,
                 onCheckedChange = {
                     feedProfileEditMenuItem.updateIsChecked(it)
                     if (feedProfileEditViewModel != null) {
@@ -76,19 +73,15 @@ fun FeedProfileEditMenuItemComposable(feedProfileEditMenuItem: FeedProfileEditMe
         if (feedProfileEditMenuItem.isNumericInput) {
             // Numeric input field
             NumericDoubleOutlinedTextFieldComposable(
-                value = feedProfileEditMenuItem.inputValue.value!!,
+                value = feedProfileEditMenuItem.inputValue.value,
                 onValueChange = { newStringValue ->
-                    val newNumericValue = newStringValue.toDouble()
-                    if (feedProfileEditViewModel == null) {
-                        Log.d("FeedProfileEditMenuItemComposable", "no view model available")
+                    if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
+                        val newNumericValue = newStringValue.toDouble()
+                        feedProfileEditMenuItem.updateInputValue(newValue = newNumericValue)
+                        feedProfileEditViewModel?.updatePhaseDuration(
+                            feedProfileEditMenuItem.id, newNumericValue
+                        )
                     }
-                    else {
-                        Log.d("FeedProfileEditMenuItemComposable", "setting model to $newNumericValue")
-                    }
-                    feedProfileEditMenuItem.updateInputValue(newValue = newStringValue.toDouble())
-                    feedProfileEditViewModel?.updatePhaseDuration(
-                        feedProfileEditMenuItem.id, newNumericValue
-                    )
                 },
                 label = stringResource(id = R.string.DurationInSeconds),
                 modifier = Modifier

@@ -29,7 +29,7 @@ fun FeedProfileSummaryComposable(
     feedProfile: FeedProfile
 ) {
     // This composable displays one Feed dosing profile.
-    // When the user clicks on the profile, the FeedProfileEditScreen is displayed.
+    // When the user clicks on the profile, the com.example.aquariumcontroller.feed.edit.FeedProfileEditScreen is displayed.
     Row(
         modifier = Modifier
             .fillMaxWidth()

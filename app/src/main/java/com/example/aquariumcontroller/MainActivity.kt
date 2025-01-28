@@ -1,6 +1,6 @@
 package com.example.aquariumcontroller
 
-import FeedProfileEditScreen
+import com.example.aquariumcontroller.feed.edit.FeedProfileEditScreen
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity

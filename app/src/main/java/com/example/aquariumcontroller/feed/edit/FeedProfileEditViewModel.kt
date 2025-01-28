@@ -3,7 +3,6 @@ package com.example.aquariumcontroller.feed.edit
 import android.util.Log
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.aquariumcontroller.feed.FeedProfile
 
@@ -23,6 +22,7 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
                         for (value3 in value2.children) {
                             when (value3.toggleButtonType) {
                                 FeedProfileEditToggleButtonType.Skimmer -> {
+                                    Log.d("FeedProfileEditViewModel", "setting value3.updateIsChecked(${myFeedProfile.feedProfilePhases[index * 2].skimmer})")
                                     value3.updateIsChecked(
                                         myFeedProfile.feedProfilePhases[index * 2].skimmer
                                     )
