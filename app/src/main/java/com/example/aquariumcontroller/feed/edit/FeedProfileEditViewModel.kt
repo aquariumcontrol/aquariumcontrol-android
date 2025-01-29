@@ -56,7 +56,7 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
                                     value3.updateInputValue(
                                         myFeedProfile.feedProfilePhases[index * 2].duration
                                     )
-                                    Log.d("FeedProfileEditViewModel", "setting myFeedProfile.feedProfilePhases[${index * 2}].duration = ${value3.inputValue.value}")
+                                    Log.d("FeedProfileEditViewModel", "setting myFeedProfile.feedProfilePhases[${index * 2}].duration = ${myFeedProfile.feedProfilePhases[index * 2].duration}")
                                 }
                             }
                         }
@@ -97,9 +97,9 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
 
                                 null -> {
                                     value3.updateInputValue(
-                                        myFeedProfile.feedProfilePhases[index * 2].duration
+                                        myFeedProfile.feedProfilePhases[index * 2 + 1].duration
                                     )
-                                    Log.d("FeedProfileEditViewModel", "setting myFeedProfile.feedProfilePhases[${index * 2 + 1}].duration = ${value3.inputValue.value}")
+                                    Log.d("FeedProfileEditViewModel", "setting myFeedProfile.feedProfilePhases[${index * 2 + 1}].duration = ${myFeedProfile.feedProfilePhases[index * 2 + 1].duration}")
                                 }
                             }
                         }
@@ -286,7 +286,6 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
         }
     }
 
-
     fun updatePhaseDuration(phaseIndex: Int, newDuration: Double) {
         Log.d("FeedProfileEditViewModel", "Updating phase($phaseIndex) duration to $newDuration")
         myFeedProfile.feedProfilePhases[phaseIndex].duration = newDuration
@@ -313,8 +312,7 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
     }
 
     fun resetFeedProfile() {
-        myFeedProfile.resetFeedProfile()
-        this.phaseMenuItems = createFeedProfileEditMenuItems()
+        myFeedProfile.reset()
         resetFeedProfileEditMenuItems()
     }
 }

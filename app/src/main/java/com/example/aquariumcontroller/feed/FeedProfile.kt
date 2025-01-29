@@ -254,30 +254,32 @@ class FeedProfile(feedProfileImport: FeedProfileImport) {
         )
 
         this.feedProfilePhasesBackup = listOf(
-            pause01,
-            feed01,
-            pause02,
-            feed02,
-            pause03,
-            feed03,
-            pause04,
-            feed04,
-            pause05,
-            feed05,
-            pause06,
-            feed06,
-            pause07,
-            feed07,
-            pause08,
-            feed08,
-            pause09,
-            feed09,
-            pause10,
-            feed10
+            pause01.copy(),
+            feed01.copy(),
+            pause02.copy(),
+            feed02.copy(),
+            pause03.copy(),
+            feed03.copy(),
+            pause04.copy(),
+            feed04.copy(),
+            pause05.copy(),
+            feed05.copy(),
+            pause06.copy(),
+            feed06.copy(),
+            pause07.copy(),
+            feed07.copy(),
+            pause08.copy(),
+            feed08.copy(),
+            pause09.copy(),
+            feed09.copy(),
+            pause10.copy(),
+            feed10.copy()
         )
     }
 
-    public fun resetFeedProfile() {
-        feedProfilePhases = feedProfilePhasesBackup.toMutableList()
+    fun reset() {
+        feedProfilePhases.zip(feedProfilePhasesBackup).forEach { (original, backup) ->
+            original.overwriteWith(backup)
+        }
     }
 }

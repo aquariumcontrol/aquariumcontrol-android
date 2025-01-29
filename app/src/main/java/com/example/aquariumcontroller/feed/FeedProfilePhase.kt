@@ -29,4 +29,15 @@ data class FeedProfilePhase(
         this.isPause = isPause
         this.idx = idx
     }
+
+    fun overwriteWith(otherPhase: FeedProfilePhase) {
+        this.duration = otherPhase.duration
+        this.skimmer = otherPhase.skimmer
+        this.mainPump1 = otherPhase.mainPump1
+        this.mainPump2 = otherPhase.mainPump2
+        this.auxPump1 = otherPhase.auxPump1
+        this.auxPump2 = otherPhase.auxPump2
+        this.isPause = otherPhase.isPause
+        this.idx = otherPhase.idx
+    }
 }
