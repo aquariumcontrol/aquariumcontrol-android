@@ -290,18 +290,24 @@ class FeedProfile(feedProfileImport: FeedProfileImport) {
         // This function copies the content from the main data structure to the backup
         // data structure. It is called after the user requested update of the feed profile to
         // the controller.
-        feedProfilePhases.zip(feedProfilePhasesBackup).forEach { (backup, original) ->
+        feedProfilePhasesBackup.zip(feedProfilePhases).forEach { (backup, original) ->
             backup.overwriteWith(original)
         }
     }
 
     fun getFeedProfileApiCallParameters(): Map<String, String> {
+        // This function iterates over the feed profile phases and adds all the parameters to the
+        // map which is then used to form the GET part of the API call
         val myMap = mutableMapOf<String, String>()
         for ((idx, feedProfilePhase) in feedProfilePhases.withIndex()) {
             myMap += feedProfilePhase.getFeedProfilePhaseApiCallParameters(
-                (idx.toFloat() / 2.0).toInt())
+                (idx.toFloat() / 2.0).toInt()
+            )
         }
-        myMap += mapOf(ApiParams.PROFILE_NAME to this.profileName, ApiParams.PROFILE_ID to this.profileID.toString())
+        myMap += mapOf(
+            ApiParams.PROFILE_NAME to this.profileName,
+            ApiParams.PROFILE_ID to this.profileID.toString()
+        )
         return myMap
     }
 }
