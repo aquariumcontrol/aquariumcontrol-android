@@ -1,14 +1,14 @@
 package com.example.aquariumcontroller.feed
 
+import com.example.aquariumcontroller.ApiParams
+
 class FeedProfile(feedProfileImport: FeedProfileImport) {
-    var profileID: Int = 0
-    var profileName: String = ""
-    public var feedProfilePhases: List<FeedProfilePhase> = listOf()
+    val profileID: Int = feedProfileImport.profileId
+    val profileName: String = feedProfileImport.profileName
+    var feedProfilePhases: List<FeedProfilePhase> = listOf()
     private var feedProfilePhasesBackup: List<FeedProfilePhase> = listOf()
 
     init {
-        this.profileID = feedProfileImport.profileId
-        this.profileName = feedProfileImport.profileName
 
         // Phase #1
         val pause01 = FeedProfilePhase(
@@ -278,8 +278,30 @@ class FeedProfile(feedProfileImport: FeedProfileImport) {
     }
 
     fun reset() {
+        // This function copies the content from the backup data structure to
+        // the data structure actively used for display, editing and subsequent communication
+        // to the controller.
         feedProfilePhases.zip(feedProfilePhasesBackup).forEach { (original, backup) ->
             original.overwriteWith(backup)
         }
+    }
+
+    fun update() {
+        // This function copies the content from the main data structure to the backup
+        // data structure. It is called after the user requested update of the feed profile to
+        // the controller.
+        feedProfilePhases.zip(feedProfilePhasesBackup).forEach { (backup, original) ->
+            backup.overwriteWith(original)
+        }
+    }
+
+    fun getFeedProfileApiCallParameters(): Map<String, String> {
+        val myMap = mutableMapOf<String, String>()
+        for ((idx, feedProfilePhase) in feedProfilePhases.withIndex()) {
+            myMap += feedProfilePhase.getFeedProfilePhaseApiCallParameters(
+                (idx.toFloat() / 2.0).toInt())
+        }
+        myMap += mapOf(ApiParams.PROFILE_NAME to this.profileName, ApiParams.PROFILE_ID to this.profileID.toString())
+        return myMap
     }
 }

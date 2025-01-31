@@ -14,105 +14,6 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
         phaseMenuItems = createFeedProfileEditMenuItems()
     }
 
-    private fun resetFeedProfileEditMenuItems() {
-        for ((index, value) in phaseMenuItems.withIndex()) {
-            for (value2 in value.children) {
-                when (value2.phaseType) {
-                    FeedProfileEditPhaseType.PAUSE -> {
-                        for (value3 in value2.children) {
-                            when (value3.toggleButtonType) {
-                                FeedProfileEditToggleButtonType.Skimmer -> {
-                                    Log.d("FeedProfileEditViewModel", "setting value3.updateIsChecked(${myFeedProfile.feedProfilePhases[index * 2].skimmer})")
-                                    value3.updateIsChecked(
-                                        myFeedProfile.feedProfilePhases[index * 2].skimmer
-                                    )
-                                }
-
-                                FeedProfileEditToggleButtonType.MainPump1 -> {
-                                    value3.updateIsChecked(
-                                        myFeedProfile.feedProfilePhases[index * 2].mainPump1
-                                    )
-                                }
-
-                                FeedProfileEditToggleButtonType.MainPump2 -> {
-                                    value3.updateIsChecked(
-                                        myFeedProfile.feedProfilePhases[index * 2].mainPump2
-                                    )
-                                }
-
-                                FeedProfileEditToggleButtonType.AuxPump1 -> {
-                                    value3.updateIsChecked(
-                                        myFeedProfile.feedProfilePhases[index * 2].auxPump1
-                                    )
-                                }
-
-                                FeedProfileEditToggleButtonType.AuxPump2 -> {
-                                    value3.updateIsChecked(
-                                        myFeedProfile.feedProfilePhases[index * 2].auxPump2
-                                    )
-                                }
-
-                                null -> {
-                                    value3.updateInputValue(
-                                        myFeedProfile.feedProfilePhases[index * 2].duration
-                                    )
-                                    Log.d("FeedProfileEditViewModel", "setting myFeedProfile.feedProfilePhases[${index * 2}].duration = ${myFeedProfile.feedProfilePhases[index * 2].duration}")
-                                }
-                            }
-                        }
-                    }
-
-                    FeedProfileEditPhaseType.FEED -> {
-                        for (value3 in value2.children) {
-                            when (value3.toggleButtonType) {
-                                FeedProfileEditToggleButtonType.Skimmer -> {
-                                    value3.updateIsChecked(
-                                        myFeedProfile.feedProfilePhases[index * 2 + 1].skimmer
-                                    )
-                                }
-
-                                FeedProfileEditToggleButtonType.MainPump1 -> {
-                                    value3.updateIsChecked(
-                                        myFeedProfile.feedProfilePhases[index * 2 + 1].mainPump1
-                                    )
-                                }
-
-                                FeedProfileEditToggleButtonType.MainPump2 -> {
-                                    value3.updateIsChecked(
-                                        myFeedProfile.feedProfilePhases[index * 2 + 1].mainPump2
-                                    )
-                                }
-
-                                FeedProfileEditToggleButtonType.AuxPump1 -> {
-                                    value3.updateIsChecked(
-                                        myFeedProfile.feedProfilePhases[index * 2 + 1].auxPump1
-                                    )
-                                }
-
-                                FeedProfileEditToggleButtonType.AuxPump2 -> {
-                                    value3.updateIsChecked(
-                                        myFeedProfile.feedProfilePhases[index * 2 + 1].auxPump2
-                                    )
-                                }
-
-                                null -> {
-                                    value3.updateInputValue(
-                                        myFeedProfile.feedProfilePhases[index * 2 + 1].duration
-                                    )
-                                    Log.d("FeedProfileEditViewModel", "setting myFeedProfile.feedProfilePhases[${index * 2 + 1}].duration = ${myFeedProfile.feedProfilePhases[index * 2 + 1].duration}")
-                                }
-                            }
-                        }
-                    }
-
-                    null -> {
-                        // do nothing
-                    }
-                }
-            }
-        }
-    }
-
     private fun createFeedProfileEditMenuItems(): List<FeedProfileEditMenuItem> {
         return List(10) { index ->
             FeedProfileEditMenuItem(
@@ -311,8 +212,115 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
         myFeedProfile.feedProfilePhases[phaseIndex].auxPump2 = newValue
     }
 
+    private fun resetFeedProfileEditMenuItems() {
+        for ((index, value) in phaseMenuItems.withIndex()) {
+            for (value2 in value.children) {
+                when (value2.phaseType) {
+                    FeedProfileEditPhaseType.PAUSE -> {
+                        for (value3 in value2.children) {
+                            when (value3.toggleButtonType) {
+                                FeedProfileEditToggleButtonType.Skimmer -> {
+                                    Log.d("FeedProfileEditViewModel", "setting value3.updateIsChecked(${myFeedProfile.feedProfilePhases[index * 2].skimmer})")
+                                    value3.updateIsChecked(
+                                        myFeedProfile.feedProfilePhases[index * 2].skimmer
+                                    )
+                                }
+
+                                FeedProfileEditToggleButtonType.MainPump1 -> {
+                                    value3.updateIsChecked(
+                                        myFeedProfile.feedProfilePhases[index * 2].mainPump1
+                                    )
+                                }
+
+                                FeedProfileEditToggleButtonType.MainPump2 -> {
+                                    value3.updateIsChecked(
+                                        myFeedProfile.feedProfilePhases[index * 2].mainPump2
+                                    )
+                                }
+
+                                FeedProfileEditToggleButtonType.AuxPump1 -> {
+                                    value3.updateIsChecked(
+                                        myFeedProfile.feedProfilePhases[index * 2].auxPump1
+                                    )
+                                }
+
+                                FeedProfileEditToggleButtonType.AuxPump2 -> {
+                                    value3.updateIsChecked(
+                                        myFeedProfile.feedProfilePhases[index * 2].auxPump2
+                                    )
+                                }
+
+                                null -> {
+                                    value3.updateInputValue(
+                                        myFeedProfile.feedProfilePhases[index * 2].duration
+                                    )
+                                    Log.d("FeedProfileEditViewModel", "setting myFeedProfile.feedProfilePhases[${index * 2}].duration = ${myFeedProfile.feedProfilePhases[index * 2].duration}")
+                                }
+                            }
+                        }
+                    }
+
+                    FeedProfileEditPhaseType.FEED -> {
+                        for (value3 in value2.children) {
+                            when (value3.toggleButtonType) {
+                                FeedProfileEditToggleButtonType.Skimmer -> {
+                                    value3.updateIsChecked(
+                                        myFeedProfile.feedProfilePhases[index * 2 + 1].skimmer
+                                    )
+                                }
+
+                                FeedProfileEditToggleButtonType.MainPump1 -> {
+                                    value3.updateIsChecked(
+                                        myFeedProfile.feedProfilePhases[index * 2 + 1].mainPump1
+                                    )
+                                }
+
+                                FeedProfileEditToggleButtonType.MainPump2 -> {
+                                    value3.updateIsChecked(
+                                        myFeedProfile.feedProfilePhases[index * 2 + 1].mainPump2
+                                    )
+                                }
+
+                                FeedProfileEditToggleButtonType.AuxPump1 -> {
+                                    value3.updateIsChecked(
+                                        myFeedProfile.feedProfilePhases[index * 2 + 1].auxPump1
+                                    )
+                                }
+
+                                FeedProfileEditToggleButtonType.AuxPump2 -> {
+                                    value3.updateIsChecked(
+                                        myFeedProfile.feedProfilePhases[index * 2 + 1].auxPump2
+                                    )
+                                }
+
+                                null -> {
+                                    value3.updateInputValue(
+                                        myFeedProfile.feedProfilePhases[index * 2 + 1].duration
+                                    )
+                                    Log.d("FeedProfileEditViewModel", "setting myFeedProfile.feedProfilePhases[${index * 2 + 1}].duration = ${myFeedProfile.feedProfilePhases[index * 2 + 1].duration}")
+                                }
+                            }
+                        }
+                    }
+
+                    null -> {
+                        // do nothing
+                    }
+                }
+            }
+        }
+    }
+
     fun resetFeedProfile() {
-        myFeedProfile.reset()
-        resetFeedProfileEditMenuItems()
+        myFeedProfile.reset()           // copy content from backup data structure
+        resetFeedProfileEditMenuItems() // copy from myFeedProfile to phaseMenuItems
+    }
+
+    fun updateFeedProfile() {
+        myFeedProfile.update()          // overwrite backup data structure
+    }
+
+    fun getApiCallParameters(): Map<String, String> {
+        return myFeedProfile.getFeedProfileApiCallParameters()
     }
 }

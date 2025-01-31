@@ -1,5 +1,6 @@
 package com.example.aquariumcontroller.feed.edit
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,21 +10,26 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.aquariumcontroller.ApiUrls
 import com.example.aquariumcontroller.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
+import com.example.aquariumcontroller.PostRequest
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.feed.FeedProfile
 import com.example.aquariumcontroller.feed.FeedProfileImport
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
+import com.example.aquariumcontroller.webApiPostRequest
 
 @Composable
 fun FeedProfileEditScreen(
@@ -41,6 +47,12 @@ fun FeedProfileEditScreen(
     val feedProfileEditViewModel: FeedProfileEditViewModel = viewModel(
         factory = FeedProfileEditViewModelFactory(feedProfile)
     )
+
+    val postRequest = PostRequest()
+
+    val context = LocalContext.current // context for web API request and Toasts
+
+    val coroutineScope = rememberCoroutineScope()
 
     AquariumControllerTheme {
         // A surface container using the 'background' color from the theme
@@ -66,7 +78,23 @@ fun FeedProfileEditScreen(
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp),
                     onClick = {
-                        // todo: add update feed profile functionality
+                        if (mainViewModel != null) {
+                            webApiPostRequest(
+                                mainViewModel = mainViewModel,
+                                apiUrl = ApiUrls.FEED_POST_PROFILE_UPDATE,
+                                coroutineScope = coroutineScope,
+                                postRequest = postRequest,
+                                context = context,
+                                optionalGetParams = feedProfileEditViewModel.getApiCallParameters()
+                            )
+                            // Show the Toast after the API call
+                            Toast.makeText(
+                                context,
+                                "Sent request to controller for updating feed profile",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            feedProfileEditViewModel.updateFeedProfile()
+                        }
                     },
                 ) {
                     Text(

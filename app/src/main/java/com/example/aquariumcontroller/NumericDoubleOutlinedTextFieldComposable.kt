@@ -16,6 +16,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 
+fun isParsableToDouble(input: String): Boolean {
+    return try {
+        input.toDouble()
+        true // Parsing successful
+    } catch (e: NumberFormatException) {
+        false // Parsing failed
+    }
+}
+
 @Composable
 fun NumericDoubleOutlinedTextFieldComposable(
     value: Double,
@@ -41,8 +50,10 @@ fun NumericDoubleOutlinedTextFieldComposable(
                 newTextFieldValue.text
                     .filter { it.isDigit() || it == '.' || it == ',' }
                     .replace(",", ".")
-            textFieldValueState = newTextFieldValue.copy(text = newValue)
-            onValueChange(newValue)
+            if (isParsableToDouble(newValue)) {
+                textFieldValueState = newTextFieldValue.copy(text = newValue)
+                onValueChange(newValue)
+            }
         },
         label = { Text(label) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
