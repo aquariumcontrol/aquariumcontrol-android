@@ -190,26 +190,32 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
     fun updatePhaseDuration(phaseIndex: Int, newDuration: Double) {
         Log.d("FeedProfileEditViewModel", "Updating phase($phaseIndex) duration to $newDuration")
         myFeedProfile.feedProfilePhases[phaseIndex].duration = newDuration
+        myFeedProfile.stateChangeIndicator = !myFeedProfile.stateChangeIndicator
     }
 
     fun updateSkimmer(phaseIndex: Int, newValue: Boolean) {
         myFeedProfile.feedProfilePhases[phaseIndex].skimmer = newValue
+        myFeedProfile.stateChangeIndicator = !myFeedProfile.stateChangeIndicator
     }
 
     fun updateMainPump1(phaseIndex: Int, newValue: Boolean) {
         myFeedProfile.feedProfilePhases[phaseIndex].mainPump1 = newValue
+        myFeedProfile.stateChangeIndicator = !myFeedProfile.stateChangeIndicator
     }
 
     fun updateMainPump2(phaseIndex: Int, newValue: Boolean) {
         myFeedProfile.feedProfilePhases[phaseIndex].mainPump2 = newValue
+        myFeedProfile.stateChangeIndicator = !myFeedProfile.stateChangeIndicator
     }
 
     fun updateAuxPump1(phaseIndex: Int, newValue: Boolean) {
         myFeedProfile.feedProfilePhases[phaseIndex].auxPump1 = newValue
+        myFeedProfile.stateChangeIndicator = !myFeedProfile.stateChangeIndicator
     }
 
     fun updateAuxPump2(phaseIndex: Int, newValue: Boolean) {
         myFeedProfile.feedProfilePhases[phaseIndex].auxPump2 = newValue
+        myFeedProfile.stateChangeIndicator = !myFeedProfile.stateChangeIndicator
     }
 
     private fun resetFeedProfileEditMenuItems() {
@@ -309,6 +315,7 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
                 }
             }
         }
+        myFeedProfile.stateChangeIndicator = !myFeedProfile.stateChangeIndicator
     }
 
     fun resetFeedProfile() {

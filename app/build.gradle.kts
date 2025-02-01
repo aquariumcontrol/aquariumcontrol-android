@@ -96,4 +96,6 @@ dependencies {
 
     // for pull refresh
     implementation("androidx.compose.material:material:1.7.6")
+
+    implementation (libs.mpandroidchart)
 }
