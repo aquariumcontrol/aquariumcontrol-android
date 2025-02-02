@@ -8,7 +8,7 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.formatter.ValueFormatter
 
-class FeedProfileAxisValueFormatter(private var feedProfile: FeedProfile) : ValueFormatter() {
+class FeedProfileAxisValueFormatter(private var totalDuration: Float) : ValueFormatter() {
     // check if the chart value is within the intervals dedicated to each actuator
     private fun isFeederChartValue(value: Float): Boolean {
         return (value > FeedProfileDisplayYAxisValueDefinition.FEEDER_OFF -
@@ -89,11 +89,10 @@ class FeedProfileAxisValueFormatter(private var feedProfile: FeedProfile) : Valu
         }
         if (axis is XAxis) {
             // dynamic precision of label
-            val duration = feedProfile.calcDuration()
-            if (duration < 0.1) {
+            if (totalDuration < 0.1) {
                 return String.format("%2.2f", value)
             }
-            if (duration < 1) {
+            if (totalDuration < 1) {
                 return String.format("%2.1f", value)
             }
             return String.format("%2.0f", value)

@@ -76,7 +76,7 @@ fun FeedProfileEditScreen(
                     style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.padding(16.dp),
                 )
-                FeedProfileDisplayComposable(feedProfile = feedProfile)
+                FeedProfileDisplayComposable(feedProfileEditViewModel = feedProfileEditViewModel)
                 FeedProfileDisplayLegend()
                 Button(
                     modifier = Modifier

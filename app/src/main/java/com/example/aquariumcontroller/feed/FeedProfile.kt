@@ -6,7 +6,6 @@ class FeedProfile(feedProfileImport: FeedProfileImport) {
     val profileID: Int = feedProfileImport.profileId
     val profileName: String = feedProfileImport.profileName
     var feedProfilePhases: List<FeedProfilePhase> = listOf()
-    var stateChangeIndicator = false
     private var feedProfilePhasesBackup: List<FeedProfilePhase> = listOf()
 
     init {
@@ -312,11 +311,7 @@ class FeedProfile(feedProfileImport: FeedProfileImport) {
         return myMap
     }
 
-    fun calcDuration(): Double {
-        var duration = 0.0
-        feedProfilePhases.forEach {
-            duration += it.duration
-        }
-        return duration
+    fun calcDuration(): Float {
+        return feedProfilePhases.sumOf { it.duration }.toFloat()
     }
 }
