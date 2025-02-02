@@ -18,10 +18,20 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
 
     var phaseMenuItems: List<FeedProfileEditMenuItem>
 
-    private var _lineDataFeedProfile = MutableLiveData<LineData>()
+    private var _lineDataFeedProfileFeeder = MutableLiveData<LineData>()
+    private var _lineDataFeedProfileSkimmer = MutableLiveData<LineData>()
+    private var _lineDataFeedProfileMainPump1 = MutableLiveData<LineData>()
+    private var _lineDataFeedProfileMainPump2 = MutableLiveData<LineData>()
+    private var _lineDataFeedProfileAuxPump1 = MutableLiveData<LineData>()
+    private var _lineDataFeedProfileAuxPump2 = MutableLiveData<LineData>()
     private var _totalDuration = MutableLiveData<Float>()
 
-    var lineDataFeedProfile: LiveData<LineData> = _lineDataFeedProfile
+    var lineDataFeedProfileFeeder: LiveData<LineData> = _lineDataFeedProfileFeeder
+    var lineDataFeedProfileSkimmer: LiveData<LineData> = _lineDataFeedProfileSkimmer
+    var lineDataFeedProfileMainPump1: LiveData<LineData> = _lineDataFeedProfileMainPump1
+    var lineDataFeedProfileMainPump2: LiveData<LineData> = _lineDataFeedProfileMainPump2
+    var lineDataFeedProfileAuxPump1: LiveData<LineData> = _lineDataFeedProfileAuxPump1
+    var lineDataFeedProfileAuxPump2: LiveData<LineData> = _lineDataFeedProfileAuxPump2
     var totalDuration: LiveData<Float> = _totalDuration
 
     init {
@@ -306,13 +316,19 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
         setAuxPump2.setDrawFilled(false)
 
         // create data objects with the data sets
-        val tempLineDataSet = LineData(setFeeder)
-        tempLineDataSet.addDataSet(setSkimmer)
-        tempLineDataSet.addDataSet(setMainPump1)
-        tempLineDataSet.addDataSet(setMainPump2)
-        tempLineDataSet.addDataSet(setAuxPump1)
-        tempLineDataSet.addDataSet(setAuxPump2)
-        _lineDataFeedProfile.value = tempLineDataSet
+        val tempLineDataSetFeeder = LineData(setFeeder)
+        val tempLineDataSetSkimmer = LineData(setSkimmer)
+        val tempLineDataSetMainPump1 = LineData(setMainPump1)
+        val tempLineDataSetMainPump2 = LineData(setMainPump2)
+        val tempLineDataSetAuxPump1 = LineData(setAuxPump1)
+        val tempLineDataSetAuxPump2 = LineData(setAuxPump2)
+
+        _lineDataFeedProfileFeeder.value = tempLineDataSetFeeder
+        _lineDataFeedProfileSkimmer.value = tempLineDataSetSkimmer
+        _lineDataFeedProfileMainPump1.value = tempLineDataSetMainPump1
+        _lineDataFeedProfileMainPump2.value = tempLineDataSetMainPump2
+        _lineDataFeedProfileAuxPump1.value = tempLineDataSetAuxPump1
+        _lineDataFeedProfileAuxPump2.value = tempLineDataSetAuxPump2
     }
 
     private fun createFeedProfileEditMenuItems(): List<FeedProfileEditMenuItem> {

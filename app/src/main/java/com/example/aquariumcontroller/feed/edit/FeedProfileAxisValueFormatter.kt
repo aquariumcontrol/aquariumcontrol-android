@@ -2,7 +2,6 @@ package com.example.aquariumcontroller.feed.edit
 
 import android.annotation.SuppressLint
 import android.util.Log
-import com.example.aquariumcontroller.feed.FeedProfile
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis

@@ -17,6 +17,7 @@ import com.example.aquariumcontroller.feed.FeedProfile
 import com.example.aquariumcontroller.feed.FeedProfileImport
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.XAxis
 
 const val chartValAllowedDelta = 0.001f
 
@@ -24,33 +25,171 @@ const val chartValAllowedDelta = 0.001f
 fun FeedProfileDisplayComposable(feedProfileEditViewModel: FeedProfileEditViewModel) {
     val isDarkMode = isSystemInDarkTheme()
 
-    val chartData by feedProfileEditViewModel.lineDataFeedProfile.observeAsState()
+    val chartDataFeeder by feedProfileEditViewModel.lineDataFeedProfileFeeder.observeAsState()
+    val chartDataSkimmer by feedProfileEditViewModel.lineDataFeedProfileSkimmer.observeAsState()
+    val chartDataMainPump1 by feedProfileEditViewModel.lineDataFeedProfileMainPump1.observeAsState()
+    val chartDataMainPump2 by feedProfileEditViewModel.lineDataFeedProfileMainPump2.observeAsState()
+    val chartDataAuxPump1 by feedProfileEditViewModel.lineDataFeedProfileAuxPump1.observeAsState()
+    val chartDataAuxPump2 by feedProfileEditViewModel.lineDataFeedProfileAuxPump2.observeAsState()
     val totalDuration by feedProfileEditViewModel.totalDuration.observeAsState()
 
     AndroidView(modifier = Modifier
         .fillMaxWidth()
-        .height(350.dp), factory = { context ->
+        .height(50.dp), factory = { context ->
         LineChart(context).apply {
-            // Customize the chart appearance (axis labels, grid lines, etc.)
-            data = chartData
-
+            data = chartDataFeeder
             description.isEnabled = false
             legend.isEnabled = false
             axisRight.isEnabled = false
-            axisLeft.granularity = 1f
+            axisLeft.granularity = FeedProfileDisplayYAxisValueDefinition.GRANULARITY
+            axisLeft.axisMinimum = FeedProfileDisplayYAxisValueDefinition.MIN_VALUE
+            axisLeft.axisMaximum = FeedProfileDisplayYAxisValueDefinition.MAX_VALUE
+            axisLeft.setDrawTopYLabelEntry(true)
+            setScaleEnabled(false)
+            xAxis.isEnabled = false
+            val valueFormatter =
+                totalDuration?.let { FeedProfileAxisValueFormatter(it) }
+            axisLeft.valueFormatter = valueFormatter
+            val axisLabelColor = if (isDarkMode) Color.WHITE else Color.BLACK
+            axisLeft.textColor = axisLabelColor
+        }
+    }, update = { lineChart ->
+        // Update the chart data or settings as needed
+        lineChart.data = chartDataFeeder
+        lineChart.notifyDataSetChanged()
+        lineChart.invalidate()
+    })
+
+    AndroidView(modifier = Modifier
+        .fillMaxWidth()
+        .height(50.dp), factory = { context ->
+        LineChart(context).apply {
+            data = chartDataSkimmer
+            description.isEnabled = false
+            legend.isEnabled = false
+            axisRight.isEnabled = false
+            axisLeft.granularity = FeedProfileDisplayYAxisValueDefinition.GRANULARITY
+            axisLeft.axisMinimum = FeedProfileDisplayYAxisValueDefinition.MIN_VALUE
+            axisLeft.axisMaximum = FeedProfileDisplayYAxisValueDefinition.MAX_VALUE
+            axisLeft.setDrawTopYLabelEntry(true)
+            setScaleEnabled(false)
+            xAxis.isEnabled = false
+            val valueFormatter =
+                totalDuration?.let { FeedProfileAxisValueFormatter(it) }
+            axisLeft.valueFormatter = valueFormatter
+            // Set axis label colors based on dark mode
+            val axisLabelColor = if (isDarkMode) Color.WHITE else Color.BLACK
+            axisLeft.textColor = axisLabelColor
+        }
+    }, update = { lineChart ->
+        lineChart.data = chartDataSkimmer
+        lineChart.notifyDataSetChanged()
+        lineChart.invalidate()
+    })
+
+    AndroidView(modifier = Modifier
+        .fillMaxWidth()
+        .height(50.dp), factory = { context ->
+        LineChart(context).apply {
+            data = chartDataMainPump1
+            description.isEnabled = false
+            legend.isEnabled = false
+            axisRight.isEnabled = false
+            axisLeft.granularity = FeedProfileDisplayYAxisValueDefinition.GRANULARITY
+            axisLeft.axisMinimum = FeedProfileDisplayYAxisValueDefinition.MIN_VALUE
+            axisLeft.axisMaximum = FeedProfileDisplayYAxisValueDefinition.MAX_VALUE
+            axisLeft.setDrawTopYLabelEntry(true)
+            setScaleEnabled(false)
+            xAxis.isEnabled = false
+            val valueFormatter =
+                totalDuration?.let { FeedProfileAxisValueFormatter(it) }
+            axisLeft.valueFormatter = valueFormatter
+            val axisLabelColor = if (isDarkMode) Color.WHITE else Color.BLACK
+            axisLeft.textColor = axisLabelColor
+        }
+    }, update = { lineChart ->
+        lineChart.data = chartDataMainPump1
+        lineChart.notifyDataSetChanged()
+        lineChart.invalidate()
+    })
+
+    AndroidView(modifier = Modifier
+        .fillMaxWidth()
+        .height(50.dp), factory = { context ->
+        LineChart(context).apply {
+            data = chartDataMainPump2
+            description.isEnabled = false
+            legend.isEnabled = false
+            axisRight.isEnabled = false
+            axisLeft.granularity = FeedProfileDisplayYAxisValueDefinition.GRANULARITY
+            axisLeft.axisMinimum = FeedProfileDisplayYAxisValueDefinition.MIN_VALUE
+            axisLeft.axisMaximum = FeedProfileDisplayYAxisValueDefinition.MAX_VALUE
+            axisLeft.setDrawTopYLabelEntry(true)
+            setScaleEnabled(false)
+            xAxis.isEnabled = false
+            val valueFormatter =
+                totalDuration?.let { FeedProfileAxisValueFormatter(it) }
+            axisLeft.valueFormatter = valueFormatter
+            val axisLabelColor = if (isDarkMode) Color.WHITE else Color.BLACK
+            axisLeft.textColor = axisLabelColor
+        }
+    }, update = { lineChart ->
+        lineChart.data = chartDataMainPump2
+        lineChart.notifyDataSetChanged()
+        lineChart.invalidate()
+    })
+
+    AndroidView(modifier = Modifier
+        .fillMaxWidth()
+        .height(50.dp), factory = { context ->
+        LineChart(context).apply {
+            data = chartDataAuxPump1
+            description.isEnabled = false
+            legend.isEnabled = false
+            axisRight.isEnabled = false
+            axisLeft.granularity = FeedProfileDisplayYAxisValueDefinition.GRANULARITY
+            axisLeft.axisMinimum = FeedProfileDisplayYAxisValueDefinition.MIN_VALUE
+            axisLeft.axisMaximum = FeedProfileDisplayYAxisValueDefinition.MAX_VALUE
+            axisLeft.setDrawTopYLabelEntry(true)
+            setScaleEnabled(false)
+            xAxis.isEnabled = false
+            val valueFormatter =
+                totalDuration?.let { FeedProfileAxisValueFormatter(it) }
+            axisLeft.valueFormatter = valueFormatter
+            val axisLabelColor = if (isDarkMode) Color.WHITE else Color.BLACK
+            axisLeft.textColor = axisLabelColor
+        }
+    }, update = { lineChart ->
+        lineChart.data = chartDataAuxPump1
+        lineChart.notifyDataSetChanged()
+        lineChart.invalidate()
+    })
+
+    AndroidView(modifier = Modifier
+        .fillMaxWidth()
+        .height(50.dp), factory = { context ->
+        LineChart(context).apply {
+            data = chartDataAuxPump2
+            description.isEnabled = false
+            legend.isEnabled = false
+            axisRight.isEnabled = false
+            axisLeft.granularity = FeedProfileDisplayYAxisValueDefinition.GRANULARITY
+            axisLeft.axisMinimum = FeedProfileDisplayYAxisValueDefinition.MIN_VALUE
+            axisLeft.axisMaximum = FeedProfileDisplayYAxisValueDefinition.MAX_VALUE
+            axisLeft.setDrawTopYLabelEntry(true)
+            setScaleEnabled(false)
+            xAxis.setDrawGridLines(false)
             val valueFormatter =
                 totalDuration?.let { FeedProfileAxisValueFormatter(it) }
             axisLeft.valueFormatter = valueFormatter
             xAxis.valueFormatter = valueFormatter
-            // Set axis label colors based on dark mode
+            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM)
             val axisLabelColor = if (isDarkMode) Color.WHITE else Color.BLACK
             xAxis.textColor = axisLabelColor
             axisLeft.textColor = axisLabelColor
         }
     }, update = { lineChart ->
-        // Update the chart data or settings as needed
-        Log.d("FeedProfileDisplayComposable", "Updating chart data")
-        lineChart.data = chartData
+        lineChart.data = chartDataAuxPump2
         lineChart.notifyDataSetChanged()
         lineChart.invalidate()
     })
