@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,33 +20,34 @@ fun FeedProfileEditMenuItemDurationComposable(
     feedProfileEditMenuItem: FeedProfileEditMenuItem,
     feedProfileEditViewModel: FeedProfileEditViewModel? = null
 ) {
-    Column() {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Row() {
             Text(feedProfileEditMenuItem.text, Modifier.padding(top = 8.dp))
             Spacer(Modifier.weight(1f))
-            NumericDoubleOutlinedTextFieldComposable(
-                value = feedProfileEditMenuItem.inputValue.value,
-                onValueChange = { newStringValue ->
-                    if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
-                        val newNumericValue = newStringValue.toDouble()
-                        feedProfileEditMenuItem.updateInputValue(newValue = newNumericValue)
-                        feedProfileEditViewModel?.updatePhaseDuration(
-                            feedProfileEditMenuItem.id, newNumericValue
-                        )
-                    }
-                },
-                label = stringResource(id = R.string.DurationInSeconds),
-                modifier = Modifier
-                    .padding(top = 16.dp)
-            )
         }
+        NumericDoubleOutlinedTextFieldComposable(
+            value = feedProfileEditMenuItem.inputValue.value,
+            onValueChange = { newStringValue ->
+                if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
+                    val newNumericValue = newStringValue.toDouble()
+                    feedProfileEditMenuItem.updateInputValue(newValue = newNumericValue)
+                    feedProfileEditViewModel?.updatePhaseDuration(
+                        feedProfileEditMenuItem.id, newNumericValue
+                    )
+                }
+            },
+            label = stringResource(id = R.string.DurationInSeconds),
+            modifier = Modifier
+                .padding(top = 16.dp)
+        )
         Slider(value = feedProfileEditMenuItem.inputValue.value.toFloat(),
             modifier = Modifier.padding(16.dp),
             onValueChange = {
                 feedProfileEditViewModel?.updatePhaseDuration(
                     feedProfileEditMenuItem.id, it.toDouble()
                 )
-            }
+            },
+            valueRange = FeedProfileEditSliderRange.RANGE
         )
     }
 }

@@ -142,7 +142,9 @@ fun BallingProfileEditScreen(
                     modifier = Modifier.padding(16.dp),
                     onValueChange = {
                         ballingProfileEditViewModel.onVolumeChange(it.toDouble())
-                    })
+                    },
+                    valueRange = BallingProfileEditSliderRange.RANGE
+                )
                 Text(
                     text = "New Dosing volume: ${"%.2f".format(sliderPositionNewDosingVolume)} ml",
                     fontSize = 12.sp,
