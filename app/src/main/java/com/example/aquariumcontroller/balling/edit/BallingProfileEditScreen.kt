@@ -33,6 +33,7 @@ import com.example.aquariumcontroller.ApiParams
 import com.example.aquariumcontroller.ApiUrls
 import com.example.aquariumcontroller.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
+import com.example.aquariumcontroller.NumericDoubleOutlinedTextFieldComposable
 import com.example.aquariumcontroller.PostRequest
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
@@ -125,6 +126,18 @@ fun BallingProfileEditScreen(
                         )
                     }
                 }
+                NumericDoubleOutlinedTextFieldComposable(
+                    value = sliderPositionNewDosingVolume,
+                    onValueChange = { newStringValue ->
+                        if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
+                            val newNumericValue = newStringValue.toDouble()
+                            ballingProfileEditViewModel.onVolumeChange(newNumericValue)
+                        }
+                    },
+                    label = "",
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                )
                 Slider(value = sliderPositionNewDosingVolume.toFloat(),
                     modifier = Modifier.padding(16.dp),
                     onValueChange = {

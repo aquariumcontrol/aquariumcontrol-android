@@ -12,11 +12,8 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.aquariumcontroller.NumericDoubleOutlinedTextFieldComposable
-import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
@@ -37,13 +34,17 @@ fun FeedProfileEditMenuItemComposable(feedProfileEditMenuItem: FeedProfileEditMe
             }
             .padding(start = (feedProfileEditMenuItem.level * 16).dp, top = 8.dp, bottom = 8.dp),
     ) {
-        Text(feedProfileEditMenuItem.text, Modifier.padding(top = 8.dp))
-        Spacer(Modifier.weight(1f))
-        if (feedProfileEditMenuItem.children.isNotEmpty() && !feedProfileEditMenuItem.isExpanded.value) {
-            // Icon to indicate expandability
-            Icon(imageVector = Icons.Default.MoreVert, contentDescription = "More options")
+        if (feedProfileEditMenuItem.children.isNotEmpty()) {
+            Text(feedProfileEditMenuItem.text, Modifier.padding(top = 8.dp))
+            Spacer(Modifier.weight(1f))
         }
         if (feedProfileEditMenuItem.isToggleButton) {
+            Text(feedProfileEditMenuItem.text, Modifier.padding(top = 8.dp))
+            Spacer(Modifier.weight(1f))
+            if (feedProfileEditMenuItem.children.isNotEmpty() && !feedProfileEditMenuItem.isExpanded.value) {
+                // Icon to indicate expandability
+                Icon(imageVector = Icons.Default.MoreVert, contentDescription = "More options")
+            }
             Switch(
                 checked = feedProfileEditMenuItem.isChecked.value,
                 onCheckedChange = {
@@ -71,22 +72,7 @@ fun FeedProfileEditMenuItemComposable(feedProfileEditMenuItem: FeedProfileEditMe
                 })
         }
         if (feedProfileEditMenuItem.isNumericInput) {
-            // Numeric input field
-            NumericDoubleOutlinedTextFieldComposable(
-                value = feedProfileEditMenuItem.inputValue.value,
-                onValueChange = { newStringValue ->
-                    if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
-                        val newNumericValue = newStringValue.toDouble()
-                        feedProfileEditMenuItem.updateInputValue(newValue = newNumericValue)
-                        feedProfileEditViewModel?.updatePhaseDuration(
-                            feedProfileEditMenuItem.id, newNumericValue
-                        )
-                    }
-                },
-                label = stringResource(id = R.string.DurationInSeconds),
-                modifier = Modifier
-                    .padding(top = 16.dp)
-            )
+            FeedProfileEditMenuItemDurationComposable(feedProfileEditMenuItem, feedProfileEditViewModel)
         }
     }
     if (feedProfileEditMenuItem.isExpanded.value) {
@@ -102,7 +88,7 @@ fun FeedProfileEditMenuItemComposable(feedProfileEditMenuItem: FeedProfileEditMe
 @Composable
 fun FeedProfileEditMenuItemPreviewComposable() {
 
-    val mockFeedProfileEditMenuItem1 = FeedProfileEditMenuItem(
+    val mockFeedProfileEditMenuItem = FeedProfileEditMenuItem(
         id = 1,
         level = 1,
         text = "Preview",
@@ -110,17 +96,9 @@ fun FeedProfileEditMenuItemPreviewComposable() {
         children = emptyList(),
     )
 
-    val mockFeedProfileEditMenuItem2 = FeedProfileEditMenuItem(
-        id = 1,
-        level = 2,
-        text = "Preview",
-        isToggleButton = true,
-        children = listOf(mockFeedProfileEditMenuItem1),
-    )
-
     AquariumControllerTheme {
         FeedProfileEditMenuItemComposable(
-            feedProfileEditMenuItem = mockFeedProfileEditMenuItem2
+            feedProfileEditMenuItem = mockFeedProfileEditMenuItem
         )
     }
 }

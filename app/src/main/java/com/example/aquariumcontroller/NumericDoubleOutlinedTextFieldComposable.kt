@@ -30,7 +30,8 @@ fun NumericDoubleOutlinedTextFieldComposable(
     value: Double,
     onValueChange: (String) -> Unit,
     label: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    precision: Int = 2  // Add precision parameter with default value
 ) {
     var textFieldValueState by remember {
         mutableStateOf(TextFieldValue(value.toString()))
@@ -39,7 +40,8 @@ fun NumericDoubleOutlinedTextFieldComposable(
     LaunchedEffect(value) { // Trigger when 'value' changes
         snapshotFlow { value }
             .collect { newValue ->
-                textFieldValueState = textFieldValueState.copy(text = newValue.toString())
+                val formattedValue = String.format("%.${precision}f", newValue) // Format incoming value
+                textFieldValueState = textFieldValueState.copy(text = formattedValue)
             }
     }
 
@@ -51,7 +53,9 @@ fun NumericDoubleOutlinedTextFieldComposable(
                     .filter { it.isDigit() || it == '.' || it == ',' }
                     .replace(",", ".")
             if (isParsableToDouble(newValue)) {
-                textFieldValueState = newTextFieldValue.copy(text = newValue)
+                val doubleValue = newValue.toDoubleOrNull()?: 0.0
+                val formattedValue = String.format("%.${precision}f", doubleValue) // Format with precision
+                textFieldValueState = newTextFieldValue.copy(text = formattedValue)
                 onValueChange(newValue)
             }
         },

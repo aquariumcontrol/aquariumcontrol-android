@@ -32,6 +32,14 @@ fun FeedProfileEditMenuComposable(
 @Composable
 fun FeedProfileEditMenuPreviewComposable() {
 
+    val mockFeedProfileEditMenuItemDuration = FeedProfileEditMenuItem(
+        id = 0,
+        level = 3,
+        text = "Duration",
+        isToggleButton = false,
+        isNumericInput = true,
+        children = emptyList(),
+    )
     val mockFeedProfileEditMenuItemSkimmer = FeedProfileEditMenuItem(
         id = 1,
         level = 3,
@@ -74,6 +82,7 @@ fun FeedProfileEditMenuPreviewComposable() {
         text = "Pause",
         isToggleButton = false,
         children = listOf(
+            mockFeedProfileEditMenuItemDuration,
             mockFeedProfileEditMenuItemSkimmer,
             mockFeedProfileEditMenuItemMainPump1,
             mockFeedProfileEditMenuItemMainPump2,
@@ -88,6 +97,7 @@ fun FeedProfileEditMenuPreviewComposable() {
         text = "Feed",
         isToggleButton = false,
         children = listOf(
+            mockFeedProfileEditMenuItemDuration,
             mockFeedProfileEditMenuItemSkimmer,
             mockFeedProfileEditMenuItemMainPump1,
             mockFeedProfileEditMenuItemMainPump2,
