@@ -352,9 +352,7 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
                                 text = "Duration",
                                 isNumericInput = true,
                                 phaseType = FeedProfileEditPhaseType.PAUSE,
-                                inputValue = mutableDoubleStateOf(
-                                    myFeedProfile.feedProfilePhases[index * 2].duration
-                                ),
+                                durationInitialValue = myFeedProfile.feedProfilePhases[index * 2].duration,
                                 isToggleButton = false,
                             ),
                             FeedProfileEditMenuItem(
@@ -433,9 +431,7 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
                                 isToggleButton = false,
                                 isNumericInput = true,
                                 phaseType = FeedProfileEditPhaseType.FEED,
-                                inputValue = mutableDoubleStateOf(
-                                    myFeedProfile.feedProfilePhases[index * 2 + 1].duration
-                                ),
+                                durationInitialValue = myFeedProfile.feedProfilePhases[index * 2 + 1].duration,
                             ),
                             FeedProfileEditMenuItem(
                                 id = index * 2 + 1,
@@ -654,5 +650,9 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
 
     fun getApiCallParameters(): Map<String, String> {
         return myFeedProfile.getFeedProfileApiCallParameters()
+    }
+
+    fun getPhaseDuration(id: Int): Double {
+        return myFeedProfile.feedProfilePhases[id].duration
     }
 }

@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -20,13 +22,16 @@ fun FeedProfileEditMenuItemDurationComposable(
     feedProfileEditMenuItem: FeedProfileEditMenuItem,
     feedProfileEditViewModel: FeedProfileEditViewModel? = null
 ) {
+    val durationInputValue by feedProfileEditMenuItem.inputValue.observeAsState(
+        initial = feedProfileEditViewModel?.getPhaseDuration(feedProfileEditMenuItem.id) ?: 0.0
+    )
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Row() {
             Text(feedProfileEditMenuItem.text, Modifier.padding(top = 8.dp))
             Spacer(Modifier.weight(1f))
         }
         NumericDoubleOutlinedTextFieldComposable(
-            value = feedProfileEditMenuItem.inputValue.value,
+            value = durationInputValue,
             onValueChange = { newStringValue ->
                 if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
                     val newNumericValue = newStringValue.toDouble()
@@ -40,7 +45,7 @@ fun FeedProfileEditMenuItemDurationComposable(
             modifier = Modifier
                 .padding(top = 16.dp)
         )
-        Slider(value = feedProfileEditMenuItem.inputValue.value.toFloat(),
+        Slider(value = durationInputValue.toFloat(),
             modifier = Modifier.padding(16.dp),
             onValueChange = {
                 feedProfileEditViewModel?.updatePhaseDuration(

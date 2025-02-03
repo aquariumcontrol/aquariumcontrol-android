@@ -138,7 +138,8 @@ fun BallingProfileEditScreen(
                     modifier = Modifier
                         .padding(top = 16.dp)
                 )
-                Slider(value = sliderPositionNewDosingVolume.toFloat(),
+                Slider(
+                    value = sliderPositionNewDosingVolume.toFloat(),
                     modifier = Modifier.padding(16.dp),
                     onValueChange = {
                         ballingProfileEditViewModel.onVolumeChange(it.toDouble())

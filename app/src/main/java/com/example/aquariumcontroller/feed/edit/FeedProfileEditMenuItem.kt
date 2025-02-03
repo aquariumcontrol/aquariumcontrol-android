@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 
 data class FeedProfileEditMenuItem(
     val id: Int,
@@ -17,12 +19,15 @@ data class FeedProfileEditMenuItem(
 
     val isNumericInput: Boolean = false,
 
-    val inputValue: MutableState<Double> = mutableDoubleStateOf(-1.0),
+    val durationInitialValue: Double = 0.0,
 
     val children: List<FeedProfileEditMenuItem> = emptyList(),
 
     val isExpanded: MutableState<Boolean> = mutableStateOf(false)
 ) {
+    private val _inputValue: MutableLiveData<Double> = MutableLiveData<Double>(durationInitialValue)
+    val inputValue: LiveData<Double> = _inputValue
+
     fun updateIsChecked(newValue: Boolean) {
         Log.d("FeedProfileEditMenuItem", "updating isChecked to $newValue")
         this.isChecked.value = newValue
@@ -35,6 +40,6 @@ data class FeedProfileEditMenuItem(
 
     fun updateInputValue(newValue: Double) {
         Log.d("FeedProfileEditMenuItem", "updating inputValue to $newValue")
-        this.inputValue.value = newValue
+        this._inputValue.value = newValue
     }
 }
