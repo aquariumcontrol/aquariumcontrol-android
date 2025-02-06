@@ -98,4 +98,7 @@ dependencies {
     implementation("androidx.compose.material:material:1.7.6")
 
     implementation (libs.mpandroidchart)
+
+    // for serialization of data class with timestamp
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0") // Or latest version
 }

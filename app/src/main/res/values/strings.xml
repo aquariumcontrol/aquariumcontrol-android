@@ -44,4 +44,5 @@
     <string name="ReloadFeedProfile">Reload feed profile</string>
     <string name="ResetFeedProfile">Reset changes to feed profile</string>
     <string name="rectBullet">\u25A0</string>
+    <string name="TimeDataSeries">Time Data Series</string>
 </resources>
