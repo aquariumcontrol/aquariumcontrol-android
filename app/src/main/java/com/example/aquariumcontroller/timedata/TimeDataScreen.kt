@@ -81,9 +81,6 @@ fun TimeDataScreen(
                             timeDataStringSample.transformToTimeDataSample()
                         }
                         timeDataSets = TimeDataSets(timeDataSamples)
-                        Log.d("TimeDataScreen", "First timestamp=${timeDataSets.firstTimestamp}")
-                        Log.d("TimeDataScreen", "Last timestamp=${timeDataSets.lastTimestamp}")
-                        Log.d("TimeDataScreen", "Length=${timeDataSets.length}")
                     }
                 }
             }

@@ -13,9 +13,6 @@ class TimeDataSets(timeData: List<TimeDataSample>) {
     val dataConductivity: LineData
     val dataTankLevel: LineData
     val dataAmbient: LineData
-    val firstTimestamp: Timestamp
-    val lastTimestamp: Timestamp
-    val length: Int = timeData.size
 
     init {
         val valuesTemperature = ArrayList<Entry>()
@@ -32,15 +29,6 @@ class TimeDataSets(timeData: List<TimeDataSample>) {
         val valuesHeating = ArrayList<Entry>()
 
         val itTimeData = timeData.iterator()
-
-        if (timeData.isNotEmpty()) {
-            firstTimestamp = timeData[0].timestamp
-            lastTimestamp = timeData[timeData.size - 1].timestamp
-        }
-        else {
-            firstTimestamp = Timestamp(0)
-            lastTimestamp = Timestamp(0)
-        }
 
         while (itTimeData.hasNext()) {
             val timeDataSample = itTimeData.next()
