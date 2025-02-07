@@ -10,11 +10,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -41,6 +43,7 @@ import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.sql.Timestamp
@@ -69,7 +72,7 @@ fun TimeDataScreen(
 
     val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
     val coroutineScope = rememberCoroutineScope()
-    var isRefreshing by remember { mutableStateOf(false) }
+    var isRefreshing by remember { mutableStateOf(mockTimeData?.isNotEmpty() ?: false) }
 
     // Use a LaunchedEffect to fetch data on initial composition
     LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
@@ -93,6 +96,7 @@ fun TimeDataScreen(
                     ) { newTimeDataSets ->
                         timeDataSets = newTimeDataSets as TimeDataSets
                     } // Pass the setter lambda
+                    delay(500)
                     isRefreshing = false // Reset the refresh state
                 }
             }
@@ -121,6 +125,15 @@ fun TimeDataScreen(
                         style = MaterialTheme.typography.headlineSmall,
                         modifier = Modifier.padding(16.dp)
                     )
+
+                    // Overlay the loading indicator
+                    if (isRefreshing) {  // Show only while isLoading is true
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .size(150.dp),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
 
                     // Main temperature chart
                     AndroidView(modifier = Modifier
