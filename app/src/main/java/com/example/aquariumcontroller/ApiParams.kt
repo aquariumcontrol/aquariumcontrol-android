@@ -13,4 +13,8 @@ object ApiParams {
     const val MAINPUMP2 = "MPmp2"
     const val AUXPUMP1 = "APmp1"
     const val AUXPUMP2 = "APmp2"
+    const val START_DATE = "startdate"
+    const val STOP_DATE = "stopdate"
+    const val START_TIME = "starttime"
+    const val STOP_TIME = "stoptime"
 }

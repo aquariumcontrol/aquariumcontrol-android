@@ -3,16 +3,24 @@ package com.example.aquariumcontroller.timedata
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -20,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
+import com.example.aquariumcontroller.ApiUrls
 import com.example.aquariumcontroller.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
@@ -27,9 +36,13 @@ import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.sql.Timestamp
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneOffset
+import java.util.Locale
 import kotlin.math.sin
 import kotlin.random.Random
 
@@ -43,10 +56,39 @@ fun TimeDataScreen(
     mainViewModel: MainViewModel? = null,
     mockTimeData: List<TimeDataSample>? = null
 ) {
+    // This screen is only displaying time data charts without any user interaction.
+    // Therefore, this screen does not use a view model.
     val isDarkMode = isSystemInDarkTheme()
     val textColor = if (isDarkMode) Color.WHITE else Color.BLACK
 
-    val timeDataSets = TimeDataSets(mockTimeData ?: emptyList())
+    var timeDataSets by remember { mutableStateOf(TimeDataSets(mockTimeData ?: emptyList())) }
+
+    val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
+
+    if ((mainViewModel != null) && (isControllerAddressValid)) {
+
+        val url = "http://" + mainViewModel.getControllerAddress() + ApiUrls.DATA_GET_START_STOP
+        val reader = TimeDataReader(url)
+
+        LaunchedEffect(Unit) {
+            withContext(Dispatchers.IO) {
+                val timeDataStringList = reader.readTimeDataSeries()
+                if (timeDataStringList != null) {
+                    if (timeDataStringList.isNotEmpty()) {
+
+                        // Convert the list of TimeDataStringSample to a list of TimeDataSample
+                        val timeDataSamples = timeDataStringList.map { timeDataStringSample ->
+                            timeDataStringSample.transformToTimeDataSample()
+                        }
+                        timeDataSets = TimeDataSets(timeDataSamples)
+                        Log.d("TimeDataScreen", "First timestamp=${timeDataSets.firstTimestamp}")
+                        Log.d("TimeDataScreen", "Last timestamp=${timeDataSets.lastTimestamp}")
+                        Log.d("TimeDataScreen", "Length=${timeDataSets.length}")
+                    }
+                }
+            }
+        }
+    }
 
     AquariumControllerTheme {
         // A surface container using the 'background' color from the theme
@@ -55,7 +97,8 @@ fun TimeDataScreen(
             color = MaterialTheme.colorScheme.background
         ) {
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.verticalScroll(rememberScrollState())
             ) {
                 MainDropdownMenuComposable(
                     navHostController = navHostController,
@@ -128,7 +171,8 @@ fun TimeDataScreen(
                         legend.isEnabled = true
                         legend.textColor = textColor
                         axisRight.isEnabled = false
-                        axisLeft.valueFormatter = TimeDataYAxisMicroSievertPerCentimeterValueFormatter()
+                        axisLeft.valueFormatter =
+                            TimeDataYAxisMicroSievertPerCentimeterValueFormatter()
                         axisLeft.setDrawTopYLabelEntry(true)
                         xAxis.granularity = axisGranularityTime
                         xAxis.valueFormatter = TimeDataXAxisValueFormatter()
@@ -238,7 +282,8 @@ fun generateMockTimeData(): List<TimeDataSample> {
         val pH = 7.5 + 0.5 * sin(2 * Math.PI * i / (24 * 60)) + addNoise(0.0, 8.0)
         pHs.add(pH)
 
-        val conductivity = 51000.0 + 1000 * sin(2 * Math.PI * i / (24 * 60)) + addNoise(0.0, 52000.0)
+        val conductivity =
+            51000.0 + 1000 * sin(2 * Math.PI * i / (24 * 60)) + addNoise(0.0, 52000.0)
         conductivities.add(conductivity)
 
         val ambientTemperature = 23.5 + 1.5 * sin(2 * Math.PI * i / (24 * 60)) + addNoise(0.0, 25.0)
@@ -253,19 +298,24 @@ fun generateMockTimeData(): List<TimeDataSample> {
         val surfaceVentilation = if (i in 12 * 60 until 17 * 60) 1 else 0 // 12:00 to 17:00
         val heater = if (i in 9 * 60 until 20 * 60) 0 else 1 // 9:00 to 20:00
 
+        val timeDataSample = TimeDataSample(
+            timestamp = timestamp,
+            temperature = temperature,
+            temperatureFiltered = temperature,
+            pH = pH,
+            pHFiltered = pH,
+            conductivity = conductivity,
+            conductivityFiltered = conductivity,
+            ambientTemperature = ambientTemperature,
+            ambientHumidity = ambientHumidity,
+            refillInProgress = refillInProgress,
+            mainTankLevelSwitchStatus = mainTankLevelSwitchStatus,
+            surfaceVentilation = surfaceVentilation,
+            heater = heater,
+        )
+
         samples.add(
-            TimeDataSample(
-                timestamp = timestamp,
-                temperature = temperature,
-                pH = pH,
-                conductivity = conductivity,
-                ambientTemperature = ambientTemperature,
-                ambientHumidity = ambientHumidity,
-                refillInProgress = refillInProgress,
-                mainTankLevelSwitchStatus = mainTankLevelSwitchStatus,
-                surfaceVentilation = surfaceVentilation,
-                heater = heater
-            )
+            timeDataSample
         )
     }
 

@@ -1,8 +1,8 @@
 package com.example.aquariumcontroller.feed.edit
 
+import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -144,7 +144,7 @@ fun FeedProfileEditScreen(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, heightDp = 1200, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun FeedViewPreview() {
     val mockFeedProfileImport = FeedProfileImport()
