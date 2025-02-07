@@ -3,7 +3,6 @@ package com.example.aquariumcontroller.timedata
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
@@ -39,10 +38,8 @@ import com.github.mikephil.charting.components.XAxis
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.sql.Timestamp
-import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneOffset
-import java.util.Locale
 import kotlin.math.sin
 import kotlin.random.Random
 
