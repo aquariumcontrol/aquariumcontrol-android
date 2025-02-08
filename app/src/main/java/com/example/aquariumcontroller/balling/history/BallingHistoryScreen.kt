@@ -1,12 +1,20 @@
 package com.example.aquariumcontroller.balling.history
 
+import android.content.res.Configuration
 import android.util.Log
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -16,6 +24,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,8 +42,11 @@ import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BallingHistoryScreen(
     navHostController: NavHostController? = null,
@@ -45,24 +57,49 @@ fun BallingHistoryScreen(
     // This screen will only display the different Balling dosing events.
     // Hence, there is no need to have a view model.
     var ballingEvents by remember { mutableStateOf(mockBallingHistoryDosingEvents) }
+    var isRefreshing by remember {
+        mutableStateOf(
+            mockBallingHistoryDosingEvents?.isNotEmpty() ?: false
+        )
+    }
 
     val isControllerLoaded = mainViewModel?.isControllerLoaded() ?: false
-
+    val coroutineScope = rememberCoroutineScope()
     val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
 
-    if ((mainViewModel != null) && (isControllerAddressValid)) {
-        val url = when {
-            showFullWeek -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.BALLING_GET_EVENTS_7D
-            else -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.BALLING_GET_EVENTS_24H
-        }
-        val reader = BallingHistoryEventReader(url)
-
-        LaunchedEffect(Unit) {
-            withContext(Dispatchers.IO) {
-                ballingEvents = reader.readBallingEvents()
-            }
+    // Use a LaunchedEffect to fetch data on initial composition
+    @Suppress("UNCHECKED_CAST")
+    LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
+        if (mainViewModel != null && isControllerAddressValid) { // Check for null and validity
+            fetchBallingEvents(
+                mainViewModel,
+                showFullWeek
+            ) { newBallingEvents ->
+                ballingEvents = newBallingEvents as List<BallingHistoryDosingEvent>
+            } // Pass the setter lambda
         }
     }
+
+    @Suppress("UNCHECKED_CAST")
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = isRefreshing,
+        onRefresh = {
+            // This lambda will be called when the user pulls to refresh
+            isRefreshing = true
+            // Perform the refresh operation here (e.g., fetch new data)
+            coroutineScope.launch {
+                if (isControllerAddressValid) {
+                    fetchBallingEvents(
+                        mainViewModel!!, showFullWeek
+                    ) { newBallingEvents ->
+                        ballingEvents = newBallingEvents as List<BallingHistoryDosingEvent>
+                    } // Pass the setter lambda
+                    delay(500)
+                    isRefreshing = false // Reset the refresh state
+                }
+            }
+        }
+    )
 
     AquariumControllerTheme {
         Surface(
@@ -91,57 +128,71 @@ fun BallingHistoryScreen(
                         text = headlineText,
                         style = MaterialTheme.typography.headlineSmall,
                     )
-                    Row(
+                    Box(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp)
+                            .pullRefresh(pullRefreshState)
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.Center
                     ) {
-                        if (isControllerLoaded || mockBallingHistoryDosingEvents != null) {
-                            if (isControllerAddressValid || mockBallingHistoryDosingEvents != null) {
-                                if (ballingEvents == null) {
-                                    Text(
-                                        text = "Loading Balling dosing events...",
-                                        style = TextStyle(
-                                            fontSize = 16.sp,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                    )
-                                } else if (ballingEvents!!.isEmpty()) {
-                                    Text(
-                                        text = "No Balling events found.",
-                                        style = TextStyle(
-                                            fontSize = 16.sp,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                    )
-                                } else {
-                                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                        items(ballingEvents!!) { ballingEvent ->
-                                            Log.d(
-                                                this::class.simpleName,
-                                                "Balling dosing events found: ${ballingEvents!!.size}"
+                        if (isRefreshing) {  // Show only while isLoading is true
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .size(150.dp),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                        Row(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp)
+                        ) {
+                            if (isControllerLoaded || mockBallingHistoryDosingEvents != null) {
+                                if (isControllerAddressValid || mockBallingHistoryDosingEvents != null) {
+                                    if (ballingEvents == null) {
+                                        Text(
+                                            text = "Loading Balling dosing events...",
+                                            style = TextStyle(
+                                                fontSize = 16.sp,
+                                                fontWeight = FontWeight.Bold
                                             )
-                                            BallingHistoryEventComposable(ballingEvent)
+                                        )
+                                    } else if (ballingEvents!!.isEmpty()) {
+                                        Text(
+                                            text = "No Balling events found.",
+                                            style = TextStyle(
+                                                fontSize = 16.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        )
+                                    } else {
+                                        LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                            items(ballingEvents!!) { ballingEvent ->
+                                                Log.d(
+                                                    this::class.simpleName,
+                                                    "Balling dosing events found: ${ballingEvents!!.size}"
+                                                )
+                                                BallingHistoryEventComposable(ballingEvent)
+                                            }
                                         }
                                     }
+                                } else {
+                                    Text(
+                                        text = "Invalid controller address",
+                                        style = TextStyle(
+                                            fontSize = 16.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    )
                                 }
                             } else {
                                 Text(
-                                    text = "Invalid controller address",
+                                    text = "Controller not loaded.",
                                     style = TextStyle(
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.Bold
                                     )
                                 )
                             }
-                        } else {
-                            Text(
-                                text = "Controller not loaded.",
-                                style = TextStyle(
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            )
                         }
                     }
                 }
@@ -150,7 +201,25 @@ fun BallingHistoryScreen(
     }
 }
 
-@Preview(showBackground = true)
+private suspend fun fetchBallingEvents(
+    mainViewModel: MainViewModel,
+    showFullWeek: Boolean,
+    updateBallingEvents: (Any) -> Unit,
+) {
+    withContext(Dispatchers.IO) {
+        val url = when {
+            showFullWeek -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.BALLING_GET_EVENTS_7D
+            else -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.BALLING_GET_EVENTS_24H
+        }
+        val reader = BallingHistoryEventReader(url)
+        val ballingEvents = reader.readBallingEvents()
+        if (ballingEvents != null) {
+            updateBallingEvents(ballingEvents) // Call the setter lambda
+        }
+    }
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun BallingHistoryPreview() {
     val mockEvents = listOf(

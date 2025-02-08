@@ -79,7 +79,9 @@ fun TimeDataScreen(
         if (mainViewModel != null && isControllerAddressValid) { // Check for null and validity
             fetchTimeData(
                 mainViewModel,
-            ) { newTimeDataSets -> timeDataSets = newTimeDataSets as TimeDataSets } // Pass the setter lambda
+            ) { newTimeDataSets ->
+                timeDataSets = newTimeDataSets as TimeDataSets
+            } // Pass the setter lambda
         }
     }
 
@@ -109,8 +111,10 @@ fun TimeDataScreen(
             modifier = Modifier.fillMaxWidth(),
             color = MaterialTheme.colorScheme.background
         ) {
-
-            Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
+            Box(
+                modifier = Modifier.pullRefresh(pullRefreshState),
+                contentAlignment = Alignment.Center
+            ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.verticalScroll(rememberScrollState())
@@ -126,11 +130,10 @@ fun TimeDataScreen(
                         modifier = Modifier.padding(16.dp)
                     )
 
-                    // Overlay the loading indicator
-                    if (isRefreshing) {  // Show only while isLoading is true
+                    if (isRefreshing) {
                         CircularProgressIndicator(
                             modifier = Modifier
-                                .size(150.dp),
+                                .size(150.dp).fillMaxWidth(),
                             color = MaterialTheme.colorScheme.primary
                         )
                     }
