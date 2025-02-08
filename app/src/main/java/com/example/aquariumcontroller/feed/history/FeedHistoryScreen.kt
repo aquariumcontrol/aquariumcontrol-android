@@ -1,12 +1,20 @@
 package com.example.aquariumcontroller.feed.history
 
+import android.content.res.Configuration
 import android.util.Log
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -16,6 +24,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,8 +42,11 @@ import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FeedHistoryScreen(
     navHostController: NavHostController? = null,
@@ -45,24 +57,49 @@ fun FeedHistoryScreen(
     // This screen will only display the different feed events.
     // Hence, there is no need to have a view model.
     var feedEvents by remember { mutableStateOf(mockFeedHistoryEvents) }
+    var isRefreshing by remember {
+        mutableStateOf(
+            mockFeedHistoryEvents?.isNotEmpty() ?: false
+        )
+    }
 
     val isControllerLoaded = mainViewModel?.isControllerLoaded() ?: false
-
+    val coroutineScope = rememberCoroutineScope()
     val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
 
-    if ((mainViewModel != null) && (isControllerAddressValid)) {
-        val url = when {
-            showFullWeek -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.FEED_GET_EVENTS_7D
-            else -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.FEED_GET_EVENTS_24H
-        }
-        val reader = FeedHistoryEventReader(url)
-
-        LaunchedEffect(Unit) {
-            withContext(Dispatchers.IO) {
-                feedEvents = reader.readBallingEvents()
-            }
+    // Use a LaunchedEffect to fetch data on initial composition
+    @Suppress("UNCHECKED_CAST")
+    LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
+        if (mainViewModel != null && isControllerAddressValid) { // Check for null and validity
+            fetchFeedEvents(
+                mainViewModel,
+                showFullWeek
+            ) { newFeedEvents ->
+                feedEvents = newFeedEvents as List<FeedHistoryEvent>
+            } // Pass the setter lambda
         }
     }
+
+    @Suppress("UNCHECKED_CAST")
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = isRefreshing,
+        onRefresh = {
+            // This lambda will be called when the user pulls to refresh
+            isRefreshing = true
+            // Perform the refresh operation here (e.g., fetch new data)
+            coroutineScope.launch {
+                if (isControllerAddressValid) {
+                    fetchFeedEvents(
+                        mainViewModel!!, showFullWeek
+                    ) { newFeedEvents ->
+                        feedEvents = newFeedEvents as List<FeedHistoryEvent>
+                    } // Pass the setter lambda
+                    delay(500)
+                    isRefreshing = false // Reset the refresh state
+                }
+            }
+        }
+    )
 
     AquariumControllerTheme {
         Surface(
@@ -91,57 +128,72 @@ fun FeedHistoryScreen(
                         text = headlineText,
                         style = MaterialTheme.typography.headlineSmall,
                     )
-                    Row(
+                    Box(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp)
+                            .pullRefresh(pullRefreshState)
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.Center
                     ) {
-                        if (isControllerLoaded || mockFeedHistoryEvents != null) {
-                            if (isControllerAddressValid || mockFeedHistoryEvents != null) {
-                                if (feedEvents == null) {
-                                    Text(
-                                        text = "Loading feed events...",
-                                        style = TextStyle(
-                                            fontSize = 16.sp,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                    )
-                                } else if (feedEvents!!.isEmpty()) {
-                                    Text(
-                                        text = "No feed events found.",
-                                        style = TextStyle(
-                                            fontSize = 16.sp,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                    )
-                                } else {
-                                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                        items(feedEvents!!) { ballingEvent ->
-                                            Log.d(
-                                                this::class.simpleName,
-                                                "Feed events found: ${feedEvents!!.size}"
+                        if (isRefreshing) {  // Show only while isLoading is true
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .size(150.dp),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp)
+                        ) {
+                            if (isControllerLoaded || mockFeedHistoryEvents != null) {
+                                if (isControllerAddressValid || mockFeedHistoryEvents != null) {
+                                    if (feedEvents == null) {
+                                        Text(
+                                            text = "Loading feed events...",
+                                            style = TextStyle(
+                                                fontSize = 16.sp,
+                                                fontWeight = FontWeight.Bold
                                             )
-                                            FeedHistoryEventComposable(ballingEvent)
+                                        )
+                                    } else if (feedEvents!!.isEmpty()) {
+                                        Text(
+                                            text = "No feed events found.",
+                                            style = TextStyle(
+                                                fontSize = 16.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        )
+                                    } else {
+                                        LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                            items(feedEvents!!) { ballingEvent ->
+                                                Log.d(
+                                                    this::class.simpleName,
+                                                    "Feed events found: ${feedEvents!!.size}"
+                                                )
+                                                FeedHistoryEventComposable(ballingEvent)
+                                            }
                                         }
                                     }
+                                } else {
+                                    Text(
+                                        text = "Invalid controller address",
+                                        style = TextStyle(
+                                            fontSize = 16.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    )
                                 }
                             } else {
                                 Text(
-                                    text = "Invalid controller address",
+                                    text = "Controller not loaded.",
                                     style = TextStyle(
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.Bold
                                     )
                                 )
                             }
-                        } else {
-                            Text(
-                                text = "Controller not loaded.",
-                                style = TextStyle(
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            )
                         }
                     }
                 }
@@ -150,7 +202,25 @@ fun FeedHistoryScreen(
     }
 }
 
-@Preview(showBackground = true)
+private suspend fun fetchFeedEvents(
+    mainViewModel: MainViewModel,
+    showFullWeek: Boolean,
+    updateFeedEvents: (Any) -> Unit,
+) {
+    withContext(Dispatchers.IO) {
+        val url = when {
+            showFullWeek -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.FEED_GET_EVENTS_7D
+            else -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.FEED_GET_EVENTS_24H
+        }
+        val reader = FeedHistoryEventReader(url)
+        val feedEvents = reader.readFeedEvents()
+        if (feedEvents != null) {
+            updateFeedEvents(feedEvents) // Call the setter lambda
+        }
+    }
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun FeedHistoryPreview() {
     val mockEvents = listOf(

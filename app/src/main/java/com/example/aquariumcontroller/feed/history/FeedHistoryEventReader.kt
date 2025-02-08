@@ -10,7 +10,7 @@ class FeedHistoryEventReader(private val url: String) {
     private val client = OkHttpClient()
     private val json = Json { ignoreUnknownKeys = true }
 
-    fun readBallingEvents(): List<FeedHistoryEvent>? {
+    fun readFeedEvents(): List<FeedHistoryEvent>? {
         val request = Request.Builder()
             .url(url)
             .build()
