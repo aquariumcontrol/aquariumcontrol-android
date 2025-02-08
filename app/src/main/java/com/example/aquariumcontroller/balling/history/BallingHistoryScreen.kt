@@ -134,7 +134,7 @@ fun BallingHistoryScreen(
                             .fillMaxWidth(),
                         contentAlignment = Alignment.Center
                     ) {
-                        if (isRefreshing) {  // Show only while isLoading is true
+                        if (isRefreshing) {
                             CircularProgressIndicator(
                                 modifier = Modifier
                                     .size(150.dp),
