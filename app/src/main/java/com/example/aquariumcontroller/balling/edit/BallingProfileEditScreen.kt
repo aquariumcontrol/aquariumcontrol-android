@@ -1,5 +1,6 @@
 package com.example.aquariumcontroller.balling.edit
 
+import android.content.res.Configuration
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -194,7 +195,7 @@ fun BallingProfileEditScreen(
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun BallingProfileEditPreviewScreen() {
     val mockBallingProfile = BallingProfile(

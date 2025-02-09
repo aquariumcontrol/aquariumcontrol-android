@@ -1,5 +1,6 @@
 package com.example.aquariumcontroller.controller
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -92,7 +93,7 @@ fun ControllerSelectionScreen(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun ControllerSelectionScreenPreview() {
     val mockControllerProfile1 = ControllerProfile(

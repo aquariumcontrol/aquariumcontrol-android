@@ -1,5 +1,6 @@
 package com.example.aquariumcontroller.balling
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -119,7 +120,7 @@ fun BallingScreen(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun BallingViewPreview() {
     val mockBallingProfile1 = BallingProfile(pumpId = 1, volume = 2.1, label = "mock1")

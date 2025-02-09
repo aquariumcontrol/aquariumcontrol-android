@@ -1,5 +1,6 @@
 package com.example.aquariumcontroller.feed.edit
 
+import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,7 +29,7 @@ fun FeedProfileEditMenuComposable(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, heightDp = 1400, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun FeedProfileEditMenuPreviewComposable() {
 

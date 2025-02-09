@@ -1,5 +1,6 @@
 package com.example.aquariumcontroller.feed.edit
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -57,7 +58,7 @@ fun FeedProfileEditMenuItemDurationComposable(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun FeedProfileEditMenuItemDurationPreviewComposable() {
     val mockFeedProfileEditMenuItem = FeedProfileEditMenuItem(

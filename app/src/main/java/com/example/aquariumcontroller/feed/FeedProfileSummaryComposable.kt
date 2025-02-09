@@ -1,5 +1,6 @@
 package com.example.aquariumcontroller.feed
 
+import android.content.res.Configuration
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -68,7 +69,7 @@ fun FeedProfileSummaryComposable(
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun FeedProfileSummaryPreviewScreen() {
     val mockFeedProfileImport = FeedProfileImport()

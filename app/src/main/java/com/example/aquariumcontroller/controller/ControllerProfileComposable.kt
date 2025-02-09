@@ -1,5 +1,6 @@
 package com.example.aquariumcontroller.controller
 
+import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -162,7 +163,7 @@ fun ControllerProfileComposable(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun ControllerProfileScreenPreview() {
     val mockControllerProfile1 = ControllerProfile(

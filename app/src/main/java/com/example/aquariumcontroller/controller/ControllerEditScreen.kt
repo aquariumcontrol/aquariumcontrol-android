@@ -1,5 +1,6 @@
 package com.example.aquariumcontroller.controller
 
+import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -128,7 +129,7 @@ fun ControllerEditScreen(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun ControllerEditViewPreview() {
 

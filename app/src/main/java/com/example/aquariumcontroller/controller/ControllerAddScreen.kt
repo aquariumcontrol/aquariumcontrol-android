@@ -1,5 +1,6 @@
 package com.example.aquariumcontroller.controller
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -126,7 +127,7 @@ fun ControllerAddScreen(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun ControllerAddViewPreview() {
     AquariumControllerTheme {

@@ -1,5 +1,6 @@
 package com.example.aquariumcontroller.refill
 
+import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -198,7 +199,7 @@ fun RefillScreen(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun RefillScreenPreview() {
     AquariumControllerTheme {

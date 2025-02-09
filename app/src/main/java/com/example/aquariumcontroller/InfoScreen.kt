@@ -1,5 +1,6 @@
 package com.example.aquariumcontroller
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
@@ -35,7 +36,7 @@ fun InfoScreen(navHostController: NavHostController? = null, mainViewModel: Main
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun InfoViewPreview() {
     AquariumControllerTheme {

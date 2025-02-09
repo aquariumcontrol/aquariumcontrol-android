@@ -1,5 +1,6 @@
 package com.example.aquariumcontroller.feed.history
 
+import android.content.res.Configuration
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
@@ -61,7 +62,7 @@ fun FeedHistoryEventComposable(
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun FeedEventPreviewScreen() {
     val mockEvent = FeedHistoryEvent(

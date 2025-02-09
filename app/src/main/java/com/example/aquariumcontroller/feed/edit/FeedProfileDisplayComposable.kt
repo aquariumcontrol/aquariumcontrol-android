@@ -1,7 +1,7 @@
 package com.example.aquariumcontroller.feed.edit
 
+import android.content.res.Configuration
 import android.graphics.Color
-import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -195,7 +195,7 @@ fun FeedProfileDisplayComposable(feedProfileEditViewModel: FeedProfileEditViewMo
     })
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun FeedProfileDisplayComposablePreview() {
     val mockFeedProfileImport = FeedProfileImport()

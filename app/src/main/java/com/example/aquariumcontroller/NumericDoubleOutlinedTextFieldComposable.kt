@@ -1,5 +1,6 @@
 package com.example.aquariumcontroller
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
@@ -14,7 +15,9 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 fun isParsableToDouble(input: String): Boolean {
     return try {
@@ -63,4 +66,18 @@ fun NumericDoubleOutlinedTextFieldComposable(
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
         modifier = modifier.width(100.dp)
     )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun NumericDoubleOutlinedTextFieldComposablePreview() {
+    val testValue = 0.5
+    AquariumControllerTheme {
+        NumericDoubleOutlinedTextFieldComposable(
+            value = testValue,
+            onValueChange = { /* do nothing */ },
+            label = "testLabel",
+            modifier = Modifier,
+        )
+    }
 }
