@@ -46,4 +46,5 @@
     <string name="rectBullet">\u25A0</string>
     <string name="TimeDataSeries">Time Data Series</string>
     <string name="UpdateOverviewData">Update Overview Data</string>
+    <string name="HeatingControl">Heating Control</string>
 </resources>

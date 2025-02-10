@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -77,7 +78,7 @@ fun NumericDoubleOutlinedTextFieldComposablePreview() {
             value = testValue,
             onValueChange = { /* do nothing */ },
             label = "testLabel",
-            modifier = Modifier,
+            modifier = Modifier
         )
     }
 }
