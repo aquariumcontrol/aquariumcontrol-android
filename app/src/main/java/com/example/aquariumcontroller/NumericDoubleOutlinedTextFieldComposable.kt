@@ -1,6 +1,8 @@
 package com.example.aquariumcontroller
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
@@ -44,7 +46,8 @@ fun NumericDoubleOutlinedTextFieldComposable(
     LaunchedEffect(value) { // Trigger when 'value' changes
         snapshotFlow { value }
             .collect { newValue ->
-                val formattedValue = String.format("%.${precision}f", newValue) // Format incoming value
+                val formattedValue =
+                    String.format("%.${precision}f", newValue) // Format incoming value
                 textFieldValueState = textFieldValueState.copy(text = formattedValue)
             }
     }
@@ -57,15 +60,20 @@ fun NumericDoubleOutlinedTextFieldComposable(
                     .filter { it.isDigit() || it == '.' || it == ',' }
                     .replace(",", ".")
             if (isParsableToDouble(newValue)) {
-                val doubleValue = newValue.toDoubleOrNull()?: 0.0
-                val formattedValue = String.format("%.${precision}f", doubleValue) // Format with precision
+                val doubleValue = newValue.toDoubleOrNull() ?: 0.0
+                val formattedValue =
+                    String.format("%.${precision}f", doubleValue) // Format with precision
                 textFieldValueState = newTextFieldValue.copy(text = formattedValue)
                 onValueChange(newValue)
             }
         },
-        label = { Text(label) },
+        label = {
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Text(text = label)
+            }
+        },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-        modifier = modifier.width(100.dp)
+        modifier = modifier.width(100.dp),
     )
 }
 
