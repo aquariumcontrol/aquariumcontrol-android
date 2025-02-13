@@ -1,10 +1,12 @@
 package com.example.aquariumcontroller.heating
 
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import java.sql.Date
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+@Serializable
 data class HeatingStatsStringEntry(
     @SerialName("Date")
     val dateString: String,
