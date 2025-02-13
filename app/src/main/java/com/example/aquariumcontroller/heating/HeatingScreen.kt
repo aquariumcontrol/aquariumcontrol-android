@@ -34,7 +34,7 @@ import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 fun HeatingScreen(
     navHostController: NavHostController? = null,
     mockHeatingSetVals: HeatingSetVals? = null,
-    // mockHeatingStatEntries: List<HeatingStatEntry>? = null,
+    mockHeatingStatEntries: List<HeatingStatsEntry>? = null,
     mainViewModel: MainViewModel? = null
 ) {
     // This screen displays
@@ -43,6 +43,8 @@ fun HeatingScreen(
     val heatingSetVals = mockHeatingSetVals ?: HeatingSetVals(
         initialSwitchOffTemp = 28.0, initialSwitchOnTemp = 22.0
     )
+
+    val heatingStats = mockHeatingStatEntries ?: createMockStatsData()
 
     val heatingSetValsViewModel: HeatingSetValsViewModel = viewModel(
         factory = HeatingSetValsViewModelFactory(heatingSetVals)
@@ -102,7 +104,7 @@ fun HeatingScreen(
                     Text(text = "Reset Heating Controller Values")
                 }
                 Spacer(modifier = Modifier.size(width = 10.dp, height = 10.dp))
-                Column() {
+                Column {
                     RangeSlider(
                         value = sliderRange,
                         onValueChange = { newValue ->
@@ -118,7 +120,7 @@ fun HeatingScreen(
                     )
                 }
                 Spacer(modifier = Modifier.size(width = 10.dp, height = 10.dp))
-                Row() {
+                Row {
                     NumericDoubleOutlinedTextFieldComposable(
                         value = lowerBoundValue,
                         onValueChange = { newStringValue ->
@@ -147,21 +149,46 @@ fun HeatingScreen(
                             .size(width = 128.dp, height = 72.dp)
                     )
                 }
+                HeatingStatsComposable(heatingStats = heatingStats)
             }
         }
     }
 }
 
+fun createMockStatsData(): List<HeatingStatsEntry> {
+    val mockHeatingStatsStringEntries = listOf(
+        HeatingStatsStringEntry(
+            dateString = "2025-1-12",
+            energy = 1988.17,
+            ambientTemperatureAverage = 22.6869,
+            waterTemperatureAverage = 25.4176,
+            heatingControlRuntime = 36235
+        ),
+        HeatingStatsStringEntry(
+            dateString = "2025-1-25",
+            energy = 18.7222,
+            ambientTemperatureAverage = 18.9717,
+            waterTemperatureAverage = 25.4007,
+            heatingControlRuntime = 389
+        )
+    )
 
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    return mockHeatingStatsStringEntries.map {
+            it.transformToHeatingStatsEntry()
+    }
+}
+
+@Preview(showBackground = true, heightDp = 800, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun HeatingViewPreview() {
+
     AquariumControllerTheme {
         HeatingScreen(
             mockHeatingSetVals = HeatingSetVals(
                 initialSwitchOffTemp = 27.5,
                 initialSwitchOnTemp = 22.5
-            )
+            ),
+            mockHeatingStatEntries = createMockStatsData()
         )
     }
 }
