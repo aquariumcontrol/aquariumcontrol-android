@@ -17,4 +17,6 @@ object ApiParams {
     const val STOP_DATE = "stopdate"
     const val START_TIME = "starttime"
     const val STOP_TIME = "stoptime"
+    const val HEATING_SWITCH_OFF_TEMPERATURE = "heatingSwitchOffTemp"
+    const val HEATING_SWITCH_ON_TEMPERATURE = "heatingSwitchOnTemp"
 }

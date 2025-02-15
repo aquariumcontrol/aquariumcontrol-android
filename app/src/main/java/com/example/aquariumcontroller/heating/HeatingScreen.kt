@@ -1,6 +1,8 @@
 package com.example.aquariumcontroller.heating
 
 import android.content.res.Configuration
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -26,24 +27,27 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.aquariumcontroller.ApiParams
 import com.example.aquariumcontroller.ApiUrls
 import com.example.aquariumcontroller.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.NumericDoubleOutlinedTextFieldComposable
+import com.example.aquariumcontroller.PostRequest
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
+import com.example.aquariumcontroller.webApiPostRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HeatingScreen(
     navHostController: NavHostController? = null,
@@ -53,10 +57,12 @@ fun HeatingScreen(
 ) {
     // This screen displays
     // - a range slider for setting the control target temperatures
-    // - the heating statistics
-    val heatingSetVals = mockHeatingSetVals ?: HeatingSetVals(
-        initialSwitchOffTemp = 28.0, initialSwitchOnTemp = 22.0
+    // - numeric input fields for entering the control target temperatures
+    // - the heating statistics incl. refresh button
+    val heatingInitialSetVals = mockHeatingSetVals ?: HeatingSetVals(
+        heatingSwitchOffTemp = 28.0, heatingSwitchOnTemp = 22.0
     )
+
     var isRefreshing by remember {
         mutableStateOf(
             mockHeatingStatEntries?.isNotEmpty() ?: false
@@ -64,27 +70,32 @@ fun HeatingScreen(
     }
 
     val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
+
     val coroutineScope = rememberCoroutineScope()
+
+    val postRequest = PostRequest()
+
+    val context = LocalContext.current // context for web API request and Toasts
 
     var heatingStats by remember { mutableStateOf(mockHeatingStatEntries ?: emptyList()) }
 
     val heatingSetValsViewModel: HeatingSetValsViewModel = viewModel(
-        factory = HeatingSetValsViewModelFactory(heatingSetVals)
+        factory = HeatingSetValsViewModelFactory(heatingInitialSetVals)
     )
 
     // Use derived state for slider position
     val sliderRange by heatingSetValsViewModel.sliderRange.observeAsState(
         initial =
-        heatingSetVals.heatingSwitchOnTemp.toFloat()..
-                heatingSetVals.heatingSwitchOffTemp.toFloat()
+        heatingInitialSetVals.heatingSwitchOnTemp.toFloat()..
+                heatingInitialSetVals.heatingSwitchOffTemp.toFloat()
     )
 
     // Use a separate mutable state for the text field values
     val lowerBoundValue by heatingSetValsViewModel.lowerBoundValue.observeAsState(
-        initial = heatingSetVals.heatingSwitchOnTemp
+        initial = heatingInitialSetVals.heatingSwitchOnTemp
     )
     val upperBoundValue by heatingSetValsViewModel.upperBoundValue.observeAsState(
-        heatingSetVals.heatingSwitchOffTemp
+        heatingInitialSetVals.heatingSwitchOffTemp
     )
 
     @Suppress("UNCHECKED_CAST")
@@ -94,7 +105,15 @@ fun HeatingScreen(
                 mainViewModel,
             ) { newHeatingStats ->
                 heatingStats = newHeatingStats as List<HeatingStatsEntry>
-            } // Pass the setter lambda
+            }
+            fetchHeatingSetVals(
+                mainViewModel,
+            ) {
+                newHeatingSetVals ->
+                val newHeatingSetValsCasted = newHeatingSetVals as HeatingSetVals
+                Log.d("HeatingScreen", "New heating set vals: $newHeatingSetValsCasted")
+                heatingSetValsViewModel.setValues(newHeatingSetValsCasted)
+            }
         }
     }
 
@@ -104,7 +123,7 @@ fun HeatingScreen(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Scaffold() { innerPadding ->
+            Scaffold { innerPadding ->
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
@@ -122,7 +141,28 @@ fun HeatingScreen(
                         modifier = Modifier.padding(16.dp)
                     )
                     Button(
-                        onClick = { heatingSetValsViewModel.updateValues() }
+                        onClick = {
+                            heatingSetValsViewModel.updateValues()
+                            if (mainViewModel != null) {
+                                webApiPostRequest(
+                                    mainViewModel = mainViewModel,
+                                    apiUrl = ApiUrls.HEATING_POST_SET_VALS,
+                                    coroutineScope = coroutineScope,
+                                    postRequest = postRequest,
+                                    context = context,
+                                    optionalGetParams = mapOf(
+                                        ApiParams.HEATING_SWITCH_ON_TEMPERATURE to heatingSetValsViewModel.getHeatingSwitchOnTempString(),
+                                        ApiParams.HEATING_SWITCH_OFF_TEMPERATURE to heatingSetValsViewModel.getHeatingSwitchOffTempString()
+                                    ),
+                                )
+                                // Show the Toast after the API call
+                                Toast.makeText(
+                                    context,
+                                    "Sent request to controller for updating heating set values",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
                     ) {
                         Text(text = "Update Heating Controller Values")
                     }
@@ -187,23 +227,23 @@ fun HeatingScreen(
 
                     @Suppress("UNCHECKED_CAST")
                     HeatingStatsComposable(heatingStats = heatingStats, updateData =
-                        {
-                            coroutineScope.launch {
-                                if (isControllerAddressValid) {
-                                    isRefreshing = true
-                                    try {
-                                        fetchHeatingStats(
-                                            mainViewModel!!
-                                        ) { newHeatingStats ->
-                                            heatingStats = newHeatingStats as List<HeatingStatsEntry>
-                                        } // Pass the setter lambda
-                                        delay(500)
-                                    } finally {
-                                        isRefreshing = false // Reset the refresh state
+                    {
+                        coroutineScope.launch {
+                            if (isControllerAddressValid) {
+                                isRefreshing = true
+                                try {
+                                    fetchHeatingStats(
+                                        mainViewModel!!
+                                    ) { newHeatingStats ->
+                                        heatingStats = newHeatingStats as List<HeatingStatsEntry>
                                     }
+                                    delay(500)
+                                } finally {
+                                    isRefreshing = false // Reset the refresh state
                                 }
                             }
                         }
+                    }
                     )
                 }
             }
@@ -222,6 +262,26 @@ private suspend fun fetchHeatingStats(
         val heatingStats =
             heatingStringsStats?.map { it.transformToHeatingStatsEntry() } ?: emptyList()
         updateHeatingStats(heatingStats)
+    }
+}
+
+private suspend fun fetchHeatingSetVals(
+    mainViewModel: MainViewModel,
+    updateHeatingSetVals: (Any) -> Unit,
+) {
+    withContext(Dispatchers.IO) {
+        val url =
+            "http://" + mainViewModel.getControllerAddress() + ApiUrls.HEATING_GET_SET_VALS
+        val heatingSetValsList = HeatingSetValsReader(url).readHeatingSetVals()
+        if (!heatingSetValsList.isNullOrEmpty()) {
+            Log.d("HeatingScreen", "Fetched heating set vals: $heatingSetValsList")
+            withContext(Dispatchers.Main) {
+                updateHeatingSetVals(heatingSetValsList.first())
+            }
+        }
+        else {
+            Log.d("HeatingScreen", "No heating set vals fetched")
+        }
     }
 }
 
@@ -254,8 +314,8 @@ fun HeatingViewPreview() {
     AquariumControllerTheme {
         HeatingScreen(
             mockHeatingSetVals = HeatingSetVals(
-                initialSwitchOffTemp = 27.5,
-                initialSwitchOnTemp = 22.5
+                heatingSwitchOffTemp = 27.5,
+                heatingSwitchOnTemp = 22.5
             ),
             mockHeatingStatEntries = createMockStatsData()
         )

@@ -1,6 +1,13 @@
 package com.example.aquariumcontroller.heating
 
-class HeatingSetVals(initialSwitchOffTemp: Double, initialSwitchOnTemp: Double) {
-    var heatingSwitchOffTemp: Double = initialSwitchOffTemp
-    var heatingSwitchOnTemp: Double = initialSwitchOnTemp
-}
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class HeatingSetVals(
+    @SerialName("heatingSwitchOffTemp")
+    var heatingSwitchOffTemp: Double,
+
+    @SerialName("heatingSwitchOnTemp")
+    var heatingSwitchOnTemp: Double
+)
