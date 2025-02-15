@@ -28,4 +28,6 @@ object ApiUrls {
     const val HEATING_GET_STATS = "${BASE_URL}getHeatingStats.php"
     const val HEATING_GET_SET_VALS = "${BASE_URL}getHeatingSetVals.php"
     const val HEATING_POST_SET_VALS = "${BASE_URL}postHeatingSetVals.php"
+    const val VENTILATION_GET_SET_VALS = "${BASE_URL}getVentilationSetVals.php"
+    const val VENTILATION_POST_SET_VALS = "${BASE_URL}postVentilationSetVals.php"
 }

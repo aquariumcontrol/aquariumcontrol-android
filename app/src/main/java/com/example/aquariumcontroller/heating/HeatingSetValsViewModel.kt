@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 class HeatingSetValsViewModel(
     private var heatingSetVals: HeatingSetVals,
 ) : ViewModel() {
-    // This class will allow the user to edit the Balling dosing profile.
+    // This class will allow the user to edit the heating control parameters
     private val _sliderRange = MutableLiveData<ClosedFloatingPointRange<Float>>()
     private val _lowerBoundValue = MutableLiveData<Double>()
     private val _upperBoundValue = MutableLiveData<Double>()

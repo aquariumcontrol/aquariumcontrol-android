@@ -30,6 +30,7 @@ import com.example.aquariumcontroller.overview.OverviewScreen
 import com.example.aquariumcontroller.refill.RefillScreen
 import com.example.aquariumcontroller.refill.history.RefillHistoryScreen
 import com.example.aquariumcontroller.timedata.TimeDataScreen
+import com.example.aquariumcontroller.ventilation.VentilationScreen
 
 @Suppress("UNCHECKED_CAST")
 class MainActivity : ComponentActivity() {

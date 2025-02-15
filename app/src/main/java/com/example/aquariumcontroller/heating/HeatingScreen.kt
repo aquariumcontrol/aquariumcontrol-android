@@ -227,23 +227,23 @@ fun HeatingScreen(
 
                     @Suppress("UNCHECKED_CAST")
                     HeatingStatsComposable(heatingStats = heatingStats, updateData =
-                    {
-                        coroutineScope.launch {
-                            if (isControllerAddressValid) {
-                                isRefreshing = true
-                                try {
-                                    fetchHeatingStats(
-                                        mainViewModel!!
-                                    ) { newHeatingStats ->
-                                        heatingStats = newHeatingStats as List<HeatingStatsEntry>
+                        {
+                            coroutineScope.launch {
+                                if (isControllerAddressValid) {
+                                    isRefreshing = true
+                                    try {
+                                        fetchHeatingStats(
+                                            mainViewModel!!
+                                        ) { newHeatingStats ->
+                                            heatingStats = newHeatingStats as List<HeatingStatsEntry>
+                                        }
+                                        delay(500)
+                                    } finally {
+                                        isRefreshing = false // Reset the refresh state
                                     }
-                                    delay(500)
-                                } finally {
-                                    isRefreshing = false // Reset the refresh state
                                 }
                             }
                         }
-                    }
                     )
                 }
             }
@@ -310,7 +310,7 @@ fun createMockStatsData(): List<HeatingStatsEntry> {
 
 @Preview(showBackground = true, heightDp = 800, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun HeatingViewPreview() {
+fun HeatingScreenPreview() {
     AquariumControllerTheme {
         HeatingScreen(
             mockHeatingSetVals = HeatingSetVals(

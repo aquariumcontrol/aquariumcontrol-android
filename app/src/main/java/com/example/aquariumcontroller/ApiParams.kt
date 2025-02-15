@@ -19,4 +19,6 @@ object ApiParams {
     const val STOP_TIME = "stoptime"
     const val HEATING_SWITCH_OFF_TEMPERATURE = "heatingSwitchOffTemp"
     const val HEATING_SWITCH_ON_TEMPERATURE = "heatingSwitchOnTemp"
+    const val VENTILATION_SWITCH_OFF_TEMPERATURE = "ventilationSwitchOffTemp"
+    const val VENTILATION_SWITCH_ON_TEMPERATURE = "ventilationSwitchOnTemp"
 }
