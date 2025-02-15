@@ -1,0 +1,47 @@
+package com.example.aquariumcontroller
+
+import android.content.res.Configuration
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Sync
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
+
+@Composable
+fun RoundRefreshButton(onClick: () -> Unit) {
+    val icon = Icons.Filled.Sync
+    Surface(
+        onClick = onClick,
+        modifier = Modifier.size(32.dp),
+        shape = CircleShape, // this is a round button
+        color = MaterialTheme.colorScheme.primary
+    ) {
+        IconButton(
+            onClick = onClick,
+            modifier = Modifier.size(48.dp),
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = "Refresh" // Provide a content description
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun RoundRefreshButtonPreviewDark() {
+    AquariumControllerTheme {
+        RoundRefreshButton(
+            onClick = { /* Do nothing */ },
+        )
+    }
+}

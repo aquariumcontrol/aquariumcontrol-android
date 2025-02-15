@@ -4,14 +4,19 @@ import android.content.res.Configuration
 import android.graphics.Color
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.example.aquariumcontroller.RoundRefreshButton
 import com.github.mikephil.charting.charts.CombinedChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
@@ -27,7 +32,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
-fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>) {
+fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: () -> Unit) {
     // This screen is only displaying time data charts without any user interaction.
     // Therefore, this screen does not use a view model.
     val isDarkMode = isSystemInDarkTheme()
@@ -150,7 +155,14 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>) {
                 }
             }
         )
-        HeatingStatsLegend()
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+
+        ) {
+            HeatingStatsLegend()
+            Spacer(modifier = Modifier.width(32.dp))
+            RoundRefreshButton(onClick = updateData)
+        }
     }
 }
 
@@ -182,5 +194,5 @@ fun createMockHeatingStatsData(): List<HeatingStatsEntry> {
 fun PreviewHeatingStatsComposable() {
     val mockData = createMockHeatingStatsData()
 
-    HeatingStatsComposable(heatingStats = mockData)
+    HeatingStatsComposable(heatingStats = mockData, updateData = {})
 }
