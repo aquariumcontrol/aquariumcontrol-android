@@ -24,6 +24,7 @@ import com.example.aquariumcontroller.controller.ControllerEditScreen
 import com.example.aquariumcontroller.controller.ControllerProfileDatabase
 import com.example.aquariumcontroller.controller.ControllerSelectionScreen
 import com.example.aquariumcontroller.controller.ControllerViewModel
+import com.example.aquariumcontroller.feed.FeedProfileScheduleScreen
 import com.example.aquariumcontroller.feed.FeedScreen
 import com.example.aquariumcontroller.heating.HeatingScreen
 import com.example.aquariumcontroller.overview.OverviewScreen
@@ -124,6 +125,12 @@ class MainActivity : ComponentActivity() {
                             navHostController = navHostController,
                             mainViewModel = mainViewModel,
                             feedProfile = mainViewModel.getMySelectedFeedProfile()!!
+                        )
+                    }
+                    composable(ViewNavigationRoutes.feedSchedule) {
+                        FeedProfileScheduleScreen(
+                            navHostController = navHostController,
+                            mainViewModel = mainViewModel,
                         )
                     }
                     composable(ViewNavigationRoutes.balling) {

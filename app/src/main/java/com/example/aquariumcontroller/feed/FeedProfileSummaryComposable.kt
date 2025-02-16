@@ -9,11 +9,18 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,11 +48,6 @@ fun FeedProfileSummaryComposable(
                 )
             )
             .padding(8.dp)
-            .clickable {
-                Log.d("FeedProfileSummaryScreen", "Clicked on {${feedProfile.profileName}}")
-                mainViewModel?.updateSelectedFeedProfile(feedProfile)
-                navHostController?.navigate(ViewNavigationRoutes.feedEdit)
-            }
     ) {
         Column(
             modifier = Modifier
@@ -58,12 +60,46 @@ fun FeedProfileSummaryComposable(
         }
 
         Column(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(3f)
         ) {
             Text(
                 text = "Name: ${feedProfile.profileName}",
                 fontSize = 12.sp
             )
+        }
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.End
+        ) {
+            Row {
+                Icon(
+                    imageVector = Icons.Filled.Edit,
+                    contentDescription = "Edit",
+                    modifier = Modifier
+                        .clickable {
+                            Log.d(
+                                "FeedProfileSummaryScreen",
+                                "Clicked on Edit icon for {${feedProfile.profileName}}"
+                            )
+                            mainViewModel?.updateSelectedFeedProfile(feedProfile)
+                            navHostController?.navigate(ViewNavigationRoutes.feedEdit)
+                        }
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Icon(
+                    imageVector = Icons.Filled.Schedule,
+                    contentDescription = "Schedule",
+                    modifier = Modifier
+                        .clickable {
+                            Log.d(
+                                "FeedProfileSummaryScreen",
+                                "Clicked on Schedule icon for {${feedProfile.profileName}}"
+                            )
+                            mainViewModel?.updateSelectedFeedProfile(feedProfile)
+                            navHostController?.navigate(ViewNavigationRoutes.feedSchedule)
+                        }
+                )
+            }
         }
     }
 }
