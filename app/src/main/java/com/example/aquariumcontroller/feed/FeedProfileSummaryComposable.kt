@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.Icon
@@ -103,6 +104,20 @@ fun FeedProfileSummaryComposable(
                             )
                             mainViewModel?.updateSelectedFeedProfile(feedProfile)
                             navHostController?.navigate(ViewNavigationRoutes.feedSchedule)
+                        }
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Icon(
+                    imageVector = Icons.Filled.Delete,
+                    contentDescription = "Schedule",
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clickable {
+                            Log.d(
+                                "FeedProfileSummaryScreen",
+                                "Clicked on Delete icon for {${feedProfile.profileName}}"
+                            )
+                            /* todo: delete feed profile */
                         }
                 )
             }

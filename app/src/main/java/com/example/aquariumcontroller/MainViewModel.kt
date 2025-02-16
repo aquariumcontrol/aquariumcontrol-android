@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import com.example.aquariumcontroller.balling.BallingProfile
 import com.example.aquariumcontroller.controller.ControllerProfile
 import com.example.aquariumcontroller.feed.FeedProfile
+import com.example.aquariumcontroller.feed.schedule.FeedScheduleEntry
 
 class MainViewModel: ViewModel() {
     fun updateSelectedControllerProfile(controllerProfile: ControllerProfile) {
@@ -60,4 +61,14 @@ class MainViewModel: ViewModel() {
     }
 
     private var selectedFeedProfile: FeedProfile? by mutableStateOf(null)
+
+    fun getMySelectedFeedScheduleEntry(): FeedScheduleEntry? {
+        return selectedFeedScheduleEntry
+    }
+
+    fun updateSelectedFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry) {
+        selectedFeedScheduleEntry = feedScheduleEntry
+    }
+
+    private var selectedFeedScheduleEntry: FeedScheduleEntry? by mutableStateOf(null)
 }

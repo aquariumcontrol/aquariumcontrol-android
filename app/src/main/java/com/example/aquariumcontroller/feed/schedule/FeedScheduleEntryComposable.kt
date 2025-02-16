@@ -1,13 +1,17 @@
 package com.example.aquariumcontroller.feed.schedule
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -20,10 +24,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.example.aquariumcontroller.MainViewModel
+import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
 fun FeedScheduleEntryComposable(
+    navHostController: NavHostController? = null,
+    mainViewModel: MainViewModel? = null,
     feedScheduleEntry: FeedScheduleEntry
 ) {
     // This composable displays one feed schedule entry:
@@ -68,7 +77,16 @@ fun FeedScheduleEntryComposable(
                     imageVector = Icons.Filled.Edit,
                     contentDescription = "Edit",
                     Modifier.size(48.dp)
+                        .clickable {
+                            Log.d(
+                                "FeedScheduleEntryComposable",
+                                "Clicked on Edit icon for schedule entry at {${feedScheduleEntry.getTimestampString()}}"
+                            )
+                            mainViewModel?.updateSelectedFeedScheduleEntry(feedScheduleEntry)
+                            navHostController?.navigate(ViewNavigationRoutes.feedSchedule)
+                        }
                 )
+                Spacer(modifier = Modifier.width(16.dp))
                 Icon(
                     imageVector = Icons.Filled.Delete,
                     contentDescription = "Delete",

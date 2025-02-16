@@ -159,7 +159,9 @@ fun FeedScreen(
                             ) {
                                 items(feedScheduleEntries!!) { feedScheduleEntry ->
                                     FeedScheduleEntryComposable(
-                                        feedScheduleEntry = feedScheduleEntry
+                                        feedScheduleEntry = feedScheduleEntry,
+                                        navHostController = navHostController,
+                                        mainViewModel = mainViewModel
                                     )
                                 }
                             }
