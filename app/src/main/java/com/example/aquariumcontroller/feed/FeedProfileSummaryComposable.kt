@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
@@ -36,8 +37,8 @@ fun FeedProfileSummaryComposable(
     mainViewModel: MainViewModel? = null,
     feedProfile: FeedProfile
 ) {
-    // This composable displays one Feed dosing profile.
-    // When the user clicks on the profile, the com.example.aquariumcontroller.feed.edit.FeedProfileEditScreen is displayed.
+    // This composable displays one Feed dosing profile summary with two icons for editing or scheduling.
+    // When the user clicks on one of the icons, the corresponding action is triggered.
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -53,29 +54,33 @@ fun FeedProfileSummaryComposable(
             modifier = Modifier
                 .weight(1f)
         ) {
-            Text(
-                text = "ID: ${feedProfile.profileID}",
-                fontSize = 12.sp
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "ID: ${feedProfile.profileID}",
+                    fontSize = 12.sp
+                )
+            }
         }
 
         Column(
             modifier = Modifier.weight(3f)
         ) {
-            Text(
-                text = "Name: ${feedProfile.profileName}",
-                fontSize = 12.sp
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "Name: ${feedProfile.profileName}",
+                    fontSize = 12.sp
+                )
+            }
         }
         Column(
-            modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.End
         ) {
-            Row {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Filled.Edit,
                     contentDescription = "Edit",
                     modifier = Modifier
+                        .size(48.dp)
                         .clickable {
                             Log.d(
                                 "FeedProfileSummaryScreen",
@@ -90,6 +95,7 @@ fun FeedProfileSummaryComposable(
                     imageVector = Icons.Filled.Schedule,
                     contentDescription = "Schedule",
                     modifier = Modifier
+                        .size(48.dp)
                         .clickable {
                             Log.d(
                                 "FeedProfileSummaryScreen",
@@ -107,7 +113,7 @@ fun FeedProfileSummaryComposable(
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun FeedProfileSummaryPreviewScreen() {
+fun FeedProfileSummaryComposablePreview() {
     val mockFeedProfileImport = FeedProfileImport()
     mockFeedProfileImport.profileId = 1
     mockFeedProfileImport.profileName = "Test Profile"

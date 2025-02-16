@@ -24,7 +24,7 @@ import com.example.aquariumcontroller.controller.ControllerEditScreen
 import com.example.aquariumcontroller.controller.ControllerProfileDatabase
 import com.example.aquariumcontroller.controller.ControllerSelectionScreen
 import com.example.aquariumcontroller.controller.ControllerViewModel
-import com.example.aquariumcontroller.feed.FeedProfileScheduleScreen
+import com.example.aquariumcontroller.feed.schedule.FeedProfileScheduleScreen
 import com.example.aquariumcontroller.feed.FeedScreen
 import com.example.aquariumcontroller.heating.HeatingScreen
 import com.example.aquariumcontroller.overview.OverviewScreen

@@ -1,4 +1,4 @@
-package com.example.aquariumcontroller.feed
+package com.example.aquariumcontroller.feed.schedule
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
@@ -30,6 +30,8 @@ import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.ViewNavigationRoutes
+import com.example.aquariumcontroller.feed.FeedProfile
+import com.example.aquariumcontroller.feed.FeedProfileImport
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import java.util.Calendar
 import java.util.Locale

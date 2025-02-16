@@ -2,8 +2,10 @@ package com.example.aquariumcontroller.feed
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -29,6 +31,11 @@ import com.example.aquariumcontroller.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
+import com.example.aquariumcontroller.feed.schedule.FeedScheduleEntry
+import com.example.aquariumcontroller.feed.schedule.FeedScheduleEntryComposable
+import com.example.aquariumcontroller.feed.schedule.FeedScheduleEntryImport
+import com.example.aquariumcontroller.feed.schedule.FeedScheduleEntryReader
+import com.example.aquariumcontroller.feed.schedule.toFeedScheduleEntryList
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -37,25 +44,39 @@ import kotlinx.coroutines.withContext
 fun FeedScreen(
     navHostController: NavHostController? = null,
     mockFeedProfiles: List<FeedProfile>? = null,
+    mockFeedScheduleEntries: List<FeedScheduleEntry>? = null,
     mainViewModel: MainViewModel? = null
 ) {
     // This screen displays
     // - a button for visualizing all feed events of the last 24h
     // - a button for visualizing all feed events of the last 7 days
     // - feed profiles
+    // - feed schedule entries
     // - floating action button for adding feed profile
 
     var feedProfiles by remember { mutableStateOf(mockFeedProfiles) }
 
+    var feedScheduleEntries by remember { mutableStateOf(mockFeedScheduleEntries) }
+
     if (mainViewModel != null) {
-        val url = "http://" + mainViewModel.getControllerAddress() + ApiUrls.FEED_GET_PROFILES
-        val reader = FeedProfileReader(url)
+        val profileUrl =
+            "http://" + mainViewModel.getControllerAddress() + ApiUrls.FEED_GET_PROFILES
+        val profileReader = FeedProfileReader(profileUrl)
+
+        val scheduleUrl =
+            "http://" + mainViewModel.getControllerAddress() + ApiUrls.FEED_GET_SCHEDULE
+        val scheduleReader = FeedScheduleEntryReader(scheduleUrl)
 
         LaunchedEffect(Unit) {
             withContext(Dispatchers.IO) {
-                val feedProfileImports = reader.readFeedProfiles()
+                val feedProfileImports = profileReader.readFeedProfiles()
                 if (feedProfileImports != null) {
                     feedProfiles = feedProfileImports.toFeedProfileList()
+                }
+
+                val feedScheduleEntryImports = scheduleReader.readFeedScheduleEntries()
+                if (feedScheduleEntryImports != null) {
+                    feedScheduleEntries = feedScheduleEntryImports.toFeedScheduleEntryList()
                 }
             }
         }
@@ -106,16 +127,42 @@ fun FeedScreen(
                         fontSize = 16.sp
                     )
                 }
-                if (feedProfiles != null) {
-                    LazyColumn(modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp)) {
-                        items(feedProfiles!!) { feedProfile ->
-                            FeedProfileSummaryComposable(
-                                navHostController = navHostController,
-                                mainViewModel = mainViewModel,
-                                feedProfile = feedProfile
-                            )
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        if (feedProfiles != null) {
+                            Spacer(modifier = Modifier.height(24.dp))
+                            Text(text = "Feed Profiles")
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp)
+                            ) {
+                                items(feedProfiles!!) { feedProfile ->
+                                    FeedProfileSummaryComposable(
+                                        navHostController = navHostController,
+                                        mainViewModel = mainViewModel,
+                                        feedProfile = feedProfile
+                                    )
+                                }
+                            }
+                        }
+                        if (feedScheduleEntries != null) {
+                            Spacer(modifier = Modifier.height(24.dp))
+                            Text(text = "Feed Schedule")
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp)
+                            ) {
+                                items(feedScheduleEntries!!) { feedScheduleEntry ->
+                                    FeedScheduleEntryComposable(
+                                        feedScheduleEntry = feedScheduleEntry
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -127,6 +174,7 @@ fun FeedScreen(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun FeedScreenPreview() {
+    // create mock feed profiles
     val mockFeedProfileImport1 = FeedProfileImport()
     mockFeedProfileImport1.profileId = 1
     mockFeedProfileImport1.profileName = "Test Profile 1"
@@ -140,7 +188,25 @@ fun FeedScreenPreview() {
 
     val mockFeedProfiles = listOf(mockFeedProfile1, mockFeedProfile2)
 
+    // create mock feed schedule entries
+    val mockFeedScheduleEntry1 = FeedScheduleEntryImport(
+        timestampString = "2023-09-01 12:00:00",
+        profileName = "Test Profile 1",
+        isDaily = 1
+    ).transformToFeedScheduleEntry()
+
+    val mockFeedScheduleEntry2 = FeedScheduleEntryImport(
+        timestampString = "2023-09-01 13:00:00",
+        profileName = "Test Profile 2",
+        isDaily = 0
+    ).transformToFeedScheduleEntry()
+
+    val mockFeedScheduleEntries = listOf(mockFeedScheduleEntry1, mockFeedScheduleEntry2)
+
     AquariumControllerTheme {
-        FeedScreen(mockFeedProfiles = mockFeedProfiles)
+        FeedScreen(
+            mockFeedProfiles = mockFeedProfiles,
+            mockFeedScheduleEntries = mockFeedScheduleEntries
+        )
     }
 }
