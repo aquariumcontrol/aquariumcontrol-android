@@ -54,6 +54,9 @@ fun FeedProfileScheduleScreen(
     val feedProfile = mainViewModel?.getMySelectedFeedProfile() ?: mockFeedProfile
     val feedScheduleEntry = mainViewModel?.getMySelectedFeedScheduleEntry() ?: mockFeedScheduleEntry
 
+    val feedProfileDisplayName =
+        feedScheduleEntry?.profileName ?: (feedProfile?.profileName ?: "ERROR")
+
     var repeatDaily by remember { mutableStateOf(feedScheduleEntry?.isDaily) }
 
     val coroutineScope = rememberCoroutineScope()
@@ -122,7 +125,7 @@ fun FeedProfileScheduleScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Row {
-                        Text(text = "Profile name: ${feedScheduleEntry?.profileName}")
+                        Text(text = "Profile name: $feedProfileDisplayName")
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     Row {
@@ -168,39 +171,64 @@ fun FeedProfileScheduleScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Button to confirm and pass the selected date and time
-                    Button(onClick = {
-                        val selectedCalendar = Calendar.getInstance(Locale.getDefault())
-                        selectedCalendar.set(
-                            selectedYear,
-                            selectedMonth,
-                            selectedDay,
-                            selectedHour,
-                            selectedMinute
-                        )
-                        feedScheduleEntry?.timestamp = Timestamp(selectedCalendar.timeInMillis)
-                        Log.d("FeedProfileScheduleScreen", "feedScheduleEntry: $feedScheduleEntry")
-                        if (mainViewModel != null) {
-                            if (feedScheduleEntry != null) {
-                                webApiPostRequest(
-                                    mainViewModel = mainViewModel,
-                                    coroutineScope = coroutineScope,
-                                    postRequest = postRequest,
-                                    context = context,
-                                    optionalGetParams = feedScheduleEntry.getApiParameters(),
-                                    apiUrl = ApiUrls.FEED_POST_PROFILE_UPDATE_SCHEDULE
-                                )
+                    Button(
+                        onClick = {
+                            val selectedCalendar = Calendar.getInstance(Locale.getDefault())
+                            selectedCalendar.set(
+                                selectedYear,
+                                selectedMonth,
+                                selectedDay,
+                                selectedHour,
+                                selectedMinute
+                            )
+                            feedScheduleEntry?.timestamp = Timestamp(selectedCalendar.timeInMillis)
+                            Log.d(
+                                "FeedProfileScheduleScreen",
+                                "feedScheduleEntry: $feedScheduleEntry"
+                            )
+                            if (mainViewModel != null) {
+                                if (feedScheduleEntry != null) {
+                                    Log.d(
+                                        "FeedProfileScheduleScreen",
+                                        "scheduling feedScheduleEntry: $feedScheduleEntry"
+                                    )
+                                } else {
+                                    Log.d(
+                                        "FeedProfileScheduleScreen",
+                                        "feedScheduleEntry is null. Using feedProfile: $feedProfile"
+                                    )
+                                }
+                                val apiUrl: String =
+                                    if (feedProfile == null) ApiUrls.FEED_POST_PROFILE_SCHEDULE
+                                    else ApiUrls.FEED_POST_PROFILE_UPDATE_SCHEDULE
+
+                                val optionalGetParams =
+                                    feedScheduleEntry?.getApiParameters()
+                                        ?: feedProfile?.getFeedProfileSchedulingApiCallParameters(
+                                            isDaily = repeatDaily == true,
+                                            timestamp = Timestamp(selectedCalendar.timeInMillis)
+                                        )
+
+                                if (optionalGetParams != null) {
+                                    webApiPostRequest(
+                                        mainViewModel = mainViewModel,
+                                        coroutineScope = coroutineScope,
+                                        postRequest = postRequest,
+                                        context = context,
+                                        optionalGetParams = optionalGetParams,
+                                        apiUrl = apiUrl
+                                    )
+                                }
                             }
-                        }
-
-                        // Show the Toast after the API call
-                        Toast.makeText(
-                            context,
-                            "Sent request to controller for updating feed schedule",
-                            Toast.LENGTH_SHORT
-                        ).show()
-
-                        navHostController?.navigate(ViewNavigationRoutes.feed)
-                    }) {
+                            // Show the Toast after the API call
+                            Toast.makeText(
+                                context,
+                                "Sent request to controller for updating feed schedule",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            navHostController?.navigate(ViewNavigationRoutes.feed)
+                        },
+                    ) {
                         Text("Confirm Scheduling")
                     }
                 }

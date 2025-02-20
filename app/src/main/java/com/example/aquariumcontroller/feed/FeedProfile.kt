@@ -1,6 +1,9 @@
 package com.example.aquariumcontroller.feed
 
 import com.example.aquariumcontroller.ApiParams
+import java.sql.Timestamp
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class FeedProfile(feedProfileImport: FeedProfileImport) {
     val profileID: Int = feedProfileImport.profileId
@@ -309,6 +312,17 @@ class FeedProfile(feedProfileImport: FeedProfileImport) {
             ApiParams.PROFILE_ID to this.profileID.toString()
         )
         return myMap
+    }
+
+    fun getFeedProfileSchedulingApiCallParameters(isDaily: Boolean, timestamp: Timestamp): Map<String, String> {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val timeStampString = dateFormat.format(timestamp).replace(" ", "T")
+
+        val params = mutableMapOf<String, String>()
+        params[ApiParams.PROFILE_NAME] = profileName
+        params[ApiParams.REPEAT_DAILY] = if (isDaily) "1" else "0"
+        params[ApiParams.TIMESTAMP] = timeStampString
+        return params
     }
 
     fun calcDuration(): Float {

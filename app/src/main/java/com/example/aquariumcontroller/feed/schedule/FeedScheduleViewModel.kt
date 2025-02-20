@@ -44,4 +44,11 @@ class FeedScheduleViewModel(private val myFeedScheduleEntries: List<FeedSchedule
         currentList.remove(feedScheduleEntry)
         _feedScheduleEntries.value = currentList
     }
+
+    fun addFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry) {
+        Log.d("FeedScheduleViewModel", "Adding feed schedule entry: $feedScheduleEntry")
+        val currentList = _feedScheduleEntries.value.orEmpty().toMutableList()
+        currentList.add(feedScheduleEntry)
+        _feedScheduleEntries.value = currentList
+    }
 }
