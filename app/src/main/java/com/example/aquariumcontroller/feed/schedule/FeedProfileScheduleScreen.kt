@@ -3,6 +3,8 @@ package com.example.aquariumcontroller.feed.schedule
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.res.Configuration
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,8 +20,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,12 +31,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.aquariumcontroller.ApiUrls
 import com.example.aquariumcontroller.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
+import com.example.aquariumcontroller.PostRequest
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.feed.FeedProfile
 import com.example.aquariumcontroller.feed.FeedProfileImport
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
+import com.example.aquariumcontroller.webApiPostRequest
+import java.sql.Timestamp
 import java.util.Calendar
 import java.util.Locale
 
@@ -40,10 +48,19 @@ import java.util.Locale
 fun FeedProfileScheduleScreen(
     navHostController: NavHostController? = null,
     mainViewModel: MainViewModel? = null,
-    mockFeedProfile: FeedProfile? = null
+    mockFeedProfile: FeedProfile? = null,
+    mockFeedScheduleEntry: FeedScheduleEntry? = null
 ) {
-    val feedProfile = mainViewModel?.getMySelectedFeedProfile()?: mockFeedProfile
-    var repeatDaily by remember { mutableStateOf(false) }
+    val feedProfile = mainViewModel?.getMySelectedFeedProfile() ?: mockFeedProfile
+    val feedScheduleEntry = mainViewModel?.getMySelectedFeedScheduleEntry() ?: mockFeedScheduleEntry
+
+    var repeatDaily by remember { mutableStateOf(feedScheduleEntry?.isDaily) }
+
+    val coroutineScope = rememberCoroutineScope()
+
+    val postRequest = PostRequest()
+
+    val context = LocalContext.current // context for web API request and Toasts
 
     AquariumControllerTheme {
         // A surface container using the 'background' color from the theme
@@ -64,19 +81,18 @@ fun FeedProfileScheduleScreen(
                     style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.padding(16.dp),
                 )
-                val context = LocalContext.current
-                val calendar = Calendar.getInstance()
-                val currentYear = calendar.get(Calendar.YEAR)
-                val currentMonth = calendar.get(Calendar.MONTH)
-                val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
-                val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
-                val currentMinute = calendar.get(Calendar.MINUTE)
 
-                var selectedYear by remember { mutableStateOf(currentYear) }
-                var selectedMonth by remember { mutableStateOf(currentMonth) }
-                var selectedDay by remember { mutableStateOf(currentDay) }
-                var selectedHour by remember { mutableStateOf(currentHour) }
-                var selectedMinute by remember { mutableStateOf(currentMinute) }
+                // Get the initial date and time from the timestamp
+                val initialCalendar = Calendar.getInstance(Locale.getDefault()).apply {
+                    timeInMillis = feedScheduleEntry?.timestamp?.time ?: System.currentTimeMillis()
+                }
+
+                // Initialize state variables with values from the Calendar
+                var selectedYear by remember { mutableIntStateOf(initialCalendar.get(Calendar.YEAR)) }
+                var selectedMonth by remember { mutableIntStateOf(initialCalendar.get(Calendar.MONTH)) }
+                var selectedDay by remember { mutableIntStateOf(initialCalendar.get(Calendar.DAY_OF_MONTH)) }
+                var selectedHour by remember { mutableIntStateOf(initialCalendar.get(Calendar.HOUR_OF_DAY)) }
+                var selectedMinute by remember { mutableIntStateOf(initialCalendar.get(Calendar.MINUTE)) }
 
                 val datePickerDialog = DatePickerDialog(
                     context,
@@ -106,7 +122,7 @@ fun FeedProfileScheduleScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Row {
-                        Text( text = "Profile name: ${feedProfile?.profileName}")
+                        Text(text = "Profile name: ${feedScheduleEntry?.profileName}")
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     Row {
@@ -128,7 +144,12 @@ fun FeedProfileScheduleScreen(
                         }
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = "$selectedHour:$selectedMinute",
+                            text = String.format(
+                                Locale.getDefault(),
+                                "%02d:%02d",
+                                selectedHour,
+                                selectedMinute
+                            ),
                             modifier = Modifier.padding(8.dp)
                         )
                     }
@@ -136,7 +157,7 @@ fun FeedProfileScheduleScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Checkbox(
-                            checked = repeatDaily,
+                            checked = repeatDaily == true,
                             onCheckedChange = { repeatDaily = it }
                         )
                         Spacer(Modifier.width(8.dp))
@@ -149,8 +170,35 @@ fun FeedProfileScheduleScreen(
                     // Button to confirm and pass the selected date and time
                     Button(onClick = {
                         val selectedCalendar = Calendar.getInstance(Locale.getDefault())
-                        selectedCalendar.set(selectedYear, selectedMonth, selectedDay, selectedHour, selectedMinute)
-                        //onDateTimeSelected(selectedCalendar.timeInMillis)
+                        selectedCalendar.set(
+                            selectedYear,
+                            selectedMonth,
+                            selectedDay,
+                            selectedHour,
+                            selectedMinute
+                        )
+                        feedScheduleEntry?.timestamp = Timestamp(selectedCalendar.timeInMillis)
+                        Log.d("FeedProfileScheduleScreen", "feedScheduleEntry: $feedScheduleEntry")
+                        if (mainViewModel != null) {
+                            if (feedScheduleEntry != null) {
+                                webApiPostRequest(
+                                    mainViewModel = mainViewModel,
+                                    coroutineScope = coroutineScope,
+                                    postRequest = postRequest,
+                                    context = context,
+                                    optionalGetParams = feedScheduleEntry.getApiParameters(),
+                                    apiUrl = ApiUrls.FEED_POST_PROFILE_UPDATE_SCHEDULE
+                                )
+                            }
+                        }
+
+                        // Show the Toast after the API call
+                        Toast.makeText(
+                            context,
+                            "Sent request to controller for updating feed schedule",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
                         navHostController?.navigate(ViewNavigationRoutes.feed)
                     }) {
                         Text("Confirm Scheduling")
@@ -170,7 +218,16 @@ fun FeedSchedulePreview() {
 
     val mockFeedProfile = FeedProfile(mockFeedProfileImport)
 
+    val mockFeedScheduleEntry = FeedScheduleEntryImport(
+        timestampString = "2024-02-16 12:00:00",
+        profileName = "MockProfile",
+        isDaily = 1
+    ).transformToFeedScheduleEntry()
+
     AquariumControllerTheme {
-        FeedProfileScheduleScreen(mockFeedProfile = mockFeedProfile)
+        FeedProfileScheduleScreen(
+            mockFeedProfile = mockFeedProfile,
+            mockFeedScheduleEntry = mockFeedScheduleEntry
+        )
     }
 }

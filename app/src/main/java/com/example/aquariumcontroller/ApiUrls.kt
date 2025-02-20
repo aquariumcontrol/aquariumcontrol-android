@@ -19,6 +19,7 @@ object ApiUrls {
     const val FEED_POST_PROFILE_UPDATE = "${BASE_URL}updateFeedProfile.php"
     const val FEED_POST_PROFILE_CREATE = "${BASE_URL}createFeedProfile.php"
     const val FEED_POST_PROFILE_SCHEDULE = "${BASE_URL}scheduleFeedProfile.php"
+    const val FEED_POST_PROFILE_UPDATE_SCHEDULE = "${BASE_URL}scheduleFeedProfile.php"
     const val FEED_GET_SCHEDULE = "${BASE_URL}getFeedSchedule.php"
     const val FEED_POST_SCHEDULE_REMOVE_ENTRY = "${BASE_URL}postRemoveFeedScheduleEntry.php"
     const val BALLING_GET_SET_VALS = "${BASE_URL}getBallingSetVals.php"

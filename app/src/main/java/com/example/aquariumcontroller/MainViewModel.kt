@@ -66,7 +66,7 @@ class MainViewModel: ViewModel() {
         return selectedFeedScheduleEntry
     }
 
-    fun updateSelectedFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry) {
+    fun updateSelectedFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry?) {
         selectedFeedScheduleEntry = feedScheduleEntry
     }
 

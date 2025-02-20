@@ -21,4 +21,6 @@ object ApiParams {
     const val HEATING_SWITCH_ON_TEMPERATURE = "heatingSwitchOnTemp"
     const val VENTILATION_SWITCH_OFF_TEMPERATURE = "ventilationSwitchOffTemp"
     const val VENTILATION_SWITCH_ON_TEMPERATURE = "ventilationSwitchOnTemp"
+    const val REPEAT_DAILY = "RepeatDaily"
+    const val TIMESTAMP = "Timestamp"
 }

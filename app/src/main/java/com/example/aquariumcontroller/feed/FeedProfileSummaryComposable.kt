@@ -103,6 +103,7 @@ fun FeedProfileSummaryComposable(
                                 "Clicked on Schedule icon for {${feedProfile.profileName}}"
                             )
                             mainViewModel?.updateSelectedFeedProfile(feedProfile)
+                            mainViewModel?.updateSelectedFeedScheduleEntry(null)
                             navHostController?.navigate(ViewNavigationRoutes.feedSchedule)
                         }
                 )

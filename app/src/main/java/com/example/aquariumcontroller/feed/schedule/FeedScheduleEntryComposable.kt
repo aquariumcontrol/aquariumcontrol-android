@@ -19,26 +19,36 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.aquariumcontroller.ApiUrls
 import com.example.aquariumcontroller.MainViewModel
+import com.example.aquariumcontroller.PostRequest
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
+import com.example.aquariumcontroller.webApiPostRequest
 
 @Composable
 fun FeedScheduleEntryComposable(
     navHostController: NavHostController? = null,
     mainViewModel: MainViewModel? = null,
-    feedScheduleEntry: FeedScheduleEntry
+    feedScheduleEntry: FeedScheduleEntry,
+    feedScheduleViewModel: FeedScheduleViewModel? = null
 ) {
     // This composable displays one feed schedule entry:
     // - Name of feed profile
     // - timestamp of schedule
     // - information if the feed profile execution should be repeated daily
+
+    val coroutineScope = rememberCoroutineScope()
+    val postRequest = PostRequest()
+    val context = LocalContext.current // context for web API request and Toasts
 
     Row(
         modifier = Modifier
@@ -76,7 +86,8 @@ fun FeedScheduleEntryComposable(
                 Icon(
                     imageVector = Icons.Filled.Edit,
                     contentDescription = "Edit",
-                    Modifier.size(48.dp)
+                    Modifier
+                        .size(48.dp)
                         .clickable {
                             Log.d(
                                 "FeedScheduleEntryComposable",
@@ -90,7 +101,26 @@ fun FeedScheduleEntryComposable(
                 Icon(
                     imageVector = Icons.Filled.Delete,
                     contentDescription = "Delete",
-                    Modifier.size(48.dp)
+                    Modifier
+                        .size(48.dp)
+                        .clickable {
+                            Log.d(
+                                "FeedScheduleEntryComposable",
+                                "Clicked on Delete icon for schedule entry at {${feedScheduleEntry.getTimestampString()}}"
+                            )
+                            if (mainViewModel != null) {
+                                mainViewModel.updateSelectedFeedScheduleEntry(null)
+                                feedScheduleViewModel?.deleteFeedScheduleEntry(feedScheduleEntry)
+                                webApiPostRequest(
+                                    apiUrl = ApiUrls.FEED_POST_SCHEDULE_REMOVE_ENTRY,
+                                    mainViewModel = mainViewModel,
+                                    coroutineScope = coroutineScope,
+                                    postRequest = postRequest,
+                                    context = context,
+                                    optionalGetParams = feedScheduleEntry.getApiParameters()
+                                )
+                            }
+                        }
                 )
             }
         }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.ApiUrls
 import com.example.aquariumcontroller.MainDropdownMenuComposable
@@ -34,8 +36,8 @@ import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.feed.schedule.FeedScheduleEntry
 import com.example.aquariumcontroller.feed.schedule.FeedScheduleEntryComposable
 import com.example.aquariumcontroller.feed.schedule.FeedScheduleEntryImport
-import com.example.aquariumcontroller.feed.schedule.FeedScheduleEntryReader
-import com.example.aquariumcontroller.feed.schedule.toFeedScheduleEntryList
+import com.example.aquariumcontroller.feed.schedule.FeedScheduleViewModel
+import com.example.aquariumcontroller.feed.schedule.FeedScheduleViewModelFactory
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -54,18 +56,17 @@ fun FeedScreen(
     // - feed schedule entries
     // - floating action button for adding feed profile
 
-    var feedProfiles by remember { mutableStateOf(mockFeedProfiles) }
+    val feedScheduleViewModel: FeedScheduleViewModel = viewModel(
+        factory = FeedScheduleViewModelFactory(feedScheduleEntries = mockFeedScheduleEntries)
+    )
 
-    var feedScheduleEntries by remember { mutableStateOf(mockFeedScheduleEntries) }
+    var feedProfiles by remember { mutableStateOf(mockFeedProfiles) }
 
     if (mainViewModel != null) {
         val profileUrl =
             "http://" + mainViewModel.getControllerAddress() + ApiUrls.FEED_GET_PROFILES
         val profileReader = FeedProfileReader(profileUrl)
 
-        val scheduleUrl =
-            "http://" + mainViewModel.getControllerAddress() + ApiUrls.FEED_GET_SCHEDULE
-        val scheduleReader = FeedScheduleEntryReader(scheduleUrl)
 
         LaunchedEffect(Unit) {
             withContext(Dispatchers.IO) {
@@ -74,9 +75,8 @@ fun FeedScreen(
                     feedProfiles = feedProfileImports.toFeedProfileList()
                 }
 
-                val feedScheduleEntryImports = scheduleReader.readFeedScheduleEntries()
-                if (feedScheduleEntryImports != null) {
-                    feedScheduleEntries = feedScheduleEntryImports.toFeedScheduleEntryList()
+                if (mainViewModel.getControllerAddress() != null) {
+                    feedScheduleViewModel.readFeedScheduleEntries(mainViewModel.getControllerAddress()!!)
                 }
             }
         }
@@ -88,68 +88,69 @@ fun FeedScreen(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                MainDropdownMenuComposable(
-                    navHostController = navHostController,
-                    navigationRouteSource = ViewNavigationRoutes.feed,
-                    mainViewModel = mainViewModel
-                )
-                Text(
-                    text = stringResource(id = R.string.FeedControl),
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(16.dp),
-                )
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    onClick = {
-                        navHostController?.navigate(ViewNavigationRoutes.feedHistory24h)
-                    },
+            Scaffold { innerPadding ->
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(innerPadding),
                 ) {
-                    Text(
-                        text = stringResource(id = R.string.ViewFeedEvents24h),
-                        fontSize = 16.sp
+                    MainDropdownMenuComposable(
+                        navHostController = navHostController,
+                        navigationRouteSource = ViewNavigationRoutes.feed,
+                        mainViewModel = mainViewModel
                     )
-                }
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    onClick = {
-                        navHostController?.navigate(ViewNavigationRoutes.feedHistory7d)
-                    },
-                ) {
                     Text(
-                        text = stringResource(id = R.string.ViewFeedEvents7d),
-                        fontSize = 16.sp
+                        text = stringResource(id = R.string.FeedControl),
+                        style = MaterialTheme.typography.headlineSmall,
+                        modifier = Modifier.padding(16.dp),
                     )
-                }
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        if (feedProfiles != null) {
-                            Spacer(modifier = Modifier.height(24.dp))
-                            Text(text = "Feed Profiles")
-                            LazyColumn(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp)
-                            ) {
-                                items(feedProfiles!!) { feedProfile ->
-                                    FeedProfileSummaryComposable(
-                                        navHostController = navHostController,
-                                        mainViewModel = mainViewModel,
-                                        feedProfile = feedProfile
-                                    )
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                        onClick = {
+                            navHostController?.navigate(ViewNavigationRoutes.feedHistory24h)
+                        },
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.ViewFeedEvents24h),
+                            fontSize = 16.sp
+                        )
+                    }
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                        onClick = {
+                            navHostController?.navigate(ViewNavigationRoutes.feedHistory7d)
+                        },
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.ViewFeedEvents7d),
+                            fontSize = 16.sp
+                        )
+                    }
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            if (feedProfiles != null) {
+                                Spacer(modifier = Modifier.height(24.dp))
+                                Text(text = "Feed Profiles")
+                                LazyColumn(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp)
+                                ) {
+                                    items(feedProfiles!!) { feedProfile ->
+                                        FeedProfileSummaryComposable(
+                                            navHostController = navHostController,
+                                            mainViewModel = mainViewModel,
+                                            feedProfile = feedProfile
+                                        )
+                                    }
                                 }
                             }
-                        }
-                        if (feedScheduleEntries != null) {
                             Spacer(modifier = Modifier.height(24.dp))
                             Text(text = "Feed Schedule")
                             LazyColumn(
@@ -157,11 +158,12 @@ fun FeedScreen(
                                     .fillMaxWidth()
                                     .padding(16.dp)
                             ) {
-                                items(feedScheduleEntries!!) { feedScheduleEntry ->
+                                items(feedScheduleViewModel.getFeedScheduleEntries()) { feedScheduleEntry ->
                                     FeedScheduleEntryComposable(
                                         feedScheduleEntry = feedScheduleEntry,
                                         navHostController = navHostController,
-                                        mainViewModel = mainViewModel
+                                        mainViewModel = mainViewModel,
+                                        feedScheduleViewModel = feedScheduleViewModel
                                     )
                                 }
                             }
