@@ -22,15 +22,20 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.aquariumcontroller.ApiUrls
 import com.example.aquariumcontroller.MainViewModel
+import com.example.aquariumcontroller.PostRequest
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
+import com.example.aquariumcontroller.webApiPostRequest
 
 @Composable
 fun FeedProfileSummaryComposable(
@@ -39,6 +44,10 @@ fun FeedProfileSummaryComposable(
     feedProfile: FeedProfile,
     feedProfileViewModel: FeedProfileViewModel? = null
 ) {
+    val coroutineScope = rememberCoroutineScope()
+    val postRequest = PostRequest()
+    val context = LocalContext.current // context for web API request and Toasts
+
     // This composable displays one Feed dosing profile summary with two icons for editing or scheduling.
     // When the user clicks on one of the icons, the corresponding action is triggered.
     Row(
@@ -120,6 +129,16 @@ fun FeedProfileSummaryComposable(
                                 "Clicked on Delete icon for {${feedProfile.profileName}}"
                             )
                             feedProfileViewModel?.deleteFeedProfile(feedProfile)
+                            if (mainViewModel != null) {
+                                webApiPostRequest(
+                                    apiUrl = ApiUrls.FEED_POST_REMOVE_PROFILE,
+                                    mainViewModel = mainViewModel,
+                                    coroutineScope = coroutineScope,
+                                    postRequest = postRequest,
+                                    context = context,
+                                    optionalGetParams = feedProfile.getFeedProfileApiCallParameters()
+                                )
+                            }
                         }
                 )
             }
