@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,99 +33,106 @@ fun ControllerEditScreen(
     onEvent: (ControllerEvent) -> Unit
 ) {
     // This screen displays a form for editing an existing controller profile.
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = stringResource(id = R.string.EditServerProfileFragmentTitle),
-            style = MaterialTheme.typography.headlineLarge,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        OutlinedTextField(
-            value = state.controllerProfileName,
-            onValueChange = {
-                Log.d(this::class.simpleName, "Setting controller profile name: $it")
-                onEvent(ControllerEvent.SetControllerProfileName(it))
-            },
-            modifier = Modifier.fillMaxWidth(),
-        )
-
-        OutlinedTextField(
-            value = state.controllerProfileAddress,
-            onValueChange = {
-                onEvent(ControllerEvent.SetControllerAddress(it))
-            },
-            label = { Text(stringResource(id = R.string.ControllerAddress)) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp)
-        )
-
-        NumericIntOutlinedTextFieldComposable(
-            value = state.controllerProfilePort,
-            onValueChange = {
-                onEvent(ControllerEvent.SetControllerPort(it))
-            },
-            label = stringResource(id = R.string.ControllerPort),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp)
-        )
-
-        OutlinedTextField(
-            value = state.controllerProfileUser,
-            onValueChange = {
-                onEvent(ControllerEvent.SetControllerUser(it))
-            },
-            label = { Text(stringResource(id = R.string.ControllerUser)) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp)
-        )
-
-        OutlinedTextField(
-            value = state.controllerProfilePassword,
-            onValueChange = {
-                onEvent(ControllerEvent.SetControllerPassword(it))
-            },
-            label = { Text(stringResource(id = R.string.ControllerPasswordTitle)) },
-            visualTransformation = PasswordVisualTransformation(), // Hide password
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp)
-        )
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
+    AquariumControllerTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
         ) {
-            Switch(
-                checked = state.controllerProfileIsDefault,
-                onCheckedChange = { onEvent(ControllerEvent.SetControllerIsDefault(it)) }
-            )
-            Text(
-                text = stringResource(id = R.string.IsDefaultServerProfile),
-                modifier = Modifier.padding(start = 8.dp)
-            )
-        }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(id = R.string.EditServerProfileFragmentTitle),
+                    style = MaterialTheme.typography.headlineLarge,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
 
-        Button(
-            onClick = {
-                onEvent(ControllerEvent.UpdateControllerProfile)
-                navHostController?.navigate(ViewNavigationRoutes.controllerSelection)
-            },
-            enabled = state.controllerProfileName.isNotBlank() && state.validControllerAddress,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp)
-        ) {
-            Text(stringResource(id = R.string.UpdateControllerProfileButtonText))
+                OutlinedTextField(
+                    value = state.controllerProfileName,
+                    onValueChange = {
+                        Log.d(this::class.simpleName, "Setting controller profile name: $it")
+                        onEvent(ControllerEvent.SetControllerProfileName(it))
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+
+                OutlinedTextField(
+                    value = state.controllerProfileAddress,
+                    onValueChange = {
+                        onEvent(ControllerEvent.SetControllerAddress(it))
+                    },
+                    label = { Text(stringResource(id = R.string.ControllerAddress)) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp)
+                )
+
+                NumericIntOutlinedTextFieldComposable(
+                    value = state.controllerProfilePort,
+                    onValueChange = {
+                        onEvent(ControllerEvent.SetControllerPort(it))
+                    },
+                    label = stringResource(id = R.string.ControllerPort),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp)
+                )
+
+                OutlinedTextField(
+                    value = state.controllerProfileUser,
+                    onValueChange = {
+                        onEvent(ControllerEvent.SetControllerUser(it))
+                    },
+                    label = { Text(stringResource(id = R.string.ControllerUser)) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp)
+                )
+
+                OutlinedTextField(
+                    value = state.controllerProfilePassword,
+                    onValueChange = {
+                        onEvent(ControllerEvent.SetControllerPassword(it))
+                    },
+                    label = { Text(stringResource(id = R.string.ControllerPasswordTitle)) },
+                    visualTransformation = PasswordVisualTransformation(), // Hide password
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp)
+                )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Switch(
+                        checked = state.controllerProfileIsDefault,
+                        onCheckedChange = { onEvent(ControllerEvent.SetControllerIsDefault(it)) }
+                    )
+                    Text(
+                        text = stringResource(id = R.string.IsDefaultServerProfile),
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
+
+                Button(
+                    onClick = {
+                        onEvent(ControllerEvent.UpdateControllerProfile)
+                        navHostController?.navigate(ViewNavigationRoutes.controllerSelection)
+                    },
+                    enabled = state.controllerProfileName.isNotBlank() && state.validControllerAddress,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp)
+                ) {
+                    Text(stringResource(id = R.string.UpdateControllerProfileButtonText))
+                }
+            }
         }
     }
 }
@@ -142,7 +150,5 @@ fun ControllerEditViewPreview() {
         controllerProfileIsDefault = true
     )
 
-    AquariumControllerTheme {
-        ControllerEditScreen(state = mockControllerState, onEvent = {})
-    }
+    ControllerEditScreen(state = mockControllerState, onEvent = {})
 }
