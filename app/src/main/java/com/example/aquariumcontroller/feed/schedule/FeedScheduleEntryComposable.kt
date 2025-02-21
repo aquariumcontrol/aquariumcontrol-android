@@ -30,13 +30,13 @@ import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.ApiUrls
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.PostRequest
-import com.example.aquariumcontroller.ViewNavigationRoutes
+// import com.example.aquariumcontroller.ViewNavigationRoutes will be used in future implementation
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import com.example.aquariumcontroller.webApiPostRequest
 
 @Composable
 fun FeedScheduleEntryComposable(
-    navHostController: NavHostController? = null,
+    navHostController: NavHostController? = null,   // for future implementation
     mainViewModel: MainViewModel? = null,
     feedScheduleEntry: FeedScheduleEntry,
     feedScheduleViewModel: FeedScheduleViewModel? = null
@@ -83,6 +83,7 @@ fun FeedScheduleEntryComposable(
                 .align(Alignment.CenterVertically)
         ) {
             Row {
+                /* deactivated because API is currently (Feb, 2025) not available
                 Icon(
                     imageVector = Icons.Filled.Edit,
                     contentDescription = "Edit",
@@ -98,6 +99,8 @@ fun FeedScheduleEntryComposable(
                         }
                 )
                 Spacer(modifier = Modifier.width(16.dp))
+
+                 */
                 Icon(
                     imageVector = Icons.Filled.Delete,
                     contentDescription = "Delete",
