@@ -36,7 +36,8 @@ import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 fun FeedProfileSummaryComposable(
     navHostController: NavHostController? = null,
     mainViewModel: MainViewModel? = null,
-    feedProfile: FeedProfile
+    feedProfile: FeedProfile,
+    feedProfileViewModel: FeedProfileViewModel? = null
 ) {
     // This composable displays one Feed dosing profile summary with two icons for editing or scheduling.
     // When the user clicks on one of the icons, the corresponding action is triggered.
@@ -118,7 +119,7 @@ fun FeedProfileSummaryComposable(
                                 "FeedProfileSummaryScreen",
                                 "Clicked on Delete icon for {${feedProfile.profileName}}"
                             )
-                            /* todo: delete feed profile */
+                            feedProfileViewModel?.deleteFeedProfile(feedProfile)
                         }
                 )
             }
@@ -139,6 +140,7 @@ fun FeedProfileSummaryComposablePreview() {
     AquariumControllerTheme {
         FeedProfileSummaryComposable(
             feedProfile = mockFeedProfile,
+            feedProfileViewModel = null,
         )
     }
 }

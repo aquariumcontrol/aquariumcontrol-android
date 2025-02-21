@@ -16,10 +16,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -28,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.aquariumcontroller.ApiUrls
 import com.example.aquariumcontroller.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
@@ -56,27 +51,24 @@ fun FeedScreen(
     // - feed schedule entries
     // - floating action button for adding feed profile
 
+    // instantiate view model with null pointer except if mock data is provided
     val feedScheduleViewModel: FeedScheduleViewModel = viewModel(
         factory = FeedScheduleViewModelFactory(feedScheduleEntries = mockFeedScheduleEntries)
     )
 
-    var feedProfiles by remember { mutableStateOf(mockFeedProfiles) }
+    // instantiate view model with null pointer except if mock data is provided
+    val feedProfileViewModel: FeedProfileViewModel = viewModel(
+        factory = FeedProfileViewModelFactory(feedProfiles = mockFeedProfiles)
+    )
 
     if (mainViewModel != null) {
-        val profileUrl =
-            "http://" + mainViewModel.getControllerAddress() + ApiUrls.FEED_GET_PROFILES
-        val profileReader = FeedProfileReader(profileUrl)
 
 
         LaunchedEffect(Unit) {
             withContext(Dispatchers.IO) {
-                val feedProfileImports = profileReader.readFeedProfiles()
-                if (feedProfileImports != null) {
-                    feedProfiles = feedProfileImports.toFeedProfileList()
-                }
-
                 if (mainViewModel.getControllerAddress() != null) {
                     feedScheduleViewModel.readFeedScheduleEntries(mainViewModel.getControllerAddress()!!)
+                    feedProfileViewModel.readFeedProfiles(mainViewModel.getControllerAddress()!!)
                 }
             }
         }
@@ -134,21 +126,20 @@ fun FeedScreen(
                         color = MaterialTheme.colorScheme.background
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            if (feedProfiles != null) {
-                                Spacer(modifier = Modifier.height(24.dp))
-                                Text(text = "Feed Profiles")
-                                LazyColumn(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp)
-                                ) {
-                                    items(feedProfiles!!) { feedProfile ->
-                                        FeedProfileSummaryComposable(
-                                            navHostController = navHostController,
-                                            mainViewModel = mainViewModel,
-                                            feedProfile = feedProfile
-                                        )
-                                    }
+                            Spacer(modifier = Modifier.height(24.dp))
+                            Text(text = "Feed Profiles")
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp)
+                            ) {
+                                items(feedProfileViewModel.getFeedProfiles()) { feedProfile ->
+                                    FeedProfileSummaryComposable(
+                                        navHostController = navHostController,
+                                        mainViewModel = mainViewModel,
+                                        feedProfile = feedProfile,
+                                        feedProfileViewModel = feedProfileViewModel
+                                    )
                                 }
                             }
                             Spacer(modifier = Modifier.height(24.dp))
