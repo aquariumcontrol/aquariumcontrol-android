@@ -52,6 +52,7 @@ fun ControllerAddScreen(
                     onValueChange = {
                         onEvent(ControllerEvent.SetControllerProfileName(it))
                     },
+                    label = { Text(stringResource(id = R.string.ControllerProfileName)) },
                     modifier = Modifier.fillMaxWidth(),
                 )
 

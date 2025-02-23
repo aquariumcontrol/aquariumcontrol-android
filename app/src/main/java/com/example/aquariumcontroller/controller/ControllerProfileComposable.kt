@@ -8,10 +8,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
@@ -89,17 +87,24 @@ fun ControllerProfileComposable(
                             .padding(top = 8.dp),
                         horizontalArrangement = Arrangement.Start
                     ) {
-                        Text(
-                            text = controllerProfile.name,
-                            fontSize = 24.sp,
-                            style = TextStyle(fontWeight = FontWeight.Bold)
-                        )
-                        if (isDefaultProfile) {
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Icon(
-                                imageVector = Icons.Outlined.Star,
-                                contentDescription = "DefaultProfile",
+                        Column(
+                            horizontalAlignment = Alignment.Start) {
+                            Text(
+                                text = controllerProfile.name,
+                                fontSize = 24.sp,
+                                style = TextStyle(fontWeight = FontWeight.Bold)
                             )
+                        }
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            horizontalAlignment = Alignment.End) {
+                            if (isDefaultProfile) {
+                                //Spacer(modifier = Modifier.width(10.dp))
+                                Icon(
+                                    imageVector = Icons.Outlined.Star,
+                                    contentDescription = "DefaultProfile",
+                                )
+                            }
                         }
                     }
                 }
