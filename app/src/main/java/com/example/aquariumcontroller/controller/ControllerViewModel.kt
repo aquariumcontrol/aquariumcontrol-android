@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.text.matches
 
 class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
     // This class represents the view model for the controller screen.
@@ -31,20 +30,16 @@ class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
                 val controllerProfilePort = state.value.controllerProfilePort
                 val controllerProfileUser = state.value.controllerProfileUser
                 val controllerProfilePassword = state.value.controllerProfilePassword
-                val controllerProfileIsDefault = state.value.controllerProfileIsDefault
-                val controllerProfile = ControllerProfile(
-                    name = controllerProfileName,
-                    address = controllerProfileAddress,
-                    port = controllerProfilePort,
-                    user = controllerProfileUser,
-                    password = controllerProfilePassword
-                )
-                controllerProfile.isDefault = controllerProfileIsDefault
 
                 viewModelScope.launch {
-                    if (controllerProfileIsDefault) {
-                        dao.resetDefaultControllerProfile()
-                    }
+                    val controllerProfile = ControllerProfile(
+                        name = controllerProfileName,
+                        address = controllerProfileAddress,
+                        port = controllerProfilePort,
+                        user = controllerProfileUser,
+                        password = controllerProfilePassword,
+                    )
+
                     dao.upsertControllerProfile(controllerProfile)
                 }
             }
@@ -56,21 +51,16 @@ class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
                 val controllerProfilePort = state.value.controllerProfilePort
                 val controllerProfileUser = state.value.controllerProfileUser
                 val controllerProfilePassword = state.value.controllerProfilePassword
-                val controllerProfileIsDefault = state.value.controllerProfileIsDefault
-                val controllerProfile = ControllerProfile(
-                    id = controllerProfileId,
-                    name = controllerProfileName,
-                    address = controllerProfileAddress,
-                    port = controllerProfilePort,
-                    user = controllerProfileUser,
-                    password = controllerProfilePassword
-                )
-                controllerProfile.isDefault = controllerProfileIsDefault
 
                 viewModelScope.launch {
-                    if (controllerProfileIsDefault) {
-                        dao.resetDefaultControllerProfile()
-                    }
+                    val controllerProfile = ControllerProfile(
+                        id = controllerProfileId,
+                        name = controllerProfileName,
+                        address = controllerProfileAddress,
+                        port = controllerProfilePort,
+                        user = controllerProfileUser,
+                        password = controllerProfilePassword
+                    )
                     dao.upsertControllerProfile(controllerProfile)
                 }
             }
@@ -104,14 +94,6 @@ class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
                 _state.update {
                     it.copy(
                         validControllerAddress = isHostName(event.controllerAddress)
-                    )
-                }
-            }
-
-            is ControllerEvent.SetControllerIsDefault -> {
-                _state.update {
-                    it.copy(
-                        controllerProfileIsDefault = event.controllerIsDefault
                     )
                 }
             }

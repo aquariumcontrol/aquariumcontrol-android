@@ -14,6 +14,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -21,6 +25,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.NumericIntOutlinedTextFieldComposable
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
@@ -30,8 +35,32 @@ import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 fun ControllerEditScreen(
     navHostController: NavHostController? = null,
     state: ControllerState,
-    onEvent: (ControllerEvent) -> Unit
+    onEvent: (ControllerEvent) -> Unit,
+    mainViewModel: MainViewModel? = null,
+    mockIsDefaultProfile: Boolean? = false
 ) {
+    // This screen allows editing of a controller profile and selecting if the profile shall be
+    // the default profile.
+    // The screen displays the following edit fields:
+    // - controller profile name
+    // - controller address
+    // - controller port
+    // - controller user
+    // - controller password
+    //
+    // Furthermore, the screen displays a switch for selecting if the profile shall be the default.
+    // Last, the screen features a button to confirm the changes.
+
+    var previousDefaultProfileId: Long? = -1
+
+    val initialStateIsDefaultProfile: Boolean = if (mainViewModel != null) {
+        (state.controllerProfileId == mainViewModel.getDefaultControllerProfileId())
+    } else {
+        mockIsDefaultProfile ?: false
+    }
+
+    var isDefaultProfile by remember { mutableStateOf(initialStateIsDefaultProfile) }
+
     // This screen displays a form for editing an existing controller profile.
     AquariumControllerTheme {
         Surface(
@@ -56,6 +85,7 @@ fun ControllerEditScreen(
                         Log.d(this::class.simpleName, "Setting controller profile name: $it")
                         onEvent(ControllerEvent.SetControllerProfileName(it))
                     },
+                    label = { Text(stringResource(id = R.string.ControllerProfileName)) },
                     modifier = Modifier.fillMaxWidth(),
                 )
 
@@ -111,8 +141,20 @@ fun ControllerEditScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Switch(
-                        checked = state.controllerProfileIsDefault,
-                        onCheckedChange = { onEvent(ControllerEvent.SetControllerIsDefault(it)) }
+                        checked = isDefaultProfile,
+                        onCheckedChange = {
+                            if (it) {
+                                previousDefaultProfileId =
+                                    mainViewModel?.getDefaultControllerProfileId()
+                                mainViewModel?.setDefaultControllerProfileId(state.controllerProfileId)
+                                isDefaultProfile = true
+                            } else {
+                                mainViewModel?.setDefaultControllerProfileId(
+                                    previousDefaultProfileId ?: -1
+                                )
+                                isDefaultProfile = false
+                            }
+                        }
                     )
                     Text(
                         text = stringResource(id = R.string.IsDefaultServerProfile),
@@ -147,8 +189,7 @@ fun ControllerEditViewPreview() {
         controllerProfilePort = 80,
         controllerProfileUser = "user",
         controllerProfilePassword = "password",
-        controllerProfileIsDefault = true
     )
 
-    ControllerEditScreen(state = mockControllerState, onEvent = {})
+    ControllerEditScreen(state = mockControllerState, onEvent = {}, mockIsDefaultProfile = true)
 }

@@ -437,7 +437,6 @@ fun OverviewViewPreview() {
         port = 80,
         user = "user",
         password = "password",
-        isDefault = true
     )
 
     val mockOverviewData = OverviewData(

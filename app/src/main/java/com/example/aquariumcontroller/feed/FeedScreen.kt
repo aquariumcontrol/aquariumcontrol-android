@@ -62,8 +62,6 @@ fun FeedScreen(
     )
 
     if (mainViewModel != null) {
-
-
         LaunchedEffect(Unit) {
             withContext(Dispatchers.IO) {
                 if (mainViewModel.getControllerAddress() != null) {

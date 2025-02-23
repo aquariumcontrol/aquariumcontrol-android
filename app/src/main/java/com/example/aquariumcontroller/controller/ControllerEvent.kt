@@ -15,7 +15,5 @@ sealed interface ControllerEvent {
     data class SetControllerPort(val controllerPort: String) : ControllerEvent
     data class SetControllerUser(val controllerUser: String) : ControllerEvent
     data class SetControllerPassword(val controllerPassword: String) : ControllerEvent
-    data class SetControllerIsDefault(val controllerIsDefault: Boolean) : ControllerEvent
-
     data class SelectControllerProfile(val controllerProfile: ControllerProfile): ControllerEvent
 }

@@ -1,22 +1,28 @@
 package com.example.aquariumcontroller.controller
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -33,8 +39,20 @@ fun ControllerProfileComposable(
     navHostController: NavHostController? = null,
     onEvent: (ControllerEvent) -> Unit,
     controllerProfile: ControllerProfile,
-    mainViewModel: MainViewModel? = null
+    mainViewModel: MainViewModel? = null,
+    mockIsDefaultProfile: Boolean = false
 ) {
+    // use either stored profile id to check if profile is default profile or use mock data for preview
+    val isDefaultProfile: Boolean = if (mainViewModel != null) {
+        Log.d(
+            "ControllerProfileComposable",
+            "mainViewModel.getDefaultControllerProfileId() = ${mainViewModel.getDefaultControllerProfileId()} controllerProfile.id = ${controllerProfile.id}"
+        )
+        mainViewModel.getDefaultControllerProfileId() == controllerProfile.id
+    } else {
+        mockIsDefaultProfile
+    }
+
     // This composable displays a single controller profile.
     Row(
         modifier = Modifier
@@ -76,106 +94,116 @@ fun ControllerProfileComposable(
                             fontSize = 24.sp,
                             style = TextStyle(fontWeight = FontWeight.Bold)
                         )
-                    }
-                }
-                Column(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End,
-                    ) {
-                        Button(
-                            modifier = Modifier.padding(end = 4.dp),
-                            onClick = {
-                                onEvent(
-                                    ControllerEvent.SelectControllerProfile(
-                                        controllerProfile
-                                    )
-                                )
-                                navHostController?.navigate(
-                                    ViewNavigationRoutes.controllerEdit
-                                )
-                            },
-                        ) {
+                        if (isDefaultProfile) {
+                            Spacer(modifier = Modifier.width(10.dp))
                             Icon(
-                                imageVector = Icons.Outlined.Edit,
-                                contentDescription = "Edit"
-                            )
-                        }
-                        Button(
-                            onClick = {
-                                onEvent(
-                                    ControllerEvent.DeleteControllerProfile(
-                                        controllerProfile
-                                    )
-                                )
-                            }) {
-                            Icon(
-                                imageVector = Icons.Outlined.Delete,
-                                contentDescription = "Delete"
+                                imageVector = Icons.Outlined.Star,
+                                contentDescription = "DefaultProfile",
                             )
                         }
                     }
                 }
             }
-            Text(
-                text = "Address: " + controllerProfile.address,
-                fontSize = 12.sp
-            )
-            Text(
-                text = "Port: " + controllerProfile.port,
-                fontSize = 12.sp
-            )
             Row(
                 modifier = Modifier.fillMaxWidth(),
-            )
-            {
-                Column(
-                    modifier = Modifier.weight(1f)
-                ) {
+            ) {
+                Text(
+                    text = "Address: " + controllerProfile.address,
+                    fontSize = 12.sp
+                )
+
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Column {
+                    Text(
+                        text = "Port: " + controllerProfile.port,
+                        fontSize = 12.sp
+                    )
+                    Text(
+                        text = "ID: ${controllerProfile.id}",
+                        fontSize = 12.sp,
+                    )
+                }
+                Column(horizontalAlignment = Alignment.End) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Start
                     ) {
-                        Text(
-                            text = "User: " + controllerProfile.user,
-                            fontSize = 12.sp,
-                        )
                     }
+                    Text(
+                        text = "User: " + controllerProfile.user,
+                        fontSize = 12.sp,
+                    )
+                    Text(
+                        text = "Password: " + controllerProfile.password,
+                        fontSize = 12.sp,
+                    )
                 }
-                Column(
-                    modifier = Modifier.weight(1f)
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+            ) {
+                Button(
+                    modifier = Modifier.padding(end = 4.dp),
+                    onClick = {
+                        onEvent(
+                            ControllerEvent.SelectControllerProfile(
+                                controllerProfile
+                            )
+                        )
+                        navHostController?.navigate(
+                            ViewNavigationRoutes.controllerEdit
+                        )
+                    },
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        Text(
-                            text = "Password: " + controllerProfile.password,
-                            fontSize = 12.sp,
-                        )
-                    }
+                    Icon(
+                        imageVector = Icons.Outlined.Edit,
+                        contentDescription = "Edit"
+                    )
                 }
-
+                Button(
+                    onClick = {
+                        onEvent(
+                            ControllerEvent.DeleteControllerProfile(
+                                controllerProfile
+                            )
+                        )
+                    }) {
+                    Icon(
+                        imageVector = Icons.Outlined.Delete,
+                        contentDescription = "Delete"
+                    )
+                }
             }
         }
     }
 }
 
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun ControllerProfileScreenPreview() {
     val mockControllerProfile1 = ControllerProfile(
+        id = 1,
         name = "Controller 1",
         address = "192.168.1.1",
         port = 80,
         user = "user",
         password = "password",
-        isDefault = true
     )
 
     AquariumControllerTheme {
-        ControllerProfileComposable(onEvent = {}, controllerProfile = mockControllerProfile1)
+        Surface(
+            color = MaterialTheme.colorScheme.background
+        ) {
+            ControllerProfileComposable(
+                onEvent = {},
+                controllerProfile = mockControllerProfile1,
+                mockIsDefaultProfile = true
+            )
+        }
     }
 }

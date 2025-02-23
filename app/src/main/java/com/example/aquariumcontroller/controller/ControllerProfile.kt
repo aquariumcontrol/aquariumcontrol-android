@@ -26,8 +26,5 @@ data class ControllerProfile(
 
     @ColumnInfo(name = "password")
     var password: String = "null",
-
-    @ColumnInfo(name = "isdefault")
-    var isDefault: Boolean? = null
 ) : Serializable {
 }

@@ -33,7 +33,7 @@ fun ControllerSelectionScreen(
     navHostController: NavHostController? = null,
     state: ControllerState,
     onEvent: (ControllerEvent) -> Unit,
-    mainViewModel: MainViewModel? = null
+    mainViewModel: MainViewModel? = null,
 ) {
     // This screen displays a list of controller profiles.
     AquariumControllerTheme {
@@ -80,10 +80,10 @@ fun ControllerSelectionScreen(
                     ) {
                         items(state.controllerProfileList) { controllerProfile ->
                             ControllerProfileComposable(
-                                navHostController,
-                                onEvent,
-                                controllerProfile,
-                                mainViewModel
+                                navHostController = navHostController,
+                                onEvent = onEvent,
+                                controllerProfile = controllerProfile,
+                                mainViewModel = mainViewModel,
                             )
                         }
                     }
@@ -97,20 +97,20 @@ fun ControllerSelectionScreen(
 @Composable
 fun ControllerSelectionScreenPreview() {
     val mockControllerProfile1 = ControllerProfile(
+        id = 1,
         name = "Controller 1",
         address = "192.168.1.1",
         port = 80,
         user = "user",
         password = "password",
-        isDefault = true
     )
     val mockControllerProfile2 = ControllerProfile(
+        id = 2,
         name = "Controller 2",
         address = "servername.external.com",
         port = 80,
         user = "userXYZ",
         password = "passwordXYZ",
-        isDefault = false
     )
 
     val controllerProfileList = listOf(
@@ -121,7 +121,10 @@ fun ControllerSelectionScreenPreview() {
     mockControllerState.controllerProfileList = controllerProfileList
 
     AquariumControllerTheme {
-        ControllerSelectionScreen(state = mockControllerState, onEvent = {})
+        ControllerSelectionScreen(
+            state = mockControllerState,
+            onEvent = {},
+        )
     }
 }
 

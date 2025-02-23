@@ -1,8 +1,9 @@
 package com.example.aquariumcontroller
 
-import com.example.aquariumcontroller.feed.edit.FeedProfileEditScreen
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -18,14 +19,15 @@ import androidx.room.Room
 import com.example.aquariumcontroller.balling.BallingScreen
 import com.example.aquariumcontroller.balling.edit.BallingProfileEditScreen
 import com.example.aquariumcontroller.balling.history.BallingHistoryScreen
-import com.example.aquariumcontroller.feed.history.FeedHistoryScreen
 import com.example.aquariumcontroller.controller.ControllerAddScreen
 import com.example.aquariumcontroller.controller.ControllerEditScreen
 import com.example.aquariumcontroller.controller.ControllerProfileDatabase
 import com.example.aquariumcontroller.controller.ControllerSelectionScreen
 import com.example.aquariumcontroller.controller.ControllerViewModel
-import com.example.aquariumcontroller.feed.schedule.FeedProfileScheduleScreen
 import com.example.aquariumcontroller.feed.FeedScreen
+import com.example.aquariumcontroller.feed.edit.FeedProfileEditScreen
+import com.example.aquariumcontroller.feed.history.FeedHistoryScreen
+import com.example.aquariumcontroller.feed.schedule.FeedProfileScheduleScreen
 import com.example.aquariumcontroller.heating.HeatingScreen
 import com.example.aquariumcontroller.overview.OverviewScreen
 import com.example.aquariumcontroller.refill.RefillScreen
@@ -35,6 +37,11 @@ import com.example.aquariumcontroller.ventilation.VentilationScreen
 
 @Suppress("UNCHECKED_CAST")
 class MainActivity : ComponentActivity() {
+
+    companion object {
+        private const val PREFS_NAME = "app_prefs"
+        private const val KEY_DEFAULT_PROFILE_ID = "default_profile_id"
+    }
 
     private val db by lazy {
         Room.databaseBuilder(
@@ -58,15 +65,31 @@ class MainActivity : ComponentActivity() {
         factoryProducer = {
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return ControllerViewModel(db.controllerProfileDao()) as T
+                    return ControllerViewModel(
+                        db.controllerProfileDao()
+                    ) as T
                 }
             }
         }
     )
 
+    override fun onPause() {
+        super.onPause()
+        val sharedPrefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        with(sharedPrefs.edit()) {
+            Log.d("MainActivity", "Saving default profile id: ${mainViewModel.getDefaultControllerProfileId()}")
+            putLong(KEY_DEFAULT_PROFILE_ID, mainViewModel.getDefaultControllerProfileId())
+            apply()
+        }
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val sharedPrefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val defaultProfileId = sharedPrefs.getLong(KEY_DEFAULT_PROFILE_ID, -1) // -1 for no default
+        mainViewModel.setDefaultControllerProfileId(defaultProfileId)
 
         setContent {
             val navHostController = rememberNavController()
@@ -98,6 +121,7 @@ class MainActivity : ComponentActivity() {
                             navHostController = navHostController,
                             state = state,
                             onEvent = controllerViewModel::onEvent,
+                            mainViewModel = mainViewModel
                         )
                     }
                     composable(ViewNavigationRoutes.feed) {
