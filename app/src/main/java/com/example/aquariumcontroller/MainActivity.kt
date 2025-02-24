@@ -32,6 +32,7 @@ import com.example.aquariumcontroller.heating.HeatingScreen
 import com.example.aquariumcontroller.overview.OverviewScreen
 import com.example.aquariumcontroller.refill.RefillScreen
 import com.example.aquariumcontroller.refill.history.RefillHistoryScreen
+import com.example.aquariumcontroller.schedule.ScheduleScreen
 import com.example.aquariumcontroller.timedata.TimeDataScreen
 import com.example.aquariumcontroller.ventilation.VentilationScreen
 

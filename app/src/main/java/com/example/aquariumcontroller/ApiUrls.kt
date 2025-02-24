@@ -1,7 +1,7 @@
 package com.example.aquariumcontroller
 
 object ApiUrls {
-    const val BASE_URL = "/aquarium-web/api/v01/"
+    private const val BASE_URL = "/aquarium-web/api/v01/"
     const val CHECK_USER_CREDENTIALS = "${BASE_URL}checkUser.php"
     const val OVERVIEW_GET_DATA = "${BASE_URL}getDataOverview.php"
     const val DATA_GET_START_STOP = "${BASE_URL}getDataStartStop.php"
@@ -31,4 +31,6 @@ object ApiUrls {
     const val HEATING_POST_SET_VALS = "${BASE_URL}postHeatingSetVals.php"
     const val VENTILATION_GET_SET_VALS = "${BASE_URL}getVentilationSetVals.php"
     const val VENTILATION_POST_SET_VALS = "${BASE_URL}postVentilationSetVals.php"
+    const val ACTUATOR_SCHEDULE_POST_UPDATE = "${BASE_URL}updateSchedule.php"
+    const val ACTUATOR_SCHEDULE_GET_VALS = "${BASE_URL}getSchedule.php"
 }
