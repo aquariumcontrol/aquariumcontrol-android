@@ -121,7 +121,7 @@ fun TimeDataScreen(
                 ) {
                     MainDropdownMenuComposable(
                         navHostController = navHostController,
-                        navigationRouteSource = ViewNavigationRoutes.balling,
+                        navigationRouteSource = ViewNavigationRoutes.timeData,
                         mainViewModel = mainViewModel
                     )
                     Text(
