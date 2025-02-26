@@ -1,8 +1,11 @@
 package com.example.aquariumcontroller.schedule
 
+import android.app.TimePickerDialog
 import android.content.res.Configuration
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,7 +23,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -39,6 +45,8 @@ import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import com.example.aquariumcontroller.webApiPostRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.util.Calendar
+import java.util.Locale
 
 @Composable
 fun ScheduleScreen(
@@ -78,6 +86,17 @@ fun ScheduleScreen(
         scheduleInitialSetVals.ballingStopTime
     )
 
+    // Get the initial date and time from the timestamp
+    val initialCalendar = Calendar.getInstance(Locale.getDefault()).apply {
+        timeInMillis = System.currentTimeMillis()
+        // todo: replace with time read from API
+    }
+
+    var selectedHourStart by remember { mutableIntStateOf(initialCalendar.get(Calendar.HOUR_OF_DAY)) }
+    var selectedMinuteStart by remember { mutableIntStateOf(initialCalendar.get(Calendar.MINUTE)) }
+    var selectedHourStop by remember { mutableIntStateOf(initialCalendar.get(Calendar.HOUR_OF_DAY)) }
+    var selectedMinuteStop by remember { mutableIntStateOf(initialCalendar.get(Calendar.MINUTE)) }
+
     LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
         if (mainViewModel != null && isControllerAddressValid) { // Check for null and validity
             fetchscheduleSetVals(
@@ -89,6 +108,28 @@ fun ScheduleScreen(
             }
         }
     }
+
+    val timePickerDialogStart = TimePickerDialog(
+        context,
+        { _, hourOfDay, minute ->
+            selectedHourStart = hourOfDay
+            selectedMinuteStart = minute
+        },
+        selectedHourStart,
+        selectedMinuteStart,
+        true // Use 24-hour format
+    )
+
+    val timePickerDialogStop = TimePickerDialog(
+        context,
+        { _, hourOfDay, minute ->
+            selectedHourStop = hourOfDay
+            selectedMinuteStop = minute
+        },
+        selectedHourStop,
+        selectedMinuteStop,
+        true // Use 24-hour format
+    )
 
     AquariumControllerTheme {
         // A surface container using the 'background' color from the theme
@@ -110,7 +151,7 @@ fun ScheduleScreen(
                     )
                     Text(
                         text = stringResource(R.string.actuatorSchedule),
-                        style = MaterialTheme.typography.headlineSmall,
+                        style = MaterialTheme.typography.headlineMedium,
                         modifier = Modifier.padding(16.dp)
                     )
                     Button(
@@ -142,36 +183,65 @@ fun ScheduleScreen(
                         Text(text = "Reset actuator schedules")
                     }
                     Spacer(modifier = Modifier.size(width = 10.dp, height = 10.dp))
-                    Column {
-                        RangeSlider(
-                            value = sliderRange,
-                            onValueChange = { newValue ->
-                                scheduleSetValsViewModel.onRangeChangedBySlider(
-                                    newValue.start,
-                                    newValue.endInclusive
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .border(
+                                border = BorderStroke(
+                                    1.dp,
+                                    MaterialTheme.colorScheme.onSurface
                                 )
-                            },
-                            valueRange = 0f..24f,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
-                    }
-                    Row {
-                        val startTimeString = scheduleSetValsViewModel.formatTime(lowerBoundValue)
+                            )
+                            .padding(8.dp)
+                    ) {
                         Text(
-                            text = "Start time: $startTimeString",
-                            modifier = Modifier
-                                .padding(top = 16.dp)
-                                .size(width = 128.dp, height = 72.dp)
+                            text = "Balling dosing schedule",
+                            style = MaterialTheme.typography.headlineSmall,
                         )
-                        Spacer(modifier = Modifier.size(width = 72.dp, height = 10.dp))
-                        val stopTimeString = scheduleSetValsViewModel.formatTime(upperBoundValue)
-                        Text(
-                            text = "Stop time: $stopTimeString",
-                            modifier = Modifier
-                                .padding(top = 16.dp)
-                                .size(width = 128.dp, height = 72.dp)
-                        )
+                        Column {
+                            RangeSlider(
+                                value = sliderRange,
+                                onValueChange = { newValue ->
+                                    scheduleSetValsViewModel.onRangeChangedBySlider(
+                                        newValue.start,
+                                        newValue.endInclusive
+                                    )
+                                },
+                                valueRange = 0f..24f,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            )
+                        }
+                        Row {
+                            Column {
+                                val startTimeString =
+                                    scheduleSetValsViewModel.formatTime(lowerBoundValue)
+                                Text(
+                                    text = "Start time: $startTimeString",
+                                    modifier = Modifier
+                                        .padding(top = 16.dp)
+                                        .size(width = 128.dp, height = 36.dp)
+                                )
+                                Button(onClick = { timePickerDialogStart.show() }) {
+                                    Text("Select Time")
+                                }
+                            }
+                            Spacer(modifier = Modifier.size(width = 72.dp, height = 10.dp))
+                            Column {
+                                val stopTimeString =
+                                    scheduleSetValsViewModel.formatTime(upperBoundValue)
+                                Text(
+                                    text = "Stop time: $stopTimeString",
+                                    modifier = Modifier
+                                        .padding(top = 16.dp)
+                                        .size(width = 128.dp, height = 36.dp)
+                                )
+                                Button(onClick = { timePickerDialogStop.show() }) {
+                                    Text("Select Time")
+                                }
+                            }
+                        }
                     }
                 }
             }
