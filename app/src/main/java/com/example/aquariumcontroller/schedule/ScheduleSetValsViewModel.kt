@@ -8,71 +8,86 @@ import com.example.aquariumcontroller.ApiParams
 import java.util.Locale
 
 class ScheduleSetValsViewModel(
-    private var scheduleSetVals: ScheduleSetVals,
+    private var setValStartTime: Float,
+    private var setValStopTime: Float,
+    private var setValLimitationActive: Boolean,
 ) : ViewModel() {
-    // This class will allow the user to edit the schedule for
-    // - Balling
+    // This class will allow the user to edit the schedule for either
+    // - Balling mineral dosing
     // - Refill
     // - Ventilation
     // - Heating
 
-    private val _sliderRangeBalling = MutableLiveData<ClosedFloatingPointRange<Float>>()
-    private val _lowerBoundValueBalling = MutableLiveData<Float>()
-    private val _upperBoundValueBalling = MutableLiveData<Float>()
-    val sliderRange: LiveData<ClosedFloatingPointRange<Float>> = _sliderRangeBalling
-    val lowerBoundValue: LiveData<Float> = _lowerBoundValueBalling
-    val upperBoundValue: LiveData<Float> = _upperBoundValueBalling
+    private val _sliderRange = MutableLiveData<ClosedFloatingPointRange<Float>>()
+    private val _lowerBoundValue = MutableLiveData<Float>()
+    private val _upperBoundValue = MutableLiveData<Float>()
+    private val _isLimitationActive = MutableLiveData<Boolean>()
+    val sliderRange: LiveData<ClosedFloatingPointRange<Float>> = _sliderRange
+    val lowerBoundValue: LiveData<Float> = _lowerBoundValue
+    val upperBoundValue: LiveData<Float> = _upperBoundValue
+    val isLimitationActive: LiveData<Boolean> = _isLimitationActive
+
+    init {
+        _sliderRange.value = setValStartTime..setValStopTime
+        _lowerBoundValue.value = setValStartTime
+        _upperBoundValue.value = setValStopTime
+        _isLimitationActive.value = setValLimitationActive
+    }
 
     val onRangeChangedBySlider: (Float, Float) -> Unit = { start, end ->
         Log.d("ScheduleSetValsViewModel", "onRangeChangedBySlider: $start - $end")
-        _sliderRangeBalling.value = start..end
-        _lowerBoundValueBalling.value = start
-        _upperBoundValueBalling.value = end
+        _sliderRange.value = start..end
+        _lowerBoundValue.value = start
+        _upperBoundValue.value = end
     }
 
     val onLowerValueChanged: (Float) -> Unit = { value ->
-        val currentRange = _sliderRangeBalling.value
+        val currentRange = _sliderRange.value
         if (currentRange != null && value < currentRange.endInclusive) {
             Log.d("ScheduleSetValsViewModel", "onLowerValueChanged: $value")
-            _sliderRangeBalling.value = value..currentRange.endInclusive
-            _lowerBoundValueBalling.value = value
+            _sliderRange.value = value..currentRange.endInclusive
+            _lowerBoundValue.value = value
         }
     }
 
     val onUpperValueChanged: (Float) -> Unit = { value ->
-        val currentRange = _sliderRangeBalling.value
+        val currentRange = _sliderRange.value
         if (currentRange != null && value > currentRange.start) {
             Log.d("ScheduleSetValsViewModel", "onUpperValueChanged: $value")
-            _sliderRangeBalling.value = currentRange.start..value
-            _upperBoundValueBalling.value = value
+            _sliderRange.value = currentRange.start..value
+            _upperBoundValue.value = value
         }
     }
 
     fun resetValues() {
-        _sliderRangeBalling.value =
-            scheduleSetVals.ballingStartTime.toFloat()..
-                    scheduleSetVals.ballingStopTime.toFloat()
+        _sliderRange.value = setValStartTime..setValStopTime
 
-        _lowerBoundValueBalling.value = scheduleSetVals.ballingStartTime
-        _upperBoundValueBalling.value = scheduleSetVals.ballingStopTime
+        _lowerBoundValue.value = setValStartTime
+        _upperBoundValue.value = setValStopTime
     }
 
     fun updateValues() {
-        if (_sliderRangeBalling.value != null) {
-            scheduleSetVals.ballingStartTime = sliderRange.value!!.start
-            scheduleSetVals.ballingStopTime = sliderRange.value!!.endInclusive
+        if (_sliderRange.value != null) {
+            setValStartTime = sliderRange.value!!.start
+            setValStopTime = sliderRange.value!!.endInclusive
+            setValLimitationActive = isLimitationActive.value!!
         } else {
             Log.d("ScheduleSetValsViewModel", "updateValues: _sliderRangeBalling.value is null")
         }
     }
 
-    fun setValues(newScheduleSetVals: ScheduleSetVals) {
-        this.scheduleSetVals.ballingStartTime = newScheduleSetVals.ballingStartTime
-        this.scheduleSetVals.ballingStopTime = newScheduleSetVals.ballingStopTime
-        _sliderRangeBalling.value =
-            this.scheduleSetVals.ballingStartTime..this.scheduleSetVals.ballingStopTime
-        _lowerBoundValueBalling.value = scheduleSetVals.ballingStartTime
-        _upperBoundValueBalling.value = scheduleSetVals.ballingStopTime
+    fun setValues(
+        newSetValStartTime: Float,
+        newSetValStopTime: Float,
+        newSetValLimitationActive: Boolean,
+    ) {
+        setValStartTime = newSetValStartTime
+        setValStopTime = newSetValStopTime
+        setValLimitationActive = newSetValLimitationActive
+        _sliderRange.value = setValStartTime..setValStopTime
+        _lowerBoundValue.value = setValStartTime
+        _upperBoundValue.value = setValStopTime
+        _isLimitationActive.value = setValLimitationActive
     }
 
     fun formatTime(value: Float): String {
@@ -81,27 +96,28 @@ class ScheduleSetValsViewModel(
         return String.format(locale = Locale.US, "%02d:%02d", hours, minutes)
     }
 
-    fun getBallingStartTimeString(): String {
+    private fun getStartTimeString(): String {
         Log.d(
             "ScheduleSetValsViewModel",
-            "getBallingStartTimeString: ${scheduleSetVals.ballingStartTime}"
+            "getStartTimeString: $setValStartTime"
         )
-        return formatTime(scheduleSetVals.ballingStartTime)
+        return formatTime(setValStartTime)
     }
 
-    fun getBallingStopTimeString(): String {
+    private fun getStopTimeString(): String {
         Log.d(
             "ScheduleSetValsViewModel",
-            "getBallingStopTimeString: ${scheduleSetVals.ballingStopTime}"
+            "getBallingStopTimeString: $setValStopTime"
         )
-        return formatTime(scheduleSetVals.ballingStopTime)
+        return formatTime(setValStopTime)
     }
 
     fun getApiParams(): Map<String, String> {
+        // todo: move this functionality elsewhere
         return mapOf(
-            ApiParams.SCHEDULE_BALLING_START_TIME to getBallingStartTimeString(),
-            ApiParams.SCHEDULE_BALLING_STOP_TIME to getBallingStopTimeString(),
-            ApiParams.SCHEDULE_BALLING_IS_ACTIVE to scheduleSetVals.ballingLimitationActive.toString(),
+            ApiParams.SCHEDULE_BALLING_START_TIME to getStartTimeString(),
+            ApiParams.SCHEDULE_BALLING_STOP_TIME to getStopTimeString(),
+            ApiParams.SCHEDULE_BALLING_IS_ACTIVE to setValLimitationActive.toString(),
             /* ApiParams.SCHEDULE_REFILL_START_TIME to getRefillStartTimeString(),
             ApiParams.SCHEDULE_REFILL_STOP_TIME to getRefillStopTimeString(),
             ApiParams.SCHEDULE_REFILL_IS_ACTIVE to scheduleSetVals.refillLimitationActive.toString()
@@ -112,5 +128,9 @@ class ScheduleSetValsViewModel(
             ApiParams.SCHEDULE_HEATING_STOP_TIME to getHeatingStopTimeString(),
             ApiParams.SCHEDULE_HEATING_IS_ACTIVE to scheduleSetVals.heatingLimitationActive.toString()*/
         )
+    }
+
+    fun setLimitationActive(newState: Boolean) {
+        _isLimitationActive.value = newState
     }
 }

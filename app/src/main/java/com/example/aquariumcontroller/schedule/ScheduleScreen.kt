@@ -1,32 +1,23 @@
 package com.example.aquariumcontroller.schedule
 
-import android.app.TimePickerDialog
 import android.content.res.Configuration
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -45,8 +36,6 @@ import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import com.example.aquariumcontroller.webApiPostRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.util.Calendar
-import java.util.Locale
 
 @Composable
 fun ScheduleScreen(
@@ -57,7 +46,12 @@ fun ScheduleScreen(
     // This screen displays for each of (Balling, Refill, schedule, Heating)
     // - a range slider for setting the start and stop time
 
-    val scheduleInitialSetVals = mockScheduleSetVals ?: ScheduleSetVals(0F, 24F, false)
+    val scheduleInitialSetVals = mockScheduleSetVals ?: ScheduleSetVals(
+        ballingStartTime = 0F, ballingStopTime = 24F, ballingLimitationActive = false,
+        refillStartTime = 0F, refillStopTime = 24F, refillLimitationActive = false,
+        ventilationStartTime = 0F, ventilationStopTime = 24F, ventilationLimitationActive = false,
+        heatingStartTime = 0F, heatingStopTime = 24F, heatingLimitationActive = false
+    )
 
     val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
 
@@ -67,35 +61,41 @@ fun ScheduleScreen(
 
     val context = LocalContext.current // context for web API request and Toasts
 
-    val scheduleSetValsViewModel: ScheduleSetValsViewModel = viewModel(
-        factory = ScheduleSetValsViewModelFactory(scheduleInitialSetVals)
+    val ballingScheduleSetValsViewModel: ScheduleSetValsViewModel = viewModel(
+        factory = ScheduleSetValsViewModelFactory(
+            setValStartTime = scheduleInitialSetVals.ballingStartTime,
+            setValStopTime = scheduleInitialSetVals.ballingStopTime,
+            setValLimitationActive = scheduleInitialSetVals.ballingLimitationActive
+        ),
+        key = "balling" // Unique key for Balling ViewModel
     )
 
-    // Use derived state for slider position
-    val sliderRange by scheduleSetValsViewModel.sliderRange.observeAsState(
-        initial =
-        scheduleInitialSetVals.ballingStartTime..
-                scheduleInitialSetVals.ballingStopTime
+    val refillScheduleSetValsViewModel: ScheduleSetValsViewModel = viewModel(
+        factory = ScheduleSetValsViewModelFactory(
+            setValStartTime = scheduleInitialSetVals.refillStartTime,
+            setValStopTime = scheduleInitialSetVals.refillStopTime,
+            setValLimitationActive = scheduleInitialSetVals.refillLimitationActive
+        ),
+        key = "refill" // Unique key for Refill
     )
 
-    // Use a separate mutable state for the text field values
-    val lowerBoundValue by scheduleSetValsViewModel.lowerBoundValue.observeAsState(
-        initial = scheduleInitialSetVals.ballingStartTime
-    )
-    val upperBoundValue by scheduleSetValsViewModel.upperBoundValue.observeAsState(
-        scheduleInitialSetVals.ballingStopTime
+    val ventilationScheduleSetValsViewModel: ScheduleSetValsViewModel = viewModel(
+        factory = ScheduleSetValsViewModelFactory(
+            setValStartTime = scheduleInitialSetVals.ventilationStartTime,
+            setValStopTime = scheduleInitialSetVals.ventilationStopTime,
+            setValLimitationActive = scheduleInitialSetVals.ventilationLimitationActive
+        ),
+        key = "ventilation" // Unique key for Ventilation
     )
 
-    // Get the initial date and time from the timestamp
-    val initialCalendar = Calendar.getInstance(Locale.getDefault()).apply {
-        timeInMillis = System.currentTimeMillis()
-        // todo: replace with time read from API
-    }
-
-    var selectedHourStart by remember { mutableIntStateOf(initialCalendar.get(Calendar.HOUR_OF_DAY)) }
-    var selectedMinuteStart by remember { mutableIntStateOf(initialCalendar.get(Calendar.MINUTE)) }
-    var selectedHourStop by remember { mutableIntStateOf(initialCalendar.get(Calendar.HOUR_OF_DAY)) }
-    var selectedMinuteStop by remember { mutableIntStateOf(initialCalendar.get(Calendar.MINUTE)) }
+    val heatingScheduleSetValsViewModel: ScheduleSetValsViewModel = viewModel(
+        factory = ScheduleSetValsViewModelFactory(
+            setValStartTime = scheduleInitialSetVals.heatingStartTime,
+            setValStopTime = scheduleInitialSetVals.heatingStopTime,
+            setValLimitationActive = scheduleInitialSetVals.heatingLimitationActive
+        ),
+        key = "heating" // Unique key for Heating
+    )
 
     LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
         if (mainViewModel != null && isControllerAddressValid) { // Check for null and validity
@@ -104,32 +104,29 @@ fun ScheduleScreen(
             ) { newScheduleSetVals ->
                 val newScheduleSetValsCasted = newScheduleSetVals as ScheduleSetVals
                 Log.d("scheduleScreen", "New schedule set vals: $newScheduleSetValsCasted")
-                scheduleSetValsViewModel.setValues(newScheduleSetValsCasted)
+                ballingScheduleSetValsViewModel.setValues(
+                    newSetValStartTime = newScheduleSetValsCasted.ballingStartTime,
+                    newSetValStopTime = newScheduleSetValsCasted.ballingStopTime,
+                    newSetValLimitationActive = newScheduleSetValsCasted.ballingLimitationActive,
+                )
+                refillScheduleSetValsViewModel.setValues(
+                    newSetValStartTime = newScheduleSetValsCasted.refillStartTime,
+                    newSetValStopTime = newScheduleSetValsCasted.refillStopTime,
+                    newSetValLimitationActive = newScheduleSetValsCasted.refillLimitationActive
+                )
+                ventilationScheduleSetValsViewModel.setValues(
+                    newSetValStartTime = newScheduleSetValsCasted.ventilationStartTime,
+                    newSetValStopTime = newScheduleSetValsCasted.ventilationStopTime,
+                    newSetValLimitationActive = newScheduleSetValsCasted.ventilationLimitationActive
+                )
+                heatingScheduleSetValsViewModel.setValues(
+                    newSetValStartTime = newScheduleSetValsCasted.heatingStartTime,
+                    newSetValStopTime = newScheduleSetValsCasted.heatingStopTime,
+                    newSetValLimitationActive = newScheduleSetValsCasted.heatingLimitationActive
+                )
             }
         }
     }
-
-    val timePickerDialogStart = TimePickerDialog(
-        context,
-        { _, hourOfDay, minute ->
-            selectedHourStart = hourOfDay
-            selectedMinuteStart = minute
-        },
-        selectedHourStart,
-        selectedMinuteStart,
-        true // Use 24-hour format
-    )
-
-    val timePickerDialogStop = TimePickerDialog(
-        context,
-        { _, hourOfDay, minute ->
-            selectedHourStop = hourOfDay
-            selectedMinuteStop = minute
-        },
-        selectedHourStop,
-        selectedMinuteStop,
-        true // Use 24-hour format
-    )
 
     AquariumControllerTheme {
         // A surface container using the 'background' color from the theme
@@ -152,11 +149,14 @@ fun ScheduleScreen(
                     Text(
                         text = stringResource(R.string.actuatorSchedule),
                         style = MaterialTheme.typography.headlineMedium,
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.padding(8.dp)
                     )
                     Button(
                         onClick = {
-                            scheduleSetValsViewModel.updateValues()
+                            ballingScheduleSetValsViewModel.updateValues()
+                            refillScheduleSetValsViewModel.updateValues()
+                            ventilationScheduleSetValsViewModel.updateValues()
+                            heatingScheduleSetValsViewModel.updateValues()
                             if (mainViewModel != null) {
                                 webApiPostRequest(
                                     mainViewModel = mainViewModel,
@@ -164,7 +164,7 @@ fun ScheduleScreen(
                                     coroutineScope = coroutineScope,
                                     postRequest = postRequest,
                                     context = context,
-                                    optionalGetParams = scheduleSetValsViewModel.getApiParams(),
+                                    optionalGetParams = ballingScheduleSetValsViewModel.getApiParams(),
                                 )
                                 // Show the Toast after the API call
                                 Toast.makeText(
@@ -178,70 +178,35 @@ fun ScheduleScreen(
                         Text(text = "Update actuator schedules")
                     }
                     Button(
-                        onClick = { scheduleSetValsViewModel.resetValues() }
+                        onClick = {
+                            ballingScheduleSetValsViewModel.resetValues()
+                            refillScheduleSetValsViewModel.resetValues()
+                            ventilationScheduleSetValsViewModel.resetValues()
+                            heatingScheduleSetValsViewModel.resetValues()
+                        }
                     ) {
                         Text(text = "Reset actuator schedules")
                     }
                     Spacer(modifier = Modifier.size(width = 10.dp, height = 10.dp))
                     Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .border(
-                                border = BorderStroke(
-                                    1.dp,
-                                    MaterialTheme.colorScheme.onSurface
-                                )
-                            )
-                            .padding(8.dp)
+                        modifier = Modifier.verticalScroll(rememberScrollState())
                     ) {
-                        Text(
-                            text = "Balling dosing schedule",
-                            style = MaterialTheme.typography.headlineSmall,
+                        ScheduleAdjustmentComposable(
+                            myViewModel = ballingScheduleSetValsViewModel,
+                            title = "Balling dosing schedule"
                         )
-                        Column {
-                            RangeSlider(
-                                value = sliderRange,
-                                onValueChange = { newValue ->
-                                    scheduleSetValsViewModel.onRangeChangedBySlider(
-                                        newValue.start,
-                                        newValue.endInclusive
-                                    )
-                                },
-                                valueRange = 0f..24f,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                            )
-                        }
-                        Row {
-                            Column {
-                                val startTimeString =
-                                    scheduleSetValsViewModel.formatTime(lowerBoundValue)
-                                Text(
-                                    text = "Start time: $startTimeString",
-                                    modifier = Modifier
-                                        .padding(top = 16.dp)
-                                        .size(width = 128.dp, height = 36.dp)
-                                )
-                                Button(onClick = { timePickerDialogStart.show() }) {
-                                    Text("Select Time")
-                                }
-                            }
-                            Spacer(modifier = Modifier.size(width = 72.dp, height = 10.dp))
-                            Column {
-                                val stopTimeString =
-                                    scheduleSetValsViewModel.formatTime(upperBoundValue)
-                                Text(
-                                    text = "Stop time: $stopTimeString",
-                                    modifier = Modifier
-                                        .padding(top = 16.dp)
-                                        .size(width = 128.dp, height = 36.dp)
-                                )
-                                Button(onClick = { timePickerDialogStop.show() }) {
-                                    Text("Select Time")
-                                }
-                            }
-                        }
+                        ScheduleAdjustmentComposable(
+                            myViewModel = refillScheduleSetValsViewModel,
+                            title = "Refill schedule"
+                        )
+                        ScheduleAdjustmentComposable(
+                            myViewModel = ventilationScheduleSetValsViewModel,
+                            title = "Ventilation schedule"
+                        )
+                        ScheduleAdjustmentComposable(
+                            myViewModel = heatingScheduleSetValsViewModel,
+                            title = "Heating schedule"
+                        )
                     }
                 }
             }
@@ -270,16 +235,23 @@ private suspend fun fetchscheduleSetVals(
     }
 }
 
-@Preview(showBackground = true, heightDp = 800, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, heightDp = 1300, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun ScheduleScreenPreview() {
-    AquariumControllerTheme {
-        ScheduleScreen(
-            mockScheduleSetVals = ScheduleSetVals(
-                ballingStartTime = 2F,
-                ballingStopTime = 22F,
-                ballingLimitationActive = false,
-            )
+    ScheduleScreen(
+        mockScheduleSetVals = ScheduleSetVals(
+            ballingStartTime = 2F,
+            ballingStopTime = 22F,
+            ballingLimitationActive = false,
+            refillStartTime = 3F,
+            refillStopTime = 21F,
+            refillLimitationActive = true,
+            ventilationStartTime = 4F,
+            ventilationStopTime = 20F,
+            ventilationLimitationActive = false,
+            heatingStartTime = 5F,
+            heatingStopTime = 19F,
+            heatingLimitationActive = true,
         )
-    }
+    )
 }
