@@ -133,7 +133,8 @@ fun TimeDataScreen(
                     if (isRefreshing) {
                         CircularProgressIndicator(
                             modifier = Modifier
-                                .size(150.dp).fillMaxWidth(),
+                                .size(150.dp)
+                                .fillMaxWidth(),
                             color = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -391,7 +392,5 @@ fun generateMockTimeData(): List<TimeDataSample> {
 @Preview(showBackground = true, heightDp = 1200, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun TimeDataViewPreview() {
-    AquariumControllerTheme {
-        TimeDataScreen(mockTimeData = generateMockTimeData())
-    }
+    TimeDataScreen(mockTimeData = generateMockTimeData())
 }

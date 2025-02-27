@@ -252,10 +252,8 @@ fun FeedSchedulePreview() {
         isDaily = 1
     ).transformToFeedScheduleEntry()
 
-    AquariumControllerTheme {
-        FeedProfileScheduleScreen(
-            mockFeedProfile = mockFeedProfile,
-            mockFeedScheduleEntry = mockFeedScheduleEntry
-        )
-    }
+    FeedProfileScheduleScreen(
+        mockFeedProfile = mockFeedProfile,
+        mockFeedScheduleEntry = mockFeedScheduleEntry
+    )
 }

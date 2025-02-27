@@ -108,8 +108,7 @@ fun HeatingScreen(
             }
             fetchHeatingSetVals(
                 mainViewModel,
-            ) {
-                newHeatingSetVals ->
+            ) { newHeatingSetVals ->
                 val newHeatingSetValsCasted = newHeatingSetVals as HeatingSetVals
                 Log.d("HeatingScreen", "New heating set vals: $newHeatingSetValsCasted")
                 heatingSetValsViewModel.setValues(newHeatingSetValsCasted)
@@ -227,23 +226,23 @@ fun HeatingScreen(
 
                     @Suppress("UNCHECKED_CAST")
                     HeatingStatsComposable(heatingStats = heatingStats, updateData =
-                        {
-                            coroutineScope.launch {
-                                if (isControllerAddressValid) {
-                                    isRefreshing = true
-                                    try {
-                                        fetchHeatingStats(
-                                            mainViewModel!!
-                                        ) { newHeatingStats ->
-                                            heatingStats = newHeatingStats as List<HeatingStatsEntry>
-                                        }
-                                        delay(500)
-                                    } finally {
-                                        isRefreshing = false // Reset the refresh state
+                    {
+                        coroutineScope.launch {
+                            if (isControllerAddressValid) {
+                                isRefreshing = true
+                                try {
+                                    fetchHeatingStats(
+                                        mainViewModel!!
+                                    ) { newHeatingStats ->
+                                        heatingStats = newHeatingStats as List<HeatingStatsEntry>
                                     }
+                                    delay(500)
+                                } finally {
+                                    isRefreshing = false // Reset the refresh state
                                 }
                             }
                         }
+                    }
                     )
                 }
             }
@@ -278,8 +277,7 @@ private suspend fun fetchHeatingSetVals(
             withContext(Dispatchers.Main) {
                 updateHeatingSetVals(heatingSetValsList.first())
             }
-        }
-        else {
+        } else {
             Log.d("HeatingScreen", "No heating set vals fetched")
         }
     }
@@ -311,13 +309,11 @@ fun createMockStatsData(): List<HeatingStatsEntry> {
 @Preview(showBackground = true, heightDp = 800, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun HeatingScreenPreview() {
-    AquariumControllerTheme {
-        HeatingScreen(
-            mockHeatingSetVals = HeatingSetVals(
-                heatingSwitchOffTemp = 27.5,
-                heatingSwitchOnTemp = 22.5
-            ),
-            mockHeatingStatEntries = createMockStatsData()
-        )
-    }
+    HeatingScreen(
+        mockHeatingSetVals = HeatingSetVals(
+            heatingSwitchOffTemp = 27.5,
+            heatingSwitchOnTemp = 22.5
+        ),
+        mockHeatingStatEntries = createMockStatsData()
+    )
 }

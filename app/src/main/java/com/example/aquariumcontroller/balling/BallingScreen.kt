@@ -103,9 +103,11 @@ fun BallingScreen(
                     )
                 }
                 if (ballingProfiles != null) {
-                    LazyColumn(modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp)) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp)
+                    ) {
                         items(ballingProfiles!!) { ballingProfile ->
                             BallingProfileSummaryComposable(
                                 navHostController = navHostController,
@@ -127,7 +129,5 @@ fun BallingViewPreview() {
     val mockBallingProfile2 = BallingProfile(pumpId = 2, volume = 3.1, label = "mock2")
     val mockBallingProfiles = listOf(mockBallingProfile1, mockBallingProfile2)
 
-    AquariumControllerTheme {
-        BallingScreen(mockBallingProfiles = mockBallingProfiles)
-    }
+    BallingScreen(mockBallingProfiles = mockBallingProfiles)
 }

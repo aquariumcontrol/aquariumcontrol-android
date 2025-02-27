@@ -196,10 +196,8 @@ fun FeedScreenPreview() {
 
     val mockFeedScheduleEntries = listOf(mockFeedScheduleEntry1, mockFeedScheduleEntry2)
 
-    AquariumControllerTheme {
-        FeedScreen(
-            mockFeedProfiles = mockFeedProfiles,
-            mockFeedScheduleEntries = mockFeedScheduleEntries
-        )
-    }
+    FeedScreen(
+        mockFeedProfiles = mockFeedProfiles,
+        mockFeedScheduleEntries = mockFeedScheduleEntries
+    )
 }

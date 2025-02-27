@@ -86,8 +86,7 @@ fun VentilationScreen(
         if (mainViewModel != null && isControllerAddressValid) { // Check for null and validity
             fetchVentilationSetVals(
                 mainViewModel,
-            ) {
-                newVentilationSetVals ->
+            ) { newVentilationSetVals ->
                 val newVentilationSetValsCasted = newVentilationSetVals as VentilationSetVals
                 Log.d("VentilationScreen", "New ventilation set vals: $newVentilationSetValsCasted")
                 ventilationSetValsViewModel.setValues(newVentilationSetValsCasted)
@@ -214,8 +213,7 @@ private suspend fun fetchVentilationSetVals(
             withContext(Dispatchers.Main) {
                 updateVentilationSetVals(ventilationSetValsList.first())
             }
-        }
-        else {
+        } else {
             Log.d("VentilationScreen", "No ventilation set vals fetched")
         }
     }
@@ -224,12 +222,10 @@ private suspend fun fetchVentilationSetVals(
 @Preview(showBackground = true, heightDp = 800, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun VentilationScreenPreview() {
-    AquariumControllerTheme {
-        VentilationScreen(
-            mockVentilationSetVals = VentilationSetVals(
-                ventilationSwitchOffTemp = 28.5,
-                ventilationSwitchOnTemp = 21.5
-            )
+    VentilationScreen(
+        mockVentilationSetVals = VentilationSetVals(
+            ventilationSwitchOffTemp = 28.5,
+            ventilationSwitchOnTemp = 21.5
         )
-    }
+    )
 }

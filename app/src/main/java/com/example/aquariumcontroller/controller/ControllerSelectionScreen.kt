@@ -120,11 +120,9 @@ fun ControllerSelectionScreenPreview() {
     val mockControllerState = ControllerState()
     mockControllerState.controllerProfileList = controllerProfileList
 
-    AquariumControllerTheme {
-        ControllerSelectionScreen(
-            state = mockControllerState,
-            onEvent = {},
-        )
-    }
+    ControllerSelectionScreen(
+        state = mockControllerState,
+        onEvent = {},
+    )
 }
 

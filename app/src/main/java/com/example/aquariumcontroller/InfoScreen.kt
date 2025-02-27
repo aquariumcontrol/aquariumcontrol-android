@@ -39,7 +39,5 @@ fun InfoScreen(navHostController: NavHostController? = null, mainViewModel: Main
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun InfoViewPreview() {
-    AquariumControllerTheme {
-        InfoScreen()
-    }
+    InfoScreen()
 }

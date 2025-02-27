@@ -237,7 +237,5 @@ fun BallingHistoryPreview() {
         ),
     )
 
-    AquariumControllerTheme {
-        BallingHistoryScreen(showFullWeek = false, mockBallingHistoryDosingEvents = mockEvents)
-    }
+    BallingHistoryScreen(showFullWeek = false, mockBallingHistoryDosingEvents = mockEvents)
 }

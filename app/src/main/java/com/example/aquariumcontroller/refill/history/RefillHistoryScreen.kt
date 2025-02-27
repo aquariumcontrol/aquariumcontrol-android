@@ -235,7 +235,5 @@ fun RefillHistoryPreview() {
         )
     )
 
-    AquariumControllerTheme {
-        RefillHistoryScreen(showFullWeek = true, mockRefillEvents = mockEvents)
-    }
+    RefillHistoryScreen(showFullWeek = true, mockRefillEvents = mockEvents)
 }

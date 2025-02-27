@@ -275,9 +275,7 @@ fun FeedViewPreview() {
 
     val mockFeedProfile = FeedProfile(mockFeedProfileImport)
 
-    AquariumControllerTheme {
-        FeedProfileEditScreen(
-            feedProfile = mockFeedProfile,
-        )
-    }
+    FeedProfileEditScreen(
+        feedProfile = mockFeedProfile,
+    )
 }

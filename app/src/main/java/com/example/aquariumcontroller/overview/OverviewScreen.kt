@@ -454,7 +454,5 @@ fun OverviewViewPreview() {
         heater = "OFF"
     )
 
-    AquariumControllerTheme {
-        OverviewScreen(mockController = mockControllerProfile, mockOverviewData = mockOverviewData)
-    }
+    OverviewScreen(mockController = mockControllerProfile, mockOverviewData = mockOverviewData)
 }

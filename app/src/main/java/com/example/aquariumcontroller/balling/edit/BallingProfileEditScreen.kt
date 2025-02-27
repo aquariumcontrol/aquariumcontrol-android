@@ -204,10 +204,8 @@ fun BallingProfileEditPreviewScreen() {
         label = "MockDosingUnit 1",
     )
 
-    AquariumControllerTheme {
-        BallingProfileEditScreen(
-            navHostController = null,
-            ballingProfile = mockBallingProfile,
-        )
-    }
+    BallingProfileEditScreen(
+        navHostController = null,
+        ballingProfile = mockBallingProfile,
+    )
 }

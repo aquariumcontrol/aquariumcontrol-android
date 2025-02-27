@@ -238,7 +238,5 @@ fun FeedHistoryPreview() {
         ),
     )
 
-    AquariumControllerTheme {
-        FeedHistoryScreen(showFullWeek = false, mockFeedHistoryEvents = mockEvents)
-    }
+    FeedHistoryScreen(showFullWeek = false, mockFeedHistoryEvents = mockEvents)
 }
