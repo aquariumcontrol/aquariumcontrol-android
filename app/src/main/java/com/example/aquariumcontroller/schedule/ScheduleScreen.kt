@@ -67,7 +67,7 @@ fun ScheduleScreen(
             setValStopTime = scheduleInitialSetVals.ballingStopTime,
             setValLimitationActive = scheduleInitialSetVals.ballingLimitationActive
         ),
-        key = "balling" // Unique key for Balling ViewModel
+        key = ScheduleType.BALLING.key // Unique key for Balling ViewModel
     )
 
     val refillScheduleSetValsViewModel: ScheduleSetValsViewModel = viewModel(
@@ -76,7 +76,7 @@ fun ScheduleScreen(
             setValStopTime = scheduleInitialSetVals.refillStopTime,
             setValLimitationActive = scheduleInitialSetVals.refillLimitationActive
         ),
-        key = "refill" // Unique key for Refill
+        key = ScheduleType.REFILL.key // Unique key for Refill
     )
 
     val ventilationScheduleSetValsViewModel: ScheduleSetValsViewModel = viewModel(
@@ -85,7 +85,7 @@ fun ScheduleScreen(
             setValStopTime = scheduleInitialSetVals.ventilationStopTime,
             setValLimitationActive = scheduleInitialSetVals.ventilationLimitationActive
         ),
-        key = "ventilation" // Unique key for Ventilation
+        key = ScheduleType.VENTILATION.key // Unique key for Ventilation
     )
 
     val heatingScheduleSetValsViewModel: ScheduleSetValsViewModel = viewModel(
@@ -94,12 +94,12 @@ fun ScheduleScreen(
             setValStopTime = scheduleInitialSetVals.heatingStopTime,
             setValLimitationActive = scheduleInitialSetVals.heatingLimitationActive
         ),
-        key = "heating" // Unique key for Heating
+        key = ScheduleType.HEATING.key // Unique key for Heating
     )
 
     LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
         if (mainViewModel != null && isControllerAddressValid) { // Check for null and validity
-            fetchscheduleSetVals(
+            fetchScheduleSetVals(
                 mainViewModel,
             ) { newScheduleSetVals ->
                 val newScheduleSetValsCasted = newScheduleSetVals as ScheduleSetVals
@@ -214,24 +214,32 @@ fun ScheduleScreen(
     }
 }
 
-private suspend fun fetchscheduleSetVals(
+private suspend fun fetchScheduleSetVals(
     mainViewModel: MainViewModel,
-    updatescheduleSetVals: (Any) -> Unit,
+    updateScheduleSetVals: (Any) -> Unit,
 ) {
     withContext(Dispatchers.IO) {
         val url =
             "http://" + mainViewModel.getControllerAddress() + ApiUrls.ACTUATOR_SCHEDULE_GET_VALS
-        /*
-        val scheduleSetValsList = scheduleSetValsReader(url).readscheduleSetVals()
-        if (!scheduleSetValsList.isNullOrEmpty()) {
-            Log.d("scheduleScreen", "Fetched schedule set vals: $scheduleSetValsList")
+
+        val scheduleSetValsReader = ScheduleSetValsReader(url)
+        val scheduleStringSetValsList = scheduleSetValsReader.readScheduleSetVals()
+
+        if (!scheduleStringSetValsList.isNullOrEmpty()) {
+            Log.d("scheduleScreen", "Fetched schedule string set vals: $scheduleStringSetValsList")
+            // Convert the list of TimeDataStringSample to a list of TimeDataSample
+            val scheduleSetValsList =
+                scheduleStringSetValsList.map { scheduleStringSetVal ->
+                    scheduleStringSetVal.transformToSetVal()
+                }
+            val scheduleSetVals = ScheduleSetValsFactory(scheduleSetValsList).create()
             withContext(Dispatchers.Main) {
-                updatescheduleSetVals(scheduleSetValsList.first())
+                updateScheduleSetVals(scheduleSetVals)
             }
         }
         else {
             Log.d("scheduleScreen", "No schedule set vals fetched")
-        }*/
+        }
     }
 }
 
