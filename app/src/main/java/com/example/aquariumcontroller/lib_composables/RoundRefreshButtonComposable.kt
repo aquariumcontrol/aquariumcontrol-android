@@ -1,4 +1,4 @@
-package com.example.aquariumcontroller
+package com.example.aquariumcontroller.lib_composables
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.size
@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
-fun RoundRefreshButton(onClick: () -> Unit) {
+fun RoundRefreshButtonComposable(onClick: () -> Unit) {
     val icon = Icons.Filled.Sync
     Surface(
         onClick = onClick,
@@ -40,8 +40,12 @@ fun RoundRefreshButton(onClick: () -> Unit) {
 @Composable
 fun RoundRefreshButtonPreviewDark() {
     AquariumControllerTheme {
-        RoundRefreshButton(
-            onClick = { /* Do nothing */ },
-        )
+        Surface(
+            color = MaterialTheme.colorScheme.background
+        ) {
+            RoundRefreshButtonComposable(
+                onClick = { /* Do nothing */ },
+            )
+        }
     }
 }

@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.example.aquariumcontroller.RoundRefreshButton
+import com.example.aquariumcontroller.lib_composables.RoundRefreshButtonComposable
 import com.github.mikephil.charting.charts.CombinedChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
@@ -161,7 +161,7 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: ()
         ) {
             HeatingStatsLegend()
             Spacer(modifier = Modifier.width(32.dp))
-            RoundRefreshButton(onClick = updateData)
+            RoundRefreshButtonComposable(onClick = updateData)
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.aquariumcontroller
+package com.example.aquariumcontroller.lib_composables
 
 import android.content.res.Configuration
 import androidx.compose.foundation.text.KeyboardOptions

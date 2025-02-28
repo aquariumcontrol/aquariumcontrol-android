@@ -1,4 +1,4 @@
-package com.example.aquariumcontroller
+package com.example.aquariumcontroller.lib_composables
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
@@ -22,6 +22,8 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,6 +35,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.aquariumcontroller.MainViewModel
+import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
@@ -199,6 +203,10 @@ fun MainDropdownMenuComposable(
 @Composable
 fun MainDropdownMenuPreview() {
     AquariumControllerTheme {
-        MainDropdownMenuComposable(navigationRouteSource = ViewNavigationRoutes.controllerSelection)
+        Surface(
+            color = MaterialTheme.colorScheme.background
+        ) {
+            MainDropdownMenuComposable(navigationRouteSource = ViewNavigationRoutes.controllerSelection)
+        }
     }
 }

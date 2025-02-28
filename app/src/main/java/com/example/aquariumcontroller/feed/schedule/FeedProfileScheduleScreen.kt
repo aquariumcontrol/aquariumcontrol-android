@@ -32,7 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.ApiUrls
-import com.example.aquariumcontroller.MainDropdownMenuComposable
+import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.PostRequest
 import com.example.aquariumcontroller.ViewNavigationRoutes
