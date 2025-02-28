@@ -46,7 +46,7 @@ fun ScheduleScreen(
     // This screen displays for each of (Balling, Refill, schedule, Heating)
     // - a range slider for setting the start and stop time
 
-    val scheduleInitialSetVals = mockScheduleSetVals ?: ScheduleSetVals(
+    var scheduleSetVals = mockScheduleSetVals ?: ScheduleSetVals(
         ballingStartTime = 0F, ballingStopTime = 24F, ballingLimitationActive = false,
         refillStartTime = 0F, refillStopTime = 24F, refillLimitationActive = false,
         ventilationStartTime = 0F, ventilationStopTime = 24F, ventilationLimitationActive = false,
@@ -63,36 +63,36 @@ fun ScheduleScreen(
 
     val ballingScheduleSetValsViewModel: ScheduleSetValsViewModel = viewModel(
         factory = ScheduleSetValsViewModelFactory(
-            setValStartTime = scheduleInitialSetVals.ballingStartTime,
-            setValStopTime = scheduleInitialSetVals.ballingStopTime,
-            setValLimitationActive = scheduleInitialSetVals.ballingLimitationActive
+            setValStartTime = scheduleSetVals.ballingStartTime,
+            setValStopTime = scheduleSetVals.ballingStopTime,
+            setValLimitationActive = scheduleSetVals.ballingLimitationActive
         ),
         key = ScheduleType.BALLING.key // Unique key for Balling ViewModel
     )
 
     val refillScheduleSetValsViewModel: ScheduleSetValsViewModel = viewModel(
         factory = ScheduleSetValsViewModelFactory(
-            setValStartTime = scheduleInitialSetVals.refillStartTime,
-            setValStopTime = scheduleInitialSetVals.refillStopTime,
-            setValLimitationActive = scheduleInitialSetVals.refillLimitationActive
+            setValStartTime = scheduleSetVals.refillStartTime,
+            setValStopTime = scheduleSetVals.refillStopTime,
+            setValLimitationActive = scheduleSetVals.refillLimitationActive
         ),
         key = ScheduleType.REFILL.key // Unique key for Refill
     )
 
     val ventilationScheduleSetValsViewModel: ScheduleSetValsViewModel = viewModel(
         factory = ScheduleSetValsViewModelFactory(
-            setValStartTime = scheduleInitialSetVals.ventilationStartTime,
-            setValStopTime = scheduleInitialSetVals.ventilationStopTime,
-            setValLimitationActive = scheduleInitialSetVals.ventilationLimitationActive
+            setValStartTime = scheduleSetVals.ventilationStartTime,
+            setValStopTime = scheduleSetVals.ventilationStopTime,
+            setValLimitationActive = scheduleSetVals.ventilationLimitationActive
         ),
         key = ScheduleType.VENTILATION.key // Unique key for Ventilation
     )
 
     val heatingScheduleSetValsViewModel: ScheduleSetValsViewModel = viewModel(
         factory = ScheduleSetValsViewModelFactory(
-            setValStartTime = scheduleInitialSetVals.heatingStartTime,
-            setValStopTime = scheduleInitialSetVals.heatingStopTime,
-            setValLimitationActive = scheduleInitialSetVals.heatingLimitationActive
+            setValStartTime = scheduleSetVals.heatingStartTime,
+            setValStopTime = scheduleSetVals.heatingStopTime,
+            setValLimitationActive = scheduleSetVals.heatingLimitationActive
         ),
         key = ScheduleType.HEATING.key // Unique key for Heating
     )
@@ -103,6 +103,7 @@ fun ScheduleScreen(
                 mainViewModel,
             ) { newScheduleSetVals ->
                 val newScheduleSetValsCasted = newScheduleSetVals as ScheduleSetVals
+                scheduleSetVals = newScheduleSetValsCasted
                 Log.d("scheduleScreen", "New schedule set vals: $newScheduleSetValsCasted")
                 ballingScheduleSetValsViewModel.setValues(
                     newSetValStartTime = newScheduleSetValsCasted.ballingStartTime,
@@ -157,6 +158,12 @@ fun ScheduleScreen(
                             refillScheduleSetValsViewModel.updateValues()
                             ventilationScheduleSetValsViewModel.updateValues()
                             heatingScheduleSetValsViewModel.updateValues()
+                            scheduleSetVals.updateFromViewModels(
+                                ballingScheduleSetValsViewModel,
+                                refillScheduleSetValsViewModel,
+                                ventilationScheduleSetValsViewModel,
+                                heatingScheduleSetValsViewModel
+                            )
                             if (mainViewModel != null) {
                                 webApiPostRequest(
                                     mainViewModel = mainViewModel,
@@ -164,7 +171,7 @@ fun ScheduleScreen(
                                     coroutineScope = coroutineScope,
                                     postRequest = postRequest,
                                     context = context,
-                                    optionalGetParams = ballingScheduleSetValsViewModel.getApiParams(),
+                                    optionalGetParams = scheduleSetVals.getApiParams(),
                                 )
                                 // Show the Toast after the API call
                                 Toast.makeText(
@@ -236,8 +243,7 @@ private suspend fun fetchScheduleSetVals(
             withContext(Dispatchers.Main) {
                 updateScheduleSetVals(scheduleSetVals)
             }
-        }
-        else {
+        } else {
             Log.d("scheduleScreen", "No schedule set vals fetched")
         }
     }

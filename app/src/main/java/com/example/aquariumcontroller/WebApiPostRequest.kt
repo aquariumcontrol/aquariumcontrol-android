@@ -22,9 +22,10 @@ fun webApiPostRequest(
         var url =
             "http://" + mainViewModel.getControllerAddress() + apiUrl + "?"
 
-        for ((key, value) in optionalGetParams) {
+        for ((index, entry) in optionalGetParams.entries.withIndex()) {
+            val (key, value) = entry
             url += "$key=$value"
-            if (optionalGetParams[key] != optionalGetParams.values.last()) {
+            if (index != optionalGetParams.size - 1) {
                 url += "&"
             }
         }

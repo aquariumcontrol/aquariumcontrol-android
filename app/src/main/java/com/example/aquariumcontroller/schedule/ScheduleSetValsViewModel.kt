@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.aquariumcontroller.ApiParams
 import java.util.Locale
 
 class ScheduleSetValsViewModel(
@@ -96,41 +95,19 @@ class ScheduleSetValsViewModel(
         return String.format(locale = Locale.US, "%02d:%02d", hours, minutes)
     }
 
-    private fun getStartTimeString(): String {
-        Log.d(
-            "ScheduleSetValsViewModel",
-            "getStartTimeString: $setValStartTime"
-        )
-        return formatTime(setValStartTime)
-    }
-
-    private fun getStopTimeString(): String {
-        Log.d(
-            "ScheduleSetValsViewModel",
-            "getBallingStopTimeString: $setValStopTime"
-        )
-        return formatTime(setValStopTime)
-    }
-
-    fun getApiParams(): Map<String, String> {
-        // todo: move this functionality elsewhere
-        return mapOf(
-            ApiParams.SCHEDULE_BALLING_START_TIME to getStartTimeString(),
-            ApiParams.SCHEDULE_BALLING_STOP_TIME to getStopTimeString(),
-            ApiParams.SCHEDULE_BALLING_IS_ACTIVE to setValLimitationActive.toString(),
-            /* ApiParams.SCHEDULE_REFILL_START_TIME to getRefillStartTimeString(),
-            ApiParams.SCHEDULE_REFILL_STOP_TIME to getRefillStopTimeString(),
-            ApiParams.SCHEDULE_REFILL_IS_ACTIVE to scheduleSetVals.refillLimitationActive.toString()
-            ApiParams.SCHEDULE_VENTILATION_START_TIME to getVentilationStartTimeString(),
-            ApiParams.SCHEDULE_VENTILATION_STOP_TIME to getVentilationStopTimeString(),
-            ApiParams.SCHEDULE_VENTILATION_IS_ACTIVE to scheduleSetVals.ventilationLimitationActive.toString()
-            ApiParams.SCHEDULE_HEATING_START_TIME to getHeatingStartTimeString(),
-            ApiParams.SCHEDULE_HEATING_STOP_TIME to getHeatingStopTimeString(),
-            ApiParams.SCHEDULE_HEATING_IS_ACTIVE to scheduleSetVals.heatingLimitationActive.toString()*/
-        )
-    }
-
     fun setLimitationActive(newState: Boolean) {
         _isLimitationActive.value = newState
+    }
+
+    fun getStartTime(): Float {
+        return setValStartTime
+    }
+
+    fun getStopTime(): Float {
+        return setValStopTime
+    }
+
+    fun isLimitationActive(): Boolean {
+        return setValLimitationActive
     }
 }
