@@ -1,6 +1,6 @@
-package com.example.aquariumcontroller
+package com.example.aquariumcontroller.webapi
 
-object ApiUrls {
+object WebApiUrls {
     private const val BASE_URL = "/aquarium-web/api/v01/"
     const val CHECK_USER_CREDENTIALS = "${BASE_URL}checkUser.php"
     const val OVERVIEW_GET_DATA = "${BASE_URL}getDataOverview.php"

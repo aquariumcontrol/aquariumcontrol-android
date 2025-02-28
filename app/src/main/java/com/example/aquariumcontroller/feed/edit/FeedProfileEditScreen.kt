@@ -22,16 +22,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.aquariumcontroller.ApiUrls
+import com.example.aquariumcontroller.webapi.WebApiUrls
 import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
-import com.example.aquariumcontroller.PostRequest
+import com.example.aquariumcontroller.webapi.WebApiPostRequest
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.feed.FeedProfile
 import com.example.aquariumcontroller.feed.FeedProfileImport
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
-import com.example.aquariumcontroller.webApiPostRequest
+import com.example.aquariumcontroller.webapi.webApiPostRequestExecution
 
 @Composable
 fun FeedProfileEditScreen(
@@ -50,7 +50,7 @@ fun FeedProfileEditScreen(
         factory = FeedProfileEditViewModelFactory(feedProfile)
     )
 
-    val postRequest = PostRequest()
+    val webApiPostRequest = WebApiPostRequest()
 
     val context = LocalContext.current // context for web API request and Toasts
 
@@ -84,11 +84,11 @@ fun FeedProfileEditScreen(
                         .padding(horizontal = 8.dp),
                     onClick = {
                         if (mainViewModel != null) {
-                            webApiPostRequest(
+                            webApiPostRequestExecution(
                                 mainViewModel = mainViewModel,
-                                apiUrl = ApiUrls.FEED_POST_PROFILE_UPDATE,
+                                apiUrl = WebApiUrls.FEED_POST_PROFILE_UPDATE,
                                 coroutineScope = coroutineScope,
-                                postRequest = postRequest,
+                                webApiPostRequest = webApiPostRequest,
                                 context = context,
                                 optionalGetParams = feedProfileEditViewModel.getApiCallParameters()
                             )

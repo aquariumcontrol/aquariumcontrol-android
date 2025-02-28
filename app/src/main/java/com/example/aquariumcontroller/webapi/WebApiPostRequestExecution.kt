@@ -1,17 +1,18 @@
-package com.example.aquariumcontroller
+package com.example.aquariumcontroller.webapi
 
 import android.content.Context
 import android.widget.Toast
+import com.example.aquariumcontroller.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-fun webApiPostRequest(
+fun webApiPostRequestExecution(
     apiUrl: String,
     mainViewModel: MainViewModel,
     coroutineScope: CoroutineScope,
-    postRequest: PostRequest,
+    webApiPostRequest: WebApiPostRequest,
     context: Context,
     optionalGetParams: Map<String, String> = emptyMap()
 ) {
@@ -32,7 +33,7 @@ fun webApiPostRequest(
 
         coroutineScope.launch {
             withContext(Dispatchers.IO) {
-                postRequest.postData(url, user, password)
+                webApiPostRequest.postData(url, user, password)
             }
         }
     } else {

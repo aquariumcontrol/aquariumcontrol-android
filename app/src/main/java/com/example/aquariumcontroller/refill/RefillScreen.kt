@@ -22,14 +22,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.aquariumcontroller.ApiUrls
+import com.example.aquariumcontroller.webapi.WebApiUrls
 import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
-import com.example.aquariumcontroller.PostRequest
+import com.example.aquariumcontroller.webapi.WebApiPostRequest
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
-import com.example.aquariumcontroller.webApiPostRequest
+import com.example.aquariumcontroller.webapi.webApiPostRequestExecution
 
 @Composable
 fun RefillScreen(
@@ -43,7 +43,7 @@ fun RefillScreen(
     // - a button for stopping the refill controller
     // - a button for resetting errors of the refill controller
 
-    val postRequest = PostRequest()
+    val webApiPostRequest = WebApiPostRequest()
     val isControllerLoaded = mainViewModel?.isControllerLoaded() ?: false
     val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
     val context = LocalContext.current // context for web API request and Toasts
@@ -116,11 +116,11 @@ fun RefillScreen(
                                     .padding(horizontal = 8.dp),
                                 onClick = {
                                     if (isControllerLoaded && isControllerAddressValid) {
-                                        webApiPostRequest(
+                                        webApiPostRequestExecution(
                                             mainViewModel = mainViewModel!!,
-                                            apiUrl = ApiUrls.REFILL_POST_CONTROL_START,
+                                            apiUrl = WebApiUrls.REFILL_POST_CONTROL_START,
                                             coroutineScope = coroutineScope,
-                                            postRequest = postRequest,
+                                            webApiPostRequest = webApiPostRequest,
                                             context = context,
                                         )
                                         // Show the Toast after the API call
@@ -143,11 +143,11 @@ fun RefillScreen(
                                     .padding(horizontal = 8.dp),
                                 onClick = {
                                     if (isControllerLoaded && isControllerAddressValid) {
-                                        webApiPostRequest(
+                                        webApiPostRequestExecution(
                                             mainViewModel = mainViewModel!!,
-                                            apiUrl = ApiUrls.REFILL_POST_CONTROL_STOP,
+                                            apiUrl = WebApiUrls.REFILL_POST_CONTROL_STOP,
                                             coroutineScope = coroutineScope,
-                                            postRequest = postRequest,
+                                            webApiPostRequest = webApiPostRequest,
                                             context = context,
                                         )
                                         // Show the Toast after the API call
@@ -170,11 +170,11 @@ fun RefillScreen(
                                     .padding(horizontal = 8.dp),
                                 onClick = {
                                     if (isControllerLoaded && isControllerAddressValid) {
-                                        webApiPostRequest(
+                                        webApiPostRequestExecution(
                                             mainViewModel = mainViewModel!!,
-                                            apiUrl = ApiUrls.REFILL_POST_CONTROL_RESET,
+                                            apiUrl = WebApiUrls.REFILL_POST_CONTROL_RESET,
                                             coroutineScope = coroutineScope,
-                                            postRequest = postRequest,
+                                            webApiPostRequest = webApiPostRequest,
                                             context = context,
                                         )
                                         // Show the Toast after the API call

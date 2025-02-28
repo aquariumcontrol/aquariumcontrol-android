@@ -24,7 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.aquariumcontroller.ApiUrls
+import com.example.aquariumcontroller.webapi.WebApiUrls
 import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
@@ -47,7 +47,7 @@ fun BallingScreen(
     var ballingProfiles by remember { mutableStateOf(mockBallingProfiles) }
 
     if (mainViewModel != null) {
-        val url = "http://" + mainViewModel.getControllerAddress() + ApiUrls.BALLING_GET_SET_VALS
+        val url = "http://" + mainViewModel.getControllerAddress() + WebApiUrls.BALLING_GET_SET_VALS
         val reader = BallingProfileReader(url)
 
         LaunchedEffect(Unit) {

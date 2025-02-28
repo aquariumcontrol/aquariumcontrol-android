@@ -1,6 +1,6 @@
 package com.example.aquariumcontroller.feed
 
-import com.example.aquariumcontroller.ApiParams
+import com.example.aquariumcontroller.webapi.WebApiParams
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -308,8 +308,8 @@ class FeedProfile(feedProfileImport: FeedProfileImport) {
             )
         }
         myMap += mapOf(
-            ApiParams.PROFILE_NAME to this.profileName,
-            ApiParams.PROFILE_ID to this.profileID.toString()
+            WebApiParams.PROFILE_NAME to this.profileName,
+            WebApiParams.PROFILE_ID to this.profileID.toString()
         )
         return myMap
     }
@@ -319,9 +319,9 @@ class FeedProfile(feedProfileImport: FeedProfileImport) {
         val timeStampString = dateFormat.format(timestamp).replace(" ", "T")
 
         val params = mutableMapOf<String, String>()
-        params[ApiParams.PROFILE_NAME] = profileName
-        params[ApiParams.REPEAT_DAILY] = if (isDaily) "1" else "0"
-        params[ApiParams.TIMESTAMP] = timeStampString
+        params[WebApiParams.PROFILE_NAME] = profileName
+        params[WebApiParams.REPEAT_DAILY] = if (isDaily) "1" else "0"
+        params[WebApiParams.TIMESTAMP] = timeStampString
         return params
     }
 

@@ -31,15 +31,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.aquariumcontroller.ApiUrls
+import com.example.aquariumcontroller.webapi.WebApiUrls
 import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
-import com.example.aquariumcontroller.PostRequest
+import com.example.aquariumcontroller.webapi.WebApiPostRequest
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.feed.FeedProfile
 import com.example.aquariumcontroller.feed.FeedProfileImport
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
-import com.example.aquariumcontroller.webApiPostRequest
+import com.example.aquariumcontroller.webapi.webApiPostRequestExecution
 import java.sql.Timestamp
 import java.util.Calendar
 import java.util.Locale
@@ -61,7 +61,7 @@ fun FeedProfileScheduleScreen(
 
     val coroutineScope = rememberCoroutineScope()
 
-    val postRequest = PostRequest()
+    val webApiPostRequest = WebApiPostRequest()
 
     val context = LocalContext.current // context for web API request and Toasts
 
@@ -199,8 +199,8 @@ fun FeedProfileScheduleScreen(
                                     )
                                 }
                                 val apiUrl: String =
-                                    if (feedProfile == null) ApiUrls.FEED_POST_PROFILE_SCHEDULE
-                                    else ApiUrls.FEED_POST_PROFILE_UPDATE_SCHEDULE
+                                    if (feedProfile == null) WebApiUrls.FEED_POST_PROFILE_SCHEDULE
+                                    else WebApiUrls.FEED_POST_PROFILE_UPDATE_SCHEDULE
 
                                 val optionalGetParams =
                                     feedScheduleEntry?.getApiParameters()
@@ -210,10 +210,10 @@ fun FeedProfileScheduleScreen(
                                         )
 
                                 if (optionalGetParams != null) {
-                                    webApiPostRequest(
+                                    webApiPostRequestExecution(
                                         mainViewModel = mainViewModel,
                                         coroutineScope = coroutineScope,
-                                        postRequest = postRequest,
+                                        webApiPostRequest = webApiPostRequest,
                                         context = context,
                                         optionalGetParams = optionalGetParams,
                                         apiUrl = apiUrl

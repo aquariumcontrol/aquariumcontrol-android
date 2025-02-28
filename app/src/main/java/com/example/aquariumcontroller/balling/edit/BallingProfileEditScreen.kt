@@ -30,17 +30,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.aquariumcontroller.ApiParams
-import com.example.aquariumcontroller.ApiUrls
+import com.example.aquariumcontroller.webapi.WebApiParams
+import com.example.aquariumcontroller.webapi.WebApiUrls
 import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.lib_composables.NumericDoubleOutlinedTextFieldComposable
-import com.example.aquariumcontroller.PostRequest
+import com.example.aquariumcontroller.webapi.WebApiPostRequest
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.balling.BallingProfile
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
-import com.example.aquariumcontroller.webApiPostRequest
+import com.example.aquariumcontroller.webapi.webApiPostRequestExecution
 
 @Composable
 fun BallingProfileEditScreen(
@@ -53,7 +53,7 @@ fun BallingProfileEditScreen(
         factory = BallingProfileEditViewModelFactory(ballingProfile)
     )
 
-    val postRequest = PostRequest()
+    val webApiPostRequest = WebApiPostRequest()
 
     val context = LocalContext.current // context for web API request and Toasts
 
@@ -162,16 +162,16 @@ fun BallingProfileEditScreen(
                     onClick = {
                         ballingProfileEditViewModel.onConfirmDosing()
                         if (mainViewModel != null) {
-                            webApiPostRequest(
+                            webApiPostRequestExecution(
                                 mainViewModel = mainViewModel,
-                                apiUrl = ApiUrls.BALLING_POST_SET_VALS,
+                                apiUrl = WebApiUrls.BALLING_POST_SET_VALS,
                                 coroutineScope = coroutineScope,
-                                postRequest = postRequest,
+                                webApiPostRequest = webApiPostRequest,
                                 context = context,
                                 optionalGetParams = mapOf(
-                                    ApiParams.PUMP_ID to ballingProfile.pumpId
+                                    WebApiParams.PUMP_ID to ballingProfile.pumpId
                                         .toString(),
-                                    ApiParams.DOSING_VOLUME to ballingProfile.volume.toString()
+                                    WebApiParams.DOSING_VOLUME to ballingProfile.volume.toString()
                                 )
                             )
                             // Show the Toast after the API call

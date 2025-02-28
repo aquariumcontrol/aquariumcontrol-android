@@ -1,6 +1,6 @@
-package com.example.aquariumcontroller
+package com.example.aquariumcontroller.webapi
 
-object ApiParams {
+object WebApiParams {
     const val PROFILE_NAME = "ProfileName"
     const val PROFILE_ID = "ProfileId"
     const val PUMP_ID = "pumpid"

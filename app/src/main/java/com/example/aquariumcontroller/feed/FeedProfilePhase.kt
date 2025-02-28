@@ -1,7 +1,7 @@
 package com.example.aquariumcontroller.feed
 
 import android.annotation.SuppressLint
-import com.example.aquariumcontroller.ApiParams
+import com.example.aquariumcontroller.webapi.WebApiParams
 
 data class FeedProfilePhase(
     var duration: Double = 0.0,
@@ -56,12 +56,12 @@ data class FeedProfilePhase(
     fun getFeedProfilePhaseApiCallParameters(idx: Int): Map<String, String> {
         return mapOf(
             // convert duration to milliseconds
-            getPostParameterNameBase(idx)+ ApiParams.DURATION to (duration * 1000.0).toInt().toString(),
-            getPostParameterNameBase(idx)+ ApiParams.SKIMMER to (if (skimmer) 1 else 0).toString(),
-            getPostParameterNameBase(idx)+ ApiParams.MAINPUMP1 to (if (mainPump1) 1 else 0).toString(),
-            getPostParameterNameBase(idx)+ ApiParams.MAINPUMP2 to (if (mainPump2) 1 else 0).toString(),
-            getPostParameterNameBase(idx)+ ApiParams.AUXPUMP1 to (if (auxPump1) 1 else 0).toString(),
-            getPostParameterNameBase(idx)+ ApiParams.AUXPUMP2 to (if (auxPump2) 1 else 0).toString(),
+            getPostParameterNameBase(idx)+ WebApiParams.DURATION to (duration * 1000.0).toInt().toString(),
+            getPostParameterNameBase(idx)+ WebApiParams.SKIMMER to (if (skimmer) 1 else 0).toString(),
+            getPostParameterNameBase(idx)+ WebApiParams.MAINPUMP1 to (if (mainPump1) 1 else 0).toString(),
+            getPostParameterNameBase(idx)+ WebApiParams.MAINPUMP2 to (if (mainPump2) 1 else 0).toString(),
+            getPostParameterNameBase(idx)+ WebApiParams.AUXPUMP1 to (if (auxPump1) 1 else 0).toString(),
+            getPostParameterNameBase(idx)+ WebApiParams.AUXPUMP2 to (if (auxPump2) 1 else 0).toString(),
         )
     }
 

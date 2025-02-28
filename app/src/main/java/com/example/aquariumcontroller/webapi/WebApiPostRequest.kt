@@ -1,4 +1,4 @@
-package com.example.aquariumcontroller
+package com.example.aquariumcontroller.webapi
 
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
@@ -6,7 +6,7 @@ import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
 
-class PostRequest {
+class WebApiPostRequest {
     private val client = OkHttpClient()
 
     fun postData(
@@ -16,8 +16,8 @@ class PostRequest {
     ): Result<String> {
 
         val formBody = FormBody.Builder()
-            .add(ApiParams.POST_PARAM_USERNAME, username)
-            .add(ApiParams.POST_PARAM_PASSWORD, password)
+            .add(WebApiParams.POST_PARAM_USERNAME, username)
+            .add(WebApiParams.POST_PARAM_PASSWORD, password)
             .build()
 
         val request = Request.Builder()

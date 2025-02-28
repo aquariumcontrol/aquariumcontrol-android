@@ -33,16 +33,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.aquariumcontroller.ApiParams
-import com.example.aquariumcontroller.ApiUrls
+import com.example.aquariumcontroller.webapi.WebApiParams
+import com.example.aquariumcontroller.webapi.WebApiUrls
 import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.lib_composables.NumericDoubleOutlinedTextFieldComposable
-import com.example.aquariumcontroller.PostRequest
+import com.example.aquariumcontroller.webapi.WebApiPostRequest
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
-import com.example.aquariumcontroller.webApiPostRequest
+import com.example.aquariumcontroller.webapi.webApiPostRequestExecution
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -73,7 +73,7 @@ fun HeatingScreen(
 
     val coroutineScope = rememberCoroutineScope()
 
-    val postRequest = PostRequest()
+    val webApiPostRequest = WebApiPostRequest()
 
     val context = LocalContext.current // context for web API request and Toasts
 
@@ -143,15 +143,15 @@ fun HeatingScreen(
                         onClick = {
                             heatingSetValsViewModel.updateValues()
                             if (mainViewModel != null) {
-                                webApiPostRequest(
+                                webApiPostRequestExecution(
                                     mainViewModel = mainViewModel,
-                                    apiUrl = ApiUrls.HEATING_POST_SET_VALS,
+                                    apiUrl = WebApiUrls.HEATING_POST_SET_VALS,
                                     coroutineScope = coroutineScope,
-                                    postRequest = postRequest,
+                                    webApiPostRequest = webApiPostRequest,
                                     context = context,
                                     optionalGetParams = mapOf(
-                                        ApiParams.HEATING_SWITCH_ON_TEMPERATURE to heatingSetValsViewModel.getHeatingSwitchOnTempString(),
-                                        ApiParams.HEATING_SWITCH_OFF_TEMPERATURE to heatingSetValsViewModel.getHeatingSwitchOffTempString()
+                                        WebApiParams.HEATING_SWITCH_ON_TEMPERATURE to heatingSetValsViewModel.getHeatingSwitchOnTempString(),
+                                        WebApiParams.HEATING_SWITCH_OFF_TEMPERATURE to heatingSetValsViewModel.getHeatingSwitchOffTempString()
                                     ),
                                 )
                                 // Show the Toast after the API call
@@ -256,7 +256,7 @@ private suspend fun fetchHeatingStats(
 ) {
     withContext(Dispatchers.IO) {
         val url =
-            "http://" + mainViewModel.getControllerAddress() + ApiUrls.HEATING_GET_STATS
+            "http://" + mainViewModel.getControllerAddress() + WebApiUrls.HEATING_GET_STATS
         val heatingStringsStats = HeatingStatsReader(url).readStatsEntry()
         val heatingStats =
             heatingStringsStats?.map { it.transformToHeatingStatsEntry() } ?: emptyList()
@@ -270,7 +270,7 @@ private suspend fun fetchHeatingSetVals(
 ) {
     withContext(Dispatchers.IO) {
         val url =
-            "http://" + mainViewModel.getControllerAddress() + ApiUrls.HEATING_GET_SET_VALS
+            "http://" + mainViewModel.getControllerAddress() + WebApiUrls.HEATING_GET_SET_VALS
         val heatingSetValsList = HeatingSetValsReader(url).readHeatingSetVals()
         if (!heatingSetValsList.isNullOrEmpty()) {
             Log.d("HeatingScreen", "Fetched heating set vals: $heatingSetValsList")

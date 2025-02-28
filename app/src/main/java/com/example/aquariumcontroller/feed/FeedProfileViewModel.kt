@@ -4,11 +4,11 @@ import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.example.aquariumcontroller.ApiUrls
+import com.example.aquariumcontroller.webapi.WebApiUrls
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class FeedProfileViewModel(private val myFeedProfiles: List<FeedProfile>?) :
+class FeedProfileViewModel(myFeedProfiles: List<FeedProfile>?) :
     ViewModel() {
     private var _feedProfiles = mutableStateOf<List<FeedProfile>?>(null)
 
@@ -20,7 +20,7 @@ class FeedProfileViewModel(private val myFeedProfiles: List<FeedProfile>?) :
 
     suspend fun readFeedProfiles(controllerAddress: String) {
         val profileUrl =
-            "http://" + controllerAddress + ApiUrls.FEED_GET_PROFILES
+            "http://" + controllerAddress + WebApiUrls.FEED_GET_PROFILES
         val profileReader = FeedProfileReader(profileUrl)
         val feedProfileImports = profileReader.readFeedProfiles()
         if (feedProfileImports != null) {

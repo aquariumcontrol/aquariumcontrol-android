@@ -35,7 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.aquariumcontroller.ApiUrls
+import com.example.aquariumcontroller.webapi.WebApiUrls
 import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
@@ -209,8 +209,8 @@ private suspend fun fetchFeedEvents(
 ) {
     withContext(Dispatchers.IO) {
         val url = when {
-            showFullWeek -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.FEED_GET_EVENTS_7D
-            else -> "http://" + mainViewModel.getControllerAddress() + ApiUrls.FEED_GET_EVENTS_24H
+            showFullWeek -> "http://" + mainViewModel.getControllerAddress() + WebApiUrls.FEED_GET_EVENTS_7D
+            else -> "http://" + mainViewModel.getControllerAddress() + WebApiUrls.FEED_GET_EVENTS_24H
         }
         val reader = FeedHistoryEventReader(url)
         val feedEvents = reader.readFeedEvents()

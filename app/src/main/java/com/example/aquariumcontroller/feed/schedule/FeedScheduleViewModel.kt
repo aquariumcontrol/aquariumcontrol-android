@@ -4,11 +4,11 @@ import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.example.aquariumcontroller.ApiUrls
+import com.example.aquariumcontroller.webapi.WebApiUrls
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class FeedScheduleViewModel(private val myFeedScheduleEntries: List<FeedScheduleEntry>?) :
+class FeedScheduleViewModel(myFeedScheduleEntries: List<FeedScheduleEntry>?) :
     ViewModel() {
     private var _feedScheduleEntries = mutableStateOf<List<FeedScheduleEntry>?>(null)
 
@@ -20,7 +20,7 @@ class FeedScheduleViewModel(private val myFeedScheduleEntries: List<FeedSchedule
 
     suspend fun readFeedScheduleEntries(controllerAddress: String) {
         val scheduleUrl =
-            "http://" + controllerAddress + ApiUrls.FEED_GET_SCHEDULE
+            "http://" + controllerAddress + WebApiUrls.FEED_GET_SCHEDULE
         val scheduleReader = FeedScheduleEntryReader(scheduleUrl)
         val feedScheduleEntryImports = scheduleReader.readFeedScheduleEntries()
         if (feedScheduleEntryImports != null) {

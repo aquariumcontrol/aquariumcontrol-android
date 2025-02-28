@@ -7,14 +7,11 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -27,12 +24,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.aquariumcontroller.ApiUrls
+import com.example.aquariumcontroller.webapi.WebApiUrls
 import com.example.aquariumcontroller.MainViewModel
-import com.example.aquariumcontroller.PostRequest
+import com.example.aquariumcontroller.webapi.WebApiPostRequest
 // import com.example.aquariumcontroller.ViewNavigationRoutes will be used in future implementation
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
-import com.example.aquariumcontroller.webApiPostRequest
+import com.example.aquariumcontroller.webapi.webApiPostRequestExecution
 
 @Composable
 fun FeedScheduleEntryComposable(
@@ -47,7 +44,7 @@ fun FeedScheduleEntryComposable(
     // - information if the feed profile execution should be repeated daily
 
     val coroutineScope = rememberCoroutineScope()
-    val postRequest = PostRequest()
+    val webApiPostRequest = WebApiPostRequest()
     val context = LocalContext.current // context for web API request and Toasts
 
     Row(
@@ -114,11 +111,11 @@ fun FeedScheduleEntryComposable(
                             if (mainViewModel != null) {
                                 mainViewModel.updateSelectedFeedScheduleEntry(null)
                                 feedScheduleViewModel?.deleteFeedScheduleEntry(feedScheduleEntry)
-                                webApiPostRequest(
-                                    apiUrl = ApiUrls.FEED_POST_SCHEDULE_REMOVE_ENTRY,
+                                webApiPostRequestExecution(
+                                    apiUrl = WebApiUrls.FEED_POST_SCHEDULE_REMOVE_ENTRY,
                                     mainViewModel = mainViewModel,
                                     coroutineScope = coroutineScope,
-                                    postRequest = postRequest,
+                                    webApiPostRequest = webApiPostRequest,
                                     context = context,
                                     optionalGetParams = feedScheduleEntry.getApiParameters()
                                 )

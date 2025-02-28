@@ -1,7 +1,7 @@
 package com.example.aquariumcontroller.timedata
 
 import android.util.Log
-import com.example.aquariumcontroller.ApiParams
+import com.example.aquariumcontroller.webapi.WebApiParams
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -29,10 +29,10 @@ class TimeDataReader(private val urlWithoutParameters: String) {
         val timeNow = Time(dateTimeInMillisNow)
 
         val optionalGetParams: Map<String, String> = mapOf(
-            ApiParams.START_DATE to date24hAgo.toString().replace(':', '-'),
-            ApiParams.STOP_DATE to dateNow.toString().replace(':', '-'),
-            ApiParams.START_TIME to time24hAgo.toString(),
-            ApiParams.STOP_TIME to timeNow.toString())
+            WebApiParams.START_DATE to date24hAgo.toString().replace(':', '-'),
+            WebApiParams.STOP_DATE to dateNow.toString().replace(':', '-'),
+            WebApiParams.START_TIME to time24hAgo.toString(),
+            WebApiParams.STOP_TIME to timeNow.toString())
 
         var url = "$urlWithoutParameters?"
 

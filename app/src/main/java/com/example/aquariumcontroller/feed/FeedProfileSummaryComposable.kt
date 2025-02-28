@@ -30,12 +30,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.aquariumcontroller.ApiUrls
+import com.example.aquariumcontroller.webapi.WebApiUrls
 import com.example.aquariumcontroller.MainViewModel
-import com.example.aquariumcontroller.PostRequest
+import com.example.aquariumcontroller.webapi.WebApiPostRequest
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
-import com.example.aquariumcontroller.webApiPostRequest
+import com.example.aquariumcontroller.webapi.webApiPostRequestExecution
 
 @Composable
 fun FeedProfileSummaryComposable(
@@ -45,7 +45,7 @@ fun FeedProfileSummaryComposable(
     feedProfileViewModel: FeedProfileViewModel? = null
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val postRequest = PostRequest()
+    val webApiPostRequest = WebApiPostRequest()
     val context = LocalContext.current // context for web API request and Toasts
 
     // This composable displays one Feed dosing profile summary with two icons for editing or scheduling.
@@ -130,11 +130,11 @@ fun FeedProfileSummaryComposable(
                             )
                             feedProfileViewModel?.deleteFeedProfile(feedProfile)
                             if (mainViewModel != null) {
-                                webApiPostRequest(
-                                    apiUrl = ApiUrls.FEED_POST_REMOVE_PROFILE,
+                                webApiPostRequestExecution(
+                                    apiUrl = WebApiUrls.FEED_POST_REMOVE_PROFILE,
                                     mainViewModel = mainViewModel,
                                     coroutineScope = coroutineScope,
-                                    postRequest = postRequest,
+                                    webApiPostRequest = webApiPostRequest,
                                     context = context,
                                     optionalGetParams = feedProfile.getFeedProfileApiCallParameters()
                                 )
