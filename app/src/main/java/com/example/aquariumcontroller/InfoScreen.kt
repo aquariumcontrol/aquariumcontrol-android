@@ -1,15 +1,22 @@
 package com.example.aquariumcontroller
 
+import HyperlinkText
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
@@ -22,16 +29,34 @@ fun InfoScreen(navHostController: NavHostController? = null, mainViewModel: Main
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Column {
+            Box() {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Spacer(Modifier.size(10.dp))
+                    Text(
+                        text = "Info",
+                        style = MaterialTheme.typography.headlineLarge,
+                    )
+                    Spacer(Modifier.size(10.dp))
+                    Text(
+                        text = "Aquarium Control is an open source control system for marine fish tanks.",
+                        textAlign = TextAlign.Center
+                    )
+                    HyperlinkText(
+                        text = "Developer information",
+                        url = "http://217.79.180.177/mediawiki/index.php/Main_Page",
+                        textAlign = TextAlign.Center
+                    )
+                }
                 MainDropdownMenuComposable(
                     navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.info,
                     mainViewModel = mainViewModel
                 )
-                Text(text = "Info")
-                Button(onClick = { }) {
-                    Text(text = "OK")
-                }
             }
         }
     }
