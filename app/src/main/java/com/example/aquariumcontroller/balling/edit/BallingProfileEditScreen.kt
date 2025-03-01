@@ -6,11 +6,14 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
@@ -39,6 +42,7 @@ import com.example.aquariumcontroller.webapi.WebApiPostRequest
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.balling.BallingProfile
+import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import com.example.aquariumcontroller.webapi.webApiPostRequestExecution
 
@@ -48,7 +52,13 @@ fun BallingProfileEditScreen(
     ballingProfile: BallingProfile,
     mainViewModel: MainViewModel? = null,
 ) {
-    // This screen will allow the user to edit the Balling dosing profile.
+    // This screen displays:
+    // - Headline
+    // - Edit field for the dosing volume of the selected balling profile
+    // - Slider to adjust the dosing volume
+    // - Text to display the current dosing volume
+    // - Button to confirm the new dosing volume
+
     val ballingProfileEditViewModel: BallingProfileEditViewModel = viewModel(
         factory = BallingProfileEditViewModelFactory(ballingProfile)
     )
@@ -65,130 +75,137 @@ fun BallingProfileEditScreen(
     val ballingConfirmedDosingVolume by ballingProfileEditViewModel.ballingConfirmedDosingVolume.observeAsState(
         initial = ballingProfile.volume
     )
+
     AquariumControllerTheme {
-        // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+            Box {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    ScreenHeadlineComposable(text = stringResource(id = R.string.balling_dosing))
+                    Spacer(modifier = Modifier.size(10.dp))
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .weight(1f)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .border(
+                                    border = BorderStroke(
+                                        1.dp,
+                                        MaterialTheme.colorScheme.onSurface
+                                    )
+                                )
+                                .padding(8.dp)
+                                .fillMaxWidth()
+                                .align(Alignment.CenterHorizontally)
+                        ) {
+                            Column(
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(
+                                    text = "Balling dosing profile:",
+                                    fontSize = 12.sp
+                                )
+                                Text(
+                                    text = (ballingProfile.label),
+                                    fontSize = 12.sp
+                                )
+                            }
+                            Column(
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(
+                                    text = "Pump ID: ${
+                                        ballingProfile.pumpId
+                                    }",
+                                    fontSize = 12.sp
+                                )
+                                Text(
+                                    text = "Dosing volume: ${
+                                        "%.2f".format(
+                                            ballingConfirmedDosingVolume
+                                        )
+                                    } ml",
+                                    fontSize = 12.sp
+                                )
+                            }
+                        }
+                        NumericDoubleOutlinedTextFieldComposable(
+                            value = sliderPositionNewDosingVolume,
+                            onValueChange = { newStringValue ->
+                                if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
+                                    val newNumericValue = newStringValue.toDouble()
+                                    ballingProfileEditViewModel.onVolumeChange(newNumericValue)
+                                }
+                            },
+                            label = "",
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .padding(top = 16.dp),
+                        )
+                        Slider(
+                            value = sliderPositionNewDosingVolume.toFloat(),
+                            modifier = Modifier.padding(16.dp),
+                            onValueChange = {
+                                ballingProfileEditViewModel.onVolumeChange(it.toDouble())
+                            },
+                            valueRange = BallingProfileEditSliderRange.RANGE
+                        )
+                        Text(
+                            text = "New Dosing volume: ${"%.2f".format(sliderPositionNewDosingVolume)} ml",
+                            fontSize = 12.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                        )
+                        Button(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp),
+                            onClick = {
+                                ballingProfileEditViewModel.onConfirmDosing()
+                                if (mainViewModel != null) {
+                                    webApiPostRequestExecution(
+                                        mainViewModel = mainViewModel,
+                                        apiUrl = WebApiUrls.BALLING_POST_SET_VALS,
+                                        coroutineScope = coroutineScope,
+                                        webApiPostRequest = webApiPostRequest,
+                                        context = context,
+                                        optionalGetParams = mapOf(
+                                            WebApiParams.PUMP_ID to ballingProfile.pumpId
+                                                .toString(),
+                                            WebApiParams.DOSING_VOLUME to ballingProfile.volume.toString()
+                                        )
+                                    )
+                                    // Show the Toast after the API call
+                                    Toast.makeText(
+                                        context,
+                                        "Sent request to controller for updating dosing volume",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+
+                                }
+                            },
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.update_dosing_value),
+                                fontSize = 16.sp
+                            )
+                        }
+                    }
+                }
                 MainDropdownMenuComposable(
                     navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.balling,
                     mainViewModel = mainViewModel
                 )
-                Text(
-                    text = stringResource(id = R.string.BallingMineralDosingControl),
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(16.dp)
-                )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .border(
-                            border = BorderStroke(
-                                1.dp,
-                                MaterialTheme.colorScheme.onSurface
-                            )
-                        )
-                        .padding(8.dp)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                    ) {
-                        Text(
-                            text = "Balling dosing profile:",
-                            fontSize = 12.sp
-                        )
-                        Text(
-                            text = (ballingProfile.label),
-                            fontSize = 12.sp
-                        )
-                    }
-                    Column(
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text(
-                            text = "Pump ID: ${
-                                ballingProfile.pumpId
-                            }",
-                            fontSize = 12.sp
-                        )
-                        Text(
-                            text = "Dosing volume: ${
-                                "%.2f".format(
-                                    ballingConfirmedDosingVolume
-                                )
-                            } ml",
-                            fontSize = 12.sp
-                        )
-                    }
-                }
-                NumericDoubleOutlinedTextFieldComposable(
-                    value = sliderPositionNewDosingVolume,
-                    onValueChange = { newStringValue ->
-                        if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
-                            val newNumericValue = newStringValue.toDouble()
-                            ballingProfileEditViewModel.onVolumeChange(newNumericValue)
-                        }
-                    },
-                    label = "",
-                    modifier = Modifier
-                        .padding(top = 16.dp)
-                )
-                Slider(
-                    value = sliderPositionNewDosingVolume.toFloat(),
-                    modifier = Modifier.padding(16.dp),
-                    onValueChange = {
-                        ballingProfileEditViewModel.onVolumeChange(it.toDouble())
-                    },
-                    valueRange = BallingProfileEditSliderRange.RANGE
-                )
-                Text(
-                    text = "New Dosing volume: ${"%.2f".format(sliderPositionNewDosingVolume)} ml",
-                    fontSize = 12.sp,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                )
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    onClick = {
-                        ballingProfileEditViewModel.onConfirmDosing()
-                        if (mainViewModel != null) {
-                            webApiPostRequestExecution(
-                                mainViewModel = mainViewModel,
-                                apiUrl = WebApiUrls.BALLING_POST_SET_VALS,
-                                coroutineScope = coroutineScope,
-                                webApiPostRequest = webApiPostRequest,
-                                context = context,
-                                optionalGetParams = mapOf(
-                                    WebApiParams.PUMP_ID to ballingProfile.pumpId
-                                        .toString(),
-                                    WebApiParams.DOSING_VOLUME to ballingProfile.volume.toString()
-                                )
-                            )
-                            // Show the Toast after the API call
-                            Toast.makeText(
-                                context,
-                                "Sent request to controller for updating dosing volume",
-                                Toast.LENGTH_SHORT
-                            ).show()
-
-                        }
-                    },
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.UpdateDosingValue),
-                        fontSize = 16.sp
-                    )
-                }
             }
         }
     }

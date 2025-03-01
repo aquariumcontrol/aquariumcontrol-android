@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -23,7 +24,9 @@ import java.sql.Timestamp
 fun RefillEventComposable(
     refillEvent: RefillEvent
 ) {
-    // This composable displays a refill event.
+    // This composable displays a refill event:
+    // Text objects for name and value of Timestamp, Duration, Volume
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -75,6 +78,8 @@ fun RefillEventPreviewScreen() {
     )
 
     AquariumControllerTheme {
-        RefillEventComposable(mockEvent)
+        Surface(color = MaterialTheme.colorScheme.background) {
+            RefillEventComposable(mockEvent)
+        }
     }
 }

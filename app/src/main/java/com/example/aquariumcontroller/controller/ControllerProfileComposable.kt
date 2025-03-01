@@ -40,6 +40,16 @@ fun ControllerProfileComposable(
     mainViewModel: MainViewModel? = null,
     mockIsDefaultProfile: Boolean = false
 ) {
+    // This composable displays:
+    // - text with the name of the controller profile
+    // - text with the address of the controller profile
+    // - text with the port number of the controller profile
+    // - text with user name of the of the controller profile
+    // - text with password of the controller profile
+    // - button to edit the controller profile
+    // - button to delete the controller profile
+    // - star icon if the controller profile is the default profile
+    
     // use either stored profile id to check if profile is default profile or use mock data for preview
     val isDefaultProfile: Boolean = if (mainViewModel != null) {
         Log.d(

@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -17,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.aquariumcontroller.lib_composables.RoundRefreshButtonComposable
+import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import com.github.mikephil.charting.charts.CombinedChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
@@ -33,8 +36,8 @@ import java.util.Locale
 
 @Composable
 fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: () -> Unit) {
-    // This screen is only displaying time data charts without any user interaction.
-    // Therefore, this screen does not use a view model.
+    // This composable is only displaying time data charts without any user interaction.
+    // Therefore, this composable does not use a view model.
     val isDarkMode = isSystemInDarkTheme()
     val textColor = if (isDarkMode) Color.WHITE else Color.BLACK
 
@@ -194,5 +197,9 @@ fun createMockHeatingStatsData(): List<HeatingStatsEntry> {
 fun PreviewHeatingStatsComposable() {
     val mockData = createMockHeatingStatsData()
 
-    HeatingStatsComposable(heatingStats = mockData, updateData = {})
+    AquariumControllerTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            HeatingStatsComposable(heatingStats = mockData, updateData = {})
+        }
+    }
 }

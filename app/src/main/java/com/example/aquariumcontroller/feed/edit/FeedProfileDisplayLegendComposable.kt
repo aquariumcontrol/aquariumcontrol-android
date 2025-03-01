@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,8 +19,13 @@ import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
-fun FeedProfileDisplayLegend() {
-    val rectBullet = stringResource(id = R.string.rectBullet)
+fun FeedProfileDisplayLegendComposable() {
+    // This composable displays the legend for the feed profile with each signal being represented by:
+    // - a rectangle bullet with the corresponding color
+    // - the name of the signal
+
+    val rectBullet = stringResource(id = R.string.rect_bullet)
+
     Row() {
         Column(
             modifier = Modifier.padding(
@@ -40,9 +47,9 @@ fun FeedProfileDisplayLegend() {
                 Text(
                     text = rectBullet, fontSize = 12.sp,
                     color = feedProfileTextColorDefinition(FeedProfileSignal.MAIN_PUMP1),
-                            modifier = Modifier.padding(
-                            horizontal = 4.dp
-                            )
+                    modifier = Modifier.padding(
+                        horizontal = 4.dp
+                    )
                 )
                 Text(text = "Main Pump 1", fontSize = 12.sp)
             }
@@ -101,6 +108,10 @@ fun FeedProfileDisplayLegend() {
 @Composable
 fun FeedProfileDisplayLegendPreview() {
     AquariumControllerTheme {
-        FeedProfileDisplayLegend()
+        Surface(
+            color = MaterialTheme.colorScheme.background
+        ) {
+            FeedProfileDisplayLegendComposable()
+        }
     }
 }

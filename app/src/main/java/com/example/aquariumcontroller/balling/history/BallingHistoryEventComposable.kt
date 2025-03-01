@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,7 +23,12 @@ import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 fun BallingHistoryEventComposable(
     ballingHistoryDosingEvent: BallingHistoryDosingEvent
 ) {
-    // This screen displays one Balling dosing event.
+    // This screen displays one Balling dosing event with the following information:
+    // - timestamp
+    // - pump id
+    // - dosing volume
+    // - label of the Balling profile
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -77,6 +83,10 @@ fun BallingEventPreviewScreen() {
     )
 
     AquariumControllerTheme {
-        BallingHistoryEventComposable(mockEvent)
+        Surface(
+            color = MaterialTheme.colorScheme.background
+        ) {
+            BallingHistoryEventComposable(mockEvent)
+        }
     }
 }

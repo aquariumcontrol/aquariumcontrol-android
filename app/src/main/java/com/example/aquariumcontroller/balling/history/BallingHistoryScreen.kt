@@ -40,6 +40,7 @@ import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
+import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -54,8 +55,13 @@ fun BallingHistoryScreen(
     mockBallingHistoryDosingEvents: List<BallingHistoryDosingEvent>? = null,
     mainViewModel: MainViewModel? = null
 ) {
-    // This screen will only display the different Balling dosing events.
-    // Hence, there is no need to have a view model.
+    // This screen displays:
+    // - headline
+    // - sub headline (last 7 days or last 24 hours)
+    // - list of balling events
+
+    // No user input is expected. There is no need to have a view model.
+
     var ballingEvents by remember { mutableStateOf(mockBallingHistoryDosingEvents) }
     var isRefreshing by remember {
         mutableStateOf(
@@ -105,97 +111,107 @@ fun BallingHistoryScreen(
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
-            Scaffold(
-            ) { innerPadding ->
+            Box {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(innerPadding),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    MainDropdownMenuComposable(
-                        navHostController = navHostController,
-                        navigationRouteSource = ViewNavigationRoutes.balling,
-                        mainViewModel = mainViewModel
-                    )
-                    val headlineText: String =
+                    ScreenHeadlineComposable(text = stringResource(R.string.balling_log))
+                    val subHeadlineText: String =
                         if (showFullWeek) {
-                            stringResource(R.string.BallingEventsLast7Days)
+                            stringResource(R.string.balling_events_last_7d)
                         } else {
-                            stringResource(R.string.BallingEventsLast24h)
+                            stringResource(R.string.balling_events_last_24h)
                         }
                     Text(
-                        text = headlineText,
-                        style = MaterialTheme.typography.headlineSmall,
+                        text = subHeadlineText,
                     )
-                    Box(
-                        modifier = Modifier
-                            .pullRefresh(pullRefreshState)
-                            .fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        if (isRefreshing) {
-                            CircularProgressIndicator(
-                                modifier = Modifier
-                                    .size(150.dp),
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                        Row(
+
+                    Scaffold(
+                    ) { innerPadding ->
+                        Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(16.dp)
+                                .padding(innerPadding),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            if (isControllerLoaded || mockBallingHistoryDosingEvents != null) {
-                                if (isControllerAddressValid || mockBallingHistoryDosingEvents != null) {
-                                    if (ballingEvents == null) {
-                                        Text(
-                                            text = "Loading Balling dosing events...",
-                                            style = TextStyle(
-                                                fontSize = 16.sp,
-                                                fontWeight = FontWeight.Bold
-                                            )
-                                        )
-                                    } else if (ballingEvents!!.isEmpty()) {
-                                        Text(
-                                            text = "No Balling events found.",
-                                            style = TextStyle(
-                                                fontSize = 16.sp,
-                                                fontWeight = FontWeight.Bold
-                                            )
-                                        )
-                                    } else {
-                                        LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                            items(ballingEvents!!) { ballingEvent ->
-                                                Log.d(
-                                                    this::class.simpleName,
-                                                    "Balling dosing events found: ${ballingEvents!!.size}"
-                                                )
-                                                BallingHistoryEventComposable(ballingEvent)
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    Text(
-                                        text = "Invalid controller address",
-                                        style = TextStyle(
-                                            fontSize = 16.sp,
-                                            fontWeight = FontWeight.Bold
-                                        )
+                            Box(
+                                modifier = Modifier
+                                    .pullRefresh(pullRefreshState)
+                                    .fillMaxWidth(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                if (isRefreshing) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier
+                                            .size(150.dp),
+                                        color = MaterialTheme.colorScheme.primary
                                     )
                                 }
-                            } else {
-                                Text(
-                                    text = "Controller not loaded.",
-                                    style = TextStyle(
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                )
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(16.dp)
+                                ) {
+                                    if (isControllerLoaded || mockBallingHistoryDosingEvents != null) {
+                                        if (isControllerAddressValid || mockBallingHistoryDosingEvents != null) {
+                                            if (ballingEvents == null) {
+                                                Text(
+                                                    text = "Loading Balling dosing events...",
+                                                    style = TextStyle(
+                                                        fontSize = 16.sp,
+                                                        fontWeight = FontWeight.Bold
+                                                    )
+                                                )
+                                            } else if (ballingEvents!!.isEmpty()) {
+                                                Text(
+                                                    text = "No Balling events found.",
+                                                    style = TextStyle(
+                                                        fontSize = 16.sp,
+                                                        fontWeight = FontWeight.Bold
+                                                    )
+                                                )
+                                            } else {
+                                                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                                    items(ballingEvents!!) { ballingEvent ->
+                                                        Log.d(
+                                                            this::class.simpleName,
+                                                            "Balling dosing events found: ${ballingEvents!!.size}"
+                                                        )
+                                                        BallingHistoryEventComposable(ballingEvent)
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            Text(
+                                                text = "Invalid controller address",
+                                                style = TextStyle(
+                                                    fontSize = 16.sp,
+                                                    fontWeight = FontWeight.Bold
+                                                )
+                                            )
+                                        }
+                                    } else {
+                                        Text(
+                                            text = "Controller not loaded.",
+                                            style = TextStyle(
+                                                fontSize = 16.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
                 }
+                MainDropdownMenuComposable(
+                    navHostController = navHostController,
+                    navigationRouteSource = ViewNavigationRoutes.balling,
+                    mainViewModel = mainViewModel
+                )
             }
         }
     }

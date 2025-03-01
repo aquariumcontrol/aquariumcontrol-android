@@ -6,6 +6,8 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -23,6 +25,8 @@ const val chartValAllowedDelta = 0.001f
 
 @Composable
 fun FeedProfileDisplayComposable(feedProfileEditViewModel: FeedProfileEditViewModel) {
+    // This composable displays a set of charts based on the provided feed profile data.
+    
     val isDarkMode = isSystemInDarkTheme()
 
     val chartDataFeeder by feedProfileEditViewModel.lineDataFeedProfileFeeder.observeAsState()
@@ -327,10 +331,14 @@ fun FeedProfileDisplayComposablePreview() {
     val feedProfileEditViewModel = FeedProfileEditViewModel(mockFeedProfile)
 
     AquariumControllerTheme {
-        Column {
-            FeedProfileDisplayComposable(
-                feedProfileEditViewModel = feedProfileEditViewModel
-            )
+        Surface(
+            color = MaterialTheme.colorScheme.background
+        ) {
+            Column {
+                FeedProfileDisplayComposable(
+                    feedProfileEditViewModel = feedProfileEditViewModel
+                )
+            }
         }
     }
 }

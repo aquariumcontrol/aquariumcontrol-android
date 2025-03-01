@@ -40,6 +40,7 @@ import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.controller.ControllerProfile
+import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -55,7 +56,11 @@ fun OverviewScreen(
     mockOverviewData: OverviewData? = null,
     mainViewModel: MainViewModel? = null,
 ) {
-    // This screen displays the overview data of the aquarium.
+    // This screen displays
+    // - headline
+    // - the overview data of the aquarium: Text for signal description and current value
+    // - a button to update the overview data
+
     var isRefreshing by remember {
         mutableStateOf(
             mockOverviewData != null
@@ -135,278 +140,273 @@ fun OverviewScreen(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-
-            Column(
-                modifier = Modifier.padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+            Box {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    ScreenHeadlineComposable(text = stringResource(id = R.string.overview))
+                    Box(
+                        modifier = Modifier
+                            .pullRefresh(pullRefreshState)
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            if (isRefreshing) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .size(150.dp),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                            Row(Modifier.fillMaxWidth()) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.Start)) {
+                                        Text(text = "Controller Name")
+                                    }
+                                }
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.End)) {
+                                        Text(text = controllerProfileName!!)
+                                    }
+                                }
+                            }
+                            Row(Modifier.fillMaxWidth()) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.Start)) {
+                                        Text(text = "Controller Address")
+                                    }
+                                }
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.End)) {
+                                        Text(text = controllerAddress!!)
+                                    }
+                                }
+                            }
+                            Row(Modifier.fillMaxWidth()) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.Start)) {
+                                        Text(text = "Controller Port")
+                                    }
+                                }
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.End)) {
+                                        Text(text = controllerPort!!.toString())
+                                    }
+                                }
+                            }
+                            Row(Modifier.fillMaxWidth()) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.Start)) {
+                                        Text(text = "User name")
+                                    }
+                                }
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.End)) {
+                                        Text(text = controllerUsername!!)
+                                    }
+                                }
+                            }
+                            Row(Modifier.fillMaxWidth()) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.Start)) {
+                                        Text(text = "Password")
+                                    }
+                                }
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.End)) {
+                                        Text(text = controllerPassword!!)
+                                    }
+                                }
+                            }
+                            Row(Modifier.fillMaxWidth()) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.Start)) {
+                                        Text(text = "Timestamp")
+                                    }
+                                }
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.End)) {
+                                        Text(text = "${overviewData?.timestamp}")
+                                    }
+                                }
+                            }
+                            Row(Modifier.fillMaxWidth()) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.Start)) {
+                                        Text(text = "Water temperature")
+                                    }
+                                }
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.End)) {
+                                        Text(text = "${overviewData?.temperatureWater} °C")
+                                    }
+                                }
+                            }
+                            Row(Modifier.fillMaxWidth()) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.Start)) {
+                                        Text(text = "Water temperature filtered")
+                                    }
+                                }
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.End)) {
+                                        Text(text = "${overviewData?.temperatureWaterFiltered} °C")
+                                    }
+                                }
+                            }
+                            Row(Modifier.fillMaxWidth()) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.Start)) {
+                                        Text(text = "pH")
+                                    }
+                                }
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.End)) {
+                                        Text(text = "${overviewData?.pH}")
+                                    }
+                                }
+                            }
+                            Row(Modifier.fillMaxWidth()) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.Start)) {
+                                        Text(text = "pH filtered")
+                                    }
+                                }
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.End)) {
+                                        Text(text = "${overviewData?.pHFiltered} °C")
+                                    }
+                                }
+                            }
+                            Row(Modifier.fillMaxWidth()) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.Start)) {
+                                        Text(text = "Conductivity")
+                                    }
+                                }
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.End)) {
+                                        Text(text = "${overviewData?.conductivity} mS/cm")
+                                    }
+                                }
+                            }
+                            Row(Modifier.fillMaxWidth()) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.Start)) {
+                                        Text(text = "Conductivity filtered")
+                                    }
+                                }
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.End)) {
+                                        Text(text = "${overviewData?.conductivityFiltered} mS/cm")
+                                    }
+                                }
+                            }
+                            Row(Modifier.fillMaxWidth()) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.Start)) {
+                                        Text(text = "Tank level switch position")
+                                    }
+                                }
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.End)) {
+                                        Text(text = "${overviewData?.tankLevelSwitchPosition}")
+                                    }
+                                }
+                            }
+                            Row(Modifier.fillMaxWidth()) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.Start)) {
+                                        Text(text = "Ventilation")
+                                    }
+                                }
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.End)) {
+                                        Text(text = "${overviewData?.surfaceVentilation}")
+                                    }
+                                }
+                            }
+                            Row(Modifier.fillMaxWidth()) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.Start)) {
+                                        Text(text = "Heating")
+                                    }
+                                }
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.End)) {
+                                        Text(text = "${overviewData?.heater}")
+                                    }
+                                }
+                            }
+                            Row(Modifier.fillMaxWidth()) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.Start)) {
+                                        Text(text = "Ambient temperature")
+                                    }
+                                }
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.End)) {
+                                        Text(text = "${overviewData?.temperatureAmbient} °C")
+                                    }
+                                }
+                            }
+                            Row(Modifier.fillMaxWidth()) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.Start)) {
+                                        Text(text = "Ambient humidity")
+                                    }
+                                }
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(modifier = Modifier.align(Alignment.End)) {
+                                        Text(text = "${overviewData?.humidityAmbient} %")
+                                    }
+                                }
+                            }
+                            Spacer(
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                            Button(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 8.dp),
+                                onClick = {
+                                    coroutineScope.launch {
+                                        if (isControllerAddressValid) {
+                                            isRefreshing = true
+                                            try {
+                                                fetchOverviewData(
+                                                    mainViewModel!!
+                                                ) { newOverviewData ->
+                                                    overviewData = newOverviewData as OverviewData
+                                                } // Pass the setter lambda
+                                                delay(500)
+                                            } finally {
+                                                isRefreshing = false // Reset the refresh state
+                                            }
+                                        }
+                                    }
+                                },
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.update_overview_data),
+                                    fontSize = 16.sp
+                                )
+                            }
+                        }
+                    }
+                }
                 MainDropdownMenuComposable(
                     navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.overView,
                     mainViewModel = mainViewModel
                 )
-                Text(
-                    text = stringResource(id = R.string.Overview),
-                    style = MaterialTheme.typography.headlineLarge,
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .align(Alignment.CenterHorizontally)
-                )
-                Box(
-                    modifier = Modifier
-                        .pullRefresh(pullRefreshState)
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        if (isRefreshing) {
-                            CircularProgressIndicator(
-                                modifier = Modifier
-                                    .size(150.dp),
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                        Row(Modifier.fillMaxWidth()) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.Start)) {
-                                    Text(text = "Controller Name")
-                                }
-                            }
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.End)) {
-                                    Text(text = controllerProfileName!!)
-                                }
-                            }
-                        }
-                        Row(Modifier.fillMaxWidth()) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.Start)) {
-                                    Text(text = "Controller Address")
-                                }
-                            }
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.End)) {
-                                    Text(text = controllerAddress!!)
-                                }
-                            }
-                        }
-                        Row(Modifier.fillMaxWidth()) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.Start)) {
-                                    Text(text = "Controller Port")
-                                }
-                            }
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.End)) {
-                                    Text(text = controllerPort!!.toString())
-                                }
-                            }
-                        }
-                        Row(Modifier.fillMaxWidth()) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.Start)) {
-                                    Text(text = "User name")
-                                }
-                            }
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.End)) {
-                                    Text(text = controllerUsername!!)
-                                }
-                            }
-                        }
-                        Row(Modifier.fillMaxWidth()) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.Start)) {
-                                    Text(text = "Password")
-                                }
-                            }
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.End)) {
-                                    Text(text = controllerPassword!!)
-                                }
-                            }
-                        }
-                        Row(Modifier.fillMaxWidth()) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.Start)) {
-                                    Text(text = "Timestamp")
-                                }
-                            }
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.End)) {
-                                    Text(text = "${overviewData?.timestamp}")
-                                }
-                            }
-                        }
-                        Row(Modifier.fillMaxWidth()) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.Start)) {
-                                    Text(text = "Water temperature")
-                                }
-                            }
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.End)) {
-                                    Text(text = "${overviewData?.temperatureWater} °C")
-                                }
-                            }
-                        }
-                        Row(Modifier.fillMaxWidth()) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.Start)) {
-                                    Text(text = "Water temperature filtered")
-                                }
-                            }
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.End)) {
-                                    Text(text = "${overviewData?.temperatureWaterFiltered} °C")
-                                }
-                            }
-                        }
-                        Row(Modifier.fillMaxWidth()) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.Start)) {
-                                    Text(text = "pH")
-                                }
-                            }
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.End)) {
-                                    Text(text = "${overviewData?.pH}")
-                                }
-                            }
-                        }
-                        Row(Modifier.fillMaxWidth()) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.Start)) {
-                                    Text(text = "pH filtered")
-                                }
-                            }
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.End)) {
-                                    Text(text = "${overviewData?.pHFiltered} °C")
-                                }
-                            }
-                        }
-                        Row(Modifier.fillMaxWidth()) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.Start)) {
-                                    Text(text = "Conductivity")
-                                }
-                            }
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.End)) {
-                                    Text(text = "${overviewData?.conductivity} mS/cm")
-                                }
-                            }
-                        }
-                        Row(Modifier.fillMaxWidth()) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.Start)) {
-                                    Text(text = "Conductivity filtered")
-                                }
-                            }
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.End)) {
-                                    Text(text = "${overviewData?.conductivityFiltered} mS/cm")
-                                }
-                            }
-                        }
-                        Row(Modifier.fillMaxWidth()) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.Start)) {
-                                    Text(text = "Tank level switch position")
-                                }
-                            }
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.End)) {
-                                    Text(text = "${overviewData?.tankLevelSwitchPosition}")
-                                }
-                            }
-                        }
-                        Row(Modifier.fillMaxWidth()) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.Start)) {
-                                    Text(text = "Ventilation")
-                                }
-                            }
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.End)) {
-                                    Text(text = "${overviewData?.surfaceVentilation}")
-                                }
-                            }
-                        }
-                        Row(Modifier.fillMaxWidth()) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.Start)) {
-                                    Text(text = "Heating")
-                                }
-                            }
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.End)) {
-                                    Text(text = "${overviewData?.heater}")
-                                }
-                            }
-                        }
-                        Row(Modifier.fillMaxWidth()) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.Start)) {
-                                    Text(text = "Ambient temperature")
-                                }
-                            }
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.End)) {
-                                    Text(text = "${overviewData?.temperatureAmbient} °C")
-                                }
-                            }
-                        }
-                        Row(Modifier.fillMaxWidth()) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.Start)) {
-                                    Text(text = "Ambient humidity")
-                                }
-                            }
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(modifier = Modifier.align(Alignment.End)) {
-                                    Text(text = "${overviewData?.humidityAmbient} %")
-                                }
-                            }
-                        }
-                        Spacer(
-                            modifier = Modifier.padding(vertical = 8.dp)
-                        )
-                        Button(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 8.dp),
-                            onClick = {
-                                coroutineScope.launch {
-                                    if (isControllerAddressValid) {
-                                        isRefreshing = true
-                                        try {
-                                            fetchOverviewData(
-                                                mainViewModel!!
-                                            ) { newOverviewData ->
-                                                overviewData = newOverviewData as OverviewData
-                                            } // Pass the setter lambda
-                                            delay(500)
-                                        } finally {
-                                            isRefreshing = false // Reset the refresh state
-                                        }
-                                    }
-                                }
-                            },
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.UpdateOverviewData),
-                                fontSize = 16.sp
-                            )
-                        }
-                    }
-                }
             }
         }
     }

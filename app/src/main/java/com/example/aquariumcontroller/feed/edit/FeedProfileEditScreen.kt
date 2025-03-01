@@ -2,6 +2,7 @@ package com.example.aquariumcontroller.feed.edit
 
 import android.content.res.Configuration
 import android.widget.Toast
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -30,6 +31,7 @@ import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.feed.FeedProfile
 import com.example.aquariumcontroller.feed.FeedProfileImport
+import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import com.example.aquariumcontroller.webapi.webApiPostRequestExecution
 
@@ -62,89 +64,90 @@ fun FeedProfileEditScreen(
             modifier = Modifier.fillMaxWidth(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.verticalScroll(rememberScrollState())
-            ) {
+            Box {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.verticalScroll(rememberScrollState())
+                ) {
+                    ScreenHeadlineComposable(text = stringResource(id = R.string.feed_profile_editing))
+
+                    FeedProfileDisplayComposable(feedProfileEditViewModel = feedProfileEditViewModel)
+
+                    FeedProfileDisplayLegendComposable()
+
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                        onClick = {
+                            if (mainViewModel != null) {
+                                webApiPostRequestExecution(
+                                    mainViewModel = mainViewModel,
+                                    apiUrl = WebApiUrls.FEED_POST_PROFILE_UPDATE,
+                                    coroutineScope = coroutineScope,
+                                    webApiPostRequest = webApiPostRequest,
+                                    context = context,
+                                    optionalGetParams = feedProfileEditViewModel.getApiCallParameters()
+                                )
+
+                                // Show the Toast after the API call
+                                Toast.makeText(
+                                    context,
+                                    "Sent request to controller for updating feed profile",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                feedProfileEditViewModel.updateFeedProfile()
+                            }
+                        },
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.update_feed_profile),
+                            fontSize = 16.sp
+                        )
+                    }
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                        onClick = {
+                            feedProfileEditViewModel.resetFeedProfile()
+                        },
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.reset_changes_to_feed_profile),
+                            fontSize = 16.sp
+                        )
+                    }
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                        onClick = {
+                            // todo: add delete feed profile functionality
+                            navHostController?.navigate(ViewNavigationRoutes.feed)
+                        },
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.delete_feed_profile),
+                            fontSize = 16.sp
+                        )
+                    }
+                    FeedProfileEditMenuComposable(
+                        feedProfileEditMenuItems = feedProfileEditViewModel.phaseMenuItems,
+                        feedProfileEditViewModel = feedProfileEditViewModel
+                    )
+                }
                 MainDropdownMenuComposable(
                     navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.feed,
                     mainViewModel = mainViewModel
-                )
-                Text(
-                    text = stringResource(id = R.string.FeedProfileEditing),
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(16.dp),
-                )
-                FeedProfileDisplayComposable(feedProfileEditViewModel = feedProfileEditViewModel)
-                FeedProfileDisplayLegend()
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    onClick = {
-                        if (mainViewModel != null) {
-                            webApiPostRequestExecution(
-                                mainViewModel = mainViewModel,
-                                apiUrl = WebApiUrls.FEED_POST_PROFILE_UPDATE,
-                                coroutineScope = coroutineScope,
-                                webApiPostRequest = webApiPostRequest,
-                                context = context,
-                                optionalGetParams = feedProfileEditViewModel.getApiCallParameters()
-                            )
-
-                            // Show the Toast after the API call
-                            Toast.makeText(
-                                context,
-                                "Sent request to controller for updating feed profile",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            feedProfileEditViewModel.updateFeedProfile()
-                        }
-                    },
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.UpdateFeedProfile),
-                        fontSize = 16.sp
-                    )
-                }
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    onClick = {
-                        feedProfileEditViewModel.resetFeedProfile()
-                    },
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.ResetFeedProfile),
-                        fontSize = 16.sp
-                    )
-                }
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    onClick = {
-                        // todo: add delete feed profile functionality
-                        navHostController?.navigate(ViewNavigationRoutes.feed)
-                    },
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.DeleteFeedProfile),
-                        fontSize = 16.sp
-                    )
-                }
-                FeedProfileEditMenuComposable(
-                    feedProfileEditMenuItems = feedProfileEditViewModel.phaseMenuItems,
-                    feedProfileEditViewModel = feedProfileEditViewModel
                 )
             }
         }
     }
 }
 
-@Preview(showBackground = true, heightDp = 1200, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, heightDp = 1100, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun FeedViewPreview() {
     val mockFeedProfileImport = FeedProfileImport()

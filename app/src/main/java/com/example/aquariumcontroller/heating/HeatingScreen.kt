@@ -3,6 +3,7 @@ package com.example.aquariumcontroller.heating
 import android.content.res.Configuration
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -41,6 +43,7 @@ import com.example.aquariumcontroller.lib_composables.NumericDoubleOutlinedTextF
 import com.example.aquariumcontroller.webapi.WebApiPostRequest
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
+import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import com.example.aquariumcontroller.webapi.webApiPostRequestExecution
 import kotlinx.coroutines.Dispatchers
@@ -56,6 +59,8 @@ fun HeatingScreen(
     mainViewModel: MainViewModel? = null
 ) {
     // This screen displays
+    // - a button to update the heating controller values
+    // - a button to reset the heating controller values
     // - a range slider for setting the control target temperatures
     // - numeric input fields for entering the control target temperatures
     // - the heating statistics incl. refresh button
@@ -117,134 +122,140 @@ fun HeatingScreen(
     }
 
     AquariumControllerTheme {
-        // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Scaffold { innerPadding ->
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .padding(24.dp)
-                        .padding(innerPadding)
-                ) {
-                    MainDropdownMenuComposable(
-                        navHostController = navHostController,
-                        navigationRouteSource = ViewNavigationRoutes.heating,
-                        mainViewModel = mainViewModel
-                    )
-                    Text(
-                        text = stringResource(id = R.string.HeatingControl),
-                        style = MaterialTheme.typography.headlineSmall,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                    Button(
-                        onClick = {
-                            heatingSetValsViewModel.updateValues()
-                            if (mainViewModel != null) {
-                                webApiPostRequestExecution(
-                                    mainViewModel = mainViewModel,
-                                    apiUrl = WebApiUrls.HEATING_POST_SET_VALS,
-                                    coroutineScope = coroutineScope,
-                                    webApiPostRequest = webApiPostRequest,
-                                    context = context,
-                                    optionalGetParams = mapOf(
-                                        WebApiParams.HEATING_SWITCH_ON_TEMPERATURE to heatingSetValsViewModel.getHeatingSwitchOnTempString(),
-                                        WebApiParams.HEATING_SWITCH_OFF_TEMPERATURE to heatingSetValsViewModel.getHeatingSwitchOffTempString()
-                                    ),
-                                )
-                                // Show the Toast after the API call
-                                Toast.makeText(
-                                    context,
-                                    "Sent request to controller for updating heating set values",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        }
-                    ) {
-                        Text(text = "Update Heating Controller Values")
-                    }
-                    Button(
-                        onClick = { heatingSetValsViewModel.resetValues() }
-                    ) {
-                        Text(text = "Reset Heating Controller Values")
-                    }
-                    Spacer(modifier = Modifier.size(width = 10.dp, height = 10.dp))
-                    Column {
-                        RangeSlider(
-                            value = sliderRange,
-                            onValueChange = { newValue ->
-                                heatingSetValsViewModel.onRangeChangedBySlider(
-                                    newValue.start,
-                                    newValue.endInclusive
-                                )
-                            },
-                            valueRange = 20f..30f,
+            Box {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    ScreenHeadlineComposable(text = stringResource(id = R.string.heating_control))
+                    Scaffold { innerPadding ->
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier
-                                .fillMaxWidth()
-
-                        )
-                    }
-                    Spacer(modifier = Modifier.size(width = 10.dp, height = 10.dp))
-                    Row {
-                        NumericDoubleOutlinedTextFieldComposable(
-                            value = lowerBoundValue,
-                            onValueChange = { newStringValue ->
-                                if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
-                                    val newNumericValue = newStringValue.toFloat()
-                                    heatingSetValsViewModel.onLowerValueChanged(newNumericValue)
-                                }
-                            },
-                            label = "Switch on at",
-                            modifier = Modifier
-                                .padding(top = 16.dp)
-                                .size(width = 128.dp, height = 72.dp)
-                        )
-                        Spacer(modifier = Modifier.size(width = 72.dp, height = 10.dp))
-                        NumericDoubleOutlinedTextFieldComposable(
-                            value = upperBoundValue,
-                            onValueChange = { newStringValue ->
-                                if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
-                                    val newNumericValue = newStringValue.toFloat()
-                                    heatingSetValsViewModel.onUpperValueChanged(newNumericValue)
-                                }
-                            },
-                            label = "Switch off at",
-                            modifier = Modifier
-                                .padding(top = 16.dp)
-                                .size(width = 128.dp, height = 72.dp)
-                        )
-                    }
-                    if (isRefreshing) {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .size(150.dp),
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-
-                    @Suppress("UNCHECKED_CAST")
-                    HeatingStatsComposable(heatingStats = heatingStats, updateData =
-                    {
-                        coroutineScope.launch {
-                            if (isControllerAddressValid) {
-                                isRefreshing = true
-                                try {
-                                    fetchHeatingStats(
-                                        mainViewModel!!
-                                    ) { newHeatingStats ->
-                                        heatingStats = newHeatingStats as List<HeatingStatsEntry>
+                                .padding(24.dp)
+                                .padding(innerPadding)
+                        ) {
+                            Button(
+                                onClick = {
+                                    heatingSetValsViewModel.updateValues()
+                                    if (mainViewModel != null) {
+                                        webApiPostRequestExecution(
+                                            mainViewModel = mainViewModel,
+                                            apiUrl = WebApiUrls.HEATING_POST_SET_VALS,
+                                            coroutineScope = coroutineScope,
+                                            webApiPostRequest = webApiPostRequest,
+                                            context = context,
+                                            optionalGetParams = mapOf(
+                                                WebApiParams.HEATING_SWITCH_ON_TEMPERATURE to heatingSetValsViewModel.getHeatingSwitchOnTempString(),
+                                                WebApiParams.HEATING_SWITCH_OFF_TEMPERATURE to heatingSetValsViewModel.getHeatingSwitchOffTempString()
+                                            ),
+                                        )
+                                        // Show the Toast after the API call
+                                        Toast.makeText(
+                                            context,
+                                            "Sent request to controller for updating heating set values",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
-                                    delay(500)
-                                } finally {
-                                    isRefreshing = false // Reset the refresh state
+                                }
+                            ) {
+                                Text(text = "Update Heating Controller Values")
+                            }
+                            Button(
+                                onClick = { heatingSetValsViewModel.resetValues() }
+                            ) {
+                                Text(text = "Reset Heating Controller Values")
+                            }
+                            Spacer(modifier = Modifier.size(width = 10.dp, height = 10.dp))
+                            Column {
+                                RangeSlider(
+                                    value = sliderRange,
+                                    onValueChange = { newValue ->
+                                        heatingSetValsViewModel.onRangeChangedBySlider(
+                                            newValue.start,
+                                            newValue.endInclusive
+                                        )
+                                    },
+                                    valueRange = 20f..30f,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+
+                                )
+                            }
+                            Spacer(modifier = Modifier.size(width = 10.dp, height = 10.dp))
+                            Row {
+                                NumericDoubleOutlinedTextFieldComposable(
+                                    value = lowerBoundValue,
+                                    onValueChange = { newStringValue ->
+                                        if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
+                                            val newNumericValue = newStringValue.toFloat()
+                                            heatingSetValsViewModel.onLowerValueChanged(
+                                                newNumericValue
+                                            )
+                                        }
+                                    },
+                                    label = "Switch on at",
+                                    modifier = Modifier
+                                        .padding(top = 16.dp)
+                                        .size(width = 128.dp, height = 72.dp),
+                                    textAlign = TextAlign.Center
+                                )
+                                Spacer(modifier = Modifier.size(width = 72.dp, height = 10.dp))
+                                NumericDoubleOutlinedTextFieldComposable(
+                                    value = upperBoundValue,
+                                    onValueChange = { newStringValue ->
+                                        if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
+                                            val newNumericValue = newStringValue.toFloat()
+                                            heatingSetValsViewModel.onUpperValueChanged(
+                                                newNumericValue
+                                            )
+                                        }
+                                    },
+                                    label = "Switch off at",
+                                    modifier = Modifier
+                                        .padding(top = 16.dp)
+                                        .size(width = 128.dp, height = 72.dp),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                            if (isRefreshing) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .size(150.dp),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+
+                            @Suppress("UNCHECKED_CAST")
+                            HeatingStatsComposable(heatingStats = heatingStats, updateData =
+                            {
+                                coroutineScope.launch {
+                                    if (isControllerAddressValid) {
+                                        isRefreshing = true
+                                        try {
+                                            fetchHeatingStats(
+                                                mainViewModel!!
+                                            ) { newHeatingStats ->
+                                                heatingStats =
+                                                    newHeatingStats as List<HeatingStatsEntry>
+                                            }
+                                            delay(500)
+                                        } finally {
+                                            isRefreshing = false // Reset the refresh state
+                                        }
+                                    }
                                 }
                             }
+                            )
                         }
                     }
-                    )
                 }
+                MainDropdownMenuComposable(
+                    navHostController = navHostController,
+                    navigationRouteSource = ViewNavigationRoutes.heating,
+                    mainViewModel = mainViewModel
+                )
             }
         }
     }

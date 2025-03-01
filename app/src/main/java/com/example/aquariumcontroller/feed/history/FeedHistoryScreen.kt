@@ -40,6 +40,7 @@ import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
+import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -107,96 +108,99 @@ fun FeedHistoryScreen(
         ) {
             Scaffold(
             ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    MainDropdownMenuComposable(
-                        navHostController = navHostController,
-                        navigationRouteSource = ViewNavigationRoutes.balling,
-                        mainViewModel = mainViewModel
-                    )
-                    val headlineText: String =
-                        if (showFullWeek) {
-                            stringResource(R.string.FeedEventsLast7Days)
-                        } else {
-                            stringResource(R.string.FeedEventsLast24h)
-                        }
-                    Text(
-                        text = headlineText,
-                        style = MaterialTheme.typography.headlineSmall,
-                    )
-                    Box(
+                Box {
+                    Column(
                         modifier = Modifier
-                            .pullRefresh(pullRefreshState)
-                            .fillMaxWidth(),
-                        contentAlignment = Alignment.Center
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        if (isRefreshing) {  // Show only while isLoading is true
-                            CircularProgressIndicator(
-                                modifier = Modifier
-                                    .size(150.dp),
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
+                        ScreenHeadlineComposable(text = stringResource(R.string.feed_log))
 
-                        Row(
+                        val subHeadlineText: String =
+                            if (showFullWeek) {
+                                stringResource(R.string.feed_events_last_7d)
+                            } else {
+                                stringResource(R.string.feed_events_last_24h)
+                            }
+                        Text(
+                            text = subHeadlineText,
+                        )
+                        Box(
                             modifier = Modifier
-                                .fillMaxSize()
-                                .padding(16.dp)
+                                .pullRefresh(pullRefreshState)
+                                .fillMaxWidth(),
+                            contentAlignment = Alignment.Center
                         ) {
-                            if (isControllerLoaded || mockFeedHistoryEvents != null) {
-                                if (isControllerAddressValid || mockFeedHistoryEvents != null) {
-                                    if (feedEvents == null) {
-                                        Text(
-                                            text = "Loading feed events...",
-                                            style = TextStyle(
-                                                fontSize = 16.sp,
-                                                fontWeight = FontWeight.Bold
-                                            )
-                                        )
-                                    } else if (feedEvents!!.isEmpty()) {
-                                        Text(
-                                            text = "No feed events found.",
-                                            style = TextStyle(
-                                                fontSize = 16.sp,
-                                                fontWeight = FontWeight.Bold
-                                            )
-                                        )
-                                    } else {
-                                        LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                            items(feedEvents!!) { ballingEvent ->
-                                                Log.d(
-                                                    this::class.simpleName,
-                                                    "Feed events found: ${feedEvents!!.size}"
+                            if (isRefreshing) {  // Show only while isLoading is true
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .size(150.dp),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(16.dp)
+                            ) {
+                                if (isControllerLoaded || mockFeedHistoryEvents != null) {
+                                    if (isControllerAddressValid || mockFeedHistoryEvents != null) {
+                                        if (feedEvents == null) {
+                                            Text(
+                                                text = "Loading feed events...",
+                                                style = TextStyle(
+                                                    fontSize = 16.sp,
+                                                    fontWeight = FontWeight.Bold
                                                 )
-                                                FeedHistoryEventComposable(ballingEvent)
+                                            )
+                                        } else if (feedEvents!!.isEmpty()) {
+                                            Text(
+                                                text = "No feed events found.",
+                                                style = TextStyle(
+                                                    fontSize = 16.sp,
+                                                    fontWeight = FontWeight.Bold
+                                                )
+                                            )
+                                        } else {
+                                            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                                items(feedEvents!!) { ballingEvent ->
+                                                    Log.d(
+                                                        this::class.simpleName,
+                                                        "Feed events found: ${feedEvents!!.size}"
+                                                    )
+                                                    FeedHistoryEventComposable(ballingEvent)
+                                                }
                                             }
                                         }
+                                    } else {
+                                        Text(
+                                            text = "Invalid controller address",
+                                            style = TextStyle(
+                                                fontSize = 16.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        )
                                     }
                                 } else {
                                     Text(
-                                        text = "Invalid controller address",
+                                        text = "Controller not loaded.",
                                         style = TextStyle(
                                             fontSize = 16.sp,
                                             fontWeight = FontWeight.Bold
                                         )
                                     )
                                 }
-                            } else {
-                                Text(
-                                    text = "Controller not loaded.",
-                                    style = TextStyle(
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                )
                             }
                         }
                     }
                 }
+                MainDropdownMenuComposable(
+                    navHostController = navHostController,
+                    navigationRouteSource = ViewNavigationRoutes.balling,
+                    mainViewModel = mainViewModel
+                )
             }
         }
     }

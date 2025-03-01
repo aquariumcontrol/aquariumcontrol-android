@@ -29,6 +29,7 @@ import com.example.aquariumcontroller.feed.edit.FeedProfileEditScreen
 import com.example.aquariumcontroller.feed.history.FeedHistoryScreen
 import com.example.aquariumcontroller.feed.schedule.FeedProfileScheduleScreen
 import com.example.aquariumcontroller.heating.HeatingScreen
+import com.example.aquariumcontroller.info.InfoScreen
 import com.example.aquariumcontroller.overview.OverviewScreen
 import com.example.aquariumcontroller.refill.RefillScreen
 import com.example.aquariumcontroller.refill.history.RefillHistoryScreen
@@ -114,6 +115,7 @@ class MainActivity : ComponentActivity() {
                             navHostController = navHostController,
                             state = state,
                             onEvent = controllerViewModel::onEvent,
+                            mainViewModel = mainViewModel
                         )
                     }
                     composable(ViewNavigationRoutes.controllerEdit)

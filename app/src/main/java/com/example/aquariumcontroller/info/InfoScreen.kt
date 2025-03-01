@@ -1,4 +1,4 @@
-package com.example.aquariumcontroller
+package com.example.aquariumcontroller.info
 
 import HyperlinkText
 import android.content.res.Configuration
@@ -18,18 +18,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.aquariumcontroller.MainViewModel
+import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
 fun InfoScreen(navHostController: NavHostController? = null, mainViewModel: MainViewModel? = null) {
+    // This screen displays information about the app and the developer.
+
     AquariumControllerTheme {
-        // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Box() {
+            Box {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -47,8 +50,17 @@ fun InfoScreen(navHostController: NavHostController? = null, mainViewModel: Main
                         textAlign = TextAlign.Center
                     )
                     HyperlinkText(
-                        text = "Developer information",
+                        text = "Developer documentation",
                         url = "http://217.79.180.177/mediawiki/index.php/Main_Page",
+                        textAlign = TextAlign.Center
+                    )
+                    HyperlinkText(
+                        text = "Developer information",
+                        url = "mailto:uwe.martin@gmail.com",
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        text = "This software comes with no warranties. Usage at your own risk.",
                         textAlign = TextAlign.Center
                     )
                 }

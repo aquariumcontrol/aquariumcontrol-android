@@ -4,6 +4,8 @@ import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -16,14 +18,19 @@ import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
 fun HeatingStatsLegend() {
-    val rectBullet = stringResource(id = R.string.rectBullet)
-    Row() {
+    // This composable displays the legend for the heating stats:
+    // - a bullet for each signal
+    // - the name of the signal incl. unit
+
+    val rectBullet = stringResource(id = R.string.rect_bullet)
+
+    Row {
         Column(
             modifier = Modifier.padding(
                 horizontal = 12.dp
             )
         ) {
-            Row() {
+            Row {
                 Text(
                     text = rectBullet,
                     fontSize = 12.sp,
@@ -32,9 +39,9 @@ fun HeatingStatsLegend() {
                         horizontal = 4.dp
                     )
                 )
-                Text(text = "Water temperature [°C]", fontSize = 12.sp)
+                Text(text = stringResource(R.string.water_temperature_c), fontSize = 12.sp)
             }
-            Row() {
+            Row {
                 Text(
                     text = rectBullet,
                     fontSize = 12.sp,
@@ -43,9 +50,9 @@ fun HeatingStatsLegend() {
                         horizontal = 4.dp
                     )
                 )
-                Text(text = "Ambient temperature [°C]", fontSize = 12.sp)
+                Text(text = stringResource(R.string.heating_stats_ambient_temperature_c), fontSize = 12.sp)
             }
-            Row() {
+            Row {
                 Text(
                     text = rectBullet, fontSize = 12.sp,
                     color = heatingStatsTextColorDefinition(HeatingStatsSignal.ENERGY),
@@ -53,7 +60,7 @@ fun HeatingStatsLegend() {
                         horizontal = 4.dp
                     )
                 )
-                Text(text = "Energy [Wh]", fontSize = 12.sp)
+                Text(text = stringResource(R.string.heating_stats_energy_wh), fontSize = 12.sp)
             }
         }
     }
@@ -63,6 +70,8 @@ fun HeatingStatsLegend() {
 @Composable
 fun HeatingStatsLegendPreview() {
     AquariumControllerTheme {
-        HeatingStatsLegend()
+        Surface(color = MaterialTheme.colorScheme.background) {
+            HeatingStatsLegend()
+        }
     }
 }

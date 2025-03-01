@@ -3,6 +3,7 @@ package com.example.aquariumcontroller.schedule
 import android.content.res.Configuration
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,6 +33,7 @@ import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.webapi.WebApiPostRequest
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
+import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import com.example.aquariumcontroller.webapi.webApiPostRequestExecution
 import kotlinx.coroutines.Dispatchers
@@ -130,92 +132,91 @@ fun ScheduleScreen(
     }
 
     AquariumControllerTheme {
-        // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Scaffold { innerPadding ->
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .padding(24.dp)
-                        .padding(innerPadding)
-                ) {
-                    MainDropdownMenuComposable(
-                        navHostController = navHostController,
-                        navigationRouteSource = ViewNavigationRoutes.schedule,
-                        mainViewModel = mainViewModel
-                    )
-                    Text(
-                        text = stringResource(R.string.actuatorSchedule),
-                        style = MaterialTheme.typography.headlineMedium,
-                        modifier = Modifier.padding(8.dp)
-                    )
-                    Button(
-                        onClick = {
-                            ballingScheduleSetValsViewModel.updateValues()
-                            refillScheduleSetValsViewModel.updateValues()
-                            ventilationScheduleSetValsViewModel.updateValues()
-                            heatingScheduleSetValsViewModel.updateValues()
-                            scheduleSetVals.updateFromViewModels(
-                                ballingScheduleSetValsViewModel,
-                                refillScheduleSetValsViewModel,
-                                ventilationScheduleSetValsViewModel,
-                                heatingScheduleSetValsViewModel
-                            )
-                            if (mainViewModel != null) {
-                                webApiPostRequestExecution(
-                                    mainViewModel = mainViewModel,
-                                    apiUrl = WebApiUrls.ACTUATOR_SCHEDULE_POST_UPDATE,
-                                    coroutineScope = coroutineScope,
-                                    webApiPostRequest = webApiPostRequest,
-                                    context = context,
-                                    optionalGetParams = scheduleSetVals.getApiParams(),
+            Box {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    ScreenHeadlineComposable(text = stringResource(R.string.actuator_schedule))
+                    Scaffold { innerPadding ->
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .padding(innerPadding)
+                        ) {
+                            Button(
+                                onClick = {
+                                    ballingScheduleSetValsViewModel.updateValues()
+                                    refillScheduleSetValsViewModel.updateValues()
+                                    ventilationScheduleSetValsViewModel.updateValues()
+                                    heatingScheduleSetValsViewModel.updateValues()
+                                    scheduleSetVals.updateFromViewModels(
+                                        ballingScheduleSetValsViewModel,
+                                        refillScheduleSetValsViewModel,
+                                        ventilationScheduleSetValsViewModel,
+                                        heatingScheduleSetValsViewModel
+                                    )
+                                    if (mainViewModel != null) {
+                                        webApiPostRequestExecution(
+                                            mainViewModel = mainViewModel,
+                                            apiUrl = WebApiUrls.ACTUATOR_SCHEDULE_POST_UPDATE,
+                                            coroutineScope = coroutineScope,
+                                            webApiPostRequest = webApiPostRequest,
+                                            context = context,
+                                            optionalGetParams = scheduleSetVals.getApiParams(),
+                                        )
+                                        // Show the Toast after the API call
+                                        Toast.makeText(
+                                            context,
+                                            "Sent request to controller for updating schedule set values",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+                            ) {
+                                Text(text = "Update actuator schedules")
+                            }
+                            Button(
+                                onClick = {
+                                    ballingScheduleSetValsViewModel.resetValues()
+                                    refillScheduleSetValsViewModel.resetValues()
+                                    ventilationScheduleSetValsViewModel.resetValues()
+                                    heatingScheduleSetValsViewModel.resetValues()
+                                }
+                            ) {
+                                Text(text = "Reset actuator schedules")
+                            }
+                            Spacer(modifier = Modifier.size(width = 10.dp, height = 10.dp))
+                            Column(
+                                modifier = Modifier.verticalScroll(rememberScrollState())
+                            ) {
+                                ScheduleAdjustmentComposable(
+                                    myViewModel = ballingScheduleSetValsViewModel,
+                                    title = "Balling dosing schedule"
                                 )
-                                // Show the Toast after the API call
-                                Toast.makeText(
-                                    context,
-                                    "Sent request to controller for updating schedule set values",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                ScheduleAdjustmentComposable(
+                                    myViewModel = refillScheduleSetValsViewModel,
+                                    title = "Refill schedule"
+                                )
+                                ScheduleAdjustmentComposable(
+                                    myViewModel = ventilationScheduleSetValsViewModel,
+                                    title = "Ventilation schedule"
+                                )
+                                ScheduleAdjustmentComposable(
+                                    myViewModel = heatingScheduleSetValsViewModel,
+                                    title = "Heating schedule"
+                                )
                             }
                         }
-                    ) {
-                        Text(text = "Update actuator schedules")
-                    }
-                    Button(
-                        onClick = {
-                            ballingScheduleSetValsViewModel.resetValues()
-                            refillScheduleSetValsViewModel.resetValues()
-                            ventilationScheduleSetValsViewModel.resetValues()
-                            heatingScheduleSetValsViewModel.resetValues()
-                        }
-                    ) {
-                        Text(text = "Reset actuator schedules")
-                    }
-                    Spacer(modifier = Modifier.size(width = 10.dp, height = 10.dp))
-                    Column(
-                        modifier = Modifier.verticalScroll(rememberScrollState())
-                    ) {
-                        ScheduleAdjustmentComposable(
-                            myViewModel = ballingScheduleSetValsViewModel,
-                            title = "Balling dosing schedule"
-                        )
-                        ScheduleAdjustmentComposable(
-                            myViewModel = refillScheduleSetValsViewModel,
-                            title = "Refill schedule"
-                        )
-                        ScheduleAdjustmentComposable(
-                            myViewModel = ventilationScheduleSetValsViewModel,
-                            title = "Ventilation schedule"
-                        )
-                        ScheduleAdjustmentComposable(
-                            myViewModel = heatingScheduleSetValsViewModel,
-                            title = "Heating schedule"
-                        )
                     }
                 }
+                MainDropdownMenuComposable(
+                    navHostController = navHostController,
+                    navigationRouteSource = ViewNavigationRoutes.schedule,
+                    mainViewModel = mainViewModel
+                )
             }
         }
     }
@@ -249,7 +250,7 @@ private suspend fun fetchScheduleSetVals(
     }
 }
 
-@Preview(showBackground = true, heightDp = 1300, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, heightDp = 1250, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun ScheduleScreenPreview() {
     ScheduleScreen(

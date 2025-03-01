@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,7 +23,10 @@ import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 fun FeedHistoryEventComposable(
     feedHistoryEvent: FeedHistoryEvent
 ) {
-    // This composable displays one feed dosing event.
+    // This composable displays one feed dosing event:
+    // - text objects for showing timestamp
+    // - text objects for showing feed profile name
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -73,6 +77,10 @@ fun FeedEventPreviewScreen() {
     )
 
     AquariumControllerTheme {
-        FeedHistoryEventComposable(mockEvent)
+        Surface(
+            color = MaterialTheme.colorScheme.background
+        ) {
+            FeedHistoryEventComposable(mockEvent)
+        }
     }
 }

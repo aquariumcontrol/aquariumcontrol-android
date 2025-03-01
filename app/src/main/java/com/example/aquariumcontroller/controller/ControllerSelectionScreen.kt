@@ -1,6 +1,7 @@
 package com.example.aquariumcontroller.controller
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -14,7 +15,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +26,7 @@ import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
+import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
@@ -35,59 +36,65 @@ fun ControllerSelectionScreen(
     onEvent: (ControllerEvent) -> Unit,
     mainViewModel: MainViewModel? = null,
 ) {
-    // This screen displays a list of controller profiles.
+    // This screen displays:
+    // - headline
+    // - list of controller profiles
+    // - floating action button to add new controller profile
+    
     AquariumControllerTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Scaffold(
-                floatingActionButton = {
-                    FloatingActionButton(
-                        onClick = {
-                            navHostController?.navigate(ViewNavigationRoutes.controllerAdd)
-                        },
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Add,
-                            contentDescription = "Create New Profile"
-                        )
-                    }
-                }
-            ) { innerPadding ->
+            Box {
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    MainDropdownMenuComposable(
-                        navHostController = navHostController,
-                        navigationRouteSource = ViewNavigationRoutes.controllerSelection,
-                        mainViewModel = mainViewModel
-                    )
-                    Text(
-                        text = stringResource(id = R.string.ListOfControllers),
-                        style = MaterialTheme.typography.headlineLarge,
-                        modifier = Modifier.padding(16.dp)
-                    )
+                    ScreenHeadlineComposable(text = stringResource(id = R.string.list_of_controllers))
 
-                    LazyColumn(
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .wrapContentSize()
-                    ) {
-                        items(state.controllerProfileList) { controllerProfile ->
-                            ControllerProfileComposable(
-                                navHostController = navHostController,
-                                onEvent = onEvent,
-                                controllerProfile = controllerProfile,
-                                mainViewModel = mainViewModel,
-                            )
+                    Scaffold(
+                        floatingActionButton = {
+                            FloatingActionButton(
+                                onClick = {
+                                    navHostController?.navigate(ViewNavigationRoutes.controllerAdd)
+                                },
+                                modifier = Modifier.padding(16.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Add,
+                                    contentDescription = "Create New Profile"
+                                )
+                            }
+                        }
+                    ) { innerPadding ->
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            LazyColumn(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .wrapContentSize()
+                            ) {
+                                items(state.controllerProfileList) { controllerProfile ->
+                                    ControllerProfileComposable(
+                                        navHostController = navHostController,
+                                        onEvent = onEvent,
+                                        controllerProfile = controllerProfile,
+                                        mainViewModel = mainViewModel,
+                                    )
+                                }
+                            }
                         }
                     }
                 }
+                MainDropdownMenuComposable(
+                    navHostController = navHostController,
+                    navigationRouteSource = ViewNavigationRoutes.controllerSelection,
+                    mainViewModel = mainViewModel
+                )
             }
         }
     }

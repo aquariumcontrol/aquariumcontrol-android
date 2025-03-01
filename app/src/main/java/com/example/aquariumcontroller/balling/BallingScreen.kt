@@ -1,6 +1,7 @@
 package com.example.aquariumcontroller.balling
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,6 +30,7 @@ import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
+import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -58,65 +60,62 @@ fun BallingScreen(
     }
 
     AquariumControllerTheme {
-        // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+            Box {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    ScreenHeadlineComposable(text = stringResource(id = R.string.balling_dosing))
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                        onClick = {
+                            navHostController?.navigate(ViewNavigationRoutes.ballingHistory24h)
+                        },
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.view_balling_events_24h),
+                            fontSize = 16.sp
+                        )
+                    }
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                        onClick = {
+                            navHostController?.navigate(ViewNavigationRoutes.ballingHistory7d)
+                        },
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.view_balling_events_7d),
+                            fontSize = 16.sp
+                        )
+                    }
+                    if (ballingProfiles != null) {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp)
+                        ) {
+                            items(ballingProfiles!!) { ballingProfile ->
+                                BallingProfileSummaryComposable(
+                                    navHostController = navHostController,
+                                    mainViewModel = mainViewModel,
+                                    ballingProfile = ballingProfile
+                                )
+                            }
+                        }
+                    }
+                }
                 MainDropdownMenuComposable(
                     navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.balling,
                     mainViewModel = mainViewModel
                 )
-                Text(
-                    text = stringResource(id = R.string.BallingMineralDosingControl),
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(16.dp)
-                )
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    onClick = {
-                        navHostController?.navigate(ViewNavigationRoutes.ballingHistory24h)
-                    },
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.ViewBallingEvents24h),
-                        fontSize = 16.sp
-                    )
-                }
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    onClick = {
-                        navHostController?.navigate(ViewNavigationRoutes.ballingHistory7d)
-                    },
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.ViewBallingEvents7d),
-                        fontSize = 16.sp
-                    )
-                }
-                if (ballingProfiles != null) {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp)
-                    ) {
-                        items(ballingProfiles!!) { ballingProfile ->
-                            BallingProfileSummaryComposable(
-                                navHostController = navHostController,
-                                mainViewModel = mainViewModel,
-                                ballingProfile = ballingProfile
-                            )
-                        }
-                    }
-                }
             }
         }
     }

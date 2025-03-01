@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
@@ -39,7 +40,8 @@ fun NumericDoubleOutlinedTextFieldComposable(
     onValueChange: (String) -> Unit,
     label: String,
     modifier: Modifier = Modifier,
-    precision: Int = 2  // Add precision parameter with default value
+    precision: Int = 2, // Add precision parameter with default value
+    textAlign: TextAlign,
 ) {
     var textFieldValueState by remember {
         mutableStateOf(TextFieldValue(value.toString()))
@@ -76,6 +78,10 @@ fun NumericDoubleOutlinedTextFieldComposable(
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
         modifier = modifier.width(100.dp),
+        singleLine = true,
+        textStyle = MaterialTheme.typography.bodyLarge.copy(
+            textAlign = textAlign
+        )
     )
 }
 
@@ -91,7 +97,8 @@ fun NumericDoubleOutlinedTextFieldComposablePreview() {
                 value = testValue,
                 onValueChange = { /* do nothing */ },
                 label = "testLabel",
-                modifier = Modifier
+                modifier = Modifier,
+                textAlign = TextAlign.Center,
             )
         }
     }

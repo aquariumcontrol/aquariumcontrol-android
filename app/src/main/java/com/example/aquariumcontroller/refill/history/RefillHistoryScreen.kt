@@ -40,6 +40,7 @@ import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
+import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -55,7 +56,11 @@ fun RefillHistoryScreen(
     mockRefillEvents: List<RefillEvent>? = null,
     mainViewModel: MainViewModel? = null
 ) {
-    // This screen displays a list of refill events downloaded from the server using a GET request.
+    // This screen displays
+    // - headline
+    // - subhead line
+    // - a list of refill events downloaded from the server using a GET request.
+    // There is user interaction to modify data, hence no view model is used.
 
     var refillEvents by remember { mutableStateOf(mockRefillEvents) }
     var isRefreshing by remember {
@@ -105,97 +110,99 @@ fun RefillHistoryScreen(
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
-            Scaffold(
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    MainDropdownMenuComposable(
-                        navHostController = navHostController,
-                        navigationRouteSource = ViewNavigationRoutes.refill,
-                        mainViewModel = mainViewModel
-                    )
-                    val headlineText: String =
+            Box {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    ScreenHeadlineComposable(stringResource(R.string.refill_log))
+                    val subHeadlineText: String =
                         if (showFullWeek) {
-                            stringResource(R.string.RefillEventsLast7Days)
+                            stringResource(R.string.refill_events_last_7d)
                         } else {
-                            stringResource(R.string.RefillEventsLast24h)
+                            stringResource(R.string.refill_events_last_24h)
                         }
-                    Text(
-                        text = headlineText,
-                        style = MaterialTheme.typography.headlineMedium,
-                    )
-                    Box(
-                        modifier = Modifier
-                            .pullRefresh(pullRefreshState)
-                            .fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        if (isRefreshing) {
-                            CircularProgressIndicator(
-                                modifier = Modifier
-                                    .size(150.dp),
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                        Row(
+                    Text(text = subHeadlineText)
+                    Scaffold(
+                    ) { innerPadding ->
+                        Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(16.dp)
+                                .padding(innerPadding),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            if (isControllerLoaded || mockRefillEvents != null) {
-                                if (isControllerAddressValid || mockRefillEvents != null) {
-                                    if (refillEvents == null) {
-                                        Text(
-                                            text = "Loading refill events...",
-                                            style = TextStyle(
-                                                fontSize = 16.sp,
-                                                fontWeight = FontWeight.Bold
-                                            )
-                                        )
-                                    } else if (refillEvents!!.isEmpty()) {
-                                        Text(
-                                            text = "No refill events found.",
-                                            style = TextStyle(
-                                                fontSize = 16.sp,
-                                                fontWeight = FontWeight.Bold
-                                            )
-                                        )
-                                    } else {
-                                        LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                            items(refillEvents!!) { refillEvent ->
-                                                Log.d(
-                                                    this::class.simpleName,
-                                                    "Refill events found: ${refillEvents!!.size}"
-                                                )
-                                                RefillEventComposable(refillEvent)
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    Text(
-                                        text = "Invalid controller address",
-                                        style = TextStyle(
-                                            fontSize = 16.sp,
-                                            fontWeight = FontWeight.Bold
-                                        )
+                            Box(
+                                modifier = Modifier
+                                    .pullRefresh(pullRefreshState)
+                                    .fillMaxWidth(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                if (isRefreshing) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier
+                                            .size(150.dp),
+                                        color = MaterialTheme.colorScheme.primary
                                     )
                                 }
-                            } else {
-                                Text(
-                                    text = "Controller not loaded.",
-                                    style = TextStyle(
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                )
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(16.dp)
+                                ) {
+                                    if (isControllerLoaded || mockRefillEvents != null) {
+                                        if (isControllerAddressValid || mockRefillEvents != null) {
+                                            if (refillEvents == null) {
+                                                Text(
+                                                    text = "Loading refill events...",
+                                                    style = TextStyle(
+                                                        fontSize = 16.sp,
+                                                        fontWeight = FontWeight.Bold
+                                                    )
+                                                )
+                                            } else if (refillEvents!!.isEmpty()) {
+                                                Text(
+                                                    text = "No refill events found.",
+                                                    style = TextStyle(
+                                                        fontSize = 16.sp,
+                                                        fontWeight = FontWeight.Bold
+                                                    )
+                                                )
+                                            } else {
+                                                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                                    items(refillEvents!!) { refillEvent ->
+                                                        Log.d(
+                                                            this::class.simpleName,
+                                                            "Refill events found: ${refillEvents!!.size}"
+                                                        )
+                                                        RefillEventComposable(refillEvent)
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            Text(
+                                                text = "Invalid controller address",
+                                                style = TextStyle(
+                                                    fontSize = 16.sp,
+                                                    fontWeight = FontWeight.Bold
+                                                )
+                                            )
+                                        }
+                                    } else {
+                                        Text(
+                                            text = "Controller not loaded.",
+                                            style = TextStyle(
+                                                fontSize = 16.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
                 }
+                MainDropdownMenuComposable(
+                    navHostController = navHostController,
+                    navigationRouteSource = ViewNavigationRoutes.refill,
+                    mainViewModel = mainViewModel
+                )
             }
         }
     }

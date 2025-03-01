@@ -1,10 +1,11 @@
 package com.example.aquariumcontroller.feed.edit
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -15,13 +16,7 @@ import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 fun FeedProfileEditMenuComposable(
     feedProfileEditMenuItems: List<FeedProfileEditMenuItem>,
     feedProfileEditViewModel: FeedProfileEditViewModel? = null) {
-
-    if (feedProfileEditViewModel == null) {
-        Log.d("FeedProfileEditMenuComposable", "no view model available")
-    }
-    else {
-        Log.d("FeedProfileEditMenuComposable", "called with view model ")
-    }
+    // This composable acts as container for the feed profile edit menu items.
     LazyColumn(modifier = Modifier.heightIn(max = 20000.dp)) {
         items(feedProfileEditMenuItems) { item ->
             FeedProfileEditMenuItemComposable(item, feedProfileEditViewModel)
@@ -32,7 +27,6 @@ fun FeedProfileEditMenuComposable(
 @Preview(showBackground = true, heightDp = 1400, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun FeedProfileEditMenuPreviewComposable() {
-
     val mockFeedProfileEditMenuItemDuration = FeedProfileEditMenuItem(
         id = 0,
         level = 3,
@@ -76,7 +70,6 @@ fun FeedProfileEditMenuPreviewComposable() {
         isToggleButton = true,
         children = emptyList(),
     )
-
     val mockFeedProfileEditMenuItemPause = FeedProfileEditMenuItem(
         id = 6,
         level = 2,
@@ -91,7 +84,6 @@ fun FeedProfileEditMenuPreviewComposable() {
             mockFeedProfileEditMenuItemAuxPump2
         )
     )
-
     val mockFeedProfileEditMenuItemFeed = FeedProfileEditMenuItem(
         id = 7,
         level = 2,
@@ -106,7 +98,6 @@ fun FeedProfileEditMenuPreviewComposable() {
             mockFeedProfileEditMenuItemAuxPump2
         )
     )
-
     val mockFeedProfileEditMenuItemPhase1 = FeedProfileEditMenuItem(
         id = 8,
         level = 1,
@@ -117,7 +108,6 @@ fun FeedProfileEditMenuPreviewComposable() {
             mockFeedProfileEditMenuItemFeed
         )
     )
-
     val mockFeedProfileEditMenuItemPhase2 = FeedProfileEditMenuItem(
         id = 8,
         level = 1,
@@ -134,11 +124,15 @@ fun FeedProfileEditMenuPreviewComposable() {
     mockFeedProfileEditMenuItemPause.updateIsExpanded(true)
 
     AquariumControllerTheme {
-        FeedProfileEditMenuComposable(
-            listOf(
-                mockFeedProfileEditMenuItemPhase1,
-                mockFeedProfileEditMenuItemPhase2
+        Surface(
+            color = MaterialTheme.colorScheme.background
+        ) {
+            FeedProfileEditMenuComposable(
+                listOf(
+                    mockFeedProfileEditMenuItemPhase1,
+                    mockFeedProfileEditMenuItemPhase2
+                )
             )
-        )
+        }
     }
 }

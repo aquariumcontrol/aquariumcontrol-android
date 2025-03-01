@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -44,12 +45,18 @@ fun FeedProfileSummaryComposable(
     feedProfile: FeedProfile,
     feedProfileViewModel: FeedProfileViewModel? = null
 ) {
+    // This composable displays one Feed dosing profile summary consisting of:
+    // - The profile ID
+    // - The profile name
+    // - The edit icon
+    // - The schedule icon
+    // - The delete icon
+    // When the user clicks on one of the icons, the corresponding action is triggered.
+
     val coroutineScope = rememberCoroutineScope()
     val webApiPostRequest = WebApiPostRequest()
     val context = LocalContext.current // context for web API request and Toasts
 
-    // This composable displays one Feed dosing profile summary with two icons for editing or scheduling.
-    // When the user clicks on one of the icons, the corresponding action is triggered.
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -157,9 +164,13 @@ fun FeedProfileSummaryComposablePreview() {
     val mockFeedProfile = FeedProfile(mockFeedProfileImport)
 
     AquariumControllerTheme {
-        FeedProfileSummaryComposable(
-            feedProfile = mockFeedProfile,
-            feedProfileViewModel = null,
-        )
+        Surface(
+            color = MaterialTheme.colorScheme.background
+        ) {
+            FeedProfileSummaryComposable(
+                feedProfile = mockFeedProfile,
+                feedProfileViewModel = null,
+            )
+        }
     }
 }

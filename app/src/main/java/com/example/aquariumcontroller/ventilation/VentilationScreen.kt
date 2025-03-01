@@ -3,6 +3,7 @@ package com.example.aquariumcontroller.ventilation
 import android.content.res.Configuration
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -37,6 +39,7 @@ import com.example.aquariumcontroller.lib_composables.NumericDoubleOutlinedTextF
 import com.example.aquariumcontroller.webapi.WebApiPostRequest
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
+import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import com.example.aquariumcontroller.webapi.webApiPostRequestExecution
 import kotlinx.coroutines.Dispatchers
@@ -49,8 +52,12 @@ fun VentilationScreen(
     mainViewModel: MainViewModel? = null
 ) {
     // This screen displays
+    // - headline
     // - a range slider for setting the control target temperatures
     // - numeric input fields for entering the control target temperatures
+    // - a button to update the control target temperatures
+    // - a button to reset the control target temperatures
+
     val ventilationInitialSetVals = mockVentilationSetVals ?: VentilationSetVals(
         ventilationSwitchOffTemp = 23.0, ventilationSwitchOnTemp = 27.0
     )
@@ -95,106 +102,111 @@ fun VentilationScreen(
     }
 
     AquariumControllerTheme {
-        // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Scaffold { innerPadding ->
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .padding(24.dp)
-                        .padding(innerPadding)
-                ) {
-                    MainDropdownMenuComposable(
-                        navHostController = navHostController,
-                        navigationRouteSource = ViewNavigationRoutes.ventilation,
-                        mainViewModel = mainViewModel
-                    )
-                    Text(
-                        text = stringResource(R.string.VentilationControl),
-                        style = MaterialTheme.typography.headlineSmall,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                    Button(
-                        onClick = {
-                            ventilationSetValsViewModel.updateValues()
-                            if (mainViewModel != null) {
-                                webApiPostRequestExecution(
-                                    mainViewModel = mainViewModel,
-                                    apiUrl = WebApiUrls.VENTILATION_POST_SET_VALS,
-                                    coroutineScope = coroutineScope,
-                                    webApiPostRequest = webApiPostRequest,
-                                    context = context,
-                                    optionalGetParams = mapOf(
-                                        WebApiParams.VENTILATION_SWITCH_ON_TEMPERATURE to ventilationSetValsViewModel.getVentilationSwitchOnTempString(),
-                                        WebApiParams.VENTILATION_SWITCH_OFF_TEMPERATURE to ventilationSetValsViewModel.getVentilationSwitchOffTempString()
-                                    ),
+            Box {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    ScreenHeadlineComposable(text = stringResource(R.string.ventilation_control))
+                    Scaffold { innerPadding ->
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .padding(24.dp)
+                                .padding(innerPadding)
+                        ) {
+                            Button(
+                                onClick = {
+                                    ventilationSetValsViewModel.updateValues()
+                                    if (mainViewModel != null) {
+                                        webApiPostRequestExecution(
+                                            mainViewModel = mainViewModel,
+                                            apiUrl = WebApiUrls.VENTILATION_POST_SET_VALS,
+                                            coroutineScope = coroutineScope,
+                                            webApiPostRequest = webApiPostRequest,
+                                            context = context,
+                                            optionalGetParams = mapOf(
+                                                WebApiParams.VENTILATION_SWITCH_ON_TEMPERATURE to ventilationSetValsViewModel.getVentilationSwitchOnTempString(),
+                                                WebApiParams.VENTILATION_SWITCH_OFF_TEMPERATURE to ventilationSetValsViewModel.getVentilationSwitchOffTempString()
+                                            ),
+                                        )
+                                        // Show the Toast after the API call
+                                        Toast.makeText(
+                                            context,
+                                            "Sent request to controller for updating ventilation set values",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+                            ) {
+                                Text(text = "Update Ventilation Controller Values")
+                            }
+                            Button(
+                                onClick = { ventilationSetValsViewModel.resetValues() }
+                            ) {
+                                Text(text = "Reset Ventilation Controller Values")
+                            }
+                            Spacer(modifier = Modifier.size(width = 10.dp, height = 10.dp))
+                            Column {
+                                RangeSlider(
+                                    value = sliderRange,
+                                    onValueChange = { newValue ->
+                                        ventilationSetValsViewModel.onRangeChangedBySlider(
+                                            newValue.start,
+                                            newValue.endInclusive
+                                        )
+                                    },
+                                    valueRange = 20f..30f,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+
                                 )
-                                // Show the Toast after the API call
-                                Toast.makeText(
-                                    context,
-                                    "Sent request to controller for updating ventilation set values",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                            }
+                            Spacer(modifier = Modifier.size(width = 10.dp, height = 10.dp))
+                            Row {
+                                NumericDoubleOutlinedTextFieldComposable(
+                                    value = lowerBoundValue,
+                                    onValueChange = { newStringValue ->
+                                        if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
+                                            val newNumericValue = newStringValue.toFloat()
+                                            ventilationSetValsViewModel.onLowerValueChanged(
+                                                newNumericValue
+                                            )
+                                        }
+                                    },
+                                    label = "Switch off at",
+                                    modifier = Modifier
+                                        .padding(top = 16.dp)
+                                        .size(width = 128.dp, height = 72.dp),
+                                    textAlign = TextAlign.Center
+                                )
+                                Spacer(modifier = Modifier.size(width = 72.dp, height = 10.dp))
+                                NumericDoubleOutlinedTextFieldComposable(
+                                    value = upperBoundValue,
+                                    onValueChange = { newStringValue ->
+                                        if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
+                                            val newNumericValue = newStringValue.toFloat()
+                                            ventilationSetValsViewModel.onUpperValueChanged(
+                                                newNumericValue
+                                            )
+                                        }
+                                    },
+                                    label = "Switch on at",
+                                    modifier = Modifier
+                                        .padding(top = 16.dp)
+                                        .size(width = 128.dp, height = 72.dp),
+                                    textAlign = TextAlign.Center
+                                )
                             }
                         }
-                    ) {
-                        Text(text = "Update Ventilation Controller Values")
-                    }
-                    Button(
-                        onClick = { ventilationSetValsViewModel.resetValues() }
-                    ) {
-                        Text(text = "Reset Ventilation Controller Values")
-                    }
-                    Spacer(modifier = Modifier.size(width = 10.dp, height = 10.dp))
-                    Column {
-                        RangeSlider(
-                            value = sliderRange,
-                            onValueChange = { newValue ->
-                                ventilationSetValsViewModel.onRangeChangedBySlider(
-                                    newValue.start,
-                                    newValue.endInclusive
-                                )
-                            },
-                            valueRange = 20f..30f,
-                            modifier = Modifier
-                                .fillMaxWidth()
-
-                        )
-                    }
-                    Spacer(modifier = Modifier.size(width = 10.dp, height = 10.dp))
-                    Row {
-                        NumericDoubleOutlinedTextFieldComposable(
-                            value = lowerBoundValue,
-                            onValueChange = { newStringValue ->
-                                if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
-                                    val newNumericValue = newStringValue.toFloat()
-                                    ventilationSetValsViewModel.onLowerValueChanged(newNumericValue)
-                                }
-                            },
-                            label = "Switch off at",
-                            modifier = Modifier
-                                .padding(top = 16.dp)
-                                .size(width = 128.dp, height = 72.dp)
-                        )
-                        Spacer(modifier = Modifier.size(width = 72.dp, height = 10.dp))
-                        NumericDoubleOutlinedTextFieldComposable(
-                            value = upperBoundValue,
-                            onValueChange = { newStringValue ->
-                                if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
-                                    val newNumericValue = newStringValue.toFloat()
-                                    ventilationSetValsViewModel.onUpperValueChanged(newNumericValue)
-                                }
-                            },
-                            label = "Switch on at",
-                            modifier = Modifier
-                                .padding(top = 16.dp)
-                                .size(width = 128.dp, height = 72.dp)
-                        )
                     }
                 }
+                MainDropdownMenuComposable(
+                    navHostController = navHostController,
+                    navigationRouteSource = ViewNavigationRoutes.ventilation,
+                    mainViewModel = mainViewModel
+                )
             }
         }
     }

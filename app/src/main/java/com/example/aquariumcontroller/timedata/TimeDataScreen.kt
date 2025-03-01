@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -19,7 +18,6 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -39,6 +37,7 @@ import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
+import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
@@ -106,165 +105,166 @@ fun TimeDataScreen(
     )
 
     AquariumControllerTheme {
-        // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxWidth(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Box(
-                modifier = Modifier.pullRefresh(pullRefreshState),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.verticalScroll(rememberScrollState())
-                ) {
-                    MainDropdownMenuComposable(
-                        navHostController = navHostController,
-                        navigationRouteSource = ViewNavigationRoutes.timeData,
-                        mainViewModel = mainViewModel
-                    )
-                    Text(
-                        text = stringResource(id = R.string.TimeDataSeries),
-                        style = MaterialTheme.typography.headlineSmall,
-                        modifier = Modifier.padding(16.dp)
-                    )
+            Box {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    ScreenHeadlineComposable(text = stringResource(id = R.string.time_data_series))
+                    Box(
+                        modifier = Modifier.pullRefresh(pullRefreshState),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.verticalScroll(rememberScrollState())
+                        ) {
 
-                    if (isRefreshing) {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .size(150.dp)
-                                .fillMaxWidth(),
-                            color = MaterialTheme.colorScheme.primary
-                        )
+                            if (isRefreshing) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .size(150.dp)
+                                        .fillMaxWidth(),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+
+                            // Main temperature chart
+                            AndroidView(modifier = Modifier
+                                .fillMaxWidth()
+                                .height(chartHeight.dp), factory = { context ->
+                                LineChart(context).apply {
+                                    data = timeDataSets.dataTemperature
+                                    description.isEnabled = false
+                                    legend.isEnabled = true
+                                    legend.textColor = textColor
+                                    axisRight.isEnabled = true
+                                    axisRight.valueFormatter = TimeDataYAxisOnOffValueFormatter()
+                                    axisRight.granularity = axisGranularityOnOff
+                                    axisRight.textColor = textColor
+                                    axisLeft.setDrawTopYLabelEntry(true)
+                                    axisLeft.valueFormatter =
+                                        TimeDataYAxisDegreeCelsiusValueFormatter()
+                                    axisLeft.textColor = textColor
+                                    xAxis.granularity = axisGranularityTime
+                                    xAxis.valueFormatter = TimeDataXAxisValueFormatter()
+                                    xAxis.position = XAxis.XAxisPosition.BOTTOM
+                                    xAxis.textColor = textColor
+                                }
+                            }, update = { lineChart ->
+                                lineChart.data = timeDataSets.dataTemperature
+                                lineChart.notifyDataSetChanged()
+                                lineChart.invalidate()
+                            })
+
+                            // pH Chart
+                            AndroidView(modifier = Modifier
+                                .fillMaxWidth()
+                                .height(chartHeight.dp), factory = { context ->
+                                LineChart(context).apply {
+                                    data = timeDataSets.datapH
+                                    description.isEnabled = false
+                                    legend.isEnabled = true
+                                    legend.textColor = textColor
+                                    axisRight.isEnabled = false
+                                    axisLeft.setDrawTopYLabelEntry(true)
+                                    xAxis.granularity = axisGranularityTime
+                                    xAxis.valueFormatter = TimeDataXAxisValueFormatter()
+                                    xAxis.position = XAxis.XAxisPosition.BOTTOM
+                                    xAxis.textColor = textColor
+                                    axisLeft.textColor = textColor
+                                }
+                            }, update = { lineChart ->
+                                lineChart.data = timeDataSets.datapH
+                                lineChart.notifyDataSetChanged()
+                                lineChart.invalidate()
+                            })
+
+                            // Conductivity chart
+                            AndroidView(modifier = Modifier
+                                .fillMaxWidth()
+                                .height(chartHeight.dp), factory = { context ->
+                                LineChart(context).apply {
+                                    data = timeDataSets.dataConductivity
+                                    description.isEnabled = false
+                                    legend.isEnabled = true
+                                    legend.textColor = textColor
+                                    axisRight.isEnabled = false
+                                    axisLeft.valueFormatter =
+                                        TimeDataYAxisMicroSievertPerCentimeterValueFormatter()
+                                    axisLeft.setDrawTopYLabelEntry(true)
+                                    xAxis.granularity = axisGranularityTime
+                                    xAxis.valueFormatter = TimeDataXAxisValueFormatter()
+                                    xAxis.position = XAxis.XAxisPosition.BOTTOM
+                                    xAxis.textColor = textColor
+                                    axisLeft.textColor = textColor
+                                }
+                            }, update = { lineChart ->
+                                lineChart.data = timeDataSets.dataConductivity
+                                lineChart.notifyDataSetChanged()
+                                lineChart.invalidate()
+                            })
+
+                            // Tank level chart
+                            AndroidView(modifier = Modifier
+                                .fillMaxWidth()
+                                .height(chartHeight.dp), factory = { context ->
+                                LineChart(context).apply {
+                                    data = timeDataSets.dataTankLevel
+                                    description.isEnabled = false
+                                    legend.isEnabled = true
+                                    legend.textColor = textColor
+                                    axisRight.isEnabled = false
+                                    axisLeft.setDrawTopYLabelEntry(true)
+                                    axisLeft.granularity = axisGranularityOnOff
+                                    axisLeft.valueFormatter = TimeDataYAxisOnOffValueFormatter()
+                                    xAxis.granularity = axisGranularityTime
+                                    xAxis.valueFormatter = TimeDataXAxisValueFormatter()
+                                    xAxis.position = XAxis.XAxisPosition.BOTTOM
+                                    xAxis.textColor = textColor
+                                    axisLeft.textColor = textColor
+                                }
+                            }, update = { lineChart ->
+                                lineChart.data = timeDataSets.dataTankLevel
+                                lineChart.notifyDataSetChanged()
+                                lineChart.invalidate()
+                            })
+
+                            // Ambient chart
+                            AndroidView(modifier = Modifier
+                                .fillMaxWidth()
+                                .height(chartHeight.dp), factory = { context ->
+                                LineChart(context).apply {
+                                    data = timeDataSets.dataAmbient
+                                    description.isEnabled = false
+                                    legend.isEnabled = true
+                                    legend.textColor = textColor
+                                    axisRight.isEnabled = true
+                                    axisRight.textColor = textColor
+                                    axisRight.valueFormatter = TimeDataYAxisPercentValueFormatter()
+                                    axisLeft.textColor = textColor
+                                    axisLeft.setDrawTopYLabelEntry(true)
+                                    axisLeft.valueFormatter =
+                                        TimeDataYAxisDegreeCelsiusValueFormatter()
+                                    xAxis.granularity = axisGranularityTime
+                                    xAxis.valueFormatter = TimeDataXAxisValueFormatter()
+                                    xAxis.position = XAxis.XAxisPosition.BOTTOM
+                                    xAxis.textColor = textColor
+                                }
+                            }, update = { lineChart ->
+                                lineChart.data = timeDataSets.dataAmbient
+                                lineChart.notifyDataSetChanged()
+                                lineChart.invalidate()
+                            })
+                        }
                     }
-
-                    // Main temperature chart
-                    AndroidView(modifier = Modifier
-                        .fillMaxWidth()
-                        .height(chartHeight.dp), factory = { context ->
-                        LineChart(context).apply {
-                            data = timeDataSets.dataTemperature
-                            description.isEnabled = false
-                            legend.isEnabled = true
-                            legend.textColor = textColor
-                            axisRight.isEnabled = true
-                            axisRight.valueFormatter = TimeDataYAxisOnOffValueFormatter()
-                            axisRight.granularity = axisGranularityOnOff
-                            axisRight.textColor = textColor
-                            axisLeft.setDrawTopYLabelEntry(true)
-                            axisLeft.valueFormatter = TimeDataYAxisDegreeCelsiusValueFormatter()
-                            axisLeft.textColor = textColor
-                            xAxis.granularity = axisGranularityTime
-                            xAxis.valueFormatter = TimeDataXAxisValueFormatter()
-                            xAxis.position = XAxis.XAxisPosition.BOTTOM
-                            xAxis.textColor = textColor
-                        }
-                    }, update = { lineChart ->
-                        lineChart.data = timeDataSets.dataTemperature
-                        lineChart.notifyDataSetChanged()
-                        lineChart.invalidate()
-                    })
-
-                    // pH Chart
-                    AndroidView(modifier = Modifier
-                        .fillMaxWidth()
-                        .height(chartHeight.dp), factory = { context ->
-                        LineChart(context).apply {
-                            data = timeDataSets.datapH
-                            description.isEnabled = false
-                            legend.isEnabled = true
-                            legend.textColor = textColor
-                            axisRight.isEnabled = false
-                            axisLeft.setDrawTopYLabelEntry(true)
-                            xAxis.granularity = axisGranularityTime
-                            xAxis.valueFormatter = TimeDataXAxisValueFormatter()
-                            xAxis.position = XAxis.XAxisPosition.BOTTOM
-                            xAxis.textColor = textColor
-                            axisLeft.textColor = textColor
-                        }
-                    }, update = { lineChart ->
-                        lineChart.data = timeDataSets.datapH
-                        lineChart.notifyDataSetChanged()
-                        lineChart.invalidate()
-                    })
-
-                    // Conductivity chart
-                    AndroidView(modifier = Modifier
-                        .fillMaxWidth()
-                        .height(chartHeight.dp), factory = { context ->
-                        LineChart(context).apply {
-                            data = timeDataSets.dataConductivity
-                            description.isEnabled = false
-                            legend.isEnabled = true
-                            legend.textColor = textColor
-                            axisRight.isEnabled = false
-                            axisLeft.valueFormatter =
-                                TimeDataYAxisMicroSievertPerCentimeterValueFormatter()
-                            axisLeft.setDrawTopYLabelEntry(true)
-                            xAxis.granularity = axisGranularityTime
-                            xAxis.valueFormatter = TimeDataXAxisValueFormatter()
-                            xAxis.position = XAxis.XAxisPosition.BOTTOM
-                            xAxis.textColor = textColor
-                            axisLeft.textColor = textColor
-                        }
-                    }, update = { lineChart ->
-                        lineChart.data = timeDataSets.dataConductivity
-                        lineChart.notifyDataSetChanged()
-                        lineChart.invalidate()
-                    })
-
-                    // Tank level chart
-                    AndroidView(modifier = Modifier
-                        .fillMaxWidth()
-                        .height(chartHeight.dp), factory = { context ->
-                        LineChart(context).apply {
-                            data = timeDataSets.dataTankLevel
-                            description.isEnabled = false
-                            legend.isEnabled = true
-                            legend.textColor = textColor
-                            axisRight.isEnabled = false
-                            axisLeft.setDrawTopYLabelEntry(true)
-                            axisLeft.granularity = axisGranularityOnOff
-                            axisLeft.valueFormatter = TimeDataYAxisOnOffValueFormatter()
-                            xAxis.granularity = axisGranularityTime
-                            xAxis.valueFormatter = TimeDataXAxisValueFormatter()
-                            xAxis.position = XAxis.XAxisPosition.BOTTOM
-                            xAxis.textColor = textColor
-                            axisLeft.textColor = textColor
-                        }
-                    }, update = { lineChart ->
-                        lineChart.data = timeDataSets.dataTankLevel
-                        lineChart.notifyDataSetChanged()
-                        lineChart.invalidate()
-                    })
-
-                    // Ambient chart
-                    AndroidView(modifier = Modifier
-                        .fillMaxWidth()
-                        .height(chartHeight.dp), factory = { context ->
-                        LineChart(context).apply {
-                            data = timeDataSets.dataAmbient
-                            description.isEnabled = false
-                            legend.isEnabled = true
-                            legend.textColor = textColor
-                            axisRight.isEnabled = true
-                            axisRight.textColor = textColor
-                            axisRight.valueFormatter = TimeDataYAxisPercentValueFormatter()
-                            axisLeft.textColor = textColor
-                            axisLeft.setDrawTopYLabelEntry(true)
-                            axisLeft.valueFormatter = TimeDataYAxisDegreeCelsiusValueFormatter()
-                            xAxis.granularity = axisGranularityTime
-                            xAxis.valueFormatter = TimeDataXAxisValueFormatter()
-                            xAxis.position = XAxis.XAxisPosition.BOTTOM
-                            xAxis.textColor = textColor
-                        }
-                    }, update = { lineChart ->
-                        lineChart.data = timeDataSets.dataAmbient
-                        lineChart.notifyDataSetChanged()
-                        lineChart.invalidate()
-                    })
                 }
+                MainDropdownMenuComposable(
+                    navHostController = navHostController,
+                    navigationRouteSource = ViewNavigationRoutes.timeData,
+                    mainViewModel = mainViewModel
+                )
             }
         }
     }
@@ -389,7 +389,7 @@ fun generateMockTimeData(): List<TimeDataSample> {
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true, heightDp = 1200, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, heightDp = 1250, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun TimeDataViewPreview() {
     TimeDataScreen(mockTimeData = generateMockTimeData())

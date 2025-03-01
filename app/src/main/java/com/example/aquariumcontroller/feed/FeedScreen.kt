@@ -1,6 +1,7 @@
 package com.example.aquariumcontroller.feed
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,6 +34,7 @@ import com.example.aquariumcontroller.feed.schedule.FeedScheduleEntryComposable
 import com.example.aquariumcontroller.feed.schedule.FeedScheduleEntryImport
 import com.example.aquariumcontroller.feed.schedule.FeedScheduleViewModel
 import com.example.aquariumcontroller.feed.schedule.FeedScheduleViewModelFactory
+import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -45,9 +47,12 @@ fun FeedScreen(
     mainViewModel: MainViewModel? = null
 ) {
     // This screen displays
+    // - headline
     // - a button for visualizing all feed events of the last 24h
     // - a button for visualizing all feed events of the last 7 days
+    // - subhead line for feed profiles
     // - feed profiles
+    // - subhead line for feed schedule
     // - feed schedule entries
     // - floating action button for adding feed profile
 
@@ -78,21 +83,11 @@ fun FeedScreen(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Scaffold { innerPadding ->
+            Box {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(innerPadding),
                 ) {
-                    MainDropdownMenuComposable(
-                        navHostController = navHostController,
-                        navigationRouteSource = ViewNavigationRoutes.feed,
-                        mainViewModel = mainViewModel
-                    )
-                    Text(
-                        text = stringResource(id = R.string.FeedControl),
-                        style = MaterialTheme.typography.headlineSmall,
-                        modifier = Modifier.padding(16.dp),
-                    )
+                    ScreenHeadlineComposable(stringResource(id = R.string.feed_control))
                     Button(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -102,7 +97,7 @@ fun FeedScreen(
                         },
                     ) {
                         Text(
-                            text = stringResource(id = R.string.ViewFeedEvents24h),
+                            text = stringResource(id = R.string.view_feed_events_24h),
                             fontSize = 16.sp
                         )
                     }
@@ -115,50 +110,58 @@ fun FeedScreen(
                         },
                     ) {
                         Text(
-                            text = stringResource(id = R.string.ViewFeedEvents7d),
+                            text = stringResource(id = R.string.view_feed_events_7d),
                             fontSize = 16.sp
                         )
                     }
-                    Surface(
-                        modifier = Modifier.fillMaxWidth(),
-                        color = MaterialTheme.colorScheme.background
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Spacer(modifier = Modifier.height(24.dp))
-                            Text(text = "Feed Profiles")
-                            LazyColumn(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp)
-                            ) {
-                                items(feedProfileViewModel.getFeedProfiles()) { feedProfile ->
-                                    FeedProfileSummaryComposable(
-                                        navHostController = navHostController,
-                                        mainViewModel = mainViewModel,
-                                        feedProfile = feedProfile,
-                                        feedProfileViewModel = feedProfileViewModel
-                                    )
+
+                    Scaffold { innerPadding ->
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.padding(innerPadding),
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Spacer(modifier = Modifier.height(24.dp))
+                                Text(text = "Feed Profiles")
+                                LazyColumn(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp)
+                                ) {
+                                    items(feedProfileViewModel.getFeedProfiles()) { feedProfile ->
+                                        FeedProfileSummaryComposable(
+                                            navHostController = navHostController,
+                                            mainViewModel = mainViewModel,
+                                            feedProfile = feedProfile,
+                                            feedProfileViewModel = feedProfileViewModel
+                                        )
+                                    }
                                 }
-                            }
-                            Spacer(modifier = Modifier.height(24.dp))
-                            Text(text = "Feed Schedule")
-                            LazyColumn(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp)
-                            ) {
-                                items(feedScheduleViewModel.getFeedScheduleEntries()) { feedScheduleEntry ->
-                                    FeedScheduleEntryComposable(
-                                        feedScheduleEntry = feedScheduleEntry,
-                                        navHostController = navHostController,
-                                        mainViewModel = mainViewModel,
-                                        feedScheduleViewModel = feedScheduleViewModel
-                                    )
+                                Spacer(modifier = Modifier.height(24.dp))
+                                Text(text = "Feed Schedule")
+                                LazyColumn(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp)
+                                ) {
+                                    items(feedScheduleViewModel.getFeedScheduleEntries()) { feedScheduleEntry ->
+                                        FeedScheduleEntryComposable(
+                                            feedScheduleEntry = feedScheduleEntry,
+                                            navHostController = navHostController,
+                                            mainViewModel = mainViewModel,
+                                            feedScheduleViewModel = feedScheduleViewModel
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
                 }
+                MainDropdownMenuComposable(
+                    navHostController = navHostController,
+                    navigationRouteSource = ViewNavigationRoutes.feed,
+                    mainViewModel = mainViewModel
+                )
             }
         }
     }

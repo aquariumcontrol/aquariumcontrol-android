@@ -1,7 +1,6 @@
 package com.example.aquariumcontroller.feed.edit
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,6 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,14 +19,14 @@ import androidx.compose.ui.unit.dp
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
-fun FeedProfileEditMenuItemComposable(feedProfileEditMenuItem: FeedProfileEditMenuItem,
-                                      feedProfileEditViewModel: FeedProfileEditViewModel? = null) {
-    if (feedProfileEditViewModel == null) {
-        Log.d("FeedProfileEditMenuItemComposable", "called without view model")
-    }
-    else {
-        Log.d("FeedProfileEditMenuItemComposable", "called with view model")
-    }
+fun FeedProfileEditMenuItemComposable(
+    feedProfileEditMenuItem: FeedProfileEditMenuItem,
+    feedProfileEditViewModel: FeedProfileEditViewModel? = null
+) {
+    // This composable displays one item of the feed profile edit menu:
+    // - text describing the actuator
+    // - switch allowing to enable/disable the actuator in the phase of the feed profile
+
     Row(
         modifier = Modifier
             .clickable {
@@ -53,27 +54,51 @@ fun FeedProfileEditMenuItemComposable(feedProfileEditMenuItem: FeedProfileEditMe
                     if (feedProfileEditViewModel != null) {
                         when (feedProfileEditMenuItem.toggleButtonType) {
                             FeedProfileEditToggleButtonType.Skimmer -> {
-                                feedProfileEditViewModel.updateSkimmer(feedProfileEditMenuItem.id, it)
+                                feedProfileEditViewModel.updateSkimmer(
+                                    feedProfileEditMenuItem.id,
+                                    it
+                                )
                             }
+
                             FeedProfileEditToggleButtonType.MainPump1 -> {
-                                feedProfileEditViewModel.updateMainPump1(feedProfileEditMenuItem.id, it)
+                                feedProfileEditViewModel.updateMainPump1(
+                                    feedProfileEditMenuItem.id,
+                                    it
+                                )
                             }
+
                             FeedProfileEditToggleButtonType.MainPump2 -> {
-                                feedProfileEditViewModel.updateMainPump2(feedProfileEditMenuItem.id, it)
+                                feedProfileEditViewModel.updateMainPump2(
+                                    feedProfileEditMenuItem.id,
+                                    it
+                                )
                             }
+
                             FeedProfileEditToggleButtonType.AuxPump1 -> {
-                                feedProfileEditViewModel.updateAuxPump1(feedProfileEditMenuItem.id, it)
+                                feedProfileEditViewModel.updateAuxPump1(
+                                    feedProfileEditMenuItem.id,
+                                    it
+                                )
                             }
+
                             FeedProfileEditToggleButtonType.AuxPump2 -> {
-                                feedProfileEditViewModel.updateAuxPump2(feedProfileEditMenuItem.id, it)
+                                feedProfileEditViewModel.updateAuxPump2(
+                                    feedProfileEditMenuItem.id,
+                                    it
+                                )
                             }
-                            null -> { /* do nothing */ }
+
+                            null -> { /* do nothing */
+                            }
                         }
                     }
                 })
         }
         if (feedProfileEditMenuItem.isNumericInput) {
-            FeedProfileEditMenuItemDurationComposable(feedProfileEditMenuItem, feedProfileEditViewModel)
+            FeedProfileEditMenuItemDurationComposable(
+                feedProfileEditMenuItem,
+                feedProfileEditViewModel
+            )
         }
     }
     if (feedProfileEditMenuItem.isExpanded.value) {
@@ -88,7 +113,6 @@ fun FeedProfileEditMenuItemComposable(feedProfileEditMenuItem: FeedProfileEditMe
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun FeedProfileEditMenuItemPreviewComposable() {
-
     val mockFeedProfileEditMenuItem = FeedProfileEditMenuItem(
         id = 1,
         level = 1,
@@ -98,8 +122,12 @@ fun FeedProfileEditMenuItemPreviewComposable() {
     )
 
     AquariumControllerTheme {
-        FeedProfileEditMenuItemComposable(
-            feedProfileEditMenuItem = mockFeedProfileEditMenuItem
-        )
+        Surface(
+            color = MaterialTheme.colorScheme.background
+        ) {
+            FeedProfileEditMenuItemComposable(
+                feedProfileEditMenuItem = mockFeedProfileEditMenuItem
+            )
+        }
     }
 }

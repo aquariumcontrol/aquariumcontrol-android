@@ -1,5 +1,6 @@
 package com.example.aquariumcontroller.feed.schedule
 
+// import com.example.aquariumcontroller.ViewNavigationRoutes will be used in future implementation
 import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
@@ -14,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -24,11 +26,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.aquariumcontroller.webapi.WebApiUrls
 import com.example.aquariumcontroller.MainViewModel
-import com.example.aquariumcontroller.webapi.WebApiPostRequest
-// import com.example.aquariumcontroller.ViewNavigationRoutes will be used in future implementation
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
+import com.example.aquariumcontroller.webapi.WebApiPostRequest
+import com.example.aquariumcontroller.webapi.WebApiUrls
 import com.example.aquariumcontroller.webapi.webApiPostRequestExecution
 
 @Composable
@@ -139,8 +140,12 @@ fun FeedScheduleEntryComposablePreview() {
     val mockFeedScheduleEntry = mockFeedScheduleEntryImport.transformToFeedScheduleEntry()
 
     AquariumControllerTheme {
-        FeedScheduleEntryComposable(
-            feedScheduleEntry = mockFeedScheduleEntry
-        )
+        Surface(
+            color = MaterialTheme.colorScheme.background
+        ) {
+            FeedScheduleEntryComposable(
+                feedScheduleEntry = mockFeedScheduleEntry
+            )
+        }
     }
 }
