@@ -149,7 +149,7 @@ fun FeedProfileEditScreen(
 
 @Preview(showBackground = true, heightDp = 1100, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun FeedViewPreview() {
+fun FeedProfileEditScreenPreview() {
     val mockFeedProfileImport = FeedProfileImport()
     mockFeedProfileImport.profileId = 1
     mockFeedProfileImport.profileName = "Test Profile"

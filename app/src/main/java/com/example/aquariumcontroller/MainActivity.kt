@@ -1,6 +1,5 @@
 package com.example.aquariumcontroller
 
-import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -24,7 +23,9 @@ import com.example.aquariumcontroller.controller.ControllerEditScreen
 import com.example.aquariumcontroller.controller.ControllerProfileDatabase
 import com.example.aquariumcontroller.controller.ControllerSelectionScreen
 import com.example.aquariumcontroller.controller.ControllerViewModel
+import com.example.aquariumcontroller.feed.FeedProfileViewModel
 import com.example.aquariumcontroller.feed.FeedScreen
+import com.example.aquariumcontroller.feed.add.FeedProfileAddScreen
 import com.example.aquariumcontroller.feed.edit.FeedProfileEditScreen
 import com.example.aquariumcontroller.feed.history.FeedHistoryScreen
 import com.example.aquariumcontroller.feed.schedule.FeedProfileScheduleScreen
@@ -75,9 +76,19 @@ class MainActivity : ComponentActivity() {
         }
     )
 
+    private val feedProfileViewModel by viewModels<FeedProfileViewModel>(
+        factoryProducer = {
+            object : ViewModelProvider.Factory {
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return FeedProfileViewModel() as T
+                }
+            }
+        }
+    )
+
     override fun onPause() {
         super.onPause()
-        val sharedPrefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val sharedPrefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
         with(sharedPrefs.edit()) {
             Log.d("MainActivity", "Saving default profile id: ${mainViewModel.getDefaultControllerProfileId()}")
             putLong(KEY_DEFAULT_PROFILE_ID, mainViewModel.getDefaultControllerProfileId())
@@ -89,7 +100,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val sharedPrefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val sharedPrefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
         val defaultProfileId = sharedPrefs.getLong(KEY_DEFAULT_PROFILE_ID, -1) // -1 for no default
         mainViewModel.setDefaultControllerProfileId(defaultProfileId)
 
@@ -130,7 +141,8 @@ class MainActivity : ComponentActivity() {
                     composable(ViewNavigationRoutes.feed) {
                         FeedScreen(
                             navHostController = navHostController,
-                            mainViewModel = mainViewModel
+                            mainViewModel = mainViewModel,
+                            myFeedProfileViewModel = feedProfileViewModel
                         )
                     }
                     composable(ViewNavigationRoutes.feedHistory24h) {
@@ -152,6 +164,13 @@ class MainActivity : ComponentActivity() {
                             navHostController = navHostController,
                             mainViewModel = mainViewModel,
                             feedProfile = mainViewModel.getMySelectedFeedProfile()!!
+                        )
+                    }
+                    composable(ViewNavigationRoutes.feedAddProfile) {
+                        FeedProfileAddScreen(
+                            navHostController = navHostController,
+                            mainViewModel = mainViewModel,
+                            myFeedProfileViewModel = feedProfileViewModel
                         )
                     }
                     composable(ViewNavigationRoutes.feedSchedule) {

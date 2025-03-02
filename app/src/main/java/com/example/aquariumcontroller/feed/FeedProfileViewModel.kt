@@ -8,7 +8,7 @@ import com.example.aquariumcontroller.webapi.WebApiUrls
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class FeedProfileViewModel(myFeedProfiles: List<FeedProfile>?) :
+class FeedProfileViewModel(myFeedProfiles: List<FeedProfile>? = null) :
     ViewModel() {
     private var _feedProfiles = mutableStateOf<List<FeedProfile>?>(null)
 
@@ -43,6 +43,7 @@ class FeedProfileViewModel(myFeedProfiles: List<FeedProfile>?) :
         val currentList = _feedProfiles.value.orEmpty().toMutableList()
         currentList.remove(feedProfile)
         _feedProfiles.value = currentList
+        feedProfiles.value = currentList
     }
 
     fun addFeedProfile(feedProfile: FeedProfile) {
@@ -50,5 +51,6 @@ class FeedProfileViewModel(myFeedProfiles: List<FeedProfile>?) :
         val currentList = _feedProfiles.value.orEmpty().toMutableList()
         currentList.add(feedProfile)
         _feedProfiles.value = currentList
+        feedProfiles.value = currentList
     }
 }

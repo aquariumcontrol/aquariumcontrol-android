@@ -12,6 +12,7 @@ import com.example.aquariumcontroller.feed.schedule.FeedScheduleEntry
 
 class MainViewModel: ViewModel() {
     private var defaultControllerProfileId: Long = 0
+    private var selectedFeedScheduleEntry: FeedScheduleEntry? by mutableStateOf(null)
 
     fun getDefaultControllerProfileId(): Long {
         //Log.d("MainViewModel", "Getting default controller profile id: $defaultControllerProfileId")
@@ -81,6 +82,4 @@ class MainViewModel: ViewModel() {
     fun updateSelectedFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry?) {
         selectedFeedScheduleEntry = feedScheduleEntry
     }
-
-    private var selectedFeedScheduleEntry: FeedScheduleEntry? by mutableStateOf(null)
 }

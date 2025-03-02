@@ -5,6 +5,7 @@ object ViewNavigationRoutes {
     var feedHistory24h = "feedHistory24h"
     var feedHistory7d = "feedHistory7d"
     var feedEdit = "feedEdit"
+    var feedAddProfile = "feedAdd"
     var feedSchedule = "feedSchedule"
     var balling = "balling"
     var ballingHistory24h = "ballingHistory24h"

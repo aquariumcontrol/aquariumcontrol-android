@@ -10,9 +10,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
@@ -34,6 +36,7 @@ import com.example.aquariumcontroller.feed.schedule.FeedScheduleEntryComposable
 import com.example.aquariumcontroller.feed.schedule.FeedScheduleEntryImport
 import com.example.aquariumcontroller.feed.schedule.FeedScheduleViewModel
 import com.example.aquariumcontroller.feed.schedule.FeedScheduleViewModelFactory
+import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
 import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import kotlinx.coroutines.Dispatchers
@@ -44,7 +47,8 @@ fun FeedScreen(
     navHostController: NavHostController? = null,
     mockFeedProfiles: List<FeedProfile>? = null,
     mockFeedScheduleEntries: List<FeedScheduleEntry>? = null,
-    mainViewModel: MainViewModel? = null
+    mainViewModel: MainViewModel? = null,
+    myFeedProfileViewModel: FeedProfileViewModel? = null
 ) {
     // This screen displays
     // - headline
@@ -61,10 +65,11 @@ fun FeedScreen(
         factory = FeedScheduleViewModelFactory(feedScheduleEntries = mockFeedScheduleEntries)
     )
 
-    // instantiate view model with null pointer except if mock data is provided
-    val feedProfileViewModel: FeedProfileViewModel = viewModel(
-        factory = FeedProfileViewModelFactory(feedProfiles = mockFeedProfiles)
-    )
+    // instantiate a new view model if there is no view model provided as parameter
+    val feedProfileViewModel: FeedProfileViewModel = myFeedProfileViewModel
+        ?: viewModel(
+            factory = FeedProfileViewModelFactory(feedProfiles = mockFeedProfiles)
+        )
 
     if (mainViewModel != null) {
         LaunchedEffect(Unit) {
@@ -78,7 +83,6 @@ fun FeedScreen(
     }
 
     AquariumControllerTheme {
-        // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
@@ -115,43 +119,52 @@ fun FeedScreen(
                         )
                     }
 
-                    Scaffold { innerPadding ->
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.padding(innerPadding),
-                        ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Spacer(modifier = Modifier.height(24.dp))
-                                Text(text = "Feed Profiles")
-                                LazyColumn(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp)
-                                ) {
-                                    items(feedProfileViewModel.getFeedProfiles()) { feedProfile ->
-                                        FeedProfileSummaryComposable(
-                                            navHostController = navHostController,
-                                            mainViewModel = mainViewModel,
-                                            feedProfile = feedProfile,
-                                            feedProfileViewModel = feedProfileViewModel
-                                        )
-                                    }
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.padding(16.dp),
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Spacer(modifier = Modifier.height(24.dp))
+                            Text(text = "Feed Profiles")
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp)
+                            ) {
+                                items(feedProfileViewModel.getFeedProfiles()) { feedProfile ->
+                                    FeedProfileSummaryComposable(
+                                        navHostController = navHostController,
+                                        mainViewModel = mainViewModel,
+                                        feedProfile = feedProfile,
+                                        feedProfileViewModel = feedProfileViewModel
+                                    )
                                 }
-                                Spacer(modifier = Modifier.height(24.dp))
-                                Text(text = "Feed Schedule")
-                                LazyColumn(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp)
-                                ) {
-                                    items(feedScheduleViewModel.getFeedScheduleEntries()) { feedScheduleEntry ->
-                                        FeedScheduleEntryComposable(
-                                            feedScheduleEntry = feedScheduleEntry,
-                                            navHostController = navHostController,
-                                            mainViewModel = mainViewModel,
-                                            feedScheduleViewModel = feedScheduleViewModel
-                                        )
-                                    }
+                            }
+                            FloatingActionButton(
+                                onClick = {
+                                    navHostController?.navigate(ViewNavigationRoutes.feedAddProfile)
+                                },
+                                modifier = Modifier.padding(16.dp).align(Alignment.End)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Add,
+                                    contentDescription = "Create New Profile"
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(24.dp))
+                            Text(text = "Feed Schedule")
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp)
+                            ) {
+                                items(feedScheduleViewModel.getFeedScheduleEntries()) { feedScheduleEntry ->
+                                    FeedScheduleEntryComposable(
+                                        feedScheduleEntry = feedScheduleEntry,
+                                        navHostController = navHostController,
+                                        mainViewModel = mainViewModel,
+                                        feedScheduleViewModel = feedScheduleViewModel
+                                    )
                                 }
                             }
                         }

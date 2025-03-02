@@ -50,4 +50,6 @@
     <string name="heating_stats_ambient_temperature_c">Ambient temperature [°C]</string>
     <string name="water_temperature_c">Water temperature [°C]</string>
     <string name="refill_log">Refill Log</string>
+    <string name="add_feed_profile">Add feed profile</string>
+    <string name="feed_profile_add">Add feed profile</string>
 </resources>
