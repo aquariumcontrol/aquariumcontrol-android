@@ -52,10 +52,6 @@ fun ControllerProfileComposable(
     
     // use either stored profile id to check if profile is default profile or use mock data for preview
     val isDefaultProfile: Boolean = if (mainViewModel != null) {
-        Log.d(
-            "ControllerProfileComposable",
-            "mainViewModel.getDefaultControllerProfileId() = ${mainViewModel.getDefaultControllerProfileId()} controllerProfile.id = ${controllerProfile.id}"
-        )
         mainViewModel.getDefaultControllerProfileId() == controllerProfile.id
     } else {
         mockIsDefaultProfile

@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
     // This class represents the view model for the controller screen.
-    private val _controllerProfiles = dao.getAllControllerProfiles()
+    private var _controllerProfiles = dao.getAllControllerProfiles()
     private val _state = MutableStateFlow(ControllerState())
 
     val state = combine(_state, _controllerProfiles) { state, controllerProfileList ->
@@ -140,6 +140,13 @@ class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
                         controllerProfileUser = event.controllerProfile.user,
                         controllerProfilePassword = event.controllerProfile.password,
                     )
+                }
+            }
+
+            is ControllerEvent.LoadControllerProfiles -> {
+                viewModelScope.launch {
+                    // Fetch the controller profiles from the database
+                    _controllerProfiles = dao.getAllControllerProfiles()
                 }
             }
         }

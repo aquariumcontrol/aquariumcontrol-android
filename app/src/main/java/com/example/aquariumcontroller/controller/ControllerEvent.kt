@@ -8,6 +8,7 @@ sealed interface ControllerEvent {
 
     data object AddControllerProfile : ControllerEvent
     data object UpdateControllerProfile : ControllerEvent
+    data object LoadControllerProfiles : ControllerEvent
 
     data class DeleteControllerProfile(val controllerProfile: ControllerProfile): ControllerEvent
     data class SetControllerProfileName(val controllerProfileName: String) : ControllerEvent

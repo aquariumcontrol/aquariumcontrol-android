@@ -26,5 +26,4 @@ data class ControllerProfile(
 
     @ColumnInfo(name = "password")
     var password: String = "null",
-) : Serializable {
-}
+) : Serializable

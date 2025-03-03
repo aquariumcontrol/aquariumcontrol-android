@@ -11,6 +11,7 @@ import com.example.aquariumcontroller.feed.FeedProfile
 import com.example.aquariumcontroller.feed.schedule.FeedScheduleEntry
 
 class MainViewModel: ViewModel() {
+    private var selectedController: ControllerProfile? by mutableStateOf(null)
     private var defaultControllerProfileId: Long = 0
     private var selectedFeedScheduleEntry: FeedScheduleEntry? by mutableStateOf(null)
 
@@ -56,8 +57,6 @@ class MainViewModel: ViewModel() {
     fun getControllerName(): String? {
         return selectedController?.name
     }
-
-    private var selectedController: ControllerProfile? by mutableStateOf(null)
 
     fun getMySelectedBallingProfile(): BallingProfile? {
         return selectedBallingProfile

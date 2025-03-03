@@ -1,6 +1,7 @@
 package com.example.aquariumcontroller.controller
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +17,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -28,6 +36,10 @@ import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.withContext
 
 @Composable
 fun ControllerSelectionScreen(
@@ -40,7 +52,57 @@ fun ControllerSelectionScreen(
     // - headline
     // - list of controller profiles
     // - floating action button to add new controller profile
-    
+
+    var progress by remember { mutableFloatStateOf(1f) }
+    var userInteracted by remember { mutableStateOf(false) }
+    val defaultProfileId = mainViewModel?.getDefaultControllerProfileId() ?: -1L
+    var isDataLoaded by remember { mutableStateOf(false) } // Flag to track data loading
+
+    // Trigger data loading when the screen is composed
+    LaunchedEffect(key1 = Unit) {
+        // This will trigger the database read operation in your ViewModel
+        // Make sure your ViewModel updates the 'state.controllerProfileList' when the data is loaded
+        onEvent(ControllerEvent.LoadControllerProfiles)
+        delay(100) // delay for data loading
+        isDataLoaded = true
+    }
+
+    // Countdown and navigation logic
+    LaunchedEffect(key1 = isDataLoaded) {
+        if (isDataLoaded && defaultProfileId > 0 && !userInteracted) {
+            for (i in 1..3) {
+                delay(1000)
+                Log.d("ControllerSelectionScreen", "Countdown: $i")
+                progress -= 0.2f
+            }
+            if (!userInteracted) {
+                val defaultProfile =
+                    state.controllerProfileList.firstOrNull { it.id == defaultProfileId }
+                if (defaultProfile != null) {
+                    Log.d(
+                        "ControllerSelectionScreen",
+                        "Default profile found: ${defaultProfile.name}"
+                    )
+                    withContext(Dispatchers.Main) { // Switch to the main thread
+                        mainViewModel?.updateSelectedControllerProfile(defaultProfile)
+                        navHostController?.navigate(ViewNavigationRoutes.overView)
+                    }
+                } else {
+                    Log.d(
+                        "ControllerSelectionScreen",
+                        "Default profile $defaultProfileId not found"
+                    )
+                    if (state.controllerProfileList.isEmpty()) {
+                        Log.d(
+                            "ControllerSelectionScreen",
+                            "controller profile list is empty."
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     AquariumControllerTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
