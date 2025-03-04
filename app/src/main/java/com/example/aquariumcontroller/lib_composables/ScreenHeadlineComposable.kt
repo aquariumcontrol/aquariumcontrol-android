@@ -31,7 +31,9 @@ fun FeedScreenPreview() {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
-            ScreenHeadlineComposable(text = "PreviewTest Headline")
+            ScreenHeadlineComposable(
+                text = "PreviewTest Headline"
+            )
         }
     }
 }

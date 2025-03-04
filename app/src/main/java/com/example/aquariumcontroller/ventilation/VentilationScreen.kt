@@ -108,7 +108,9 @@ fun VentilationScreen(
         ) {
             Box {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    ScreenHeadlineComposable(text = stringResource(R.string.ventilation_control))
+                    ScreenHeadlineComposable(
+                        text = stringResource(R.string.ventilation_control)
+                    )
                     Scaffold { innerPadding ->
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,

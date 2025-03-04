@@ -53,7 +53,9 @@ fun ControllerAddScreen(
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    ScreenHeadlineComposable(text =  stringResource(id = R.string.add_profile))
+                    ScreenHeadlineComposable(
+                        text =  stringResource(id = R.string.add_profile)
+                    )
 
                     OutlinedTextField(
                         value = state.controllerProfileName,

@@ -60,7 +60,9 @@ fun RefillScreen(
         ) {
             Box {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    ScreenHeadlineComposable(text = stringResource(id = R.string.refill_control))
+                    ScreenHeadlineComposable(
+                        text = stringResource(id = R.string.refill_control)
+                    )
                     Scaffold(
                     ) { innerPadding ->
                         Column(

@@ -111,7 +111,9 @@ fun TimeDataScreen(
         ) {
             Box {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    ScreenHeadlineComposable(text = stringResource(id = R.string.time_data_series))
+                    ScreenHeadlineComposable(
+                        text = stringResource(id = R.string.time_data_series)
+                    )
                     Box(
                         modifier = Modifier.pullRefresh(pullRefreshState),
                         contentAlignment = Alignment.Center

@@ -91,7 +91,9 @@ fun FeedScreen(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    ScreenHeadlineComposable(stringResource(id = R.string.feed_control))
+                    ScreenHeadlineComposable(
+                        stringResource(id = R.string.feed_control)
+                    )
                     Button(
                         modifier = Modifier
                             .fillMaxWidth()

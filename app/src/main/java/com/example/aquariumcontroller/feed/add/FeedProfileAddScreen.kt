@@ -71,7 +71,9 @@ fun FeedProfileAddScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    ScreenHeadlineComposable(text = stringResource(id = R.string.feed_profile_add))
+                    ScreenHeadlineComposable(
+                        text = stringResource(id = R.string.feed_profile_add)
+                    )
 
                     FeedProfileAddNameEditableOutlinedFieldComposable(
                         onFeedProfileNameChange = {

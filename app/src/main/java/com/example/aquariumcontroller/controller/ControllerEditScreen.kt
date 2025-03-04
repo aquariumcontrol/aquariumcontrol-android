@@ -77,7 +77,9 @@ fun ControllerEditScreen(
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    ScreenHeadlineComposable(text = stringResource(id = R.string.edit_profile))
+                    ScreenHeadlineComposable(
+                        text = stringResource(id = R.string.edit_profile)
+                    )
 
                     OutlinedTextField(
                         value = state.controllerProfileName,

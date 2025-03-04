@@ -145,7 +145,9 @@ fun OverviewScreen(
                     modifier = Modifier.padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    ScreenHeadlineComposable(text = stringResource(id = R.string.overview))
+                    ScreenHeadlineComposable(
+                        text = stringResource(id = R.string.overview)
+                    )
                     Box(
                         modifier = Modifier
                             .pullRefresh(pullRefreshState)

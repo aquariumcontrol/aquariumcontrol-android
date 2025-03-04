@@ -88,7 +88,9 @@ fun FeedProfileScheduleScreen(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    ScreenHeadlineComposable(text = stringResource(R.string.feed_scheduling))
+                    ScreenHeadlineComposable(
+                        text = stringResource(R.string.feed_scheduling)
+                    )
 
                     // Get the initial date and time from the timestamp
                     val initialCalendar = Calendar.getInstance(Locale.getDefault()).apply {

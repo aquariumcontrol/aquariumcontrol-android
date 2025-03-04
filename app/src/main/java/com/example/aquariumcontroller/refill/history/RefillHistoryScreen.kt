@@ -112,7 +112,9 @@ fun RefillHistoryScreen(
         ) {
             Box {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    ScreenHeadlineComposable(stringResource(R.string.refill_log))
+                    ScreenHeadlineComposable(
+                        stringResource(R.string.refill_log)
+                    )
                     val subHeadlineText: String =
                         if (showFullWeek) {
                             stringResource(R.string.refill_events_last_7d)

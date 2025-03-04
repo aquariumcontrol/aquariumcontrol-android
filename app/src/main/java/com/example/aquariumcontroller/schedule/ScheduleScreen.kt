@@ -138,7 +138,9 @@ fun ScheduleScreen(
         ) {
             Box {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    ScreenHeadlineComposable(text = stringResource(R.string.actuator_schedule))
+                    ScreenHeadlineComposable(
+                        text = stringResource(R.string.actuator_schedule)
+                    )
                     Scaffold { innerPadding ->
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,

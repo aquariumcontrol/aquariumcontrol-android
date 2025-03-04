@@ -69,7 +69,9 @@ fun FeedProfileEditScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.verticalScroll(rememberScrollState())
                 ) {
-                    ScreenHeadlineComposable(text = stringResource(id = R.string.feed_profile_editing))
+                    ScreenHeadlineComposable(
+                        text = stringResource(id = R.string.feed_profile_editing)
+                    )
 
                     FeedProfileDisplayComposable(feedProfileEditViewModel = feedProfileEditViewModel)
 

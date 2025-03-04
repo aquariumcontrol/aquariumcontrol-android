@@ -128,7 +128,9 @@ fun HeatingScreen(
         ) {
             Box {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    ScreenHeadlineComposable(text = stringResource(id = R.string.heating_control))
+                    ScreenHeadlineComposable(
+                        text = stringResource(id = R.string.heating_control)
+                    )
                     Scaffold { innerPadding ->
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,

@@ -118,7 +118,9 @@ fun BallingHistoryScreen(
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    ScreenHeadlineComposable(text = stringResource(R.string.balling_log))
+                    ScreenHeadlineComposable(
+                        text = stringResource(R.string.balling_log)
+                    )
                     val subHeadlineText: String =
                         if (showFullWeek) {
                             stringResource(R.string.balling_events_last_7d)

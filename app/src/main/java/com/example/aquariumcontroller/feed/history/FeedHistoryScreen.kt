@@ -115,7 +115,9 @@ fun FeedHistoryScreen(
                             .padding(innerPadding),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        ScreenHeadlineComposable(text = stringResource(R.string.feed_log))
+                        ScreenHeadlineComposable(
+                            text = stringResource(R.string.feed_log)
+                        )
 
                         val subHeadlineText: String =
                             if (showFullWeek) {

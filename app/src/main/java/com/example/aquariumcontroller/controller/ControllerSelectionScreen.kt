@@ -5,10 +5,12 @@ import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
@@ -16,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,22 +26,20 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
+import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
 import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.withContext
 
 @Composable
@@ -47,13 +48,14 @@ fun ControllerSelectionScreen(
     state: ControllerState,
     onEvent: (ControllerEvent) -> Unit,
     mainViewModel: MainViewModel? = null,
+    mockProgress: Float? = null
 ) {
     // This screen displays:
     // - headline
     // - list of controller profiles
     // - floating action button to add new controller profile
 
-    var progress by remember { mutableFloatStateOf(1f) }
+    var progress by remember { mutableFloatStateOf(0f) }
     var userInteracted by remember { mutableStateOf(false) }
     val defaultProfileId = mainViewModel?.getDefaultControllerProfileId() ?: -1L
     var isDataLoaded by remember { mutableStateOf(false) } // Flag to track data loading
@@ -69,11 +71,11 @@ fun ControllerSelectionScreen(
 
     // Countdown and navigation logic
     LaunchedEffect(key1 = isDataLoaded) {
-        if (isDataLoaded && defaultProfileId > 0 && !userInteracted) {
-            for (i in 1..3) {
-                delay(1000)
-                Log.d("ControllerSelectionScreen", "Countdown: $i")
-                progress -= 0.2f
+        if (isDataLoaded && defaultProfileId > 0 && !userInteracted && mainViewModel?.isFirstLoad() != false) {
+            // fine grained progressbar for visualization
+            for (i in 1..40) {
+                delay(100)
+                progress += 0.025f
             }
             if (!userInteracted) {
                 val defaultProfile =
@@ -83,20 +85,10 @@ fun ControllerSelectionScreen(
                         "ControllerSelectionScreen",
                         "Default profile found: ${defaultProfile.name}"
                     )
+                    mainViewModel?.setFirstLoad()
                     withContext(Dispatchers.Main) { // Switch to the main thread
                         mainViewModel?.updateSelectedControllerProfile(defaultProfile)
                         navHostController?.navigate(ViewNavigationRoutes.overView)
-                    }
-                } else {
-                    Log.d(
-                        "ControllerSelectionScreen",
-                        "Default profile $defaultProfileId not found"
-                    )
-                    if (state.controllerProfileList.isEmpty()) {
-                        Log.d(
-                            "ControllerSelectionScreen",
-                            "controller profile list is empty."
-                        )
                     }
                 }
             }
@@ -113,6 +105,20 @@ fun ControllerSelectionScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     ScreenHeadlineComposable(text = stringResource(id = R.string.list_of_controllers))
+
+                    // Progress bar at the top
+                    if (mockProgress != null || (isDataLoaded && !userInteracted && mainViewModel?.isFirstLoad() != false)) {
+                        // Only show if
+                        // - in preview
+                        // - data is loaded and no user interaction
+                        Text(text = "Loading default profile...")
+                        LinearProgressIndicator(
+                            progress = { progress },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                        )
+                    }
 
                     Scaffold(
                         floatingActionButton = {
@@ -192,6 +198,7 @@ fun ControllerSelectionScreenPreview() {
     ControllerSelectionScreen(
         state = mockControllerState,
         onEvent = {},
+        mockProgress = 0.3f
     )
 }
 

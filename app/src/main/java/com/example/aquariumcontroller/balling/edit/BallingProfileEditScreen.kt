@@ -85,7 +85,9 @@ fun BallingProfileEditScreen(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    ScreenHeadlineComposable(text = stringResource(id = R.string.balling_dosing))
+                    ScreenHeadlineComposable(
+                        text = stringResource(id = R.string.balling_dosing)
+                    )
                     Spacer(modifier = Modifier.size(10.dp))
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,

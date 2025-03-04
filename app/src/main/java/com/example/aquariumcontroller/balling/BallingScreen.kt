@@ -68,7 +68,9 @@ fun BallingScreen(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    ScreenHeadlineComposable(text = stringResource(id = R.string.balling_dosing))
+                    ScreenHeadlineComposable(
+                        text = stringResource(id = R.string.balling_dosing)
+                    )
                     Button(
                         modifier = Modifier
                             .fillMaxWidth()

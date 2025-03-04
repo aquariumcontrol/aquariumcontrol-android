@@ -14,6 +14,7 @@ class MainViewModel: ViewModel() {
     private var selectedController: ControllerProfile? by mutableStateOf(null)
     private var defaultControllerProfileId: Long = 0
     private var selectedFeedScheduleEntry: FeedScheduleEntry? by mutableStateOf(null)
+    private var firstLoad: Boolean = true
 
     fun getDefaultControllerProfileId(): Long {
         //Log.d("MainViewModel", "Getting default controller profile id: $defaultControllerProfileId")
@@ -80,5 +81,13 @@ class MainViewModel: ViewModel() {
 
     fun updateSelectedFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry?) {
         selectedFeedScheduleEntry = feedScheduleEntry
+    }
+
+    fun isFirstLoad(): Boolean {
+        return firstLoad
+    }
+
+    fun setFirstLoad() {
+        firstLoad = false
     }
 }
