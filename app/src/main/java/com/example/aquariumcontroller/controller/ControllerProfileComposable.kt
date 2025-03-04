@@ -74,6 +74,7 @@ fun ControllerProfileComposable(
                 .weight(1f)
                 .clickable {
                     if (mainViewModel != null) {
+                        mainViewModel.setFirstLoad()
                         mainViewModel.updateSelectedControllerProfile(controllerProfile)
                         navHostController?.navigate(ViewNavigationRoutes.overView)
                     }

@@ -56,7 +56,6 @@ fun ControllerSelectionScreen(
     // - floating action button to add new controller profile
 
     var progress by remember { mutableFloatStateOf(0f) }
-    var userInteracted by remember { mutableStateOf(false) }
     val defaultProfileId = mainViewModel?.getDefaultControllerProfileId() ?: -1L
     var isDataLoaded by remember { mutableStateOf(false) } // Flag to track data loading
 
@@ -71,25 +70,23 @@ fun ControllerSelectionScreen(
 
     // Countdown and navigation logic
     LaunchedEffect(key1 = isDataLoaded) {
-        if (isDataLoaded && defaultProfileId > 0 && !userInteracted && mainViewModel?.isFirstLoad() != false) {
+        if (isDataLoaded && defaultProfileId > 0 && mainViewModel?.isFirstLoad() != false) {
             // fine grained progressbar for visualization
             for (i in 1..40) {
                 delay(100)
                 progress += 0.025f
             }
-            if (!userInteracted) {
-                val defaultProfile =
-                    state.controllerProfileList.firstOrNull { it.id == defaultProfileId }
-                if (defaultProfile != null) {
-                    Log.d(
-                        "ControllerSelectionScreen",
-                        "Default profile found: ${defaultProfile.name}"
-                    )
-                    mainViewModel?.setFirstLoad()
-                    withContext(Dispatchers.Main) { // Switch to the main thread
-                        mainViewModel?.updateSelectedControllerProfile(defaultProfile)
-                        navHostController?.navigate(ViewNavigationRoutes.overView)
-                    }
+            val defaultProfile =
+                state.controllerProfileList.firstOrNull { it.id == defaultProfileId }
+            if (defaultProfile != null) {
+                Log.d(
+                    "ControllerSelectionScreen",
+                    "Default profile found: ${defaultProfile.name}"
+                )
+                mainViewModel?.setFirstLoad()
+                withContext(Dispatchers.Main) { // Switch to the main thread
+                    mainViewModel?.updateSelectedControllerProfile(defaultProfile)
+                    navHostController?.navigate(ViewNavigationRoutes.overView)
                 }
             }
         }
@@ -107,7 +104,7 @@ fun ControllerSelectionScreen(
                     ScreenHeadlineComposable(text = stringResource(id = R.string.list_of_controllers))
 
                     // Progress bar at the top
-                    if (mockProgress != null || (isDataLoaded && !userInteracted && mainViewModel?.isFirstLoad() != false)) {
+                    if (mockProgress != null || (isDataLoaded && mainViewModel?.isFirstLoad() != false)) {
                         // Only show if
                         // - in preview
                         // - data is loaded and no user interaction
