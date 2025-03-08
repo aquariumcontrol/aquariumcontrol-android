@@ -25,7 +25,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import com.example.aquariumcontroller.webapi.WebApiPostRequest
@@ -34,7 +33,6 @@ import com.example.aquariumcontroller.webapi.webApiPostRequestExecution
 
 @Composable
 fun FeedScheduleEntryComposable(
-    navHostController: NavHostController? = null,   // for future implementation
     mainViewModel: MainViewModel? = null,
     feedScheduleEntry: FeedScheduleEntry,
     feedScheduleViewModel: FeedScheduleViewModel? = null
@@ -129,6 +127,7 @@ fun FeedScheduleEntryComposable(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 fun FeedScheduleEntryComposablePreview() {
     val mockFeedScheduleEntryImport = FeedScheduleEntryImport(

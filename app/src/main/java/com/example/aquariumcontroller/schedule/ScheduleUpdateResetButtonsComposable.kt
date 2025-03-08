@@ -1,0 +1,103 @@
+package com.example.aquariumcontroller.schedule
+
+import android.content.res.Configuration
+import android.widget.Toast
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.aquariumcontroller.MainViewModel
+import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
+import com.example.aquariumcontroller.webapi.WebApiPostRequest
+import com.example.aquariumcontroller.webapi.WebApiUrls
+import com.example.aquariumcontroller.webapi.webApiPostRequestExecution
+
+@Composable
+fun ScheduleUpdateResetButtonsComposable(
+    ballingScheduleSetValsViewModel: ScheduleSetValsViewModel? = null,
+    refillScheduleSetValsViewModel: ScheduleSetValsViewModel? = null,
+    ventilationScheduleSetValsViewModel: ScheduleSetValsViewModel? = null,
+    heatingScheduleSetValsViewModel: ScheduleSetValsViewModel? = null,
+    scheduleSetVals: ScheduleSetVals? = null,
+    mainViewModel: MainViewModel? = null
+) {
+    val coroutineScope = rememberCoroutineScope()
+
+    val webApiPostRequest = WebApiPostRequest()
+
+    val context = LocalContext.current // context for web API request and Toasts
+
+    Button(
+        onClick = {
+            if (ballingScheduleSetValsViewModel != null &&
+                refillScheduleSetValsViewModel != null &&
+                ventilationScheduleSetValsViewModel != null &&
+                heatingScheduleSetValsViewModel != null
+            ) {
+
+                ballingScheduleSetValsViewModel.updateValues()
+                refillScheduleSetValsViewModel.updateValues()
+                ventilationScheduleSetValsViewModel.updateValues()
+                heatingScheduleSetValsViewModel.updateValues()
+
+                scheduleSetVals?.updateFromViewModels(
+                    ballingScheduleSetValsViewModel,
+                    refillScheduleSetValsViewModel,
+                    ventilationScheduleSetValsViewModel,
+                    heatingScheduleSetValsViewModel
+                )
+                if (mainViewModel != null) {
+                    webApiPostRequestExecution(
+                        mainViewModel = mainViewModel,
+                        apiUrl = WebApiUrls.ACTUATOR_SCHEDULE_POST_UPDATE,
+                        coroutineScope = coroutineScope,
+                        webApiPostRequest = webApiPostRequest,
+                        context = context,
+                        optionalGetParams = scheduleSetVals?.getApiParams() ?: emptyMap(),
+                    )
+                    // Show the Toast after the API call
+                    Toast.makeText(
+                        context,
+                        "Sent request to controller for updating schedule set values",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    ) {
+        Text(text = "Update actuator schedules")
+    }
+    Spacer(modifier = Modifier.width(10.dp))
+    Button(
+        onClick = {
+            ballingScheduleSetValsViewModel?.resetValues()
+            refillScheduleSetValsViewModel?.resetValues()
+            ventilationScheduleSetValsViewModel?.resetValues()
+            heatingScheduleSetValsViewModel?.resetValues()
+        }
+    ) {
+        Text(text = "Reset actuator schedules")
+    }
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun ScheduleUpdateResetButtonsComposablePreview() {
+    AquariumControllerTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                ScheduleUpdateResetButtonsComposable()
+            }
+        }
+    }
+}

@@ -1,4 +1,6 @@
+import android.content.res.Configuration
 import androidx.compose.foundation.clickable
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -9,6 +11,8 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
 fun HyperlinkText(text: String, url: String, textAlign: TextAlign? = null) {
@@ -27,4 +31,15 @@ fun HyperlinkText(text: String, url: String, textAlign: TextAlign? = null) {
         textAlign = textAlign,
         modifier = Modifier.clickable { uriHandler.openUri(url) }
     )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+fun HyperlinkTextPreview() {
+    AquariumControllerTheme {
+        Surface {
+            HyperlinkText(text = "Click here", url = "https://www.google.com")
+        }
+    }
 }

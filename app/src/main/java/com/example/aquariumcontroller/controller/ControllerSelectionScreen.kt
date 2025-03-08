@@ -10,11 +10,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -35,7 +35,7 @@ import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
-import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
+import com.example.aquariumcontroller.maindropdownmenu.MainDropdownMenuComposable
 import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import kotlinx.coroutines.Dispatchers
@@ -166,6 +166,17 @@ fun ControllerSelectionScreen(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    device = "spec:width=600dp,height=600dp,orientation=landscape"
+)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=600dp,height=600dp,orientation=landscape"
+)
 @Composable
 fun ControllerSelectionScreenPreview() {
     val mockControllerProfile1 = ControllerProfile(

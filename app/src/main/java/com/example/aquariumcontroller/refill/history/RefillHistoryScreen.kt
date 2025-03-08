@@ -1,7 +1,6 @@
 package com.example.aquariumcontroller.refill.history
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,13 +34,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.aquariumcontroller.webapi.WebApiUrls
-import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
+import com.example.aquariumcontroller.maindropdownmenu.MainDropdownMenuComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
+import com.example.aquariumcontroller.webapi.WebApiUrls
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -65,7 +64,7 @@ fun RefillHistoryScreen(
     var refillEvents by remember { mutableStateOf(mockRefillEvents) }
     var isRefreshing by remember {
         mutableStateOf(
-            mockRefillEvents?.isNotEmpty() ?: false
+            value = mockRefillEvents?.isNotEmpty() ?: false
         )
     }
     val isControllerLoaded = mainViewModel?.isControllerLoaded() ?: false
@@ -152,7 +151,7 @@ fun RefillHistoryScreen(
                                         if (isControllerAddressValid || mockRefillEvents != null) {
                                             if (refillEvents == null) {
                                                 Text(
-                                                    text = "Loading refill events...",
+                                                    text = stringResource(R.string.loading_refill_events),
                                                     style = TextStyle(
                                                         fontSize = 16.sp,
                                                         fontWeight = FontWeight.Bold
@@ -160,7 +159,7 @@ fun RefillHistoryScreen(
                                                 )
                                             } else if (refillEvents!!.isEmpty()) {
                                                 Text(
-                                                    text = "No refill events found.",
+                                                    text = stringResource(R.string.no_refill_events_found),
                                                     style = TextStyle(
                                                         fontSize = 16.sp,
                                                         fontWeight = FontWeight.Bold
@@ -169,17 +168,13 @@ fun RefillHistoryScreen(
                                             } else {
                                                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                                                     items(refillEvents!!) { refillEvent ->
-                                                        Log.d(
-                                                            this::class.simpleName,
-                                                            "Refill events found: ${refillEvents!!.size}"
-                                                        )
                                                         RefillEventComposable(refillEvent)
                                                     }
                                                 }
                                             }
                                         } else {
                                             Text(
-                                                text = "Invalid controller address",
+                                                text = stringResource(R.string.invalid_controller_address),
                                                 style = TextStyle(
                                                     fontSize = 16.sp,
                                                     fontWeight = FontWeight.Bold
@@ -188,7 +183,7 @@ fun RefillHistoryScreen(
                                         }
                                     } else {
                                         Text(
-                                            text = "Controller not loaded.",
+                                            text = stringResource(R.string.controller_not_loaded),
                                             style = TextStyle(
                                                 fontSize = 16.sp,
                                                 fontWeight = FontWeight.Bold
@@ -229,6 +224,17 @@ private suspend fun fetchRefillEvents(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    device = "spec:width=800dp,height=400dp,orientation=landscape"
+)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=800dp,height=400dp,orientation=landscape"
+)
 @Composable
 fun RefillHistoryPreview() {
     val mockEvents = listOf(

@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -29,7 +31,7 @@ import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.feed.FeedProfile
 import com.example.aquariumcontroller.feed.FeedProfileViewModel
-import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
+import com.example.aquariumcontroller.maindropdownmenu.MainDropdownMenuComposable
 import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import com.example.aquariumcontroller.webapi.WebApiPostRequest
@@ -69,7 +71,9 @@ fun FeedProfileAddScreen(
             Box {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
                 ) {
                     ScreenHeadlineComposable(
                         text = stringResource(id = R.string.feed_profile_add)
@@ -78,7 +82,8 @@ fun FeedProfileAddScreen(
                     FeedProfileAddNameEditableOutlinedFieldComposable(
                         onFeedProfileNameChange = {
                             Log.d("FeedProfileAddScreen", "Feed profile name changed to $it")
-                            feedProfileAddViewModel.setFeedProfileName(it) },
+                            feedProfileAddViewModel.setFeedProfileName(it)
+                        },
                         modifier = Modifier.padding(16.dp)
                     )
 
@@ -126,8 +131,18 @@ fun FeedProfileAddScreen(
     }
 }
 
-@Preview(showBackground = true, heightDp = 800, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    device = "spec:width=600dp,height=400dp,orientation=landscape"
+)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=600dp,height=400dp,orientation=landscape"
+)@Composable
 fun FeedProfileAddScreenPreview() {
     FeedProfileAddScreen()
 }

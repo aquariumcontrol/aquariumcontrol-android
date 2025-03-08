@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
@@ -34,7 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.webapi.WebApiUrls
-import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
+import com.example.aquariumcontroller.maindropdownmenu.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.webapi.WebApiPostRequest
@@ -86,6 +88,7 @@ fun FeedProfileScheduleScreen(
         ) {
             Box {
                 Column(
+                    modifier = Modifier.verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     ScreenHeadlineComposable(
@@ -253,6 +256,17 @@ fun FeedProfileScheduleScreen(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    device = "spec:width=600dp,height=400dp,orientation=landscape"
+)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=600dp,height=400dp,orientation=landscape"
+)
 @Composable
 fun FeedSchedulePreview() {
     val mockFeedProfileImport = FeedProfileImport()

@@ -13,7 +13,6 @@ class BallingProfileEditViewModel(
     private val _ballingConfirmedDosingVolume = MutableLiveData<Double>()
 
     val ballingNewDosingVolume: LiveData<Double> = _ballingNewDosingVolume
-    val ballingConfirmedDosingVolume: LiveData<Double> = _ballingConfirmedDosingVolume
 
     init {
         _ballingNewDosingVolume.value = ballingProfile.volume

@@ -23,14 +23,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.aquariumcontroller.webapi.WebApiUrls
-import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
-import com.example.aquariumcontroller.webapi.WebApiPostRequest
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
+import com.example.aquariumcontroller.maindropdownmenu.MainDropdownMenuComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
+import com.example.aquariumcontroller.webapi.WebApiPostRequest
+import com.example.aquariumcontroller.webapi.WebApiUrls
 import com.example.aquariumcontroller.webapi.webApiPostRequestExecution
 
 @Composable
@@ -59,7 +59,9 @@ fun RefillScreen(
             color = MaterialTheme.colorScheme.background
         ) {
             Box {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
                     ScreenHeadlineComposable(
                         text = stringResource(id = R.string.refill_control)
                     )
@@ -123,7 +125,7 @@ fun RefillScreen(
                                                 // Show the Toast after the API call
                                                 Toast.makeText(
                                                     context,
-                                                    "Sent request to controller for starting refill control",
+                                                    context.getString(R.string.sent_request_to_controller_for_starting_refill_control),
                                                     Toast.LENGTH_SHORT
                                                 ).show()
                                             }
@@ -150,7 +152,7 @@ fun RefillScreen(
                                                 // Show the Toast after the API call
                                                 Toast.makeText(
                                                     context,
-                                                    "Sent request to controller for stopping refill control",
+                                                    context.getString(R.string.sent_request_to_controller_for_stopping_refill_control),
                                                     Toast.LENGTH_SHORT
                                                 ).show()
                                             }
@@ -177,7 +179,7 @@ fun RefillScreen(
                                                 // Show the Toast after the API call
                                                 Toast.makeText(
                                                     context,
-                                                    "Sent request to controller for resetting errors",
+                                                    context.getString(R.string.sent_request_to_controller_for_resetting_errors),
                                                     Toast.LENGTH_SHORT
                                                 ).show()
                                             }
@@ -203,6 +205,18 @@ fun RefillScreen(
     }
 }
 
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    device = "spec:width=800dp,height=400dp,orientation=landscape"
+)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=800dp,height=400dp,orientation=landscape"
+)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun RefillScreenPreview() {

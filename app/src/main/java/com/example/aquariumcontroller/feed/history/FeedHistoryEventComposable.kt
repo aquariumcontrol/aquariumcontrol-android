@@ -67,6 +67,7 @@ fun FeedHistoryEventComposable(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 fun FeedEventPreviewScreen() {
     val mockEvent = FeedHistoryEvent(

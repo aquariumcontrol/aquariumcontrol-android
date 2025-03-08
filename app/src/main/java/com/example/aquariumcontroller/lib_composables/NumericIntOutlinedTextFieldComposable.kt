@@ -42,6 +42,7 @@ fun NumericIntOutlinedTextFieldComposable(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 fun NumericIntOutlinedTextFieldComposablePreview() {
     val testValue = 5

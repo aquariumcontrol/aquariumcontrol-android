@@ -2,40 +2,35 @@ package com.example.aquariumcontroller.schedule
 
 import android.content.res.Configuration
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.aquariumcontroller.webapi.WebApiUrls
-import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
-import com.example.aquariumcontroller.webapi.WebApiPostRequest
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
+import com.example.aquariumcontroller.maindropdownmenu.MainDropdownMenuComposable
 import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
-import com.example.aquariumcontroller.webapi.webApiPostRequestExecution
+import com.example.aquariumcontroller.webapi.WebApiUrls
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -57,11 +52,7 @@ fun ScheduleScreen(
 
     val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
 
-    val coroutineScope = rememberCoroutineScope()
-
-    val webApiPostRequest = WebApiPostRequest()
-
-    val context = LocalContext.current // context for web API request and Toasts
+    val configuration = LocalConfiguration.current
 
     val ballingScheduleSetValsViewModel: ScheduleSetValsViewModel = viewModel(
         factory = ScheduleSetValsViewModelFactory(
@@ -141,55 +132,36 @@ fun ScheduleScreen(
                     ScreenHeadlineComposable(
                         text = stringResource(R.string.actuator_schedule)
                     )
+                    when (configuration.orientation) {
+                        Configuration.ORIENTATION_LANDSCAPE -> {
+                            Row {
+                                ScheduleUpdateResetButtonsComposable(
+                                    ballingScheduleSetValsViewModel = ballingScheduleSetValsViewModel,
+                                    refillScheduleSetValsViewModel = refillScheduleSetValsViewModel,
+                                    ventilationScheduleSetValsViewModel = ventilationScheduleSetValsViewModel,
+                                    heatingScheduleSetValsViewModel = heatingScheduleSetValsViewModel,
+                                    scheduleSetVals = scheduleSetVals,
+                                    mainViewModel = mainViewModel
+                                )
+                            }
+                        }
+                        else -> {
+                            ScheduleUpdateResetButtonsComposable(
+                                ballingScheduleSetValsViewModel = ballingScheduleSetValsViewModel,
+                                refillScheduleSetValsViewModel = refillScheduleSetValsViewModel,
+                                ventilationScheduleSetValsViewModel = ventilationScheduleSetValsViewModel,
+                                heatingScheduleSetValsViewModel = heatingScheduleSetValsViewModel,
+                                scheduleSetVals = scheduleSetVals,
+                                mainViewModel = mainViewModel
+                            )
+                        }
+                    }
                     Scaffold { innerPadding ->
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .padding(innerPadding)
+                            modifier = Modifier.padding(innerPadding)
                         ) {
-                            Button(
-                                onClick = {
-                                    ballingScheduleSetValsViewModel.updateValues()
-                                    refillScheduleSetValsViewModel.updateValues()
-                                    ventilationScheduleSetValsViewModel.updateValues()
-                                    heatingScheduleSetValsViewModel.updateValues()
-                                    scheduleSetVals.updateFromViewModels(
-                                        ballingScheduleSetValsViewModel,
-                                        refillScheduleSetValsViewModel,
-                                        ventilationScheduleSetValsViewModel,
-                                        heatingScheduleSetValsViewModel
-                                    )
-                                    if (mainViewModel != null) {
-                                        webApiPostRequestExecution(
-                                            mainViewModel = mainViewModel,
-                                            apiUrl = WebApiUrls.ACTUATOR_SCHEDULE_POST_UPDATE,
-                                            coroutineScope = coroutineScope,
-                                            webApiPostRequest = webApiPostRequest,
-                                            context = context,
-                                            optionalGetParams = scheduleSetVals.getApiParams(),
-                                        )
-                                        // Show the Toast after the API call
-                                        Toast.makeText(
-                                            context,
-                                            "Sent request to controller for updating schedule set values",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-                                }
-                            ) {
-                                Text(text = "Update actuator schedules")
-                            }
-                            Button(
-                                onClick = {
-                                    ballingScheduleSetValsViewModel.resetValues()
-                                    refillScheduleSetValsViewModel.resetValues()
-                                    ventilationScheduleSetValsViewModel.resetValues()
-                                    heatingScheduleSetValsViewModel.resetValues()
-                                }
-                            ) {
-                                Text(text = "Reset actuator schedules")
-                            }
+
                             Spacer(modifier = Modifier.size(width = 10.dp, height = 10.dp))
                             Column(
                                 modifier = Modifier.verticalScroll(rememberScrollState())
@@ -236,7 +208,6 @@ private suspend fun fetchScheduleSetVals(
         val scheduleStringSetValsList = scheduleSetValsReader.readScheduleSetVals()
 
         if (!scheduleStringSetValsList.isNullOrEmpty()) {
-            Log.d("scheduleScreen", "Fetched schedule string set vals: $scheduleStringSetValsList")
             // Convert the list of TimeDataStringSample to a list of TimeDataSample
             val scheduleSetValsList =
                 scheduleStringSetValsList.map { scheduleStringSetVal ->
@@ -246,13 +217,22 @@ private suspend fun fetchScheduleSetVals(
             withContext(Dispatchers.Main) {
                 updateScheduleSetVals(scheduleSetVals)
             }
-        } else {
-            Log.d("scheduleScreen", "No schedule set vals fetched")
         }
     }
 }
 
-@Preview(showBackground = true, heightDp = 1250, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, heightDp = 1200, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, heightDp = 1200, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    device = "spec:width=1200dp,height=950dp,orientation=landscape"
+)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=1200dp,height=950dp,orientation=landscape"
+)
 @Composable
 fun ScheduleScreenPreview() {
     ScheduleScreen(

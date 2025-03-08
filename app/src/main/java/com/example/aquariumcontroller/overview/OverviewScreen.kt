@@ -2,7 +2,6 @@ package com.example.aquariumcontroller.overview
 
 import android.content.res.Configuration
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,19 +28,20 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.aquariumcontroller.webapi.WebApiUrls
-import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.controller.ControllerProfile
 import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
+import com.example.aquariumcontroller.maindropdownmenu.MainDropdownMenuComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
+import com.example.aquariumcontroller.webapi.WebApiUrls
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -61,9 +61,21 @@ fun OverviewScreen(
     // - the overview data of the aquarium: Text for signal description and current value
     // - a button to update the overview data
 
+    val configuration = LocalConfiguration.current
+
+    val displayCircularProgressIndicatorInPreview: Boolean = when (configuration.orientation) {
+        Configuration.ORIENTATION_LANDSCAPE -> {
+            false
+        }
+
+        else -> {
+            mockOverviewData == null // display circular progress indicator in preview for portrait mode
+        }
+    }
+
     var isRefreshing by remember {
         mutableStateOf(
-            mockOverviewData != null
+            displayCircularProgressIndicatorInPreview
         )
     }
 
@@ -114,7 +126,6 @@ fun OverviewScreen(
     val pullRefreshState = rememberPullRefreshState(
         refreshing = isRefreshing,
         onRefresh = {
-            Log.d("OverviewScreen", "onRefresh called")
             isRefreshing = true
 
             coroutineScope.launch {
@@ -125,7 +136,7 @@ fun OverviewScreen(
                         ) { newOverviewData ->
                             overviewData = newOverviewData as OverviewData
                         } // Pass the setter lambda
-                        delay(500)
+                        delay(timeMillis = 500)
                     } finally {
                         isRefreshing = false // Reset the refresh state
                     }
@@ -156,7 +167,6 @@ fun OverviewScreen(
                     ) {
                         Column(
                             modifier = Modifier
-                                .padding(16.dp)
                                 .fillMaxWidth(),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
@@ -167,210 +177,43 @@ fun OverviewScreen(
                                     color = MaterialTheme.colorScheme.primary
                                 )
                             }
-                            Row(Modifier.fillMaxWidth()) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.Start)) {
-                                        Text(text = "Controller Name")
+
+                            when (configuration.orientation) {
+                                Configuration.ORIENTATION_LANDSCAPE -> {
+                                    Row {
+                                        Column(modifier = Modifier.weight(0.5f)) {
+                                            OverviewControllerComposable(
+                                                controllerProfileName = controllerProfileName!!,
+                                                controllerAddress = controllerAddress!!,
+                                                controllerPort = controllerPort!!,
+                                                controllerUsername = controllerUsername!!,
+                                                controllerPassword = controllerPassword!!
+                                            )
+                                            OverviewAmbientComposable(overviewData = overviewData!!)
+                                        }
+                                        Column(modifier = Modifier.weight(0.5f)) {
+                                            OverviewTimestampComposable(overviewData = overviewData!!)
+                                            OverviewWaterSignalsComposable(overviewData = overviewData!!)
+                                            OverviewActuatorsComposable(overviewData = overviewData!!)
+                                        }
                                     }
                                 }
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.End)) {
-                                        Text(text = controllerProfileName!!)
-                                    }
-                                }
-                            }
-                            Row(Modifier.fillMaxWidth()) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.Start)) {
-                                        Text(text = "Controller Address")
-                                    }
-                                }
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.End)) {
-                                        Text(text = controllerAddress!!)
-                                    }
-                                }
-                            }
-                            Row(Modifier.fillMaxWidth()) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.Start)) {
-                                        Text(text = "Controller Port")
-                                    }
-                                }
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.End)) {
-                                        Text(text = controllerPort!!.toString())
-                                    }
-                                }
-                            }
-                            Row(Modifier.fillMaxWidth()) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.Start)) {
-                                        Text(text = "User name")
-                                    }
-                                }
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.End)) {
-                                        Text(text = controllerUsername!!)
-                                    }
+
+                                else -> {
+                                    OverviewControllerComposable(
+                                        controllerProfileName = controllerProfileName!!,
+                                        controllerAddress = controllerAddress!!,
+                                        controllerPort = controllerPort!!,
+                                        controllerUsername = controllerUsername!!,
+                                        controllerPassword = controllerPassword!!
+                                    )
+                                    OverviewTimestampComposable(overviewData = overviewData!!)
+                                    OverviewWaterSignalsComposable(overviewData = overviewData!!)
+                                    OverviewActuatorsComposable(overviewData = overviewData!!)
+                                    OverviewAmbientComposable(overviewData = overviewData!!)
                                 }
                             }
-                            Row(Modifier.fillMaxWidth()) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.Start)) {
-                                        Text(text = "Password")
-                                    }
-                                }
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.End)) {
-                                        Text(text = controllerPassword!!)
-                                    }
-                                }
-                            }
-                            Row(Modifier.fillMaxWidth()) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.Start)) {
-                                        Text(text = "Timestamp")
-                                    }
-                                }
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.End)) {
-                                        Text(text = "${overviewData?.timestamp}")
-                                    }
-                                }
-                            }
-                            Row(Modifier.fillMaxWidth()) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.Start)) {
-                                        Text(text = "Water temperature")
-                                    }
-                                }
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.End)) {
-                                        Text(text = "${overviewData?.temperatureWater} °C")
-                                    }
-                                }
-                            }
-                            Row(Modifier.fillMaxWidth()) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.Start)) {
-                                        Text(text = "Water temperature filtered")
-                                    }
-                                }
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.End)) {
-                                        Text(text = "${overviewData?.temperatureWaterFiltered} °C")
-                                    }
-                                }
-                            }
-                            Row(Modifier.fillMaxWidth()) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.Start)) {
-                                        Text(text = "pH")
-                                    }
-                                }
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.End)) {
-                                        Text(text = "${overviewData?.pH}")
-                                    }
-                                }
-                            }
-                            Row(Modifier.fillMaxWidth()) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.Start)) {
-                                        Text(text = "pH filtered")
-                                    }
-                                }
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.End)) {
-                                        Text(text = "${overviewData?.pHFiltered} °C")
-                                    }
-                                }
-                            }
-                            Row(Modifier.fillMaxWidth()) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.Start)) {
-                                        Text(text = "Conductivity")
-                                    }
-                                }
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.End)) {
-                                        Text(text = "${overviewData?.conductivity} mS/cm")
-                                    }
-                                }
-                            }
-                            Row(Modifier.fillMaxWidth()) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.Start)) {
-                                        Text(text = "Conductivity filtered")
-                                    }
-                                }
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.End)) {
-                                        Text(text = "${overviewData?.conductivityFiltered} mS/cm")
-                                    }
-                                }
-                            }
-                            Row(Modifier.fillMaxWidth()) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.Start)) {
-                                        Text(text = "Tank level switch position")
-                                    }
-                                }
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.End)) {
-                                        Text(text = "${overviewData?.tankLevelSwitchPosition}")
-                                    }
-                                }
-                            }
-                            Row(Modifier.fillMaxWidth()) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.Start)) {
-                                        Text(text = "Ventilation")
-                                    }
-                                }
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.End)) {
-                                        Text(text = "${overviewData?.surfaceVentilation}")
-                                    }
-                                }
-                            }
-                            Row(Modifier.fillMaxWidth()) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.Start)) {
-                                        Text(text = "Heating")
-                                    }
-                                }
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.End)) {
-                                        Text(text = "${overviewData?.heater}")
-                                    }
-                                }
-                            }
-                            Row(Modifier.fillMaxWidth()) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.Start)) {
-                                        Text(text = "Ambient temperature")
-                                    }
-                                }
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.End)) {
-                                        Text(text = "${overviewData?.temperatureAmbient} °C")
-                                    }
-                                }
-                            }
-                            Row(Modifier.fillMaxWidth()) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.Start)) {
-                                        Text(text = "Ambient humidity")
-                                    }
-                                }
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Row(modifier = Modifier.align(Alignment.End)) {
-                                        Text(text = "${overviewData?.humidityAmbient} %")
-                                    }
-                                }
-                            }
+
                             Spacer(
                                 modifier = Modifier.padding(vertical = 8.dp)
                             )
@@ -429,19 +272,8 @@ private suspend fun fetchOverviewData(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true, heightDp = 1000, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun OverviewViewPreview() {
-    val mockControllerProfile = ControllerProfile(
-        name = "Controller 1",
-        address = "192.168.1.1",
-        port = 80,
-        user = "user",
-        password = "password",
-    )
-
-    val mockOverviewData = OverviewData(
+fun createMockOverviewData(): OverviewData {
+    return OverviewData(
         timestamp = "2023-05-01 12:00:00",
         temperatureWater = 25.0,
         temperatureWaterFiltered = 25.5,
@@ -455,6 +287,33 @@ fun OverviewViewPreview() {
         humidityAmbient = 60.0,
         heater = "OFF"
     )
+}
 
-    OverviewScreen(mockController = mockControllerProfile, mockOverviewData = mockOverviewData)
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    device = "spec:width=800dp,height=400dp,orientation=landscape"
+)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=800dp,height=400dp,orientation=landscape"
+)
+@Composable
+fun OverviewViewPreview() {
+    val mockControllerProfile = ControllerProfile(
+        name = "Controller 1",
+        address = "192.168.1.1",
+        port = 80,
+        user = "user",
+        password = "password",
+    )
+
+    OverviewScreen(
+        mockController = mockControllerProfile,
+        mockOverviewData = createMockOverviewData()
+    )
 }

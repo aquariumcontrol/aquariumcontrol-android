@@ -3,40 +3,31 @@ package com.example.aquariumcontroller.feed
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Button
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.feed.schedule.FeedScheduleEntry
-import com.example.aquariumcontroller.feed.schedule.FeedScheduleEntryComposable
 import com.example.aquariumcontroller.feed.schedule.FeedScheduleEntryImport
 import com.example.aquariumcontroller.feed.schedule.FeedScheduleViewModel
 import com.example.aquariumcontroller.feed.schedule.FeedScheduleViewModelFactory
-import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
+import com.example.aquariumcontroller.maindropdownmenu.MainDropdownMenuComposable
 import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import kotlinx.coroutines.Dispatchers
@@ -59,6 +50,8 @@ fun FeedScreen(
     // - subhead line for feed schedule
     // - feed schedule entries
     // - floating action button for adding feed profile
+
+    val configuration = LocalConfiguration.current
 
     // instantiate view model with null pointer except if mock data is provided
     val feedScheduleViewModel: FeedScheduleViewModel = viewModel(
@@ -94,81 +87,51 @@ fun FeedScreen(
                     ScreenHeadlineComposable(
                         stringResource(id = R.string.feed_control)
                     )
-                    Button(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp),
-                        onClick = {
-                            navHostController?.navigate(ViewNavigationRoutes.feedHistory24h)
-                        },
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.view_feed_events_24h),
-                            fontSize = 16.sp
-                        )
-                    }
-                    Button(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp),
-                        onClick = {
-                            navHostController?.navigate(ViewNavigationRoutes.feedHistory7d)
-                        },
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.view_feed_events_7d),
-                            fontSize = 16.sp
-                        )
-                    }
 
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.padding(16.dp),
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Spacer(modifier = Modifier.height(24.dp))
-                            Text(text = "Feed Profiles")
-                            LazyColumn(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp)
-                            ) {
-                                items(feedProfileViewModel.getFeedProfiles()) { feedProfile ->
-                                    FeedProfileSummaryComposable(
+                    when (configuration.orientation) {
+                        Configuration.ORIENTATION_LANDSCAPE -> {
+                            Row {
+                                FeedHistorySelectionButtonsComposable(navHostController = navHostController)
+                            }
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Row {
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    FeedProfileSelectionComposable(
                                         navHostController = navHostController,
-                                        mainViewModel = mainViewModel,
-                                        feedProfile = feedProfile,
-                                        feedProfileViewModel = feedProfileViewModel
+                                        myFeedProfileViewModel = feedProfileViewModel,
+                                        modifier = Modifier.align(Alignment.End)
+                                    )
+                                }
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    FeedScheduleSelectionComposable(
+                                        myFeedScheduleViewModel = feedScheduleViewModel,
+                                        mainViewModel = mainViewModel
                                     )
                                 }
                             }
-                            FloatingActionButton(
-                                onClick = {
-                                    navHostController?.navigate(ViewNavigationRoutes.feedAddProfile)
-                                },
-                                modifier = Modifier.padding(16.dp).align(Alignment.End)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Add,
-                                    contentDescription = "Create New Profile"
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(24.dp))
-                            Text(text = "Feed Schedule")
-                            LazyColumn(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp)
-                            ) {
-                                items(feedScheduleViewModel.getFeedScheduleEntries()) { feedScheduleEntry ->
-                                    FeedScheduleEntryComposable(
-                                        feedScheduleEntry = feedScheduleEntry,
-                                        navHostController = navHostController,
-                                        mainViewModel = mainViewModel,
-                                        feedScheduleViewModel = feedScheduleViewModel
-                                    )
-                                }
-                            }
+                        }
+
+                        else -> {
+                            FeedHistorySelectionButtonsComposable(
+                                navHostController = navHostController,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            FeedProfileSelectionComposable(
+                                navHostController = navHostController,
+                                myFeedProfileViewModel = feedProfileViewModel,
+                                modifier = Modifier.align(Alignment.End)
+                            )
+                            FeedScheduleSelectionComposable(
+                                myFeedScheduleViewModel = feedScheduleViewModel,
+                                mainViewModel = mainViewModel
+                            )
                         }
                     }
                 }
@@ -182,10 +145,7 @@ fun FeedScreen(
     }
 }
 
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun FeedScreenPreview() {
-    // create mock feed profiles
+fun createMockFeedProfiles(): List<FeedProfile> {
     val mockFeedProfileImport1 = FeedProfileImport()
     mockFeedProfileImport1.profileId = 1
     mockFeedProfileImport1.profileName = "Test Profile 1"
@@ -197,7 +157,17 @@ fun FeedScreenPreview() {
     val mockFeedProfile1 = FeedProfile(mockFeedProfileImport1)
     val mockFeedProfile2 = FeedProfile(mockFeedProfileImport2)
 
-    val mockFeedProfiles = listOf(mockFeedProfile1, mockFeedProfile2)
+    return listOf(mockFeedProfile1, mockFeedProfile2)
+}
+
+fun createMockFeedSchedule(): List<FeedScheduleEntry> {
+    val mockFeedProfileImport1 = FeedProfileImport()
+    mockFeedProfileImport1.profileId = 1
+    mockFeedProfileImport1.profileName = "Test Profile 1"
+
+    val mockFeedProfileImport2 = FeedProfileImport()
+    mockFeedProfileImport2.profileId = 2
+    mockFeedProfileImport2.profileName = "Test Profile 2"
 
     // create mock feed schedule entries
     val mockFeedScheduleEntry1 = FeedScheduleEntryImport(
@@ -212,10 +182,25 @@ fun FeedScreenPreview() {
         isDaily = 0
     ).transformToFeedScheduleEntry()
 
-    val mockFeedScheduleEntries = listOf(mockFeedScheduleEntry1, mockFeedScheduleEntry2)
+    return listOf(mockFeedScheduleEntry1, mockFeedScheduleEntry2)
+}
 
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    device = "spec:width=800dp,height=400dp,orientation=landscape"
+)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=800dp,height=400dp,orientation=landscape"
+)
+@Composable
+fun FeedScreenPreview() {
     FeedScreen(
-        mockFeedProfiles = mockFeedProfiles,
-        mockFeedScheduleEntries = mockFeedScheduleEntries
+        mockFeedProfiles = createMockFeedProfiles(),
+        mockFeedScheduleEntries = createMockFeedSchedule()
     )
 }

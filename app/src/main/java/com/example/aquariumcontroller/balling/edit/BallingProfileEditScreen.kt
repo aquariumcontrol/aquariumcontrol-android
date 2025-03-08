@@ -4,8 +4,6 @@ import android.content.res.Configuration
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,9 +22,9 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,13 +32,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.webapi.WebApiParams
 import com.example.aquariumcontroller.webapi.WebApiUrls
-import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
+import com.example.aquariumcontroller.maindropdownmenu.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
-import com.example.aquariumcontroller.lib_composables.NumericDoubleOutlinedTextFieldComposable
 import com.example.aquariumcontroller.webapi.WebApiPostRequest
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.balling.BallingProfile
+import com.example.aquariumcontroller.balling.BallingProfileSummaryComposable
 import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import com.example.aquariumcontroller.webapi.webApiPostRequestExecution
@@ -72,9 +69,8 @@ fun BallingProfileEditScreen(
     val sliderPositionNewDosingVolume by ballingProfileEditViewModel.ballingNewDosingVolume.observeAsState(
         initial = ballingProfile.volume
     )
-    val ballingConfirmedDosingVolume by ballingProfileEditViewModel.ballingConfirmedDosingVolume.observeAsState(
-        initial = ballingProfile.volume
-    )
+
+    val configuration = LocalConfiguration.current
 
     AquariumControllerTheme {
         Surface(
@@ -83,7 +79,7 @@ fun BallingProfileEditScreen(
         ) {
             Box {
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     ScreenHeadlineComposable(
                         text = stringResource(id = R.string.balling_dosing)
@@ -95,78 +91,27 @@ fun BallingProfileEditScreen(
                             .padding(16.dp)
                             .weight(1f)
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .border(
-                                    border = BorderStroke(
-                                        1.dp,
-                                        MaterialTheme.colorScheme.onSurface
+                        BallingProfileSummaryComposable(ballingProfile = ballingProfile)
+                        when (configuration.orientation) {
+                            Configuration.ORIENTATION_LANDSCAPE -> {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.padding(20.dp)
+                                ) {
+                                    BallingProfileEditTextFieldSliderComposable(
+                                        sliderPositionNewDosingVolume = sliderPositionNewDosingVolume,
+                                        ballingProfileEditViewModel = ballingProfileEditViewModel
                                     )
-                                )
-                                .padding(8.dp)
-                                .fillMaxWidth()
-                                .align(Alignment.CenterHorizontally)
-                        ) {
-                            Column(
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Text(
-                                    text = "Balling dosing profile:",
-                                    fontSize = 12.sp
-                                )
-                                Text(
-                                    text = (ballingProfile.label),
-                                    fontSize = 12.sp
-                                )
+                                }
                             }
-                            Column(
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Text(
-                                    text = "Pump ID: ${
-                                        ballingProfile.pumpId
-                                    }",
-                                    fontSize = 12.sp
-                                )
-                                Text(
-                                    text = "Dosing volume: ${
-                                        "%.2f".format(
-                                            ballingConfirmedDosingVolume
-                                        )
-                                    } ml",
-                                    fontSize = 12.sp
+
+                            else -> {
+                                BallingProfileEditTextFieldSliderComposable(
+                                    sliderPositionNewDosingVolume = sliderPositionNewDosingVolume,
+                                    ballingProfileEditViewModel = ballingProfileEditViewModel
                                 )
                             }
                         }
-                        NumericDoubleOutlinedTextFieldComposable(
-                            value = sliderPositionNewDosingVolume,
-                            onValueChange = { newStringValue ->
-                                if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
-                                    val newNumericValue = newStringValue.toDouble()
-                                    ballingProfileEditViewModel.onVolumeChange(newNumericValue)
-                                }
-                            },
-                            label = "",
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .padding(top = 16.dp),
-                        )
-                        Slider(
-                            value = sliderPositionNewDosingVolume.toFloat(),
-                            modifier = Modifier.padding(16.dp),
-                            onValueChange = {
-                                ballingProfileEditViewModel.onVolumeChange(it.toDouble())
-                            },
-                            valueRange = BallingProfileEditSliderRange.RANGE
-                        )
-                        Text(
-                            text = "New Dosing volume: ${"%.2f".format(sliderPositionNewDosingVolume)} ml",
-                            fontSize = 12.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                        )
                         Button(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -213,16 +158,27 @@ fun BallingProfileEditScreen(
     }
 }
 
+val mockBallingProfile = BallingProfile(
+    pumpId = 1,
+    volume = 1.5,
+    label = "MockDosingUnit 1",
+)
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    device = "spec:width=600dp,height=400dp,orientation=landscape"
+)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=600dp,height=400dp,orientation=landscape"
+)
 @Composable
 fun BallingProfileEditPreviewScreen() {
-    val mockBallingProfile = BallingProfile(
-        pumpId = 1,
-        volume = 1.5,
-        label = "MockDosingUnit 1",
-    )
-
     BallingProfileEditScreen(
         navHostController = null,
         ballingProfile = mockBallingProfile,

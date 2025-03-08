@@ -2,50 +2,39 @@ package com.example.aquariumcontroller.heating
 
 import android.content.res.Configuration
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.aquariumcontroller.webapi.WebApiParams
 import com.example.aquariumcontroller.webapi.WebApiUrls
-import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
+import com.example.aquariumcontroller.maindropdownmenu.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
-import com.example.aquariumcontroller.lib_composables.NumericDoubleOutlinedTextFieldComposable
-import com.example.aquariumcontroller.webapi.WebApiPostRequest
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
-import com.example.aquariumcontroller.webapi.webApiPostRequestExecution
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -64,13 +53,26 @@ fun HeatingScreen(
     // - a range slider for setting the control target temperatures
     // - numeric input fields for entering the control target temperatures
     // - the heating statistics incl. refresh button
+
+
     val heatingInitialSetVals = mockHeatingSetVals ?: HeatingSetVals(
         heatingSwitchOffTemp = 28.0, heatingSwitchOnTemp = 22.0
     )
 
+    val configuration = LocalConfiguration.current
+
+    val displayCircularProgressIndicatorInPreview: Boolean = when (configuration.orientation) {
+        Configuration.ORIENTATION_LANDSCAPE -> {
+            false
+        }
+        else -> {
+            mockHeatingStatEntries?.isNotEmpty() ?: false
+        }
+    }
+
     var isRefreshing by remember {
         mutableStateOf(
-            mockHeatingStatEntries?.isNotEmpty() ?: false
+            displayCircularProgressIndicatorInPreview
         )
     }
 
@@ -78,29 +80,10 @@ fun HeatingScreen(
 
     val coroutineScope = rememberCoroutineScope()
 
-    val webApiPostRequest = WebApiPostRequest()
-
-    val context = LocalContext.current // context for web API request and Toasts
-
     var heatingStats by remember { mutableStateOf(mockHeatingStatEntries ?: emptyList()) }
 
     val heatingSetValsViewModel: HeatingSetValsViewModel = viewModel(
         factory = HeatingSetValsViewModelFactory(heatingInitialSetVals)
-    )
-
-    // Use derived state for slider position
-    val sliderRange by heatingSetValsViewModel.sliderRange.observeAsState(
-        initial =
-        heatingInitialSetVals.heatingSwitchOnTemp.toFloat()..
-                heatingInitialSetVals.heatingSwitchOffTemp.toFloat()
-    )
-
-    // Use a separate mutable state for the text field values
-    val lowerBoundValue by heatingSetValsViewModel.lowerBoundValue.observeAsState(
-        initial = heatingInitialSetVals.heatingSwitchOnTemp
-    )
-    val upperBoundValue by heatingSetValsViewModel.upperBoundValue.observeAsState(
-        heatingInitialSetVals.heatingSwitchOffTemp
     )
 
     @Suppress("UNCHECKED_CAST")
@@ -127,7 +110,9 @@ fun HeatingScreen(
             color = MaterialTheme.colorScheme.background
         ) {
             Box {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
                     ScreenHeadlineComposable(
                         text = stringResource(id = R.string.heating_control)
                     )
@@ -135,91 +120,37 @@ fun HeatingScreen(
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier
-                                .padding(24.dp)
                                 .padding(innerPadding)
                         ) {
-                            Button(
-                                onClick = {
-                                    heatingSetValsViewModel.updateValues()
-                                    if (mainViewModel != null) {
-                                        webApiPostRequestExecution(
+                            when (configuration.orientation) {
+                                Configuration.ORIENTATION_LANDSCAPE -> {
+                                    Row {
+                                        HeatingButtonsComposable(
+                                            heatingSetValsViewModel = heatingSetValsViewModel,
                                             mainViewModel = mainViewModel,
-                                            apiUrl = WebApiUrls.HEATING_POST_SET_VALS,
-                                            coroutineScope = coroutineScope,
-                                            webApiPostRequest = webApiPostRequest,
-                                            context = context,
-                                            optionalGetParams = mapOf(
-                                                WebApiParams.HEATING_SWITCH_ON_TEMPERATURE to heatingSetValsViewModel.getHeatingSwitchOnTempString(),
-                                                WebApiParams.HEATING_SWITCH_OFF_TEMPERATURE to heatingSetValsViewModel.getHeatingSwitchOffTempString()
-                                            ),
+                                            coroutineScope = coroutineScope
                                         )
-                                        // Show the Toast after the API call
-                                        Toast.makeText(
-                                            context,
-                                            "Sent request to controller for updating heating set values",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                                    }
+                                    Row {
+                                        HeatingRangeSliderTextFieldsLandscapeComposable(
+                                            myHeatingSetValsViewModel = heatingSetValsViewModel,
+                                            heatingInitialSetVals = heatingInitialSetVals
+                                        )
                                     }
                                 }
-                            ) {
-                                Text(text = "Update Heating Controller Values")
-                            }
-                            Button(
-                                onClick = { heatingSetValsViewModel.resetValues() }
-                            ) {
-                                Text(text = "Reset Heating Controller Values")
-                            }
-                            Spacer(modifier = Modifier.size(width = 10.dp, height = 10.dp))
-                            Column {
-                                RangeSlider(
-                                    value = sliderRange,
-                                    onValueChange = { newValue ->
-                                        heatingSetValsViewModel.onRangeChangedBySlider(
-                                            newValue.start,
-                                            newValue.endInclusive
-                                        )
-                                    },
-                                    valueRange = 20f..30f,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
 
-                                )
-                            }
-                            Spacer(modifier = Modifier.size(width = 10.dp, height = 10.dp))
-                            Row {
-                                NumericDoubleOutlinedTextFieldComposable(
-                                    value = lowerBoundValue,
-                                    onValueChange = { newStringValue ->
-                                        if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
-                                            val newNumericValue = newStringValue.toFloat()
-                                            heatingSetValsViewModel.onLowerValueChanged(
-                                                newNumericValue
-                                            )
-                                        }
-                                    },
-                                    label = "Switch on at",
-                                    modifier = Modifier
-                                        .padding(top = 16.dp)
-                                        .size(width = 128.dp, height = 72.dp),
-                                    textAlign = TextAlign.Center
-                                )
-                                Spacer(modifier = Modifier.size(width = 72.dp, height = 10.dp))
-                                NumericDoubleOutlinedTextFieldComposable(
-                                    value = upperBoundValue,
-                                    onValueChange = { newStringValue ->
-                                        if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
-                                            val newNumericValue = newStringValue.toFloat()
-                                            heatingSetValsViewModel.onUpperValueChanged(
-                                                newNumericValue
-                                            )
-                                        }
-                                    },
-                                    label = "Switch off at",
-                                    modifier = Modifier
-                                        .padding(top = 16.dp)
-                                        .size(width = 128.dp, height = 72.dp),
-                                    textAlign = TextAlign.Center
-                                )
+                                else -> {
+                                    HeatingButtonsComposable(
+                                        heatingSetValsViewModel = heatingSetValsViewModel,
+                                        mainViewModel = mainViewModel,
+                                        coroutineScope = coroutineScope
+                                    )
+                                    Spacer(modifier = Modifier.size(width = 10.dp, height = 10.dp))
+                                    HeatingRangeSliderTextFieldsPortraitComposable(
+                                        myHeatingSetValsViewModel = heatingSetValsViewModel,
+                                        heatingInitialSetVals = heatingInitialSetVals
+                                    )
+                                }
                             }
                             if (isRefreshing) {
                                 CircularProgressIndicator(
@@ -319,7 +250,18 @@ fun createMockStatsData(): List<HeatingStatsEntry> {
     }
 }
 
-@Preview(showBackground = true, heightDp = 800, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    device = "spec:width=800dp,height=400dp,orientation=landscape"
+)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=800dp,height=400dp,orientation=landscape"
+)
 @Composable
 fun HeatingScreenPreview() {
     HeatingScreen(

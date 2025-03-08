@@ -14,17 +14,18 @@ import androidx.compose.ui.unit.dp
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
-fun ScreenHeadlineComposable(text: String) {
+fun ScreenHeadlineComposable(text: String, textModifier: Modifier? = null) {
     Spacer(modifier = Modifier.size(10.dp))
     Text(
         text = text,
         style = MaterialTheme.typography.headlineLarge,
-        modifier = Modifier.padding(16.dp),
+        modifier = textModifier ?: Modifier.padding(16.dp),
     )
     Spacer(modifier = Modifier.size(10.dp))
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 fun FeedScreenPreview() {
     AquariumControllerTheme {

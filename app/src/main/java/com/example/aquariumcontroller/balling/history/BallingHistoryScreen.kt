@@ -35,13 +35,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.aquariumcontroller.webapi.WebApiUrls
-import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
+import com.example.aquariumcontroller.maindropdownmenu.MainDropdownMenuComposable
 import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
+import com.example.aquariumcontroller.webapi.WebApiUrls
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -237,10 +237,7 @@ private suspend fun fetchBallingEvents(
     }
 }
 
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun BallingHistoryPreview() {
-    val mockEvents = listOf(
+val ballingHistoryScreenMockData = listOf(
         BallingHistoryDosingEvent(
             timestamp = "2025-01-18 12:00:00",
             pumpId = 1,
@@ -255,5 +252,22 @@ fun BallingHistoryPreview() {
         ),
     )
 
-    BallingHistoryScreen(showFullWeek = false, mockBallingHistoryDosingEvents = mockEvents)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    device = "spec:width=600dp,height=400dp,orientation=landscape"
+)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=600dp,height=400dp,orientation=landscape"
+)
+@Composable
+fun BallingHistoryPreview() {
+    BallingHistoryScreen(
+        showFullWeek = false,
+        mockBallingHistoryDosingEvents = ballingHistoryScreenMockData
+    )
 }

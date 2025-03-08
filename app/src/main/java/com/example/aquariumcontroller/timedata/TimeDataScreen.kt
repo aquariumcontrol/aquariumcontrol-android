@@ -27,13 +27,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.webapi.WebApiUrls
-import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
+import com.example.aquariumcontroller.maindropdownmenu.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
@@ -65,13 +66,31 @@ fun TimeDataScreen(
     // This screen is only displaying time data charts without any user interaction.
     // Therefore, this screen does not use a view model.
     val isDarkMode = isSystemInDarkTheme()
+
     val textColor = if (isDarkMode) Color.WHITE else Color.BLACK
 
     var timeDataSets by remember { mutableStateOf(TimeDataSets(mockTimeData ?: emptyList())) }
 
     val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
+
     val coroutineScope = rememberCoroutineScope()
-    var isRefreshing by remember { mutableStateOf(mockTimeData?.isNotEmpty() ?: false) }
+
+    val configuration = LocalConfiguration.current
+
+    val displayCircularProgressIndicatorInPreview: Boolean = when (configuration.orientation) {
+        Configuration.ORIENTATION_LANDSCAPE -> {
+            false
+        }
+        else -> {
+            mockTimeData?.isNotEmpty() ?: false
+        }
+    }
+
+    var isRefreshing by remember {
+        mutableStateOf(
+            displayCircularProgressIndicatorInPreview
+        )
+    }
 
     // Use a LaunchedEffect to fetch data on initial composition
     LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
@@ -392,6 +411,17 @@ fun generateMockTimeData(): List<TimeDataSample> {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, heightDp = 1250, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, heightDp = 1250, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    device = "spec:width=1600dp,height=1200dp,orientation=landscape"
+)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=1600dp,height=1200dp,orientation=landscape"
+)
 @Composable
 fun TimeDataViewPreview() {
     TimeDataScreen(mockTimeData = generateMockTimeData())

@@ -1,39 +1,30 @@
 package com.example.aquariumcontroller.feed.edit
 
 import android.content.res.Configuration
-import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.aquariumcontroller.webapi.WebApiUrls
-import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
+import com.example.aquariumcontroller.maindropdownmenu.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
-import com.example.aquariumcontroller.webapi.WebApiPostRequest
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.feed.FeedProfile
 import com.example.aquariumcontroller.feed.FeedProfileImport
 import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
-import com.example.aquariumcontroller.webapi.webApiPostRequestExecution
 
 @Composable
 fun FeedProfileEditScreen(
@@ -52,11 +43,7 @@ fun FeedProfileEditScreen(
         factory = FeedProfileEditViewModelFactory(feedProfile)
     )
 
-    val webApiPostRequest = WebApiPostRequest()
-
-    val context = LocalContext.current // context for web API request and Toasts
-
-    val coroutineScope = rememberCoroutineScope()
+    val configuration = LocalConfiguration.current
 
     AquariumControllerTheme {
         // A surface container using the 'background' color from the theme
@@ -77,63 +64,24 @@ fun FeedProfileEditScreen(
 
                     FeedProfileDisplayLegendComposable()
 
-                    Button(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp),
-                        onClick = {
-                            if (mainViewModel != null) {
-                                webApiPostRequestExecution(
+                    when (configuration.orientation) {
+                        Configuration.ORIENTATION_LANDSCAPE -> {
+                            Row {
+                                FeedProfileEditButtonsComposable(
                                     mainViewModel = mainViewModel,
-                                    apiUrl = WebApiUrls.FEED_POST_PROFILE_UPDATE,
-                                    coroutineScope = coroutineScope,
-                                    webApiPostRequest = webApiPostRequest,
-                                    context = context,
-                                    optionalGetParams = feedProfileEditViewModel.getApiCallParameters()
+                                    feedProfileEditViewModel = feedProfileEditViewModel
                                 )
-
-                                // Show the Toast after the API call
-                                Toast.makeText(
-                                    context,
-                                    "Sent request to controller for updating feed profile",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                feedProfileEditViewModel.updateFeedProfile()
                             }
-                        },
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.update_feed_profile),
-                            fontSize = 16.sp
-                        )
+                        }
+                        else -> {
+                            FeedProfileEditButtonsComposable(
+                                mainViewModel = mainViewModel,
+                                feedProfileEditViewModel = feedProfileEditViewModel,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
                     }
-                    Button(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp),
-                        onClick = {
-                            feedProfileEditViewModel.resetFeedProfile()
-                        },
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.reset_changes_to_feed_profile),
-                            fontSize = 16.sp
-                        )
-                    }
-                    Button(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp),
-                        onClick = {
-                            // todo: add delete feed profile functionality
-                            navHostController?.navigate(ViewNavigationRoutes.feed)
-                        },
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.delete_feed_profile),
-                            fontSize = 16.sp
-                        )
-                    }
+
                     FeedProfileEditMenuComposable(
                         feedProfileEditMenuItems = feedProfileEditViewModel.phaseMenuItems,
                         feedProfileEditViewModel = feedProfileEditViewModel
@@ -150,6 +98,17 @@ fun FeedProfileEditScreen(
 }
 
 @Preview(showBackground = true, heightDp = 1100, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, heightDp = 1100, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    device = "spec:width=600dp,height=1100dp,orientation=landscape"
+)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=600dp,height=1100dp,orientation=landscape"
+)
 @Composable
 fun FeedProfileEditScreenPreview() {
     val mockFeedProfileImport = FeedProfileImport()

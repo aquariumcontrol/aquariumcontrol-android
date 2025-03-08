@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -75,21 +76,37 @@ fun BallingProfileSummaryComposable(
     }
 }
 
+val mockBallingProfile = BallingProfile(
+    pumpId = 1,
+    volume = 1.5,
+    label = "MockDosingUnit 1",
+)
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun BallingProfileSummaryPreviewScreen() {
-    val mockBallingProfile = BallingProfile(
-        pumpId = 1,
-        volume = 1.5,
-        label = "MockDosingUnit 1",
-    )
-
+fun BallingProfileSummaryPreviewNightScreen() {
     AquariumControllerTheme {
-        BallingProfileSummaryComposable(
-            navHostController = null,
-            mainViewModel = null,
-            ballingProfile = mockBallingProfile
-        )
+        Surface {
+            BallingProfileSummaryComposable(
+                navHostController = null,
+                mainViewModel = null,
+                ballingProfile = mockBallingProfile
+            )
+        }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+fun BallingProfileSummaryPreviewDayScreen() {
+    AquariumControllerTheme {
+        Surface {
+            BallingProfileSummaryComposable(
+                navHostController = null,
+                mainViewModel = null,
+                ballingProfile = mockBallingProfile
+            )
+        }
     }
 }

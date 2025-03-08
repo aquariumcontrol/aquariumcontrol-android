@@ -1,47 +1,32 @@
 package com.example.aquariumcontroller.ventilation
 
 import android.content.res.Configuration
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.aquariumcontroller.webapi.WebApiParams
-import com.example.aquariumcontroller.webapi.WebApiUrls
-import com.example.aquariumcontroller.lib_composables.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
-import com.example.aquariumcontroller.lib_composables.NumericDoubleOutlinedTextFieldComposable
-import com.example.aquariumcontroller.webapi.WebApiPostRequest
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
+import com.example.aquariumcontroller.maindropdownmenu.MainDropdownMenuComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
-import com.example.aquariumcontroller.webapi.webApiPostRequestExecution
+import com.example.aquariumcontroller.webapi.WebApiUrls
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -66,27 +51,10 @@ fun VentilationScreen(
 
     val coroutineScope = rememberCoroutineScope()
 
-    val webApiPostRequest = WebApiPostRequest()
-
-    val context = LocalContext.current // context for web API request and Toasts
+    val configuration = LocalConfiguration.current
 
     val ventilationSetValsViewModel: VentilationSetValsViewModel = viewModel(
         factory = VentilationSetValsViewModelFactory(ventilationInitialSetVals)
-    )
-
-    // Use derived state for slider position
-    val sliderRange by ventilationSetValsViewModel.sliderRange.observeAsState(
-        initial =
-        ventilationInitialSetVals.ventilationSwitchOffTemp.toFloat()..
-                ventilationInitialSetVals.ventilationSwitchOnTemp.toFloat()
-    )
-
-    // Use a separate mutable state for the text field values
-    val lowerBoundValue by ventilationSetValsViewModel.lowerBoundValue.observeAsState(
-        initial = ventilationInitialSetVals.ventilationSwitchOnTemp
-    )
-    val upperBoundValue by ventilationSetValsViewModel.upperBoundValue.observeAsState(
-        ventilationInitialSetVals.ventilationSwitchOffTemp
     )
 
     LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
@@ -95,7 +63,6 @@ fun VentilationScreen(
                 mainViewModel,
             ) { newVentilationSetVals ->
                 val newVentilationSetValsCasted = newVentilationSetVals as VentilationSetVals
-                Log.d("VentilationScreen", "New ventilation set vals: $newVentilationSetValsCasted")
                 ventilationSetValsViewModel.setValues(newVentilationSetValsCasted)
             }
         }
@@ -107,7 +74,9 @@ fun VentilationScreen(
             color = MaterialTheme.colorScheme.background
         ) {
             Box {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
                     ScreenHeadlineComposable(
                         text = stringResource(R.string.ventilation_control)
                     )
@@ -118,88 +87,31 @@ fun VentilationScreen(
                                 .padding(24.dp)
                                 .padding(innerPadding)
                         ) {
-                            Button(
-                                onClick = {
-                                    ventilationSetValsViewModel.updateValues()
-                                    if (mainViewModel != null) {
-                                        webApiPostRequestExecution(
+                            when (configuration.orientation) {
+                                Configuration.ORIENTATION_LANDSCAPE -> {
+                                    Row {
+                                        VentilationButtonsComposable(
+                                            ventilationSetValsViewModel = ventilationSetValsViewModel,
                                             mainViewModel = mainViewModel,
-                                            apiUrl = WebApiUrls.VENTILATION_POST_SET_VALS,
                                             coroutineScope = coroutineScope,
-                                            webApiPostRequest = webApiPostRequest,
-                                            context = context,
-                                            optionalGetParams = mapOf(
-                                                WebApiParams.VENTILATION_SWITCH_ON_TEMPERATURE to ventilationSetValsViewModel.getVentilationSwitchOnTempString(),
-                                                WebApiParams.VENTILATION_SWITCH_OFF_TEMPERATURE to ventilationSetValsViewModel.getVentilationSwitchOffTempString()
-                                            ),
                                         )
-                                        // Show the Toast after the API call
-                                        Toast.makeText(
-                                            context,
-                                            "Sent request to controller for updating ventilation set values",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
                                     }
+                                    VentilationRangeSliderTextFieldsLandscapeComposable(
+                                        myVentilationSetValsViewModel = ventilationSetValsViewModel,
+                                        ventilationInitialSetVals = ventilationInitialSetVals
+                                    )
                                 }
-                            ) {
-                                Text(text = "Update Ventilation Controller Values")
-                            }
-                            Button(
-                                onClick = { ventilationSetValsViewModel.resetValues() }
-                            ) {
-                                Text(text = "Reset Ventilation Controller Values")
-                            }
-                            Spacer(modifier = Modifier.size(width = 10.dp, height = 10.dp))
-                            Column {
-                                RangeSlider(
-                                    value = sliderRange,
-                                    onValueChange = { newValue ->
-                                        ventilationSetValsViewModel.onRangeChangedBySlider(
-                                            newValue.start,
-                                            newValue.endInclusive
-                                        )
-                                    },
-                                    valueRange = 20f..30f,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-
-                                )
-                            }
-                            Spacer(modifier = Modifier.size(width = 10.dp, height = 10.dp))
-                            Row {
-                                NumericDoubleOutlinedTextFieldComposable(
-                                    value = lowerBoundValue,
-                                    onValueChange = { newStringValue ->
-                                        if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
-                                            val newNumericValue = newStringValue.toFloat()
-                                            ventilationSetValsViewModel.onLowerValueChanged(
-                                                newNumericValue
-                                            )
-                                        }
-                                    },
-                                    label = "Switch off at",
-                                    modifier = Modifier
-                                        .padding(top = 16.dp)
-                                        .size(width = 128.dp, height = 72.dp),
-                                    textAlign = TextAlign.Center
-                                )
-                                Spacer(modifier = Modifier.size(width = 72.dp, height = 10.dp))
-                                NumericDoubleOutlinedTextFieldComposable(
-                                    value = upperBoundValue,
-                                    onValueChange = { newStringValue ->
-                                        if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
-                                            val newNumericValue = newStringValue.toFloat()
-                                            ventilationSetValsViewModel.onUpperValueChanged(
-                                                newNumericValue
-                                            )
-                                        }
-                                    },
-                                    label = "Switch on at",
-                                    modifier = Modifier
-                                        .padding(top = 16.dp)
-                                        .size(width = 128.dp, height = 72.dp),
-                                    textAlign = TextAlign.Center
-                                )
+                                else -> {
+                                    VentilationButtonsComposable(
+                                        ventilationSetValsViewModel = ventilationSetValsViewModel,
+                                        mainViewModel = mainViewModel,
+                                        coroutineScope = coroutineScope,
+                                    )
+                                    VentilationRangeSliderTextFieldsPortraitComposable(
+                                        myVentilationSetValsViewModel = ventilationSetValsViewModel,
+                                        ventilationInitialSetVals = ventilationInitialSetVals
+                                    )
+                                }
                             }
                         }
                     }
@@ -223,23 +135,31 @@ private suspend fun fetchVentilationSetVals(
             "http://" + mainViewModel.getControllerAddress() + WebApiUrls.VENTILATION_GET_SET_VALS
         val ventilationSetValsList = VentilationSetValsReader(url).readVentilationSetVals()
         if (!ventilationSetValsList.isNullOrEmpty()) {
-            Log.d("VentilationScreen", "Fetched ventilation set vals: $ventilationSetValsList")
             withContext(Dispatchers.Main) {
                 updateVentilationSetVals(ventilationSetValsList.first())
             }
-        } else {
-            Log.d("VentilationScreen", "No ventilation set vals fetched")
         }
     }
 }
 
-@Preview(showBackground = true, heightDp = 800, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    device = "spec:width=800dp,height=400dp,orientation=landscape"
+)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=800dp,height=400dp,orientation=landscape"
+)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)@Composable
 fun VentilationScreenPreview() {
     VentilationScreen(
         mockVentilationSetVals = VentilationSetVals(
-            ventilationSwitchOffTemp = 28.5,
-            ventilationSwitchOnTemp = 21.5
+            ventilationSwitchOffTemp = 23.5,
+            ventilationSwitchOnTemp = 27.5
         )
     )
 }
