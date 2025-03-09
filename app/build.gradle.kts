@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+        //alias(libs.plugins.paparazzi)
 //    id("com.android.application")
 //    id("org.jetbrains.kotlin.android")
     //kotlin("plugin.serialization")
@@ -15,7 +16,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.aquariumcontroller"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -69,12 +70,13 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.espresso.core)
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.22")
+    implementation(libs.kotlinx.serialization.json.v162)
+    implementation(libs.okhttp)
+    implementation(libs.androidx.core.ktx.v1120)
+    implementation(libs.kotlin.stdlib.jdk8.v1922)
     implementation(libs.androidx.tracing.perfetto.handshake)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.junit.ktx)
     //implementation(libs.kotlinx.serialization.json)
     //implementation(libs.okhttp)
     //implementation(libs.kotlin.stdlib.jdk8)
@@ -83,6 +85,9 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    //androidTestImplementation("app.cash.paparazzi:paparazzi:1.3.4") {
+    //    exclude("com.sun.activation")
+    //}
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
@@ -95,10 +100,10 @@ dependencies {
     //implementation(libs.kotlinx.serialization.json) // Use the latest version
 
     // for pull refresh
-    implementation("androidx.compose.material:material:1.7.6")
+    implementation(libs.androidx.material)
 
     implementation (libs.mpandroidchart)
 
     // for serialization of data class with timestamp
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0") // Or latest version
+    implementation(libs.kotlinx.serialization.json.v130) // Or latest version
 }

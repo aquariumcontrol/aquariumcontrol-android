@@ -11,7 +11,9 @@ buildscript {
         set("room_version", "2.6.0")
     }
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.20") // Update version here
+//        classpath(libs.r8)
+        classpath(libs.kotlin.gradle.plugin)
+    // classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.20")
         // ... other dependencies ...
     }
 }

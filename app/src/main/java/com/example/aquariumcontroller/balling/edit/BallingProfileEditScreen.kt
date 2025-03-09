@@ -45,7 +45,7 @@ import com.example.aquariumcontroller.webapi.webApiPostRequestExecution
 
 @Composable
 fun BallingProfileEditScreen(
-    navHostController: NavHostController?,
+    navHostController: NavHostController? = null,
     ballingProfile: BallingProfile,
     mainViewModel: MainViewModel? = null,
 ) {
@@ -179,8 +179,5 @@ val mockBallingProfile = BallingProfile(
 )
 @Composable
 fun BallingProfileEditPreviewScreen() {
-    BallingProfileEditScreen(
-        navHostController = null,
-        ballingProfile = mockBallingProfile,
-    )
+    BallingProfileEditScreen(ballingProfile = mockBallingProfile)
 }
