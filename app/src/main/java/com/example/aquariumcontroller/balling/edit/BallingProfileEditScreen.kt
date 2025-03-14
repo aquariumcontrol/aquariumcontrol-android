@@ -164,7 +164,6 @@ val mockBallingProfile = BallingProfile(
     label = "MockDosingUnit 1",
 )
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
@@ -178,6 +177,6 @@ val mockBallingProfile = BallingProfile(
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
 @Composable
-fun BallingProfileEditPreviewScreen() {
+fun BallingProfileEditScreenPreview() {
     BallingProfileEditScreen(ballingProfile = mockBallingProfile)
 }
