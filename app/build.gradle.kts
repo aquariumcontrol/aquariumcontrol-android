@@ -8,6 +8,7 @@ plugins {
     //id("org.jetbrains.kotlin.android") version "1.9.20-1.0.14"
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp") version "1.9.20-1.0.14"
+    alias(libs.plugins.screenshot)
 }
 
 android {
@@ -49,6 +50,7 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.4"
     }
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -106,4 +108,6 @@ dependencies {
 
     // for serialization of data class with timestamp
     implementation(libs.kotlinx.serialization.json.v130) // Or latest version
+
+    screenshotTestImplementation(libs.androidx.compose.ui.tooling)
 }
