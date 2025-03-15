@@ -1,9 +1,7 @@
 package com.example.aquariumcontroller.balling
 
 import android.content.res.Configuration
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -81,25 +79,11 @@ val mockBallingProfile = BallingProfile(
     volume = 1.5,
     label = "MockDosingUnit 1",
 )
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun BallingProfileSummaryPreviewNightScreen() {
-    AquariumControllerTheme {
-        Surface {
-            BallingProfileSummaryComposable(
-                navHostController = null,
-                mainViewModel = null,
-                ballingProfile = mockBallingProfile
-            )
-        }
-    }
-}
 
-@RequiresApi(Build.VERSION_CODES.O)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun BallingProfileSummaryPreviewDayScreen() {
+fun BallingProfileSummaryPreview() {
     AquariumControllerTheme {
         Surface {
             BallingProfileSummaryComposable(

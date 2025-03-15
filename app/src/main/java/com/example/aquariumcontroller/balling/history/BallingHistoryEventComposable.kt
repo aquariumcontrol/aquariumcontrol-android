@@ -1,8 +1,6 @@
 package com.example.aquariumcontroller.balling.history
 
 import android.content.res.Configuration
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -71,11 +69,10 @@ fun BallingHistoryEventComposable(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun BallingEventPreviewScreen() {
+fun BallingHistoryEventComposablePreview() {
     val mockEvent = BallingHistoryDosingEvent(
         timestamp = "2025-01-18 12:00:00",
         pumpId = 1,
