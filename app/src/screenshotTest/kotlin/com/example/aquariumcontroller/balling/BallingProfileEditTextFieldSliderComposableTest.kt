@@ -6,6 +6,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.aquariumcontroller.balling.edit.BallingProfileEditTextFieldSliderComposableLandscapePreview
 import com.example.aquariumcontroller.balling.edit.BallingProfileEditTextFieldSliderComposablePortraitPreview
 
+@Suppress("unused")
 class BallingProfileEditTextFieldSliderComposableTest {
     @Preview(
         showBackground = true,

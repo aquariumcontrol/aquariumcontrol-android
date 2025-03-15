@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 
+@Suppress("unused")
 class VentilationRangeSliderTextFieldsLandscapeComposableTest {
     @Preview(
         showBackground = true,
