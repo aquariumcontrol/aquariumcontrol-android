@@ -1,8 +1,6 @@
 package com.example.aquariumcontroller.refill.history
 
 import android.content.res.Configuration
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -65,10 +63,10 @@ fun RefillEventComposable(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun RefillEventPreviewScreen() {
+fun RefillEventComposablePreview() {
     val fixedTimestamp = Timestamp(0L)
 
     val mockEvent = RefillEvent(

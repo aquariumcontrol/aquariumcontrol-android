@@ -2,8 +2,6 @@ package com.example.aquariumcontroller.timedata
 
 import android.content.res.Configuration
 import android.graphics.Color
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,13 +31,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
-import com.example.aquariumcontroller.webapi.WebApiUrls
-import com.example.aquariumcontroller.maindropdownmenu.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
+import com.example.aquariumcontroller.maindropdownmenu.MainDropdownMenuComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
+import com.example.aquariumcontroller.webapi.WebApiUrls
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import kotlinx.coroutines.Dispatchers
@@ -313,7 +311,6 @@ private suspend fun fetchTimeData(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun generateMockTimeData(): List<TimeDataSample> {
     val startTime = LocalDateTime.of(2024, 10, 24, 0, 0) // October 24th, 2024, 0:00 AM
     val samples = mutableListOf<TimeDataSample>()
@@ -409,7 +406,6 @@ fun generateMockTimeData(): List<TimeDataSample> {
     return samples
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, heightDp = 1250, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, heightDp = 1250, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
@@ -423,6 +419,6 @@ fun generateMockTimeData(): List<TimeDataSample> {
     device = "spec:width=1600dp,height=1200dp,orientation=landscape"
 )
 @Composable
-fun TimeDataViewPreview() {
+fun TimeDataScreenPreview() {
     TimeDataScreen(mockTimeData = generateMockTimeData())
 }

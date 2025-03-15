@@ -1,8 +1,6 @@
 package com.example.aquariumcontroller.overview
 
 import android.content.res.Configuration
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -48,7 +46,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterialApi::class)
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun OverviewScreen(
     navHostController: NavHostController? = null,
@@ -257,7 +254,6 @@ fun OverviewScreen(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 private suspend fun fetchOverviewData(
     mainViewModel: MainViewModel,
     updateOverviewData: (Any) -> Unit,
@@ -289,7 +285,6 @@ fun createMockOverviewData(): OverviewData {
     )
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
@@ -303,7 +298,7 @@ fun createMockOverviewData(): OverviewData {
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
 @Composable
-fun OverviewViewPreview() {
+fun OverviewScreenPreview() {
     val mockControllerProfile = ControllerProfile(
         name = "Controller 1",
         address = "192.168.1.1",
