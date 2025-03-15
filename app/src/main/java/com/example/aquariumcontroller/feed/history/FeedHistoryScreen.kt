@@ -238,7 +238,7 @@ private suspend fun fetchFeedEvents(
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
 @Composable
-fun FeedHistoryPreview() {
+fun FeedHistoryScreenPreview() {
     val mockEvents = listOf(
         FeedHistoryEvent(
             timestamp = "2025-01-18 12:00:00",

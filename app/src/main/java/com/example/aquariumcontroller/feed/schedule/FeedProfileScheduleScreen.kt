@@ -268,7 +268,7 @@ fun FeedProfileScheduleScreen(
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
 @Composable
-fun FeedSchedulePreview() {
+fun FeedProfileScheduleScreenPreview() {
     val mockFeedProfileImport = FeedProfileImport()
     mockFeedProfileImport.profileId = 1
     mockFeedProfileImport.profileName = "Test Profile 1"
