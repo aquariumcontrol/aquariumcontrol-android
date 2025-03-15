@@ -137,14 +137,14 @@ fun ControllerAddScreen(
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
-    device = "spec:width=600dp,height=400dp,orientation=landscape"
+    device = "spec:width=600dp,height=480dp,orientation=landscape"
 )
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO,
-    device = "spec:width=600dp,height=400dp,orientation=landscape"
+    device = "spec:width=600dp,height=480dp,orientation=landscape"
 )
 @Composable
-fun ControllerAddViewPreview() {
+fun ControllerAddScreenPreview() {
     ControllerAddScreen(state = ControllerState(), onEvent = {})
 }

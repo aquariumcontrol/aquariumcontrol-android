@@ -188,16 +188,15 @@ fun ControllerEditScreen(
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
-    device = "spec:width=600dp,height=500dp,orientation=landscape"
+    device = "spec:width=600dp,height=480dp,orientation=landscape"
 )
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO,
-    device = "spec:width=600dp,height=500dp,orientation=landscape"
+    device = "spec:width=600dp,height=480dp,orientation=landscape"
 )
 @Composable
-fun ControllerEditViewPreview() {
-
+fun ControllerEditScreenPreview() {
     val mockControllerState = ControllerState(
         controllerProfileName = "Controller",
         controllerProfileAddress = "192.168.1.1",
@@ -205,6 +204,5 @@ fun ControllerEditViewPreview() {
         controllerProfileUser = "user",
         controllerProfilePassword = "password",
     )
-
     ControllerEditScreen(state = mockControllerState, onEvent = {}, mockIsDefaultProfile = true)
 }

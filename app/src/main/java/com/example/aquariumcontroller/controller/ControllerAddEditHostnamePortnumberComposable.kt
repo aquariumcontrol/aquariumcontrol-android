@@ -63,8 +63,16 @@ fun ControllerAddEditHostnamePortnumberComposablePortraitPreview() {
     }
 }
 
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    device = "spec:width=600dp,height=400dp,orientation=landscape"
+)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=600dp,height=400dp,orientation=landscape"
+)
 @Composable
 fun ControllerAddEditHostnamePortnumberComposableLandscapePreview() {
     AquariumControllerTheme {
@@ -72,7 +80,7 @@ fun ControllerAddEditHostnamePortnumberComposableLandscapePreview() {
             Row {
                 ControllerAddEditHostnamePortnumberComposable(
                     onEvent = {},
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.weight(0.5f),
                 )
             }
         }

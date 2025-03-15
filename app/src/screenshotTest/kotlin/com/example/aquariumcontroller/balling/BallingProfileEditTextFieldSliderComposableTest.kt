@@ -1,4 +1,4 @@
-package com.example.aquariumcontroller
+package com.example.aquariumcontroller.balling
 
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
