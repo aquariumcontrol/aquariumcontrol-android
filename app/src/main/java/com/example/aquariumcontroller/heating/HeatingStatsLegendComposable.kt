@@ -20,7 +20,7 @@ import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
-fun HeatingStatsLegend() {
+fun HeatingStatsLegendComposable() {
     // This composable displays the legend for the heating stats:
     // - a bullet for each signal
     // - the name of the signal incl. unit
@@ -142,10 +142,10 @@ fun HeatingStatsLegend() {
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
 @Composable
-fun HeatingStatsLegendPreview() {
+fun HeatingStatsLegendComposablePreview() {
     AquariumControllerTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
-            HeatingStatsLegend()
+            HeatingStatsLegendComposable()
         }
     }
 }

@@ -162,7 +162,7 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: ()
             verticalAlignment = Alignment.CenterVertically,
 
         ) {
-            HeatingStatsLegend()
+            HeatingStatsLegendComposable()
             Spacer(modifier = Modifier.width(32.dp))
             RoundRefreshButtonComposable(onClick = updateData)
         }
@@ -205,7 +205,7 @@ fun createMockHeatingStatsData(): List<HeatingStatsEntry> {
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
 @Composable
-fun PreviewHeatingStatsComposable() {
+fun HeatingStatsComposablePreview() {
     val mockData = createMockHeatingStatsData()
 
     AquariumControllerTheme {

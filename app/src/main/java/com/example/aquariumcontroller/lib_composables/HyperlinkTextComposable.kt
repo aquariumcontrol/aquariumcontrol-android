@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
-fun HyperlinkText(text: String, url: String, textAlign: TextAlign? = null) {
+fun HyperlinkTextComposable(text: String, url: String, textAlign: TextAlign? = null) {
     val uriHandler = LocalUriHandler.current
     Text(
         text = buildAnnotatedString {
@@ -36,10 +36,10 @@ fun HyperlinkText(text: String, url: String, textAlign: TextAlign? = null) {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun HyperlinkTextPreview() {
+fun HyperlinkTextComposablePreview() {
     AquariumControllerTheme {
         Surface {
-            HyperlinkText(text = "Click here", url = "https://www.google.com")
+            HyperlinkTextComposable(text = "Click here", url = "https://www.google.com")
         }
     }
 }

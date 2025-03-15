@@ -1,6 +1,6 @@
 package com.example.aquariumcontroller.info
 
-import HyperlinkText
+import HyperlinkTextComposable
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,12 +52,12 @@ fun InfoScreen(navHostController: NavHostController? = null, mainViewModel: Main
                         text = "Aquarium Control is an open source control system for marine fish tanks.",
                         textAlign = TextAlign.Center
                     )
-                    HyperlinkText(
+                    HyperlinkTextComposable(
                         text = "Developer documentation",
                         url = "http://217.79.180.177/mediawiki/index.php/Main_Page",
                         textAlign = TextAlign.Center
                     )
-                    HyperlinkText(
+                    HyperlinkTextComposable(
                         text = "Developer information",
                         url = "mailto:uwe.martin@gmail.com",
                         textAlign = TextAlign.Center
@@ -80,6 +80,6 @@ fun InfoScreen(navHostController: NavHostController? = null, mainViewModel: Main
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun InfoViewPreview() {
+fun InfoScreenPreview() {
     InfoScreen()
 }
