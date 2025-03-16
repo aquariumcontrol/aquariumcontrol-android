@@ -66,7 +66,7 @@ fun HeatingScreen(
             false
         }
         else -> {
-            mockHeatingStatEntries?.isNotEmpty() ?: false
+            mockHeatingStatEntries?.isNotEmpty() == true
         }
     }
 

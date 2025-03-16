@@ -64,10 +64,10 @@ fun RefillHistoryScreen(
     var refillEvents by remember { mutableStateOf(mockRefillEvents) }
     var isRefreshing by remember {
         mutableStateOf(
-            value = mockRefillEvents?.isNotEmpty() ?: false
+            value = mockRefillEvents?.isNotEmpty() == true
         )
     }
-    val isControllerLoaded = mainViewModel?.isControllerLoaded() ?: false
+    val isControllerLoaded = mainViewModel?.isControllerLoaded() == true
     val coroutineScope = rememberCoroutineScope()
     val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
 
@@ -121,8 +121,7 @@ fun RefillHistoryScreen(
                             stringResource(R.string.refill_events_last_24h)
                         }
                     Text(text = subHeadlineText)
-                    Scaffold(
-                    ) { innerPadding ->
+                    Scaffold { innerPadding ->
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()

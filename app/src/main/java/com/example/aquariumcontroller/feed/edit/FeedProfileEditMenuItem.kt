@@ -1,6 +1,5 @@
 package com.example.aquariumcontroller.feed.edit
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
@@ -28,17 +27,14 @@ data class FeedProfileEditMenuItem(
     val inputValue: LiveData<Double> = _inputValue
 
     fun updateIsChecked(newValue: Boolean) {
-        Log.d("FeedProfileEditMenuItem", "updating isChecked to $newValue")
         this.isChecked.value = newValue
     }
 
     fun updateIsExpanded(newValue: Boolean) {
-        Log.d("FeedProfileEditMenuItem", "updating isExpanded to $newValue")
         this.isExpanded.value = newValue
     }
 
     fun updateInputValue(newValue: Double) {
-        Log.d("FeedProfileEditMenuItem", "updating inputValue to $newValue")
         this._inputValue.value = newValue
     }
 }

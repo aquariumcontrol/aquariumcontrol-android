@@ -69,7 +69,7 @@ fun BallingHistoryScreen(
         )
     }
 
-    val isControllerLoaded = mainViewModel?.isControllerLoaded() ?: false
+    val isControllerLoaded = mainViewModel?.isControllerLoaded() == true
     val coroutineScope = rememberCoroutineScope()
     val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
 

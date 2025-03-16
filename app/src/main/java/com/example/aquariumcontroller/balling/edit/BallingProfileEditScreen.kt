@@ -1,9 +1,7 @@
 package com.example.aquariumcontroller.balling.edit
 
 import android.content.res.Configuration
-import android.os.Build
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,17 +28,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.aquariumcontroller.webapi.WebApiParams
-import com.example.aquariumcontroller.webapi.WebApiUrls
-import com.example.aquariumcontroller.maindropdownmenu.MainDropdownMenuComposable
 import com.example.aquariumcontroller.MainViewModel
-import com.example.aquariumcontroller.webapi.WebApiPostRequest
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.balling.BallingProfile
 import com.example.aquariumcontroller.balling.BallingProfileSummaryComposable
 import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
+import com.example.aquariumcontroller.maindropdownmenu.MainDropdownMenuComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
+import com.example.aquariumcontroller.webapi.WebApiParams
+import com.example.aquariumcontroller.webapi.WebApiPostRequest
+import com.example.aquariumcontroller.webapi.WebApiUrls
 import com.example.aquariumcontroller.webapi.webApiPostRequestExecution
 
 @Composable
@@ -134,7 +132,7 @@ fun BallingProfileEditScreen(
                                     // Show the Toast after the API call
                                     Toast.makeText(
                                         context,
-                                        "Sent request to controller for updating dosing volume",
+                                        context.getString(R.string.sent_request_to_controller_for_updating_dosing_volume),
                                         Toast.LENGTH_SHORT
                                     ).show()
 

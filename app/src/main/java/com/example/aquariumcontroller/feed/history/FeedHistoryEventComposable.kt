@@ -1,8 +1,6 @@
 package com.example.aquariumcontroller.feed.history
 
 import android.content.res.Configuration
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -14,10 +12,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
+import com.example.aquariumcontroller.R
 
 @Composable
 fun FeedHistoryEventComposable(
@@ -26,7 +26,6 @@ fun FeedHistoryEventComposable(
     // This composable displays one feed dosing event:
     // - text objects for showing timestamp
     // - text objects for showing feed profile name
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -42,7 +41,7 @@ fun FeedHistoryEventComposable(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = "Timestamp",
+                text = stringResource(id = R.string.timestamp),
                 fontSize = 12.sp
             )
             Text(
@@ -54,7 +53,7 @@ fun FeedHistoryEventComposable(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = "Name",
+                text = stringResource(R.string.name),
                 fontSize = 12.sp
             )
             Text(

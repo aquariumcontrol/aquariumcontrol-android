@@ -60,11 +60,11 @@ fun FeedHistoryScreen(
     var feedEvents by remember { mutableStateOf(mockFeedHistoryEvents) }
     var isRefreshing by remember {
         mutableStateOf(
-            mockFeedHistoryEvents?.isNotEmpty() ?: false
+            mockFeedHistoryEvents?.isNotEmpty() == true
         )
     }
 
-    val isControllerLoaded = mainViewModel?.isControllerLoaded() ?: false
+    val isControllerLoaded = mainViewModel?.isControllerLoaded() == true
     val coroutineScope = rememberCoroutineScope()
     val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
 
@@ -150,7 +150,7 @@ fun FeedHistoryScreen(
                                     if (isControllerAddressValid || mockFeedHistoryEvents != null) {
                                         if (feedEvents == null) {
                                             Text(
-                                                text = "Loading feed events...",
+                                                text = stringResource(R.string.loading_feed_events),
                                                 style = TextStyle(
                                                     fontSize = 16.sp,
                                                     fontWeight = FontWeight.Bold
@@ -158,7 +158,7 @@ fun FeedHistoryScreen(
                                             )
                                         } else if (feedEvents!!.isEmpty()) {
                                             Text(
-                                                text = "No feed events found.",
+                                                text = stringResource(R.string.no_feed_events_found),
                                                 style = TextStyle(
                                                     fontSize = 16.sp,
                                                     fontWeight = FontWeight.Bold
@@ -177,7 +177,7 @@ fun FeedHistoryScreen(
                                         }
                                     } else {
                                         Text(
-                                            text = "Invalid controller address",
+                                            text = stringResource(R.string.invalid_controller_address),
                                             style = TextStyle(
                                                 fontSize = 16.sp,
                                                 fontWeight = FontWeight.Bold
@@ -186,7 +186,7 @@ fun FeedHistoryScreen(
                                     }
                                 } else {
                                     Text(
-                                        text = "Controller not loaded.",
+                                        text = stringResource(R.string.controller_not_loaded),
                                         style = TextStyle(
                                             fontSize = 16.sp,
                                             fontWeight = FontWeight.Bold

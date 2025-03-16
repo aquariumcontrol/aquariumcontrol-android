@@ -12,9 +12,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
@@ -42,7 +44,7 @@ fun BallingHistoryEventComposable(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = "Timestamp",
+                text = stringResource(R.string.timestamp),
                 fontSize = 12.sp
             )
             Text(
@@ -54,15 +56,17 @@ fun BallingHistoryEventComposable(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = "Pump ID: ${ballingHistoryDosingEvent.pumpId}",
+                text = stringResource(R.string.pump_id) + "${ballingHistoryDosingEvent.pumpId}",
                 fontSize = 12.sp
             )
             Text(
-                text = "Dosing volume: ${"%.2f".format(ballingHistoryDosingEvent.volume)} ml",
+                text = stringResource(R.string.dosing_volume) +
+                        "%.2f".format(ballingHistoryDosingEvent.volume) +
+                        stringResource(R.string.milliliter_unit),
                 fontSize = 12.sp
             )
             Text(
-                text = "Label: ${ballingHistoryDosingEvent.label}",
+                text = stringResource(R.string.label) + ballingHistoryDosingEvent.label,
                 fontSize = 12.sp
             )
         }

@@ -80,7 +80,7 @@ fun TimeDataScreen(
             false
         }
         else -> {
-            mockTimeData?.isNotEmpty() ?: false
+            mockTimeData?.isNotEmpty() == true
         }
     }
 

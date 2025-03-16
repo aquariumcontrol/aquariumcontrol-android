@@ -22,8 +22,8 @@ import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
 fun FeedHistorySelectionButtonsComposable(
+    modifier: Modifier? = Modifier,
     navHostController: NavHostController? = null,
-    modifier: Modifier? = null
 ) {
     // This composable displays the feed history selection buttons.
     // The arrangement of the buttons follows the device orientation.

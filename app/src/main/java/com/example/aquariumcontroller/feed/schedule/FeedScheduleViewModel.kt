@@ -1,6 +1,5 @@
 package com.example.aquariumcontroller.feed.schedule
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -39,14 +38,12 @@ class FeedScheduleViewModel(myFeedScheduleEntries: List<FeedScheduleEntry>?) :
     }
 
     fun deleteFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry) {
-        Log.d("FeedScheduleViewModel", "Deleting feed schedule entry: $feedScheduleEntry")
         val currentList = _feedScheduleEntries.value.orEmpty().toMutableList()
         currentList.remove(feedScheduleEntry)
         _feedScheduleEntries.value = currentList
     }
 
     fun addFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry) {
-        Log.d("FeedScheduleViewModel", "Adding feed schedule entry: $feedScheduleEntry")
         val currentList = _feedScheduleEntries.value.orEmpty().toMutableList()
         currentList.add(feedScheduleEntry)
         _feedScheduleEntries.value = currentList

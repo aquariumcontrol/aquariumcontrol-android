@@ -1,6 +1,5 @@
 package com.example.aquariumcontroller.info
 
-import HyperlinkTextComposable
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +23,7 @@ import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.maindropdownmenu.MainDropdownMenuComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
+import com.example.aquariumcontroller.lib_composables.HyperlinkTextComposable
 
 @Composable
 fun InfoScreen(navHostController: NavHostController? = null, mainViewModel: MainViewModel? = null) {

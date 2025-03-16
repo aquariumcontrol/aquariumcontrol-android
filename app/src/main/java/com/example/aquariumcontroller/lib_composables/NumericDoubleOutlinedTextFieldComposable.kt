@@ -29,7 +29,7 @@ fun isParsableToDouble(input: String): Boolean {
     return try {
         input.toDouble()
         true // Parsing successful
-    } catch (e: NumberFormatException) {
+    } catch (_: NumberFormatException) {
         false // Parsing failed
     }
 }

@@ -70,7 +70,7 @@ fun ControllerSelectionScreen(
     LaunchedEffect(key1 = isDataLoaded) {
         if (isDataLoaded && defaultProfileId > 0 && mainViewModel?.isFirstLoad() != false && state.controllerProfileList.isNotEmpty()) {
             // fine grained progressbar for visualization
-            (1..40).forEach { i ->
+            (1..40).forEach { _ ->
                 delay(100)
                 progress += 0.025f
             }

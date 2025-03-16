@@ -55,7 +55,7 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: ()
                     setDrawGridBackground(false) // No grid
                     isDragEnabled = true
                     setScaleEnabled(true)  //Allow zooming
-                    setPinchZoom(true)    //Allow zooming via Pinc gesture
+                    setPinchZoom(true)    //Allow zooming via Pinch gesture
 
                     // X-Axis configuration
                     xAxis.position = XAxis.XAxisPosition.BOTTOM

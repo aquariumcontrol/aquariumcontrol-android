@@ -21,9 +21,9 @@ import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
 fun ControllerAddEditUsernamePasswordComposable(
-    state: ControllerState? = null,
     onEvent: (ControllerEvent) -> Unit,
-    modifier: Modifier? = null
+    modifier: Modifier? = Modifier,
+    state: ControllerState? = null,
 ) {
     // This composable displays text fields for user name and password.
     // The arrangement of the fields follows the device orientation.

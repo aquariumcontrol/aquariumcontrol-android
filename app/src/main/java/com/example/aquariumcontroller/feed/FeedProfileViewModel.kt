@@ -1,6 +1,5 @@
 package com.example.aquariumcontroller.feed
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -39,7 +38,6 @@ class FeedProfileViewModel(myFeedProfiles: List<FeedProfile>? = null) :
     }
 
     fun deleteFeedProfile(feedProfile: FeedProfile) {
-        Log.d("FeedProfileViewModel", "Deleting feed profile: $feedProfile")
         val currentList = _feedProfiles.value.orEmpty().toMutableList()
         currentList.remove(feedProfile)
         _feedProfiles.value = currentList
@@ -47,7 +45,6 @@ class FeedProfileViewModel(myFeedProfiles: List<FeedProfile>? = null) :
     }
 
     fun addFeedProfile(feedProfile: FeedProfile) {
-        Log.d("FeedProfileViewModel", "Adding feed Profile: $feedProfile")
         val currentList = _feedProfiles.value.orEmpty().toMutableList()
         currentList.add(feedProfile)
         _feedProfiles.value = currentList

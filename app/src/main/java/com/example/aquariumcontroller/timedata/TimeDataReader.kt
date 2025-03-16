@@ -1,6 +1,5 @@
 package com.example.aquariumcontroller.timedata
 
-import android.util.Log
 import com.example.aquariumcontroller.webapi.WebApiParams
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
@@ -44,21 +43,17 @@ class TimeDataReader(private val urlWithoutParameters: String) {
             .url(url)
             .build()
 
-        Log.d(this::class.simpleName, "Request URL: $url")
         return try {
             val response = client.newCall(request).execute()
             if (response.isSuccessful) {
                 val responseBody = response.body?.string()
-                Log.d(this::class.simpleName, "Response successful: $responseBody")
                 responseBody?.let {
                     json.decodeFromString<List<TimeDataStringSample>>(it)
                 }
             } else {
-                Log.d(this::class.simpleName, "Error: ${response.code} - ${response.message}")
                 null
             }
-        } catch (e: Exception) {
-            Log.d(this::class.simpleName, "Exception: ${e.message}")
+        } catch (_: Exception) {
             null
         }
     }

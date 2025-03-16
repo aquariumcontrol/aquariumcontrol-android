@@ -15,21 +15,25 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.MainViewModel
+import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
+import com.example.aquariumcontroller.feed.schedule.FeedScheduleViewModel
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
 @Composable
 fun FeedProfileSelectionComposable(
+    modifier: Modifier? = Modifier,
     mockFeedProfiles: List<FeedProfile>? = null,
     myFeedProfileViewModel: FeedProfileViewModel? = null,
     mainViewModel: MainViewModel? = null,
     navHostController: NavHostController? = null,
-    modifier: Modifier? = null
+    feedScheduleViewModel: FeedScheduleViewModel? = null
 ) {
     // This composable displays a label "Feed Profiles"
     // and a list of feed profiles.
@@ -39,7 +43,7 @@ fun FeedProfileSelectionComposable(
         factory = FeedProfileViewModelFactory(feedProfiles = mockFeedProfiles)
     )
 
-    Text(text = "Feed Profiles")
+    Text(text = stringResource(R.string.feed_profiles))
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -50,7 +54,8 @@ fun FeedProfileSelectionComposable(
                 navHostController = navHostController,
                 mainViewModel = mainViewModel,
                 feedProfile = feedProfile,
-                feedProfileViewModel = feedProfileViewModel
+                feedProfileViewModel = feedProfileViewModel,
+                feedScheduleViewModel = feedScheduleViewModel
             )
         }
     }
@@ -90,7 +95,6 @@ fun FeedProfileSelectionComposablePreview() {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 FeedProfileSelectionComposable(
                     mockFeedProfiles = createMockFeedProfiles(),
-                    //modifier = Modifier.align(Alignment.End)
                 )
             }
         }

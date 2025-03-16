@@ -1,7 +1,6 @@
 package com.example.aquariumcontroller.feed.add
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,8 +30,8 @@ import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.feed.FeedProfile
 import com.example.aquariumcontroller.feed.FeedProfileViewModel
-import com.example.aquariumcontroller.maindropdownmenu.MainDropdownMenuComposable
 import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
+import com.example.aquariumcontroller.maindropdownmenu.MainDropdownMenuComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import com.example.aquariumcontroller.webapi.WebApiPostRequest
 import com.example.aquariumcontroller.webapi.WebApiUrls
@@ -81,7 +80,6 @@ fun FeedProfileAddScreen(
 
                     FeedProfileAddNameEditableOutlinedFieldComposable(
                         onFeedProfileNameChange = {
-                            Log.d("FeedProfileAddScreen", "Feed profile name changed to $it")
                             feedProfileAddViewModel.setFeedProfileName(it)
                         },
                         modifier = Modifier.padding(16.dp)

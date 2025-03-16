@@ -11,9 +11,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.lib_composables.NumericDoubleOutlinedTextFieldComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
@@ -35,7 +37,7 @@ fun BallingProfileEditTextFieldSliderComposable(
                 ballingProfileEditViewModel?.onVolumeChange(newNumericValue)
             }
         },
-        label = "New Dosing Volume (ml/h)",
+        label = stringResource(R.string.new_dosing_volume_ml_h),
         textAlign = TextAlign.Center,
         modifier = Modifier
             .width(200.dp)

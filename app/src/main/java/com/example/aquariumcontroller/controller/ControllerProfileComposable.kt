@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.MainViewModel
+import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 
@@ -129,11 +131,11 @@ fun ControllerProfileComposable(
             ) {
                 Column {
                     Text(
-                        text = "Port: " + controllerProfile.port,
+                        text = stringResource(R.string.port) + controllerProfile.port,
                         fontSize = 12.sp
                     )
                     Text(
-                        text = "ID: ${controllerProfile.id}",
+                        text = stringResource(R.string.id) + "${controllerProfile.id}",
                         fontSize = 12.sp,
                     )
                 }
@@ -144,11 +146,11 @@ fun ControllerProfileComposable(
                     ) {
                     }
                     Text(
-                        text = "User: " + controllerProfile.user,
+                        text = stringResource(R.string.user) + controllerProfile.user,
                         fontSize = 12.sp,
                     )
                     Text(
-                        text = "Password: " + controllerProfile.password,
+                        text = stringResource(R.string.password_label) + controllerProfile.password,
                         fontSize = 12.sp,
                     )
                 }

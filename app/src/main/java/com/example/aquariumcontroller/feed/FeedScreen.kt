@@ -8,10 +8,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -31,6 +37,7 @@ import com.example.aquariumcontroller.maindropdownmenu.MainDropdownMenuComposabl
 import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 @Composable
@@ -53,6 +60,8 @@ fun FeedScreen(
 
     val configuration = LocalConfiguration.current
 
+    var isLoading by remember { mutableStateOf(mockFeedProfiles == null) }
+
     // instantiate view model with null pointer except if mock data is provided
     val feedScheduleViewModel: FeedScheduleViewModel = viewModel(
         factory = FeedScheduleViewModelFactory(feedScheduleEntries = mockFeedScheduleEntries)
@@ -68,8 +77,10 @@ fun FeedScreen(
         LaunchedEffect(Unit) {
             withContext(Dispatchers.IO) {
                 if (mainViewModel.getControllerAddress() != null) {
+                    delay(500)
                     feedScheduleViewModel.readFeedScheduleEntries(mainViewModel.getControllerAddress()!!)
                     feedProfileViewModel.readFeedProfiles(mainViewModel.getControllerAddress()!!)
+                    isLoading = false
                 }
             }
         }
@@ -94,44 +105,62 @@ fun FeedScreen(
                                 FeedHistorySelectionButtonsComposable(navHostController = navHostController)
                             }
                             Spacer(modifier = Modifier.height(16.dp))
-                            Row {
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    FeedProfileSelectionComposable(
-                                        navHostController = navHostController,
-                                        myFeedProfileViewModel = feedProfileViewModel,
-                                        modifier = Modifier.align(Alignment.End)
-                                    )
-                                }
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    FeedScheduleSelectionComposable(
-                                        myFeedScheduleViewModel = feedScheduleViewModel,
-                                        mainViewModel = mainViewModel
-                                    )
+                            if (isLoading) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .size(150.dp),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            } else {
+                                Row {
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        FeedProfileSelectionComposable(
+                                            navHostController = navHostController,
+                                            myFeedProfileViewModel = feedProfileViewModel,
+                                            modifier = Modifier.align(Alignment.End),
+                                            feedScheduleViewModel = feedScheduleViewModel
+                                        )
+                                    }
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        FeedScheduleSelectionComposable(
+                                            myFeedScheduleViewModel = feedScheduleViewModel,
+                                            mainViewModel = mainViewModel
+                                        )
+                                    }
                                 }
                             }
                         }
-
                         else -> {
                             FeedHistorySelectionButtonsComposable(
                                 navHostController = navHostController,
                                 modifier = Modifier.fillMaxWidth()
                             )
                             Spacer(modifier = Modifier.height(16.dp))
-                            FeedProfileSelectionComposable(
-                                navHostController = navHostController,
-                                myFeedProfileViewModel = feedProfileViewModel,
-                                modifier = Modifier.align(Alignment.End)
-                            )
-                            FeedScheduleSelectionComposable(
-                                myFeedScheduleViewModel = feedScheduleViewModel,
-                                mainViewModel = mainViewModel
-                            )
+                            if (isLoading) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .size(150.dp),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            } else {
+                                FeedProfileSelectionComposable(
+                                    modifier = Modifier.align(Alignment.End),
+                                    myFeedProfileViewModel = feedProfileViewModel,
+                                    mainViewModel = mainViewModel,
+                                    navHostController = navHostController,
+                                    feedScheduleViewModel = feedScheduleViewModel
+                                )
+                                FeedScheduleSelectionComposable(
+                                    myFeedScheduleViewModel = feedScheduleViewModel,
+                                    mainViewModel = mainViewModel
+                                )
+                            }
                         }
                     }
                 }

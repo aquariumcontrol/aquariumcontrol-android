@@ -28,9 +28,9 @@ import com.example.aquariumcontroller.webapi.webApiPostRequestExecution
 
 @Composable
 fun FeedProfileEditButtonsComposable(
+    modifier: Modifier? = Modifier,
     feedProfileEditViewModel: FeedProfileEditViewModel? = null,
     mainViewModel: MainViewModel? = null,
-    modifier: Modifier? = null,
 ) {
     // This composable displays the buttons for updating the feed profile.
     // The arrangement of the buttons follows the device orientation.
@@ -59,7 +59,7 @@ fun FeedProfileEditButtonsComposable(
                 // Show the Toast after the API call
                 Toast.makeText(
                     context,
-                    "Sent request to controller for updating feed profile",
+                    context.getString(R.string.sent_request_to_controller_for_updating_feed_profile),
                     Toast.LENGTH_SHORT
                 ).show()
                 feedProfileEditViewModel?.updateFeedProfile()

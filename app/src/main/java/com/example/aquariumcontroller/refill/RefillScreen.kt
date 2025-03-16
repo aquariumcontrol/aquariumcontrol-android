@@ -46,7 +46,7 @@ fun RefillScreen(
     // - a button for resetting errors of the refill controller
 
     val webApiPostRequest = WebApiPostRequest()
-    val isControllerLoaded = mainViewModel?.isControllerLoaded() ?: false
+    val isControllerLoaded = mainViewModel?.isControllerLoaded() == true
     val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
     val context = LocalContext.current // context for web API request and Toasts
 
@@ -65,8 +65,7 @@ fun RefillScreen(
                     ScreenHeadlineComposable(
                         text = stringResource(id = R.string.refill_control)
                     )
-                    Scaffold(
-                    ) { innerPadding ->
+                    Scaffold { innerPadding ->
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()

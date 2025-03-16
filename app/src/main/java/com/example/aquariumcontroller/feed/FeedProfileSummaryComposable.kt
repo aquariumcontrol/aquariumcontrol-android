@@ -1,9 +1,6 @@
 package com.example.aquariumcontroller.feed
 
 import android.content.res.Configuration
-import android.os.Build
-import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -35,6 +32,7 @@ import com.example.aquariumcontroller.webapi.WebApiUrls
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.webapi.WebApiPostRequest
 import com.example.aquariumcontroller.ViewNavigationRoutes
+import com.example.aquariumcontroller.feed.schedule.FeedScheduleViewModel
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import com.example.aquariumcontroller.webapi.webApiPostRequestExecution
 
@@ -43,7 +41,8 @@ fun FeedProfileSummaryComposable(
     navHostController: NavHostController? = null,
     mainViewModel: MainViewModel? = null,
     feedProfile: FeedProfile,
-    feedProfileViewModel: FeedProfileViewModel? = null
+    feedProfileViewModel: FeedProfileViewModel? = null,
+    feedScheduleViewModel: FeedScheduleViewModel? = null
 ) {
     // This composable displays one Feed dosing profile summary consisting of:
     // - The profile ID
@@ -100,10 +99,6 @@ fun FeedProfileSummaryComposable(
                     modifier = Modifier
                         .size(48.dp)
                         .clickable {
-                            Log.d(
-                                "FeedProfileSummaryScreen",
-                                "Clicked on Edit icon for {${feedProfile.profileName}}"
-                            )
                             mainViewModel?.updateSelectedFeedProfile(feedProfile)
                             navHostController?.navigate(ViewNavigationRoutes.feedEdit)
                         }
@@ -115,26 +110,19 @@ fun FeedProfileSummaryComposable(
                     modifier = Modifier
                         .size(48.dp)
                         .clickable {
-                            Log.d(
-                                "FeedProfileSummaryScreen",
-                                "Clicked on Schedule icon for {${feedProfile.profileName}}"
-                            )
                             mainViewModel?.updateSelectedFeedProfile(feedProfile)
                             mainViewModel?.updateSelectedFeedScheduleEntry(null)
+                            mainViewModel?.setMyFeedScheduleViewModel(feedScheduleViewModel)
                             navHostController?.navigate(ViewNavigationRoutes.feedSchedule)
                         }
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Icon(
                     imageVector = Icons.Filled.Delete,
-                    contentDescription = "Schedule",
+                    contentDescription = "Delete",
                     modifier = Modifier
                         .size(48.dp)
                         .clickable {
-                            Log.d(
-                                "FeedProfileSummaryScreen",
-                                "Clicked on Delete icon for {${feedProfile.profileName}}"
-                            )
                             feedProfileViewModel?.deleteFeedProfile(feedProfile)
                             if (mainViewModel != null) {
                                 webApiPostRequestExecution(
@@ -169,7 +157,6 @@ fun FeedProfileSummaryComposablePreview() {
         ) {
             FeedProfileSummaryComposable(
                 feedProfile = mockFeedProfile,
-                feedProfileViewModel = null,
             )
         }
     }

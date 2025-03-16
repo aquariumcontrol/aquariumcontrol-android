@@ -35,7 +35,7 @@ fun MainDropdownMenuComposable(
     navigationRouteSource: String,
     mainViewModel: MainViewModel? = null
 ) {
-    val isControllerLoaded = mainViewModel?.isControllerLoaded() ?: false
+    val isControllerLoaded = mainViewModel?.isControllerLoaded() == true
 
     var expanded by remember { mutableStateOf(false) }
 

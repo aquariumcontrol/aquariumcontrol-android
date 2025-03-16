@@ -2,7 +2,6 @@ package com.example.aquariumcontroller.feed.schedule
 
 // import com.example.aquariumcontroller.ViewNavigationRoutes will be used in future implementation
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -22,10 +21,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.aquariumcontroller.MainViewModel
+import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import com.example.aquariumcontroller.webapi.WebApiPostRequest
 import com.example.aquariumcontroller.webapi.WebApiUrls
@@ -62,15 +63,18 @@ fun FeedScheduleEntryComposable(
                 .weight(5f)
         ) {
             Text(
-                text = "Profile name: ${feedScheduleEntry.profileName}",
+                text = stringResource(R.string.profile_name_label) + feedScheduleEntry.profileName,
                 fontSize = 12.sp
             )
             Text(
-                text = "Scheduled for ${feedScheduleEntry.getTimestampString()}",
+                text = stringResource(R.string.scheduled_for) + feedScheduleEntry.getTimestampString(),
                 fontSize = 12.sp
             )
             Text(
-                text = "Repeat daily: ${if (feedScheduleEntry.isDaily) "Yes" else "No"}",
+                text = stringResource(R.string.repeat_daily_label) +
+                        if (feedScheduleEntry.isDaily)
+                            stringResource(R.string.yes)
+                        else stringResource(R.string.no),
                 fontSize = 12.sp
             )
         }
@@ -99,14 +103,10 @@ fun FeedScheduleEntryComposable(
                  */
                 Icon(
                     imageVector = Icons.Filled.Delete,
-                    contentDescription = "Delete",
+                    contentDescription = stringResource(R.string.delete),
                     Modifier
                         .size(48.dp)
                         .clickable {
-                            Log.d(
-                                "FeedScheduleEntryComposable",
-                                "Clicked on Delete icon for schedule entry at {${feedScheduleEntry.getTimestampString()}}"
-                            )
                             if (mainViewModel != null) {
                                 mainViewModel.updateSelectedFeedScheduleEntry(null)
                                 feedScheduleViewModel?.deleteFeedScheduleEntry(feedScheduleEntry)

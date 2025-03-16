@@ -8,12 +8,14 @@ import com.example.aquariumcontroller.balling.BallingProfile
 import com.example.aquariumcontroller.controller.ControllerProfile
 import com.example.aquariumcontroller.feed.FeedProfile
 import com.example.aquariumcontroller.feed.schedule.FeedScheduleEntry
+import com.example.aquariumcontroller.feed.schedule.FeedScheduleViewModel
 
 class MainViewModel: ViewModel() {
     private var selectedController: ControllerProfile? by mutableStateOf(null)
     private var defaultControllerProfileId: Long = 0
     private var selectedFeedScheduleEntry: FeedScheduleEntry? by mutableStateOf(null)
     private var firstLoad: Boolean = true
+    private var feedScheduleViewModel: FeedScheduleViewModel? by mutableStateOf(null)
 
     fun getDefaultControllerProfileId(): Long {
         return defaultControllerProfileId
@@ -85,5 +87,13 @@ class MainViewModel: ViewModel() {
 
     fun setFirstLoad() {
         firstLoad = false
+    }
+
+    fun getMyFeedScheduleViewModel(): FeedScheduleViewModel? {
+        return feedScheduleViewModel
+    }
+
+    fun setMyFeedScheduleViewModel(feedScheduleViewModel: FeedScheduleViewModel?) {
+        this.feedScheduleViewModel = feedScheduleViewModel
     }
 }

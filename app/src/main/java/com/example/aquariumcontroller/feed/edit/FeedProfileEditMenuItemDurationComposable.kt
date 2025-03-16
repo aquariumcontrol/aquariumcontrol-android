@@ -36,7 +36,7 @@ fun FeedProfileEditMenuItemDurationComposable(
         initial = feedProfileEditViewModel?.getPhaseDuration(feedProfileEditMenuItem.id) ?: 0.0
     )
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Row() {
+        Row {
             Text(feedProfileEditMenuItem.text, Modifier.padding(top = 8.dp))
             Spacer(Modifier.weight(1f))
         }

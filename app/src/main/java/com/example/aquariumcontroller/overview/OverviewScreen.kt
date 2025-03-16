@@ -175,13 +175,7 @@ fun OverviewScreen(
                                 )
                             }
 
-                            if (overviewData == null) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier
-                                        .size(150.dp),
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            } else {
+                            if (overviewData != null) {
                                 when (configuration.orientation) {
                                     Configuration.ORIENTATION_LANDSCAPE -> {
                                         Row {

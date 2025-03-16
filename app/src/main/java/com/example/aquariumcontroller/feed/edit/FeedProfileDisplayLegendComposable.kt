@@ -63,7 +63,7 @@ fun FeedProfileDisplayLegendComposable() {
                                 horizontal = 4.dp
                             )
                         )
-                        Text(text = "Main Pump 1", fontSize = 12.sp)
+                        Text(text = stringResource(R.string.main_pump_1), fontSize = 12.sp)
                     }
                 }
                 Column(
@@ -80,7 +80,7 @@ fun FeedProfileDisplayLegendComposable() {
                                 horizontal = 4.dp
                             )
                         )
-                        Text(text = "Main Pump 2", fontSize = 12.sp)
+                        Text(text = stringResource(R.string.main_pump_2), fontSize = 12.sp)
                     }
                 }
                 Column(

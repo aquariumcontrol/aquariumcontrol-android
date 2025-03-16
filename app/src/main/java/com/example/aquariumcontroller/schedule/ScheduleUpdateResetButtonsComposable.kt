@@ -14,9 +14,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.aquariumcontroller.MainViewModel
+import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import com.example.aquariumcontroller.webapi.WebApiPostRequest
 import com.example.aquariumcontroller.webapi.WebApiUrls
@@ -68,14 +70,14 @@ fun ScheduleUpdateResetButtonsComposable(
                     // Show the Toast after the API call
                     Toast.makeText(
                         context,
-                        "Sent request to controller for updating schedule set values",
+                        context.getString(R.string.sent_request_to_controller_for_updating_schedule_set_values),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
             }
         }
     ) {
-        Text(text = "Update actuator schedules")
+        Text(text = stringResource(R.string.update_actuator_schedules))
     }
     Spacer(modifier = Modifier.width(10.dp))
     Button(
