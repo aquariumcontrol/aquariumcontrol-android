@@ -3,6 +3,7 @@ package com.example.aquariumcontroller.feed
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.aquariumcontroller.feed.history.FeedHistoryScreenEmptyPreview
 import com.example.aquariumcontroller.feed.history.FeedHistoryScreenPreview
 
 @Suppress("unused")
@@ -22,5 +23,11 @@ class FeedHistoryScreenTest {
     @Composable
     fun FeedHistoryScreenSnapshotTest() {
         FeedHistoryScreenPreview()
+    }
+
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun FeedHistoryScreenEmptySnapshotTest() {
+        FeedHistoryScreenEmptyPreview()
     }
 }

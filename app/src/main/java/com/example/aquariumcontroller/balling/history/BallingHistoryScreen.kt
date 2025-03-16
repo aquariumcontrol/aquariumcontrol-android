@@ -1,7 +1,7 @@
 package com.example.aquariumcontroller.balling.history
 
 import android.content.res.Configuration
-import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,8 +38,8 @@ import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
-import com.example.aquariumcontroller.maindropdownmenu.MainDropdownMenuComposable
 import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
+import com.example.aquariumcontroller.maindropdownmenu.MainDropdownMenuComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import com.example.aquariumcontroller.webapi.WebApiUrls
 import kotlinx.coroutines.Dispatchers
@@ -77,12 +77,14 @@ fun BallingHistoryScreen(
     @Suppress("UNCHECKED_CAST")
     LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
         if (mainViewModel != null && isControllerAddressValid) { // Check for null and validity
+            isRefreshing = true
             fetchBallingEvents(
                 mainViewModel,
                 showFullWeek
             ) { newBallingEvents ->
                 ballingEvents = newBallingEvents as List<BallingHistoryDosingEvent>
             } // Pass the setter lambda
+            isRefreshing = false
         }
     }
 
@@ -127,12 +129,9 @@ fun BallingHistoryScreen(
                         } else {
                             stringResource(R.string.balling_events_last_24h)
                         }
-                    Text(
-                        text = subHeadlineText,
-                    )
+                    Text(text = subHeadlineText)
 
-                    Scaffold(
-                    ) { innerPadding ->
+                    Scaffold{ innerPadding ->
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -155,13 +154,14 @@ fun BallingHistoryScreen(
                                 Row(
                                     modifier = Modifier
                                         .fillMaxSize()
-                                        .padding(16.dp)
+                                        .padding(16.dp),
+                                    horizontalArrangement = Arrangement.Center
                                 ) {
                                     if (isControllerLoaded || mockBallingHistoryDosingEvents != null) {
                                         if (isControllerAddressValid || mockBallingHistoryDosingEvents != null) {
                                             if (ballingEvents == null) {
                                                 Text(
-                                                    text = "Loading Balling dosing events...",
+                                                    text = stringResource(R.string.loading_balling_dosing_events),
                                                     style = TextStyle(
                                                         fontSize = 16.sp,
                                                         fontWeight = FontWeight.Bold
@@ -169,26 +169,22 @@ fun BallingHistoryScreen(
                                                 )
                                             } else if (ballingEvents!!.isEmpty()) {
                                                 Text(
-                                                    text = "No Balling events found.",
+                                                    text = stringResource(R.string.no_balling_events_found),
                                                     style = TextStyle(
                                                         fontSize = 16.sp,
                                                         fontWeight = FontWeight.Bold
-                                                    )
+                                                    ),
                                                 )
                                             } else {
                                                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                                                     items(ballingEvents!!) { ballingEvent ->
-                                                        Log.d(
-                                                            this::class.simpleName,
-                                                            "Balling dosing events found: ${ballingEvents!!.size}"
-                                                        )
                                                         BallingHistoryEventComposable(ballingEvent)
                                                     }
                                                 }
                                             }
                                         } else {
                                             Text(
-                                                text = "Invalid controller address",
+                                                text = stringResource(id = R.string.invalid_controller_address),
                                                 style = TextStyle(
                                                     fontSize = 16.sp,
                                                     fontWeight = FontWeight.Bold
@@ -197,7 +193,7 @@ fun BallingHistoryScreen(
                                         }
                                     } else {
                                         Text(
-                                            text = "Controller not loaded.",
+                                            text = stringResource(id = R.string.controller_not_loaded),
                                             style = TextStyle(
                                                 fontSize = 16.sp,
                                                 fontWeight = FontWeight.Bold
@@ -238,19 +234,19 @@ private suspend fun fetchBallingEvents(
 }
 
 val ballingHistoryScreenMockData = listOf(
-        BallingHistoryDosingEvent(
-            timestamp = "2025-01-18 12:00:00",
-            pumpId = 1,
-            volume = 1.5,
-            label = "MockDosingUnit 1"
-        ),
-        BallingHistoryDosingEvent(
-            timestamp = "2025-01-18 12:00:00",
-            pumpId = 2,
-            volume = 2.5,
-            label = "MockDosingUnit 2"
-        ),
-    )
+    BallingHistoryDosingEvent(
+        timestamp = "2025-01-18 12:00:00",
+        pumpId = 1,
+        volume = 1.5,
+        label = "MockDosingUnit 1"
+    ),
+    BallingHistoryDosingEvent(
+        timestamp = "2025-01-18 12:00:00",
+        pumpId = 2,
+        volume = 2.5,
+        label = "MockDosingUnit 2"
+    ),
+)
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -269,5 +265,14 @@ fun BallingHistoryScreenPreview() {
     BallingHistoryScreen(
         showFullWeek = false,
         mockBallingHistoryDosingEvents = ballingHistoryScreenMockData
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun BallingHistoryScreenEmptyPreview() {
+    BallingHistoryScreen(
+        showFullWeek = false,
+        mockBallingHistoryDosingEvents = emptyList()
     )
 }

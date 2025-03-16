@@ -2,6 +2,7 @@ package com.example.aquariumcontroller.feed.history
 
 import android.content.res.Configuration
 import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -72,12 +73,14 @@ fun FeedHistoryScreen(
     @Suppress("UNCHECKED_CAST")
     LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
         if (mainViewModel != null && isControllerAddressValid) { // Check for null and validity
+            isRefreshing = true
             fetchFeedEvents(
                 mainViewModel,
                 showFullWeek
             ) { newFeedEvents ->
                 feedEvents = newFeedEvents as List<FeedHistoryEvent>
             } // Pass the setter lambda
+            isRefreshing = false
         }
     }
 
@@ -144,7 +147,8 @@ fun FeedHistoryScreen(
                             Row(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(16.dp)
+                                    .padding(16.dp),
+                                horizontalArrangement = Arrangement.Center
                             ) {
                                 if (isControllerLoaded || mockFeedHistoryEvents != null) {
                                     if (isControllerAddressValid || mockFeedHistoryEvents != null) {
@@ -255,4 +259,10 @@ fun FeedHistoryScreenPreview() {
     )
 
     FeedHistoryScreen(showFullWeek = false, mockFeedHistoryEvents = mockEvents)
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun FeedHistoryScreenEmptyPreview() {
+    FeedHistoryScreen(showFullWeek = false, mockFeedHistoryEvents = emptyList())
 }

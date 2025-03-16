@@ -120,4 +120,6 @@
     <string name="feed_profiles">Feed Profiles</string>
     <string name="sent_request_to_controller_for_updating_schedule_set_values">Sent request to controller for updating schedule set values</string>
     <string name="update_actuator_schedules">Update actuator schedules</string>
+    <string name="loading_balling_dosing_events">Loading Balling dosing events.</string>
+    <string name="no_balling_events_found">No Balling events found.</string>
 </resources>
