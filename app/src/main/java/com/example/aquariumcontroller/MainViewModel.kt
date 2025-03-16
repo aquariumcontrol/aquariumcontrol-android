@@ -1,6 +1,5 @@
 package com.example.aquariumcontroller
 
-//import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -17,12 +16,10 @@ class MainViewModel: ViewModel() {
     private var firstLoad: Boolean = true
 
     fun getDefaultControllerProfileId(): Long {
-        //Log.d("MainViewModel", "Getting default controller profile id: $defaultControllerProfileId")
         return defaultControllerProfileId
     }
 
     fun setDefaultControllerProfileId(id: Long) {
-        //Log.d("MainViewModel", "Setting default controller profile id: $id")
         this.defaultControllerProfileId = id
     }
 
@@ -32,7 +29,6 @@ class MainViewModel: ViewModel() {
 
     fun updateSelectedBallingProfile(ballingProfile: BallingProfile) {
         selectedBallingProfile = ballingProfile
-        //Log.d("MainViewModel", "Selected balling profile: ${ballingProfile.label}")
     }
 
     fun isControllerLoaded(): Boolean {

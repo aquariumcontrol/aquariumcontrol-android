@@ -17,6 +17,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -62,10 +63,15 @@ fun ControllerEditScreen(
     val initialStateIsDefaultProfile: Boolean = if (mainViewModel != null) {
         (state.controllerProfileId == mainViewModel.getDefaultControllerProfileId())
     } else {
-        mockIsDefaultProfile ?: false
+        mockIsDefaultProfile == true
     }
 
     var isDefaultProfile by remember { mutableStateOf(initialStateIsDefaultProfile) }
+
+    LaunchedEffect(key1 = Unit) {
+        // Inhibit the countdown and automatic navigation when returning to ControllerSelectionScreen
+        mainViewModel?.setFirstLoad()
+    }
 
     // This screen displays a form for editing an existing controller profile.
     AquariumControllerTheme {

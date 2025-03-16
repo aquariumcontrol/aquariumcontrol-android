@@ -15,6 +15,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -45,6 +46,11 @@ fun ControllerAddScreen(
     // - button to add the controller profile and navigate to the controller selection screen
 
     val configuration = LocalConfiguration.current
+
+    LaunchedEffect(key1 = Unit) {
+        // Inhibit the countdown and automatic navigation when returning to ControllerSelectionScreen
+        mainViewModel?.setFirstLoad()
+    }
 
     AquariumControllerTheme {
         Surface(

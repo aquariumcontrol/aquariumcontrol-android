@@ -175,71 +175,81 @@ fun OverviewScreen(
                                 )
                             }
 
-                            when (configuration.orientation) {
-                                Configuration.ORIENTATION_LANDSCAPE -> {
-                                    Row {
-                                        Column(modifier = Modifier.weight(0.5f)) {
-                                            OverviewControllerComposable(
-                                                controllerProfileName = controllerProfileName!!,
-                                                controllerAddress = controllerAddress!!,
-                                                controllerPort = controllerPort!!,
-                                                controllerUsername = controllerUsername!!,
-                                                controllerPassword = controllerPassword!!
-                                            )
-                                            OverviewAmbientComposable(overviewData = overviewData!!)
-                                        }
-                                        Column(modifier = Modifier.weight(0.5f)) {
-                                            OverviewTimestampComposable(overviewData = overviewData!!)
-                                            OverviewWaterSignalsComposable(overviewData = overviewData!!)
-                                            OverviewActuatorsComposable(overviewData = overviewData!!)
-                                        }
-                                    }
-                                }
-
-                                else -> {
-                                    OverviewControllerComposable(
-                                        controllerProfileName = controllerProfileName!!,
-                                        controllerAddress = controllerAddress!!,
-                                        controllerPort = controllerPort!!,
-                                        controllerUsername = controllerUsername!!,
-                                        controllerPassword = controllerPassword!!
-                                    )
-                                    OverviewTimestampComposable(overviewData = overviewData!!)
-                                    OverviewWaterSignalsComposable(overviewData = overviewData!!)
-                                    OverviewActuatorsComposable(overviewData = overviewData!!)
-                                    OverviewAmbientComposable(overviewData = overviewData!!)
-                                }
-                            }
-
-                            Spacer(
-                                modifier = Modifier.padding(vertical = 8.dp)
-                            )
-                            Button(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 8.dp),
-                                onClick = {
-                                    coroutineScope.launch {
-                                        if (isControllerAddressValid) {
-                                            isRefreshing = true
-                                            try {
-                                                fetchOverviewData(
-                                                    mainViewModel!!
-                                                ) { newOverviewData ->
-                                                    overviewData = newOverviewData as OverviewData
-                                                } // Pass the setter lambda
-                                                delay(500)
-                                            } finally {
-                                                isRefreshing = false // Reset the refresh state
+                            if (overviewData == null) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .size(150.dp),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            } else {
+                                when (configuration.orientation) {
+                                    Configuration.ORIENTATION_LANDSCAPE -> {
+                                        Row {
+                                            Column(modifier = Modifier.weight(0.5f)) {
+                                                OverviewControllerComposable(
+                                                    controllerProfileName = controllerProfileName!!,
+                                                    controllerAddress = controllerAddress!!,
+                                                    controllerPort = controllerPort!!,
+                                                    controllerUsername = controllerUsername!!,
+                                                    controllerPassword = controllerPassword!!
+                                                )
+                                                OverviewAmbientComposable(overviewData = overviewData!!)
+                                            }
+                                            Column(modifier = Modifier.weight(0.5f)) {
+                                                OverviewTimestampComposable(overviewData = overviewData!!)
+                                                OverviewWaterSignalsComposable(overviewData = overviewData!!)
+                                                OverviewActuatorsComposable(overviewData = overviewData!!)
                                             }
                                         }
                                     }
-                                },
-                            ) {
-                                Text(
-                                    text = stringResource(id = R.string.update_overview_data),
-                                    fontSize = 16.sp
+
+                                    else -> {
+                                        OverviewControllerComposable(
+                                            controllerProfileName = controllerProfileName!!,
+                                            controllerAddress = controllerAddress!!,
+                                            controllerPort = controllerPort!!,
+                                            controllerUsername = controllerUsername!!,
+                                            controllerPassword = controllerPassword!!
+                                        )
+                                        OverviewTimestampComposable(overviewData = overviewData!!)
+                                        OverviewWaterSignalsComposable(overviewData = overviewData!!)
+                                        OverviewActuatorsComposable(overviewData = overviewData!!)
+                                        OverviewAmbientComposable(overviewData = overviewData!!)
+                                    }
+                                }
+
+
+                                Spacer(
+                                    modifier = Modifier.padding(vertical = 8.dp)
                                 )
+                                Button(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 8.dp),
+                                    onClick = {
+                                        coroutineScope.launch {
+                                            if (isControllerAddressValid) {
+                                                isRefreshing = true
+                                                try {
+                                                    fetchOverviewData(
+                                                        mainViewModel!!
+                                                    ) { newOverviewData ->
+                                                        overviewData =
+                                                            newOverviewData as OverviewData
+                                                    } // Pass the setter lambda
+                                                    delay(500)
+                                                } finally {
+                                                    isRefreshing = false // Reset the refresh state
+                                                }
+                                            }
+                                        }
+                                    },
+                                ) {
+                                    Text(
+                                        text = stringResource(id = R.string.update_overview_data),
+                                        fontSize = 16.sp
+                                    )
+                                }
                             }
                         }
                     }
@@ -259,7 +269,8 @@ private suspend fun fetchOverviewData(
     updateOverviewData: (Any) -> Unit,
 ) {
     withContext(Dispatchers.IO) {
-        val url = "http://" + mainViewModel.getControllerAddress() + WebApiUrls.OVERVIEW_GET_DATA
+        val url =
+            "http://" + mainViewModel.getControllerAddress() + WebApiUrls.OVERVIEW_GET_DATA
         val reader = OverviewDataReader(url)
         val overviewData = reader.readOverviewData()
         if (overviewData != null) {

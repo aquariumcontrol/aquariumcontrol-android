@@ -1,7 +1,6 @@
 package com.example.aquariumcontroller.controller
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,8 +34,8 @@ import androidx.navigation.NavHostController
 import com.example.aquariumcontroller.MainViewModel
 import com.example.aquariumcontroller.R
 import com.example.aquariumcontroller.ViewNavigationRoutes
-import com.example.aquariumcontroller.maindropdownmenu.MainDropdownMenuComposable
 import com.example.aquariumcontroller.lib_composables.ScreenHeadlineComposable
+import com.example.aquariumcontroller.maindropdownmenu.MainDropdownMenuComposable
 import com.example.aquariumcontroller.ui.theme.AquariumControllerTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -61,8 +60,7 @@ fun ControllerSelectionScreen(
 
     // Trigger data loading when the screen is composed
     LaunchedEffect(key1 = Unit) {
-        // This will trigger the database read operation in your ViewModel
-        // Make sure your ViewModel updates the 'state.controllerProfileList' when the data is loaded
+        // This will trigger the database read operation in the view model
         onEvent(ControllerEvent.LoadControllerProfiles)
         delay(100) // delay for data loading
         isDataLoaded = true
@@ -70,19 +68,17 @@ fun ControllerSelectionScreen(
 
     // Countdown and navigation logic
     LaunchedEffect(key1 = isDataLoaded) {
-        if (isDataLoaded && defaultProfileId > 0 && mainViewModel?.isFirstLoad() != false) {
+        if (isDataLoaded && defaultProfileId > 0 && mainViewModel?.isFirstLoad() != false && state.controllerProfileList.isNotEmpty()) {
             // fine grained progressbar for visualization
-            for (i in 1..40) {
+            (1..40).forEach { i ->
                 delay(100)
                 progress += 0.025f
             }
+
+            // Time has passed without user interaction, navigate to the default profile
             val defaultProfile =
                 state.controllerProfileList.firstOrNull { it.id == defaultProfileId }
             if (defaultProfile != null) {
-                Log.d(
-                    "ControllerSelectionScreen",
-                    "Default profile found: ${defaultProfile.name}"
-                )
                 mainViewModel?.setFirstLoad()
                 withContext(Dispatchers.Main) { // Switch to the main thread
                     mainViewModel?.updateSelectedControllerProfile(defaultProfile)
@@ -103,12 +99,18 @@ fun ControllerSelectionScreen(
                 ) {
                     ScreenHeadlineComposable(text = stringResource(id = R.string.list_of_controllers))
 
-                    // Progress bar at the top
-                    if (mockProgress != null || (isDataLoaded && mainViewModel?.isFirstLoad() != false)) {
-                        // Only show if
-                        // - in preview
-                        // - data is loaded and no user interaction
-                        Text(text = "Loading default profile...")
+                    // Progress bar at the top to be visualized
+                    // - for preview OR:
+                    // - after data is loaded AND
+                    // - default profile has been selected before AND
+                    // - screen is invoked at startup AND
+                    // - list of controller profiles is not empty
+                    if (mockProgress != null || // Display progress bar if mockProgress is provided
+                        (isDataLoaded && defaultProfileId > 0 &&
+                                mainViewModel?.isFirstLoad() != false &&
+                                state.controllerProfileList.isNotEmpty())
+                    ) {
+                        Text(text = stringResource(R.string.loading_default_profile))
                         LinearProgressIndicator(
                             progress = { progress },
                             modifier = Modifier
@@ -127,7 +129,7 @@ fun ControllerSelectionScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Filled.Add,
-                                    contentDescription = "Create New Profile"
+                                    contentDescription = stringResource(R.string.create_new_profile)
                                 )
                             }
                         }

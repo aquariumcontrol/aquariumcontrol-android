@@ -88,4 +88,6 @@
     <string name="sent_request_to_controller_for_updating_ventilation_set_values">Sent request to controller for updating ventilation set values</string>
     <string name="update_ventilation_controller_values">Update Ventilation Controller Values</string>
     <string name="reset_ventilation_controller_values">Reset Ventilation Controller Values</string>
+    <string name="loading_default_profile">Loading default profile.</string>
+    <string name="create_new_profile">Create New Profile</string>
 </resources>
