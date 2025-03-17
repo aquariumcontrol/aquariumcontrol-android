@@ -314,10 +314,11 @@ private suspend fun fetchTimeData(
 fun generateMockTimeData(): List<TimeDataSample> {
     val startTime = LocalDateTime.of(2024, 10, 24, 0, 0) // October 24th, 2024, 0:00 AM
     val samples = mutableListOf<TimeDataSample>()
+    val random = Random(12345) // arbitrary but fixed seed to have reproducible results
 
     // Helper function to add noise
     fun addNoise(value: Double, max: Double): Double {
-        val noise = Random.nextDouble(-0.01 * max, 0.01 * max)
+        val noise = random.nextDouble(-0.01 * max, 0.01 * max)
         return value + noise
     }
 
