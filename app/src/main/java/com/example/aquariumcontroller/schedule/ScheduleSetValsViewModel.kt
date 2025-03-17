@@ -1,6 +1,5 @@
 package com.example.aquariumcontroller.schedule
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -34,7 +33,6 @@ class ScheduleSetValsViewModel(
     }
 
     val onRangeChangedBySlider: (Float, Float) -> Unit = { start, end ->
-        Log.d("ScheduleSetValsViewModel", "onRangeChangedBySlider: $start - $end")
         _sliderRange.value = start..end
         _lowerBoundValue.value = start
         _upperBoundValue.value = end
@@ -43,7 +41,6 @@ class ScheduleSetValsViewModel(
     val onLowerValueChanged: (Float) -> Unit = { value ->
         val currentRange = _sliderRange.value
         if (currentRange != null && value < currentRange.endInclusive) {
-            Log.d("ScheduleSetValsViewModel", "onLowerValueChanged: $value")
             _sliderRange.value = value..currentRange.endInclusive
             _lowerBoundValue.value = value
         }
@@ -52,7 +49,6 @@ class ScheduleSetValsViewModel(
     val onUpperValueChanged: (Float) -> Unit = { value ->
         val currentRange = _sliderRange.value
         if (currentRange != null && value > currentRange.start) {
-            Log.d("ScheduleSetValsViewModel", "onUpperValueChanged: $value")
             _sliderRange.value = currentRange.start..value
             _upperBoundValue.value = value
         }
@@ -70,8 +66,6 @@ class ScheduleSetValsViewModel(
             setValStartTime = sliderRange.value!!.start
             setValStopTime = sliderRange.value!!.endInclusive
             setValLimitationActive = isLimitationActive.value!!
-        } else {
-            Log.d("ScheduleSetValsViewModel", "updateValues: _sliderRangeBalling.value is null")
         }
     }
 

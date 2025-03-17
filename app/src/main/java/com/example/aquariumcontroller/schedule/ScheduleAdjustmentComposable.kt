@@ -62,7 +62,7 @@ fun ScheduleAdjustmentComposable(
     // Get the initial date and time from the timestamp
     val initialCalendar = Calendar.getInstance(Locale.getDefault()).apply {
         timeInMillis = System.currentTimeMillis()
-        // todo: replace with time read from API
+        // initial value is replaced by view model - loading initiated by upper-level composable
     }
 
     var selectedHourStart by remember { mutableIntStateOf(initialCalendar.get(Calendar.HOUR_OF_DAY)) }
