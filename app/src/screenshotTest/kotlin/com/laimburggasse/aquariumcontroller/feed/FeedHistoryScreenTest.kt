@@ -1,0 +1,33 @@
+package com.laimburggasse.aquariumcontroller.feed
+
+import android.content.res.Configuration
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
+import com.laimburggasse.aquariumcontroller.feed.history.FeedHistoryScreenEmptyPreview
+import com.laimburggasse.aquariumcontroller.feed.history.FeedHistoryScreenPreview
+
+@Suppress("unused")
+class FeedHistoryScreenTest {
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+    @Preview(
+        showBackground = true,
+        uiMode = Configuration.UI_MODE_NIGHT_YES,
+        device = "spec:width=600dp,height=400dp,orientation=landscape"
+    )
+    @Preview(
+        showBackground = true,
+        uiMode = Configuration.UI_MODE_NIGHT_NO,
+        device = "spec:width=600dp,height=400dp,orientation=landscape"
+    )
+    @Composable
+    fun FeedHistoryScreenSnapshotTest() {
+        FeedHistoryScreenPreview()
+    }
+
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun FeedHistoryScreenEmptySnapshotTest() {
+        FeedHistoryScreenEmptyPreview()
+    }
+}

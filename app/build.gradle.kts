@@ -1,26 +1,21 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-        //alias(libs.plugins.paparazzi)
-//    id("com.android.application")
-//    id("org.jetbrains.kotlin.android")
-    //kotlin("plugin.serialization")
-    //id("org.jetbrains.kotlin.android") version "1.9.20-1.0.14"
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp") version "1.9.20-1.0.14"
     alias(libs.plugins.screenshot)
 }
 
 android {
-    namespace = "com.example.aquariumcontroller"
+    namespace = "com.laimburggasse.aquariumcontroller"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.aquariumcontroller"
+        applicationId = "com.laimburggasse.aquariumcontroller"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 9
+        versionName = "2.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -79,17 +74,11 @@ dependencies {
     implementation(libs.androidx.tracing.perfetto.handshake)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.junit.ktx)
-    //implementation(libs.kotlinx.serialization.json)
-    //implementation(libs.okhttp)
-    //implementation(libs.kotlin.stdlib.jdk8)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
-    //androidTestImplementation("app.cash.paparazzi:paparazzi:1.3.4") {
-    //    exclude("com.sun.activation")
-    //}
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
@@ -99,15 +88,14 @@ dependencies {
     ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
     implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")
 
-    //implementation(libs.kotlinx.serialization.json) // Use the latest version
-
     // for pull refresh
     implementation(libs.androidx.material)
 
+    // for charts (time data. heating stats and feed profile)
     implementation (libs.mpandroidchart)
 
     // for serialization of data class with timestamp
-    implementation(libs.kotlinx.serialization.json.v130) // Or latest version
+    implementation(libs.kotlinx.serialization.json.v130)
 
     screenshotTestImplementation(libs.androidx.compose.ui.tooling)
 }
