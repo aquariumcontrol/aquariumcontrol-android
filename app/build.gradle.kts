@@ -7,14 +7,14 @@ plugins {
 }
 
 android {
-    namespace = "com.laimburggasse.aquariumcontroller"
+    namespace = "com.laimburggasse.aquariumcontrol"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.laimburggasse.aquariumcontroller"
+        applicationId = "com.laimburggasse.aquariumcontrol"
         minSdk = 26
         targetSdk = 34
-        versionCode = 9
+        versionCode = 10
         versionName = "2.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

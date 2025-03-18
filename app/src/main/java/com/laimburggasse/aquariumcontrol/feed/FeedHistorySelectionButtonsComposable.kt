@@ -1,0 +1,88 @@
+package com.laimburggasse.aquariumcontrol.feed
+
+import android.content.res.Configuration
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.laimburggasse.aquariumcontrol.R
+import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
+
+@Composable
+fun FeedHistorySelectionButtonsComposable(
+    modifier: Modifier? = Modifier,
+    navHostController: NavHostController? = null,
+) {
+    // This composable displays the feed history selection buttons.
+    // The arrangement of the buttons follows the device orientation.
+
+    Button(
+        modifier = modifier?.then(Modifier.padding(horizontal = 8.dp)) ?: Modifier,
+        onClick = {
+            navHostController?.navigate(ViewNavigationRoutes.feedHistory24h)
+        },
+    ) {
+        Text(
+            text = stringResource(id = R.string.view_feed_events_24h),
+            fontSize = 16.sp
+        )
+    }
+    Spacer(modifier = Modifier.width(10.dp))
+    Button(
+        modifier = modifier?.then(Modifier.padding(horizontal = 8.dp)) ?: Modifier,
+        onClick = {
+            navHostController?.navigate(ViewNavigationRoutes.feedHistory7d)
+        },
+    ) {
+        Text(
+            text = stringResource(id = R.string.view_feed_events_7d),
+            fontSize = 16.sp
+        )
+    }
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+fun FeedHistorySelectionButtonsComposablePortraitPreview() {
+    AquariumControllerTheme {
+        Surface {
+            Column {
+                FeedHistorySelectionButtonsComposable()
+            }
+        }
+    }
+}
+
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    device = "spec:width=600dp,height=400dp,orientation=landscape"
+)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=600dp,height=400dp,orientation=landscape"
+)
+@Composable
+fun FeedHistorySelectionButtonsComposableLandscapePreview() {
+    AquariumControllerTheme {
+        Surface {
+            Row {
+                FeedHistorySelectionButtonsComposable()
+            }
+        }
+    }
+}

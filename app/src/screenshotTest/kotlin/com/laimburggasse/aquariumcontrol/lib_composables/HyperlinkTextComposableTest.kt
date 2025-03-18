@@ -1,0 +1,15 @@
+package com.laimburggasse.aquariumcontrol.lib_composables
+
+import android.content.res.Configuration
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
+
+@Suppress("unused")
+class HyperlinkTextComposableTest {
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+    @Composable
+    fun HyperlinkTextComposableSnapshotTest() {
+        HyperlinkTextComposablePreview()
+    }
+}
