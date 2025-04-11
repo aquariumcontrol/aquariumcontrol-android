@@ -32,6 +32,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.LaunchedEffect
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import java.util.Calendar
@@ -65,10 +66,50 @@ fun ScheduleAdjustmentComposable(
         // initial value is replaced by view model - loading initiated by upper-level composable
     }
 
-    var selectedHourStart by remember { mutableIntStateOf(initialCalendar.get(Calendar.HOUR_OF_DAY)) }
-    var selectedMinuteStart by remember { mutableIntStateOf(initialCalendar.get(Calendar.MINUTE)) }
-    var selectedHourStop by remember { mutableIntStateOf(initialCalendar.get(Calendar.HOUR_OF_DAY)) }
-    var selectedMinuteStop by remember { mutableIntStateOf(initialCalendar.get(Calendar.MINUTE)) }
+    var selectedHourStart by remember { mutableIntStateOf(
+            if (lowerBoundValue != null)
+                myViewModel.getHour(lowerBoundValue!!)
+            else
+                initialCalendar.get(Calendar.HOUR_OF_DAY)
+        )
+    }
+    var selectedMinuteStart by remember { mutableIntStateOf(
+            if (lowerBoundValue != null)
+                myViewModel.getMinute(lowerBoundValue!!)
+            else
+                initialCalendar.get(Calendar.MINUTE)
+        )
+    }
+    var selectedHourStop by remember { mutableIntStateOf(
+            if (upperBoundValue != null)
+                myViewModel.getHour(upperBoundValue!!)
+            else
+                initialCalendar.get(Calendar.HOUR_OF_DAY)
+        )
+    }
+    var selectedMinuteStop by remember { mutableIntStateOf(
+            if (upperBoundValue != null)
+                myViewModel.getMinute(upperBoundValue!!)
+            else
+                initialCalendar.get(Calendar.MINUTE)
+        )
+    }
+
+    // Update selectedHourStart and selectedMinuteStart when lowerBoundValue changes
+    LaunchedEffect(lowerBoundValue) {
+        lowerBoundValue?.let {
+            selectedHourStart = myViewModel.getHour(it)
+            selectedMinuteStart = myViewModel.getMinute(it)
+        }
+    }
+
+    // Update selectedHourStop and selectedMinuteStop when upperBoundValue changes
+    LaunchedEffect(upperBoundValue) {
+        upperBoundValue?.let {
+            selectedHourStop = myViewModel.getHour(it)
+            selectedMinuteStop = myViewModel.getMinute(it)
+        }
+    }
 
     val timePickerDialogStart = TimePickerDialog(
         /* context = */ LocalContext.current,
@@ -211,7 +252,6 @@ fun ScheduleAdjustmentComposable(
                         }
                     }
                 }
-
             }
         }
         Row(

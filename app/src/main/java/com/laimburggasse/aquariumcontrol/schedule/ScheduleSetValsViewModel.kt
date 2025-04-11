@@ -89,6 +89,14 @@ class ScheduleSetValsViewModel(
         return String.format(locale = Locale.US, "%02d:%02d", hours, minutes)
     }
 
+    fun getHour(value: Float): Int {
+        return value.toInt()
+    }
+
+    fun getMinute(value: Float): Int {
+        return ((value - value.toInt()) * 60).toInt()
+    }
+
     fun setLimitationActive(newState: Boolean) {
         _isLimitationActive.value = newState
     }
