@@ -122,4 +122,8 @@
     <string name="update_actuator_schedules">Update actuator schedules</string>
     <string name="loading_balling_dosing_events">Loading Balling dosing events.</string>
     <string name="no_balling_events_found">No Balling events found.</string>
+    <string name="balling_dosing_schedule">Balling dosing schedule</string>
+    <string name="refill_schedule">Refill schedule</string>
+    <string name="ventilation_schedule">Ventilation schedule</string>
+    <string name="heating_schedule">Heating schedule</string>
 </resources>

@@ -168,19 +168,19 @@ fun ScheduleScreen(
                             ) {
                                 ScheduleAdjustmentComposable(
                                     myViewModel = ballingScheduleSetValsViewModel,
-                                    title = "Balling dosing schedule"
+                                    title = stringResource(R.string.balling_dosing_schedule)
                                 )
                                 ScheduleAdjustmentComposable(
                                     myViewModel = refillScheduleSetValsViewModel,
-                                    title = "Refill schedule"
+                                    title = stringResource(R.string.refill_schedule)
                                 )
                                 ScheduleAdjustmentComposable(
                                     myViewModel = ventilationScheduleSetValsViewModel,
-                                    title = "Ventilation schedule"
+                                    title = stringResource(R.string.ventilation_schedule)
                                 )
                                 ScheduleAdjustmentComposable(
                                     myViewModel = heatingScheduleSetValsViewModel,
-                                    title = "Heating schedule"
+                                    title = stringResource(R.string.heating_schedule)
                                 )
                             }
                         }

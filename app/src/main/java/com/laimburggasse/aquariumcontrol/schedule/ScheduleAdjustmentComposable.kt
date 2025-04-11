@@ -168,7 +168,6 @@ fun ScheduleAdjustmentComposable(
                             text = stringResource(R.string.start_time) + startTimeString,
                             modifier = Modifier
                                 .padding(top = 16.dp)
-                                .size(width = 128.dp, height = 36.dp)
                         )
                         Button(onClick = { timePickerDialogStart.show() }) {
                             Text(stringResource(R.string.select_time))
@@ -198,7 +197,6 @@ fun ScheduleAdjustmentComposable(
                             text = stringResource(R.string.stop_time) + stopTimeString,
                             modifier = Modifier
                                 .padding(top = 16.dp)
-                                .size(width = 128.dp, height = 36.dp)
                         )
                         Button(onClick = { timePickerDialogStop.show() }) {
                             Text(stringResource(R.string.select_time))
@@ -231,7 +229,6 @@ fun ScheduleAdjustmentComposable(
                             text = stringResource(R.string.start_time) + startTimeString,
                             modifier = Modifier
                                 .padding(top = 16.dp)
-                                .size(width = 128.dp, height = 36.dp)
                         )
                         Button(onClick = { timePickerDialogStart.show() }) {
                             Text(text = stringResource(R.string.select_time))
@@ -245,7 +242,6 @@ fun ScheduleAdjustmentComposable(
                             text = stringResource(R.string.stop_time) + stopTimeString,
                             modifier = Modifier
                                 .padding(top = 16.dp)
-                                .size(width = 128.dp, height = 36.dp)
                         )
                         Button(onClick = { timePickerDialogStop.show() }) {
                             Text(text = stringResource(R.string.select_time))
