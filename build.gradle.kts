@@ -2,15 +2,19 @@
 plugins {
     alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.jetbrainsKotlinAndroid) apply false
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.20" apply false
+    alias(libs.plugins.ksp) apply false
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.2.20" apply false
     id("com.android.library") version "8.1.4" apply false
 }
 
 buildscript {
     extra.apply {
-        set("room_version", "2.6.0")
+        set("room_version", "2.8.1")
     }
     dependencies {
         classpath(libs.kotlin.gradle.plugin)
+    }
+    repositories {
+        mavenCentral()
     }
 }

@@ -1,21 +1,22 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    id("org.jetbrains.kotlin.plugin.compose") version "2.2.20"
     id("org.jetbrains.kotlin.plugin.serialization")
-    id("com.google.devtools.ksp") version "1.9.20-1.0.14"
+    id("com.google.devtools.ksp") version "2.2.20-2.0.3"
     alias(libs.plugins.screenshot)
 }
 
 android {
     namespace = "com.laimburggasse.aquariumcontrol"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.laimburggasse.aquariumcontrol"
         minSdk = 26
         targetSdk = 34
-        versionCode = 11
-        versionName = "2.0.0"
+        versionCode = 12
+        versionName = "2.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -74,6 +75,7 @@ dependencies {
     implementation(libs.androidx.tracing.perfetto.handshake)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.junit.ktx)
+    implementation(libs.core.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

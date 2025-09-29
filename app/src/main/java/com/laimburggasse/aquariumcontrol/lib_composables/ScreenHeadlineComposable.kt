@@ -2,6 +2,7 @@ package com.laimburggasse.aquariumcontrol.lib_composables
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
@@ -9,6 +10,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
@@ -18,8 +20,9 @@ fun ScreenHeadlineComposable(text: String, modifier: Modifier? = Modifier) {
     Spacer(modifier = Modifier.size(10.dp))
     Text(
         text = text,
+        textAlign = TextAlign.Center,
         style = MaterialTheme.typography.headlineLarge,
-        modifier = modifier ?: Modifier.padding(16.dp),
+        modifier = modifier ?: Modifier.fillMaxWidth().padding(16.dp).padding(16.dp),
     )
     Spacer(modifier = Modifier.size(10.dp))
 }

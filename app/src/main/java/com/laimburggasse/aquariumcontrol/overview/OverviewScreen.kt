@@ -82,7 +82,6 @@ fun OverviewScreen(
     val controllerProfileName: String?
     val controllerAddress: String?
     val controllerUsername: String?
-    val controllerPassword: String?
     val controllerPort: Int?
     var overviewData by remember { mutableStateOf(mockOverviewData) }
 
@@ -90,7 +89,6 @@ fun OverviewScreen(
         controllerProfileName = mainViewModel!!.getControllerName()
         controllerAddress = mainViewModel.getControllerAddress()
         controllerUsername = mainViewModel.getControllerUser()
-        controllerPassword = mainViewModel.getControllerPassword()
         controllerPort = mainViewModel.getControllerPort()
         LaunchedEffect(Unit) {
             fetchOverviewData(
@@ -103,7 +101,6 @@ fun OverviewScreen(
         controllerProfileName = mockController.name
         controllerAddress = mockController.address
         controllerUsername = mockController.user
-        controllerPassword = mockController.password
         controllerPort = mockController.port
     }
 
@@ -184,8 +181,7 @@ fun OverviewScreen(
                                                     controllerProfileName = controllerProfileName!!,
                                                     controllerAddress = controllerAddress!!,
                                                     controllerPort = controllerPort!!,
-                                                    controllerUsername = controllerUsername!!,
-                                                    controllerPassword = controllerPassword!!
+                                                    controllerUsername = controllerUsername!!
                                                 )
                                                 OverviewAmbientComposable(overviewData = overviewData!!)
                                             }
@@ -202,8 +198,7 @@ fun OverviewScreen(
                                             controllerProfileName = controllerProfileName!!,
                                             controllerAddress = controllerAddress!!,
                                             controllerPort = controllerPort!!,
-                                            controllerUsername = controllerUsername!!,
-                                            controllerPassword = controllerPassword!!
+                                            controllerUsername = controllerUsername!!
                                         )
                                         OverviewTimestampComposable(overviewData = overviewData!!)
                                         OverviewWaterSignalsComposable(overviewData = overviewData!!)
@@ -309,7 +304,6 @@ fun OverviewScreenPreview() {
         address = "192.168.1.1",
         port = 80,
         user = "user",
-        password = "password",
     )
 
     OverviewScreen(

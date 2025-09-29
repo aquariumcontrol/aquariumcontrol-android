@@ -25,7 +25,6 @@ fun OverviewControllerComposable(
     controllerAddress: String,
     controllerPort: Int,
     controllerUsername: String,
-    controllerPassword: String
 ) {
     Column(
         modifier = Modifier.border(
@@ -83,18 +82,6 @@ fun OverviewControllerComposable(
                 }
             }
         }
-        Row(Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.weight(1f)) {
-                Row(modifier = Modifier.align(Alignment.Start)) {
-                    Text(text = stringResource(R.string.password))
-                }
-            }
-            Column(modifier = Modifier.weight(1f)) {
-                Row(modifier = Modifier.align(Alignment.End)) {
-                    Text(text = controllerPassword)
-                }
-            }
-        }
     }
 }
 
@@ -109,7 +96,6 @@ fun OverviewControllerComposablePreview() {
                 controllerAddress = "mock.controller.address",
                 controllerPort = 80,
                 controllerUsername = "mock_user",
-                controllerPassword = "mock_password"
             )
         }
     }

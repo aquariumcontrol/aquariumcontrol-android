@@ -12,7 +12,8 @@ import kotlinx.coroutines.launch
 
 class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
     // This class represents the view model for the controller screen.
-    private var _controllerProfiles = dao.getAllControllerProfiles()
+    // Initialize with an empty list or a loading state if preferred
+    private val _controllerProfiles = MutableStateFlow<List<ControllerProfile>>(emptyList())
     private val _state = MutableStateFlow(ControllerState())
 
     val state = combine(_state, _controllerProfiles) { state, controllerProfileList ->
@@ -20,6 +21,24 @@ class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
             controllerProfileList = controllerProfileList
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ControllerState())
+
+    init {
+        loadInitialControllerProfiles()
+    }
+
+    private fun loadInitialControllerProfiles() {
+        viewModelScope.launch {
+            try {
+                // Fetch the initial list
+                val profiles = dao.getAllControllerProfiles() // This is your suspend function call
+                _controllerProfiles.value = profiles
+            } catch (e: Exception) {
+                // Handle any errors during fetching, e.g., log them or update UI state
+                Log.e("ControllerViewModel", "Error loading controller profiles", e)
+                // You might want to set _controllerProfiles.value to an empty list or an error state
+            }
+        }
+    }
 
     fun onEvent(event: ControllerEvent) {
         when (event) {
@@ -66,9 +85,9 @@ class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
             }
 
             is ControllerEvent.DeleteControllerProfile -> {
-                viewModelScope.launch {
-                    dao.deleteControllerProfile(event.controllerProfile)
-                }
+                //viewModelScope.launch {
+                //    dao.deleteControllerProfile(event.controllerProfile)
+                //}
             }
 
             is ControllerEvent.SetControllerProfileName -> {
@@ -145,8 +164,14 @@ class ControllerViewModel(private val dao: ControllerProfileDao) : ViewModel() {
 
             is ControllerEvent.LoadControllerProfiles -> {
                 viewModelScope.launch {
-                    // Fetch the controller profiles from the database
-                    _controllerProfiles = dao.getAllControllerProfiles()
+                    try {
+                        // Fetch the controller profiles from the database
+                        val profiles = dao.getAllControllerProfiles() // This is your suspend function call
+                        _controllerProfiles.value = profiles // Update the value of the StateFlow
+                    } catch (e: Exception) {
+                        Log.e("ControllerViewModel", "Error loading controller profiles on event", e)
+                        // Optionally, update the UI or _controllerProfiles with an error state or empty list
+                    }
                 }
             }
         }
