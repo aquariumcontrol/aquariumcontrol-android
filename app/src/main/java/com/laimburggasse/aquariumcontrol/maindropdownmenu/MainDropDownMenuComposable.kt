@@ -113,7 +113,7 @@ fun MainDropdownMenuComposable(
 @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun MainDropdownMenuComposablePreview() {
+internal fun MainDropdownMenuComposablePreview() {
     // Preview consists of drop down menu items instead of complete menu,
     // because complete menu is not displayed correctly.
     AquariumControllerTheme {

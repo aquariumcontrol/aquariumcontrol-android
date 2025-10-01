@@ -40,7 +40,7 @@ fun MainDropDownMenuItemHeatingComposable(
 @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun MainDropdownMenuItemHeatingEnabledPreview() {
+internal fun MainDropdownMenuItemHeatingEnabledPreview() {
     AquariumControllerTheme {
         Surface(
             color = MaterialTheme.colorScheme.background,
@@ -53,7 +53,7 @@ fun MainDropdownMenuItemHeatingEnabledPreview() {
 @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun MainDropdownMenuItemHeatingDisabledPreview() {
+internal fun MainDropdownMenuItemHeatingDisabledPreview() {
     AquariumControllerTheme {
         Surface(
             color = MaterialTheme.colorScheme.background,

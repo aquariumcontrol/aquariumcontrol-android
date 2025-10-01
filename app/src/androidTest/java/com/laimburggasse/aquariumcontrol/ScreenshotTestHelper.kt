@@ -7,14 +7,16 @@ import java.io.File
 import java.io.FileOutputStream
 
 object ScreenshotTestHelper {
-    private const val GOLDEN_IMAGE_ASSETS_PATH = "screenshots"
+    private const val GOLDEN_IMAGE_ASSETS_PATH = "assets.screenshots"
 
     fun getDeviceOutputDirectory(): File {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val dir = File(context.filesDir, "screenshots_output")
+
         if (!dir.exists()) {
             dir.mkdirs()
         }
+        println("***** Recording to $dir *****")
         return dir
     }
 
@@ -33,10 +35,12 @@ object ScreenshotTestHelper {
 
     fun verifyBitmap(
         capturedBitmap: androidx.compose.ui.graphics.ImageBitmap,
+        packageName: String,
+        testName: String,
         goldenName: String
     ): Boolean {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        val goldenFileInAssets = "$GOLDEN_IMAGE_ASSETS_PATH/$goldenName.png"
+        val goldenFileInAssets = "$GOLDEN_IMAGE_ASSETS_PATH/$packageName/$testName/$goldenName.png"
 
         try {
             println("Using reference file $goldenFileInAssets for $goldenName")

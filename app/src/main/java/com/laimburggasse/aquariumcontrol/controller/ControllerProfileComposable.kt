@@ -198,7 +198,7 @@ fun ControllerProfileComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun ControllerProfileComposablePreview() {
+internal fun ControllerProfileComposablePreview() {
     val mockControllerProfile1 = ControllerProfile(
         id = 1,
         name = "Controller 1",

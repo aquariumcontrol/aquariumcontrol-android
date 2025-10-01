@@ -141,6 +141,6 @@ fun FeedProfileAddScreen(
     uiMode = Configuration.UI_MODE_NIGHT_NO,
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )@Composable
-fun FeedProfileAddScreenPreview() {
+internal fun FeedProfileAddScreenPreview() {
     FeedProfileAddScreen()
 }

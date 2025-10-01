@@ -56,7 +56,7 @@ fun BallingProfileEditTextFieldSliderComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun BallingProfileEditTextFieldSliderComposablePortraitPreview() {
+internal fun BallingProfileEditTextFieldSliderComposablePortraitPreview() {
     AquariumControllerTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -79,7 +79,7 @@ fun BallingProfileEditTextFieldSliderComposablePortraitPreview() {
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
 @Composable
-fun BallingProfileEditTextFieldSliderComposableLandscapePreview() {
+internal fun BallingProfileEditTextFieldSliderComposableLandscapePreview() {
     AquariumControllerTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             Row {

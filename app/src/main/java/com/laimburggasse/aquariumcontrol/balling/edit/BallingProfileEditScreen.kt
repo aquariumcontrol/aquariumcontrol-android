@@ -175,6 +175,6 @@ val mockBallingProfile = BallingProfile(
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
 @Composable
-fun BallingProfileEditScreenPreview() {
+internal fun BallingProfileEditScreenPreview() {
     BallingProfileEditScreen(ballingProfile = mockBallingProfile)
 }

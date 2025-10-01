@@ -3,14 +3,11 @@ package com.laimburggasse.aquariumcontrol.timedata
 import android.content.res.Configuration
 import android.graphics.Color
 import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -42,17 +39,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
+import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.XAxis
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
+import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState.Error
+import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState.Loading
+import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState.Success
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
-import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
-import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.components.XAxis
-import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState.*
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
+import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -509,7 +508,7 @@ fun generateMockTimeData(): List<TimeDataSample> {
     device = "spec:width=1600dp,height=1200dp,orientation=landscape"
 )
 @Composable
-fun TimeDataScreenPreview_Success() {
+internal fun TimeDataScreenPreview_Success() {
     TimeDataScreen(mockTimeDataUiState = Success(TimeDataSets(generateMockTimeData())))
 }
 
@@ -526,7 +525,7 @@ fun TimeDataScreenPreview_Success() {
     device = "spec:width=250dp,height=350dp,orientation=landscape"
 )
 @Composable
-fun TimeDataScreenPreview_Error() {
+internal fun TimeDataScreenPreview_Error() {
     TimeDataScreen(mockTimeDataUiState = Error("Error message"))
 }
 
@@ -543,6 +542,6 @@ fun TimeDataScreenPreview_Error() {
     device = "spec:width=250dp,height=350dp,orientation=landscape"
 )
 @Composable
-fun TimeDataScreenPreview_Loading() {
+internal fun TimeDataScreenPreview_Loading() {
     TimeDataScreen(mockTimeDataUiState = Loading)
 }

@@ -76,7 +76,7 @@ fun BallingHistoryEventComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun BallingHistoryEventComposablePreview() {
+internal fun BallingHistoryEventComposablePreview() {
     val mockEvent = BallingHistoryDosingEvent(
         timestamp = "2025-01-18 12:00:00",
         pumpId = 1,

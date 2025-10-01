@@ -151,6 +151,6 @@ fun ControllerAddScreen(
     device = "spec:width=600dp,height=480dp,orientation=landscape"
 )
 @Composable
-fun ControllerAddScreenPreview() {
+internal fun ControllerAddScreenPreview() {
     ControllerAddScreen(state = ControllerState(), onEvent = {})
 }

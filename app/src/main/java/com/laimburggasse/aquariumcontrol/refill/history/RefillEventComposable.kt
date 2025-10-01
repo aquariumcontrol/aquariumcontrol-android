@@ -66,7 +66,7 @@ fun RefillEventComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun RefillEventComposablePreview() {
+internal fun RefillEventComposablePreview() {
     val fixedTimestamp = Timestamp(0L)
 
     val mockEvent = RefillEvent(

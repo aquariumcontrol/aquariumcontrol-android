@@ -75,7 +75,7 @@ fun VentilationButtonsComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun VentilationButtonsComposablePortraitPreview() {
+internal fun VentilationButtonsComposablePortraitPreview() {
     AquariumControllerTheme {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -96,7 +96,7 @@ fun VentilationButtonsComposablePortraitPreview() {
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
 @Composable
-fun VentilationButtonsComposableLandscapePreview() {
+internal fun VentilationButtonsComposableLandscapePreview() {
     AquariumControllerTheme {
         Surface {
             Row {

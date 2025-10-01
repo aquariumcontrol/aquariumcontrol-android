@@ -101,7 +101,7 @@ fun VentilationRangeSliderTextFieldsPortraitComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun VentilationRangeSliderTextFieldsPortraitComposablePreview() {
+internal fun VentilationRangeSliderTextFieldsPortraitComposablePreview() {
     AquariumControllerTheme {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {

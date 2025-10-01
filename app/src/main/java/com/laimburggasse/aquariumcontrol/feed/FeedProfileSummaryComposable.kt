@@ -144,7 +144,7 @@ fun FeedProfileSummaryComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun FeedProfileSummaryComposablePreview() {
+internal fun FeedProfileSummaryComposablePreview() {
     val mockFeedProfileImport = FeedProfileImport()
     mockFeedProfileImport.profileId = 1
     mockFeedProfileImport.profileName = "Test Profile"

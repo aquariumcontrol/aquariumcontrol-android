@@ -69,7 +69,7 @@ fun FeedProfileEditMenuItemDurationComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun FeedProfileEditMenuItemDurationComposablePreview() {
+internal fun FeedProfileEditMenuItemDurationComposablePreview() {
     val mockFeedProfileEditMenuItem = FeedProfileEditMenuItem(
         id = 1,
         level = 1,

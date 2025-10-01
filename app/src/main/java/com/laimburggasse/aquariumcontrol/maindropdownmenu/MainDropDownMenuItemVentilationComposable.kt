@@ -40,7 +40,7 @@ fun MainDropDownMenuItemVentilationComposable(
 @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun MainDropdownMenuItemVentilationEnabledPreview() {
+internal fun MainDropdownMenuItemVentilationEnabledPreview() {
     AquariumControllerTheme {
         Surface(
             color = MaterialTheme.colorScheme.background,
@@ -53,7 +53,7 @@ fun MainDropdownMenuItemVentilationEnabledPreview() {
 @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun MainDropdownMenuItemVentilationDisabledPreview() {
+internal fun MainDropdownMenuItemVentilationDisabledPreview() {
     AquariumControllerTheme {
         Surface(
             color = MaterialTheme.colorScheme.background,

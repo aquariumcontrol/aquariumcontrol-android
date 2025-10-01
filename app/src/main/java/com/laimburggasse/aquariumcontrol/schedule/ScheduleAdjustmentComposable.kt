@@ -281,7 +281,7 @@ fun ScheduleAdjustmentComposable(
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
 @Composable
-fun ScheduleAdjustmentComposablePreview() {
+internal fun ScheduleAdjustmentComposablePreview() {
     val mockScheduleSetVals = ScheduleSetVals(
         ballingStartTime = 2F,
         ballingStopTime = 22F,

@@ -155,7 +155,7 @@ private suspend fun fetchVentilationSetVals(
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)@Composable
-fun VentilationScreenPreview() {
+internal fun VentilationScreenPreview() {
     VentilationScreen(
         mockVentilationSetVals = VentilationSetVals(
             ventilationSwitchOffTemp = 23.5,

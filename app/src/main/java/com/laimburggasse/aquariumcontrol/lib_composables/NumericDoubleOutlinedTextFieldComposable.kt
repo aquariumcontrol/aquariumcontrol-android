@@ -88,7 +88,7 @@ fun NumericDoubleOutlinedTextFieldComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun NumericDoubleOutlinedTextFieldComposablePreview() {
+internal fun NumericDoubleOutlinedTextFieldComposablePreview() {
     val testValue = 0.5
     AquariumControllerTheme {
         Surface(

@@ -50,7 +50,7 @@ fun ControllerAddEditHostnamePortnumberComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun ControllerAddEditHostnamePortnumberComposablePortraitPreview() {
+internal fun ControllerAddEditHostnamePortnumberComposablePortraitPreview() {
     AquariumControllerTheme {
         Surface {
             Column {
@@ -74,7 +74,7 @@ fun ControllerAddEditHostnamePortnumberComposablePortraitPreview() {
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
 @Composable
-fun ControllerAddEditHostnamePortnumberComposableLandscapePreview() {
+internal fun ControllerAddEditHostnamePortnumberComposableLandscapePreview() {
     AquariumControllerTheme {
         Surface {
             Row {

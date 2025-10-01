@@ -30,7 +30,7 @@ fun ScreenHeadlineComposable(text: String, modifier: Modifier? = Modifier) {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun ScreenHeadlineComposablePreview() {
+internal fun ScreenHeadlineComposablePreview() {
     AquariumControllerTheme {
         Surface(
             color = MaterialTheme.colorScheme.background

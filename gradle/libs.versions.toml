@@ -53,6 +53,7 @@ androidx-tracing-perfetto-handshake = { group = "androidx.tracing", name = "trac
 androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
 androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCoreKtx" }
+screenshot-validation-api = { group = "com.android.tools.screenshot", name = "screenshot-validation-api", version.ref = "screenshot"}
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

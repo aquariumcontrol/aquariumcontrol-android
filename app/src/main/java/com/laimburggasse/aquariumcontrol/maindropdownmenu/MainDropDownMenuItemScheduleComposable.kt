@@ -40,7 +40,7 @@ fun MainDropDownMenuItemScheduleComposable(
 @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun MainDropdownMenuItemScheduleEnabledPreview() {
+internal fun MainDropdownMenuItemScheduleEnabledPreview() {
     AquariumControllerTheme {
         Surface(
             color = MaterialTheme.colorScheme.background,
@@ -53,7 +53,7 @@ fun MainDropdownMenuItemScheduleEnabledPreview() {
 @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun MainDropdownMenuItemScheduleDisabledPreview() {
+internal fun MainDropdownMenuItemScheduleDisabledPreview() {
     AquariumControllerTheme {
         Surface(
             color = MaterialTheme.colorScheme.background,

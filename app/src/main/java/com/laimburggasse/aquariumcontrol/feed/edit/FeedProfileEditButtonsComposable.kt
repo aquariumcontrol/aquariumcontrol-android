@@ -90,7 +90,7 @@ fun FeedProfileEditButtonsComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun FeedProfileEditButtonsComposablePortraitPreview() {
+internal fun FeedProfileEditButtonsComposablePortraitPreview() {
     AquariumControllerTheme {
         Surface {
             Column {
@@ -111,7 +111,7 @@ fun FeedProfileEditButtonsComposablePortraitPreview() {
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
 @Composable
-fun FeedProfileEditButtonsComposableLandscapePreview() {
+internal fun FeedProfileEditButtonsComposableLandscapePreview() {
     AquariumControllerTheme {
         Surface {
             Row {

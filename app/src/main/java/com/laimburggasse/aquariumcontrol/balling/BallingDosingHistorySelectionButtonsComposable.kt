@@ -62,7 +62,7 @@ fun BallingDosingHistorySelectionButtonsComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun BallingDosingHistorySelectionButtonsComposablePortraitPreview() {
+internal fun BallingDosingHistorySelectionButtonsComposablePortraitPreview() {
     AquariumControllerTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -87,7 +87,7 @@ fun BallingDosingHistorySelectionButtonsComposablePortraitPreview() {
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
 @Composable
-fun BallingDosingHistorySelectionButtonsComposableLandscapePreview() {
+internal fun BallingDosingHistorySelectionButtonsComposableLandscapePreview() {
     AquariumControllerTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             Row {

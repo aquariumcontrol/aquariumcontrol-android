@@ -66,7 +66,7 @@ fun FeedScheduleSelectionComposable(
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
 @Composable
-fun FeedScheduleSelectionComposablePreview() {
+internal fun FeedScheduleSelectionComposablePreview() {
     AquariumControllerTheme {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {

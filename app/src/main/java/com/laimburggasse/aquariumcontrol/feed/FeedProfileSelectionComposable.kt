@@ -89,7 +89,7 @@ fun FeedProfileSelectionComposable(
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
 @Composable
-fun FeedProfileSelectionComposablePreview() {
+internal fun FeedProfileSelectionComposablePreview() {
     AquariumControllerTheme {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {

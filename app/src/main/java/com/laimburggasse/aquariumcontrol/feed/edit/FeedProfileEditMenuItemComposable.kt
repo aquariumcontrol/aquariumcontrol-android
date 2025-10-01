@@ -113,7 +113,7 @@ fun FeedProfileEditMenuItemComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun FeedProfileEditMenuItemComposablePreview() {
+internal fun FeedProfileEditMenuItemComposablePreview() {
     val mockFeedProfileEditMenuItem = FeedProfileEditMenuItem(
         id = 1,
         level = 1,

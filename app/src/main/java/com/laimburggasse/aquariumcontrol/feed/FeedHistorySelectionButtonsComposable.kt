@@ -56,7 +56,7 @@ fun FeedHistorySelectionButtonsComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun FeedHistorySelectionButtonsComposablePortraitPreview() {
+internal fun FeedHistorySelectionButtonsComposablePortraitPreview() {
     AquariumControllerTheme {
         Surface {
             Column {
@@ -77,7 +77,7 @@ fun FeedHistorySelectionButtonsComposablePortraitPreview() {
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
 @Composable
-fun FeedHistorySelectionButtonsComposableLandscapePreview() {
+internal fun FeedHistorySelectionButtonsComposableLandscapePreview() {
     AquariumControllerTheme {
         Surface {
             Row {

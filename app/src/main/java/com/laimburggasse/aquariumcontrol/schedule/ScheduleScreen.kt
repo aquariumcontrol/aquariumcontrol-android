@@ -234,7 +234,7 @@ private suspend fun fetchScheduleSetVals(
     device = "spec:width=1200dp,height=950dp,orientation=landscape"
 )
 @Composable
-fun ScheduleScreenPreview() {
+internal fun ScheduleScreenPreview() {
     ScheduleScreen(
         mockScheduleSetVals = ScheduleSetVals(
             ballingStartTime = 2F,

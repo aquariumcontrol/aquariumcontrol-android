@@ -205,7 +205,7 @@ fun createMockHeatingStatsData(): List<HeatingStatsEntry> {
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
 @Composable
-fun HeatingStatsComposablePreview() {
+internal fun HeatingStatsComposablePreview() {
     val mockData = createMockHeatingStatsData()
 
     AquariumControllerTheme {

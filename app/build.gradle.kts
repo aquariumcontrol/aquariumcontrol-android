@@ -1,10 +1,12 @@
+import org.gradle.kotlin.dsl.androidTestUtil
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.screenshot)
     id("org.jetbrains.kotlin.plugin.compose") version "2.2.20"
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp") version "2.2.20-2.0.3"
-    alias(libs.plugins.screenshot)
 }
 
 android {
@@ -19,6 +21,11 @@ android {
         versionName = "2.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments["clearPackageData"] = "false"
+        testOptions {
+            //execution = "ANDROIDX_TEST_ORCHESTRATOR"
+        }
+
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -46,12 +53,12 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.4"
     }
-    experimentalProperties["android.experimental.enableScreenshotTest"] = true
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
 
 dependencies {
@@ -99,5 +106,7 @@ dependencies {
     // for serialization of data class with timestamp
     implementation(libs.kotlinx.serialization.json.v130)
 
-    screenshotTestImplementation(libs.androidx.compose.ui.tooling)
+    // for compose preview snapshot testing
+    screenshotTestImplementation(libs.screenshot.validation.api)
+    screenshotTestImplementation(libs.androidx.ui.tooling)
 }

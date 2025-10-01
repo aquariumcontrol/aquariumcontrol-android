@@ -235,7 +235,7 @@ private suspend fun fetchRefillEvents(
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
 @Composable
-fun RefillHistoryScreenPreview() {
+internal fun RefillHistoryScreenPreview() {
     val mockEvents = listOf(
         RefillEvent(
             timestamp = Timestamp(0L),

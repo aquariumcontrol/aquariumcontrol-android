@@ -261,7 +261,7 @@ val ballingHistoryScreenMockData = listOf(
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
 @Composable
-fun BallingHistoryScreenPreview() {
+internal fun BallingHistoryScreenPreview() {
     BallingHistoryScreen(
         showFullWeek = false,
         mockBallingHistoryDosingEvents = ballingHistoryScreenMockData
@@ -270,7 +270,7 @@ fun BallingHistoryScreenPreview() {
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun BallingHistoryScreenEmptyPreview() {
+internal fun BallingHistoryScreenEmptyPreview() {
     BallingHistoryScreen(
         showFullWeek = false,
         mockBallingHistoryDosingEvents = emptyList()

@@ -51,7 +51,7 @@ fun ControllerAddEditUsernamePasswordComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun ControllerAddEditUsernamePasswordComposablePortraitPreview() {
+internal fun ControllerAddEditUsernamePasswordComposablePortraitPreview() {
     AquariumControllerTheme {
         Surface {
             Column {
@@ -67,7 +67,7 @@ fun ControllerAddEditUsernamePasswordComposablePortraitPreview() {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun ControllerAddEditUsernamePasswordComposableLandscapePreview() {
+internal fun ControllerAddEditUsernamePasswordComposableLandscapePreview() {
     AquariumControllerTheme {
         Surface {
             Row {

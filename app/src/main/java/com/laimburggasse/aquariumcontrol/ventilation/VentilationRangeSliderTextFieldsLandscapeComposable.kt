@@ -113,7 +113,7 @@ fun VentilationRangeSliderTextFieldsLandscapeComposable(
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
 @Composable
-fun VentilationRangeSliderTextFieldsLandscapeComposablePreview() {
+internal fun VentilationRangeSliderTextFieldsLandscapeComposablePreview() {
     AquariumControllerTheme {
         Surface {
             VentilationRangeSliderTextFieldsLandscapeComposable(

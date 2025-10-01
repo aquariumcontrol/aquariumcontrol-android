@@ -49,8 +49,8 @@ class TimeDataReader(private val urlWithoutParameters: String) {
             val response = client.newCall(request).execute()
             if (response.isSuccessful) {
                 Log.d("TimeDataReader", "Successful http request.")
-                val responseBody = response.body?.string()
-                responseBody?.let {
+                val responseBody = response.body.string()
+                responseBody.let {
                     try {
                         val decodedData = json.decodeFromString<List<TimeDataStringSample>>(it)
                         Log.d("TimeDataReader", "Successfully decoded ${decodedData.size} items.")
@@ -68,6 +68,5 @@ class TimeDataReader(private val urlWithoutParameters: String) {
             Log.e("TimeDatReader", "Unexpected error during data fetching: ${e.message}")
             return DataFetchResult.Error(e, "An unexpected error occurred during preparation of server communication.")
         }
-        return DataFetchResult.Error(null, "An unexpected error occurred during data fetching.")
     }
 }

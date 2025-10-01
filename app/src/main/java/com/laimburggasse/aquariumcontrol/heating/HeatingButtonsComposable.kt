@@ -74,7 +74,7 @@ fun HeatingButtonsComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun HeatingButtonsComposablePortraitPreview() {
+internal fun HeatingButtonsComposablePortraitPreview() {
     AquariumControllerTheme {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -95,7 +95,7 @@ fun HeatingButtonsComposablePortraitPreview() {
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
 @Composable
-fun HeatingButtonsComposableLandscapePreview() {
+internal fun HeatingButtonsComposableLandscapePreview() {
     AquariumControllerTheme {
         Surface {
             Row {

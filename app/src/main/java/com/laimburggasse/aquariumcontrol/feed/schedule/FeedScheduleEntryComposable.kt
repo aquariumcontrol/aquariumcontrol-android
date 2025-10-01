@@ -129,7 +129,7 @@ fun FeedScheduleEntryComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun FeedScheduleEntryComposablePreview() {
+internal fun FeedScheduleEntryComposablePreview() {
     val mockFeedScheduleEntryImport = FeedScheduleEntryImport(
         timestampString = "2023-09-01 12:00:00",
         profileName = "MockProfile",

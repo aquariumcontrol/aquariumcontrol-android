@@ -202,7 +202,7 @@ fun ControllerEditScreen(
     device = "spec:width=600dp,height=480dp,orientation=landscape"
 )
 @Composable
-fun ControllerEditScreenPreview() {
+internal fun ControllerEditScreenPreview() {
     val mockControllerState = ControllerState(
         controllerProfileName = "Controller",
         controllerProfileAddress = "192.168.1.1",

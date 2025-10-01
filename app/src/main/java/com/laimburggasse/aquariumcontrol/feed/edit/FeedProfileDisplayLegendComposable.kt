@@ -230,7 +230,7 @@ fun FeedProfileDisplayLegendComposable() {
     device = "spec:width=800dp,height=600dp,orientation=landscape"
 )
 @Composable
-fun FeedProfileDisplayLegendPreview() {
+internal fun FeedProfileDisplayLegendPreview() {
     AquariumControllerTheme {
         Surface(
             color = MaterialTheme.colorScheme.background

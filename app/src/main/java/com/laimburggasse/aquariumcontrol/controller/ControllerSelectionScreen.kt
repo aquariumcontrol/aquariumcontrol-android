@@ -180,7 +180,7 @@ fun ControllerSelectionScreen(
     device = "spec:width=600dp,height=600dp,orientation=landscape"
 )
 @Composable
-fun ControllerSelectionScreenPreview() {
+internal fun ControllerSelectionScreenPreview() {
     val mockControllerProfile1 = ControllerProfile(
         id = 1,
         name = "Controller 1",

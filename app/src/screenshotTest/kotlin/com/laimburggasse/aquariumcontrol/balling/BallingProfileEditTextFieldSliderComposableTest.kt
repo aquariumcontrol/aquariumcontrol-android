@@ -3,11 +3,13 @@ package com.laimburggasse.aquariumcontrol.balling
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import com.android.tools.screenshot.PreviewTest
 import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditTextFieldSliderComposableLandscapePreview
 import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditTextFieldSliderComposablePortraitPreview
 
 @Suppress("unused")
 class BallingProfileEditTextFieldSliderComposableTest {
+    @PreviewTest
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_YES,
@@ -23,6 +25,7 @@ class BallingProfileEditTextFieldSliderComposableTest {
         BallingProfileEditTextFieldSliderComposableLandscapePreview()
     }
 
+    @PreviewTest
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_YES,

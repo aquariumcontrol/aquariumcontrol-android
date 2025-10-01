@@ -101,7 +101,7 @@ fun HeatingRangeSliderTextFieldsPortraitComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun HeatingRangeSliderTextFieldsPortraitComposablePreview() {
+internal fun HeatingRangeSliderTextFieldsPortraitComposablePreview() {
     AquariumControllerTheme {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
