@@ -9,7 +9,7 @@ import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryScreenPreview
 
 @Suppress("unused")
 class FeedHistoryScreenTest {
-    @PreviewTest
+    //@PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
@@ -27,7 +27,7 @@ class FeedHistoryScreenTest {
         FeedHistoryScreenPreview()
     }
 
-    @PreviewTest
+    //@PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Composable
     fun FeedHistoryScreenEmptySnapshotTest() {

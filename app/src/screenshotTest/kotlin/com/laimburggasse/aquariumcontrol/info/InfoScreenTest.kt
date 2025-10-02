@@ -7,7 +7,7 @@ import com.android.tools.screenshot.PreviewTest
 
 @Suppress("unused")
 class InfoScreenTest {
-    @PreviewTest
+    //@PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable

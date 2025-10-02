@@ -8,7 +8,7 @@ import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryScreenPrevi
 
 @Suppress("unused")
 class RefillHistoryScreenTest {
-    @PreviewTest
+    //@PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(

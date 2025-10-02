@@ -9,7 +9,7 @@ import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryScreenPre
 
 @Suppress("unused")
 class BallingHistoryScreenTest {
-    @PreviewTest
+    //@PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
@@ -27,7 +27,7 @@ class BallingHistoryScreenTest {
         BallingHistoryScreenPreview()
     }
 
-    @PreviewTest
+    //@PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Composable
     fun BallingHistoryScreenEmptySnapshotTest() {

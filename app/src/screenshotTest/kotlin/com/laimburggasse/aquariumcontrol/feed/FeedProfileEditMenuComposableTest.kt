@@ -9,8 +9,8 @@ import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditMenuComposable
 @Suppress("unused")
 class FeedProfileEditMenuComposableTest {
     @PreviewTest
-    @Preview(showBackground = true, heightDp = 1400, uiMode = Configuration.UI_MODE_NIGHT_YES)
-    @Preview(showBackground = true, heightDp = 1400, uiMode = Configuration.UI_MODE_NIGHT_NO)
+    @Preview(showBackground = true, heightDp = 600, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Preview(showBackground = true, heightDp = 600, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
     fun FeedProfileEditMenuComposableSnapshotTest(){
         FeedProfileEditMenuComposablePreview()

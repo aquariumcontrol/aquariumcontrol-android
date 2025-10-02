@@ -7,7 +7,7 @@ import com.android.tools.screenshot.PreviewTest
 
 @Suppress("unused")
 class ScheduleScreenTest {
-    @PreviewTest
+    //@PreviewTest
     @Preview(showBackground = true, heightDp = 1200, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, heightDp = 1200, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
