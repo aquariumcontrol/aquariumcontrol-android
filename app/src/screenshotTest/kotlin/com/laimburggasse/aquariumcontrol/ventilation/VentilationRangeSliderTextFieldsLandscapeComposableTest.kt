@@ -7,7 +7,7 @@ import com.android.tools.screenshot.PreviewTest
 
 @Suppress("unused")
 class VentilationRangeSliderTextFieldsLandscapeComposableTest {
-    // @PreviewTest
+    @PreviewTest
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_YES,

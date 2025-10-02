@@ -8,7 +8,7 @@ import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditMenuItemCompos
 
 @Suppress("unused")
 class FeedProfileEditMenuItemComposableTest {
-    // @PreviewTest
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable

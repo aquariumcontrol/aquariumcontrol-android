@@ -1,7 +1,6 @@
 package com.laimburggasse.aquariumcontrol.feed.history
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +29,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -171,13 +171,18 @@ fun FeedHistoryScreen(
                                                 )
                                             )
                                         } else {
-                                            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                                items(feedEvents!!) { ballingEvent ->
-                                                    Log.d(
-                                                        this::class.simpleName,
-                                                        "Feed events found: ${feedEvents!!.size}"
-                                                    )
-                                                    FeedHistoryEventComposable(ballingEvent)
+                                            if (LocalInspectionMode.current) {
+                                                Column(modifier = Modifier.fillMaxSize()) {
+                                                    feedEvents!!.forEach { feedHistoryEvent ->
+                                                        FeedHistoryEventComposable(feedHistoryEvent)
+                                                    }
+                                                }
+                                            }
+                                            else {
+                                                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                                    items(feedEvents!!) { feedHistoryEvent ->
+                                                        FeedHistoryEventComposable(feedHistoryEvent)
+                                                    }
                                                 }
                                             }
                                         }

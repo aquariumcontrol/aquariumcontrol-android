@@ -9,8 +9,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -22,6 +25,9 @@ import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntryComposab
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleViewModel
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleViewModelFactory
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
+import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
+import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
 
 @Composable
 fun FeedScheduleSelectionComposable(
@@ -32,23 +38,59 @@ fun FeedScheduleSelectionComposable(
     // This composable displays a label "Feed Schedule"
     // and a list of feed schedule entries
 
+    val context = LocalContext.current // context for web API request and Toasts
+    val coroutineScope = rememberCoroutineScope()
+
     // use view model provided as parameter or create a new one
     val feedScheduleViewModel: FeedScheduleViewModel = myFeedScheduleViewModel ?: viewModel(
         factory = FeedScheduleViewModelFactory(feedScheduleEntries = mockFeedScheduleEntries)
     )
 
     Text(text = stringResource(R.string.feed_schedule))
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        items(feedScheduleViewModel.getFeedScheduleEntries()) { feedScheduleEntry ->
-            FeedScheduleEntryComposable(
-                mainViewModel = mainViewModel,
-                feedScheduleEntry = feedScheduleEntry,
-                feedScheduleViewModel = feedScheduleViewModel
-            )
+    if (LocalInspectionMode.current) {
+        // In Preview: Render a simple, static Column instead of LazyColumn
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            feedScheduleViewModel.getFeedScheduleEntries().forEach { feedScheduleEntry ->
+                FeedScheduleEntryComposable(
+                    feedScheduleEntry = feedScheduleEntry,
+                    onEditClick = {},
+                    onDeleteClick = {}
+                )
+            }
+        }
+    } else {
+        // In App Runtime: Use the performant LazyColumn and provide lambdas
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            items(items = feedScheduleViewModel.getFeedScheduleEntries()) { feedScheduleEntry ->
+                FeedScheduleEntryComposable(
+                    feedScheduleEntry = feedScheduleEntry,
+                    onEditClick = {
+                        mainViewModel?.updateSelectedFeedScheduleEntry(feedScheduleEntry)
+                    },
+                    onDeleteClick = {
+                        if (mainViewModel != null) {
+                            mainViewModel.updateSelectedFeedScheduleEntry(null)
+                            feedScheduleViewModel?.deleteFeedScheduleEntry(feedScheduleEntry)
+                            webApiPostRequestExecution(
+                                apiUrl = WebApiUrls.FEED_POST_SCHEDULE_REMOVE_ENTRY,
+                                mainViewModel = mainViewModel,
+                                coroutineScope = coroutineScope, // Make sure scope is available here
+                                webApiPostRequest = WebApiPostRequest(),
+                                context = context, // Make sure context is available here
+                                optionalGetParams = feedScheduleEntry.getApiParameters()
+                            )
+                        }
+                    }
+                )
+            }
         }
     }
 }

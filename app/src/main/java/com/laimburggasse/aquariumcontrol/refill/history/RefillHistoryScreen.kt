@@ -28,6 +28,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -168,9 +169,18 @@ fun RefillHistoryScreen(
                                                     )
                                                 )
                                             } else {
-                                                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                                    items(refillEvents!!) { refillEvent ->
-                                                        RefillEventComposable(refillEvent)
+                                                if (LocalInspectionMode.current) {
+                                                    Column(modifier = Modifier.fillMaxSize()) {
+                                                        refillEvents!!.forEach { refillEvent ->
+                                                            RefillEventComposable(refillEvent)
+                                                        }
+                                                    }
+                                                }
+                                                else {
+                                                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                                        items(refillEvents!!) { refillEvent ->
+                                                            RefillEventComposable(refillEvent)
+                                                        }
                                                     }
                                                 }
                                             }

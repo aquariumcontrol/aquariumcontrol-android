@@ -8,7 +8,7 @@ import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditScreenPreview
 
 @Suppress("unused")
 class FeedProfileEditScreenTest {
-    // @PreviewTest
+    @PreviewTest
     @Preview(showBackground = true, heightDp = 1100, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, heightDp = 1100, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(

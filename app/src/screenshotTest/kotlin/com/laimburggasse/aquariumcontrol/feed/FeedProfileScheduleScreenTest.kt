@@ -8,7 +8,7 @@ import com.laimburggasse.aquariumcontrol.feed.schedule.FeedProfileScheduleScreen
 
 @Suppress("unused")
 class FeedProfileScheduleScreenTest {
-    // @PreviewTest
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(

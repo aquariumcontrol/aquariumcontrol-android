@@ -1,6 +1,8 @@
 package com.laimburggasse.aquariumcontrol.feed.edit
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -8,8 +10,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryEventComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
@@ -17,9 +21,19 @@ fun FeedProfileEditMenuComposable(
     feedProfileEditMenuItems: List<FeedProfileEditMenuItem>,
     feedProfileEditViewModel: FeedProfileEditViewModel? = null) {
     // This composable acts as container for the feed profile edit menu items.
-    LazyColumn(modifier = Modifier.heightIn(max = 20000.dp)) {
-        items(feedProfileEditMenuItems) { item ->
-            FeedProfileEditMenuItemComposable(item, feedProfileEditViewModel)
+    if (LocalInspectionMode.current) {
+        // In Preview: Render a simple, static Column instead of LazyColumn
+        Column(modifier = Modifier.heightIn(max = 20000.dp)) {
+            feedProfileEditMenuItems.forEach { feedProfileEditMenuItem ->
+                FeedProfileEditMenuItemComposable(feedProfileEditMenuItem)
+            }
+        }
+    } else {
+        // In App Runtime: Use the performant LazyColumn
+        LazyColumn(modifier = Modifier.heightIn(max = 20000.dp)) {
+            items(feedProfileEditMenuItems) { feedProfileEditMenuItem ->
+                FeedProfileEditMenuItemComposable(feedProfileEditMenuItem, feedProfileEditViewModel)
+            }
         }
     }
 }

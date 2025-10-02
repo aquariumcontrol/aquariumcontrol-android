@@ -8,7 +8,7 @@ import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddNameEditableOutl
 
 @Suppress("unused")
 class FeedProfileAddNameEditableOutlinedFieldComposableTest {
-    // @PreviewTest
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable

@@ -29,6 +29,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -179,11 +180,21 @@ fun BallingHistoryScreen(
                                                     ),
                                                 )
                                             } else {
-                                                LazyColumn(
-                                                    modifier = Modifier.fillMaxSize()
-                                                ) {
-                                                    items(ballingEvents!!) { ballingEvent ->
-                                                        BallingHistoryEventComposable(ballingEvent)
+                                                if (LocalInspectionMode.current) {
+                                                    // In Preview: Render a simple, static Column instead of LazyColumn
+                                                    Column(modifier = Modifier.fillMaxSize()) {
+                                                        ballingEvents!!.forEach { ballingEvent ->
+                                                            BallingHistoryEventComposable(ballingEvent)
+                                                        }
+                                                    }
+                                                } else {
+                                                    // In App Runtime: Use the performant LazyColumn
+                                                    LazyColumn(
+                                                        modifier = Modifier.fillMaxSize()
+                                                    ) {
+                                                        items(items = ballingEvents!!) { ballingEvent ->
+                                                            BallingHistoryEventComposable(ballingHistoryDosingEvent = ballingEvent)
+                                                        }
                                                     }
                                                 }
                                             }

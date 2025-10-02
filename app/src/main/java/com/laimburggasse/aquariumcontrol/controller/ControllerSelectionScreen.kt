@@ -27,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -140,18 +141,31 @@ fun ControllerSelectionScreen(
                                 .padding(innerPadding),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            LazyColumn(
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .wrapContentSize()
-                            ) {
-                                items(state.controllerProfileList) { controllerProfile ->
-                                    ControllerProfileComposable(
-                                        navHostController = navHostController,
-                                        onEvent = onEvent,
-                                        controllerProfile = controllerProfile,
-                                        mainViewModel = mainViewModel,
-                                    )
+                            val modifier = Modifier.padding(16.dp).wrapContentSize()
+
+                            if (LocalInspectionMode.current) {
+                                Column(modifier) {
+                                    val items = state.controllerProfileList
+                                    items.forEach { item ->
+                                        ControllerProfileComposable(
+                                            navHostController = null,
+                                            onEvent =  { },
+                                            controllerProfile = item,
+                                            mainViewModel = null,
+                                        )
+                                    }
+                                }
+                            }
+                            else {
+                                LazyColumn(modifier) {
+                                    items(items =state.controllerProfileList) { controllerProfile ->
+                                        ControllerProfileComposable(
+                                            navHostController = navHostController,
+                                            onEvent = onEvent,
+                                            controllerProfile = controllerProfile,
+                                            mainViewModel = mainViewModel,
+                                        )
+                                    }
                                 }
                             }
                         }

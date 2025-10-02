@@ -7,45 +7,38 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
-import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
-import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
-import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
 
 @Composable
 fun FeedScheduleEntryComposable(
-    mainViewModel: MainViewModel? = null,
     feedScheduleEntry: FeedScheduleEntry,
-    feedScheduleViewModel: FeedScheduleViewModel? = null
+    onEditClick: () -> Unit,
+    onDeleteClick: () -> Unit
 ) {
     // This composable displays one feed schedule entry:
     // - Name of feed profile
     // - timestamp of schedule
     // - information if the feed profile execution should be repeated daily
-
-    val coroutineScope = rememberCoroutineScope()
-    val webApiPostRequest = WebApiPostRequest()
-    val context = LocalContext.current // context for web API request and Toasts
 
     Row(
         modifier = Modifier
@@ -83,42 +76,25 @@ fun FeedScheduleEntryComposable(
                 .align(Alignment.CenterVertically)
         ) {
             Row {
-                /* deactivated because API is currently (Feb, 2025) not available
+                //* deactivated because API is currently (Feb, 2025) not available
                 Icon(
                     imageVector = Icons.Filled.Edit,
                     contentDescription = "Edit",
                     Modifier
                         .size(48.dp)
                         .clickable {
-                            Log.d(
-                                "FeedScheduleEntryComposable",
-                                "Clicked on Edit icon for schedule entry at {${feedScheduleEntry.getTimestampString()}}"
-                            )
-                            mainViewModel?.updateSelectedFeedScheduleEntry(feedScheduleEntry)
-                            navHostController?.navigate(ViewNavigationRoutes.feedSchedule)
+                            onEditClick()
                         }
                 )
                 Spacer(modifier = Modifier.width(16.dp))
 
-                 */
                 Icon(
                     imageVector = Icons.Filled.Delete,
                     contentDescription = stringResource(R.string.delete),
                     Modifier
                         .size(48.dp)
                         .clickable {
-                            if (mainViewModel != null) {
-                                mainViewModel.updateSelectedFeedScheduleEntry(null)
-                                feedScheduleViewModel?.deleteFeedScheduleEntry(feedScheduleEntry)
-                                webApiPostRequestExecution(
-                                    apiUrl = WebApiUrls.FEED_POST_SCHEDULE_REMOVE_ENTRY,
-                                    mainViewModel = mainViewModel,
-                                    coroutineScope = coroutineScope,
-                                    webApiPostRequest = webApiPostRequest,
-                                    context = context,
-                                    optionalGetParams = feedScheduleEntry.getApiParameters()
-                                )
-                            }
+                            onDeleteClick()
                         }
                 )
             }
@@ -143,7 +119,9 @@ internal fun FeedScheduleEntryComposablePreview() {
             color = MaterialTheme.colorScheme.background
         ) {
             FeedScheduleEntryComposable(
-                feedScheduleEntry = mockFeedScheduleEntry
+                feedScheduleEntry = mockFeedScheduleEntry,
+                onEditClick = { },
+                onDeleteClick = {}
             )
         }
     }

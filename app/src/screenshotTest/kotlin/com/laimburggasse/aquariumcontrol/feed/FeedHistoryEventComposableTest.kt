@@ -8,7 +8,7 @@ import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryEventComposable
 
 @Suppress("unused")
 class FeedHistoryEventComposableTest {
-    // @PreviewTest
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable

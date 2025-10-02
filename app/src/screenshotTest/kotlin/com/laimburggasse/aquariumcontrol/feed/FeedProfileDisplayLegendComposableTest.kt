@@ -8,7 +8,7 @@ import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileDisplayLegendPrevi
 
 @Suppress("unused")
 class FeedProfileDisplayLegendComposableTest {
-    // @PreviewTest
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(

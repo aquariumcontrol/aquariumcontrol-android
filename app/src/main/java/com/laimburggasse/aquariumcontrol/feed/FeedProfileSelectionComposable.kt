@@ -13,8 +13,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,6 +28,9 @@ import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleViewModel
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
+import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
+import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
 
 @Composable
 fun FeedProfileSelectionComposable(
@@ -42,21 +48,55 @@ fun FeedProfileSelectionComposable(
     val feedProfileViewModel: FeedProfileViewModel = myFeedProfileViewModel ?: viewModel(
         factory = FeedProfileViewModelFactory(feedProfiles = mockFeedProfiles)
     )
+    
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current // context for web API request and Toasts
 
     Text(text = stringResource(R.string.feed_profiles))
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-    ) {
-        items(feedProfileViewModel.getFeedProfiles()) { feedProfile ->
-            FeedProfileSummaryComposable(
-                navHostController = navHostController,
-                mainViewModel = mainViewModel,
-                feedProfile = feedProfile,
-                feedProfileViewModel = feedProfileViewModel,
-                feedScheduleViewModel = feedScheduleViewModel
-            )
+
+    val columnModifier = Modifier.fillMaxWidth().padding(8.dp)
+    if (LocalInspectionMode.current) {
+        Column(modifier = columnModifier) {
+            feedProfileViewModel.getFeedProfiles().forEach { feedProfile ->
+                FeedProfileSummaryComposable(
+                    feedProfile = feedProfile,
+                    onEditClick = {},
+                    onScheduleClick = {},
+                    onDeleteClick = {}
+                )
+            }
+        }
+    }
+    else {
+        LazyColumn(modifier = columnModifier) {
+            items(feedProfileViewModel.getFeedProfiles()) { feedProfile ->
+                FeedProfileSummaryComposable(
+                    feedProfile = feedProfile,
+                    onEditClick = {
+                        mainViewModel?.updateSelectedFeedProfile(feedProfile)
+                        navHostController?.navigate(ViewNavigationRoutes.feedEdit)
+                    },
+                    onScheduleClick = {
+                        mainViewModel?.updateSelectedFeedProfile(feedProfile)
+                        mainViewModel?.updateSelectedFeedScheduleEntry(null)
+                        mainViewModel?.setMyFeedScheduleViewModel(feedScheduleViewModel)
+                        navHostController?.navigate(ViewNavigationRoutes.feedSchedule)
+                    },
+                    onDeleteClick = {
+                        feedProfileViewModel?.deleteFeedProfile(feedProfile)
+                        if (mainViewModel != null) {
+                            webApiPostRequestExecution(
+                                apiUrl = WebApiUrls.FEED_POST_REMOVE_PROFILE,
+                                mainViewModel = mainViewModel,
+                                coroutineScope = coroutineScope,
+                                webApiPostRequest = WebApiPostRequest(),
+                                context = context,
+                                optionalGetParams = feedProfile.getFeedProfileApiCallParameters()
+                            )
+                        }
+                    }
+                )
+            }
         }
     }
     FloatingActionButton(
