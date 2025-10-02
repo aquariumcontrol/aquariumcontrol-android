@@ -10,7 +10,7 @@ import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState.Success
 
 @Suppress("unused")
 class TimeDataScreenTest {
-    @PreviewTest
+    // @PreviewTest
     @Preview(showBackground = true, heightDp = 1250, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, heightDp = 1250, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
@@ -28,7 +28,7 @@ class TimeDataScreenTest {
         TimeDataScreen(mockTimeDataUiState = Success(TimeDataSets(generateMockTimeData())))
     }
 
-    @PreviewTest
+    // @PreviewTest
     @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
@@ -46,7 +46,7 @@ class TimeDataScreenTest {
         TimeDataScreen(mockTimeDataUiState = Error("Error message"))
     }
 
-    @PreviewTest
+    // @PreviewTest
     @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(

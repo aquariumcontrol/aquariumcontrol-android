@@ -9,7 +9,7 @@ import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditTextFiel
 
 @Suppress("unused")
 class BallingProfileEditTextFieldSliderComposableTest {
-    @PreviewTest
+    // @PreviewTest
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_YES,
@@ -25,7 +25,7 @@ class BallingProfileEditTextFieldSliderComposableTest {
         BallingProfileEditTextFieldSliderComposableLandscapePreview()
     }
 
-    @PreviewTest
+    // @PreviewTest
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_YES,

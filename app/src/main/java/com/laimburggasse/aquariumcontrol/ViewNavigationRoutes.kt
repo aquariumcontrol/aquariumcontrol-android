@@ -2,6 +2,7 @@ package com.laimburggasse.aquariumcontrol
 
 object ViewNavigationRoutes {
     var feed = "feed"
+    var feedHistory = "feedHistory"
     var feedHistory24h = "feedHistory24h"
     var feedHistory7d = "feedHistory7d"
     var feedEdit = "feedEdit"

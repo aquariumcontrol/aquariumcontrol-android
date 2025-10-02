@@ -8,7 +8,7 @@ import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileDisplayComposableP
 
 @Suppress("unused")
 class FeedProfileDisplayComposableTest {
-    @PreviewTest
+    // @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable

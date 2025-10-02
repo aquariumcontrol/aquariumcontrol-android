@@ -10,9 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -20,6 +17,8 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -49,7 +48,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.sql.Timestamp
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun RefillHistoryScreen(
     navHostController: NavHostController? = null,
@@ -81,31 +79,10 @@ fun RefillHistoryScreen(
                 mainViewModel,
                 showFullWeek
             ) { newRefillEvents ->
-                refillEvents = newRefillEvents as List<RefillEvent>
+                refillEvents = newRefillEvents
             } // Pass the setter lambda
         }
     }
-
-    @Suppress("UNCHECKED_CAST")
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = isRefreshing,
-        onRefresh = {
-            // This lambda will be called when the user pulls to refresh
-            isRefreshing = true
-            // Perform the refresh operation here (e.g., fetch new data)
-            coroutineScope.launch {
-                if (isControllerAddressValid) {
-                    fetchRefillEvents(
-                        mainViewModel!!, showFullWeek
-                    ) { newRefillEvents ->
-                        refillEvents = newRefillEvents as List<RefillEvent>
-                    } // Pass the setter lambda
-                    delay(timeMillis = 500)
-                    isRefreshing = false // Reset the refresh state
-                }
-            }
-        }
-    )
 
     AquariumControllerTheme {
         Surface(
@@ -135,19 +112,38 @@ fun RefillHistoryScreen(
                                 .padding(innerPadding),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Box(
+                            PullToRefreshBox(
                                 modifier = Modifier
-                                    .pullRefresh(pullRefreshState)
                                     .fillMaxWidth(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                if (isRefreshing) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier
-                                            .size(150.dp),
-                                        color = MaterialTheme.colorScheme.primary
-                                    )
+                                contentAlignment = Alignment.Center,
+                                state = rememberPullToRefreshState(),
+                                isRefreshing = isRefreshing,
+                                onRefresh = {
+                                    // This lambda will be called when the user pulls to refresh
+                                    isRefreshing = true
+                                    // Perform the refresh operation here (e.g., fetch new data)
+                                    coroutineScope.launch {
+                                        if (isControllerAddressValid) {
+                                            fetchRefillEvents(
+                                                mainViewModel, showFullWeek
+                                            ) { newRefillEvents ->
+                                                refillEvents = newRefillEvents
+                                            } // Pass the setter lambda
+                                            delay(timeMillis = 500)
+                                        }
+                                        isRefreshing = false // Reset the refresh state
+                                    }
+                                },
+                                indicator = {
+                                    if (isRefreshing) {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier
+                                                .size(150.dp),
+                                            color = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
                                 }
+                            ) {
                                 Row(
                                     modifier = Modifier
                                         .fillMaxSize()
@@ -214,7 +210,7 @@ fun RefillHistoryScreen(
 private suspend fun fetchRefillEvents(
     mainViewModel: MainViewModel,
     showFullWeek: Boolean,
-    updateRefillEvents: (Any) -> Unit,
+    updateRefillEvents: (List<RefillEvent>) -> Unit,
 ) {
     withContext(Dispatchers.IO) {
         val url = when {

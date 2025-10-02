@@ -9,14 +9,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,7 +44,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun OverviewScreen(
     navHostController: NavHostController? = null,
@@ -117,28 +115,6 @@ fun OverviewScreen(
         }
     }
 
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = isRefreshing,
-        onRefresh = {
-            isRefreshing = true
-
-            coroutineScope.launch {
-                if (isControllerAddressValid) {
-                    try {
-                        fetchOverviewData(
-                            mainViewModel!!
-                        ) { newOverviewData ->
-                            overviewData = newOverviewData as OverviewData
-                        } // Pass the setter lambda
-                        delay(timeMillis = 500)
-                    } finally {
-                        isRefreshing = false // Reset the refresh state
-                    }
-                }
-            }
-        }
-    )
-
     AquariumControllerTheme {
         // A surface container using the 'background' color from the theme
         Surface(
@@ -153,25 +129,42 @@ fun OverviewScreen(
                     ScreenHeadlineComposable(
                         text = stringResource(id = R.string.overview)
                     )
-                    Box(
+                    PullToRefreshBox(
                         modifier = Modifier
-                            .pullRefresh(pullRefreshState)
                             .fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
+                        state = rememberPullToRefreshState(),
+                        isRefreshing = isRefreshing,
+                        contentAlignment = Alignment.Center,
+                        onRefresh = {
+                            // This lambda will be called when the user pulls to refresh
+                            isRefreshing = true
+                            // Perform the refresh operation here (e.g., fetch new data)
+                            coroutineScope.launch {
+                                if (isControllerAddressValid) {
+                                    fetchOverviewData(
+                                        mainViewModel
+                                    ) { newOverviewData ->
+                                        overviewData = newOverviewData as OverviewData
+                                    } // Pass the setter lambda
+                                    delay(timeMillis = 500)
+                                }
+                                isRefreshing = false // Reset the refresh state
+                            }
+                        },
+                        indicator = {
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .size(150.dp),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    )
+                    {
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth(),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            if (isRefreshing) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier
-                                        .size(150.dp),
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-
                             if (overviewData != null) {
                                 when (configuration.orientation) {
                                     Configuration.ORIENTATION_LANDSCAPE -> {
@@ -221,7 +214,7 @@ fun OverviewScreen(
                                                 isRefreshing = true
                                                 try {
                                                     fetchOverviewData(
-                                                        mainViewModel!!
+                                                        mainViewModel
                                                     ) { newOverviewData ->
                                                         overviewData =
                                                             newOverviewData as OverviewData

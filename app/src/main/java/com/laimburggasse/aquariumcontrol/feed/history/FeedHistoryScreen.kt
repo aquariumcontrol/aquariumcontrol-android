@@ -12,9 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -22,6 +19,8 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -38,19 +37,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
-import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FeedHistoryScreen(
     navHostController: NavHostController? = null,
@@ -80,32 +78,11 @@ fun FeedHistoryScreen(
                 mainViewModel,
                 showFullWeek
             ) { newFeedEvents ->
-                feedEvents = newFeedEvents as List<FeedHistoryEvent>
+                feedEvents = newFeedEvents
             } // Pass the setter lambda
             isRefreshing = false
         }
     }
-
-    @Suppress("UNCHECKED_CAST")
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = isRefreshing,
-        onRefresh = {
-            // This lambda will be called when the user pulls to refresh
-            isRefreshing = true
-            // Perform the refresh operation here (e.g., fetch new data)
-            coroutineScope.launch {
-                if (isControllerAddressValid) {
-                    fetchFeedEvents(
-                        mainViewModel!!, showFullWeek
-                    ) { newFeedEvents ->
-                        feedEvents = newFeedEvents as List<FeedHistoryEvent>
-                    } // Pass the setter lambda
-                    delay(500)
-                    isRefreshing = false // Reset the refresh state
-                }
-            }
-        }
-    )
 
     AquariumControllerTheme {
         Surface(
@@ -137,20 +114,38 @@ fun FeedHistoryScreen(
                         Text(
                             text = subHeadlineText,
                         )
-                        Box(
+                        PullToRefreshBox(
                             modifier = Modifier
-                                .pullRefresh(pullRefreshState)
                                 .fillMaxWidth(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            if (isRefreshing) {  // Show only while isLoading is true
-                                CircularProgressIndicator(
-                                    modifier = Modifier
-                                        .size(150.dp),
-                                    color = MaterialTheme.colorScheme.primary
-                                )
+                            contentAlignment = Alignment.Center,
+                            state = rememberPullToRefreshState(),
+                            isRefreshing = isRefreshing,
+                            onRefresh = {
+                                // This lambda will be called when the user pulls to refresh
+                                isRefreshing = true
+                                // Perform the refresh operation here (e.g., fetch new data)
+                                coroutineScope.launch {
+                                    if (isControllerAddressValid) {
+                                        fetchFeedEvents(
+                                            mainViewModel, showFullWeek
+                                        ) { newFeedEvents ->
+                                            feedEvents = newFeedEvents
+                                        } // Pass the setter lambda
+                                        delay(timeMillis = 500)
+                                    }
+                                    isRefreshing = false // Reset the refresh state
+                                }
+                            },
+                            indicator = {
+                                if (isRefreshing) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier
+                                            .size(150.dp),
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                }
                             }
-
+                        ) {
                             Row(
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -210,7 +205,7 @@ fun FeedHistoryScreen(
                 }
                 MainDropdownMenuComposable(
                     navHostController = navHostController,
-                    navigationRouteSource = ViewNavigationRoutes.balling,
+                    navigationRouteSource = ViewNavigationRoutes.feedHistory,
                     mainViewModel = mainViewModel
                 )
             }
@@ -221,7 +216,7 @@ fun FeedHistoryScreen(
 private suspend fun fetchFeedEvents(
     mainViewModel: MainViewModel,
     showFullWeek: Boolean,
-    updateFeedEvents: (Any) -> Unit,
+    updateFeedEvents: (List<FeedHistoryEvent>) -> Unit,
 ) {
     withContext(Dispatchers.IO) {
         val url = when {

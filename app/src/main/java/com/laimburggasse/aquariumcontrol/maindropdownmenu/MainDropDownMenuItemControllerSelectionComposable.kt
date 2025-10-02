@@ -32,7 +32,9 @@ fun MainDropDownMenuItemControllerSelectionComposable(
                 contentDescription = stringResource(R.string.select_controller)
             )
         },
-        enabled = navigationRouteSource != ViewNavigationRoutes.controllerSelection
+        enabled = navigationRouteSource != ViewNavigationRoutes.controllerSelection &&
+                    navigationRouteSource != ViewNavigationRoutes.controllerAdd &&
+                    navigationRouteSource != ViewNavigationRoutes.controllerEdit
     )
 }
 

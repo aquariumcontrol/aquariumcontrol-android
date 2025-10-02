@@ -11,9 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -21,6 +18,8 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -49,7 +48,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BallingHistoryScreen(
     navHostController: NavHostController? = null,
@@ -84,32 +82,11 @@ fun BallingHistoryScreen(
                 mainViewModel,
                 showFullWeek
             ) { newBallingEvents ->
-                ballingEvents = newBallingEvents as List<BallingHistoryDosingEvent>
+                ballingEvents = newBallingEvents
             } // Pass the setter lambda
             isRefreshing = false
         }
     }
-
-    @Suppress("UNCHECKED_CAST")
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = isRefreshing,
-        onRefresh = {
-            // This lambda will be called when the user pulls to refresh
-            isRefreshing = true
-            // Perform the refresh operation here (e.g., fetch new data)
-            coroutineScope.launch {
-                if (isControllerAddressValid) {
-                    fetchBallingEvents(
-                        mainViewModel!!, showFullWeek
-                    ) { newBallingEvents ->
-                        ballingEvents = newBallingEvents as List<BallingHistoryDosingEvent>
-                    } // Pass the setter lambda
-                    delay(500)
-                    isRefreshing = false // Reset the refresh state
-                }
-            }
-        }
-    )
 
     AquariumControllerTheme {
         Surface(
@@ -145,19 +122,38 @@ fun BallingHistoryScreen(
                                 .padding(innerPadding),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Box(
+                            PullToRefreshBox(
                                 modifier = Modifier
-                                    .pullRefresh(pullRefreshState)
                                     .fillMaxWidth(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                if (isRefreshing) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier
-                                            .size(150.dp),
-                                        color = MaterialTheme.colorScheme.primary
-                                    )
+                                contentAlignment = Alignment.Center,
+                                state = rememberPullToRefreshState(),
+                                isRefreshing = isRefreshing,
+                                onRefresh = {
+                                    // This lambda will be called when the user pulls to refresh
+                                    isRefreshing = true
+                                    // Perform the refresh operation here (e.g., fetch new data)
+                                    coroutineScope.launch {
+                                        if (isControllerAddressValid) {
+                                            fetchBallingEvents(
+                                                mainViewModel, showFullWeek
+                                            ) { newBallingEvents ->
+                                                ballingEvents = newBallingEvents as List<BallingHistoryDosingEvent>
+                                            } // Pass the setter lambda
+                                            delay(timeMillis = 500)
+                                        }
+                                        isRefreshing = false // Reset the refresh state
+                                    }
+                                },
+                                indicator = {
+                                    if (isRefreshing) {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier
+                                                .size(150.dp),
+                                            color = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
                                 }
+                            ) {
                                 Row(
                                     modifier = Modifier
                                         .fillMaxSize()
@@ -183,7 +179,9 @@ fun BallingHistoryScreen(
                                                     ),
                                                 )
                                             } else {
-                                                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                                LazyColumn(
+                                                    modifier = Modifier.fillMaxSize()
+                                                ) {
                                                     items(ballingEvents!!) { ballingEvent ->
                                                         BallingHistoryEventComposable(ballingEvent)
                                                     }
@@ -225,7 +223,7 @@ fun BallingHistoryScreen(
 private suspend fun fetchBallingEvents(
     mainViewModel: MainViewModel,
     showFullWeek: Boolean,
-    updateBallingEvents: (Any) -> Unit,
+    updateBallingEvents: (List<BallingHistoryDosingEvent>) -> Unit,
 ) {
     withContext(Dispatchers.IO) {
         val url = when {

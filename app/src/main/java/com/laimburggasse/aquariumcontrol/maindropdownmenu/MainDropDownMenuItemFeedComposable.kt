@@ -33,7 +33,13 @@ fun MainDropDownMenuItemFeedComposable(
                 contentDescription = stringResource(R.string.feed)
             )
         },
-        enabled = isControllerLoaded && navigationRouteSource != ViewNavigationRoutes.feed
+        enabled = isControllerLoaded &&
+                    navigationRouteSource != ViewNavigationRoutes.feedHistory &&
+                    navigationRouteSource != ViewNavigationRoutes.feedHistory24h &&
+                    navigationRouteSource != ViewNavigationRoutes.feedHistory7d &&
+                    navigationRouteSource != ViewNavigationRoutes.feedEdit &&
+                    navigationRouteSource != ViewNavigationRoutes.feedAddProfile &&
+                    navigationRouteSource != ViewNavigationRoutes.feedSchedule
     )
 }
 

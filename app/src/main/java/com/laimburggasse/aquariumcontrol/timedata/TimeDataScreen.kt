@@ -15,14 +15,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,13 +33,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.LineData
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
@@ -66,7 +65,6 @@ const val chartHeight = 200
 const val axisGranularityOnOff = 1.0f
 const val axisGranularityTime = 14400f
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun TimeDataScreen(
     navHostController: NavHostController? = null,
@@ -81,7 +79,7 @@ fun TimeDataScreen(
 
     val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
 
-    var timeDataUiState by remember { mutableStateOf<TimeDataUiState>(mockTimeDataUiState ?:Loading) }
+    var timeDataUiState by remember { mutableStateOf(mockTimeDataUiState ?:Loading) }
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -129,22 +127,6 @@ fun TimeDataScreen(
         }
     }
 
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = isRefreshing,
-        onRefresh = {
-            // This lambda will be called when the user pulls to refresh
-            isRefreshing = true
-            // Perform the refresh operation here (e.g., fetch new data)
-            coroutineScope.launch {
-                if (isControllerAddressValid) {
-                    loadData()
-                    delay(500)
-                    isRefreshing = false // Reset the refresh state
-                }
-            }
-        }
-    )
-
     AquariumControllerTheme {
         Surface(
             modifier = Modifier,
@@ -156,195 +138,92 @@ fun TimeDataScreen(
                         modifier = Modifier,
                         text = stringResource(id = R.string.time_data_series),
                     )
-                    Box(
-                        modifier = Modifier.pullRefresh(pullRefreshState),
-                        contentAlignment = Alignment.Center
+                    PullToRefreshBox(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        state = rememberPullToRefreshState(),
+                        isRefreshing = isRefreshing,
+                        contentAlignment = Alignment.Center,
+                        onRefresh = {
+                            // This lambda will be called when the user pulls to refresh
+                            isRefreshing = true
+                            // Perform the refresh operation here (e.g., fetch new data)
+                            coroutineScope.launch {
+                                if (isControllerAddressValid) {
+                                    loadData()
+                                    delay(timeMillis = 500)
+                                }
+                                isRefreshing = false // Reset the refresh state
+                            }
+                        },
+                        indicator = {
+                            if (isRefreshing) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .size(64.dp)
+                                        .fillMaxWidth(),
+                                    color = MaterialTheme.colorScheme.primary,
+                                    strokeWidth = 5.dp
+                                )
+                            }
+                        }
                     ) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.verticalScroll(rememberScrollState())
                         ) {
-                            when (val state = timeDataUiState) {
-                                is Loading -> {
-                                    Column(
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        verticalArrangement = Arrangement.Center,
-                                        modifier = Modifier.fillMaxSize(),
-                                    ) {
-                                        CircularProgressIndicator(
-                                            modifier = Modifier
-                                                .size(64.dp)
-                                                .fillMaxWidth(),
-                                            color = MaterialTheme.colorScheme.primary,
-                                            strokeWidth = 5.dp
-                                        )
-                                        Spacer(modifier = Modifier.height(16.dp))
-                                        Text(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            text = "Loading data...",
-                                            textAlign = TextAlign.Center,
-                                            style = MaterialTheme.typography.titleMedium
-                                        )
-                                    }
-                                }
-                                is Success -> {
-                                    val timeDataSets = state.timeDataSets
-                                    // Main temperature chart
-                                    AndroidView (modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(chartHeight.dp), factory = { context ->
-                                        LineChart(context).apply {
-                                            data = timeDataSets.dataTemperature
-                                            description.isEnabled = false
-                                            legend.isEnabled = true
-                                            legend.textColor = textColor
-                                            axisRight.isEnabled = true
-                                            axisRight.valueFormatter =
-                                                TimeDataYAxisOnOffValueFormatter()
-                                            axisRight.granularity = axisGranularityOnOff
-                                            axisRight.textColor = textColor
-                                            axisLeft.setDrawTopYLabelEntry(true)
-                                            axisLeft.valueFormatter =
-                                                TimeDataYAxisDegreeCelsiusValueFormatter()
-                                            axisLeft.textColor = textColor
-                                            xAxis.granularity = axisGranularityTime
-                                            xAxis.valueFormatter = TimeDataXAxisValueFormatter()
-                                            xAxis.position = XAxis.XAxisPosition.BOTTOM
-                                            xAxis.textColor = textColor
-                                        }
-                                    }, update = { lineChart ->
-                                        lineChart.data = timeDataSets.dataTemperature
-                                        lineChart.notifyDataSetChanged()
-                                        lineChart.invalidate()
-                                    })
+                            val state = timeDataUiState
+                            if (state is Success) {
+                                val timeDataSets = state.timeDataSets
 
-                                    // pH Chart
-                                    AndroidView(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(chartHeight.dp), factory = { context ->
-                                            LineChart(context).apply {
-                                                data = timeDataSets.datapH
-                                                description.isEnabled = false
-                                                legend.isEnabled = true
-                                                legend.textColor = textColor
-                                                axisRight.isEnabled = false
-                                                axisLeft.setDrawTopYLabelEntry(true)
-                                                xAxis.granularity = axisGranularityTime
-                                                xAxis.valueFormatter = TimeDataXAxisValueFormatter()
-                                                xAxis.position = XAxis.XAxisPosition.BOTTOM
-                                                xAxis.textColor = textColor
-                                                axisLeft.textColor = textColor
-                                            }
-                                        }, update = { lineChart ->
-                                            lineChart.data = timeDataSets.datapH
-                                            lineChart.notifyDataSetChanged()
-                                            lineChart.invalidate()
-                                        })
+                                TimeDataTemperatureChartComposable(
+                                    temperatureDataSet = timeDataSets.dataTemperature,
+                                    textColor = textColor
+                                )
 
-                                    // Conductivity chart
-                                    AndroidView(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(chartHeight.dp), factory = { context ->
-                                            LineChart(context).apply {
-                                                data = timeDataSets.dataConductivity
-                                                description.isEnabled = false
-                                                legend.isEnabled = true
-                                                legend.textColor = textColor
-                                                axisRight.isEnabled = false
-                                                axisLeft.valueFormatter =
-                                                    TimeDataYAxisMicroSievertPerCentimeterValueFormatter()
-                                                axisLeft.setDrawTopYLabelEntry(true)
-                                                xAxis.granularity = axisGranularityTime
-                                                xAxis.valueFormatter = TimeDataXAxisValueFormatter()
-                                                xAxis.position = XAxis.XAxisPosition.BOTTOM
-                                                xAxis.textColor = textColor
-                                                axisLeft.textColor = textColor
-                                            }
-                                        }, update = { lineChart ->
-                                            lineChart.data = timeDataSets.dataConductivity
-                                            lineChart.notifyDataSetChanged()
-                                            lineChart.invalidate()
-                                        })
+                                TimeDatapHChartComposable(
+                                    pHDataSet = timeDataSets.datapH,
+                                    textColor = textColor
+                                )
 
-                                    // Tank level chart
-                                    AndroidView (modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(chartHeight.dp), factory = { context ->
-                                            LineChart(context).apply {
-                                                data = timeDataSets.dataTankLevel
-                                                description.isEnabled = false
-                                                legend.isEnabled = true
-                                                legend.textColor = textColor
-                                                axisRight.isEnabled = false
-                                                axisLeft.setDrawTopYLabelEntry(true)
-                                                axisLeft.granularity = axisGranularityOnOff
-                                                axisLeft.valueFormatter = TimeDataYAxisOnOffValueFormatter()
-                                                xAxis.granularity = axisGranularityTime
-                                                xAxis.valueFormatter = TimeDataXAxisValueFormatter()
-                                                xAxis.position = XAxis.XAxisPosition.BOTTOM
-                                                xAxis.textColor = textColor
-                                                axisLeft.textColor = textColor
-                                            }
-                                        }, update = { lineChart ->
-                                            lineChart.data = timeDataSets.dataTankLevel
-                                            lineChart.notifyDataSetChanged()
-                                            lineChart.invalidate()
-                                        })
+                                TimeDataConductivityChartComposable(
+                                    conductivityDataSet = timeDataSets.dataConductivity,
+                                    textColor = textColor
+                                )
 
-                                    // Ambient chart
-                                    AndroidView(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(chartHeight.dp), factory = { context ->
-                                            LineChart(context).apply {
-                                                data = timeDataSets.dataAmbient
-                                                description.isEnabled = false
-                                                legend.isEnabled = true
-                                                legend.textColor = textColor
-                                                axisRight.isEnabled = true
-                                                axisRight.textColor = textColor
-                                                axisRight.valueFormatter =
-                                                    TimeDataYAxisPercentValueFormatter()
-                                                axisLeft.textColor = textColor
-                                                axisLeft.setDrawTopYLabelEntry(true)
-                                                axisLeft.valueFormatter =
-                                                    TimeDataYAxisDegreeCelsiusValueFormatter()
-                                                xAxis.granularity = axisGranularityTime
-                                                xAxis.valueFormatter = TimeDataXAxisValueFormatter()
-                                                xAxis.position = XAxis.XAxisPosition.BOTTOM
-                                                xAxis.textColor = textColor
-                                            }
-                                        }, update = { lineChart ->
-                                            lineChart.data = timeDataSets.dataAmbient
-                                            lineChart.notifyDataSetChanged()
-                                            lineChart.invalidate()
-                                        })
-                                }
-                                is Error -> {
-                                    // Show an error message and a retry button
-                                    Column(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .padding(16.dp),
-                                        verticalArrangement = Arrangement.Center,
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
-                                        Text(
-                                            text = "Error loading data:",
-                                            style = MaterialTheme.typography.titleMedium
-                                        )
-                                        Spacer(modifier = Modifier.height(8.dp))
-                                        Text(
-                                            text = state.errorMessage,
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            color = MaterialTheme.colorScheme.error
-                                        )
-                                        Spacer(modifier = Modifier.height(16.dp))
-                                        Button(onClick = { loadData() }) { // Retry button
-                                            Text("Retry")
-                                        }
+                                TimeDataTankLevelChartComposable(
+                                    tankLevelDataSet = timeDataSets.dataTankLevel,
+                                    textColor = textColor
+                                )
+
+                                TimeDataAmbientChartComposable(
+                                    ambientDataSet = timeDataSets.dataAmbient,
+                                    textColor = textColor
+                                )
+                            }
+
+                            if (state is Error) {
+                                // Show an error message and a retry button
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(16.dp),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = "Error loading data:",
+                                        style = MaterialTheme.typography.titleMedium
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Text(
+                                        text = state.errorMessage,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.error
+                                    )
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Button(onClick = { loadData() }) { // Retry button
+                                        Text("Retry")
                                     }
                                 }
                             }
@@ -531,16 +410,6 @@ internal fun TimeDataScreenPreview_Error() {
 
 @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    device = "spec:width=250dp,height=350dp,orientation=landscape"
-)
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    device = "spec:width=250dp,height=350dp,orientation=landscape"
-)
 @Composable
 internal fun TimeDataScreenPreview_Loading() {
     TimeDataScreen(mockTimeDataUiState = Loading)

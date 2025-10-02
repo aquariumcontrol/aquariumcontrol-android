@@ -33,7 +33,10 @@ fun MainDropDownMenuItemRefillComposable(
                 contentDescription = stringResource(R.string.fresh_water_refill)
             )
         },
-        enabled = isControllerLoaded && navigationRouteSource != ViewNavigationRoutes.refill
+        enabled = isControllerLoaded &&
+                    navigationRouteSource != ViewNavigationRoutes.refill &&
+                    navigationRouteSource != ViewNavigationRoutes.refillHistory24h &&
+                    navigationRouteSource != ViewNavigationRoutes.refillHistory7d
     )
 }
 

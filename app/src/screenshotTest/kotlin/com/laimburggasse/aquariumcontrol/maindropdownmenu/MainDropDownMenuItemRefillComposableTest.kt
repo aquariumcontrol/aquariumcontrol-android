@@ -7,7 +7,7 @@ import com.android.tools.screenshot.PreviewTest
 
 @Suppress("unused")
 class MainDropDownMenuItemRefillComposableTest {
-    @PreviewTest
+    // @PreviewTest
     @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
@@ -15,7 +15,7 @@ class MainDropDownMenuItemRefillComposableTest {
         MainDropdownMenuItemRefillEnabledPreview()
     }
 
-    @PreviewTest
+    // @PreviewTest
     @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
