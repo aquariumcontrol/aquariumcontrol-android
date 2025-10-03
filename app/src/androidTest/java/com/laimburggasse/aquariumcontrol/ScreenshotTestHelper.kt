@@ -7,7 +7,7 @@ import java.io.File
 import java.io.FileOutputStream
 
 object ScreenshotTestHelper {
-    private const val GOLDEN_IMAGE_ASSETS_PATH = "assets.screenshots"
+    private const val GOLDEN_IMAGE_ASSETS_PATH = "assets"
 
     fun getDeviceOutputDirectory(): File {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
@@ -35,40 +35,42 @@ object ScreenshotTestHelper {
 
     fun verifyBitmap(
         capturedBitmap: androidx.compose.ui.graphics.ImageBitmap,
-        packageName: String,
-        testName: String,
+        subfolder: String,
         goldenName: String
     ): Boolean {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
-        val goldenFileInAssets = "$GOLDEN_IMAGE_ASSETS_PATH/$packageName/$testName/$goldenName.png"
+        val context = InstrumentationRegistry.getInstrumentation().context
+        val goldenFileRelativePath = "screenshots/$subfolder/$goldenName.png"
 
         try {
-            println("Using reference file $goldenFileInAssets for $goldenName")
-            context.assets.open(goldenFileInAssets).use { inputStream ->
+            val apkPath = context.packageResourcePath
+            println("▶️ verifyBitmap: Attempting to open asset from APK: $apkPath")
+            println("▶️ verifyBitmap: Using relative asset path: $goldenFileRelativePath")
+            context.assets.open(goldenFileRelativePath).use { inputStream ->
                 val goldenBitmap = android.graphics.BitmapFactory.decodeStream(inputStream)
                 val capturedAndroidBitmap = capturedBitmap.asAndroidBitmap()
 
                 if (goldenBitmap.width != capturedAndroidBitmap.width || goldenBitmap.height != capturedAndroidBitmap.height) {
-                    println("Bitmap dimensions differ for $goldenName.")
+                    println("▶️ verifyBitmap: Bitmap dimensions differ for $goldenName.")
                     saveDebugBitmaps(capturedAndroidBitmap, goldenBitmap, goldenName)
                     return false
                 }
                 for (x in 0 until goldenBitmap.width) {
                     for (y in 0 until goldenBitmap.height) {
                         if (goldenBitmap.getPixel(x, y) != capturedAndroidBitmap.getPixel(x, y)) {
-                            println("Pixel mismatch at ($x, $y) for $goldenName.")
+                            println("▶️ verifyBitmap: Pixel mismatch at ($x, $y) for $goldenName.")
                             saveDebugBitmaps(capturedAndroidBitmap, goldenBitmap, goldenName)
                             return false
                         }
                     }
                 }
+                println("✅ verifyBitmap: Golden image matches for $goldenName")
                 return true
             }
         } catch (_: java.io.FileNotFoundException) {
-            println("🚨 Golden image not found: $goldenFileInAssets. If this is the first run or a new test, set recordMode=true to create it.")
+            println("🚨 verifyBitmap: Golden image not found: $goldenFileRelativePath. If this is the first run or a new test, set recordMode=true to create it.")
             return false // Fail the test if golden is missing in verify mode
         } catch (e: Exception) {
-            println("Could not load or compare golden image $goldenName from assets. ${e.message}")
+            println("verifyBitmap: Could not load or compare golden image $goldenName from assets. ${e.message}")
             return false
         }
     }
