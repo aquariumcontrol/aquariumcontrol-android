@@ -54,7 +54,8 @@ fun FeedHistoryScreen(
     navHostController: NavHostController? = null,
     showFullWeek: Boolean,
     mockFeedHistoryEvents: List<FeedHistoryEvent>? = null,
-    mainViewModel: MainViewModel? = null
+    mainViewModel: MainViewModel? = null,
+    darkTheme: Boolean? = null
 ) {
     // This screen will only display the different feed events.
     // Hence, there is no need to have a view model.
@@ -84,7 +85,7 @@ fun FeedHistoryScreen(
         }
     }
 
-    AquariumControllerTheme {
+    AquariumControllerTheme(darkTheme) {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {

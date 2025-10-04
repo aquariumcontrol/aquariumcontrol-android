@@ -54,7 +54,8 @@ fun BallingHistoryScreen(
     navHostController: NavHostController? = null,
     showFullWeek: Boolean,
     mockBallingHistoryDosingEvents: List<BallingHistoryDosingEvent>? = null,
-    mainViewModel: MainViewModel? = null
+    mainViewModel: MainViewModel? = null,
+    darkTheme: Boolean? = null,
 ) {
     // This screen displays:
     // - headline
@@ -89,7 +90,7 @@ fun BallingHistoryScreen(
         }
     }
 
-    AquariumControllerTheme {
+    AquariumControllerTheme(darkTheme) {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {

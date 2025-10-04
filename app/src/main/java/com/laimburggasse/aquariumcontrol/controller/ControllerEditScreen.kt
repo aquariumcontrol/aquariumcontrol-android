@@ -42,7 +42,8 @@ fun ControllerEditScreen(
     state: ControllerState,
     onEvent: (ControllerEvent) -> Unit,
     mainViewModel: MainViewModel? = null,
-    mockIsDefaultProfile: Boolean? = false
+    mockIsDefaultProfile: Boolean? = false,
+    darkTheme: Boolean? = null,
 ) {
     // This screen allows editing of a controller profile and selecting if the profile shall be
     // the default profile.
@@ -74,7 +75,7 @@ fun ControllerEditScreen(
     }
 
     // This screen displays a form for editing an existing controller profile.
-    AquariumControllerTheme {
+    AquariumControllerTheme(darkTheme) {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background

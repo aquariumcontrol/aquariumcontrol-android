@@ -46,6 +46,7 @@ fun BallingProfileEditScreen(
     navHostController: NavHostController? = null,
     ballingProfile: BallingProfile,
     mainViewModel: MainViewModel? = null,
+    darkTheme: Boolean? = null,
 ) {
     // This screen displays:
     // - Headline
@@ -70,10 +71,10 @@ fun BallingProfileEditScreen(
 
     val configuration = LocalConfiguration.current
 
-    AquariumControllerTheme {
+    AquariumControllerTheme(darkTheme) {
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+            color = MaterialTheme.colorScheme.background,
         ) {
             Box {
                 Column(

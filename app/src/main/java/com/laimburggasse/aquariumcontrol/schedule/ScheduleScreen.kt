@@ -41,7 +41,8 @@ import kotlinx.coroutines.withContext
 fun ScheduleScreen(
     navHostController: NavHostController? = null,
     mockScheduleSetVals: ScheduleSetVals? = null,
-    mainViewModel: MainViewModel? = null
+    mainViewModel: MainViewModel? = null,
+    darkTheme: Boolean? = null
 ) {
     // This screen displays for each of (Balling, Refill, schedule, Heating)
     // - a range slider for setting the start and stop time
@@ -125,7 +126,7 @@ fun ScheduleScreen(
         }
     }
 
-    AquariumControllerTheme {
+    AquariumControllerTheme(darkTheme) {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background

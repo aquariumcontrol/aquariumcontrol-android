@@ -1,8 +1,14 @@
 package com.laimburggasse.aquariumcontrol
 
 import android.graphics.Bitmap
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.test.captureToImage
+import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onRoot
 import androidx.test.platform.app.InstrumentationRegistry
+import org.junit.Rule
 import java.io.File
 import java.io.FileOutputStream
 
@@ -90,6 +96,33 @@ object ScreenshotTestHelper {
             println("Saved debug bitmaps for $goldenName to ${debugDir.absolutePath}")
         } catch (e: Exception) {
             println("Error saving debug bitmaps: ${e.message}")
+        }
+    }
+
+    fun performScreenshotTest(
+        goldenName: String,
+        recordMode: Boolean,
+        imageBitmap: ImageBitmap
+    ) {
+        if (recordMode) {
+            ScreenshotTestHelper.recordBitmap(imageBitmap, goldenName)
+            // After recording, we might want to fail the test to remind the user to copy the file
+            // and switch back to verify mode, or handle this in a more sophisticated way.
+            // For this example, we'll let it pass but print a strong reminder.
+            println("RECORD MODE: Screenshot for '$goldenName' captured. Ensure it's copied to assets and switch recordMode to false.")
+        } else {
+
+            val matches = ScreenshotTestHelper.verifyBitmap(
+                imageBitmap,
+                "balling",
+                goldenName
+            )
+
+            assert(matches) {
+                "Screenshot '$goldenName' does not match the golden image. " +
+                        "If this is an intentional change, re-record the screenshot by setting recordMode=true. " +
+                        "Debug images might be in: ${File(ScreenshotTestHelper.getDeviceOutputDirectory(), "debug_diffs").absolutePath}"
+            }
         }
     }
 }

@@ -35,11 +35,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
-import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.LineData
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
@@ -69,7 +65,8 @@ const val axisGranularityTime = 14400f
 fun TimeDataScreen(
     navHostController: NavHostController? = null,
     mainViewModel: MainViewModel? = null,
-    mockTimeDataUiState: TimeDataUiState? = null
+    mockTimeDataUiState: TimeDataUiState? = null,
+    darkTheme: Boolean? = null
 ) {
     // This screen is only displaying time data charts without any user interaction.
     // Therefore, this screen does not use a view model.
@@ -127,7 +124,7 @@ fun TimeDataScreen(
         }
     }
 
-    AquariumControllerTheme {
+    AquariumControllerTheme(darkTheme) {
         Surface(
             modifier = Modifier,
             color = MaterialTheme.colorScheme.background
@@ -145,9 +142,7 @@ fun TimeDataScreen(
                         isRefreshing = isRefreshing,
                         contentAlignment = Alignment.Center,
                         onRefresh = {
-                            // This lambda will be called when the user pulls to refresh
                             isRefreshing = true
-                            // Perform the refresh operation here (e.g., fetch new data)
                             coroutineScope.launch {
                                 if (isControllerAddressValid) {
                                     loadData()
@@ -278,7 +273,7 @@ private suspend fun fetchTimeData(
     }
 }
 
-fun generateMockTimeData(): List<TimeDataSample> {
+public fun generateMockTimeData(): List<TimeDataSample> {
     val startTime = LocalDateTime.of(2024, 10, 24, 0, 0) // October 24th, 2024, 0:00 AM
     val samples = mutableListOf<TimeDataSample>()
     val random = Random(12345) // arbitrary but fixed seed to have reproducible results

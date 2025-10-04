@@ -54,7 +54,8 @@ fun FeedProfileScheduleScreen(
     navHostController: NavHostController? = null,
     mainViewModel: MainViewModel? = null,
     mockFeedProfile: FeedProfile? = null,
-    mockFeedScheduleEntry: FeedScheduleEntry? = null
+    mockFeedScheduleEntry: FeedScheduleEntry? = null,
+    darkTheme: Boolean? = null
 ) {
     // This screen displays:
     // - Headline
@@ -92,7 +93,7 @@ fun FeedProfileScheduleScreen(
 
     val context = LocalContext.current // context for web API request and Toasts
 
-    AquariumControllerTheme {
+    AquariumControllerTheme(darkTheme) {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background

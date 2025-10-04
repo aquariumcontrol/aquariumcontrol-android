@@ -37,7 +37,8 @@ import kotlinx.coroutines.withContext
 fun VentilationScreen(
     navHostController: NavHostController? = null,
     mockVentilationSetVals: VentilationSetVals? = null,
-    mainViewModel: MainViewModel? = null
+    mainViewModel: MainViewModel? = null,
+    darkTheme: Boolean? = null
 ) {
     // This screen displays
     // - headline
@@ -71,7 +72,7 @@ fun VentilationScreen(
         }
     }
 
-    AquariumControllerTheme {
+    AquariumControllerTheme(darkTheme) {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background

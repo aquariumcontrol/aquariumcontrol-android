@@ -43,7 +43,8 @@ import kotlinx.coroutines.launch
 fun FeedProfileAddScreen(
     navHostController: NavHostController? = null,
     mainViewModel: MainViewModel? = null,
-    myFeedProfileViewModel: FeedProfileViewModel? = null
+    myFeedProfileViewModel: FeedProfileViewModel? = null,
+    darkTheme: Boolean? = null
 ) {
     // This screen displays
     // - a graphic visualizing the feed profile
@@ -62,7 +63,7 @@ fun FeedProfileAddScreen(
 
     val feedProfileName by feedProfileAddViewModel.feedProfileName.collectAsState()
 
-    AquariumControllerTheme {
+    AquariumControllerTheme(darkTheme) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
             color = MaterialTheme.colorScheme.background

@@ -54,7 +54,8 @@ fun RefillHistoryScreen(
     navHostController: NavHostController? = null,
     showFullWeek: Boolean,
     mockRefillEvents: List<RefillEvent>? = null,
-    mainViewModel: MainViewModel? = null
+    mainViewModel: MainViewModel? = null,
+    darkTheme: Boolean? = null
 ) {
     // This screen displays
     // - headline
@@ -85,7 +86,7 @@ fun RefillHistoryScreen(
         }
     }
 
-    AquariumControllerTheme {
+    AquariumControllerTheme(darkTheme) {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {

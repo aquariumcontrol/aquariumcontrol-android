@@ -48,7 +48,8 @@ fun ControllerSelectionScreen(
     state: ControllerState,
     onEvent: (ControllerEvent) -> Unit,
     mainViewModel: MainViewModel? = null,
-    mockProgress: Float? = null
+    mockProgress: Float? = null,
+    darkTheme: Boolean? = null,
 ) {
     // This screen displays:
     // - headline
@@ -89,7 +90,7 @@ fun ControllerSelectionScreen(
         }
     }
 
-    AquariumControllerTheme {
+    AquariumControllerTheme(darkTheme) {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background

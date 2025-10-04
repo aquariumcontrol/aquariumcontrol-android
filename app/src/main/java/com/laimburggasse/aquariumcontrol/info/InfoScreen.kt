@@ -26,10 +26,14 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.lib_composables.HyperlinkTextComposable
 
 @Composable
-fun InfoScreen(navHostController: NavHostController? = null, mainViewModel: MainViewModel? = null) {
+fun InfoScreen(
+    navHostController: NavHostController? = null,
+    mainViewModel: MainViewModel? = null,
+    darkTheme: Boolean? = null
+) {
     // This screen displays information about the app and the developer.
 
-    AquariumControllerTheme {
+    AquariumControllerTheme(darkTheme) {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background

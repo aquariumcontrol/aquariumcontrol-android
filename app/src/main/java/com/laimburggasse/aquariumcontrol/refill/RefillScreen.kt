@@ -39,7 +39,8 @@ import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
 @Composable
 fun RefillScreen(
     navHostController: NavHostController? = null,
-    mainViewModel: MainViewModel? = null
+    mainViewModel: MainViewModel? = null,
+    darkTheme: Boolean? = null
 ) {
     // This screen displays
     // - a button for visualizing all refill events of the last 24h
@@ -56,7 +57,7 @@ fun RefillScreen(
     // Create a CoroutineScope that follows this composable's lifecycle
     val coroutineScope = rememberCoroutineScope()
 
-    AquariumControllerTheme {
+    AquariumControllerTheme(darkTheme) {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background

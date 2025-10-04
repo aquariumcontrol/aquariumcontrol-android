@@ -47,7 +47,8 @@ fun HeatingScreen(
     navHostController: NavHostController? = null,
     mockHeatingSetVals: HeatingSetVals? = null,
     mockHeatingStatEntries: List<HeatingStatsEntry>? = null,
-    mainViewModel: MainViewModel? = null
+    mainViewModel: MainViewModel? = null,
+    darkTheme: Boolean? = null
 ) {
     // This screen displays
     // - a button to update the heating controller values
@@ -106,7 +107,7 @@ fun HeatingScreen(
         }
     }
 
-    AquariumControllerTheme {
+    AquariumControllerTheme(darkTheme) {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background

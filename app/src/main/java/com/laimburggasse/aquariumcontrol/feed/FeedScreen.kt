@@ -46,7 +46,8 @@ fun FeedScreen(
     mockFeedProfiles: List<FeedProfile>? = null,
     mockFeedScheduleEntries: List<FeedScheduleEntry>? = null,
     mainViewModel: MainViewModel? = null,
-    myFeedProfileViewModel: FeedProfileViewModel? = null
+    myFeedProfileViewModel: FeedProfileViewModel? = null,
+    darkTheme: Boolean? = null
 ) {
     // This screen displays
     // - headline
@@ -86,7 +87,7 @@ fun FeedScreen(
         }
     }
 
-    AquariumControllerTheme {
+    AquariumControllerTheme(darkTheme) {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background

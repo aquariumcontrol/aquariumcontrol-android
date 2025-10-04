@@ -50,6 +50,7 @@ fun OverviewScreen(
     mockController: ControllerProfile? = null,
     mockOverviewData: OverviewData? = null,
     mainViewModel: MainViewModel? = null,
+    darkTheme: Boolean? = null
 ) {
     // This screen displays
     // - headline
@@ -115,7 +116,7 @@ fun OverviewScreen(
         }
     }
 
-    AquariumControllerTheme {
+    AquariumControllerTheme(darkTheme) {
         // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize(),

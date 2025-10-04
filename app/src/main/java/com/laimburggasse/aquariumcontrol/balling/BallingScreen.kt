@@ -41,7 +41,8 @@ import kotlinx.coroutines.withContext
 fun BallingScreen(
     navHostController: NavHostController? = null,
     mockBallingProfiles: List<BallingProfile>? = null,
-    mainViewModel: MainViewModel? = null
+    mainViewModel: MainViewModel? = null,
+    darkTheme: Boolean? = null,
 ) {
     // This screen displays
     // - a button for visualizing all Balling dosing events of the last 24h
@@ -63,10 +64,10 @@ fun BallingScreen(
         }
     }
 
-    AquariumControllerTheme {
+    AquariumControllerTheme(darkTheme) {
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+            color = MaterialTheme.colorScheme.background,
         ) {
             Box {
                 Column(

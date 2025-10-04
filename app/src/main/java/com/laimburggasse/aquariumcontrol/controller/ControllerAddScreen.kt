@@ -36,6 +36,7 @@ fun ControllerAddScreen(
     state: ControllerState,
     onEvent: (ControllerEvent) -> Unit,
     mainViewModel: MainViewModel? = null,
+    darkTheme: Boolean? = null,
 ) {
     // This screen displays a form for adding a new controller profile:
     // - editable text field for the controller profile name
@@ -52,7 +53,7 @@ fun ControllerAddScreen(
         mainViewModel?.setFirstLoad()
     }
 
-    AquariumControllerTheme {
+    AquariumControllerTheme(darkTheme) {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background

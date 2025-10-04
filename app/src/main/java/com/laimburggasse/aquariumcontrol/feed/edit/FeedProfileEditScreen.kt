@@ -30,7 +30,8 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 fun FeedProfileEditScreen(
     navHostController: NavHostController? = null,
     feedProfile: FeedProfile,
-    mainViewModel: MainViewModel? = null
+    mainViewModel: MainViewModel? = null,
+    darkTheme: Boolean? = null
 ) {
     // This screen displays
     // - a graphic visualizing the feed profile
@@ -45,7 +46,7 @@ fun FeedProfileEditScreen(
 
     val configuration = LocalConfiguration.current
 
-    AquariumControllerTheme {
+    AquariumControllerTheme(darkTheme) {
         // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxWidth(),
