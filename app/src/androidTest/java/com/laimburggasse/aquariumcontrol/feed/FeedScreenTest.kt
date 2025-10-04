@@ -17,6 +17,8 @@ class FeedScreenTest {
     // Set this to true to record new golden images.
     private val recordMode = false
 
+    private val subfolder = "feed"
+
     @Test
     fun feedScreenDarkTest() {
         composeTestRule.setContent {
@@ -30,6 +32,7 @@ class FeedScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "feed_screen_dark",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
@@ -47,6 +50,7 @@ class FeedScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "feed_screen_light",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }

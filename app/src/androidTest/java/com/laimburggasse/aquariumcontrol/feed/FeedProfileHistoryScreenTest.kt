@@ -18,6 +18,9 @@ class FeedProfileHistoryScreenTest {
 
     // Set this to true to record new golden images.
     private val recordMode = false
+
+    private val subfolder = "feed"
+
     val mockEvents = listOf(
         FeedHistoryEvent(
             timestamp = "2025-01-18 12:00:00",
@@ -46,6 +49,7 @@ class FeedProfileHistoryScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "feed_profile_history_screen_empty_dark",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
@@ -63,6 +67,7 @@ class FeedProfileHistoryScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "feed_profile_history_screen_empty_light",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
@@ -75,6 +80,7 @@ class FeedProfileHistoryScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "feed_profile_history_screen_data_dark",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
@@ -88,6 +94,7 @@ class FeedProfileHistoryScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "feed_profile_history_screen_data_light",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }

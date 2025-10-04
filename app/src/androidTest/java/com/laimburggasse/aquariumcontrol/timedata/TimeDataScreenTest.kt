@@ -20,6 +20,8 @@ class TimeDataScreenTest {
     // Set this to true to record new golden images.
     private val recordMode = false
 
+    private val subfolder = "timedata"
+
     @Test
     fun timeDataScreenLoadingDarkTest() {
         composeTestRule.setContent {
@@ -29,6 +31,7 @@ class TimeDataScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "time_data_screen_loading_dark",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
@@ -42,6 +45,7 @@ class TimeDataScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "time_data_screen_loading_light",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
@@ -58,6 +62,7 @@ class TimeDataScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "time_data_screen_error_dark",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
@@ -74,6 +79,7 @@ class TimeDataScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "time_data_screen_error_light",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
@@ -90,6 +96,7 @@ class TimeDataScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "time_data_screen_error_dark",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
@@ -106,6 +113,7 @@ class TimeDataScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "time_data_screen_error_light",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }

@@ -17,6 +17,8 @@ class BallingScreenTest {
     // Set this to true to record new golden images.
     private val recordMode = false
 
+    private val subfolder = "balling"
+
     val mockBallingProfile1 = BallingProfile(pumpId = 1, volume = 2.1, label = "mock1")
     val mockBallingProfile2 = BallingProfile(pumpId = 2, volume = 3.1, label = "mock2")
     val mockBallingProfiles = listOf(mockBallingProfile1, mockBallingProfile2)
@@ -30,6 +32,7 @@ class BallingScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "balling_screen_dark",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
@@ -43,6 +46,7 @@ class BallingScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "balling_screen_light",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }

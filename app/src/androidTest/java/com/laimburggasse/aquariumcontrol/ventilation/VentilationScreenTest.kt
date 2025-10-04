@@ -19,6 +19,8 @@ class VentilationScreenTest {
     // Set this to true to record new golden images.
     private val recordMode = false
 
+    private val subfolder = "ventilation"
+
     @Test
     fun heatingScreenDarkTest() {
         composeTestRule.setContent {
@@ -34,6 +36,7 @@ class VentilationScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "ventilation_screen_dark",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
@@ -53,6 +56,7 @@ class VentilationScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "ventilation_screen_light",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }

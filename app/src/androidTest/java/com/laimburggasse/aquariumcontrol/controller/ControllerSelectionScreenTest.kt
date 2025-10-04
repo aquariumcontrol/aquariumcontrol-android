@@ -17,6 +17,8 @@ class ControllerSelectionScreenTest {
     // Set this to true to record new golden images.
     private val recordMode = false
 
+    private val subfolder = "controller"
+
     val mockControllerProfile1 = ControllerProfile(
         id = 1,
         name = "Controller 1",
@@ -56,6 +58,7 @@ class ControllerSelectionScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "controller_selection_screen_dark",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
@@ -76,6 +79,7 @@ class ControllerSelectionScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "controller_selection_screen_light",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }

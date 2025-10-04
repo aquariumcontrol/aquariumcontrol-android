@@ -102,6 +102,7 @@ object ScreenshotTestHelper {
     fun performScreenshotTest(
         goldenName: String,
         recordMode: Boolean,
+        subfolder: String,
         imageBitmap: ImageBitmap
     ) {
         if (recordMode) {
@@ -114,7 +115,7 @@ object ScreenshotTestHelper {
 
             val matches = ScreenshotTestHelper.verifyBitmap(
                 imageBitmap,
-                "balling",
+                subfolder,
                 goldenName
             )
 

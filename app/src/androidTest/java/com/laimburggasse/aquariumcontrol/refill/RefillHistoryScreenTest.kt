@@ -20,6 +20,8 @@ class RefillHistoryScreenTest {
     // Set this to true to record new golden images.
     private val recordMode = false
 
+    private val subfolder = "refill"
+
     val mockEvents = listOf(
         RefillEvent(
             timestamp = Timestamp(0L),
@@ -46,6 +48,7 @@ class RefillHistoryScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "refill_history_screen_empty_dark",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
@@ -63,6 +66,7 @@ class RefillHistoryScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "refill_history_screen_empty_light",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
@@ -79,6 +83,7 @@ class RefillHistoryScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "refill_history_screen_data_dark",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
@@ -96,6 +101,7 @@ class RefillHistoryScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "refill_history_screen_data_light",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }

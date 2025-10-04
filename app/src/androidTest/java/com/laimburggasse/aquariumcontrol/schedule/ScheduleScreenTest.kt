@@ -17,6 +17,8 @@ class ScheduleScreenTest {
     // Set this to true to record new golden images.
     private val recordMode = false
 
+    private val subfolder = "schedule"
+
     val mockScheduleSetVals = ScheduleSetVals(
         ballingStartTime = 2F,
         ballingStopTime = 22F,
@@ -41,6 +43,7 @@ class ScheduleScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "schedule_screen_dark",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
@@ -54,6 +57,7 @@ class ScheduleScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "schedule_screen_light",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }

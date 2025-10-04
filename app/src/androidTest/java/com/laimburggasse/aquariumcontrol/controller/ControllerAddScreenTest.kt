@@ -17,6 +17,8 @@ class ControllerAddScreenTest {
     // Set this to true to record new golden images.
     private val recordMode = false
 
+    private val subfolder = "controller"
+
     @Test
     fun controllerAddScreenDarkTest() {
         composeTestRule.setContent {
@@ -26,6 +28,7 @@ class ControllerAddScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "controller_add_screen_dark",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
@@ -39,6 +42,7 @@ class ControllerAddScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "controller_add_screen_light",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }

@@ -19,6 +19,8 @@ class BallingHistoryScreenTest {
     // Set this to true to record new golden images.
     private val recordMode = false
 
+    private val subfolder = "balling"
+
     val ballingHistoryScreenMockData = listOf(
         BallingHistoryDosingEvent(
             timestamp = "2025-01-18 12:00:00",
@@ -47,6 +49,7 @@ class BallingHistoryScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "balling_history_screen_empty_dark",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
@@ -64,6 +67,7 @@ class BallingHistoryScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "balling_history_screen_empty_light",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
@@ -80,6 +84,7 @@ class BallingHistoryScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "balling_history_screen_data_dark",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
@@ -97,6 +102,7 @@ class BallingHistoryScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "balling_history_screen_data_light",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }

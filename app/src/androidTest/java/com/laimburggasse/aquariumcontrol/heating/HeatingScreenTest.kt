@@ -17,6 +17,8 @@ class HeatingScreenTest {
     // Set this to true to record new golden images.
     private val recordMode = false
 
+    private val subfolder = "heating"
+
     @Test
     fun heatingScreenDarkTest() {
         composeTestRule.setContent {
@@ -33,6 +35,7 @@ class HeatingScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "heating_screen_dark",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
@@ -53,6 +56,7 @@ class HeatingScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "heating_screen_light",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }

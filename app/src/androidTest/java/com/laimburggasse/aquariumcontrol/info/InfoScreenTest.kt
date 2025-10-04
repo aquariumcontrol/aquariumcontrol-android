@@ -17,6 +17,8 @@ class InfoScreenTest {
     // Set this to true to record new golden images.
     private val recordMode = false
 
+    private val subfolder = "info"
+
     @Test
     fun infoScreenDarkTest() {
         composeTestRule.setContent {
@@ -26,6 +28,7 @@ class InfoScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "info_screen_dark",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
@@ -39,6 +42,7 @@ class InfoScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "info_screen_light",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }

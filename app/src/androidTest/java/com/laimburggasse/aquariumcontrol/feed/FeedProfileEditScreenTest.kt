@@ -18,6 +18,7 @@ class FeedProfileEditScreenTest {
     // Set this to true to record new golden images.
     private val recordMode = false
 
+    private val subfolder = "feed"
 
     fun generateMockFeedProfile(): FeedProfile {
         val mockFeedProfileImport = FeedProfileImport()
@@ -163,6 +164,7 @@ class FeedProfileEditScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "feed_profile_edit_screen_dark",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
@@ -180,6 +182,7 @@ class FeedProfileEditScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "feed_profile_edit_screen_light",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }

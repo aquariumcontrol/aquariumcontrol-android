@@ -17,6 +17,8 @@ class RefillScreenTest {
     // Set this to true to record new golden images.
     private val recordMode = false
 
+    private val subfolder = "refill"
+
     @Test
     fun refillScreenDarkTest() {
         composeTestRule.setContent {
@@ -26,6 +28,7 @@ class RefillScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "refill_screen_dark",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
@@ -39,6 +42,7 @@ class RefillScreenTest {
         ScreenshotTestHelper.performScreenshotTest(
             goldenName = "refill_screen_light",
             recordMode = recordMode,
+            subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
