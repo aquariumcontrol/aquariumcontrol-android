@@ -22,6 +22,6 @@ class ScheduleScreenTest {
     )
     @Composable
     fun ScheduleScreenSnapshotTest() {
-        ScheduleScreenPreview()
+        ScheduleScreenPreviewSuccess()
     }
 }

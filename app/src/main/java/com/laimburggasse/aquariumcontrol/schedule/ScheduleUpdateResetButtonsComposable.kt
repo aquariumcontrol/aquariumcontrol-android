@@ -35,8 +35,6 @@ fun ScheduleUpdateResetButtonsComposable(
 ) {
     val coroutineScope = rememberCoroutineScope()
 
-    val webApiPostRequest = WebApiPostRequest()
-
     val context = LocalContext.current // context for web API request and Toasts
 
     Button(
@@ -59,6 +57,7 @@ fun ScheduleUpdateResetButtonsComposable(
                     heatingScheduleSetValsViewModel
                 )
                 if (mainViewModel != null) {
+                    val webApiPostRequest = WebApiPostRequest()
                     webApiPostRequestExecution(
                         mainViewModel = mainViewModel,
                         apiUrl = WebApiUrls.ACTUATOR_SCHEDULE_POST_UPDATE,

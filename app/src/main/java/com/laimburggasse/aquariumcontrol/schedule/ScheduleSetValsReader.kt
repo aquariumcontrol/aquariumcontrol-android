@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol.schedule
 
+import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -10,23 +11,28 @@ class ScheduleSetValsReader(private val url: String) {
     private val client = OkHttpClient()
     private val json = Json { ignoreUnknownKeys = true }
 
-    fun readScheduleSetVals(): List<ScheduleStringSetVal>? {
+    fun readScheduleSetVals(): DataFetchResult<List<ScheduleStringSetVal>> {
         val request = Request.Builder()
             .url(url)
             .build()
 
-        return try {
+        try {
             val response = client.newCall(request).execute()
             if (response.isSuccessful) {
-                val responseBody = response.body?.string()
-                responseBody?.let {
-                    json.decodeFromString<List<ScheduleStringSetVal>>(it)
+                val responseBody = response.body.string()
+                responseBody.let {
+                    try {
+                        val decodedData = json.decodeFromString<List<ScheduleStringSetVal>>(it)
+                        return DataFetchResult.Success(decodedData)
+                    } catch (e: Exception) {
+                        return DataFetchResult.Error(e, "Error decoding data sent from server: ${e.message}")
+                    }
                 }
             } else {
-                null
+                return DataFetchResult.Error(null, "Server responded with error code: ${response.code}")
             }
-        } catch (_: Exception) {
-            null
+        } catch (e: Exception) {
+            return DataFetchResult.Error(e, "An unexpected error occurred during preparation of server communication.")
         }
     }
 }

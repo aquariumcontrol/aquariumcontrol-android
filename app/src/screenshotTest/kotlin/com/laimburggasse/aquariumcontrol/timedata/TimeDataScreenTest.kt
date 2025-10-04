@@ -24,7 +24,7 @@ class TimeDataScreenTest {
         device = "spec:width=1600dp,height=1200dp,orientation=landscape"
     )
     @Composable
-    fun TimeDataScreenPreview_Success() {
+    fun TimeDataScreenPreviewSuccess() {
         TimeDataScreen(mockTimeDataUiState = Success(TimeDataSets(generateMockTimeData())))
     }
 
@@ -42,7 +42,7 @@ class TimeDataScreenTest {
         device = "spec:width=250dp,height=350dp,orientation=landscape"
     )
     @Composable
-    fun TimeDataScreenPreview_Error() {
+    fun TimeDataScreenPreviewError() {
         TimeDataScreen(mockTimeDataUiState = Error("Error message"))
     }
 
@@ -60,7 +60,7 @@ class TimeDataScreenTest {
         device = "spec:width=250dp,height=350dp,orientation=landscape"
     )
     @Composable
-    fun TimeDataScreenPreview_Loading() {
+    fun TimeDataScreenPreviewLoading() {
         TimeDataScreen(mockTimeDataUiState = Loading)
     }
 }

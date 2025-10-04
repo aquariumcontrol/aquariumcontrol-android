@@ -235,12 +235,6 @@ fun TimeDataScreen(
     }
 }
 
-sealed class TimeDataUiState {
-    object Loading : TimeDataUiState()
-    data class Success(val timeDataSets: TimeDataSets) : TimeDataUiState()
-    data class Error(val errorMessage: String) : TimeDataUiState()
-}
-
 private suspend fun fetchTimeData(
     mainViewModel: MainViewModel,
     updateUiState: (TimeDataUiState) -> Unit,
@@ -382,7 +376,7 @@ public fun generateMockTimeData(): List<TimeDataSample> {
     device = "spec:width=1600dp,height=1200dp,orientation=landscape"
 )
 @Composable
-internal fun TimeDataScreenPreview_Success() {
+internal fun TimeDataScreenPreviewSuccess() {
     TimeDataScreen(mockTimeDataUiState = Success(TimeDataSets(generateMockTimeData())))
 }
 
@@ -399,13 +393,13 @@ internal fun TimeDataScreenPreview_Success() {
     device = "spec:width=250dp,height=350dp,orientation=landscape"
 )
 @Composable
-internal fun TimeDataScreenPreview_Error() {
+internal fun TimeDataScreenPreviewError() {
     TimeDataScreen(mockTimeDataUiState = Error("Error message"))
 }
 
 @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun TimeDataScreenPreview_Loading() {
+internal fun TimeDataScreenPreviewLoading() {
     TimeDataScreen(mockTimeDataUiState = Loading)
 }
