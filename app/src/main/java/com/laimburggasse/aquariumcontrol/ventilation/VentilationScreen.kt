@@ -1,6 +1,7 @@
 package com.laimburggasse.aquariumcontrol.ventilation
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,10 +12,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -29,14 +34,16 @@ import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
 fun VentilationScreen(
     navHostController: NavHostController? = null,
-    mockVentilationSetVals: VentilationSetVals? = null,
+    mockVentilationUiState: VentilationUiState? = null,
     mainViewModel: MainViewModel? = null,
     darkTheme: Boolean? = null
 ) {
@@ -47,28 +54,51 @@ fun VentilationScreen(
     // - a button to update the control target temperatures
     // - a button to reset the control target temperatures
 
-    val ventilationInitialSetVals = mockVentilationSetVals ?: VentilationSetVals(
-        ventilationSwitchOffTemp = 23.0, ventilationSwitchOnTemp = 27.0
-    )
-
     val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
+
+    var ventilationUiState by remember { mutableStateOf(mockVentilationUiState ?: VentilationUiState.Loading) }
 
     val coroutineScope = rememberCoroutineScope()
 
     val configuration = LocalConfiguration.current
 
+    val ventilationInitialSetVals = VentilationSetVals(
+        ventilationSwitchOffTemp = 23.5,
+        ventilationSwitchOnTemp = 27.5
+    )
+
     val ventilationSetValsViewModel: VentilationSetValsViewModel = viewModel(
         factory = VentilationSetValsViewModelFactory(ventilationInitialSetVals)
     )
 
+    fun loadData() {
+        coroutineScope.launch {
+            if (mainViewModel != null) {
+                fetchVentilationSetVals(
+                    mainViewModel,
+                ) { newVentilationUiState ->
+                    ventilationUiState = newVentilationUiState
+                    when (newVentilationUiState) {
+                        is VentilationUiState.Success -> {
+                            // Update the view model with the data
+                            val newVentilationSetVals = newVentilationUiState.ventilationSetVals
+                            ventilationSetValsViewModel.setValues(newVentilationSetVals)
+                        }
+                        is VentilationUiState.Error -> {
+                            // Do nothing
+                        }
+                        VentilationUiState.Loading -> {
+                            // Do nothing
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
         if (mainViewModel != null && isControllerAddressValid) { // Check for null and validity
-            fetchVentilationSetVals(
-                mainViewModel,
-            ) { newVentilationSetVals ->
-                val newVentilationSetValsCasted = newVentilationSetVals as VentilationSetVals
-                ventilationSetValsViewModel.setValues(newVentilationSetValsCasted)
-            }
+            loadData()
         }
     }
 
@@ -96,30 +126,52 @@ fun VentilationScreen(
                                 .padding(24.dp)
                                 .padding(innerPadding)
                         ) {
-                            when (configuration.orientation) {
-                                Configuration.ORIENTATION_LANDSCAPE -> {
-                                    Row {
-                                        VentilationButtonsComposable(
-                                            ventilationSetValsViewModel = ventilationSetValsViewModel,
-                                            mainViewModel = mainViewModel,
-                                            coroutineScope = coroutineScope,
-                                        )
+                            when (ventilationUiState) {
+                                is VentilationUiState.Success -> {
+                                    when (configuration.orientation) {
+                                        Configuration.ORIENTATION_LANDSCAPE -> {
+                                            Row {
+                                                VentilationButtonsComposable(
+                                                    ventilationSetValsViewModel = ventilationSetValsViewModel,
+                                                    mainViewModel = mainViewModel,
+                                                    coroutineScope = coroutineScope,
+                                                )
+                                            }
+                                            VentilationRangeSliderTextFieldsLandscapeComposable(
+                                                myVentilationSetValsViewModel = ventilationSetValsViewModel,
+                                                ventilationInitialSetVals = ventilationInitialSetVals
+                                            )
+                                        }
+                                        else -> {
+                                            VentilationButtonsComposable(
+                                                ventilationSetValsViewModel = ventilationSetValsViewModel,
+                                                mainViewModel = mainViewModel,
+                                                coroutineScope = coroutineScope,
+                                            )
+                                            VentilationRangeSliderTextFieldsPortraitComposable(
+                                                myVentilationSetValsViewModel = ventilationSetValsViewModel,
+                                                ventilationInitialSetVals = ventilationInitialSetVals
+                                            )
+                                        }
                                     }
-                                    VentilationRangeSliderTextFieldsLandscapeComposable(
-                                        myVentilationSetValsViewModel = ventilationSetValsViewModel,
-                                        ventilationInitialSetVals = ventilationInitialSetVals
-                                    )
                                 }
-                                else -> {
-                                    VentilationButtonsComposable(
-                                        ventilationSetValsViewModel = ventilationSetValsViewModel,
-                                        mainViewModel = mainViewModel,
-                                        coroutineScope = coroutineScope,
-                                    )
-                                    VentilationRangeSliderTextFieldsPortraitComposable(
-                                        myVentilationSetValsViewModel = ventilationSetValsViewModel,
-                                        ventilationInitialSetVals = ventilationInitialSetVals
-                                    )
+                                is VentilationUiState.Error -> {
+                                    Column(
+                                        modifier = Modifier.fillMaxSize().padding(16.dp),
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Text("Error loading data: ${(ventilationUiState as VentilationUiState.Error).errorMessage}")
+                                    }
+                                }
+                                is VentilationUiState.Loading -> {
+                                    Column(
+                                        modifier = Modifier.fillMaxSize().padding(16.dp),
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Text("Loading...")
+                                    }
                                 }
                             }
                         }
@@ -137,15 +189,19 @@ fun VentilationScreen(
 
 private suspend fun fetchVentilationSetVals(
     mainViewModel: MainViewModel,
-    updateVentilationSetVals: (Any) -> Unit,
+    updateVentilationSetVals: (VentilationUiState) -> Unit,
 ) {
     withContext(Dispatchers.IO) {
         val url =
             "http://" + mainViewModel.getControllerAddress() + WebApiUrls.VENTILATION_GET_SET_VALS
-        val ventilationSetValsList = VentilationSetValsReader(url).readVentilationSetVals()
-        if (!ventilationSetValsList.isNullOrEmpty()) {
-            withContext(Dispatchers.Main) {
-                updateVentilationSetVals(ventilationSetValsList.first())
+        val ventilationSetValsReader = VentilationSetValsReader(url)
+        when (val result = ventilationSetValsReader.readVentilationSetVals()) {
+            is DataFetchResult.Success -> {
+                val ventilationSetValsList = result.data
+                updateVentilationSetVals(VentilationUiState.Success(ventilationSetValsList.first()))
+            }
+            is DataFetchResult.Error -> {
+                updateVentilationSetVals(VentilationUiState.Error(result.errorMessage))
             }
         }
     }
@@ -163,12 +219,34 @@ private suspend fun fetchVentilationSetVals(
     uiMode = Configuration.UI_MODE_NIGHT_NO,
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)@Composable
-internal fun VentilationScreenPreview() {
-    VentilationScreen(
-        mockVentilationSetVals = VentilationSetVals(
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun VentilationScreenPreviewSuccess() {
+    val mockVentilationUiState = VentilationUiState.Success(
+        VentilationSetVals(
             ventilationSwitchOffTemp = 23.5,
             ventilationSwitchOnTemp = 27.5
         )
     )
+    VentilationScreen(
+        mockVentilationUiState = mockVentilationUiState
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+internal fun VentilationScreenPreviewError() {
+    VentilationScreen(
+        mockVentilationUiState = VentilationUiState.Error(
+            errorMessage = "Error message"
+        )
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+internal fun VentilationScreenPreviewLoading() {
+    VentilationScreen(mockVentilationUiState = VentilationUiState.Loading)
 }

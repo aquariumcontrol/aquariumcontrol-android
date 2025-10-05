@@ -34,14 +34,13 @@ fun VentilationButtonsComposable(
     // This composable displays two buttons for the Ventilation control.
     // Arrangement of the buttons follows the device's orientation.
 
-    val webApiPostRequest = WebApiPostRequest()
-
     val context = LocalContext.current // context for web API request and Toasts
 
     Button(
         onClick = {
             ventilationSetValsViewModel?.updateValues()
             if (mainViewModel != null && coroutineScope != null && ventilationSetValsViewModel != null) {
+                val webApiPostRequest = WebApiPostRequest()
                 webApiPostRequestExecution(
                     mainViewModel = mainViewModel,
                     apiUrl = WebApiUrls.VENTILATION_POST_SET_VALS,

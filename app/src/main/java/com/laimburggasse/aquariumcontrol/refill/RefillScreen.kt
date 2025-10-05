@@ -49,7 +49,6 @@ fun RefillScreen(
     // - a button for stopping the refill controller
     // - a button for resetting errors of the refill controller
 
-    val webApiPostRequest = WebApiPostRequest()
     val isControllerLoaded = mainViewModel?.isControllerLoaded() == true
     val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
     val context = LocalContext.current // context for web API request and Toasts
@@ -123,8 +122,9 @@ fun RefillScreen(
                                             .padding(horizontal = 8.dp),
                                         onClick = {
                                             if (isControllerLoaded && isControllerAddressValid) {
+                                                val webApiPostRequest = WebApiPostRequest()
                                                 webApiPostRequestExecution(
-                                                    mainViewModel = mainViewModel!!,
+                                                    mainViewModel = mainViewModel,
                                                     apiUrl = WebApiUrls.REFILL_POST_CONTROL_START,
                                                     coroutineScope = coroutineScope,
                                                     webApiPostRequest = webApiPostRequest,
@@ -150,8 +150,9 @@ fun RefillScreen(
                                             .padding(horizontal = 8.dp),
                                         onClick = {
                                             if (isControllerLoaded && isControllerAddressValid) {
+                                                val webApiPostRequest = WebApiPostRequest()
                                                 webApiPostRequestExecution(
-                                                    mainViewModel = mainViewModel!!,
+                                                    mainViewModel = mainViewModel,
                                                     apiUrl = WebApiUrls.REFILL_POST_CONTROL_STOP,
                                                     coroutineScope = coroutineScope,
                                                     webApiPostRequest = webApiPostRequest,
@@ -177,8 +178,9 @@ fun RefillScreen(
                                             .padding(horizontal = 8.dp),
                                         onClick = {
                                             if (isControllerLoaded && isControllerAddressValid) {
+                                                val webApiPostRequest = WebApiPostRequest()
                                                 webApiPostRequestExecution(
-                                                    mainViewModel = mainViewModel!!,
+                                                    mainViewModel = mainViewModel,
                                                     apiUrl = WebApiUrls.REFILL_POST_CONTROL_RESET,
                                                     coroutineScope = coroutineScope,
                                                     webApiPostRequest = webApiPostRequest,
