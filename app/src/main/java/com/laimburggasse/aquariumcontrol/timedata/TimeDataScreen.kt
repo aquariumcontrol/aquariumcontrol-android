@@ -120,6 +120,7 @@ fun TimeDataScreen(
     LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
         if (mainViewModel != null && isControllerAddressValid) { // Check for null and validity
             loadData()
+            isRefreshing = false
         }
     }
 

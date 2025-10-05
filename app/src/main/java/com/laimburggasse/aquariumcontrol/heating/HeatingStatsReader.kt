@@ -20,6 +20,9 @@ class HeatingStatsReader(private val url: String) {
             val response = client.newCall(request).execute()
             if (response.isSuccessful) {
                 val responseBody = response.body.string()
+                if (responseBody.isEmpty()) {
+                    return DataFetchResult.Success(emptyList())
+                }
                 val decodedData = json.decodeFromString<List<HeatingStatsStringEntry>>(responseBody)
                 return DataFetchResult.Success(decodedData)
             } else {

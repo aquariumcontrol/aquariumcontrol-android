@@ -90,6 +90,9 @@ fun VentilationScreen(
                         VentilationSetValueUiState.Loading -> {
                             // Do nothing
                         }
+                        VentilationSetValueUiState.Empty -> {
+                            // Do nothing
+                        }
                     }
                 }
             }
@@ -173,6 +176,15 @@ fun VentilationScreen(
                                         Text("Loading...")
                                     }
                                 }
+                                is VentilationSetValueUiState.Empty -> {
+                                    Column(
+                                        modifier = Modifier.fillMaxSize().padding(16.dp),
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Text("No set values configured - check server configuration.")
+                                    }
+                                }
                             }
                         }
                     }
@@ -199,11 +211,16 @@ private suspend fun fetchVentilationSetVals(
             is DataFetchResult.Success -> {
                 val ventilationSetValsList = result.data
                 withContext(Dispatchers.Main) {
-                    updateVentilationSetVals(
-                        VentilationSetValueUiState.Success(
-                            ventilationSetValsList.first()
+                    if (ventilationSetValsList.isEmpty()) {
+                        updateVentilationSetVals(VentilationSetValueUiState.Empty)
+                    }
+                    else {
+                        updateVentilationSetVals(
+                            VentilationSetValueUiState.Success(
+                                ventilationSetValsList.first()
+                            )
                         )
-                    )
+                    }
                 }
             }
             is DataFetchResult.Error -> {

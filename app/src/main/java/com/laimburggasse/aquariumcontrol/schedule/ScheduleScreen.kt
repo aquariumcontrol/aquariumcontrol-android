@@ -149,6 +149,9 @@ fun ScheduleScreen(
                             ScheduleUiState.Loading -> {
                                 // Do nothing
                             }
+                            ScheduleUiState.Empty -> {
+                                // Do nothing
+                            }
                         }
                     }
                 }
@@ -260,6 +263,15 @@ fun ScheduleScreen(
                                 Text("Loading...")
                             }
                         }
+                        ScheduleUiState.Empty -> {
+                            Column(
+                                modifier = Modifier.fillMaxSize().padding(16.dp),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text("No schedule configured - check server configuration.")
+                            }
+                        }
                     }
                 }
                 MainDropdownMenuComposable(
@@ -298,7 +310,7 @@ private suspend fun fetchScheduleSetVals(
                 }
                 else {
                     withContext(context = Dispatchers.Main) {
-                        updateScheduleUiState(ScheduleUiState.Error("No data available."))
+                        updateScheduleUiState(ScheduleUiState.Empty)
                     }
                 }
             }

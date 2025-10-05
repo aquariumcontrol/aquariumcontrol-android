@@ -86,17 +86,26 @@ fun OverviewScreen(
     val controllerPort: Int?
     var overviewUiState by remember { mutableStateOf(mockOverviewUiState ?: OverviewUiState.Loading) }
 
+    fun loadData() {
+        coroutineScope.launch {
+            isRefreshing = true
+            if (mainViewModel != null) {
+                fetchOverviewData(
+                    mainViewModel,
+                ) { newOverviewUiState ->
+                    overviewUiState = newOverviewUiState
+                }
+            }
+        }
+    }
+
     if (mockController == null) {
         controllerProfileName = mainViewModel!!.getControllerName()
         controllerAddress = mainViewModel.getControllerAddress()
         controllerUsername = mainViewModel.getControllerUser()
         controllerPort = mainViewModel.getControllerPort()
         LaunchedEffect(Unit) {
-            fetchOverviewData(
-                mainViewModel
-            ) { newOverviewUiState ->
-                overviewUiState = newOverviewUiState
-            } // Pass the setter lambda
+            loadData()
         }
     } else {
         controllerProfileName = mockController.name
@@ -108,12 +117,7 @@ fun OverviewScreen(
     // Use a LaunchedEffect to fetch data on initial composition
     LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
         if (mainViewModel != null && isControllerAddressValid) { // Check for null and validity
-            isRefreshing = true
-            fetchOverviewData(
-                mainViewModel,
-            ) { newOverviewUiState ->
-                overviewUiState = newOverviewUiState
-            } // Pass the setter lambda
+            loadData()
             isRefreshing = false
         }
     }
@@ -144,11 +148,7 @@ fun OverviewScreen(
                             // Perform the refresh operation here (e.g., fetch new data)
                             coroutineScope.launch {
                                 if (isControllerAddressValid) {
-                                    fetchOverviewData(
-                                        mainViewModel
-                                    ) { newOverviewUiState ->
-                                        overviewUiState = newOverviewUiState
-                                    } // Pass the setter lambda
+                                    loadData()
                                     delay(timeMillis = 500)
                                 }
                                 isRefreshing = false // Reset the refresh state
@@ -235,11 +235,7 @@ fun OverviewScreen(
                                         if (isControllerAddressValid) {
                                             isRefreshing = true
                                             try {
-                                                fetchOverviewData(
-                                                    mainViewModel
-                                                ) { newOverviewUiState ->
-                                                    overviewUiState = newOverviewUiState
-                                                } // Pass the setter lambda
+                                                loadData()
                                                 delay(500)
                                             } finally {
                                                 isRefreshing = false // Reset the refresh state

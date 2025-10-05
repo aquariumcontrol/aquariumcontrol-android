@@ -242,7 +242,7 @@ private suspend fun fetchBallingEvents(
             else -> "http://" + mainViewModel.getControllerAddress() + WebApiUrls.BALLING_GET_EVENTS_24H
         }
         val reader = BallingHistoryEventReader(url)
-        when (val result = reader.readBallingEvents()) {
+        when (val result = reader.readBallingEvents(mainViewModel)) {
             is DataFetchResult.Success -> {
                 val ballingEvents = result.data
                 withContext(context = Dispatchers.Main) {

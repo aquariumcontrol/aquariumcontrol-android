@@ -227,13 +227,13 @@ private suspend fun fetchRefillEvents(
     updateRefillUiState: (RefillHistoryUiState) -> Unit,
 ) {
     updateRefillUiState(RefillHistoryUiState.Loading)
-    withContext(Dispatchers.IO) {
+    withContext(context = Dispatchers.IO) {
         val url = when {
             showFullWeek -> "http://" + mainViewModel.getControllerAddress() + WebApiUrls.REFILL_GET_EVENTS_7D
             else -> "http://" + mainViewModel.getControllerAddress() + WebApiUrls.REFILL_GET_EVENTS_24H
         }
         val reader = RefillEventReader(url)
-        when (val result = reader.readRefillEvents()) {
+        when (val result = reader.readRefillEvents(mainViewModel)) {
             is DataFetchResult.Success -> {
                 val refillEvents = result.data
                 withContext(Dispatchers.Main) {

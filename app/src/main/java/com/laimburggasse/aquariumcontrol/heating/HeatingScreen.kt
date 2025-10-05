@@ -97,6 +97,9 @@ fun HeatingScreen(
                         HeatingSetValueUiState.Loading -> {
                             // Do nothing
                         }
+                        HeatingSetValueUiState.Empty -> {
+                            // Do nothing
+                        }
                     }
                 }
             }
@@ -183,7 +186,12 @@ fun HeatingScreen(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.Center
                                     ) {
-                                        Text("Error loading set value data: ${(heatingSetValueUiState as HeatingSetValueUiState.Error).errorMessage}")
+                                        Column(
+                                            verticalArrangement = Arrangement.Center,
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            Text("Error loading set value data: ${(heatingSetValueUiState as HeatingSetValueUiState.Error).errorMessage}")
+                                        }
                                     }
                                 }
                                 is HeatingSetValueUiState.Loading -> {
@@ -191,7 +199,26 @@ fun HeatingScreen(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.Center
                                     ) {
-                                        Text("Loading set value data...")
+                                        Column(
+                                            verticalArrangement = Arrangement.Center,
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            Text("Loading set value data...")
+                                        }
+                                    }
+                                }
+                                is HeatingSetValueUiState.Empty -> {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        Column(
+                                            modifier = Modifier.fillMaxSize().padding(16.dp),
+                                            verticalArrangement = Arrangement.Center,
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            Text("No set values configured - check server configuration.")
+                                        }
                                     }
                                 }
                             }
@@ -202,7 +229,13 @@ fun HeatingScreen(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.Center
                                     ) {
-                                        Text("Error loading statistical data: ${(heatingStatsUiState as HeatingStatsUiState.Error).errorMessage}")
+                                        Column(
+                                            modifier = Modifier.fillMaxSize().padding(16.dp),
+                                            verticalArrangement = Arrangement.Center,
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            Text("Error loading statistical data: ${(heatingStatsUiState as HeatingStatsUiState.Error).errorMessage}")
+                                        }
                                     }
                                 }
                                 HeatingStatsUiState.Loading -> {
@@ -210,7 +243,13 @@ fun HeatingScreen(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.Center
                                     ) {
-                                        Text("Loading statistical data...")
+                                        Column(
+                                            modifier = Modifier.fillMaxSize().padding(16.dp),
+                                            verticalArrangement = Arrangement.Center,
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            Text("Loading statistical data...")
+                                        }
                                     }
                                 }
                                 is HeatingStatsUiState.Success -> {
@@ -234,6 +273,20 @@ fun HeatingScreen(
                                             }
                                         }
                                     )
+                                }
+                                is HeatingStatsUiState.Empty -> {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        Column(
+                                            modifier = Modifier.fillMaxSize().padding(16.dp),
+                                            verticalArrangement = Arrangement.Center,
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            Text("No heating stats available.")
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -286,7 +339,12 @@ private suspend fun fetchHeatingSetVals(
             is DataFetchResult.Success -> {
                 val heatingSetValsList = result.data
                 withContext(context = Dispatchers.Main) {
-                    updateHeatingSetVals(HeatingSetValueUiState.Success(heatingSetValsList.first()))
+                    if (heatingSetValsList.isEmpty()) {
+                        updateHeatingSetVals(HeatingSetValueUiState.Empty)
+                    }
+                    else {
+                        updateHeatingSetVals(HeatingSetValueUiState.Success(heatingSetValsList.first()))
+                    }
                 }
             }
             is DataFetchResult.Error -> {

@@ -19,6 +19,9 @@ class HeatingSetValsReader(private val url: String) {
             val response = client.newCall(request).execute()
             if (response.isSuccessful) {
                 val responseBody = response.body.string()
+                if (responseBody.isEmpty()) {
+                    return DataFetchResult.Success(data = emptyList())
+                }
                 try {
                     val decodedData = json.decodeFromString<List<HeatingSetVals>>(responseBody)
                     return DataFetchResult.Success(decodedData)

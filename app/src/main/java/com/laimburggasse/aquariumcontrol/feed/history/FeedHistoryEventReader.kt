@@ -19,10 +19,14 @@ class FeedHistoryEventReader(private val url: String) {
         return try {
             val response = client.newCall(request).execute()
             if (response.isSuccessful) {
-                val responseBody = response.body?.string()
+                val responseBody = response.body.string()
                 Log.d(this::class.simpleName, "Response successful: $responseBody")
-                responseBody?.let {
-                    json.decodeFromString<List<FeedHistoryEvent>>(it)
+                if (responseBody.isEmpty()) {
+                    Log.d(this::class.simpleName, "Response body is empty")
+                    emptyList()
+                }
+                else {
+                    json.decodeFromString<List<FeedHistoryEvent>>(responseBody)
                 }
             } else {
                 Log.d(this::class.simpleName, "Error: ${response.code} - ${response.message}")
