@@ -33,6 +33,7 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,6 +44,7 @@ import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -53,7 +55,7 @@ import kotlinx.coroutines.withContext
 fun BallingHistoryScreen(
     navHostController: NavHostController? = null,
     showFullWeek: Boolean,
-    mockBallingHistoryDosingEvents: List<BallingHistoryDosingEvent>? = null,
+    mockBallingHistoryUiState: BallingHistoryUiState? = null,
     mainViewModel: MainViewModel? = null,
     darkTheme: Boolean? = null,
 ) {
@@ -64,29 +66,30 @@ fun BallingHistoryScreen(
 
     // No user input is expected. There is no need to have a view model.
 
-    var ballingEvents by remember { mutableStateOf(mockBallingHistoryDosingEvents) }
-    var isRefreshing by remember {
-        mutableStateOf(
-            mockBallingHistoryDosingEvents?.isNotEmpty() ?: false
-        )
-    }
+    var ballingHistoryUiState by remember { mutableStateOf(mockBallingHistoryUiState ?: BallingHistoryUiState.Loading) }
 
-    val isControllerLoaded = mainViewModel?.isControllerLoaded() == true
+    var isRefreshing by remember { mutableStateOf(true) }
+
     val coroutineScope = rememberCoroutineScope()
+
     val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
 
+    fun loadData() {
+        coroutineScope.launch {
+            if (mainViewModel != null) {
+                fetchBallingEvents(
+                    mainViewModel,
+                    showFullWeek
+                ) { newBallingHistoryUiState ->
+                    ballingHistoryUiState = newBallingHistoryUiState
+                }
+            }
+        }
+    }
     // Use a LaunchedEffect to fetch data on initial composition
-    @Suppress("UNCHECKED_CAST")
     LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
         if (mainViewModel != null && isControllerAddressValid) { // Check for null and validity
-            isRefreshing = true
-            fetchBallingEvents(
-                mainViewModel,
-                showFullWeek
-            ) { newBallingEvents ->
-                ballingEvents = newBallingEvents
-            } // Pass the setter lambda
-            isRefreshing = false
+            loadData()
         }
     }
 
@@ -136,11 +139,7 @@ fun BallingHistoryScreen(
                                     // Perform the refresh operation here (e.g., fetch new data)
                                     coroutineScope.launch {
                                         if (isControllerAddressValid) {
-                                            fetchBallingEvents(
-                                                mainViewModel, showFullWeek
-                                            ) { newBallingEvents ->
-                                                ballingEvents = newBallingEvents as List<BallingHistoryDosingEvent>
-                                            } // Pass the setter lambda
+                                            loadData()
                                             delay(timeMillis = 500)
                                         }
                                         isRefreshing = false // Reset the refresh state
@@ -162,60 +161,60 @@ fun BallingHistoryScreen(
                                         .padding(16.dp),
                                     horizontalArrangement = Arrangement.Center
                                 ) {
-                                    if (isControllerLoaded || mockBallingHistoryDosingEvents != null) {
-                                        if (isControllerAddressValid || mockBallingHistoryDosingEvents != null) {
-                                            if (ballingEvents == null) {
-                                                Text(
-                                                    text = stringResource(R.string.loading_balling_dosing_events),
-                                                    style = TextStyle(
-                                                        fontSize = 16.sp,
-                                                        fontWeight = FontWeight.Bold
-                                                    )
-                                                )
-                                            } else if (ballingEvents!!.isEmpty()) {
-                                                Text(
-                                                    text = stringResource(R.string.no_balling_events_found),
-                                                    style = TextStyle(
-                                                        fontSize = 16.sp,
-                                                        fontWeight = FontWeight.Bold
-                                                    ),
-                                                )
-                                            } else {
-                                                if (LocalInspectionMode.current) {
-                                                    // In Preview: Render a simple, static Column instead of LazyColumn
-                                                    Column(modifier = Modifier.fillMaxSize()) {
-                                                        ballingEvents!!.forEach { ballingEvent ->
-                                                            BallingHistoryEventComposable(ballingEvent)
-                                                        }
-                                                    }
-                                                } else {
-                                                    // In App Runtime: Use the performant LazyColumn
-                                                    LazyColumn(
-                                                        modifier = Modifier.fillMaxSize()
-                                                    ) {
-                                                        items(items = ballingEvents!!) { ballingEvent ->
-                                                            BallingHistoryEventComposable(ballingHistoryDosingEvent = ballingEvent)
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        } else {
+                                    when (ballingHistoryUiState) {
+                                        is BallingHistoryUiState.Empty -> {
                                             Text(
-                                                text = stringResource(id = R.string.invalid_controller_address),
+                                                text = stringResource(id = R.string.no_balling_events_found),
                                                 style = TextStyle(
                                                     fontSize = 16.sp,
                                                     fontWeight = FontWeight.Bold
-                                                )
+                                                ),
+                                                modifier = Modifier.weight(1f),
+                                                textAlign = TextAlign.Center
                                             )
                                         }
-                                    } else {
-                                        Text(
-                                            text = stringResource(id = R.string.controller_not_loaded),
-                                            style = TextStyle(
-                                                fontSize = 16.sp,
-                                                fontWeight = FontWeight.Bold
+                                        is BallingHistoryUiState.Error -> {
+                                            Text(
+                                                "Error loading data: ${(ballingHistoryUiState as BallingHistoryUiState.Error).errorMessage}",
+                                                style = TextStyle(
+                                                    fontSize = 16.sp,
+                                                    fontWeight = FontWeight.Bold
+                                                ),
+                                                modifier = Modifier.weight(1f),
+                                                textAlign = TextAlign.Center
                                             )
-                                        )
+                                        }
+                                        is BallingHistoryUiState.Loading -> {
+                                            Text(
+                                                text = stringResource(id = R.string.loading_balling_dosing_events),
+                                                style = TextStyle(
+                                                    fontSize = 16.sp,
+                                                    fontWeight = FontWeight.Bold
+                                                ),
+                                                modifier = Modifier.weight(1f),
+                                                textAlign = TextAlign.Center
+                                            )
+                                        }
+                                        is BallingHistoryUiState.Success -> {
+                                            val ballingHistoryDosingEvents = (ballingHistoryUiState as BallingHistoryUiState.Success).ballingHistoryDosingEvents
+                                            if (LocalInspectionMode.current) {
+                                                // In Preview: Render a simple, static Column instead of LazyColumn
+                                                Column(modifier = Modifier.fillMaxSize()) {
+                                                    ballingHistoryDosingEvents.forEach { ballingHistoryDosingEvent ->
+                                                        BallingHistoryEventComposable(ballingHistoryDosingEvent = ballingHistoryDosingEvent)
+                                                    }
+                                                }
+                                            } else {
+                                                // In App Runtime: Use the performant LazyColumn
+                                                LazyColumn(
+                                                    modifier = Modifier.fillMaxSize()
+                                                ) {
+                                                    items(items = ballingHistoryDosingEvents) { ballingHistoryDosingEvent ->
+                                                        BallingHistoryEventComposable(ballingHistoryDosingEvent = ballingHistoryDosingEvent)
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -235,7 +234,7 @@ fun BallingHistoryScreen(
 private suspend fun fetchBallingEvents(
     mainViewModel: MainViewModel,
     showFullWeek: Boolean,
-    updateBallingEvents: (List<BallingHistoryDosingEvent>) -> Unit,
+    updateBallingEvents: (BallingHistoryUiState) -> Unit,
 ) {
     withContext(Dispatchers.IO) {
         val url = when {
@@ -243,9 +242,23 @@ private suspend fun fetchBallingEvents(
             else -> "http://" + mainViewModel.getControllerAddress() + WebApiUrls.BALLING_GET_EVENTS_24H
         }
         val reader = BallingHistoryEventReader(url)
-        val ballingEvents = reader.readBallingEvents()
-        if (ballingEvents != null) {
-            updateBallingEvents(ballingEvents) // Call the setter lambda
+        when (val result = reader.readBallingEvents()) {
+            is DataFetchResult.Success -> {
+                val ballingEvents = result.data
+                withContext(context = Dispatchers.Main) {
+                    if (ballingEvents.isEmpty()) {
+                        updateBallingEvents(BallingHistoryUiState.Empty)
+                    }
+                    else {
+                        updateBallingEvents(BallingHistoryUiState.Success(ballingEvents))
+                    }
+                }
+            }
+            is DataFetchResult.Error -> {
+                withContext(context = Dispatchers.Main) {
+                    updateBallingEvents(BallingHistoryUiState.Error(result.errorMessage))
+                }
+            }
         }
     }
 }
@@ -278,18 +291,39 @@ val ballingHistoryScreenMockData = listOf(
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
 @Composable
-internal fun BallingHistoryScreenPreview() {
+internal fun BallingHistoryScreenPreviewSuccess() {
     BallingHistoryScreen(
         showFullWeek = false,
-        mockBallingHistoryDosingEvents = ballingHistoryScreenMockData
+        mockBallingHistoryUiState = BallingHistoryUiState.Success(
+            ballingHistoryDosingEvents = ballingHistoryScreenMockData
+        )
     )
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-internal fun BallingHistoryScreenEmptyPreview() {
+internal fun BallingHistoryScreenPreviewEmpty() {
     BallingHistoryScreen(
         showFullWeek = false,
-        mockBallingHistoryDosingEvents = emptyList()
+        mockBallingHistoryUiState = BallingHistoryUiState.Empty
+
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun BallingHistoryScreenPreviewError() {
+    BallingHistoryScreen(
+        showFullWeek = false,
+        mockBallingHistoryUiState = BallingHistoryUiState.Error(errorMessage = "Error message")
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun BallingHistoryScreenPreviewLoading() {
+    BallingHistoryScreen(
+        showFullWeek = false,
+        mockBallingHistoryUiState = BallingHistoryUiState.Loading
     )
 }

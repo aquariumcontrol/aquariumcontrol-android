@@ -19,13 +19,11 @@ class VentilationSetValsReader(private val url: String) {
             val response = client.newCall(request).execute()
             if (response.isSuccessful) {
                 val responseBody = response.body.string()
-                responseBody.let {
-                    try {
-                        val decodedData = json.decodeFromString<List<VentilationSetVals>>(it)
-                        return DataFetchResult.Success(decodedData)
-                    } catch (e: Exception) {
-                        return DataFetchResult.Error(e, "Error decoding data sent from server: ${e.message}")
-                    }
+                try {
+                    val decodedData = json.decodeFromString<List<VentilationSetVals>>(responseBody)
+                    return DataFetchResult.Success(decodedData)
+                } catch (e: Exception) {
+                    return DataFetchResult.Error(e, "Error decoding data sent from server: ${e.message}")
                 }
             } else {
                 return DataFetchResult.Error(null, "Server responded with error code: ${response.code}")

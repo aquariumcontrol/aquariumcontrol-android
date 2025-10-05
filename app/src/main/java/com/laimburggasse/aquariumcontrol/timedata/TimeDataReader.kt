@@ -50,15 +50,13 @@ class TimeDataReader(private val urlWithoutParameters: String) {
             if (response.isSuccessful) {
                 Log.d("TimeDataReader", "Successful http request.")
                 val responseBody = response.body.string()
-                responseBody.let {
-                    try {
-                        val decodedData = json.decodeFromString<List<TimeDataStringSample>>(it)
-                        Log.d("TimeDataReader", "Successfully decoded ${decodedData.size} items.")
-                        return DataFetchResult.Success(decodedData)
-                    } catch (e: Exception) {
-                        Log.e("TimeDataReader", "Error decoding JSON: ${e.message}", e)
-                        return DataFetchResult.Error(e, "Error decoding data sent from server: ${e.message}")
-                    }
+                try {
+                    val decodedData = json.decodeFromString<List<TimeDataStringSample>>(responseBody)
+                    Log.d("TimeDataReader", "Successfully decoded ${decodedData.size} items.")
+                    return DataFetchResult.Success(decodedData)
+                } catch (e: Exception) {
+                    Log.e("TimeDataReader", "Error decoding JSON: ${e.message}", e)
+                    return DataFetchResult.Error(e, "Error decoding data sent from server: ${e.message}")
                 }
             } else {
                 Log.d("TimeDataReader", "Error: ${response.code}")

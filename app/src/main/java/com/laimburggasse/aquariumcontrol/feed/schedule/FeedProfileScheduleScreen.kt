@@ -89,8 +89,6 @@ fun FeedProfileScheduleScreen(
 
     val coroutineScope = rememberCoroutineScope()
 
-    val webApiPostRequest = WebApiPostRequest()
-
     val context = LocalContext.current // context for web API request and Toasts
 
     AquariumControllerTheme(darkTheme) {
@@ -219,6 +217,8 @@ fun FeedProfileScheduleScreen(
                                             )
 
                                     if (optionalGetParams != null) {
+                                        val webApiPostRequest = WebApiPostRequest()
+
                                         webApiPostRequestExecution(
                                             mainViewModel = mainViewModel,
                                             coroutineScope = coroutineScope,

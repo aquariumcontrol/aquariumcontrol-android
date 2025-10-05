@@ -21,10 +21,8 @@ class HeatingStatsReader(private val url: String) {
             val response = client.newCall(request).execute()
             if (response.isSuccessful) {
                 val responseBody = response.body.string()
-                responseBody.let {
-                    val decodedData = json.decodeFromString<List<HeatingStatsStringEntry>>(it)
-                    return DataFetchResult.Success(decodedData)
-                }
+                val decodedData = json.decodeFromString<List<HeatingStatsStringEntry>>(responseBody)
+                return DataFetchResult.Success(decodedData)
             } else {
                 return DataFetchResult.Error(exception = null, errorMessage = "Request failed with code ${response.code}")
             }

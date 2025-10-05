@@ -70,6 +70,7 @@ fun RefillHistoryScreen(
     var isRefreshing: Boolean by remember { mutableStateOf(value = true) }
 
     val coroutineScope = rememberCoroutineScope()
+
     val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
 
     fun loadData() {
@@ -80,12 +81,12 @@ fun RefillHistoryScreen(
                     showFullWeek
                 ) { newRefillUiState ->
                     refillHistoryUiState = newRefillUiState
-                } // Pass the setter lambda
+                }
             }
         }
     }
+
     // Use a LaunchedEffect to fetch data on initial composition
-    @Suppress("UNCHECKED_CAST")
     LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
         if (mainViewModel != null && isControllerAddressValid) { // Check for null and validity
             loadData()
@@ -245,7 +246,9 @@ private suspend fun fetchRefillEvents(
                 }
             }
             is DataFetchResult.Error -> {
-                updateRefillUiState(RefillHistoryUiState.Error(result.errorMessage))
+                withContext(context = Dispatchers.Main) {
+                    updateRefillUiState(RefillHistoryUiState.Error(result.errorMessage))
+                }
             }
         }
     }

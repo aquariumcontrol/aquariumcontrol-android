@@ -20,9 +20,7 @@ class OverviewDataReader(private val url: String) {
             val response = client.newCall(request).execute()
             if (response.isSuccessful) {
                 val responseBody = response.body.string()
-                responseBody.let {
-                    json.decodeFromString<List<String>>(it)
-                }
+                json.decodeFromString<List<String>>(responseBody)
             } else {
                 return DataFetchResult.Error(null, "Server responded with error code: ${response.code}")
             }

@@ -2,7 +2,6 @@ package com.laimburggasse.aquariumcontrol.timedata
 
 import android.content.res.Configuration
 import android.graphics.Color
-import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -167,59 +166,64 @@ fun TimeDataScreen(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.verticalScroll(rememberScrollState())
                         ) {
-                            val state = timeDataUiState
-                            if (state is Success) {
-                                val timeDataSets = state.timeDataSets
-
-                                TimeDataTemperatureChartComposable(
-                                    temperatureDataSet = timeDataSets.dataTemperature,
-                                    textColor = textColor
-                                )
-
-                                TimeDatapHChartComposable(
-                                    pHDataSet = timeDataSets.datapH,
-                                    textColor = textColor
-                                )
-
-                                TimeDataConductivityChartComposable(
-                                    conductivityDataSet = timeDataSets.dataConductivity,
-                                    textColor = textColor
-                                )
-
-                                TimeDataTankLevelChartComposable(
-                                    tankLevelDataSet = timeDataSets.dataTankLevel,
-                                    textColor = textColor
-                                )
-
-                                TimeDataAmbientChartComposable(
-                                    ambientDataSet = timeDataSets.dataAmbient,
-                                    textColor = textColor
-                                )
-                            }
-
-                            if (state is Error) {
-                                // Show an error message and a retry button
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(16.dp),
-                                    verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Text(
-                                        text = "Error loading data:",
-                                        style = MaterialTheme.typography.titleMedium
-                                    )
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    Text(
-                                        text = state.errorMessage,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.error
-                                    )
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                    Button(onClick = { loadData() }) { // Retry button
-                                        Text("Retry")
+                            when (timeDataUiState) {
+                                is TimeDataUiState.Empty -> {
+                                    Text("No data available.")
+                                }
+                                is Error -> {
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(16.dp),
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Text(
+                                            text = "Error loading data:",
+                                            style = MaterialTheme.typography.titleMedium
+                                        )
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        Text(
+                                            text = (timeDataUiState as Error).errorMessage,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.error
+                                        )
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                        Button(onClick = { loadData() }) { // Retry button
+                                            Text("Retry")
+                                        }
                                     }
+                                }
+                                is Loading -> {
+                                    Text("Loading...")
+                                }
+                                is Success -> {
+                                    val timeDataSets = (timeDataUiState as Success).timeDataSets
+                                    TimeDataTemperatureChartComposable(
+                                        temperatureDataSet = timeDataSets.dataTemperature,
+                                        textColor = textColor
+                                    )
+
+                                    TimeDatapHChartComposable(
+                                        pHDataSet = timeDataSets.datapH,
+                                        textColor = textColor
+                                    )
+
+                                    TimeDataConductivityChartComposable(
+                                        conductivityDataSet = timeDataSets.dataConductivity,
+                                        textColor = textColor
+                                    )
+
+                                    TimeDataTankLevelChartComposable(
+                                        tankLevelDataSet = timeDataSets.dataTankLevel,
+                                        textColor = textColor
+                                    )
+
+                                    TimeDataAmbientChartComposable(
+                                        ambientDataSet = timeDataSets.dataAmbient,
+                                        textColor = textColor
+                                    )
+
                                 }
                             }
                         }
@@ -252,22 +256,25 @@ private suspend fun fetchTimeData(
                         timeDataStringList.map { timeDataStringSample ->
                             timeDataStringSample.transformToTimeDataSample()
                         }
-                    updateUiState(Success(TimeDataSets(timeDataSamples)))
+                    withContext(context = Dispatchers.Main) {
+                        updateUiState(Success(TimeDataSets(timeData = timeDataSamples)))
+                    }
                 } else {
-                    // Handle case where data is successfully fetched but is empty
-                    // You might want a specific state for this or treat it as an error
-                    updateUiState(Error("No data available."))
+                    withContext(context = Dispatchers.Main) {
+                        updateUiState(TimeDataUiState.Empty)
+                    }
                 }
             }
             is DataFetchResult.Error -> {
-                Log.e("TimeDataScreen", "Error fetching time data: ${result.errorMessage}", result.exception)
-                updateUiState(Error(result.errorMessage))
+                withContext(context = Dispatchers.Main) {
+                    updateUiState(Error(errorMessage = result.errorMessage))
+                }
             }
         }
     }
 }
 
-public fun generateMockTimeData(): List<TimeDataSample> {
+fun generateMockTimeData(): List<TimeDataSample> {
     val startTime = LocalDateTime.of(2024, 10, 24, 0, 0) // October 24th, 2024, 0:00 AM
     val samples = mutableListOf<TimeDataSample>()
     val random = Random(12345) // arbitrary but fixed seed to have reproducible results

@@ -276,7 +276,9 @@ private suspend fun fetchOverviewData(
         val reader = OverviewDataReader(url)
         when (val result = reader.readOverviewData()) {
             is DataFetchResult.Error -> {
-                updateOverviewUiState(OverviewUiState.Error(result.errorMessage))
+                withContext(context = Dispatchers.Main) {
+                    updateOverviewUiState(OverviewUiState.Error(result.errorMessage))
+                }
             }
             is DataFetchResult.Success -> {
                 val overviewData = result.data

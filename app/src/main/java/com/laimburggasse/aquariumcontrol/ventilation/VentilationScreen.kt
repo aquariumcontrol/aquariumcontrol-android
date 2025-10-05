@@ -198,10 +198,18 @@ private suspend fun fetchVentilationSetVals(
         when (val result = ventilationSetValsReader.readVentilationSetVals()) {
             is DataFetchResult.Success -> {
                 val ventilationSetValsList = result.data
-                updateVentilationSetVals(VentilationSetValueUiState.Success(ventilationSetValsList.first()))
+                withContext(Dispatchers.Main) {
+                    updateVentilationSetVals(
+                        VentilationSetValueUiState.Success(
+                            ventilationSetValsList.first()
+                        )
+                    )
+                }
             }
             is DataFetchResult.Error -> {
-                updateVentilationSetVals(VentilationSetValueUiState.Error(result.errorMessage))
+                withContext(Dispatchers.Main) {
+                    updateVentilationSetVals(VentilationSetValueUiState.Error(result.errorMessage))
+                }
             }
         }
     }

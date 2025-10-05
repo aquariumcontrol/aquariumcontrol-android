@@ -297,11 +297,15 @@ private suspend fun fetchScheduleSetVals(
                     }
                 }
                 else {
-                    updateScheduleUiState(ScheduleUiState.Error("No data available."))
+                    withContext(context = Dispatchers.Main) {
+                        updateScheduleUiState(ScheduleUiState.Error("No data available."))
+                    }
                 }
             }
             is DataFetchResult.Error -> {
-                updateScheduleUiState(ScheduleUiState.Error(result.errorMessage))
+                withContext(context = Dispatchers.Main) {
+                    updateScheduleUiState(ScheduleUiState.Error(result.errorMessage))
+                }
             }
         }
     }

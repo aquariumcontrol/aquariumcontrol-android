@@ -261,10 +261,14 @@ private suspend fun fetchHeatingStats(
             is DataFetchResult.Success -> {
                 val heatingStringsStats = result.data
                 val heatingStats = heatingStringsStats.map { it.transformToHeatingStatsEntry() }
-                updateHeatingStats(HeatingStatsUiState.Success(heatingStats))
+                withContext(context = Dispatchers.Main) {
+                    updateHeatingStats(HeatingStatsUiState.Success(heatingStats))
+                }
             }
             is DataFetchResult.Error -> {
-                updateHeatingStats(HeatingStatsUiState.Error(result.errorMessage))
+                withContext(context = Dispatchers.Main) {
+                    updateHeatingStats(HeatingStatsUiState.Error(result.errorMessage))
+                }
             }
         }
     }
@@ -281,10 +285,14 @@ private suspend fun fetchHeatingSetVals(
         when (val result = heatingSetValsReader.readHeatingSetVals()) {
             is DataFetchResult.Success -> {
                 val heatingSetValsList = result.data
-                updateHeatingSetVals(HeatingSetValueUiState.Success(heatingSetValsList.first()))
+                withContext(context = Dispatchers.Main) {
+                    updateHeatingSetVals(HeatingSetValueUiState.Success(heatingSetValsList.first()))
+                }
             }
             is DataFetchResult.Error -> {
-                updateHeatingSetVals(HeatingSetValueUiState.Error(result.errorMessage))
+                withContext(context = Dispatchers.Main) {
+                    updateHeatingSetVals(HeatingSetValueUiState.Error(result.errorMessage))
+                }
             }
         }
     }
