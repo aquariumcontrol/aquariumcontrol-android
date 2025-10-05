@@ -1,6 +1,5 @@
 package com.laimburggasse.aquariumcontrol.refill.history
 
-import android.util.Log
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json

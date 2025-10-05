@@ -1,6 +1,5 @@
 package com.laimburggasse.aquariumcontrol.heating
 
-import android.util.Log
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
