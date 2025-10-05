@@ -32,14 +32,13 @@ fun HeatingButtonsComposable(
     // This composable displays two buttons for the heating control.
     // Arrangement of the buttons follows the device's orientation.
     
-    val webApiPostRequest = WebApiPostRequest()
-
     val context = LocalContext.current // context for web API request and Toasts
 
     Button(
         onClick = {
             heatingSetValsViewModel?.updateValues()
             if (mainViewModel != null && coroutineScope != null && heatingSetValsViewModel != null) {
+                val webApiPostRequest = WebApiPostRequest()
                 webApiPostRequestExecution(
                     mainViewModel = mainViewModel,
                     apiUrl = WebApiUrls.HEATING_POST_SET_VALS,

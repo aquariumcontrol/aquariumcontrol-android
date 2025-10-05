@@ -1,6 +1,7 @@
 package com.laimburggasse.aquariumcontrol.heating
 
 import android.util.Log
+import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -11,29 +12,24 @@ class HeatingStatsReader(private val url: String) {
     private val client = OkHttpClient()
     private val json = Json { ignoreUnknownKeys = true }
 
-    fun readStatsEntry(): List<HeatingStatsStringEntry>? {
+    fun readStatsEntry(): DataFetchResult<List<HeatingStatsStringEntry>> {
         val request = Request.Builder()
             .url(url)
             .build()
 
-        Log.d(this::class.simpleName, "Request URL: $url")
-        return try {
-            Log.d(this::class.simpleName, "Trying to execute request")
+        try {
             val response = client.newCall(request).execute()
-            Log.d(this::class.simpleName, "Response Code: ${response.code}")
             if (response.isSuccessful) {
-                val responseBody = response.body?.string()
-                Log.d(this::class.simpleName, "ResponseBody=: $responseBody")
-                responseBody?.let {
-                    json.decodeFromString<List<HeatingStatsStringEntry>>(it)
+                val responseBody = response.body.string()
+                responseBody.let {
+                    val decodedData = json.decodeFromString<List<HeatingStatsStringEntry>>(it)
+                    return DataFetchResult.Success(decodedData)
                 }
             } else {
-                Log.d(this::class.simpleName, "Error: ${response.code} - ${response.message}")
-                null
+                return DataFetchResult.Error(exception = null, errorMessage = "Request failed with code ${response.code}")
             }
         } catch (e: Exception) {
-            Log.d(this::class.simpleName, "Exception: ${e.message}")
-            null
+            return DataFetchResult.Error(exception = e, errorMessage = "Exception occurred: ${e.message}")
         }
     }
 }

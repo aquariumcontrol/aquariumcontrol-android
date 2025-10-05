@@ -6,7 +6,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 
 class VentilationSetValsReader(private val url: String) {
-    // This class reads the Balling profiles from the server using a GET request.
+    // This class reads the ventilation set values from the server using a GET request.
     private val client = OkHttpClient()
     private val json = Json { ignoreUnknownKeys = true }
 

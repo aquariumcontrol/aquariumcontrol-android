@@ -1,20 +1,21 @@
 package com.laimburggasse.aquariumcontrol.heating
 
 import android.content.res.Configuration
-import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,13 +31,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
-import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
+import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -45,8 +47,8 @@ import kotlinx.coroutines.withContext
 @Composable
 fun HeatingScreen(
     navHostController: NavHostController? = null,
-    mockHeatingSetVals: HeatingSetVals? = null,
-    mockHeatingStatEntries: List<HeatingStatsEntry>? = null,
+    mockHeatingSetValueUiState: HeatingSetValueUiState? = null,
+    mockHeatingStatsUiState: HeatingStatsUiState? = null,
     mainViewModel: MainViewModel? = null,
     darkTheme: Boolean? = null
 ) {
@@ -57,53 +59,58 @@ fun HeatingScreen(
     // - numeric input fields for entering the control target temperatures
     // - the heating statistics incl. refresh button
 
-
-    val heatingInitialSetVals = mockHeatingSetVals ?: HeatingSetVals(
-        heatingSwitchOffTemp = 28.0, heatingSwitchOnTemp = 22.0
-    )
-
-    val configuration = LocalConfiguration.current
-
-    val displayCircularProgressIndicatorInPreview: Boolean = when (configuration.orientation) {
-        Configuration.ORIENTATION_LANDSCAPE -> {
-            false
-        }
-        else -> {
-            mockHeatingStatEntries?.isNotEmpty() == true
-        }
-    }
-
-    var isRefreshing by remember {
-        mutableStateOf(
-            displayCircularProgressIndicatorInPreview
-        )
-    }
-
     val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
+
+    var heatingSetValueUiState by remember { mutableStateOf(mockHeatingSetValueUiState ?: HeatingSetValueUiState.Loading) }
 
     val coroutineScope = rememberCoroutineScope()
 
-    var heatingStats by remember { mutableStateOf(mockHeatingStatEntries ?: emptyList()) }
+    val configuration = LocalConfiguration.current
+
+    val heatingInitialSetVals = HeatingSetVals(
+        heatingSwitchOffTemp = 28.0,
+        heatingSwitchOnTemp = 22.0
+    )
+
+    var heatingStatsUiState by remember { mutableStateOf(mockHeatingStatsUiState ?: HeatingStatsUiState.Loading) }
 
     val heatingSetValsViewModel: HeatingSetValsViewModel = viewModel(
         factory = HeatingSetValsViewModelFactory(heatingInitialSetVals)
     )
-
+    
+    fun loadData() {
+        coroutineScope.launch {
+            if (mainViewModel != null) {
+                fetchHeatingSetVals(
+                    mainViewModel,
+                ) { newHeatingUiState ->
+                    heatingSetValueUiState = newHeatingUiState
+                    when (newHeatingUiState) {
+                        is HeatingSetValueUiState.Success -> {
+                            // Update the view model with the data
+                            val newHeatingSetVals = newHeatingUiState.heatingSetVals
+                            heatingSetValsViewModel.setValues(newHeatingSetVals)
+                        }
+                        is HeatingSetValueUiState.Error -> {
+                            // Do nothing
+                        }
+                        HeatingSetValueUiState.Loading -> {
+                            // Do nothing
+                        }
+                    }
+                }
+            }
+        }
+    }
     @Suppress("UNCHECKED_CAST")
     LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
         if (mainViewModel != null && isControllerAddressValid) { // Check for null and validity
             fetchHeatingStats(
                 mainViewModel,
-            ) { newHeatingStats ->
-                heatingStats = newHeatingStats as List<HeatingStatsEntry>
+            ) { newHeatingStatsUiState ->
+                heatingStatsUiState = newHeatingStatsUiState
             }
-            fetchHeatingSetVals(
-                mainViewModel,
-            ) { newHeatingSetVals ->
-                val newHeatingSetValsCasted = newHeatingSetVals as HeatingSetVals
-                Log.d("HeatingScreen", "New heating set vals: $newHeatingSetValsCasted")
-                heatingSetValsViewModel.setValues(newHeatingSetValsCasted)
-            }
+            loadData()
         }
     }
 
@@ -130,65 +137,105 @@ fun HeatingScreen(
                             modifier = Modifier
                                 .padding(innerPadding)
                         ) {
-                            when (configuration.orientation) {
-                                Configuration.ORIENTATION_LANDSCAPE -> {
-                                    Row {
-                                        HeatingButtonsComposable(
-                                            heatingSetValsViewModel = heatingSetValsViewModel,
-                                            mainViewModel = mainViewModel,
-                                            coroutineScope = coroutineScope
-                                        )
-                                    }
-                                    Row {
-                                        HeatingRangeSliderTextFieldsLandscapeComposable(
-                                            myHeatingSetValsViewModel = heatingSetValsViewModel,
-                                            heatingInitialSetVals = heatingInitialSetVals
-                                        )
-                                    }
-                                }
-
-                                else -> {
-                                    HeatingButtonsComposable(
-                                        heatingSetValsViewModel = heatingSetValsViewModel,
-                                        mainViewModel = mainViewModel,
-                                        coroutineScope = coroutineScope
-                                    )
-                                    Spacer(modifier = Modifier.size(width = 10.dp, height = 10.dp))
-                                    HeatingRangeSliderTextFieldsPortraitComposable(
-                                        myHeatingSetValsViewModel = heatingSetValsViewModel,
-                                        heatingInitialSetVals = heatingInitialSetVals
-                                    )
-                                }
-                            }
-                            if (isRefreshing) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier
-                                        .size(150.dp),
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-
-                            @Suppress("UNCHECKED_CAST")
-                            HeatingStatsComposable(heatingStats = heatingStats, updateData =
-                            {
-                                coroutineScope.launch {
-                                    if (isControllerAddressValid) {
-                                        isRefreshing = true
-                                        try {
-                                            fetchHeatingStats(
-                                                mainViewModel!!
-                                            ) { newHeatingStats ->
-                                                heatingStats =
-                                                    newHeatingStats as List<HeatingStatsEntry>
+                            when (heatingSetValueUiState) {
+                                is HeatingSetValueUiState.Success -> {
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally) {
+                                        when (configuration.orientation) {
+                                            Configuration.ORIENTATION_LANDSCAPE -> {
+                                                Row {
+                                                    HeatingButtonsComposable(
+                                                        heatingSetValsViewModel = heatingSetValsViewModel,
+                                                        mainViewModel = mainViewModel,
+                                                        coroutineScope = coroutineScope
+                                                    )
+                                                }
+                                                Row {
+                                                    HeatingRangeSliderTextFieldsLandscapeComposable(
+                                                        myHeatingSetValsViewModel = heatingSetValsViewModel,
+                                                        heatingInitialSetVals = heatingInitialSetVals
+                                                    )
+                                                }
                                             }
-                                            delay(500)
-                                        } finally {
-                                            isRefreshing = false // Reset the refresh state
+
+                                            else -> {
+                                                HeatingButtonsComposable(
+                                                    heatingSetValsViewModel = heatingSetValsViewModel,
+                                                    mainViewModel = mainViewModel,
+                                                    coroutineScope = coroutineScope
+                                                )
+                                                Spacer(
+                                                    modifier = Modifier.size(
+                                                        width = 10.dp,
+                                                        height = 10.dp
+                                                    )
+                                                )
+                                                HeatingRangeSliderTextFieldsPortraitComposable(
+                                                    myHeatingSetValsViewModel = heatingSetValsViewModel,
+                                                    heatingInitialSetVals = heatingInitialSetVals
+                                                )
+                                            }
                                         }
                                     }
                                 }
+                                is HeatingSetValueUiState.Error -> {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        Text("Error loading set value data: ${(heatingSetValueUiState as HeatingSetValueUiState.Error).errorMessage}")
+                                    }
+                                }
+                                is HeatingSetValueUiState.Loading -> {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        Text("Loading set value data...")
+                                    }
+                                }
                             }
-                            )
+
+                            when (heatingStatsUiState) {
+                                is HeatingStatsUiState.Error -> {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        Text("Error loading statistical data: ${(heatingStatsUiState as HeatingStatsUiState.Error).errorMessage}")
+                                    }
+                                }
+                                HeatingStatsUiState.Loading -> {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        Text("Loading statistical data...")
+                                    }
+                                }
+                                is HeatingStatsUiState.Success -> {
+                                    val heatingStats = (heatingStatsUiState as HeatingStatsUiState.Success).heatingStats
+                                    HeatingStatsComposable(heatingStats = heatingStats, updateData =
+                                        {
+                                            coroutineScope.launch {
+                                                if (isControllerAddressValid) {
+                                                    try {
+                                                        heatingStatsUiState = HeatingStatsUiState.Loading
+                                                        delay(500)
+                                                        fetchHeatingStats(
+                                                            mainViewModel
+                                                        ) { newHeatingStatsUiState ->
+                                                            heatingStatsUiState = newHeatingStatsUiState
+                                                        }
+                                                    } finally {
+                                                        // do nothing
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -204,33 +251,41 @@ fun HeatingScreen(
 
 private suspend fun fetchHeatingStats(
     mainViewModel: MainViewModel,
-    updateHeatingStats: (Any) -> Unit,
+    updateHeatingStats: (HeatingStatsUiState) -> Unit,
 ) {
     withContext(Dispatchers.IO) {
         val url =
             "http://" + mainViewModel.getControllerAddress() + WebApiUrls.HEATING_GET_STATS
-        val heatingStringsStats = HeatingStatsReader(url).readStatsEntry()
-        val heatingStats =
-            heatingStringsStats?.map { it.transformToHeatingStatsEntry() } ?: emptyList()
-        updateHeatingStats(heatingStats)
+        val heatingStatsReader = HeatingStatsReader(url)
+        when (val result = heatingStatsReader.readStatsEntry()) {
+            is DataFetchResult.Success -> {
+                val heatingStringsStats = result.data
+                val heatingStats = heatingStringsStats.map { it.transformToHeatingStatsEntry() }
+                updateHeatingStats(HeatingStatsUiState.Success(heatingStats))
+            }
+            is DataFetchResult.Error -> {
+                updateHeatingStats(HeatingStatsUiState.Error(result.errorMessage))
+            }
+        }
     }
 }
 
 private suspend fun fetchHeatingSetVals(
     mainViewModel: MainViewModel,
-    updateHeatingSetVals: (Any) -> Unit,
+    updateHeatingSetVals: (HeatingSetValueUiState) -> Unit,
 ) {
     withContext(Dispatchers.IO) {
         val url =
             "http://" + mainViewModel.getControllerAddress() + WebApiUrls.HEATING_GET_SET_VALS
-        val heatingSetValsList = HeatingSetValsReader(url).readHeatingSetVals()
-        if (!heatingSetValsList.isNullOrEmpty()) {
-            Log.d("HeatingScreen", "Fetched heating set vals: $heatingSetValsList")
-            withContext(Dispatchers.Main) {
-                updateHeatingSetVals(heatingSetValsList.first())
+        val heatingSetValsReader = HeatingSetValsReader(url)
+        when (val result = heatingSetValsReader.readHeatingSetVals()) {
+            is DataFetchResult.Success -> {
+                val heatingSetValsList = result.data
+                updateHeatingSetVals(HeatingSetValueUiState.Success(heatingSetValsList.first()))
             }
-        } else {
-            Log.d("HeatingScreen", "No heating set vals fetched")
+            is DataFetchResult.Error -> {
+                updateHeatingSetVals(HeatingSetValueUiState.Error(result.errorMessage))
+            }
         }
     }
 }
@@ -271,12 +326,36 @@ fun createMockStatsData(): List<HeatingStatsEntry> {
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
 @Composable
-fun HeatingScreenPreview() {
-    HeatingScreen(
-        mockHeatingSetVals = HeatingSetVals(
+fun HeatingScreenPreviewSuccess() {
+    val mockHeatingSetValueUiState = HeatingSetValueUiState.Success(
+        HeatingSetVals(
             heatingSwitchOffTemp = 27.5,
             heatingSwitchOnTemp = 22.5
-        ),
-        mockHeatingStatEntries = createMockStatsData()
+        )
+    )
+    val mockHeatingStatsUiState = HeatingStatsUiState.Success(createMockStatsData())
+    HeatingScreen(
+        mockHeatingSetValueUiState = mockHeatingSetValueUiState,
+        mockHeatingStatsUiState = mockHeatingStatsUiState
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+fun HeatingScreenPreviewError() {
+    HeatingScreen(
+        mockHeatingSetValueUiState = HeatingSetValueUiState.Error(errorMessage = "Error message"),
+        mockHeatingStatsUiState = HeatingStatsUiState.Error(errorMessage = "Error message")
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+fun HeatingScreenPreviewLoading() {
+    HeatingScreen(
+        mockHeatingSetValueUiState = HeatingSetValueUiState.Loading,
+        mockHeatingStatsUiState = HeatingStatsUiState.Loading
     )
 }
