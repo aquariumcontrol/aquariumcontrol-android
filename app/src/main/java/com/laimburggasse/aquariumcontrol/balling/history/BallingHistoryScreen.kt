@@ -22,11 +22,7 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -37,26 +33,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
+import com.laimburggasse.aquariumcontrol.overview.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
-import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
-import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @Composable
 fun BallingHistoryScreen(
     navHostController: NavHostController? = null,
     showFullWeek: Boolean,
-    mockBallingHistoryUiState: BallingHistoryUiState? = null,
-    mainViewModel: MainViewModel? = null,
+    mainViewModel: MainViewModel,
+    ballingHistoryViewModel: BallingHistoryViewModelInterface = viewModel<BallingHistoryViewModel>(),
     darkTheme: Boolean? = null,
 ) {
     // This screen displays:
@@ -64,32 +56,13 @@ fun BallingHistoryScreen(
     // - sub headline (last 7 days or last 24 hours)
     // - list of balling events
 
-    // No user input is expected. There is no need to have a view model.
+    val isControllerAddressValid: Boolean = !mainViewModel.getControllerAddress().isNullOrBlank()
+    val isRefreshing: Boolean by remember { ballingHistoryViewModel::isRefreshing }
+    val ballingHistoryUiState: BallingHistoryUiState by remember { ballingHistoryViewModel::ballingHistoryUiState }
 
-    var ballingHistoryUiState by remember { mutableStateOf(mockBallingHistoryUiState ?: BallingHistoryUiState.Loading) }
-
-    var isRefreshing by remember { mutableStateOf(true) }
-
-    val coroutineScope = rememberCoroutineScope()
-
-    val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
-
-    fun loadData() {
-        coroutineScope.launch {
-            if (mainViewModel != null) {
-                fetchBallingEvents(
-                    mainViewModel,
-                    showFullWeek
-                ) { newBallingHistoryUiState ->
-                    ballingHistoryUiState = newBallingHistoryUiState
-                }
-            }
-        }
-    }
-    // Use a LaunchedEffect to fetch data on initial composition
     LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
-        if (mainViewModel != null && isControllerAddressValid) { // Check for null and validity
-            loadData()
+        if (isControllerAddressValid) {
+            ballingHistoryViewModel.loadData(mainViewModel, showFullWeek)
         }
     }
 
@@ -133,18 +106,7 @@ fun BallingHistoryScreen(
                                 contentAlignment = Alignment.Center,
                                 state = rememberPullToRefreshState(),
                                 isRefreshing = isRefreshing,
-                                onRefresh = {
-                                    // This lambda will be called when the user pulls to refresh
-                                    isRefreshing = true
-                                    // Perform the refresh operation here (e.g., fetch new data)
-                                    coroutineScope.launch {
-                                        if (isControllerAddressValid) {
-                                            loadData()
-                                            delay(timeMillis = 500)
-                                        }
-                                        isRefreshing = false // Reset the refresh state
-                                    }
-                                },
+                                onRefresh = { ballingHistoryViewModel.loadData(mainViewModel, showFullWeek) },
                                 indicator = {
                                     if (isRefreshing) {
                                         CircularProgressIndicator(
@@ -159,7 +121,7 @@ fun BallingHistoryScreen(
                                     modifier = Modifier
                                         .fillMaxSize()
                                         .padding(16.dp),
-                                    horizontalArrangement = Arrangement.Center
+                                        horizontalArrangement = Arrangement.Center
                                 ) {
                                     when (ballingHistoryUiState) {
                                         is BallingHistoryUiState.Empty -> {
@@ -231,38 +193,6 @@ fun BallingHistoryScreen(
     }
 }
 
-private suspend fun fetchBallingEvents(
-    mainViewModel: MainViewModel,
-    showFullWeek: Boolean,
-    updateBallingEvents: (BallingHistoryUiState) -> Unit,
-) {
-    withContext(Dispatchers.IO) {
-        val url = when {
-            showFullWeek -> "http://" + mainViewModel.getControllerAddress() + WebApiUrls.BALLING_GET_EVENTS_7D
-            else -> "http://" + mainViewModel.getControllerAddress() + WebApiUrls.BALLING_GET_EVENTS_24H
-        }
-        val reader = BallingHistoryEventReader(url)
-        when (val result = reader.readBallingEvents(mainViewModel)) {
-            is DataFetchResult.Success -> {
-                val ballingEvents = result.data
-                withContext(context = Dispatchers.Main) {
-                    if (ballingEvents.isEmpty()) {
-                        updateBallingEvents(BallingHistoryUiState.Empty)
-                    }
-                    else {
-                        updateBallingEvents(BallingHistoryUiState.Success(ballingEvents))
-                    }
-                }
-            }
-            is DataFetchResult.Error -> {
-                withContext(context = Dispatchers.Main) {
-                    updateBallingEvents(BallingHistoryUiState.Error(result.errorMessage))
-                }
-            }
-        }
-    }
-}
-
 val ballingHistoryScreenMockData = listOf(
     BallingHistoryDosingEvent(
         timestamp = "2025-01-18 12:00:00",
@@ -277,6 +207,22 @@ val ballingHistoryScreenMockData = listOf(
         label = "MockDosingUnit 2"
     ),
 )
+
+val mockBallingHistoryUiState = BallingHistoryUiState.Success(ballingHistoryDosingEvents = ballingHistoryScreenMockData)
+
+val mockBallingHistoryViewModelSuccess = MockBallingHistoryViewModel(mockBallingHistoryUiState)
+
+val mockBallingHistoryUiStateError = BallingHistoryUiState.Error(errorMessage = "Error message")
+
+val mockBallingHistoryViewModelError = MockBallingHistoryViewModel(mockBallingHistoryUiStateError)
+
+val mockBallingHistoryUiStateLoading = BallingHistoryUiState.Loading
+
+val mockBallingHistoryViewModelLoading = MockBallingHistoryViewModel(mockBallingHistoryUiStateLoading)
+
+val mockBallingHistoryUiStateEmpty = BallingHistoryUiState.Empty
+
+val mockBallingHistoryViewModelEmpty = MockBallingHistoryViewModel(mockBallingHistoryUiStateEmpty)
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -294,9 +240,8 @@ val ballingHistoryScreenMockData = listOf(
 internal fun BallingHistoryScreenPreviewSuccess() {
     BallingHistoryScreen(
         showFullWeek = false,
-        mockBallingHistoryUiState = BallingHistoryUiState.Success(
-            ballingHistoryDosingEvents = ballingHistoryScreenMockData
-        )
+        mainViewModel = mockMainViewModel,
+        ballingHistoryViewModel = mockBallingHistoryViewModelSuccess,
     )
 }
 
@@ -305,8 +250,8 @@ internal fun BallingHistoryScreenPreviewSuccess() {
 internal fun BallingHistoryScreenPreviewEmpty() {
     BallingHistoryScreen(
         showFullWeek = false,
-        mockBallingHistoryUiState = BallingHistoryUiState.Empty
-
+        mainViewModel = mockMainViewModel,
+        ballingHistoryViewModel = mockBallingHistoryViewModelEmpty,
     )
 }
 
@@ -315,7 +260,8 @@ internal fun BallingHistoryScreenPreviewEmpty() {
 internal fun BallingHistoryScreenPreviewError() {
     BallingHistoryScreen(
         showFullWeek = false,
-        mockBallingHistoryUiState = BallingHistoryUiState.Error(errorMessage = "Error message")
+        mainViewModel = mockMainViewModel,
+        ballingHistoryViewModel = mockBallingHistoryViewModelError,
     )
 }
 
@@ -324,6 +270,7 @@ internal fun BallingHistoryScreenPreviewError() {
 internal fun BallingHistoryScreenPreviewLoading() {
     BallingHistoryScreen(
         showFullWeek = false,
-        mockBallingHistoryUiState = BallingHistoryUiState.Loading
+        mainViewModel = mockMainViewModel,
+        ballingHistoryViewModel = mockBallingHistoryViewModelLoading,
     )
 }

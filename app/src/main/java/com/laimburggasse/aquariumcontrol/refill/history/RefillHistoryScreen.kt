@@ -57,8 +57,6 @@ fun RefillHistoryScreen(
     // - headline
     // - subhead line
     // - a list of refill events downloaded from the server using a GET request.
-    // There is user interaction to modify data, hence no view model is used.
-
     val isControllerAddressValid: Boolean = !mainViewModel.getControllerAddress().isNullOrBlank()
     val isRefreshing: Boolean by remember { refillHistoryViewModel::isRefreshing }
     val refillHistoryUiState: RefillHistoryUiState by remember { refillHistoryViewModel::refillHistoryUiState }
@@ -200,19 +198,19 @@ val mockRefillHistoryUiStateSuccess = RefillHistoryUiState.Success(listOf(
     )
 ))
 
-val mockRefillHistoryViewModelSuccess = MockRefillHistoryViewModel(mockRefillHistoryUiStateSuccess)
+val mockRefillHistoryViewModelSuccess = MockRefillHistoryViewModel(mockRefillHistoryUiState = mockRefillHistoryUiStateSuccess)
 
-val mockRefillHistoryUiStateError = RefillHistoryUiState.Error("Error message")
+val mockRefillHistoryUiStateError = RefillHistoryUiState.Error(errorMessage = "Error message")
 
-val mockRefillHistoryViewModelError = MockRefillHistoryViewModel(mockRefillHistoryUiStateError)
+val mockRefillHistoryViewModelError = MockRefillHistoryViewModel(mockRefillHistoryUiState = mockRefillHistoryUiStateError)
 
 val mockRefillHistoryUiStateLoading = RefillHistoryUiState.Loading
 
-val mockRefillHistoryViewModelLoading = MockRefillHistoryViewModel(mockRefillHistoryUiStateLoading)
+val mockRefillHistoryViewModelLoading = MockRefillHistoryViewModel(mockRefillHistoryUiState = mockRefillHistoryUiStateLoading)
 
 val mockRefillHistoryUiStateEmpty = RefillHistoryUiState.Empty
 
-val mockRefillHistoryViewModelEmpty = MockRefillHistoryViewModel(mockRefillHistoryUiStateEmpty)
+val mockRefillHistoryViewModelEmpty = MockRefillHistoryViewModel(mockRefillHistoryUiState = mockRefillHistoryUiStateEmpty)
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
