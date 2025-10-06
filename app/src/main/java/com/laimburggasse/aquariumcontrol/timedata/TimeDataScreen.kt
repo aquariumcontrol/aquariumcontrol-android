@@ -136,8 +136,7 @@ fun TimeDataScreen(
                         text = stringResource(id = R.string.time_data_series),
                     )
                     PullToRefreshBox(
-                        modifier = Modifier
-                            .fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                         state = rememberPullToRefreshState(),
                         isRefreshing = isRefreshing,
                         contentAlignment = Alignment.Center,

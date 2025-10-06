@@ -42,7 +42,6 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -86,15 +85,26 @@ fun OverviewScreen(
     val controllerPort: Int?
     var overviewUiState by remember { mutableStateOf(mockOverviewUiState ?: OverviewUiState.Loading) }
 
-    fun loadData() {
+    fun loadData(onFinished: () -> Unit = {}) {
         coroutineScope.launch {
             isRefreshing = true
             if (mainViewModel != null) {
-                fetchOverviewData(
-                    mainViewModel,
-                ) { newOverviewUiState ->
-                    overviewUiState = newOverviewUiState
+                val result = fetchOverviewData(mainViewModel)
+                // Switch to the main thread to update the UI
+                withContext(Dispatchers.Main) {
+                    overviewUiState = when (result) {
+                        is DataFetchResult.Error -> {
+                            OverviewUiState.Error(errorMessage = result.errorMessage)
+                        }
+                        is DataFetchResult.Success -> {
+                            OverviewUiState.Success(overviewData = result.data)
+                        }
+                    }
                 }
+            }
+            // onFinished may alter the UI, so also switch to main thread
+            withContext(Dispatchers.Main) {
+                onFinished()
             }
         }
     }
@@ -104,9 +114,9 @@ fun OverviewScreen(
         controllerAddress = mainViewModel.getControllerAddress()
         controllerUsername = mainViewModel.getControllerUser()
         controllerPort = mainViewModel.getControllerPort()
-        LaunchedEffect(Unit) {
-            loadData()
-        }
+        //LaunchedEffect(Unit) {
+        //    loadData { isRefreshing = false }
+        //}
     } else {
         controllerProfileName = mockController.name
         controllerAddress = mockController.address
@@ -117,8 +127,7 @@ fun OverviewScreen(
     // Use a LaunchedEffect to fetch data on initial composition
     LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
         if (mainViewModel != null && isControllerAddressValid) { // Check for null and validity
-            loadData()
-            isRefreshing = false
+            loadData { isRefreshing = false }
         }
     }
 
@@ -133,33 +142,24 @@ fun OverviewScreen(
                     modifier = Modifier.padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+
                     ScreenHeadlineComposable(
                         text = stringResource(id = R.string.overview)
                     )
                     PullToRefreshBox(
-                        modifier = Modifier
-                            .fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                         state = rememberPullToRefreshState(),
                         isRefreshing = isRefreshing,
                         contentAlignment = Alignment.Center,
-                        onRefresh = {
-                            // This lambda will be called when the user pulls to refresh
-                            isRefreshing = true
-                            // Perform the refresh operation here (e.g., fetch new data)
-                            coroutineScope.launch {
-                                if (isControllerAddressValid) {
-                                    loadData()
-                                    delay(timeMillis = 500)
-                                }
-                                isRefreshing = false // Reset the refresh state
-                            }
-                        },
+                        onRefresh = { loadData { isRefreshing = false } },
                         indicator = {
-                            CircularProgressIndicator(
-                                modifier = Modifier
-                                    .size(150.dp),
-                                color = MaterialTheme.colorScheme.primary
-                            )
+                            if (isRefreshing) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .size(150.dp),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
                     )
                     {
@@ -231,16 +231,8 @@ fun OverviewScreen(
                                     .fillMaxWidth()
                                     .padding(horizontal = 8.dp),
                                 onClick = {
-                                    coroutineScope.launch {
-                                        if (isControllerAddressValid) {
-                                            isRefreshing = true
-                                            try {
-                                                loadData()
-                                                delay(500)
-                                            } finally {
-                                                isRefreshing = false // Reset the refresh state
-                                            }
-                                        }
+                                    if (isControllerAddressValid) {
+                                        loadData { isRefreshing = false }
                                     }
                                 },
                             ) {
@@ -262,27 +254,12 @@ fun OverviewScreen(
     }
 }
 
-private suspend fun fetchOverviewData(
-    mainViewModel: MainViewModel,
-    updateOverviewUiState: (OverviewUiState) -> Unit,
-) {
-    withContext(Dispatchers.IO) {
+private suspend fun fetchOverviewData(mainViewModel: MainViewModel): DataFetchResult<OverviewData> {
+    return withContext(context = Dispatchers.IO) {
         val url =
             "http://" + mainViewModel.getControllerAddress() + WebApiUrls.OVERVIEW_GET_DATA
         val reader = OverviewDataReader(url)
-        when (val result = reader.readOverviewData()) {
-            is DataFetchResult.Error -> {
-                withContext(context = Dispatchers.Main) {
-                    updateOverviewUiState(OverviewUiState.Error(result.errorMessage))
-                }
-            }
-            is DataFetchResult.Success -> {
-                val overviewData = result.data
-                withContext(context = Dispatchers.Main) {
-                    updateOverviewUiState(OverviewUiState.Success(overviewData = overviewData))
-                }
-            }
-        }
+        reader.readOverviewData()
     }
 }
 
