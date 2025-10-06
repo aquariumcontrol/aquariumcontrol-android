@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -19,11 +21,7 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -31,26 +29,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.controller.ControllerProfile
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
-import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
-import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @Composable
 fun OverviewScreen(
     navHostController: NavHostController? = null,
-    mockController: ControllerProfile? = null,
-    mockOverviewUiState: OverviewUiState? = null,
-    mainViewModel: MainViewModel? = null,
+    mainViewModel: MainViewModel,
+    overviewViewModel: OverviewViewModelInterface = viewModel<OverviewViewModel>(),
     darkTheme: Boolean? = null
 ) {
     // This screen displays
@@ -59,75 +53,20 @@ fun OverviewScreen(
     // - a button to update the overview data
 
     val configuration = LocalConfiguration.current
+    val isControllerAddressValid: Boolean = !mainViewModel.getControllerAddress().isNullOrBlank()
+    val isRefreshing by remember { overviewViewModel::isRefreshing }
+    val overviewUiState by remember { overviewViewModel::overviewUiState }
 
-    // display circular progress indicator in preview for portrait mode
-    val displayCircularProgressIndicatorInPreview: Boolean = when (configuration.orientation) {
-        Configuration.ORIENTATION_LANDSCAPE -> {
-            false
-        }
-        else -> {
-            mockOverviewUiState == OverviewUiState.Loading
-        }
-    }
+    val controllerProfileName: String? = mainViewModel.getControllerName()
+    val controllerAddress: String? = mainViewModel.getControllerAddress()
+    val controllerUsername: String? = mainViewModel.getControllerUser()
+    val controllerPort: Int? = mainViewModel.getControllerPort()
 
-    var isRefreshing by remember {
-        mutableStateOf(
-            displayCircularProgressIndicatorInPreview
-        )
-    }
-
-    val coroutineScope = rememberCoroutineScope()
-    val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
-
-    val controllerProfileName: String?
-    val controllerAddress: String?
-    val controllerUsername: String?
-    val controllerPort: Int?
-    var overviewUiState by remember { mutableStateOf(mockOverviewUiState ?: OverviewUiState.Loading) }
-
-    fun loadData(onFinished: () -> Unit = {}) {
-        coroutineScope.launch {
-            isRefreshing = true
-            if (mainViewModel != null) {
-                val result = fetchOverviewData(mainViewModel)
-                // Switch to the main thread to update the UI
-                withContext(Dispatchers.Main) {
-                    overviewUiState = when (result) {
-                        is DataFetchResult.Error -> {
-                            OverviewUiState.Error(errorMessage = result.errorMessage)
-                        }
-                        is DataFetchResult.Success -> {
-                            OverviewUiState.Success(overviewData = result.data)
-                        }
-                    }
-                }
-            }
-            // onFinished may alter the UI, so also switch to main thread
-            withContext(Dispatchers.Main) {
-                onFinished()
-            }
-        }
-    }
-
-    if (mockController == null) {
-        controllerProfileName = mainViewModel!!.getControllerName()
-        controllerAddress = mainViewModel.getControllerAddress()
-        controllerUsername = mainViewModel.getControllerUser()
-        controllerPort = mainViewModel.getControllerPort()
-        //LaunchedEffect(Unit) {
-        //    loadData { isRefreshing = false }
-        //}
-    } else {
-        controllerProfileName = mockController.name
-        controllerAddress = mockController.address
-        controllerUsername = mockController.user
-        controllerPort = mockController.port
-    }
 
     // Use a LaunchedEffect to fetch data on initial composition
     LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
-        if (mainViewModel != null && isControllerAddressValid) { // Check for null and validity
-            loadData { isRefreshing = false }
+        if (isControllerAddressValid) { // Check for null and validity
+            overviewViewModel.loadData(mainViewModel)
         }
     }
 
@@ -151,7 +90,7 @@ fun OverviewScreen(
                         state = rememberPullToRefreshState(),
                         isRefreshing = isRefreshing,
                         contentAlignment = Alignment.Center,
-                        onRefresh = { loadData { isRefreshing = false } },
+                        onRefresh = { overviewViewModel.loadData(mainViewModel) },
                         indicator = {
                             if (isRefreshing) {
                                 CircularProgressIndicator(
@@ -164,8 +103,7 @@ fun OverviewScreen(
                     )
                     {
                         Column(
-                            modifier = Modifier
-                                .fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth().verticalScroll(state = rememberScrollState()),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             when (overviewUiState) {
@@ -232,7 +170,7 @@ fun OverviewScreen(
                                     .padding(horizontal = 8.dp),
                                 onClick = {
                                     if (isControllerAddressValid) {
-                                        loadData { isRefreshing = false }
+                                        overviewViewModel.loadData(mainViewModel)
                                     }
                                 },
                             ) {
@@ -251,15 +189,6 @@ fun OverviewScreen(
                 )
             }
         }
-    }
-}
-
-private suspend fun fetchOverviewData(mainViewModel: MainViewModel): DataFetchResult<OverviewData> {
-    return withContext(context = Dispatchers.IO) {
-        val url =
-            "http://" + mainViewModel.getControllerAddress() + WebApiUrls.OVERVIEW_GET_DATA
-        val reader = OverviewDataReader(url)
-        reader.readOverviewData()
     }
 }
 
@@ -286,6 +215,16 @@ val mockControllerProfile = ControllerProfile(
     port = 80,
     user = "user",
 )
+val mockOverviewViewModelSuccess = MockOverviewViewModel(
+    mockOverviewUiState = OverviewUiState.Success(overviewData = createMockOverviewData())
+)
+val mockOverviewViewModelError = MockOverviewViewModel(
+    mockOverviewUiState = OverviewUiState.Error(errorMessage = "Error message")
+)
+val mockOverviewViewModelLoading = MockOverviewViewModel(
+    mockOverviewUiState = OverviewUiState.Loading
+)
+val mockMainViewModel = MockMainViewModel(controller = mockControllerProfile)
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -302,8 +241,8 @@ val mockControllerProfile = ControllerProfile(
 @Composable
 fun OverviewScreenPreviewSuccess() {
     OverviewScreen(
-        mockController = mockControllerProfile,
-        mockOverviewUiState = OverviewUiState.Success(createMockOverviewData())
+        mainViewModel = mockMainViewModel,
+        overviewViewModel = mockOverviewViewModelSuccess,
     )
 }
 
@@ -312,8 +251,8 @@ fun OverviewScreenPreviewSuccess() {
 @Composable
 fun OverviewScreenPreviewError() {
     OverviewScreen(
-        mockController = mockControllerProfile,
-        mockOverviewUiState = OverviewUiState.Error("Error message")
+        mainViewModel = mockMainViewModel,
+        overviewViewModel = mockOverviewViewModelError,
     )
 }
 
@@ -322,7 +261,7 @@ fun OverviewScreenPreviewError() {
 @Composable
 fun OverviewScreenPreviewLoading() {
     OverviewScreen(
-        mockController = mockControllerProfile,
-        mockOverviewUiState = OverviewUiState.Loading
+        mainViewModel = mockMainViewModel,
+        overviewViewModel = mockOverviewViewModelLoading,
     )
 }

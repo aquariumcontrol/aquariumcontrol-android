@@ -10,7 +10,7 @@ import com.laimburggasse.aquariumcontrol.feed.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleViewModel
 
-class MainViewModel: ViewModel() {
+open class MainViewModel: ViewModel() {
     private var selectedController: ControllerProfile? by mutableStateOf(null)
     private var defaultControllerProfileId: Long = 0
     private var selectedFeedScheduleEntry: FeedScheduleEntry? by mutableStateOf(null)
@@ -37,11 +37,11 @@ class MainViewModel: ViewModel() {
         return selectedController != null
     }
 
-    fun getControllerAddress(): String? {
+    open fun getControllerAddress(): String? {
         return selectedController?.address
     }
 
-    fun getControllerUser(): String? {
+    open fun getControllerUser(): String? {
         return selectedController?.user
     }
 
@@ -49,11 +49,11 @@ class MainViewModel: ViewModel() {
         return selectedController?.password
     }
 
-    fun getControllerPort(): Int? {
+    open fun getControllerPort(): Int? {
         return selectedController?.port
     }
 
-    fun getControllerName(): String? {
+    open fun getControllerName(): String? {
         return selectedController?.name
     }
 
