@@ -52,10 +52,10 @@ fun OverviewScreen(
     // - the overview data of the aquarium: Text for signal description and current value
     // - a button to update the overview data
 
-    val configuration = LocalConfiguration.current
+    val configuration: Configuration = LocalConfiguration.current
     val isControllerAddressValid: Boolean = !mainViewModel.getControllerAddress().isNullOrBlank()
-    val isRefreshing by remember { overviewViewModel::isRefreshing }
-    val overviewUiState by remember { overviewViewModel::overviewUiState }
+    val isRefreshing: Boolean by remember { overviewViewModel::isRefreshing }
+    val overviewUiState: OverviewUiState by remember { overviewViewModel::overviewUiState }
 
     val controllerProfileName: String? = mainViewModel.getControllerName()
     val controllerAddress: String? = mainViewModel.getControllerAddress()
@@ -65,7 +65,7 @@ fun OverviewScreen(
 
     // Use a LaunchedEffect to fetch data on initial composition
     LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
-        if (isControllerAddressValid) { // Check for null and validity
+        if (isControllerAddressValid) {
             overviewViewModel.loadData(mainViewModel)
         }
     }
