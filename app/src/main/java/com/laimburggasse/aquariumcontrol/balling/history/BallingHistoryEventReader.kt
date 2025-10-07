@@ -5,6 +5,7 @@ import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.Response
 
 class BallingHistoryEventReader(private val url: String) {
     // This class will read the Balling dosing events from the server using a GET request.
@@ -16,13 +17,14 @@ class BallingHistoryEventReader(private val url: String) {
             .url(url)
             .build()
 
+        // @todo: check if this check is necessary
         val isControllerLoaded = mainViewModel?.isControllerLoaded() == true
         if (!isControllerLoaded) {
             return DataFetchResult.Error(null, "Controller not loaded.")
         }
 
         try {
-            val response = client.newCall(request).execute()
+            val response: Response = client.newCall(request).execute()
             if (response.isSuccessful) {
                 val responseBody = response.body.string()
                 if (responseBody.isEmpty()) {

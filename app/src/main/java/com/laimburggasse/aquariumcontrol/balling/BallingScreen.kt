@@ -158,7 +158,7 @@ val mockMainViewModel = MockMainViewModel()
 internal fun BallingScreenPreview() {
     val mockBallingProfile1 = BallingProfile(pumpId = 1, volume = 2.1, label = "mock1")
     val mockBallingProfile2 = BallingProfile(pumpId = 2, volume = 3.1, label = "mock2")
-    val mockBallingProfiles = listOf(mockBallingProfile1, mockBallingProfile2)
+    val mockBallingProfiles: List<BallingProfile> = listOf(mockBallingProfile1, mockBallingProfile2)
 
     BallingScreen(
         mockBallingProfiles = mockBallingProfiles,

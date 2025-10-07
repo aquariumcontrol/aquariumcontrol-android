@@ -1,16 +1,25 @@
 package com.laimburggasse.aquariumcontrol.ventilation
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.heating.HeatingSetVals
+import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsReader
+import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsUiState
+import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class VentilationSetValsViewModel(
     private var ventilationSetVals: VentilationSetVals,
@@ -23,6 +32,9 @@ class VentilationSetValsViewModel(
     val sliderRange: LiveData<ClosedFloatingPointRange<Float>> = _sliderRange
     val lowerBoundValue: LiveData<Double> = _lowerBoundValue
     val upperBoundValue: LiveData<Double> = _upperBoundValue
+
+    var ventilationSetValsUiState: VentilationSetValsUiState by mutableStateOf(value = VentilationSetValsUiState.Loading)
+        private set
 
     val onRangeChangedBySlider: (Float, Float) -> Unit = { start, end ->
         Log.d("VentilationSetValsViewModel", "onRangeChangedBySlider: $start - $end")
@@ -96,4 +108,38 @@ class VentilationSetValsViewModel(
         Log.d("VentilationSetValsViewModel", "getVentilationSwitchOffTempString: ${ventilationSetVals.ventilationSwitchOffTemp}")
         return ventilationSetVals.ventilationSwitchOffTemp.toString()
     }
+
+    fun loadData(mainViewModel: MainViewModel) {
+        viewModelScope.launch {
+            val result: DataFetchResult<List<VentilationSetVals>> = fetchVentilationSetVals(
+                mainViewModel
+            )
+            // @ todo: transfer content of UiState to other class attributes
+            ventilationSetValsUiState = when(result) {
+                is DataFetchResult.Success -> {
+                    val ventilationSetValsList: List<VentilationSetVals> = result.data
+                    if (ventilationSetValsList.isEmpty()) {
+                        VentilationSetValsUiState.Empty
+                    }
+                    else {
+                        VentilationSetValsUiState.Success(ventilationSetVals = ventilationSetValsList.first())
+                    }
+                }
+                is DataFetchResult.Error -> {
+                    VentilationSetValsUiState.Error(errorMessage = result.errorMessage)
+                }
+            }
+        }
+    }
+
+    private suspend fun fetchVentilationSetVals(
+        mainViewModel: MainViewModel,
+    ): DataFetchResult<List<VentilationSetVals>> {
+        return withContext(Dispatchers.IO) {
+            val url: String = "http://" + mainViewModel.getControllerAddress() + WebApiUrls.HEATING_GET_SET_VALS
+            val ventilationSetValsReader = VentilationSetValsReader(url)
+            ventilationSetValsReader.readVentilationSetVals()
+        }
+    }
+
 }

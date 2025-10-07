@@ -1,9 +1,19 @@
 package com.laimburggasse.aquariumcontrol.heating
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
+import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HeatingSetValsViewModel(
     private var heatingSetVals: HeatingSetVals,
@@ -15,6 +25,9 @@ class HeatingSetValsViewModel(
     val sliderRange: LiveData<ClosedFloatingPointRange<Float>> = _sliderRange
     val lowerBoundValue: LiveData<Double> = _lowerBoundValue
     val upperBoundValue: LiveData<Double> = _upperBoundValue
+
+    var heatingSetValsUiState: HeatingSetValsUiState by mutableStateOf(value = HeatingSetValsUiState.Loading)
+        private set
 
     val onRangeChangedBySlider: (Float, Float) -> Unit = { start, end ->
         Log.d("HeatingSetValsViewModel", "onRangeChangedBySlider: $start - $end")
@@ -74,5 +87,38 @@ class HeatingSetValsViewModel(
 
     fun getHeatingSwitchOffTempString(): String {
         return heatingSetVals.heatingSwitchOffTemp.toString()
+    }
+
+    fun loadData(mainViewModel: MainViewModel) {
+        viewModelScope.launch {
+            val result: DataFetchResult<List<HeatingSetVals>> = fetchHeatingSetVals(
+                mainViewModel
+            )
+            // @ todo: transfer content of UiState to other class attributes
+            heatingSetValsUiState = when(result) {
+                is DataFetchResult.Success -> {
+                    val heatingSetValsList: List<HeatingSetVals> = result.data
+                    if (heatingSetValsList.isEmpty()) {
+                        HeatingSetValsUiState.Empty
+                    }
+                    else {
+                        HeatingSetValsUiState.Success(heatingSetVals = heatingSetValsList.first())
+                    }
+                }
+                is DataFetchResult.Error -> {
+                    HeatingSetValsUiState.Error(errorMessage = result.errorMessage)
+                }
+            }
+        }
+    }
+
+    private suspend fun fetchHeatingSetVals(
+        mainViewModel: MainViewModel,
+    ): DataFetchResult<List<HeatingSetVals>> {
+        return withContext(Dispatchers.IO) {
+            val url: String = "http://" + mainViewModel.getControllerAddress() + WebApiUrls.HEATING_GET_SET_VALS
+            val heatingSetValsReader = HeatingSetValsReader(url)
+            heatingSetValsReader.readHeatingSetVals()
+        }
     }
 }

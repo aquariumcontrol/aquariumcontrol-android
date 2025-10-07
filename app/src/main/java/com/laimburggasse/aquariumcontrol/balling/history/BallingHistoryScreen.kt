@@ -208,19 +208,19 @@ val ballingHistoryScreenMockData = listOf(
 
 val mockBallingHistoryUiStateSuccess = BallingHistoryUiState.Success(ballingHistoryDosingEvents = ballingHistoryScreenMockData)
 
-val mockBallingHistoryViewModelSuccess = MockBallingHistoryViewModel(mockBallingHistoryUiStateSuccess)
+val mockBallingHistoryViewModelSuccess = MockBallingHistoryViewModel(mockBallingHistoryUiState = mockBallingHistoryUiStateSuccess)
 
 val mockBallingHistoryUiStateError = BallingHistoryUiState.Error(errorMessage = "Error message")
 
-val mockBallingHistoryViewModelError = MockBallingHistoryViewModel(mockBallingHistoryUiStateError)
+val mockBallingHistoryViewModelError = MockBallingHistoryViewModel(mockBallingHistoryUiState = mockBallingHistoryUiStateError)
 
 val mockBallingHistoryUiStateLoading = BallingHistoryUiState.Loading
 
-val mockBallingHistoryViewModelLoading = MockBallingHistoryViewModel(mockBallingHistoryUiStateLoading)
+val mockBallingHistoryViewModelLoading = MockBallingHistoryViewModel(mockBallingHistoryUiState = mockBallingHistoryUiStateLoading)
 
 val mockBallingHistoryUiStateEmpty = BallingHistoryUiState.Empty
 
-val mockBallingHistoryViewModelEmpty = MockBallingHistoryViewModel(mockBallingHistoryUiStateEmpty)
+val mockBallingHistoryViewModelEmpty = MockBallingHistoryViewModel(mockBallingHistoryUiState = mockBallingHistoryUiStateEmpty)
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
