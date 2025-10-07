@@ -25,7 +25,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,12 +38,10 @@ import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.FeedProfileImport
+import com.laimburggasse.aquariumcontrol.feed.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
-import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
-import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
-import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
 import java.sql.Timestamp
 import java.util.Calendar
 import java.util.Locale
@@ -52,7 +49,7 @@ import java.util.Locale
 @Composable
 fun FeedProfileScheduleScreen(
     navHostController: NavHostController? = null,
-    mainViewModel: MainViewModel? = null,
+    mainViewModel: MainViewModel,
     mockFeedProfile: FeedProfile? = null,
     mockFeedScheduleEntry: FeedScheduleEntry? = null,
     darkTheme: Boolean? = null
@@ -67,27 +64,21 @@ fun FeedProfileScheduleScreen(
     // - Checkbox to repeat daily
     // - Button to confirm the scheduling of the feed profile
 
-    val feedProfile = mainViewModel?.getMySelectedFeedProfile() ?: mockFeedProfile
+    val feedProfile = mainViewModel.getMySelectedFeedProfile() ?: mockFeedProfile
 
-    var feedScheduleEntry = mainViewModel?.getMySelectedFeedScheduleEntry() ?: mockFeedScheduleEntry
+    val feedScheduleEntryOpt = mainViewModel.getMySelectedFeedScheduleEntry() ?: mockFeedScheduleEntry
 
-    // create feed schedule entry in case none is provided
-    if (feedScheduleEntry == null) {
-        feedScheduleEntry = FeedScheduleEntry(
+    val feedScheduleEntry = feedScheduleEntryOpt ?: FeedScheduleEntry(
             timestamp = Timestamp(System.currentTimeMillis()),
             profileName = feedProfile?.profileName ?: "ERROR",
             isDaily = false
         )
-    }
 
-    val feedScheduleViewModel = mainViewModel?.getMyFeedScheduleViewModel()
+    val feedScheduleViewModel = mainViewModel.getMyFeedScheduleViewModel()
 
-    val feedProfileDisplayName =
-        feedProfile?.profileName ?: "ERROR"
+    val feedProfileDisplayName: String = feedProfile?.profileName ?: "ERROR"
 
     var repeatDaily by remember { mutableStateOf(feedScheduleEntry.isDaily) }
-
-    val coroutineScope = rememberCoroutineScope()
 
     val context = LocalContext.current // context for web API request and Toasts
 
@@ -181,7 +172,7 @@ fun FeedProfileScheduleScreen(
                         Spacer(modifier = Modifier.height(16.dp))
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Checkbox(
-                                checked = repeatDaily == true,
+                                checked = repeatDaily,
                                 onCheckedChange = { repeatDaily = it }
                             )
                             Spacer(Modifier.width(8.dp))
@@ -204,30 +195,10 @@ fun FeedProfileScheduleScreen(
                                 )
                                 feedScheduleEntry.timestamp =
                                     Timestamp(selectedCalendar.timeInMillis)
-                                if (mainViewModel != null) {
-                                    feedScheduleViewModel?.addFeedScheduleEntry(feedScheduleEntry)
-                                    val apiUrl: String =
-                                        if (feedProfile == null) WebApiUrls.FEED_POST_PROFILE_SCHEDULE
-                                        else WebApiUrls.FEED_POST_PROFILE_UPDATE_SCHEDULE
-
-                                    val optionalGetParams =
-                                        feedProfile?.getFeedProfileSchedulingApiCallParameters(
-                                                isDaily = repeatDaily == true,
-                                                timestamp = Timestamp(selectedCalendar.timeInMillis)
-                                            )
-
-                                    if (optionalGetParams != null) {
-                                        val webApiPostRequest = WebApiPostRequest()
-
-                                        webApiPostRequestExecution(
-                                            mainViewModel = mainViewModel,
-                                            coroutineScope = coroutineScope,
-                                            webApiPostRequest = webApiPostRequest,
-                                            optionalGetParams = optionalGetParams,
-                                            apiUrl = apiUrl
-                                        )
-                                    }
-                                }
+                                feedScheduleViewModel?.addFeedScheduleEntry(
+                                    feedScheduleEntry = feedScheduleEntry,
+                                    mainViewModel = mainViewModel
+                                )
                                 // Show the Toast after the API call
                                 Toast.makeText(
                                     context,
@@ -278,6 +249,7 @@ internal fun FeedProfileScheduleScreenPreview() {
     ).transformToFeedScheduleEntry()
 
     FeedProfileScheduleScreen(
+        mainViewModel = mockMainViewModel,
         mockFeedProfile = mockFeedProfile,
         mockFeedScheduleEntry = mockFeedScheduleEntry
     )

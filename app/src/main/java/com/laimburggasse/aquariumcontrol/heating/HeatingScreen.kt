@@ -118,7 +118,6 @@ fun HeatingScreen(
                                                     HeatingButtonsComposable(
                                                         heatingSetValsViewModel = heatingSetValsViewModel,
                                                         mainViewModel = mainViewModel,
-                                                        coroutineScope = coroutineScope
                                                     )
                                                 }
                                                 Row {
@@ -133,7 +132,6 @@ fun HeatingScreen(
                                                 HeatingButtonsComposable(
                                                     heatingSetValsViewModel = heatingSetValsViewModel,
                                                     mainViewModel = mainViewModel,
-                                                    coroutineScope = coroutineScope
                                                 )
                                                 Spacer(
                                                     modifier = Modifier.size(
@@ -224,6 +222,7 @@ fun HeatingScreen(
                                     val heatingStats = (heatingStatsUiState as HeatingStatsUiState.Success).heatingStats
                                     HeatingStatsComposable(heatingStats = heatingStats, updateData =
                                         {
+                                            // @todo: replace this code with message passing
                                             coroutineScope.launch {
                                                 if (isControllerAddressValid) {
                                                     try {

@@ -17,7 +17,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -25,21 +24,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
-import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
-import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
-import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
 
 @Composable
 fun RefillScreen(
     navHostController: NavHostController? = null,
-    mainViewModel: MainViewModel? = null,
+    mainViewModel: MainViewModel,
     darkTheme: Boolean? = null
 ) {
     // This screen displays
@@ -49,12 +47,11 @@ fun RefillScreen(
     // - a button for stopping the refill controller
     // - a button for resetting errors of the refill controller
 
-    val isControllerLoaded = mainViewModel?.isControllerLoaded() == true
-    val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
+    val isControllerLoaded = mainViewModel.isControllerLoaded()
+    val isControllerAddressValid: Boolean = !mainViewModel.getControllerAddress().isNullOrBlank()
     val context = LocalContext.current // context for web API request and Toasts
 
-    // Create a CoroutineScope that follows this composable's lifecycle
-    val coroutineScope = rememberCoroutineScope()
+    val refillViewModel: RefillViewModel = viewModel(factory = RefillViewModelFactory())
 
     AquariumControllerTheme(darkTheme) {
         Surface(
@@ -122,14 +119,7 @@ fun RefillScreen(
                                             .padding(horizontal = 8.dp),
                                         onClick = {
                                             if (isControllerLoaded && isControllerAddressValid) {
-                                                val webApiPostRequest = WebApiPostRequest()
-                                                webApiPostRequestExecution(
-                                                    mainViewModel = mainViewModel,
-                                                    apiUrl = WebApiUrls.REFILL_POST_CONTROL_START,
-                                                    coroutineScope = coroutineScope,
-                                                    webApiPostRequest = webApiPostRequest,
-                                                )
-                                                // Show the Toast after the API call
+                                                refillViewModel.sendStartRequest(mainViewModel)
                                                 Toast.makeText(
                                                     context,
                                                     context.getString(R.string.sent_request_to_controller_for_starting_refill_control),
@@ -149,14 +139,7 @@ fun RefillScreen(
                                             .padding(horizontal = 8.dp),
                                         onClick = {
                                             if (isControllerLoaded && isControllerAddressValid) {
-                                                val webApiPostRequest = WebApiPostRequest()
-                                                webApiPostRequestExecution(
-                                                    mainViewModel = mainViewModel,
-                                                    apiUrl = WebApiUrls.REFILL_POST_CONTROL_STOP,
-                                                    coroutineScope = coroutineScope,
-                                                    webApiPostRequest = webApiPostRequest,
-                                                )
-                                                // Show the Toast after the API call
+                                                refillViewModel.sendStartRequest(mainViewModel)
                                                 Toast.makeText(
                                                     context,
                                                     context.getString(R.string.sent_request_to_controller_for_stopping_refill_control),
@@ -176,14 +159,7 @@ fun RefillScreen(
                                             .padding(horizontal = 8.dp),
                                         onClick = {
                                             if (isControllerLoaded && isControllerAddressValid) {
-                                                val webApiPostRequest = WebApiPostRequest()
-                                                webApiPostRequestExecution(
-                                                    mainViewModel = mainViewModel,
-                                                    apiUrl = WebApiUrls.REFILL_POST_CONTROL_RESET,
-                                                    coroutineScope = coroutineScope,
-                                                    webApiPostRequest = webApiPostRequest,
-                                                )
-                                                // Show the Toast after the API call
+                                                refillViewModel.sendResetRequest(mainViewModel)
                                                 Toast.makeText(
                                                     context,
                                                     context.getString(R.string.sent_request_to_controller_for_resetting_errors),
@@ -212,6 +188,8 @@ fun RefillScreen(
     }
 }
 
+val mockMainViewModel = MockMainViewModel()
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
@@ -227,5 +205,5 @@ fun RefillScreen(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 internal fun RefillScreenPreview() {
-    RefillScreen()
+    RefillScreen(mainViewModel = mockMainViewModel)
 }

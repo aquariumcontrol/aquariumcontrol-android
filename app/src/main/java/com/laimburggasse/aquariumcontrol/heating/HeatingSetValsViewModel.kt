@@ -20,7 +20,7 @@ import kotlinx.coroutines.withContext
 
 class HeatingSetValsViewModel(
     private var heatingSetVals: HeatingSetVals,
-) : ViewModel() {
+) : ViewModel(), HeatingSetValsViewModelInterface {
     // This class will allow the user to edit the heating control parameters
     private val _sliderRange = MutableLiveData<ClosedFloatingPointRange<Float>>()
     private val _lowerBoundValue = MutableLiveData<Double>()
@@ -57,7 +57,7 @@ class HeatingSetValsViewModel(
         }
     }
 
-    fun resetValues() {
+    override fun resetValues() {
         _sliderRange.value =
             heatingSetVals.heatingSwitchOnTemp.toFloat()..
                     heatingSetVals.heatingSwitchOffTemp.toFloat()
@@ -66,7 +66,7 @@ class HeatingSetValsViewModel(
         _upperBoundValue.value = heatingSetVals.heatingSwitchOffTemp
     }
 
-    fun updateValues(mainViewModel: MainViewModel) {
+    override fun updateValues(mainViewModel: MainViewModel) {
         if (_sliderRange.value != null) {
             heatingSetVals.heatingSwitchOnTemp = sliderRange.value!!.start.toDouble()
             heatingSetVals.heatingSwitchOffTemp = sliderRange.value!!.endInclusive.toDouble()

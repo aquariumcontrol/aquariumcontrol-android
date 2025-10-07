@@ -8,6 +8,7 @@ import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.sql.Timestamp
 
 class FeedScheduleViewModel(myFeedScheduleEntries: List<FeedScheduleEntry>?) :
     ViewModel() {
@@ -51,9 +52,30 @@ class FeedScheduleViewModel(myFeedScheduleEntries: List<FeedScheduleEntry>?) :
         )
     }
 
-    fun addFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry) {
+    fun addFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry, mainViewModel: MainViewModel) {
         val currentList = _feedScheduleEntries.value.orEmpty().toMutableList()
         currentList.add(feedScheduleEntry)
         _feedScheduleEntries.value = currentList
+        val apiUrl: String =
+            if (feedProfile == null) WebApiUrls.FEED_POST_PROFILE_SCHEDULE
+            else WebApiUrls.FEED_POST_PROFILE_UPDATE_SCHEDULE
+
+        val optionalGetParams =
+            feedProfile?.getFeedProfileSchedulingApiCallParameters(
+                isDaily = repeatDaily,
+                timestamp = Timestamp(selectedCalendar.timeInMillis)
+            )
+
+        if (optionalGetParams != null) {
+            val webApiPostRequest =
+
+            webApiPostRequestExecution(
+                mainViewModel = mainViewModel,
+                webApiPostRequest = WebApiPostRequest(),
+                optionalGetParams = optionalGetParams,
+                apiUrl = apiUrl
+            )
+        }
+
     }
 }
