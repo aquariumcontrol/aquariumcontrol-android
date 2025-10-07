@@ -38,12 +38,7 @@ import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
-import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
-import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @Composable
 fun HeatingScreen(
@@ -63,6 +58,7 @@ fun HeatingScreen(
     val isControllerAddressValid: Boolean = !mainViewModel.getControllerAddress().isNullOrBlank()
 
     var heatingSetValsUiState: HeatingSetValsUiState by remember { mutableStateOf(value = mockHeatingSetValsUiState ?: HeatingSetValsUiState.Loading) }
+    var heatingStatsUiState: HeatingStatsUiState by remember { mutableStateOf(value = mockHeatingStatsUiState ?: HeatingStatsUiState.Loading) }
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -73,16 +69,19 @@ fun HeatingScreen(
         heatingSwitchOnTemp = 22.0
     )
 
-    var heatingStatsUiState: HeatingStatsUiState by remember { mutableStateOf(value = mockHeatingStatsUiState ?: HeatingStatsUiState.Loading) }
-
     val heatingSetValsViewModel: HeatingSetValsViewModel = viewModel(
         factory = HeatingSetValsViewModelFactory(heatingInitialSetVals)
+    )
+
+    val heatingStatsViewModel: HeatingStatsViewModel = viewModel(
+        factory = HeatingStatsViewModelFactory()
     )
 
     @Suppress("UNCHECKED_CAST")
     LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
         if (isControllerAddressValid) { // Check for null and validity
             heatingSetValsViewModel.loadData(mainViewModel = mainViewModel)
+            heatingStatsViewModel.loadData(mainViewModel = mainViewModel)
         }
     }
 
@@ -229,12 +228,7 @@ fun HeatingScreen(
                                                 if (isControllerAddressValid) {
                                                     try {
                                                         heatingStatsUiState = HeatingStatsUiState.Loading
-                                                        delay(500)
-                                                        fetchHeatingStats(
-                                                            mainViewModel
-                                                        ) { newHeatingStatsUiState ->
-                                                            heatingStatsUiState = newHeatingStatsUiState
-                                                        }
+                                                        // @ todo: update with view model
                                                     } finally {
                                                         // do nothing
                                                     }

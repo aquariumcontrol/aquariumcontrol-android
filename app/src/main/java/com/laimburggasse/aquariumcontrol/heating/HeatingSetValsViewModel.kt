@@ -10,7 +10,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
+import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
+import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
+import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -63,10 +66,21 @@ class HeatingSetValsViewModel(
         _upperBoundValue.value = heatingSetVals.heatingSwitchOffTemp
     }
 
-    fun updateValues() {
+    fun updateValues(mainViewModel: MainViewModel) {
         if (_sliderRange.value != null) {
             heatingSetVals.heatingSwitchOnTemp = sliderRange.value!!.start.toDouble()
             heatingSetVals.heatingSwitchOffTemp = sliderRange.value!!.endInclusive.toDouble()
+            viewModelScope.launch {
+                webApiPostRequestExecution(
+                    mainViewModel = mainViewModel,
+                    apiUrl = WebApiUrls.HEATING_POST_SET_VALS,
+                    webApiPostRequest = WebApiPostRequest(),
+                    optionalGetParams = mapOf(
+                        WebApiParams.HEATING_SWITCH_ON_TEMPERATURE to getHeatingSwitchOnTempString(),
+                        WebApiParams.HEATING_SWITCH_OFF_TEMPERATURE to getHeatingSwitchOffTempString()
+                    ),
+                )
+            }
         } else {
             Log.d("HeatingSetValsViewModel", "updateValues: _sliderRange.value is null")
         }

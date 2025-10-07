@@ -9,9 +9,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.MainViewModel
-import com.laimburggasse.aquariumcontrol.heating.HeatingSetVals
-import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsReader
-import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsUiState
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
@@ -22,9 +19,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class VentilationSetValsViewModel(
-    private var ventilationSetVals: VentilationSetVals,
-    private var mainViewModel: MainViewModel
-) : ViewModel() {
+    private var ventilationSetVals: VentilationSetVals
+) : ViewModel(), VentilationSetValsViewModelInterface {
     // This class will allow the user to edit the ventilation control parameters
     private val _sliderRange = MutableLiveData<ClosedFloatingPointRange<Float>>()
     private val _lowerBoundValue = MutableLiveData<Double>()
@@ -61,7 +57,7 @@ class VentilationSetValsViewModel(
         }
     }
 
-    fun resetValues() {
+    override fun resetValues() {
         _sliderRange.value =
             ventilationSetVals.ventilationSwitchOffTemp.toFloat()..
                     ventilationSetVals.ventilationSwitchOnTemp.toFloat()
@@ -70,7 +66,7 @@ class VentilationSetValsViewModel(
         _upperBoundValue.value = ventilationSetVals.ventilationSwitchOnTemp
     }
 
-    fun updateValues() {
+    override fun updateValues(mainViewModel: MainViewModel) {
         if (_sliderRange.value != null) {
             ventilationSetVals.ventilationSwitchOffTemp = sliderRange.value!!.start.toDouble()
             ventilationSetVals.ventilationSwitchOnTemp = sliderRange.value!!.endInclusive.toDouble()

@@ -17,17 +17,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
-import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
-import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
-import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
-import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
-import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun HeatingButtonsComposable(
-    heatingSetValsViewModel: HeatingSetValsViewModel? = null,
-    mainViewModel: MainViewModel? = null,
-    coroutineScope: CoroutineScope? = null
+    heatingSetValsViewModel: HeatingSetValsViewModelInterface,
+    mainViewModel: MainViewModel,
 ) {
     // This composable displays two buttons for the heating control.
     // Arrangement of the buttons follows the device's orientation.
@@ -36,38 +30,27 @@ fun HeatingButtonsComposable(
 
     Button(
         onClick = {
-            heatingSetValsViewModel?.updateValues()
-            if (mainViewModel != null && coroutineScope != null && heatingSetValsViewModel != null) {
-                val webApiPostRequest = WebApiPostRequest()
-                webApiPostRequestExecution(
-                    mainViewModel = mainViewModel,
-                    apiUrl = WebApiUrls.HEATING_POST_SET_VALS,
-                    coroutineScope = coroutineScope,
-                    webApiPostRequest = webApiPostRequest,
-                    optionalGetParams = mapOf(
-                        WebApiParams.HEATING_SWITCH_ON_TEMPERATURE to heatingSetValsViewModel.getHeatingSwitchOnTempString(),
-                        WebApiParams.HEATING_SWITCH_OFF_TEMPERATURE to heatingSetValsViewModel.getHeatingSwitchOffTempString()
-                    ),
-                )
-                // Show the Toast after the API call
-                Toast.makeText(
-                    context,
-                    "Sent request to controller for updating heating set values",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+            heatingSetValsViewModel.updateValues(mainViewModel)
+            // Show the Toast after the API call
+            Toast.makeText(
+                context,
+                "Sent request to controller for updating heating set values",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     ) {
         Text(text = "Update Heating Controller Values")
     }
     Spacer(modifier = Modifier.width(10.dp))
     Button(
-        onClick = { heatingSetValsViewModel?.resetValues() }
+        onClick = { heatingSetValsViewModel.resetValues() }
     ) {
         Text(text = "Reset Heating Controller Values")
     }
 
 }
+
+val mockHeatingSetValsViewModel = MockHeatingSetValsViewModel()
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -76,7 +59,10 @@ internal fun HeatingButtonsComposablePortraitPreview() {
     AquariumControllerTheme {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                HeatingButtonsComposable()
+                HeatingButtonsComposable(
+                    mainViewModel = mockMainViewModel,
+                    heatingSetValsViewModel = mockHeatingSetValsViewModel
+                )
             }
         }
     }
@@ -97,7 +83,10 @@ internal fun HeatingButtonsComposableLandscapePreview() {
     AquariumControllerTheme {
         Surface {
             Row {
-                HeatingButtonsComposable()
+                HeatingButtonsComposable(
+                    mainViewModel = mockMainViewModel,
+                    heatingSetValsViewModel = mockHeatingSetValsViewModel
+                )
             }
         }
     }

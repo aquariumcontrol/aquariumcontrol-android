@@ -18,7 +18,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
@@ -39,7 +39,7 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 fun VentilationScreen(
     navHostController: NavHostController? = null,
     mockVentilationSetValsUiState: VentilationSetValsUiState? = null,
-    mainViewModel: MainViewModel? = null,
+    mainViewModel: MainViewModel,
     darkTheme: Boolean? = null
 ) {
     // This screen displays
@@ -49,11 +49,9 @@ fun VentilationScreen(
     // - a button to update the control target temperatures
     // - a button to reset the control target temperatures
 
-    val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
+    val isControllerAddressValid: Boolean = !mainViewModel.getControllerAddress().isNullOrBlank()
 
     var ventilationSetValsUiState by remember { mutableStateOf(mockVentilationSetValsUiState ?: VentilationSetValsUiState.Loading) }
-
-    val coroutineScope = rememberCoroutineScope()
 
     val configuration = LocalConfiguration.current
 
@@ -104,7 +102,6 @@ fun VentilationScreen(
                                                 VentilationButtonsComposable(
                                                     ventilationSetValsViewModel = ventilationSetValsViewModel,
                                                     mainViewModel = mainViewModel,
-                                                    coroutineScope = coroutineScope,
                                                 )
                                             }
                                             VentilationRangeSliderTextFieldsLandscapeComposable(
@@ -116,7 +113,6 @@ fun VentilationScreen(
                                             VentilationButtonsComposable(
                                                 ventilationSetValsViewModel = ventilationSetValsViewModel,
                                                 mainViewModel = mainViewModel,
-                                                coroutineScope = coroutineScope,
                                             )
                                             VentilationRangeSliderTextFieldsPortraitComposable(
                                                 myVentilationSetValsViewModel = ventilationSetValsViewModel,
@@ -166,6 +162,8 @@ fun VentilationScreen(
     }
 }
 
+val mockMainViewModel = MockMainViewModel()
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
@@ -188,7 +186,8 @@ internal fun VentilationScreenPreviewSuccess() {
         )
     )
     VentilationScreen(
-        mockVentilationSetValsUiState = mockVentilationSetValsUiState
+        mainViewModel = mockMainViewModel,
+        mockVentilationSetValsUiState = mockVentilationSetValsUiState,
     )
 }
 
@@ -197,6 +196,7 @@ internal fun VentilationScreenPreviewSuccess() {
 @Composable
 internal fun VentilationScreenPreviewError() {
     VentilationScreen(
+        mainViewModel = mockMainViewModel,
         mockVentilationSetValsUiState = VentilationSetValsUiState.Error(
             errorMessage = "Error message"
         )
@@ -207,5 +207,8 @@ internal fun VentilationScreenPreviewError() {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun VentilationScreenPreviewLoading() {
-    VentilationScreen(mockVentilationSetValsUiState = VentilationSetValsUiState.Loading)
+    VentilationScreen(
+        mainViewModel = mockMainViewModel,
+        mockVentilationSetValsUiState = VentilationSetValsUiState.Loading
+    )
 }

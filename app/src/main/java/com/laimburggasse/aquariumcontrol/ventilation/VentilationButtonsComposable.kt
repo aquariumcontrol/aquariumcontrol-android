@@ -19,17 +19,11 @@ import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
-import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
-import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
-import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
-import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
-import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun VentilationButtonsComposable(
-    ventilationSetValsViewModel: VentilationSetValsViewModel? = null,
-    mainViewModel: MainViewModel? = null,
-    coroutineScope: CoroutineScope? = null
+    ventilationSetValsViewModel: VentilationSetValsViewModelInterface,
+    mainViewModel: MainViewModel,
 ) {
     // This composable displays two buttons for the Ventilation control.
     // Arrangement of the buttons follows the device's orientation.
@@ -38,28 +32,27 @@ fun VentilationButtonsComposable(
 
     Button(
         onClick = {
-            ventilationSetValsViewModel?.updateValues()
-            if (mainViewModel != null && coroutineScope != null && ventilationSetValsViewModel != null) {
-                val webApiPostRequest = WebApiPostRequest()
-                
-                // Show the Toast after the API call
-                Toast.makeText(
-                    context,
-                    context.getString(R.string.sent_request_to_controller_for_updating_ventilation_set_values),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+            ventilationSetValsViewModel.updateValues(mainViewModel)
+            Toast.makeText(
+                context,
+                context.getString(R.string.sent_request_to_controller_for_updating_ventilation_set_values),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     ) {
         Text(text = stringResource(R.string.update_ventilation_controller_values))
     }
     Spacer(modifier = Modifier.width(10.dp))
     Button(
-        onClick = { ventilationSetValsViewModel?.resetValues() }
+        onClick = { ventilationSetValsViewModel.resetValues() }
     ) {
         Text(text = stringResource(R.string.reset_ventilation_controller_values))
     }
 }
+
+
+val mockVentilationSetValsViewModel = MockVentilationSetValsViewModel()
+
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -68,7 +61,10 @@ internal fun VentilationButtonsComposablePortraitPreview() {
     AquariumControllerTheme {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                VentilationButtonsComposable()
+                VentilationButtonsComposable(
+                    mainViewModel = mockMainViewModel,
+                    ventilationSetValsViewModel = mockVentilationSetValsViewModel
+                )
             }
         }
     }
@@ -89,7 +85,10 @@ internal fun VentilationButtonsComposableLandscapePreview() {
     AquariumControllerTheme {
         Surface {
             Row {
-                VentilationButtonsComposable()
+                VentilationButtonsComposable(
+                    mainViewModel = mockMainViewModel,
+                    ventilationSetValsViewModel = mockVentilationSetValsViewModel
+                )
             }
         }
     }
