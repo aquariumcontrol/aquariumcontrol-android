@@ -223,7 +223,6 @@ fun FeedProfileScheduleScreen(
                                             mainViewModel = mainViewModel,
                                             coroutineScope = coroutineScope,
                                             webApiPostRequest = webApiPostRequest,
-                                            context = context,
                                             optionalGetParams = optionalGetParams,
                                             apiUrl = apiUrl
                                         )

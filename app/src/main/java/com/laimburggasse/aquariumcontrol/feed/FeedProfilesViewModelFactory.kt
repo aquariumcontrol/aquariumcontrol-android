@@ -5,11 +5,11 @@ import androidx.lifecycle.ViewModelProvider
 import javax.inject.Singleton
 
 @Singleton
-class FeedProfileViewModelFactory(
+class FeedProfilesViewModelFactory(
     feedProfiles: List<FeedProfile>?,
 ) : ViewModelProvider.Factory {
-    // This class creates the view model FeedProfileViewModel
-    private val viewModel = FeedProfileViewModel(feedProfiles)
+    // This class creates the view model FeedProfilesViewModel
+    private val viewModel = FeedProfilesViewModel(feedProfiles)
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

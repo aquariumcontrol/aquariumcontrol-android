@@ -46,7 +46,7 @@ fun FeedScreen(
     mockFeedProfiles: List<FeedProfile>? = null,
     mockFeedScheduleEntries: List<FeedScheduleEntry>? = null,
     mainViewModel: MainViewModel? = null,
-    myFeedProfileViewModel: FeedProfileViewModel? = null,
+    myFeedProfilesViewModel: FeedProfilesViewModel? = null,
     darkTheme: Boolean? = null
 ) {
     // This screen displays
@@ -69,9 +69,9 @@ fun FeedScreen(
     )
 
     // instantiate a new view model if there is no view model provided as parameter
-    val feedProfileViewModel: FeedProfileViewModel = myFeedProfileViewModel
+    val feedProfilesViewModel: FeedProfilesViewModel = myFeedProfilesViewModel
         ?: viewModel(
-            factory = FeedProfileViewModelFactory(feedProfiles = mockFeedProfiles)
+            factory = FeedProfilesViewModelFactory(feedProfiles = mockFeedProfiles)
         )
 
     if (mainViewModel != null) {
@@ -80,7 +80,7 @@ fun FeedScreen(
                 if (mainViewModel.getControllerAddress() != null) {
                     delay(500)
                     feedScheduleViewModel.readFeedScheduleEntries(mainViewModel.getControllerAddress()!!)
-                    feedProfileViewModel.readFeedProfiles(mainViewModel.getControllerAddress()!!)
+                    feedProfilesViewModel.readFeedProfiles(mainViewModel.getControllerAddress()!!)
                     isLoading = false
                 }
             }
@@ -120,7 +120,7 @@ fun FeedScreen(
                                     ) {
                                         FeedProfileSelectionComposable(
                                             navHostController = navHostController,
-                                            myFeedProfileViewModel = feedProfileViewModel,
+                                            myFeedProfilesViewModel = feedProfilesViewModel,
                                             modifier = Modifier.align(Alignment.End),
                                             feedScheduleViewModel = feedScheduleViewModel
                                         )
@@ -152,7 +152,7 @@ fun FeedScreen(
                             } else {
                                 FeedProfileSelectionComposable(
                                     modifier = Modifier.align(Alignment.End),
-                                    myFeedProfileViewModel = feedProfileViewModel,
+                                    myFeedProfilesViewModel = feedProfilesViewModel,
                                     mainViewModel = mainViewModel,
                                     navHostController = navHostController,
                                     feedScheduleViewModel = feedScheduleViewModel

@@ -20,7 +20,7 @@ import com.laimburggasse.aquariumcontrol.controller.ControllerEditScreen
 import com.laimburggasse.aquariumcontrol.controller.ControllerProfileDatabase
 import com.laimburggasse.aquariumcontrol.controller.ControllerSelectionScreen
 import com.laimburggasse.aquariumcontrol.controller.ControllerViewModel
-import com.laimburggasse.aquariumcontrol.feed.FeedProfileViewModel
+import com.laimburggasse.aquariumcontrol.feed.FeedProfilesViewModel
 import com.laimburggasse.aquariumcontrol.feed.FeedScreen
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddScreen
 import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditScreen
@@ -73,11 +73,11 @@ class MainActivity : ComponentActivity() {
         }
     )
 
-    private val feedProfileViewModel by viewModels<FeedProfileViewModel>(
+    private val feedProfilesViewModel by viewModels<FeedProfilesViewModel>(
         factoryProducer = {
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return FeedProfileViewModel() as T
+                    return FeedProfilesViewModel() as T
                 }
             }
         }
@@ -137,7 +137,7 @@ class MainActivity : ComponentActivity() {
                         FeedScreen(
                             navHostController = navHostController,
                             mainViewModel = mainViewModel,
-                            myFeedProfileViewModel = feedProfileViewModel
+                            myFeedProfilesViewModel = feedProfilesViewModel
                         )
                     }
                     composable(ViewNavigationRoutes.feedHistory24h) {
@@ -165,7 +165,7 @@ class MainActivity : ComponentActivity() {
                         FeedProfileAddScreen(
                             navHostController = navHostController,
                             mainViewModel = mainViewModel,
-                            myFeedProfileViewModel = feedProfileViewModel
+                            myFeedProfilesViewModel = feedProfilesViewModel
                         )
                     }
                     composable(ViewNavigationRoutes.feedSchedule) {

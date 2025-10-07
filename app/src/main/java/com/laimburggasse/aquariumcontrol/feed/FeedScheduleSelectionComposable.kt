@@ -84,7 +84,6 @@ fun FeedScheduleSelectionComposable(
                                 mainViewModel = mainViewModel,
                                 coroutineScope = coroutineScope, // Make sure scope is available here
                                 webApiPostRequest = WebApiPostRequest(),
-                                context = context, // Make sure context is available here
                                 optionalGetParams = feedScheduleEntry.getApiParameters()
                             )
                         }

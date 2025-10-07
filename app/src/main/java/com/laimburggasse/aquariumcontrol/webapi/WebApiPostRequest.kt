@@ -28,7 +28,7 @@ class WebApiPostRequest {
         return try {
             val response: Response = client.newCall(request).execute()
             if (response.isSuccessful) {
-                val responseBody = response.body?.string() ?: ""
+                val responseBody = response.body.string()
                 Result.success(responseBody)
             } else {
                 Result.failure(IOException("Request failed with code: ${response.code}"))

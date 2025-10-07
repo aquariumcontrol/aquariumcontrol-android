@@ -44,7 +44,6 @@ fun HeatingButtonsComposable(
                     apiUrl = WebApiUrls.HEATING_POST_SET_VALS,
                     coroutineScope = coroutineScope,
                     webApiPostRequest = webApiPostRequest,
-                    context = context,
                     optionalGetParams = mapOf(
                         WebApiParams.HEATING_SWITCH_ON_TEMPERATURE to heatingSetValsViewModel.getHeatingSwitchOnTempString(),
                         WebApiParams.HEATING_SWITCH_OFF_TEMPERATURE to heatingSetValsViewModel.getHeatingSwitchOffTempString()

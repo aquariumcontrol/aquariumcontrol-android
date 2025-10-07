@@ -36,17 +36,17 @@ import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
 fun FeedProfileSelectionComposable(
     modifier: Modifier? = Modifier,
     mockFeedProfiles: List<FeedProfile>? = null,
-    myFeedProfileViewModel: FeedProfileViewModel? = null,
+    myFeedProfilesViewModel: FeedProfilesViewModel? = null,
     mainViewModel: MainViewModel? = null,
     navHostController: NavHostController? = null,
-    feedScheduleViewModel: FeedScheduleViewModel? = null
+    feedScheduleViewModel: FeedScheduleViewModel? = null,
 ) {
     // This composable displays a label "Feed Profiles"
     // and a list of feed profiles.
 
     // instantiate a new view model if there is no view model provided as parameter
-    val feedProfileViewModel: FeedProfileViewModel = myFeedProfileViewModel ?: viewModel(
-        factory = FeedProfileViewModelFactory(feedProfiles = mockFeedProfiles)
+    val feedProfilesViewModel: FeedProfilesViewModel = myFeedProfilesViewModel ?: viewModel(
+        factory = FeedProfilesViewModelFactory(feedProfiles = mockFeedProfiles)
     )
     
     val coroutineScope = rememberCoroutineScope()
@@ -57,7 +57,7 @@ fun FeedProfileSelectionComposable(
     val columnModifier = Modifier.fillMaxWidth().padding(8.dp)
     if (LocalInspectionMode.current) {
         Column(modifier = columnModifier) {
-            feedProfileViewModel.getFeedProfiles().forEach { feedProfile ->
+            feedProfilesViewModel.getFeedProfiles().forEach { feedProfile ->
                 FeedProfileSummaryComposable(
                     feedProfile = feedProfile,
                     onEditClick = {},
@@ -69,7 +69,7 @@ fun FeedProfileSelectionComposable(
     }
     else {
         LazyColumn(modifier = columnModifier) {
-            items(feedProfileViewModel.getFeedProfiles()) { feedProfile ->
+            items(feedProfilesViewModel.getFeedProfiles()) { feedProfile ->
                 FeedProfileSummaryComposable(
                     feedProfile = feedProfile,
                     onEditClick = {
@@ -83,16 +83,8 @@ fun FeedProfileSelectionComposable(
                         navHostController?.navigate(ViewNavigationRoutes.feedSchedule)
                     },
                     onDeleteClick = {
-                        feedProfileViewModel?.deleteFeedProfile(feedProfile)
+                        feedProfilesViewModel?.deleteFeedProfile(feedProfile)
                         if (mainViewModel != null) {
-                            webApiPostRequestExecution(
-                                apiUrl = WebApiUrls.FEED_POST_REMOVE_PROFILE,
-                                mainViewModel = mainViewModel,
-                                coroutineScope = coroutineScope,
-                                webApiPostRequest = WebApiPostRequest(),
-                                context = context,
-                                optionalGetParams = feedProfile.getFeedProfileApiCallParameters()
-                            )
                         }
                     }
                 )

@@ -46,7 +46,6 @@ fun VentilationButtonsComposable(
                     apiUrl = WebApiUrls.VENTILATION_POST_SET_VALS,
                     coroutineScope = coroutineScope,
                     webApiPostRequest = webApiPostRequest,
-                    context = context,
                     optionalGetParams = mapOf(
                         WebApiParams.VENTILATION_SWITCH_ON_TEMPERATURE to ventilationSetValsViewModel.getVentilationSwitchOnTempString(),
                         WebApiParams.VENTILATION_SWITCH_OFF_TEMPERATURE to ventilationSetValsViewModel.getVentilationSwitchOffTempString()

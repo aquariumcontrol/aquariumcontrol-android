@@ -29,7 +29,7 @@ import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.FeedProfile
-import com.laimburggasse.aquariumcontrol.feed.FeedProfileViewModel
+import com.laimburggasse.aquariumcontrol.feed.FeedProfilesViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
@@ -43,7 +43,7 @@ import kotlinx.coroutines.launch
 fun FeedProfileAddScreen(
     navHostController: NavHostController? = null,
     mainViewModel: MainViewModel? = null,
-    myFeedProfileViewModel: FeedProfileViewModel? = null,
+    myFeedProfilesViewModel: FeedProfilesViewModel? = null,
     darkTheme: Boolean? = null
 ) {
     // This screen displays
@@ -98,11 +98,10 @@ fun FeedProfileAddScreen(
                                     apiUrl = WebApiUrls.FEED_POST_PROFILE_CREATE,
                                     coroutineScope = coroutineScope,
                                     webApiPostRequest = webApiPostRequest,
-                                    context = context,
                                     optionalGetParams = feedProfileAddViewModel.getApiCallParameters()
                                 )
 
-                                myFeedProfileViewModel?.addFeedProfile(
+                                myFeedProfilesViewModel?.addFeedProfile(
                                     feedProfile = feedProfileAddViewModel.getFeedProfile()
                                 )
 

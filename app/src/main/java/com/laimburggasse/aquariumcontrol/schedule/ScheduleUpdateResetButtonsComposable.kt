@@ -63,7 +63,6 @@ fun ScheduleUpdateResetButtonsComposable(
                         apiUrl = WebApiUrls.ACTUATOR_SCHEDULE_POST_UPDATE,
                         coroutineScope = coroutineScope,
                         webApiPostRequest = webApiPostRequest,
-                        context = context,
                         optionalGetParams = scheduleSetVals?.getApiParams() ?: emptyMap(),
                     )
                     // Show the Toast after the API call

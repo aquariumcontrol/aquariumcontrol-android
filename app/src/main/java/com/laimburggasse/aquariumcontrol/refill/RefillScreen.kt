@@ -128,7 +128,6 @@ fun RefillScreen(
                                                     apiUrl = WebApiUrls.REFILL_POST_CONTROL_START,
                                                     coroutineScope = coroutineScope,
                                                     webApiPostRequest = webApiPostRequest,
-                                                    context = context,
                                                 )
                                                 // Show the Toast after the API call
                                                 Toast.makeText(
@@ -156,7 +155,6 @@ fun RefillScreen(
                                                     apiUrl = WebApiUrls.REFILL_POST_CONTROL_STOP,
                                                     coroutineScope = coroutineScope,
                                                     webApiPostRequest = webApiPostRequest,
-                                                    context = context,
                                                 )
                                                 // Show the Toast after the API call
                                                 Toast.makeText(
@@ -184,7 +182,6 @@ fun RefillScreen(
                                                     apiUrl = WebApiUrls.REFILL_POST_CONTROL_RESET,
                                                     coroutineScope = coroutineScope,
                                                     webApiPostRequest = webApiPostRequest,
-                                                    context = context,
                                                 )
                                                 // Show the Toast after the API call
                                                 Toast.makeText(

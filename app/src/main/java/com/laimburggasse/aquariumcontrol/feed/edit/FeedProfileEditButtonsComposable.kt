@@ -52,7 +52,6 @@ fun FeedProfileEditButtonsComposable(
                     apiUrl = WebApiUrls.FEED_POST_PROFILE_UPDATE,
                     coroutineScope = coroutineScope,
                     webApiPostRequest = webApiPostRequest,
-                    context = context,
                     optionalGetParams = feedProfileEditViewModel?.getApiCallParameters() ?: emptyMap()
                 )
 

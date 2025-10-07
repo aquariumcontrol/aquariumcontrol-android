@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.balling.BallingProfile
@@ -36,16 +37,13 @@ import com.laimburggasse.aquariumcontrol.balling.BallingProfileSummaryComposable
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
-import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
-import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
-import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
 
 @Composable
 fun BallingProfileEditScreen(
     navHostController: NavHostController? = null,
     ballingProfile: BallingProfile,
-    mainViewModel: MainViewModel? = null,
+    mainViewModel: MainViewModel,
     darkTheme: Boolean? = null,
 ) {
     // This screen displays:
@@ -59,11 +57,7 @@ fun BallingProfileEditScreen(
         factory = BallingProfileEditViewModelFactory(ballingProfile)
     )
 
-    val webApiPostRequest = WebApiPostRequest()
-
     val context = LocalContext.current // context for web API request and Toasts
-
-    val coroutineScope = rememberCoroutineScope()
 
     val sliderPositionNewDosingVolume by ballingProfileEditViewModel.ballingNewDosingVolume.observeAsState(
         initial = ballingProfile.volume
@@ -117,27 +111,11 @@ fun BallingProfileEditScreen(
                                 .padding(horizontal = 8.dp),
                             onClick = {
                                 ballingProfileEditViewModel.onConfirmDosing()
-                                if (mainViewModel != null) {
-                                    webApiPostRequestExecution(
-                                        mainViewModel = mainViewModel,
-                                        apiUrl = WebApiUrls.BALLING_POST_SET_VALS,
-                                        coroutineScope = coroutineScope,
-                                        webApiPostRequest = webApiPostRequest,
-                                        context = context,
-                                        optionalGetParams = mapOf(
-                                            WebApiParams.PUMP_ID to ballingProfile.pumpId
-                                                .toString(),
-                                            WebApiParams.DOSING_VOLUME to ballingProfile.volume.toString()
-                                        )
-                                    )
-                                    // Show the Toast after the API call
-                                    Toast.makeText(
-                                        context,
-                                        context.getString(R.string.sent_request_to_controller_for_updating_dosing_volume),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-
-                                }
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.sent_request_to_controller_for_updating_dosing_volume),
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             },
                         ) {
                             Text(
@@ -163,6 +141,8 @@ val mockBallingProfile = BallingProfile(
     label = "MockDosingUnit 1",
 )
 
+val mockMainViewModel = MockMainViewModel()
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
@@ -177,5 +157,5 @@ val mockBallingProfile = BallingProfile(
 )
 @Composable
 internal fun BallingProfileEditScreenPreview() {
-    BallingProfileEditScreen(ballingProfile = mockBallingProfile)
+    BallingProfileEditScreen(ballingProfile = mockBallingProfile, mainViewModel = mockMainViewModel)
 }

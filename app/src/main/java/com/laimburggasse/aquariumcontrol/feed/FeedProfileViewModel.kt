@@ -1,53 +1,25 @@
 package com.laimburggasse.aquariumcontrol.feed
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
+import kotlinx.coroutines.launch
 
-class FeedProfileViewModel(myFeedProfiles: List<FeedProfile>? = null) :
-    ViewModel() {
-    private var _feedProfiles = mutableStateOf<List<FeedProfile>?>(null)
-
-    private val feedProfiles: MutableState<List<FeedProfile>?> = _feedProfiles
-
-    init {
-        _feedProfiles.value = myFeedProfiles
-    }
-
-    suspend fun readFeedProfiles(controllerAddress: String) {
-        val profileUrl =
-            "http://" + controllerAddress + WebApiUrls.FEED_GET_PROFILES
-        val profileReader = FeedProfileReader(profileUrl)
-        val feedProfileImports = profileReader.readFeedProfiles()
-        if (feedProfileImports != null) {
-            withContext(Dispatchers.Main) {  // Switch to the Main thread to update LiveData
-                _feedProfiles.value = feedProfileImports.toFeedProfileList()
-            }
+class FeedProfileViewModel(
+    private val feedProfile: FeedProfile,
+    private val mainViewModel: MainViewModel
+): ViewModel() {
+    fun onDelete() {
+        viewModelScope.launch {
+            webApiPostRequestExecution(
+                apiUrl = WebApiUrls.FEED_POST_REMOVE_PROFILE,
+                mainViewModel = mainViewModel,
+                webApiPostRequest = WebApiPostRequest(),
+                optionalGetParams = feedProfile.getFeedProfileApiCallParameters()
+            )
         }
-    }
-
-    fun getFeedProfiles(): List<FeedProfile> {
-        return if (feedProfiles.value == null) {
-            emptyList()
-        } else {
-            feedProfiles.value!!
-        }
-    }
-
-    fun deleteFeedProfile(feedProfile: FeedProfile) {
-        val currentList = _feedProfiles.value.orEmpty().toMutableList()
-        currentList.remove(feedProfile)
-        _feedProfiles.value = currentList
-        feedProfiles.value = currentList
-    }
-
-    fun addFeedProfile(feedProfile: FeedProfile) {
-        val currentList = _feedProfiles.value.orEmpty().toMutableList()
-        currentList.add(feedProfile)
-        _feedProfiles.value = currentList
-        feedProfiles.value = currentList
     }
 }
