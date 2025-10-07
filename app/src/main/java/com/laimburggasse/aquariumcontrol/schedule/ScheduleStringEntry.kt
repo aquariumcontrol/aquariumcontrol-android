@@ -7,7 +7,7 @@ import java.util.Calendar
 import java.util.Locale
 
 @Serializable
-class ScheduleStringSetVal (
+class ScheduleStringEntry (
     @SerialName("scheduleType") var scheduleType: String,
     @SerialName("startTime") var startTime: String,
     @SerialName("stopTime") var stopTime: String,
@@ -30,8 +30,8 @@ class ScheduleStringSetVal (
         return hour + minute / 60f + second / 3600f
     }
 
-    fun transformToSetVal(): ScheduleSetVal {
-        return ScheduleSetVal(
+    fun transformToSetVal(): ScheduleEntry {
+        return ScheduleEntry(
             scheduleType = scheduleType,
             startTime = stringTimeToFloat(startTime, 0f),
             stopTime = stringTimeToFloat(stopTime, 24f),

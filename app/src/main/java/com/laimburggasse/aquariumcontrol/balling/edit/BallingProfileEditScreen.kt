@@ -108,7 +108,7 @@ fun BallingProfileEditScreen(
                                 .fillMaxWidth()
                                 .padding(horizontal = 8.dp),
                             onClick = {
-                                ballingProfileEditViewModel.onConfirmDosing()
+                                ballingProfileEditViewModel.onConfirmDosing(mainViewModel)
                                 Toast.makeText(
                                     context,
                                     context.getString(R.string.sent_request_to_controller_for_updating_dosing_volume),

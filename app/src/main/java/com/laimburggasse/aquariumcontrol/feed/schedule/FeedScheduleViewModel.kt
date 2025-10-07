@@ -3,12 +3,17 @@ package com.laimburggasse.aquariumcontrol.feed.schedule
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.feed.FeedProfile
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.sql.Timestamp
+import java.util.Calendar
 
 class FeedScheduleViewModel(myFeedScheduleEntries: List<FeedScheduleEntry>?) :
     ViewModel() {
@@ -40,19 +45,27 @@ class FeedScheduleViewModel(myFeedScheduleEntries: List<FeedScheduleEntry>?) :
         }
     }
 
-    fun deleteFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry) {
+    fun deleteFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry, mainViewModel: MainViewModel) {
         val currentList = _feedScheduleEntries.value.orEmpty().toMutableList()
         currentList.remove(feedScheduleEntry)
         _feedScheduleEntries.value = currentList
-        webApiPostRequestExecution(
-            apiUrl = WebApiUrls.FEED_POST_SCHEDULE_REMOVE_ENTRY,
-            mainViewModel = mainViewModel,
-            webApiPostRequest = WebApiPostRequest(),
-            optionalGetParams = feedScheduleEntry.getApiParameters()
-        )
+        viewModelScope.launch {
+            webApiPostRequestExecution(
+                apiUrl = WebApiUrls.FEED_POST_SCHEDULE_REMOVE_ENTRY,
+                mainViewModel = mainViewModel,
+                webApiPostRequest = WebApiPostRequest(),
+                optionalGetParams = feedScheduleEntry.getApiParameters()
+            )
+        }
     }
 
-    fun addFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry, mainViewModel: MainViewModel) {
+    fun addFeedScheduleEntry(
+        feedScheduleEntry: FeedScheduleEntry,
+        feedProfile: FeedProfile?,
+        repeatDaily: Boolean,
+        mainViewModel: MainViewModel,
+        selectedCalendar: Calendar
+    ) {
         val currentList = _feedScheduleEntries.value.orEmpty().toMutableList()
         currentList.add(feedScheduleEntry)
         _feedScheduleEntries.value = currentList
@@ -67,14 +80,14 @@ class FeedScheduleViewModel(myFeedScheduleEntries: List<FeedScheduleEntry>?) :
             )
 
         if (optionalGetParams != null) {
-            val webApiPostRequest =
-
-            webApiPostRequestExecution(
-                mainViewModel = mainViewModel,
-                webApiPostRequest = WebApiPostRequest(),
-                optionalGetParams = optionalGetParams,
-                apiUrl = apiUrl
-            )
+            viewModelScope.launch {
+                webApiPostRequestExecution(
+                    mainViewModel = mainViewModel,
+                    webApiPostRequest = WebApiPostRequest(),
+                    optionalGetParams = optionalGetParams,
+                    apiUrl = apiUrl
+                )
+            }
         }
 
     }

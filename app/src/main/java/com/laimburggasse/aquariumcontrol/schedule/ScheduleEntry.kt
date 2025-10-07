@@ -1,6 +1,6 @@
 package com.laimburggasse.aquariumcontrol.schedule
 
-class ScheduleSetVal(
+class ScheduleEntry(
     var scheduleType: String,
     var startTime: Float,
     var stopTime: Float,

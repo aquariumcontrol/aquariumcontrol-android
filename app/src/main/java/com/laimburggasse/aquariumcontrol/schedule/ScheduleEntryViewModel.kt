@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import java.util.Locale
 
-class ScheduleSetValsViewModel(
+class ScheduleEntryViewModel(
     private var setValStartTime: Float,
     private var setValStopTime: Float,
     private var setValLimitationActive: Boolean,

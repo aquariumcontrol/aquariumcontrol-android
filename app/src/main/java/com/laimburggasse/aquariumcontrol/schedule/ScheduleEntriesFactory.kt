@@ -2,13 +2,13 @@ package com.laimburggasse.aquariumcontrol.schedule
 
 import android.util.Log
 
-class ScheduleSetValsFactory (
-    private val scheduleSetVals: List<ScheduleSetVal>
+class ScheduleEntriesFactory (
+    private val scheduleEntryList: List<ScheduleEntry>
 ) {
     // This class creates an instance of ScheduleSetVals
     // Different from the other factory classes, this one shall provide multiple instances.
 
-    fun create(): ScheduleSetVals {
+    fun create(): ScheduleEntries {
         // initialize with default values
         var ballingStartTime = 0f
         var ballingStopTime = 24f
@@ -23,8 +23,8 @@ class ScheduleSetValsFactory (
         var heatingStopTime = 24f
         var heatingLimitationActive = false
         
-        if (scheduleSetVals.isNotEmpty()) {
-            for (scheduleSetVal in scheduleSetVals) {
+        if (scheduleEntryList.isNotEmpty()) {
+            for (scheduleSetVal in scheduleEntryList) {
                 Log.d("ScheduleSetValsFactory", "parsing scheduleSetVal: ${scheduleSetVal.scheduleType}")
                 when (scheduleSetVal.scheduleType) {
                     ScheduleType.BALLING.key -> {
@@ -67,7 +67,7 @@ class ScheduleSetValsFactory (
         Log.d("ScheduleSetValsFactory", "heatingStopTime: $heatingStopTime")
         Log.d("ScheduleSetValsFactory", "heatingLimitationActive: $heatingLimitationActive")
 
-        return ScheduleSetVals(
+        return ScheduleEntries(
             ballingStartTime = ballingStartTime,
             ballingStopTime = ballingStopTime,
             ballingLimitationActive = ballingLimitationActive,

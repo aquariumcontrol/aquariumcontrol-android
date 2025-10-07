@@ -40,7 +40,7 @@ import java.util.Locale
 
 @Composable
 fun ScheduleAdjustmentComposable(
-    myViewModel: ScheduleSetValsViewModel,
+    myViewModel: ScheduleEntryViewModel,
     title: String
 ) {
     // This composable displays:
@@ -282,7 +282,7 @@ fun ScheduleAdjustmentComposable(
 )
 @Composable
 internal fun ScheduleAdjustmentComposablePreview() {
-    val mockScheduleSetVals = ScheduleSetVals(
+    val mockScheduleEntries = ScheduleEntries(
         ballingStartTime = 2F,
         ballingStopTime = 22F,
         ballingLimitationActive = false,
@@ -298,11 +298,11 @@ internal fun ScheduleAdjustmentComposablePreview() {
     )
 
     // create a view model instance for preview
-    val myViewModel: ScheduleSetValsViewModel = viewModel(
-        factory = ScheduleSetValsViewModelFactory(
-            setValStartTime = mockScheduleSetVals.ballingStartTime,
-            setValStopTime = mockScheduleSetVals.ballingStopTime,
-            setValLimitationActive = mockScheduleSetVals.ballingLimitationActive
+    val myViewModel: ScheduleEntryViewModel = viewModel(
+        factory = ScheduleEntryViewModelFactory(
+            setValStartTime = mockScheduleEntries.ballingStartTime,
+            setValStopTime = mockScheduleEntries.ballingStopTime,
+            setValLimitationActive = mockScheduleEntries.ballingLimitationActive
         )
     )
 

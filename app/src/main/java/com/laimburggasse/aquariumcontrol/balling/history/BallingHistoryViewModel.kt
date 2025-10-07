@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class BallingHistoryViewModel: ViewModel(), BallingHistoryViewModelInterface {
-    override var ballingHistoryUiState: BallingHistoryUiState by mutableStateOf(BallingHistoryUiState.Loading)
+    override var ballingHistoryUiState: BallingHistoryUiState by mutableStateOf(value = BallingHistoryUiState.Loading)
         private set
 
     override var isRefreshing by mutableStateOf(value = false)

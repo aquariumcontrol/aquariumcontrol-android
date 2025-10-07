@@ -197,7 +197,10 @@ fun FeedProfileScheduleScreen(
                                     Timestamp(selectedCalendar.timeInMillis)
                                 feedScheduleViewModel?.addFeedScheduleEntry(
                                     feedScheduleEntry = feedScheduleEntry,
-                                    mainViewModel = mainViewModel
+                                    feedProfile = feedProfile,
+                                    repeatDaily = repeatDaily,
+                                    mainViewModel = mainViewModel,
+                                    selectedCalendar = selectedCalendar
                                 )
                                 // Show the Toast after the API call
                                 Toast.makeText(

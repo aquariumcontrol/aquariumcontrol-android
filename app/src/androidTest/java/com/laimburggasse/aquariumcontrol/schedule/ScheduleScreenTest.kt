@@ -19,7 +19,7 @@ class ScheduleScreenTest {
 
     private val subfolder = "schedule"
 
-    val mockScheduleSetVals = ScheduleSetVals(
+    val mockScheduleEntries = ScheduleEntries(
         ballingStartTime = 2F,
         ballingStopTime = 22F,
         ballingLimitationActive = false,
@@ -33,11 +33,17 @@ class ScheduleScreenTest {
         heatingStopTime = 19F,
         heatingLimitationActive = true,
     )
+    val mockScheduleUiStateSuccess = ScheduleUiState.Success(mockScheduleEntries)
+    val mockScheduleViewModelSuccess = MockScheduleViewModel(scheduleUiState = mockScheduleUiStateSuccess)
 
     @Test
-    fun refillAddScreenDarkTest() {
+    fun scheduleScreenDarkTest() {
         composeTestRule.setContent {
-            ScheduleScreen(navHostController = null, mockScheduleSetVals, darkTheme = true)
+            ScheduleScreen(
+                mainViewModel = mockMainViewModel,
+                scheduleViewModel = mockScheduleViewModelSuccess,
+                darkTheme = true
+            )
         }
         composeTestRule.waitForIdle()
         ScreenshotTestHelper.performScreenshotTest(
@@ -49,9 +55,13 @@ class ScheduleScreenTest {
     }
 
     @Test
-    fun refillAddScreenLightTest() {
+    fun scheduleScreenLightTest() {
         composeTestRule.setContent {
-            ScheduleScreen(navHostController = null, mockScheduleSetVals, darkTheme = false)
+            ScheduleScreen(
+                mainViewModel = mockMainViewModel,
+                scheduleViewModel = mockScheduleViewModelSuccess,
+                darkTheme = false
+            )
         }
         composeTestRule.waitForIdle()
         ScreenshotTestHelper.performScreenshotTest(

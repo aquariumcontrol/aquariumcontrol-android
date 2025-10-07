@@ -5,13 +5,13 @@ import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
 
-class ScheduleSetValsReader(private val url: String) {
+class ScheduleEntryReader(private val url: String) {
     // This class reads the schedule set values from the server using a GET request
     // These are later converted into one instance of ScheduleSetVals
     private val client = OkHttpClient()
     private val json = Json { ignoreUnknownKeys = true }
 
-    fun readScheduleSetVals(): DataFetchResult<List<ScheduleStringSetVal>> {
+    fun readScheduleEntryList(): DataFetchResult<List<ScheduleStringEntry>> {
         val request = Request.Builder()
             .url(url)
             .build()
@@ -24,7 +24,7 @@ class ScheduleSetValsReader(private val url: String) {
                     return DataFetchResult.Success(data = emptyList())
                 }
                 try {
-                    val decodedData = json.decodeFromString<List<ScheduleStringSetVal>>(responseBody)
+                    val decodedData = json.decodeFromString<List<ScheduleStringEntry>>(responseBody)
                     return DataFetchResult.Success(decodedData)
                 } catch (e: Exception) {
                     return DataFetchResult.Error(e, "Error decoding data sent from server: ${e.message}")

@@ -6,7 +6,7 @@ import java.util.Locale
 
 @SuppressLint("SimpleDateFormat")
 
-class ScheduleSetVals(
+class ScheduleEntries(
     var ballingStartTime: Float,
     var ballingStopTime: Float,
     var ballingLimitationActive: Boolean,
@@ -21,23 +21,23 @@ class ScheduleSetVals(
     var heatingLimitationActive: Boolean,
 ) {
     fun updateFromViewModels(
-        ballingSetVals: ScheduleSetValsViewModel,
-        refillSetVals: ScheduleSetValsViewModel,
-        ventilationSetVals: ScheduleSetValsViewModel,
-        heatingSetVals: ScheduleSetValsViewModel
+        ballingScheduleEntryViewModel: ScheduleEntryViewModel,
+        refillScheduleEntryViewModel: ScheduleEntryViewModel,
+        ventilationScheduleEntryViewModel: ScheduleEntryViewModel,
+        heatingScheduleEntryViewModel: ScheduleEntryViewModel
     ) {
-        ballingStartTime = ballingSetVals.getStartTime()
-        ballingStopTime = ballingSetVals.getStopTime()
-        ballingLimitationActive = ballingSetVals.isLimitationActive()
-        refillStartTime = refillSetVals.getStartTime()
-        refillStopTime = refillSetVals.getStopTime()
-        refillLimitationActive = refillSetVals.isLimitationActive()
-        ventilationStartTime = ventilationSetVals.getStartTime()
-        ventilationStopTime = ventilationSetVals.getStopTime()
-        ventilationLimitationActive = ventilationSetVals.isLimitationActive()
-        heatingStartTime = heatingSetVals.getStartTime()
-        heatingStopTime = heatingSetVals.getStopTime()
-        heatingLimitationActive = heatingSetVals.isLimitationActive()
+        ballingStartTime = ballingScheduleEntryViewModel.getStartTime()
+        ballingStopTime = ballingScheduleEntryViewModel.getStopTime()
+        ballingLimitationActive = ballingScheduleEntryViewModel.isLimitationActive()
+        refillStartTime = refillScheduleEntryViewModel.getStartTime()
+        refillStopTime = refillScheduleEntryViewModel.getStopTime()
+        refillLimitationActive = refillScheduleEntryViewModel.isLimitationActive()
+        ventilationStartTime = ventilationScheduleEntryViewModel.getStartTime()
+        ventilationStopTime = ventilationScheduleEntryViewModel.getStopTime()
+        ventilationLimitationActive = ventilationScheduleEntryViewModel.isLimitationActive()
+        heatingStartTime = heatingScheduleEntryViewModel.getStartTime()
+        heatingStopTime = heatingScheduleEntryViewModel.getStopTime()
+        heatingLimitationActive = heatingScheduleEntryViewModel.isLimitationActive()
     }
 
     private fun formatTime(value: Float): String {

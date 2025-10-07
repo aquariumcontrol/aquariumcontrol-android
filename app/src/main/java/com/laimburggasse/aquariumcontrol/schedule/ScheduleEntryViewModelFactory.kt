@@ -3,7 +3,7 @@ package com.laimburggasse.aquariumcontrol.schedule
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
-class ScheduleSetValsViewModelFactory (
+class ScheduleEntryViewModelFactory (
     private val setValStartTime: Float,
     private val setValStopTime: Float,
     private val setValLimitationActive: Boolean,
@@ -13,7 +13,7 @@ class ScheduleSetValsViewModelFactory (
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val viewModel = ScheduleSetValsViewModel(
+        val viewModel = ScheduleEntryViewModel(
             setValStartTime = setValStartTime,
             setValStopTime = setValStopTime,
             setValLimitationActive = setValLimitationActive

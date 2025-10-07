@@ -14,7 +14,6 @@ import kotlinx.coroutines.launch
 
 class BallingProfileEditViewModel(
     private val ballingProfile: BallingProfile,
-    private val mainViewModel: MainViewModel
 ) : ViewModel() {
     // This class will allow the user to edit the Balling dosing profile.
     private val _ballingNewDosingVolume = MutableLiveData<Double>()
@@ -30,7 +29,7 @@ class BallingProfileEditViewModel(
         _ballingNewDosingVolume.value = volume
     }
 
-    fun onConfirmDosing() {
+    fun onConfirmDosing(mainViewModel: MainViewModel) {
         _ballingConfirmedDosingVolume.value = _ballingNewDosingVolume.value
         ballingProfile.volume = _ballingNewDosingVolume.value!!
         viewModelScope.launch {
