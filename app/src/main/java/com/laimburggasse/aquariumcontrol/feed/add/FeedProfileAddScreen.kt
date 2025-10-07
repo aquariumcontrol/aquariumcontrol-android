@@ -1,6 +1,7 @@
 package com.laimburggasse.aquariumcontrol.feed.add
 
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,9 +14,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -30,19 +31,15 @@ import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.FeedProfilesViewModel
+import com.laimburggasse.aquariumcontrol.feed.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
-import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
-import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
-import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun FeedProfileAddScreen(
     navHostController: NavHostController? = null,
-    mainViewModel: MainViewModel? = null,
+    mainViewModel: MainViewModel,
     myFeedProfilesViewModel: FeedProfilesViewModel? = null,
     darkTheme: Boolean? = null
 ) {
@@ -55,13 +52,26 @@ fun FeedProfileAddScreen(
         factory = FeedProfileAddViewModelFactory(feedProfile = FeedProfile())
     )
 
-    val webApiPostRequest = WebApiPostRequest()
-
     val context = LocalContext.current // context for web API request and Toasts
 
-    val coroutineScope = rememberCoroutineScope()
-
     val feedProfileName by feedProfileAddViewModel.feedProfileName.collectAsState()
+
+    LaunchedEffect(Unit) {
+        myFeedProfilesViewModel?.eventFlow?.collect { event ->
+            when (event) {
+                is FeedProfileAddEvent.FeedProfileAddSuccess -> {
+                    navHostController?.navigate(ViewNavigationRoutes.feed)
+                }
+                is FeedProfileAddEvent.FeedProfileAddFailure -> {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.failed_to_add_feed_profile),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
 
     AquariumControllerTheme(darkTheme) {
         Surface(
@@ -92,25 +102,11 @@ fun FeedProfileAddScreen(
                             .padding(horizontal = 8.dp),
                         enabled = feedProfileName.isNotEmpty(),
                         onClick = {
-                            if (mainViewModel != null) {
-                                webApiPostRequestExecution(
-                                    mainViewModel = mainViewModel,
-                                    apiUrl = WebApiUrls.FEED_POST_PROFILE_CREATE,
-                                    coroutineScope = coroutineScope,
-                                    webApiPostRequest = webApiPostRequest,
-                                    optionalGetParams = feedProfileAddViewModel.getApiCallParameters()
-                                )
-
-                                myFeedProfilesViewModel?.addFeedProfile(
-                                    feedProfile = feedProfileAddViewModel.getFeedProfile()
-                                )
-
-                                coroutineScope.launch {
-                                    // give the API some time and navigate back to main feed screen
-                                    delay(500)
-                                    navHostController?.navigate(ViewNavigationRoutes.feed)
-                                }
-                            }
+                            myFeedProfilesViewModel?.addFeedProfile(
+                                mainViewModel = mainViewModel,
+                                feedProfile = feedProfileAddViewModel.getFeedProfile(),
+                                apiCallParameters = feedProfileAddViewModel.getApiCallParameters()
+                            )
                         },
                     ) {
                         Text(
@@ -142,5 +138,5 @@ fun FeedProfileAddScreen(
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )@Composable
 internal fun FeedProfileAddScreenPreview() {
-    FeedProfileAddScreen()
+    FeedProfileAddScreen(mainViewModel = mockMainViewModel)
 }

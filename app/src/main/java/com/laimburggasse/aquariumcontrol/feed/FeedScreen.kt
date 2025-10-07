@@ -33,8 +33,8 @@ import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntryImport
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleViewModel
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleViewModelFactory
-import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -45,7 +45,7 @@ fun FeedScreen(
     navHostController: NavHostController? = null,
     mockFeedProfiles: List<FeedProfile>? = null,
     mockFeedScheduleEntries: List<FeedScheduleEntry>? = null,
-    mainViewModel: MainViewModel? = null,
+    mainViewModel: MainViewModel,
     myFeedProfilesViewModel: FeedProfilesViewModel? = null,
     darkTheme: Boolean? = null
 ) {
@@ -74,15 +74,13 @@ fun FeedScreen(
             factory = FeedProfilesViewModelFactory(feedProfiles = mockFeedProfiles)
         )
 
-    if (mainViewModel != null) {
-        LaunchedEffect(Unit) {
-            withContext(Dispatchers.IO) {
-                if (mainViewModel.getControllerAddress() != null) {
-                    delay(500)
-                    feedScheduleViewModel.readFeedScheduleEntries(mainViewModel.getControllerAddress()!!)
-                    feedProfilesViewModel.readFeedProfiles(mainViewModel.getControllerAddress()!!)
-                    isLoading = false
-                }
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.IO) {
+            if (mainViewModel.getControllerAddress() != null) {
+                delay(500)
+                feedScheduleViewModel.readFeedScheduleEntries(mainViewModel.getControllerAddress()!!)
+                feedProfilesViewModel.readFeedProfiles(mainViewModel.getControllerAddress()!!)
+                isLoading = false
             }
         }
     }
@@ -231,6 +229,7 @@ fun createMockFeedSchedule(): List<FeedScheduleEntry> {
 fun FeedScreenPreview() {
     FeedScreen(
         mockFeedProfiles = createMockFeedProfiles(),
-        mockFeedScheduleEntries = createMockFeedSchedule()
+        mockFeedScheduleEntries = createMockFeedSchedule(),
+        mainViewModel = mockMainViewModel,
     )
 }

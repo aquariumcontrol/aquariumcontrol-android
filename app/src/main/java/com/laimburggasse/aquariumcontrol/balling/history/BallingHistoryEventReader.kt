@@ -25,21 +25,24 @@ class BallingHistoryEventReader(private val url: String) {
             val response = client.newCall(request).execute()
             if (response.isSuccessful) {
                 val responseBody = response.body.string()
+                if (responseBody.isEmpty()) {
+                    return DataFetchResult.Success(data = emptyList())
+                }
                 try {
-                    val decodedData =
-                        json.decodeFromString<List<BallingHistoryDosingEvent>>(responseBody)
+                    val decodedData: List<BallingHistoryDosingEvent> =
+                        json.decodeFromString<List<BallingHistoryDosingEvent>>(string = responseBody)
                     return DataFetchResult.Success(decodedData)
                 } catch (e: Exception) {
                     return DataFetchResult.Error(
-                        e,
-                        "Error decoding data sent from server: ${e.message}"
+                        exception = e,
+                        errorMessage = "Error decoding data sent from server: ${e.message}"
                     )
                 }
             } else {
-                return DataFetchResult.Error(null, "Server responded with error code: ${response.code}")
+                return DataFetchResult.Error(exception = null, errorMessage = "Server responded with error code: ${response.code}")
             }
         } catch (e: Exception) {
-            return DataFetchResult.Error(e, "An unexpected error occurred during preparation of server communication.")
+            return DataFetchResult.Error(exception = e, errorMessage = "An unexpected error occurred during preparation of server communication.")
         }
     }
 }

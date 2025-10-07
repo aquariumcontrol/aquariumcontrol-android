@@ -4,9 +4,17 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
+import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
+import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
+import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
+import kotlinx.coroutines.launch
 
 class VentilationSetValsViewModel(
     private var ventilationSetVals: VentilationSetVals,
+    private var mainViewModel: MainViewModel
 ) : ViewModel() {
     // This class will allow the user to edit the ventilation control parameters
     private val _sliderRange = MutableLiveData<ClosedFloatingPointRange<Float>>()
@@ -54,6 +62,17 @@ class VentilationSetValsViewModel(
         if (_sliderRange.value != null) {
             ventilationSetVals.ventilationSwitchOffTemp = sliderRange.value!!.start.toDouble()
             ventilationSetVals.ventilationSwitchOnTemp = sliderRange.value!!.endInclusive.toDouble()
+            viewModelScope.launch {
+                webApiPostRequestExecution(
+                    mainViewModel = mainViewModel,
+                    apiUrl = WebApiUrls.VENTILATION_POST_SET_VALS,
+                    webApiPostRequest = WebApiPostRequest(),
+                    optionalGetParams = mapOf(
+                        WebApiParams.VENTILATION_SWITCH_ON_TEMPERATURE to getVentilationSwitchOnTempString(),
+                        WebApiParams.VENTILATION_SWITCH_OFF_TEMPERATURE to getVentilationSwitchOffTempString()
+                    ),
+                )
+            }
         } else {
             Log.d("VentilationSetValsViewModel", "updateValues: _sliderRange.value is null")
         }

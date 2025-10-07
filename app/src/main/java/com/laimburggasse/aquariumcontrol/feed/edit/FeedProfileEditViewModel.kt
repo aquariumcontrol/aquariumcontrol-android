@@ -5,12 +5,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.feed.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.FeedProfilePhase
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
+import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
+import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
+import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewModel() {
@@ -644,8 +650,16 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
         resetFeedProfileEditMenuItems() // copy from myFeedProfile to phaseMenuItems
     }
 
-    fun updateFeedProfile() {
-        myFeedProfile.update()          // overwrite backup data structure
+    fun updateFeedProfile(mainViewModel: MainViewModel) {
+        viewModelScope.launch {
+            webApiPostRequestExecution(
+                mainViewModel = mainViewModel,
+                apiUrl = WebApiUrls.FEED_POST_PROFILE_UPDATE,
+                webApiPostRequest = WebApiPostRequest(),
+                optionalGetParams = getApiCallParameters()
+            )
+            myFeedProfile.update()          // overwrite backup data structure
+        }
     }
 
     fun getApiCallParameters(): Map<String, String> {

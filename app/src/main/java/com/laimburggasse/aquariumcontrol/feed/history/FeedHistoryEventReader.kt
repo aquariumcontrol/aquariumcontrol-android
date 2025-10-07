@@ -1,6 +1,8 @@
 package com.laimburggasse.aquariumcontrol.feed.history
 
 import android.util.Log
+import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -10,31 +12,38 @@ class FeedHistoryEventReader(private val url: String) {
     private val client = OkHttpClient()
     private val json = Json { ignoreUnknownKeys = true }
 
-    fun readFeedEvents(): List<FeedHistoryEvent>? {
+    fun readFeedEvents(mainViewModel: MainViewModel? = null): DataFetchResult<List<FeedHistoryEvent>> {
         val request = Request.Builder()
             .url(url)
             .build()
 
-        Log.d(this::class.simpleName, "Request URL: $url")
-        return try {
+        val isControllerLoaded = mainViewModel?.isControllerLoaded() == true
+        if (!isControllerLoaded) {
+            return DataFetchResult.Error(exception = null, errorMessage = "Controller not loaded.")
+        }
+
+        try {
             val response = client.newCall(request).execute()
             if (response.isSuccessful) {
                 val responseBody = response.body.string()
-                Log.d(this::class.simpleName, "Response successful: $responseBody")
                 if (responseBody.isEmpty()) {
-                    Log.d(this::class.simpleName, "Response body is empty")
-                    emptyList()
+                    return DataFetchResult.Success(data = emptyList())
                 }
-                else {
-                    json.decodeFromString<List<FeedHistoryEvent>>(responseBody)
+                try {
+                    val decodedData: List<FeedHistoryEvent> =
+                        json.decodeFromString<List<FeedHistoryEvent>>(responseBody)
+                    return DataFetchResult.Success(decodedData)
+                } catch (e: Exception) {
+                    return DataFetchResult.Error(
+                        exception = e,
+                        errorMessage = "Error decoding data sent from server: ${e.message}"
+                    )
                 }
             } else {
-                Log.d(this::class.simpleName, "Error: ${response.code} - ${response.message}")
-                null
+                return DataFetchResult.Error(exception = null, errorMessage = "Server responded with error code: ${response.code}")
             }
         } catch (e: Exception) {
-            Log.d(this::class.simpleName, "Exception: ${e.message}")
-            null
+            return DataFetchResult.Error(exception = e, errorMessage = "An unexpected error occurred during preparation of server communication.")
         }
     }
 }

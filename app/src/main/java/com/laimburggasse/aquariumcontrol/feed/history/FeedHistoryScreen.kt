@@ -22,66 +22,49 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.feed.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
-import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @Composable
 fun FeedHistoryScreen(
     navHostController: NavHostController? = null,
     showFullWeek: Boolean,
-    mockFeedHistoryEvents: List<FeedHistoryEvent>? = null,
-    mainViewModel: MainViewModel? = null,
+    mainViewModel: MainViewModel,
+    feedHistoryViewModel: FeedHistoryViewModelInterface = viewModel<FeedHistoryViewModel>(),
     darkTheme: Boolean? = null
 ) {
-    // This screen will only display the different feed events.
-    // Hence, there is no need to have a view model.
-    var feedEvents by remember { mutableStateOf(mockFeedHistoryEvents) }
-    var isRefreshing by remember {
-        mutableStateOf(
-            mockFeedHistoryEvents?.isNotEmpty() == true
-        )
-    }
+    // This screen displays:
+    // - headline
+    // - sub headline (last 7 days or last 24 hours)
+    // - list of feed events
+    val isControllerAddressValid: Boolean = !mainViewModel.getControllerAddress().isNullOrBlank()
+    val isRefreshing: Boolean by remember { feedHistoryViewModel::isRefreshing }
+    val feedHistoryUiState: FeedHistoryUiState by remember { feedHistoryViewModel::feedHistoryUiState }
 
-    val isControllerLoaded = mainViewModel?.isControllerLoaded() == true
-    val coroutineScope = rememberCoroutineScope()
-    val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
 
     // Use a LaunchedEffect to fetch data on initial composition
     @Suppress("UNCHECKED_CAST")
     LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
-        if (mainViewModel != null && isControllerAddressValid) { // Check for null and validity
-            isRefreshing = true
-            fetchFeedEvents(
-                mainViewModel,
-                showFullWeek
-            ) { newFeedEvents ->
-                feedEvents = newFeedEvents
-            } // Pass the setter lambda
-            isRefreshing = false
+        if (isControllerAddressValid) {
+            feedHistoryViewModel.loadData(mainViewModel, showFullWeek)
         }
     }
 
@@ -116,32 +99,15 @@ fun FeedHistoryScreen(
                             text = subHeadlineText,
                         )
                         PullToRefreshBox(
-                            modifier = Modifier
-                                .fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                             contentAlignment = Alignment.Center,
                             state = rememberPullToRefreshState(),
                             isRefreshing = isRefreshing,
-                            onRefresh = {
-                                // This lambda will be called when the user pulls to refresh
-                                isRefreshing = true
-                                // Perform the refresh operation here (e.g., fetch new data)
-                                coroutineScope.launch {
-                                    if (isControllerAddressValid) {
-                                        fetchFeedEvents(
-                                            mainViewModel, showFullWeek
-                                        ) { newFeedEvents ->
-                                            feedEvents = newFeedEvents
-                                        } // Pass the setter lambda
-                                        delay(timeMillis = 500)
-                                    }
-                                    isRefreshing = false // Reset the refresh state
-                                }
-                            },
+                            onRefresh = { feedHistoryViewModel.loadData(mainViewModel, showFullWeek) },
                             indicator = {
                                 if (isRefreshing) {
                                     CircularProgressIndicator(
-                                        modifier = Modifier
-                                            .size(150.dp),
+                                        modifier = Modifier.size(150.dp),
                                         color = MaterialTheme.colorScheme.primary
                                     )
                                 }
@@ -153,57 +119,52 @@ fun FeedHistoryScreen(
                                     .padding(16.dp),
                                 horizontalArrangement = Arrangement.Center
                             ) {
-                                if (isControllerLoaded || mockFeedHistoryEvents != null) {
-                                    if (isControllerAddressValid || mockFeedHistoryEvents != null) {
-                                        if (feedEvents == null) {
-                                            Text(
-                                                text = stringResource(R.string.loading_feed_events),
-                                                style = TextStyle(
-                                                    fontSize = 16.sp,
-                                                    fontWeight = FontWeight.Bold
-                                                )
-                                            )
-                                        } else if (feedEvents!!.isEmpty()) {
-                                            Text(
-                                                text = stringResource(R.string.no_feed_events_found),
-                                                style = TextStyle(
-                                                    fontSize = 16.sp,
-                                                    fontWeight = FontWeight.Bold
-                                                )
-                                            )
-                                        } else {
-                                            if (LocalInspectionMode.current) {
-                                                Column(modifier = Modifier.fillMaxSize()) {
-                                                    feedEvents!!.forEach { feedHistoryEvent ->
-                                                        FeedHistoryEventComposable(feedHistoryEvent)
-                                                    }
-                                                }
-                                            }
-                                            else {
-                                                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                                    items(feedEvents!!) { feedHistoryEvent ->
-                                                        FeedHistoryEventComposable(feedHistoryEvent)
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    } else {
+                                when (feedHistoryUiState) {
+                                    is FeedHistoryUiState.Empty -> {
                                         Text(
-                                            text = stringResource(R.string.invalid_controller_address),
+                                            text = stringResource(R.string.no_feed_events_found),
                                             style = TextStyle(
                                                 fontSize = 16.sp,
                                                 fontWeight = FontWeight.Bold
                                             )
                                         )
                                     }
-                                } else {
-                                    Text(
-                                        text = stringResource(R.string.controller_not_loaded),
-                                        style = TextStyle(
-                                            fontSize = 16.sp,
-                                            fontWeight = FontWeight.Bold
+                                    is FeedHistoryUiState.Error -> {
+                                        Text(
+                                            text = "Error loading data: ${(feedHistoryUiState as FeedHistoryUiState.Error).errorMessage}",
+                                            style = TextStyle(
+                                                fontSize = 16.sp,
+                                                fontWeight = FontWeight.Bold
+                                            ),
+                                            modifier = Modifier.weight(1f),
+                                            textAlign = TextAlign.Center
+                                        )                                    }
+                                    is FeedHistoryUiState.Loading -> {
+                                        Text(
+                                            text = stringResource(R.string.loading_feed_events),
+                                            style = TextStyle(
+                                                fontSize = 16.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
                                         )
-                                    )
+                                    }
+                                    is FeedHistoryUiState.Success -> {
+                                        val feedEvents = (feedHistoryUiState as FeedHistoryUiState.Success).feedHistory
+                                        if (LocalInspectionMode.current) {
+                                            Column(modifier = Modifier.fillMaxSize()) {
+                                                feedEvents.forEach { feedHistoryEvent ->
+                                                    FeedHistoryEventComposable(feedHistoryEvent)
+                                                }
+                                            }
+                                        }
+                                        else {
+                                            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                                items(items = feedEvents) { feedHistoryEvent ->
+                                                    FeedHistoryEventComposable(feedHistoryEvent)
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -219,23 +180,36 @@ fun FeedHistoryScreen(
     }
 }
 
-private suspend fun fetchFeedEvents(
-    mainViewModel: MainViewModel,
-    showFullWeek: Boolean,
-    updateFeedEvents: (List<FeedHistoryEvent>) -> Unit,
-) {
-    withContext(Dispatchers.IO) {
-        val url = when {
-            showFullWeek -> "http://" + mainViewModel.getControllerAddress() + WebApiUrls.FEED_GET_EVENTS_7D
-            else -> "http://" + mainViewModel.getControllerAddress() + WebApiUrls.FEED_GET_EVENTS_24H
-        }
-        val reader = FeedHistoryEventReader(url)
-        val feedEvents = reader.readFeedEvents()
-        if (feedEvents != null) {
-            updateFeedEvents(feedEvents) // Call the setter lambda
-        }
-    }
-}
+val mockFeedEvents = listOf(
+    FeedHistoryEvent(
+        timestamp = "2025-01-18 12:00:00",
+        feederOnTime = 20000,
+        profileName = "Mock feed profile 1",
+        idx = 1
+    ),
+    FeedHistoryEvent(
+        timestamp = "2025-01-18 12:00:00",
+        feederOnTime = 10000,
+        profileName = "Mock feed profile 2",
+        idx = 2
+    ),
+)
+
+val mockFeedHistoryUiStateSuccess = FeedHistoryUiState.Success(feedHistory = mockFeedEvents)
+
+val mockFeedHistoryViewModelSuccess = MockFeedHistoryViewModel(mockFeedHistoryUiStateSuccess)
+
+val mockFeedHistoryUiStateError = FeedHistoryUiState.Error(errorMessage = "Error message")
+
+val mockFeedHistoryViewModelError = MockFeedHistoryViewModel(mockFeedHistoryUiStateError)
+
+val mockFeedHistoryUiStateLoading = FeedHistoryUiState.Loading
+
+val mockFeedHistoryViewModelLoading = MockFeedHistoryViewModel(mockFeedHistoryUiStateLoading)
+
+val mockFeedHistoryUiStateEmpty = FeedHistoryUiState.Empty
+
+val mockFeedHistoryViewModelEmpty = MockFeedHistoryViewModel(mockFeedHistoryUiStateEmpty)
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -250,27 +224,43 @@ private suspend fun fetchFeedEvents(
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
 @Composable
-internal fun FeedHistoryScreenPreview() {
-    val mockEvents = listOf(
-        FeedHistoryEvent(
-            timestamp = "2025-01-18 12:00:00",
-            feederOnTime = 20000,
-            profileName = "Mock feed profile 1",
-            idx = 1
-        ),
-        FeedHistoryEvent(
-            timestamp = "2025-01-18 12:00:00",
-            feederOnTime = 10000,
-            profileName = "Mock feed profile 2",
-            idx = 2
-        ),
+internal fun FeedHistoryScreenPreviewSuccess() {
+    FeedHistoryScreen(
+        showFullWeek = false,
+        feedHistoryViewModel = mockFeedHistoryViewModelSuccess,
+        mainViewModel = mockMainViewModel
     )
-
-    FeedHistoryScreen(showFullWeek = false, mockFeedHistoryEvents = mockEvents)
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun FeedHistoryScreenEmptyPreview() {
-    FeedHistoryScreen(showFullWeek = false, mockFeedHistoryEvents = emptyList())
+internal fun FeedHistoryScreenPreviewError() {
+    FeedHistoryScreen(
+        showFullWeek = false,
+        feedHistoryViewModel = mockFeedHistoryViewModelError,
+        mainViewModel = mockMainViewModel
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+internal fun FeedHistoryScreenPreviewLoading() {
+    FeedHistoryScreen(
+        showFullWeek = false,
+        feedHistoryViewModel = mockFeedHistoryViewModelLoading,
+        mainViewModel = mockMainViewModel
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+internal fun FeedHistoryScreenPreviewEmpty() {
+    FeedHistoryScreen(
+        showFullWeek = false,
+        feedHistoryViewModel = mockFeedHistoryViewModelEmpty,
+        mainViewModel = mockMainViewModel
+    )
 }

@@ -12,7 +12,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -22,9 +21,6 @@ import androidx.compose.ui.unit.sp
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
-import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
-import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
-import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
 
 @Composable
 fun FeedProfileEditButtonsComposable(
@@ -35,11 +31,7 @@ fun FeedProfileEditButtonsComposable(
     // This composable displays the buttons for updating the feed profile.
     // The arrangement of the buttons follows the device orientation.
 
-    val webApiPostRequest = WebApiPostRequest()
-
     val context = LocalContext.current // context for web API request and Toasts
-
-    val coroutineScope = rememberCoroutineScope()
 
     Button(
         modifier = modifier?.then(Modifier
@@ -47,21 +39,12 @@ fun FeedProfileEditButtonsComposable(
             .padding(horizontal = 8.dp)) ?: Modifier,
         onClick = {
             if (mainViewModel != null) {
-                webApiPostRequestExecution(
-                    mainViewModel = mainViewModel,
-                    apiUrl = WebApiUrls.FEED_POST_PROFILE_UPDATE,
-                    coroutineScope = coroutineScope,
-                    webApiPostRequest = webApiPostRequest,
-                    optionalGetParams = feedProfileEditViewModel?.getApiCallParameters() ?: emptyMap()
-                )
-
-                // Show the Toast after the API call
+                feedProfileEditViewModel?.updateFeedProfile(mainViewModel)
                 Toast.makeText(
                     context,
                     context.getString(R.string.sent_request_to_controller_for_updating_feed_profile),
                     Toast.LENGTH_SHORT
                 ).show()
-                feedProfileEditViewModel?.updateFeedProfile()
             }
         },
     ) {

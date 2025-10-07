@@ -19,27 +19,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntryComposable
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleViewModel
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleViewModelFactory
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
-import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
-import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
-import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
 
 @Composable
 fun FeedScheduleSelectionComposable(
     myFeedScheduleViewModel: FeedScheduleViewModel? = null,
     mockFeedScheduleEntries: List<FeedScheduleEntry>? = null,
-    mainViewModel: MainViewModel? = null
+    mainViewModel: MainViewModel
 ) {
     // This composable displays a label "Feed Schedule"
     // and a list of feed schedule entries
-
-    val context = LocalContext.current // context for web API request and Toasts
-    val coroutineScope = rememberCoroutineScope()
 
     // use view model provided as parameter or create a new one
     val feedScheduleViewModel: FeedScheduleViewModel = myFeedScheduleViewModel ?: viewModel(
@@ -76,23 +71,16 @@ fun FeedScheduleSelectionComposable(
                         mainViewModel?.updateSelectedFeedScheduleEntry(feedScheduleEntry)
                     },
                     onDeleteClick = {
-                        if (mainViewModel != null) {
-                            mainViewModel.updateSelectedFeedScheduleEntry(null)
-                            feedScheduleViewModel?.deleteFeedScheduleEntry(feedScheduleEntry)
-                            webApiPostRequestExecution(
-                                apiUrl = WebApiUrls.FEED_POST_SCHEDULE_REMOVE_ENTRY,
-                                mainViewModel = mainViewModel,
-                                coroutineScope = coroutineScope, // Make sure scope is available here
-                                webApiPostRequest = WebApiPostRequest(),
-                                optionalGetParams = feedScheduleEntry.getApiParameters()
-                            )
-                        }
+                        mainViewModel.updateSelectedFeedScheduleEntry(null)
+                        feedScheduleViewModel.deleteFeedScheduleEntry(feedScheduleEntry)
                     }
                 )
             }
         }
     }
 }
+
+val mockMainViewModel = MockMainViewModel()
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -112,7 +100,8 @@ internal fun FeedScheduleSelectionComposablePreview() {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 FeedScheduleSelectionComposable(
-                    mockFeedScheduleEntries = createMockFeedSchedule()
+                    mockFeedScheduleEntries = createMockFeedSchedule(),
+                    mainViewModel = mockMainViewModel
                 )
             }
         }

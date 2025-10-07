@@ -13,10 +13,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,9 +26,6 @@ import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleViewModel
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
-import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
-import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
-import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
 
 @Composable
 fun FeedProfileSelectionComposable(
@@ -48,9 +43,6 @@ fun FeedProfileSelectionComposable(
     val feedProfilesViewModel: FeedProfilesViewModel = myFeedProfilesViewModel ?: viewModel(
         factory = FeedProfilesViewModelFactory(feedProfiles = mockFeedProfiles)
     )
-    
-    val coroutineScope = rememberCoroutineScope()
-    val context = LocalContext.current // context for web API request and Toasts
 
     Text(text = stringResource(R.string.feed_profiles))
 
@@ -74,18 +66,16 @@ fun FeedProfileSelectionComposable(
                     feedProfile = feedProfile,
                     onEditClick = {
                         mainViewModel?.updateSelectedFeedProfile(feedProfile)
-                        navHostController?.navigate(ViewNavigationRoutes.feedEdit)
+                        navHostController?.navigate(route = ViewNavigationRoutes.feedEdit)
                     },
                     onScheduleClick = {
                         mainViewModel?.updateSelectedFeedProfile(feedProfile)
                         mainViewModel?.updateSelectedFeedScheduleEntry(null)
                         mainViewModel?.setMyFeedScheduleViewModel(feedScheduleViewModel)
-                        navHostController?.navigate(ViewNavigationRoutes.feedSchedule)
+                        navHostController?.navigate(route = ViewNavigationRoutes.feedSchedule)
                     },
                     onDeleteClick = {
-                        feedProfilesViewModel?.deleteFeedProfile(feedProfile)
-                        if (mainViewModel != null) {
-                        }
+                        feedProfilesViewModel.deleteFeedProfile(feedProfile)
                     }
                 )
             }

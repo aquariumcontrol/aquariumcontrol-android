@@ -3,7 +3,9 @@ package com.laimburggasse.aquariumcontrol.feed.schedule
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
+import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -41,6 +43,12 @@ class FeedScheduleViewModel(myFeedScheduleEntries: List<FeedScheduleEntry>?) :
         val currentList = _feedScheduleEntries.value.orEmpty().toMutableList()
         currentList.remove(feedScheduleEntry)
         _feedScheduleEntries.value = currentList
+        webApiPostRequestExecution(
+            apiUrl = WebApiUrls.FEED_POST_SCHEDULE_REMOVE_ENTRY,
+            mainViewModel = mainViewModel,
+            webApiPostRequest = WebApiPostRequest(),
+            optionalGetParams = feedScheduleEntry.getApiParameters()
+        )
     }
 
     fun addFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry) {

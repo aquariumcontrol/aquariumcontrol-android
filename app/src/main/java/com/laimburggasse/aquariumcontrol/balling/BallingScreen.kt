@@ -28,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
@@ -41,7 +42,7 @@ import kotlinx.coroutines.withContext
 fun BallingScreen(
     navHostController: NavHostController? = null,
     mockBallingProfiles: List<BallingProfile>? = null,
-    mainViewModel: MainViewModel? = null,
+    mainViewModel: MainViewModel,
     darkTheme: Boolean? = null,
 ) {
     // This screen displays
@@ -49,18 +50,18 @@ fun BallingScreen(
     // - a button for visualizing all Balling dosing events of the last 7 days
     // - all Balling profiles downloaded from the controller
 
+    // @todo: Add view model
+
     var ballingProfiles by remember { mutableStateOf(mockBallingProfiles) }
 
     val configuration = LocalConfiguration.current
 
-    if (mainViewModel != null) {
-        val url = "http://" + mainViewModel.getControllerAddress() + WebApiUrls.BALLING_GET_SET_VALS
-        val reader = BallingProfileReader(url)
+    val url = "http://" + mainViewModel.getControllerAddress() + WebApiUrls.BALLING_GET_SET_VALS
+    val reader = BallingProfileReader(url)
 
-        LaunchedEffect(Unit) {
-            withContext(Dispatchers.IO) {
-                ballingProfiles = reader.readBallingProfiles()
-            }
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.IO) {
+            ballingProfiles = reader.readBallingProfiles()
         }
     }
 
@@ -139,6 +140,8 @@ fun BallingScreen(
     }
 }
 
+val mockMainViewModel = MockMainViewModel()
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
@@ -157,5 +160,8 @@ internal fun BallingScreenPreview() {
     val mockBallingProfile2 = BallingProfile(pumpId = 2, volume = 3.1, label = "mock2")
     val mockBallingProfiles = listOf(mockBallingProfile1, mockBallingProfile2)
 
-    BallingScreen(mockBallingProfiles = mockBallingProfiles)
+    BallingScreen(
+        mockBallingProfiles = mockBallingProfiles,
+        mainViewModel = mockMainViewModel,
+    )
 }

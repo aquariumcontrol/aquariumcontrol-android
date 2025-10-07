@@ -101,8 +101,7 @@ fun BallingHistoryScreen(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             PullToRefreshBox(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
+                                modifier = Modifier.fillMaxWidth(),
                                 contentAlignment = Alignment.Center,
                                 state = rememberPullToRefreshState(),
                                 isRefreshing = isRefreshing,
@@ -110,8 +109,7 @@ fun BallingHistoryScreen(
                                 indicator = {
                                     if (isRefreshing) {
                                         CircularProgressIndicator(
-                                            modifier = Modifier
-                                                .size(150.dp),
+                                            modifier = Modifier.size(150.dp),
                                             color = MaterialTheme.colorScheme.primary
                                         )
                                     }
@@ -137,7 +135,7 @@ fun BallingHistoryScreen(
                                         }
                                         is BallingHistoryUiState.Error -> {
                                             Text(
-                                                "Error loading data: ${(ballingHistoryUiState as BallingHistoryUiState.Error).errorMessage}",
+                                                text = "Error loading data: ${(ballingHistoryUiState as BallingHistoryUiState.Error).errorMessage}",
                                                 style = TextStyle(
                                                     fontSize = 16.sp,
                                                     fontWeight = FontWeight.Bold
@@ -208,9 +206,9 @@ val ballingHistoryScreenMockData = listOf(
     ),
 )
 
-val mockBallingHistoryUiState = BallingHistoryUiState.Success(ballingHistoryDosingEvents = ballingHistoryScreenMockData)
+val mockBallingHistoryUiStateSuccess = BallingHistoryUiState.Success(ballingHistoryDosingEvents = ballingHistoryScreenMockData)
 
-val mockBallingHistoryViewModelSuccess = MockBallingHistoryViewModel(mockBallingHistoryUiState)
+val mockBallingHistoryViewModelSuccess = MockBallingHistoryViewModel(mockBallingHistoryUiStateSuccess)
 
 val mockBallingHistoryUiStateError = BallingHistoryUiState.Error(errorMessage = "Error message")
 

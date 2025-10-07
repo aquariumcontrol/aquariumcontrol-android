@@ -23,6 +23,7 @@ import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.FeedProfileImport
+import com.laimburggasse.aquariumcontrol.feed.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
@@ -30,7 +31,7 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 fun FeedProfileEditScreen(
     navHostController: NavHostController? = null,
     feedProfile: FeedProfile,
-    mainViewModel: MainViewModel? = null,
+    mainViewModel: MainViewModel,
     darkTheme: Boolean? = null
 ) {
     // This screen displays
@@ -44,7 +45,7 @@ fun FeedProfileEditScreen(
         factory = FeedProfileEditViewModelFactory(feedProfile)
     )
 
-    val configuration = LocalConfiguration.current
+    val configuration: Configuration = LocalConfiguration.current
 
     AquariumControllerTheme(darkTheme) {
         // A surface container using the 'background' color from the theme
@@ -242,5 +243,6 @@ internal fun FeedProfileEditScreenPreview() {
 
     FeedProfileEditScreen(
         feedProfile = mockFeedProfile,
+        mainViewModel = mockMainViewModel
     )
 }

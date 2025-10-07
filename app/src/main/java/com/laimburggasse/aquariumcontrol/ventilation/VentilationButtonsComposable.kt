@@ -41,16 +41,7 @@ fun VentilationButtonsComposable(
             ventilationSetValsViewModel?.updateValues()
             if (mainViewModel != null && coroutineScope != null && ventilationSetValsViewModel != null) {
                 val webApiPostRequest = WebApiPostRequest()
-                webApiPostRequestExecution(
-                    mainViewModel = mainViewModel,
-                    apiUrl = WebApiUrls.VENTILATION_POST_SET_VALS,
-                    coroutineScope = coroutineScope,
-                    webApiPostRequest = webApiPostRequest,
-                    optionalGetParams = mapOf(
-                        WebApiParams.VENTILATION_SWITCH_ON_TEMPERATURE to ventilationSetValsViewModel.getVentilationSwitchOnTempString(),
-                        WebApiParams.VENTILATION_SWITCH_OFF_TEMPERATURE to ventilationSetValsViewModel.getVentilationSwitchOffTempString()
-                    ),
-                )
+                
                 // Show the Toast after the API call
                 Toast.makeText(
                     context,
