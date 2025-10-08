@@ -67,7 +67,7 @@ open class MainViewModel: ViewModel() {
         return selectedFeedProfile
     }
 
-    fun updateSelectedFeedProfile(feedProfile: FeedProfile) {
+    fun updateSelectedFeedProfile(feedProfile: FeedProfile?) {
         selectedFeedProfile = feedProfile
     }
 

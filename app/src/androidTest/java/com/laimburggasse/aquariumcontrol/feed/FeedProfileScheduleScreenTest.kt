@@ -39,15 +39,18 @@ class FeedProfileScheduleScreenTest {
         ).transformToFeedScheduleEntry()
     }
 
-    val mockMainViewModel = MockMainViewModel()
+    fun generateMockMainViewModel(): MockMainViewModel {
+        val mockMainViewModel = MockMainViewModel()
+        mockMainViewModel.updateSelectedFeedProfile(feedProfile = generateMockFeedProfile())
+        mockMainViewModel.updateSelectedFeedScheduleEntry(feedScheduleEntry = generateMockFeedScheduleEntry())
+        return mockMainViewModel
+    }
 
     @Test
     fun feedScheduleScreenDarkTest() {
         composeTestRule.setContent {
             FeedProfileScheduleScreen(
-                mainViewModel = mockMainViewModel,
-                mockFeedProfile = generateMockFeedProfile(),
-                mockFeedScheduleEntry = generateMockFeedScheduleEntry(),
+                mainViewModel = generateMockMainViewModel(),
                 darkTheme = true
             )
         }
@@ -64,9 +67,7 @@ class FeedProfileScheduleScreenTest {
     fun feedScheduleScreenLightTest() {
         composeTestRule.setContent {
             FeedProfileScheduleScreen(
-                mainViewModel = mockMainViewModel,
-                mockFeedProfile = generateMockFeedProfile(),
-                mockFeedScheduleEntry = generateMockFeedScheduleEntry(),
+                mainViewModel = generateMockMainViewModel(),
                 darkTheme = false
             )
         }
