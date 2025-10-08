@@ -1,36 +1,42 @@
 package com.laimburggasse.aquariumcontrol.balling
 
-import android.util.Log
+import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.Response
 
 class BallingProfileReader(private val url: String) {
     // This class reads the Balling profiles from the server using a GET request.
     private val client = OkHttpClient()
     private val json = Json { ignoreUnknownKeys = true }
 
-    fun readBallingProfiles(): List<BallingProfile>? {
-        val request = Request.Builder()
-            .url(url)
-            .build()
+    fun readBallingProfiles(): DataFetchResult<List<BallingProfile>> {
+        val request = Request.Builder().url(url).build()
 
-        Log.d(this::class.simpleName, "Request URL: $url")
-        return try {
-            val response = client.newCall(request).execute()
+        try {
+            val response: Response = client.newCall(request).execute()
             if (response.isSuccessful) {
-                val responseBody = response.body?.string()
-                Log.d(this::class.simpleName, "Response successful: $responseBody")
-                responseBody?.let {
-                    json.decodeFromString<List<BallingProfile>>(it)
+                val responseBody = response.body.string()
+                if (responseBody.isEmpty()) {
+                    return DataFetchResult.Success(data = emptyList())
+                }
+                else {
+                    val decodedData: List<BallingProfile> =
+                        json.decodeFromString<List<BallingProfile>>(string = responseBody)
+                    return DataFetchResult.Success(decodedData)
                 }
             } else {
-                Log.d(this::class.simpleName, "Error: ${response.code} - ${response.message}")
-                null
+                return DataFetchResult.Error(
+                    exception = null,
+                    errorMessage = "Server responded with error code: ${response.code}"
+                )
             }
         } catch (e: Exception) {
-            Log.d(this::class.simpleName, "Exception: ${e.message}")
-            null
+            return DataFetchResult.Error(
+                exception = e,
+                errorMessage = "An unexpected error occurred during preparation of server communication."
+            )
         }
     }
 }

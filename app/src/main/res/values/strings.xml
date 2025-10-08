@@ -127,4 +127,6 @@
     <string name="ventilation_schedule">Ventilation schedule</string>
     <string name="heating_schedule">Heating schedule</string>
     <string name="failed_to_add_feed_profile">Failed to add feed profile.</string>
+    <string name="no_balling_profiles_found">There are no configured Balling profiles. Check the controller configuration.</string>
+    <string name="loading_balling_profiles">Loading Balling profiles...</string>
 </resources>

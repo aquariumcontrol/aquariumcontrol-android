@@ -4,6 +4,7 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import org.junit.Rule
 import org.junit.Test
@@ -23,10 +24,21 @@ class BallingScreenTest {
     val mockBallingProfile2 = BallingProfile(pumpId = 2, volume = 3.1, label = "mock2")
     val mockBallingProfiles = listOf(mockBallingProfile1, mockBallingProfile2)
 
+    val mockBallingUiState = BallingUiState.Success(ballingProfiles = mockBallingProfiles)
+
+    val mockBallingViewModel = MockBallingViewModel(ballingUiState = mockBallingUiState, isRefreshing = false)
+
+    val mockMainViewModel = MockMainViewModel()
+
     @Test
     fun ballingScreenDarkTest() {
         composeTestRule.setContent {
-            BallingScreen(navHostController = null, mockBallingProfiles, darkTheme = true)
+            BallingScreen(
+                navHostController = null,
+                mainViewModel = mockMainViewModel,
+                ballingViewModel = mockBallingViewModel,
+                darkTheme = true
+            )
         }
         composeTestRule.waitForIdle()
         ScreenshotTestHelper.performScreenshotTest(
@@ -40,7 +52,12 @@ class BallingScreenTest {
     @Test
     fun ballingScreenLightTest() {
         composeTestRule.setContent {
-            BallingScreen(navHostController = null, mockBallingProfiles, darkTheme = false)
+            BallingScreen(
+                navHostController = null,
+                mainViewModel = mockMainViewModel,
+                ballingViewModel = mockBallingViewModel,
+                darkTheme = false
+            )
         }
         composeTestRule.waitForIdle()
         ScreenshotTestHelper.performScreenshotTest(
