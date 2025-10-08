@@ -4,6 +4,7 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditScreen
 import org.junit.Rule
@@ -151,13 +152,15 @@ class FeedProfileEditScreenTest {
         return FeedProfile(mockFeedProfileImport)
     }
 
+    val mockMainViewModel = MockMainViewModel()
+
     @Test
     fun feedEditScreenDarkTest() {
         composeTestRule.setContent {
             FeedProfileEditScreen(
-                navHostController = null,
                 feedProfile = generateMockFeedProfile(),
-                darkTheme = true
+                mainViewModel = mockMainViewModel,
+                darkTheme = true,
             )
         }
         composeTestRule.waitForIdle()
@@ -173,8 +176,8 @@ class FeedProfileEditScreenTest {
     fun feedEditScreenLightTest() {
         composeTestRule.setContent {
             FeedProfileEditScreen(
-                navHostController = null,
                 feedProfile = generateMockFeedProfile(),
+                mainViewModel = mockMainViewModel,
                 darkTheme = false
             )
         }

@@ -4,9 +4,12 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryEvent
 import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryScreen
+import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryUiState
+import com.laimburggasse.aquariumcontrol.feed.history.MockFeedHistoryViewModel
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -36,12 +39,23 @@ class FeedProfileHistoryScreenTest {
         ),
     )
 
+    val mockFeedHistoryUiStateSuccess = FeedHistoryUiState.Success(feedHistory = mockEvents)
+
+    val mockFeedHistoryViewModelSuccess = MockFeedHistoryViewModel(mockFeedHistoryUiState = mockFeedHistoryUiStateSuccess)
+
+    val mockMainViewModel = MockMainViewModel()
+
+    val mockFeedHistoryUiStateEmpty = FeedHistoryUiState.Empty
+
+    val mockFeedHistoryViewModelEmpty = MockFeedHistoryViewModel(mockFeedHistoryUiState = mockFeedHistoryUiStateEmpty)
+
     @Test
     fun feedProfileHistoryScreenDarkEmptyTest() {
         composeTestRule.setContent {
             FeedHistoryScreen(
                 showFullWeek = false,
-                mockFeedHistoryEvents = emptyList(),
+                mainViewModel = mockMainViewModel,
+                feedHistoryViewModel = mockFeedHistoryViewModelEmpty,
                 darkTheme = true
             )
         }
@@ -59,7 +73,8 @@ class FeedProfileHistoryScreenTest {
         composeTestRule.setContent {
             FeedHistoryScreen(
                 showFullWeek = false,
-                mockFeedHistoryEvents = emptyList(),
+                mainViewModel = mockMainViewModel,
+                feedHistoryViewModel = mockFeedHistoryViewModelEmpty,
                 darkTheme = false
             )
         }
@@ -74,7 +89,12 @@ class FeedProfileHistoryScreenTest {
     @Test
     fun feedProfileHistoryScreenDarkDataTest() {
         composeTestRule.setContent {
-            FeedHistoryScreen(showFullWeek = false, mockFeedHistoryEvents = mockEvents)
+            FeedHistoryScreen(
+                showFullWeek = false,
+                mainViewModel = mockMainViewModel,
+                feedHistoryViewModel = mockFeedHistoryViewModelSuccess,
+                darkTheme = true
+            )
         }
         composeTestRule.waitForIdle()
         ScreenshotTestHelper.performScreenshotTest(
@@ -88,7 +108,12 @@ class FeedProfileHistoryScreenTest {
     @Test
     fun feedProfileHistoryScreenLightDataTest() {
         composeTestRule.setContent {
-            FeedHistoryScreen(showFullWeek = false, mockFeedHistoryEvents = mockEvents)
+            FeedHistoryScreen(
+                showFullWeek = false,
+                mainViewModel = mockMainViewModel,
+                feedHistoryViewModel = mockFeedHistoryViewModelSuccess,
+                darkTheme = false
+            )
         }
         composeTestRule.waitForIdle()
         ScreenshotTestHelper.performScreenshotTest(

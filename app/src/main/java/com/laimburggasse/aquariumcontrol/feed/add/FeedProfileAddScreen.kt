@@ -40,7 +40,7 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 fun FeedProfileAddScreen(
     navHostController: NavHostController? = null,
     mainViewModel: MainViewModel,
-    myFeedProfilesViewModel: FeedProfilesViewModel? = null,
+    feedProfilesViewModel: FeedProfilesViewModel? = null,
     darkTheme: Boolean? = null
 ) {
     // This screen displays
@@ -57,7 +57,7 @@ fun FeedProfileAddScreen(
     val feedProfileName by feedProfileAddViewModel.feedProfileName.collectAsState()
 
     LaunchedEffect(Unit) {
-        myFeedProfilesViewModel?.eventFlow?.collect { event ->
+        feedProfilesViewModel?.eventFlow?.collect { event ->
             when (event) {
                 is FeedProfileAddEvent.FeedProfileAddSuccess -> {
                     navHostController?.navigate(ViewNavigationRoutes.feed)
@@ -102,7 +102,7 @@ fun FeedProfileAddScreen(
                             .padding(horizontal = 8.dp),
                         enabled = feedProfileName.isNotEmpty(),
                         onClick = {
-                            myFeedProfilesViewModel?.addFeedProfile(
+                            feedProfilesViewModel?.addFeedProfile(
                                 mainViewModel = mainViewModel,
                                 feedProfile = feedProfileAddViewModel.getFeedProfile(),
                                 apiCallParameters = feedProfileAddViewModel.getApiCallParameters()

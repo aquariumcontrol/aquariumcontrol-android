@@ -4,9 +4,12 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryDosingEvent
 import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryScreen
+import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryUiState
+import com.laimburggasse.aquariumcontrol.balling.history.MockBallingHistoryViewModel
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -21,7 +24,7 @@ class BallingHistoryScreenTest {
 
     private val subfolder = "balling"
 
-    val ballingHistoryScreenMockData = listOf(
+    val mockBallingHistoryEvents = listOf(
         BallingHistoryDosingEvent(
             timestamp = "2025-01-18 12:00:00",
             pumpId = 1,
@@ -36,12 +39,29 @@ class BallingHistoryScreenTest {
         ),
     )
 
+    val mockBallingHistoryUiStateEmpty = BallingHistoryUiState.Empty
+
+    val mockBallingHistoryUiStateSuccess = BallingHistoryUiState.Success(
+        ballingHistoryDosingEvents = mockBallingHistoryEvents
+    )
+
+    val mockBallingHistoryViewModelSuccess = MockBallingHistoryViewModel(
+        mockBallingHistoryUiState = mockBallingHistoryUiStateSuccess
+    )
+
+    val mockBallingHistoryViewModelEmpty = MockBallingHistoryViewModel(
+        mockBallingHistoryUiState = mockBallingHistoryUiStateEmpty
+    )
+
+    val mockMainViewModel = MockMainViewModel()
+
     @Test
     fun ballingHistoryScreenDarkEmptyTest() {
         composeTestRule.setContent {
             BallingHistoryScreen(
                 showFullWeek = false,
-                mockBallingHistoryDosingEvents = emptyList(),
+                mainViewModel = mockMainViewModel,
+                ballingHistoryViewModel = mockBallingHistoryViewModelEmpty,
                 darkTheme = true
             )
         }
@@ -59,7 +79,8 @@ class BallingHistoryScreenTest {
         composeTestRule.setContent {
             BallingHistoryScreen(
                 showFullWeek = false,
-                mockBallingHistoryDosingEvents = emptyList(),
+                mainViewModel = mockMainViewModel,
+                ballingHistoryViewModel = mockBallingHistoryViewModelEmpty,
                 darkTheme = false
             )
         }
@@ -76,7 +97,8 @@ class BallingHistoryScreenTest {
         composeTestRule.setContent {
             BallingHistoryScreen(
                 showFullWeek = false,
-                mockBallingHistoryDosingEvents = ballingHistoryScreenMockData,
+                mainViewModel = mockMainViewModel,
+                ballingHistoryViewModel = mockBallingHistoryViewModelSuccess,
                 darkTheme = true
             )
         }
@@ -94,7 +116,8 @@ class BallingHistoryScreenTest {
         composeTestRule.setContent {
             BallingHistoryScreen(
                 showFullWeek = false,
-                mockBallingHistoryDosingEvents = ballingHistoryScreenMockData,
+                mainViewModel = mockMainViewModel,
+                ballingHistoryViewModel = mockBallingHistoryViewModelSuccess,
                 darkTheme = false
             )
         }

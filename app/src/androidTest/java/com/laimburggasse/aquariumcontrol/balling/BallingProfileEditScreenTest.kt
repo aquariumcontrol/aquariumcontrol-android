@@ -4,6 +4,7 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditScreen
 import org.junit.Rule
@@ -26,10 +27,17 @@ class BallingProfileEditScreenTest {
         label = "MockDosingUnit 1",
     )
 
+    val mockMainViewModel = MockMainViewModel()
+
     @Test
     fun ballingProfileEditScreenDarkTest() {
         composeTestRule.setContent {
-            BallingProfileEditScreen(navHostController = null, mockBallingProfile, darkTheme = true)
+            BallingProfileEditScreen(
+                navHostController = null,
+                mainViewModel = mockMainViewModel,
+                ballingProfile = mockBallingProfile,
+                darkTheme = true
+            )
         }
         composeTestRule.waitForIdle()
         ScreenshotTestHelper.performScreenshotTest(
@@ -43,7 +51,12 @@ class BallingProfileEditScreenTest {
     @Test
     fun ballingProfileEditScreenLightTest() {
         composeTestRule.setContent {
-            BallingProfileEditScreen(navHostController = null, mockBallingProfile, darkTheme = false)
+            BallingProfileEditScreen(
+                navHostController = null,
+                mainViewModel = mockMainViewModel,
+                ballingProfile = mockBallingProfile,
+                darkTheme = false
+            )
         }
         composeTestRule.waitForIdle()
         ScreenshotTestHelper.performScreenshotTest(

@@ -165,7 +165,7 @@ class MainActivity : ComponentActivity() {
                         FeedProfileAddScreen(
                             navHostController = navHostController,
                             mainViewModel = mainViewModel,
-                            myFeedProfilesViewModel = feedProfilesViewModel
+                            feedProfilesViewModel = feedProfilesViewModel
                         )
                     }
                     composable(ViewNavigationRoutes.feedSchedule) {

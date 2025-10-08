@@ -4,6 +4,7 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedProfileScheduleScreen
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntry
@@ -38,10 +39,13 @@ class FeedProfileScheduleScreenTest {
         ).transformToFeedScheduleEntry()
     }
 
+    val mockMainViewModel = MockMainViewModel()
+
     @Test
     fun feedScheduleScreenDarkTest() {
         composeTestRule.setContent {
             FeedProfileScheduleScreen(
+                mainViewModel = mockMainViewModel,
                 mockFeedProfile = generateMockFeedProfile(),
                 mockFeedScheduleEntry = generateMockFeedScheduleEntry(),
                 darkTheme = true
@@ -60,6 +64,7 @@ class FeedProfileScheduleScreenTest {
     fun feedScheduleScreenLightTest() {
         composeTestRule.setContent {
             FeedProfileScheduleScreen(
+                mainViewModel = mockMainViewModel,
                 mockFeedProfile = generateMockFeedProfile(),
                 mockFeedScheduleEntry = generateMockFeedScheduleEntry(),
                 darkTheme = false
