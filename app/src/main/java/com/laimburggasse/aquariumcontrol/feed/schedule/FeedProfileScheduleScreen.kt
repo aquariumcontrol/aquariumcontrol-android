@@ -44,6 +44,10 @@ import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.FeedProfileImport
+import com.laimburggasse.aquariumcontrol.feed.FeedProfilesUiState
+import com.laimburggasse.aquariumcontrol.feed.FeedProfilesViewModelInterface
+import com.laimburggasse.aquariumcontrol.feed.MockFeedProfilesViewModel
+import com.laimburggasse.aquariumcontrol.feed.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
@@ -55,6 +59,8 @@ import java.util.Locale
 fun FeedProfileScheduleScreen(
     navHostController: NavHostController? = null,
     mainViewModel: MainViewModel,
+    profileName: String,
+    milliSecondsSinceEpoch: Long,
     darkTheme: Boolean? = null
 ) {
     // This screen displays:
@@ -67,20 +73,30 @@ fun FeedProfileScheduleScreen(
     // - Checkbox to repeat daily
     // - Button to confirm the scheduling of the feed profile
 
-    val feedProfileOpt: FeedProfile? = mainViewModel.getMySelectedFeedProfile()
-    val feedScheduleEntryOpt: FeedScheduleEntry? = mainViewModel.getMySelectedFeedScheduleEntry()
+    val feedScheduleViewModel: FeedScheduleViewModelInterface? = mainViewModel.getMyFeedScheduleViewModel()
+    val feedProfileViewModel: FeedProfilesViewModelInterface? = mainViewModel.getMyFeedProfilesViewModel()
 
-    val feedScheduleUiState: FeedScheduleUiState = if (feedProfileOpt == null || feedScheduleEntryOpt == null) {
-        FeedScheduleUiState.Error(errorMessage = "No feed profile or no schedule selected")
-    } else {
-        FeedScheduleUiState.Success(feedProfile = feedProfileOpt, feedScheduleEntry = feedScheduleEntryOpt)
-    }
-
-    val feedScheduleViewModel: FeedScheduleViewModel? = mainViewModel.getMyFeedScheduleViewModel()
-
-    val feedProfileDisplayName: String = feedProfileOpt?.profileName ?: "ERROR"
+    val feedScheduleEntryOpt: FeedScheduleEntry? = feedScheduleViewModel?.getFeedScheduleEntry(
+        profileName = profileName,
+        milliSecondsSinceEpoch = milliSecondsSinceEpoch
+    )
+    val feedProfile: FeedProfile? = feedProfileViewModel?.getFeedProfile(profileName = profileName)
 
     var repeatDaily: Boolean by remember { mutableStateOf(value = feedScheduleEntryOpt?.isDaily ?: false) }
+
+    val feedScheduleEntryUiState: FeedScheduleEntryUiState = if (feedScheduleEntryOpt == null || feedProfile == null) {
+        if (feedScheduleEntryOpt == null && feedProfile != null) {
+            FeedScheduleEntryUiState.Error(errorMessage = "Feed schedule entry for $profileName not found")
+        }
+        else if (feedScheduleEntryOpt != null && feedProfile == null) {
+            FeedScheduleEntryUiState.Error(errorMessage = "Feed profile $profileName not found")
+        }
+        else {
+            FeedScheduleEntryUiState.Error(errorMessage = "Feed profile and corresponding profile for $profileName not found")
+        }
+    } else {
+        FeedScheduleEntryUiState.Success(feedScheduleEntry = feedScheduleEntryOpt)
+    }
 
     val context: Context = LocalContext.current // context for Toasts
 
@@ -97,10 +113,10 @@ fun FeedProfileScheduleScreen(
                     ScreenHeadlineComposable(
                         text = stringResource(R.string.feed_scheduling)
                     )
-                    when (feedScheduleUiState) {
-                        is FeedScheduleUiState.Error -> {
+                    when (feedScheduleEntryUiState) {
+                        is FeedScheduleEntryUiState.Error -> {
                             Text(
-                                text = "Error loading data: ${feedScheduleUiState.errorMessage}",
+                                text = "Error loading data: ${feedScheduleEntryUiState.errorMessage}",
                                 style = TextStyle(
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Bold
@@ -109,8 +125,8 @@ fun FeedProfileScheduleScreen(
                                 textAlign = TextAlign.Center
                             )
                         }
-                        is FeedScheduleUiState.Success -> {
-                            val feedScheduleEntry: FeedScheduleEntry = feedScheduleUiState.feedScheduleEntry
+                        is FeedScheduleEntryUiState.Success -> {
+                            val feedScheduleEntry: FeedScheduleEntry = feedScheduleEntryUiState.feedScheduleEntry
 
                             // Get the initial date and time from the timestamp
                             val initialCalendar = Calendar.getInstance(Locale.getDefault()).apply {
@@ -182,7 +198,7 @@ fun FeedProfileScheduleScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Row {
-                                    Text(text = stringResource(id = R.string.profile_name_label) + feedProfileDisplayName)
+                                    Text(text = stringResource(id = R.string.profile_name_label) + profileName)
                                 }
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Row {
@@ -243,7 +259,7 @@ fun FeedProfileScheduleScreen(
                                             Timestamp(selectedCalendar.timeInMillis)
                                         feedScheduleViewModel?.addFeedScheduleEntry(
                                             feedScheduleEntry = feedScheduleEntry,
-                                            feedProfile = feedProfileOpt,
+                                            feedProfile = feedProfile!!,
                                             repeatDaily = repeatDaily,
                                             mainViewModel = mainViewModel,
                                             selectedCalendar = selectedCalendar
@@ -273,21 +289,7 @@ fun FeedProfileScheduleScreen(
     }
 }
 
-fun generateMockMainViewModelSuccess(): MockMainViewModel {
-    val mockFeedProfileImport = FeedProfileImport()
-    mockFeedProfileImport.profileId = 1
-    mockFeedProfileImport.profileName = "Test Profile 1"
-    val mockFeedProfile = FeedProfile(mockFeedProfileImport)
-    val mockFeedScheduleEntry = FeedScheduleEntryImport(
-        timestampString = "2024-02-16 12:00:00",
-        profileName = "MockProfile",
-        isDaily = 1
-    ).transformToFeedScheduleEntry()
-    val mockMainViewModel = MockMainViewModel()
-    mockMainViewModel.updateSelectedFeedProfile(mockFeedProfile)
-    mockMainViewModel.updateSelectedFeedScheduleEntry(mockFeedScheduleEntry)
-    return mockMainViewModel
-}
+val mockMainViewModel = MockMainViewModel()
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -302,24 +304,57 @@ fun generateMockMainViewModelSuccess(): MockMainViewModel {
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
 @Composable
-internal fun FeedProfileScheduleScreenPreviewSuccess() {
+fun FeedProfileScheduleScreenPreviewSuccess() {
+    val mockFeedProfileImport = FeedProfileImport()
+    mockFeedProfileImport.profileId = 1
+    mockFeedProfileImport.profileName = "Test Profile 1"
+    val mockFeedProfile = FeedProfile(mockFeedProfileImport)
+    val mockFeedScheduleEntry: FeedScheduleEntry = FeedScheduleEntryImport(
+        timestampString = "2024-02-16 12:00:00",
+        profileName = "MockProfile",
+        isDaily = 1
+    ).transformToFeedScheduleEntry()
+    val mockFeedScheduleViewModel = MockFeedScheduleViewModel(
+        feedScheduleUiState = FeedScheduleUiState.Success(listOf(mockFeedScheduleEntry)),
+        isRefreshing = false
+    )
+    val mockFeedProfiles: List<FeedProfile> = listOf(mockFeedProfile)
+    val mockFeedProfilesViewModel = MockFeedProfilesViewModel(
+        feedProfilesUiState = FeedProfilesUiState.Success(mockFeedProfiles),
+        isRefreshing = false,
+        feedProfiles = mockFeedProfiles
+    )
+    mockMainViewModel.setMyFeedScheduleViewModel(mockFeedScheduleViewModel)
+    mockMainViewModel.setMyFeedProfileViewModel(mockFeedProfilesViewModel)
+
     FeedProfileScheduleScreen(
-        mainViewModel = generateMockMainViewModelSuccess(),
+        mainViewModel = mockMainViewModel,
+        profileName = mockFeedProfile.profileName,
+        milliSecondsSinceEpoch = mockFeedScheduleEntry.timestamp.time,
+        darkTheme = false
     )
 }
 
-fun generateMockMainViewModelError(): MockMainViewModel {
-    val mockMainViewModelError = MockMainViewModel()
-    mockMainViewModelError.updateSelectedFeedProfile(feedProfile = null)
-    mockMainViewModelError.updateSelectedFeedScheduleEntry(feedScheduleEntry = null)
-    return mockMainViewModelError
-}
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun FeedProfileScheduleScreenPreviewError() {
+    val mockFeedScheduleViewModel = MockFeedScheduleViewModel(
+        feedScheduleUiState = FeedScheduleUiState.Error(errorMessage = "Error loading feed schedule"),
+        isRefreshing = false
+    )
+    val mockFeedProfilesViewModel = MockFeedProfilesViewModel(
+        feedProfilesUiState = FeedProfilesUiState.Error(errorMessage = "Error loading feed profiles"),
+        isRefreshing = false,
+        feedProfiles = emptyList()
+    )
+    mockMainViewModel.setMyFeedScheduleViewModel(mockFeedScheduleViewModel)
+    mockMainViewModel.setMyFeedProfileViewModel(mockFeedProfilesViewModel)
     FeedProfileScheduleScreen(
-        mainViewModel = generateMockMainViewModelError(),
+        mainViewModel = mockMainViewModel,
+        profileName = "MockProfile",
+        milliSecondsSinceEpoch = 0,
+        darkTheme = false
     )
 }

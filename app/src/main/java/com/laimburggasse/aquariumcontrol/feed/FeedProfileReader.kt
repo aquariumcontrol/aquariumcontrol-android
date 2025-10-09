@@ -1,8 +1,10 @@
 package com.laimburggasse.aquariumcontrol.feed
 
+import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.Response
 
 class FeedProfileReader(private val url: String) {
     // This class reads the Feed profiles from the server using a GET request.
@@ -10,23 +12,31 @@ class FeedProfileReader(private val url: String) {
     private val client = OkHttpClient()
     private val json = Json { ignoreUnknownKeys = true }
 
-    fun readFeedProfiles(): List<FeedProfileImport>? {
-        val request = Request.Builder()
-            .url(url)
-            .build()
+    fun readFeedProfiles(): DataFetchResult<List<FeedProfileImport>> {
+        val request: Request = Request.Builder().url(url).build()
 
         return try {
-            val response = client.newCall(request).execute()
+            val response: Response = client.newCall(request).execute()
             if (response.isSuccessful) {
-                val responseBody = response.body?.string()
-                responseBody?.let {
-                    json.decodeFromString<List<FeedProfileImport>>(it)
+                val responseBody: String = response.body.string()
+                if (responseBody.isEmpty()) {
+                    DataFetchResult.Success(data = emptyList())
+                } else {
+                    val decodedData: List<FeedProfileImport> =
+                        json.decodeFromString<List<FeedProfileImport>>(string = responseBody)
+                    DataFetchResult.Success(data = decodedData)
                 }
             } else {
-                null
+                DataFetchResult.Error(
+                    exception = null,
+                    errorMessage = "Server responded with error code: ${response.code}"
+                )
             }
-        } catch (_: Exception) {
-            null
+        } catch (e: Exception) {
+            DataFetchResult.Error(
+                exception = e,
+                errorMessage = "An unexpected error occurred during preparation of server communication."
+            )
         }
     }
 }

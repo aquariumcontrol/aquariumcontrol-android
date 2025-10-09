@@ -1,8 +1,10 @@
 package com.laimburggasse.aquariumcontrol.feed.schedule
 
+import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.Response
 
 class FeedScheduleEntryReader(private val url: String) {
     // This class reads the Feed schedule entries from the server using a GET request.
@@ -10,23 +12,26 @@ class FeedScheduleEntryReader(private val url: String) {
     private val client = OkHttpClient()
     private val json = Json { ignoreUnknownKeys = true }
 
-    fun readFeedScheduleEntries(): List<FeedScheduleEntryImport>? {
-        val request = Request.Builder()
-            .url(url)
-            .build()
+    fun readFeedScheduleEntries(): DataFetchResult<List<FeedScheduleEntryImport>> {
+        val request = Request.Builder().url(url).build()
 
-        return try {
-            val response = client.newCall(request).execute()
+        try {
+            val response: Response = client.newCall(request).execute()
             if (response.isSuccessful) {
-                val responseBody = response.body?.string()
-                responseBody?.let {
-                    json.decodeFromString<List<FeedScheduleEntryImport>>(it)
+                val responseBody: String = response.body.string()
+                if (responseBody.isEmpty()) {
+                    return DataFetchResult.Success(data = emptyList())
+                }
+                else {
+                    val decodedData: List<FeedScheduleEntryImport> =
+                        json.decodeFromString<List<FeedScheduleEntryImport>>(string = responseBody)
+                    return DataFetchResult.Success(data = decodedData)
                 }
             } else {
-                null
+                return DataFetchResult.Error(exception = null, errorMessage = "Server responded with error code: ${response.code}")
             }
-        } catch (_: Exception) {
-            null
+        } catch (e: Exception) {
+            return DataFetchResult.Error(exception = e, errorMessage = "An unexpected error occurred during preparation of server communication.")
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.laimburggasse.aquariumcontrol
 
+import java.sql.Timestamp
+
 object ViewNavigationRoutes {
     var feed = "feed"
     var feedHistory = "feedHistory"
@@ -7,7 +9,12 @@ object ViewNavigationRoutes {
     var feedHistory7d = "feedHistory7d"
     var feedEdit = "feedEdit"
     var feedAddProfile = "feedAdd"
-    var feedSchedule = "feedSchedule"
+
+    private const val FEED_SCHEDULE_ARG_PROFILE_NAME = "profileName"
+    private const val FEED_SCHEDULE_ARG_TIMESTAMP = "timestamp"
+
+    var feedSchedule = "feedSchedule/{$FEED_SCHEDULE_ARG_PROFILE_NAME}/{$FEED_SCHEDULE_ARG_TIMESTAMP}"
+
     var balling = "balling"
     var ballingHistory24h = "ballingHistory24h"
     var ballingHistory7d = "ballingHistory7d"
@@ -24,4 +31,9 @@ object ViewNavigationRoutes {
     var controllerAdd = "controllerAdd"
     var controllerEdit = "controllerEdit"
     var overView = "overView"
+
+    fun feedSchedule(profileName: String, timestamp: Timestamp?): String {
+        val milliSecondsSinceEpoch = timestamp?.time ?: 0
+        return "feedSchedule/$profileName/$milliSecondsSinceEpoch"
+    }
 }

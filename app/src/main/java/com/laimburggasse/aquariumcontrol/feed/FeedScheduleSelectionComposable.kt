@@ -15,71 +15,88 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
-import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntryComposable
-import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleViewModel
-import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleViewModelFactory
+import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleUiState
+import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleViewModelInterface
+import com.laimburggasse.aquariumcontrol.feed.schedule.MockFeedScheduleViewModel
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun FeedScheduleSelectionComposable(
-    myFeedScheduleViewModel: FeedScheduleViewModel? = null,
-    mockFeedScheduleEntries: List<FeedScheduleEntry>? = null,
+    myFeedScheduleViewModel: FeedScheduleViewModelInterface,
     mainViewModel: MainViewModel
 ) {
     // This composable displays a label "Feed Schedule"
     // and a list of feed schedule entries
 
-    // use view model provided as parameter or create a new one
-    val feedScheduleViewModel: FeedScheduleViewModel = myFeedScheduleViewModel ?: viewModel(
-        factory = FeedScheduleViewModelFactory(feedScheduleEntries = mockFeedScheduleEntries)
-    )
+    val feedScheduleUiState: FeedScheduleUiState = myFeedScheduleViewModel.feedScheduleUiState
 
     Text(text = stringResource(R.string.feed_schedule))
-    if (LocalInspectionMode.current) {
-        // In Preview: Render a simple, static Column instead of LazyColumn
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            feedScheduleViewModel.getFeedScheduleEntries().forEach { feedScheduleEntry ->
-                FeedScheduleEntryComposable(
-                    feedScheduleEntry = feedScheduleEntry,
-                    onEditClick = {},
-                    onDeleteClick = {}
-                )
-            }
-        }
-    } else {
-        // In App Runtime: Use the performant LazyColumn and provide lambdas
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            items(items = feedScheduleViewModel.getFeedScheduleEntries()) { feedScheduleEntry ->
-                FeedScheduleEntryComposable(
-                    feedScheduleEntry = feedScheduleEntry,
-                    onEditClick = {
-                        mainViewModel.updateSelectedFeedScheduleEntry(feedScheduleEntry)
-                    },
-                    onDeleteClick = {
-                        mainViewModel.updateSelectedFeedScheduleEntry(null)
-                        feedScheduleViewModel.deleteFeedScheduleEntry(
+    when (feedScheduleUiState) {
+        is FeedScheduleUiState.Success -> {
+            val feedScheduleEntries = feedScheduleUiState.feedScheduleEntries
+
+            if (LocalInspectionMode.current) {
+                // In Preview: Render a simple, static Column instead of LazyColumn
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    feedScheduleEntries.forEach { feedScheduleEntry ->
+                        FeedScheduleEntryComposable(
                             feedScheduleEntry = feedScheduleEntry,
-                            mainViewModel = mainViewModel
+                            onEditClick = {},
+                            onDeleteClick = {}
                         )
                     }
-                )
+                }
+            } else {
+                // In App Runtime: Use the performant LazyColumn and provide lambdas
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    items(items = feedScheduleEntries) { feedScheduleEntry ->
+                        FeedScheduleEntryComposable(
+                            feedScheduleEntry = feedScheduleEntry,
+                            onEditClick = {
+                                mainViewModel.updateSelectedFeedScheduleEntry(feedScheduleEntry)
+                            },
+                            onDeleteClick = {
+                                mainViewModel.updateSelectedFeedScheduleEntry(null)
+                                myFeedScheduleViewModel.deleteFeedScheduleEntry(
+                                    feedScheduleEntry = feedScheduleEntry,
+                                    mainViewModel = mainViewModel
+                                )
+                            }
+                        )
+                    }
+                }
             }
+        }
+        is FeedScheduleUiState.Loading -> {
+            Text(text = "Loading...")
+        }
+        is FeedScheduleUiState.Error -> {
+            Text(text = feedScheduleUiState.errorMessage)
+        }
+        is FeedScheduleUiState.Empty -> {
+            Text(text = "No feed schedule entries found.")
         }
     }
 }
+
+val mockFeedScheduleEntries = createMockFeedSchedule()
+
+val mockFeedScheduleViewModelSuccess = MockFeedScheduleViewModel(
+    feedScheduleUiState = FeedScheduleUiState.Success(feedScheduleEntries = mockFeedScheduleEntries),
+    isRefreshing = false
+)
 
 val mockMainViewModel = MockMainViewModel()
 
@@ -101,8 +118,8 @@ internal fun FeedScheduleSelectionComposablePreview() {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 FeedScheduleSelectionComposable(
-                    mockFeedScheduleEntries = createMockFeedSchedule(),
-                    mainViewModel = mockMainViewModel
+                    mainViewModel = mockMainViewModel,
+                    myFeedScheduleViewModel = mockFeedScheduleViewModelSuccess
                 )
             }
         }

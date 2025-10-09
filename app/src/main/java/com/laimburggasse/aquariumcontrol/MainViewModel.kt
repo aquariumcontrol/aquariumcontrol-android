@@ -7,15 +7,19 @@ import androidx.lifecycle.ViewModel
 import com.laimburggasse.aquariumcontrol.balling.BallingProfile
 import com.laimburggasse.aquariumcontrol.controller.ControllerProfile
 import com.laimburggasse.aquariumcontrol.feed.FeedProfile
+import com.laimburggasse.aquariumcontrol.feed.FeedProfilesViewModelInterface
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleViewModel
+import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleViewModelInterface
 
 open class MainViewModel: ViewModel() {
     private var selectedController: ControllerProfile? by mutableStateOf(null)
     private var defaultControllerProfileId: Long = 0
     private var selectedFeedScheduleEntry: FeedScheduleEntry? by mutableStateOf(null)
     private var firstLoad: Boolean = true
-    private var feedScheduleViewModel: FeedScheduleViewModel? by mutableStateOf(null)
+    private var feedScheduleViewModel: FeedScheduleViewModelInterface? by mutableStateOf(null)
+
+    private var feedProfilesViewModel: FeedProfilesViewModelInterface? by mutableStateOf(null)
 
     fun getDefaultControllerProfileId(): Long {
         return defaultControllerProfileId
@@ -73,10 +77,6 @@ open class MainViewModel: ViewModel() {
 
     private var selectedFeedProfile: FeedProfile? by mutableStateOf(null)
 
-    fun getMySelectedFeedScheduleEntry(): FeedScheduleEntry? {
-        return selectedFeedScheduleEntry
-    }
-
     fun updateSelectedFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry?) {
         selectedFeedScheduleEntry = feedScheduleEntry
     }
@@ -89,11 +89,20 @@ open class MainViewModel: ViewModel() {
         firstLoad = false
     }
 
-    fun getMyFeedScheduleViewModel(): FeedScheduleViewModel? {
+    fun getMyFeedScheduleViewModel(): FeedScheduleViewModelInterface? {
         return feedScheduleViewModel
     }
 
-    fun setMyFeedScheduleViewModel(feedScheduleViewModel: FeedScheduleViewModel?) {
+    fun setMyFeedScheduleViewModel(feedScheduleViewModel: FeedScheduleViewModelInterface) {
         this.feedScheduleViewModel = feedScheduleViewModel
     }
+
+    fun getMyFeedProfilesViewModel(): FeedProfilesViewModelInterface? {
+        return feedProfilesViewModel
+    }
+
+    fun setMyFeedProfileViewModel(feedProfilesViewModel: FeedProfilesViewModelInterface) {
+        this.feedProfilesViewModel = feedProfilesViewModel
+    }
+
 }

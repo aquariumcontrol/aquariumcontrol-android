@@ -1,8 +1,8 @@
 package com.laimburggasse.aquariumcontrol.feed.schedule
 
-import com.laimburggasse.aquariumcontrol.feed.FeedProfile
-
 sealed class FeedScheduleUiState {
+    object Loading : FeedScheduleUiState()
+    object Empty : FeedScheduleUiState()
     data class Error(val errorMessage: String) : FeedScheduleUiState()
-    data class Success(val feedProfile: FeedProfile, val feedScheduleEntry: FeedScheduleEntry) : FeedScheduleUiState()
+    data class Success(val feedScheduleEntries: List<FeedScheduleEntry>) : FeedScheduleUiState()
 }
