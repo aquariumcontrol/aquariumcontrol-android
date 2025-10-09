@@ -95,7 +95,8 @@ val mockFeedScheduleEntries = createMockFeedSchedule()
 
 val mockFeedScheduleViewModelSuccess = MockFeedScheduleViewModel(
     feedScheduleUiState = FeedScheduleUiState.Success(feedScheduleEntries = mockFeedScheduleEntries),
-    isRefreshing = false
+    isRefreshing = false,
+    feedScheduleEntries = mockFeedScheduleEntries
 )
 
 val mockMainViewModel = MockMainViewModel()

@@ -4,6 +4,7 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import org.junit.Rule
 import org.junit.Test
@@ -19,8 +20,22 @@ class HeatingScreenTest {
 
     private val subfolder = "heating"
 
+    val mockMainViewModel = MockMainViewModel()
     @Test
     fun heatingScreenDarkTest() {
+        val mockHeatingSetValsUiState = HeatingSetValsUiState.Success(
+            HeatingSetVals(
+                heatingSwitchOffTemp = 27.5,
+                heatingSwitchOnTemp = 22.5
+            )
+        )
+        val mockHeatingStatsUiState = HeatingStatsUiState.Success(createMockStatsData())
+        HeatingScreen(
+            mockHeatingSetValsUiState = mockHeatingSetValsUiState,
+            mockHeatingStatsUiState = mockHeatingStatsUiState,
+            mainViewModel = mockMainViewModel,
+            darkTheme = true
+        )
         composeTestRule.setContent {
             HeatingScreen(
                 mockHeatingSetVals = HeatingSetVals(

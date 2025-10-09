@@ -7,7 +7,7 @@ import java.util.Calendar
 interface FeedScheduleViewModelInterface {
     val feedScheduleUiState: FeedScheduleUiState
     val isRefreshing: Boolean
-    fun getFeedScheduleEntries(): List<FeedScheduleEntry>
+    fun getFeedScheduleEntryList(): List<FeedScheduleEntry>
 
     fun loadData(mainViewModel: MainViewModel)
 

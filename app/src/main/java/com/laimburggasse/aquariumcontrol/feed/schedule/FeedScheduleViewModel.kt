@@ -80,7 +80,7 @@ class FeedScheduleViewModel(
         }
     }
 
-    override fun getFeedScheduleEntries(): List<FeedScheduleEntry> {
+    override fun getFeedScheduleEntryList(): List<FeedScheduleEntry> {
         return if (feedScheduleEntries.value == null) {
             emptyList()
         } else {

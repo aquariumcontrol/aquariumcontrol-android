@@ -38,14 +38,15 @@ import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
 fun HeatingScreen(
     navHostController: NavHostController? = null,
-    mockHeatingSetValsUiState: HeatingSetValsUiState? = null,
-    mockHeatingStatsUiState: HeatingStatsUiState? = null,
     mainViewModel: MainViewModel,
+    heatingSetValsViewModel: HeatingSetValsViewModelInterface = viewModel<HeatingSetValsViewModel>(),
+    heatingStatsViewModel: HeatingStatsViewModelInterface = viewModel<HeatingStatsViewModel>(),
     darkTheme: Boolean? = null
 ) {
     // This screen displays
@@ -57,24 +58,16 @@ fun HeatingScreen(
 
     val isControllerAddressValid: Boolean = !mainViewModel.getControllerAddress().isNullOrBlank()
 
-    var heatingSetValsUiState: HeatingSetValsUiState by remember { mutableStateOf(value = mockHeatingSetValsUiState ?: HeatingSetValsUiState.Loading) }
-    var heatingStatsUiState: HeatingStatsUiState by remember { mutableStateOf(value = mockHeatingStatsUiState ?: HeatingStatsUiState.Loading) }
+    var heatingSetValsUiState: HeatingSetValsUiState by remember { heatingSetValsViewModel::heatingSetValsUiState }
+    var heatingStatsUiState: HeatingStatsUiState by remember { heatingStatsViewModel::heatingStatsUiState }
 
-    val coroutineScope = rememberCoroutineScope()
+    val coroutineScope: CoroutineScope = rememberCoroutineScope()
 
-    val configuration = LocalConfiguration.current
+    val configuration: Configuration = LocalConfiguration.current
 
     val heatingInitialSetVals = HeatingSetVals(
         heatingSwitchOffTemp = 28.0,
         heatingSwitchOnTemp = 22.0
-    )
-
-    val heatingSetValsViewModel: HeatingSetValsViewModel = viewModel(
-        factory = HeatingSetValsViewModelFactory(heatingInitialSetVals)
-    )
-
-    val heatingStatsViewModel: HeatingStatsViewModel = viewModel(
-        factory = HeatingStatsViewModelFactory()
     )
 
     @Suppress("UNCHECKED_CAST")

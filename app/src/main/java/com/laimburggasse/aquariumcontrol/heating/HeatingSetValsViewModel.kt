@@ -25,21 +25,20 @@ class HeatingSetValsViewModel(
     private val _sliderRange = MutableLiveData<ClosedFloatingPointRange<Float>>()
     private val _lowerBoundValue = MutableLiveData<Double>()
     private val _upperBoundValue = MutableLiveData<Double>()
-    val sliderRange: LiveData<ClosedFloatingPointRange<Float>> = _sliderRange
-    val lowerBoundValue: LiveData<Double> = _lowerBoundValue
-    val upperBoundValue: LiveData<Double> = _upperBoundValue
+    override val sliderRange: LiveData<ClosedFloatingPointRange<Float>> = _sliderRange
+    override val lowerBoundValue: LiveData<Double> = _lowerBoundValue
+    override val upperBoundValue: LiveData<Double> = _upperBoundValue
 
-    var heatingSetValsUiState: HeatingSetValsUiState by mutableStateOf(value = HeatingSetValsUiState.Loading)
-        private set
+    override var heatingSetValsUiState: HeatingSetValsUiState by mutableStateOf(value = HeatingSetValsUiState.Loading)
 
-    val onRangeChangedBySlider: (Float, Float) -> Unit = { start, end ->
+    override val onRangeChangedBySlider: (Float, Float) -> Unit = { start, end ->
         Log.d("HeatingSetValsViewModel", "onRangeChangedBySlider: $start - $end")
         _sliderRange.value = start..end
         _lowerBoundValue.value = start.toDouble()
         _upperBoundValue.value = end.toDouble()
     }
 
-    val onLowerValueChanged: (Float) -> Unit = { value ->
+    override val onLowerValueChanged: (Float) -> Unit = { value ->
         val currentRange = _sliderRange.value
         if (currentRange != null && value < currentRange.endInclusive) {
             Log.d("HeatingSetValsViewModel", "onLowerValueChanged: $value")
@@ -48,7 +47,7 @@ class HeatingSetValsViewModel(
         }
     }
 
-    val onUpperValueChanged: (Float) -> Unit = { value ->
+    override val onUpperValueChanged: (Float) -> Unit = { value ->
         val currentRange = _sliderRange.value
         if (currentRange != null && value > currentRange.start) {
             Log.d("HeatingSetValsViewModel", "onUpperValueChanged: $value")
@@ -86,15 +85,6 @@ class HeatingSetValsViewModel(
         }
     }
 
-    fun setValues(newHeatingSetVals: HeatingSetVals) {
-        this.heatingSetVals.heatingSwitchOnTemp = newHeatingSetVals.heatingSwitchOnTemp
-        this.heatingSetVals.heatingSwitchOffTemp = newHeatingSetVals.heatingSwitchOffTemp
-        _sliderRange.value =
-            this.heatingSetVals.heatingSwitchOnTemp.toFloat()..this.heatingSetVals.heatingSwitchOffTemp.toFloat()
-        _lowerBoundValue.value = heatingSetVals.heatingSwitchOnTemp
-        _upperBoundValue.value = heatingSetVals.heatingSwitchOffTemp
-    }
-
     fun getHeatingSwitchOnTempString(): String {
         return heatingSetVals.heatingSwitchOnTemp.toString()
     }
@@ -103,7 +93,7 @@ class HeatingSetValsViewModel(
         return heatingSetVals.heatingSwitchOffTemp.toString()
     }
 
-    fun loadData(mainViewModel: MainViewModel) {
+    override fun loadData(mainViewModel: MainViewModel) {
         viewModelScope.launch {
             val result: DataFetchResult<List<HeatingSetVals>> = fetchHeatingSetVals(
                 mainViewModel

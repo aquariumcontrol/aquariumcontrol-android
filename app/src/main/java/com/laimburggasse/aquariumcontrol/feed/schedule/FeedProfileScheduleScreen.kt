@@ -47,6 +47,7 @@ import com.laimburggasse.aquariumcontrol.feed.FeedProfileImport
 import com.laimburggasse.aquariumcontrol.feed.FeedProfilesUiState
 import com.laimburggasse.aquariumcontrol.feed.FeedProfilesViewModelInterface
 import com.laimburggasse.aquariumcontrol.feed.MockFeedProfilesViewModel
+import com.laimburggasse.aquariumcontrol.feed.mockFeedScheduleEntries
 import com.laimburggasse.aquariumcontrol.feed.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
@@ -314,9 +315,11 @@ fun FeedProfileScheduleScreenPreviewSuccess() {
         profileName = "MockProfile",
         isDaily = 1
     ).transformToFeedScheduleEntry()
+    val mockFeedScheduleEntries = listOf(mockFeedScheduleEntry)
     val mockFeedScheduleViewModel = MockFeedScheduleViewModel(
-        feedScheduleUiState = FeedScheduleUiState.Success(listOf(mockFeedScheduleEntry)),
-        isRefreshing = false
+        feedScheduleUiState = FeedScheduleUiState.Success(feedScheduleEntries = mockFeedScheduleEntries),
+        isRefreshing = false,
+        feedScheduleEntries = mockFeedScheduleEntries
     )
     val mockFeedProfiles: List<FeedProfile> = listOf(mockFeedProfile)
     val mockFeedProfilesViewModel = MockFeedProfilesViewModel(
@@ -342,7 +345,8 @@ fun FeedProfileScheduleScreenPreviewSuccess() {
 internal fun FeedProfileScheduleScreenPreviewError() {
     val mockFeedScheduleViewModel = MockFeedScheduleViewModel(
         feedScheduleUiState = FeedScheduleUiState.Error(errorMessage = "Error loading feed schedule"),
-        isRefreshing = false
+        isRefreshing = false,
+        feedScheduleEntries = emptyList()
     )
     val mockFeedProfilesViewModel = MockFeedProfilesViewModel(
         feedProfilesUiState = FeedProfilesUiState.Error(errorMessage = "Error loading feed profiles"),

@@ -106,6 +106,7 @@ val mockFeedProfileViewModel = MockFeedProfilesViewModel(
 
 val mockFeedScheduleViewModel = MockFeedScheduleViewModel(
     feedScheduleUiState = FeedScheduleUiState.Success(feedScheduleEntries = emptyList()),
+    feedScheduleEntries = emptyList(),
     isRefreshing = false
 )
 

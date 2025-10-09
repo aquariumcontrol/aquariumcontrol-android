@@ -16,36 +16,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.NumericDoubleOutlinedTextFieldComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun HeatingRangeSliderTextFieldsLandscapeComposable(
-    myHeatingSetValsViewModel: HeatingSetValsViewModel?,
+    heatingSetValsViewModel: HeatingSetValsViewModelInterface,
     heatingInitialSetVals: HeatingSetVals
 ) {
     // This composable displays a slider and two text fields.
     // The slider is arrange in between the two text fields in one row.
     // This composable shall be exclusively used for landscape mode.
 
-    val heatingSetValsViewModel = myHeatingSetValsViewModel ?: viewModel(
-        factory = HeatingSetValsViewModelFactory(heatingInitialSetVals)
-    )
-
     // Use derived state for slider position
-    val sliderRange by heatingSetValsViewModel.sliderRange.observeAsState(
+    val sliderRange: ClosedFloatingPointRange<Float> by heatingSetValsViewModel.sliderRange.observeAsState(
         initial =
         heatingInitialSetVals.heatingSwitchOnTemp.toFloat()..
                 heatingInitialSetVals.heatingSwitchOffTemp.toFloat()
     )
 
     // Use a separate mutable state for the text field values
-    val lowerBoundValue by heatingSetValsViewModel.lowerBoundValue.observeAsState(
+    val lowerBoundValue: Double by heatingSetValsViewModel.lowerBoundValue.observeAsState(
         initial = heatingInitialSetVals.heatingSwitchOnTemp
     )
-    val upperBoundValue by heatingSetValsViewModel.upperBoundValue.observeAsState(
-        heatingInitialSetVals.heatingSwitchOffTemp
+    val upperBoundValue: Double by heatingSetValsViewModel.upperBoundValue.observeAsState(
+        initial = heatingInitialSetVals.heatingSwitchOffTemp
     )
 
     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -53,7 +48,7 @@ fun HeatingRangeSliderTextFieldsLandscapeComposable(
             value = lowerBoundValue,
             onValueChange = { newStringValue ->
                 if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
-                    val newNumericValue = newStringValue.toFloat()
+                    val newNumericValue: Float = newStringValue.toFloat()
                     heatingSetValsViewModel.onLowerValueChanged(
                         newNumericValue
                     )
@@ -114,7 +109,7 @@ internal fun HeatingRangeSliderTextFieldsLandscapeComposablePreview() {
     AquariumControllerTheme {
         Surface {
             HeatingRangeSliderTextFieldsLandscapeComposable(
-                myHeatingSetValsViewModel = null,
+                heatingSetValsViewModel = mockHeatingSetValsViewModel,
                 heatingInitialSetVals = HeatingSetVals(
                     heatingSwitchOffTemp = 28.0, heatingSwitchOnTemp = 22.0
                 )

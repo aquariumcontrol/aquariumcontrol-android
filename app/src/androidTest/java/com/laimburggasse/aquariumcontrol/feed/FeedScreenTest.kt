@@ -5,6 +5,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
+import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleUiState
+import com.laimburggasse.aquariumcontrol.feed.schedule.MockFeedScheduleViewModel
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -21,10 +23,26 @@ class FeedScreenTest {
 
     @Test
     fun feedScreenDarkTest() {
+        val mockFeedProfilesViewModel = MockFeedProfilesViewModel(
+            feedProfilesUiState = FeedProfilesUiState.Error(errorMessage = "Error loading feed profiles"),
+            isRefreshing = false,
+            feedProfiles = emptyList()
+        )
+
+        val mockFeedScheduleViewModel = MockFeedScheduleViewModel(
+            feedScheduleUiState = FeedScheduleUiState.Error(errorMessage = "Error loading feed schedule"),
+            isRefreshing = false,
+            feedScheduleEntries = emptyList()
+        )
+
+        mockMainViewModel.setMyFeedScheduleViewModel(mockFeedScheduleViewModel)
+        mockMainViewModel.setMyFeedProfileViewModel(mockFeedProfilesViewModel)
+
         composeTestRule.setContent {
             FeedScreen(
-                mockFeedProfiles = createMockFeedProfiles(),
-                mockFeedScheduleEntries = createMockFeedSchedule(),
+                mainViewModel = mockMainViewModel,
+                feedProfilesViewModel = mockFeedProfilesViewModel,
+                feedScheduleViewModel = mockFeedScheduleViewModel,
                 darkTheme = true
             )
         }
@@ -39,10 +57,26 @@ class FeedScreenTest {
 
     @Test
     fun feedScreenLightTest() {
+        val mockFeedProfilesViewModel = MockFeedProfilesViewModel(
+            feedProfilesUiState = FeedProfilesUiState.Error(errorMessage = "Error loading feed profiles"),
+            isRefreshing = false,
+            feedProfiles = emptyList()
+        )
+
+        val mockFeedScheduleViewModel = MockFeedScheduleViewModel(
+            feedScheduleUiState = FeedScheduleUiState.Error(errorMessage = "Error loading feed schedule"),
+            isRefreshing = false,
+            feedScheduleEntries = emptyList()
+        )
+
+        mockMainViewModel.setMyFeedScheduleViewModel(mockFeedScheduleViewModel)
+        mockMainViewModel.setMyFeedProfileViewModel(mockFeedProfilesViewModel)
+
         composeTestRule.setContent {
             FeedScreen(
-                mockFeedProfiles = createMockFeedProfiles(),
-                mockFeedScheduleEntries = createMockFeedSchedule(),
+                mainViewModel = mockMainViewModel,
+                feedProfilesViewModel = mockFeedProfilesViewModel,
+                feedScheduleViewModel = mockFeedScheduleViewModel,
                 darkTheme = false
             )
         }

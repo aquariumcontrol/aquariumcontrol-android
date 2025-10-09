@@ -6,9 +6,10 @@ import java.util.Calendar
 
 class MockFeedScheduleViewModel(
     override val feedScheduleUiState: FeedScheduleUiState,
-    override val isRefreshing: Boolean
+    override val isRefreshing: Boolean,
+    val feedScheduleEntries: List<FeedScheduleEntry>
 ) : FeedScheduleViewModelInterface {
-    override fun getFeedScheduleEntries(): List<FeedScheduleEntry> {
+    override fun getFeedScheduleEntryList(): List<FeedScheduleEntry> {
         return emptyList()
     }
 
@@ -24,7 +25,10 @@ class MockFeedScheduleViewModel(
     }
 
     override fun getFeedScheduleEntry(profileName: String, milliSecondsSinceEpoch: Long): FeedScheduleEntry? {
-        return null
+        return feedScheduleEntries.find {
+            it.profileName == profileName &&
+            it.timestamp.time == milliSecondsSinceEpoch
+        }
     }
 
     override fun addFeedScheduleEntry(

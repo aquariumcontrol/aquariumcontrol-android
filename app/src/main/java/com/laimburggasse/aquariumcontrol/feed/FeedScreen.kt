@@ -231,7 +231,8 @@ fun FeedScreenPreviewSuccess() {
 
     val mockFeedScheduleViewModel = MockFeedScheduleViewModel(
         feedScheduleUiState = FeedScheduleUiState.Success(feedScheduleEntries = mockFeedScheduleEntries),
-        isRefreshing = false
+        isRefreshing = false,
+        feedScheduleEntries = mockFeedScheduleEntries
     )
 
     mockMainViewModel.setMyFeedScheduleViewModel(mockFeedScheduleViewModel)
@@ -266,7 +267,8 @@ fun FeedScreenPreviewError() {
 
     val mockFeedScheduleViewModel = MockFeedScheduleViewModel(
         feedScheduleUiState = FeedScheduleUiState.Error(errorMessage = "Error loading feed schedule"),
-        isRefreshing = false
+        isRefreshing = false,
+        feedScheduleEntries = emptyList()
     )
 
     mockMainViewModel.setMyFeedScheduleViewModel(mockFeedScheduleViewModel)

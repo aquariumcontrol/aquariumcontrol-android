@@ -12,11 +12,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class HeatingStatsViewModel: ViewModel() {
-    var heatingStatsUiState: HeatingStatsUiState by mutableStateOf(value = HeatingStatsUiState.Loading)
-        private set
+class HeatingStatsViewModel: ViewModel(), HeatingStatsViewModelInterface {
+    override var heatingStatsUiState: HeatingStatsUiState by mutableStateOf(value = HeatingStatsUiState.Loading)
     
-    fun loadData(mainViewModel: MainViewModel) {
+    override fun loadData(mainViewModel: MainViewModel) {
         viewModelScope.launch {
             val result: DataFetchResult<List<HeatingStatsEntry>> = fetchHeatingStats(
                 mainViewModel
