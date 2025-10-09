@@ -22,7 +22,10 @@ class RefillScreenTest {
     @Test
     fun refillScreenDarkTest() {
         composeTestRule.setContent {
-            RefillScreen(darkTheme = true)
+            RefillScreen(
+                mainViewModel = mockMainViewModel,
+                darkTheme = true
+            )
         }
         composeTestRule.waitForIdle()
         ScreenshotTestHelper.performScreenshotTest(
@@ -36,7 +39,10 @@ class RefillScreenTest {
     @Test
     fun refillScreenLightTest() {
         composeTestRule.setContent {
-            RefillScreen(darkTheme = false)
+            RefillScreen(
+                mainViewModel = mockMainViewModel,
+                darkTheme = false
+            )
         }
         composeTestRule.waitForIdle()
         ScreenshotTestHelper.performScreenshotTest(

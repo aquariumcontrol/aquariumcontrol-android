@@ -1,12 +1,10 @@
-package com.laimburggasse.aquariumcontrol.heating
+package com.laimburggasse.aquariumcontrol.ventilation
 
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
-import com.laimburggasse.aquariumcontrol.ventilation.VentilationScreen
-import com.laimburggasse.aquariumcontrol.ventilation.VentilationSetVals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -21,14 +19,20 @@ class VentilationScreenTest {
 
     private val subfolder = "ventilation"
 
+    val mockVentilationSetValsUiState = VentilationSetValsUiState.Success(
+        VentilationSetVals(
+            ventilationSwitchOffTemp = 23.5,
+            ventilationSwitchOnTemp = 27.5
+        )
+    )
+    val mockVentilationSetValsViewModel = MockVentilationSetValsViewModel(mockVentilationSetValsUiState)
+
     @Test
-    fun heatingScreenDarkTest() {
+    fun ventilationScreenDarkTest() {
         composeTestRule.setContent {
             VentilationScreen(
-                mockVentilationSetVals = VentilationSetVals(
-                    ventilationSwitchOffTemp = 23.5,
-                    ventilationSwitchOnTemp = 27.5
-                ),
+                mainViewModel = mockMainViewModel,
+                ventilationSetValsViewModel = mockVentilationSetValsViewModel,
                 darkTheme = true
             )
         }
@@ -42,13 +46,11 @@ class VentilationScreenTest {
     }
 
     @Test
-    fun heatingScreenLightTest() {
+    fun ventilationScreenLightTest() {
         composeTestRule.setContent {
             VentilationScreen(
-                mockVentilationSetVals = VentilationSetVals(
-                    ventilationSwitchOffTemp = 23.5,
-                    ventilationSwitchOnTemp = 27.5
-                ),
+                mainViewModel = mockMainViewModel,
+                ventilationSetValsViewModel = mockVentilationSetValsViewModel,
                 darkTheme = false
             )
         }

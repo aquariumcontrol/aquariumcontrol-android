@@ -5,7 +5,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
-import com.laimburggasse.aquariumcontrol.controller.ControllerProfile
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -20,19 +19,12 @@ class OverviewScreenTest {
 
     private val subfolder = "overview"
 
-    val mockControllerProfile = ControllerProfile(
-        name = "Controller 1",
-        address = "192.168.1.1",
-        port = 80,
-        user = "user",
-    )
-
     @Test
     fun overviewScreenDarkTest() {
         composeTestRule.setContent {
             OverviewScreen(
-                mockController = mockControllerProfile,
-                mockOverviewData = createMockOverviewData(),
+                mainViewModel = mockMainViewModel,
+                overviewViewModel = mockOverviewViewModelSuccess,
                 darkTheme = true
             )
         }
@@ -49,8 +41,8 @@ class OverviewScreenTest {
     fun overviewScreenLightTest() {
         composeTestRule.setContent {
             OverviewScreen(
-                mockController = mockControllerProfile,
-                mockOverviewData = createMockOverviewData(),
+                mainViewModel = mockMainViewModel,
+                overviewViewModel = mockOverviewViewModelSuccess,
                 darkTheme = false
             )
         }

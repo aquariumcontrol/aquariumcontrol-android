@@ -29,20 +29,15 @@ class HeatingScreenTest {
                 heatingSwitchOnTemp = 22.5
             )
         )
-        val mockHeatingStatsUiState = HeatingStatsUiState.Success(createMockStatsData())
-        HeatingScreen(
-            mockHeatingSetValsUiState = mockHeatingSetValsUiState,
-            mockHeatingStatsUiState = mockHeatingStatsUiState,
-            mainViewModel = mockMainViewModel,
-            darkTheme = true
-        )
+        val mockHeatingSetValsViewModel = MockHeatingSetValsViewModel(mockHeatingSetValsUiState)
+        val mockHeatingStatsUiState = HeatingStatsUiState.Success(heatingStats = createMockStatsData())
+        val mockHeatingStatsViewModel = MockHeatingStatsViewModel(mockHeatingStatsUiState)
+
         composeTestRule.setContent {
             HeatingScreen(
-                mockHeatingSetVals = HeatingSetVals(
-                    heatingSwitchOffTemp = 27.5,
-                    heatingSwitchOnTemp = 22.5
-                ),
-                mockHeatingStatEntries = createMockStatsData(),
+                mainViewModel = com.laimburggasse.aquariumcontrol.heating.mockMainViewModel,
+                heatingStatsViewModel = mockHeatingStatsViewModel,
+                heatingSetValsViewModel = mockHeatingSetValsViewModel,
                 darkTheme = true
             )
         }
@@ -57,13 +52,20 @@ class HeatingScreenTest {
 
     @Test
     fun heatingScreenLightTest() {
+        val mockHeatingSetValsUiState = HeatingSetValsUiState.Success(
+            HeatingSetVals(
+                heatingSwitchOffTemp = 27.5,
+                heatingSwitchOnTemp = 22.5
+            )
+        )
+        val mockHeatingSetValsViewModel = MockHeatingSetValsViewModel(mockHeatingSetValsUiState)
+        val mockHeatingStatsUiState = HeatingStatsUiState.Success(heatingStats = createMockStatsData())
+        val mockHeatingStatsViewModel = MockHeatingStatsViewModel(mockHeatingStatsUiState)
         composeTestRule.setContent {
             HeatingScreen(
-                mockHeatingSetVals = HeatingSetVals(
-                    heatingSwitchOffTemp = 27.5,
-                    heatingSwitchOnTemp = 22.5
-                ),
-                mockHeatingStatEntries = createMockStatsData(),
+                mainViewModel = com.laimburggasse.aquariumcontrol.heating.mockMainViewModel,
+                heatingStatsViewModel = mockHeatingStatsViewModel,
+                heatingSetValsViewModel = mockHeatingSetValsViewModel,
                 darkTheme = false
             )
         }

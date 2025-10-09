@@ -35,15 +35,15 @@ fun BallingProfileSummaryComposable(
             .fillMaxWidth()
             .border(
                 border = BorderStroke(
-                    1.dp,
-                    MaterialTheme.colorScheme.onSurface
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             )
-            .padding(8.dp)
+            .padding(all = 8.dp)
             .clickable {
                 Log.d("BallingProfileSummaryScreen", "Clicked on {${ballingProfile.label}}")
                 mainViewModel?.updateSelectedBallingProfile(ballingProfile)
-                navHostController?.navigate(ViewNavigationRoutes.ballingEdit)
+                navHostController?.navigate(route = ViewNavigationRoutes.ballingEdit)
             }
     ) {
         Column(
