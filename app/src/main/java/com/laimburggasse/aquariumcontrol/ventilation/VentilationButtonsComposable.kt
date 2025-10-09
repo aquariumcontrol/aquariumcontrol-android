@@ -51,7 +51,14 @@ fun VentilationButtonsComposable(
 }
 
 
-val mockVentilationSetValsViewModel = MockVentilationSetValsViewModel()
+val mockVentilationSetValsViewModel = MockVentilationSetValsViewModel(
+    ventilationSetValsUiState = VentilationSetValsUiState.Success(
+        VentilationSetVals(
+            ventilationSwitchOffTemp = 23.5,
+            ventilationSwitchOnTemp = 27.5
+        )
+    )
+)
 
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)

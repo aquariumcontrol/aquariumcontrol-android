@@ -17,35 +17,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.NumericDoubleOutlinedTextFieldComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun HeatingRangeSliderTextFieldsPortraitComposable(
-    myHeatingSetValsViewModel: HeatingSetValsViewModel?,
+    heatingSetValsViewModel: HeatingSetValsViewModelInterface,
     heatingInitialSetVals: HeatingSetVals
 ) {
     // This composable displays a slider and two text fields.
     // The slider is arrange on top of the two text fields.
     // This composable shall be exclusively used for portrait mode.
 
-    val heatingSetValsViewModel = myHeatingSetValsViewModel ?: viewModel(
-        factory = HeatingSetValsViewModelFactory(heatingInitialSetVals)
-    )
-
     // Use derived state for slider position
-    val sliderRange by heatingSetValsViewModel.sliderRange.observeAsState(
+    val sliderRange: ClosedFloatingPointRange<Float> by heatingSetValsViewModel.sliderRange.observeAsState(
         initial =
         heatingInitialSetVals.heatingSwitchOnTemp.toFloat()..
                 heatingInitialSetVals.heatingSwitchOffTemp.toFloat()
     )
 
     // Use a separate mutable state for the text field values
-    val lowerBoundValue by heatingSetValsViewModel.lowerBoundValue.observeAsState(
+    val lowerBoundValue: Double by heatingSetValsViewModel.lowerBoundValue.observeAsState(
         initial = heatingInitialSetVals.heatingSwitchOnTemp
     )
-    val upperBoundValue by heatingSetValsViewModel.upperBoundValue.observeAsState(
+    val upperBoundValue: Double by heatingSetValsViewModel.upperBoundValue.observeAsState(
         heatingInitialSetVals.heatingSwitchOffTemp
     )
 
@@ -106,7 +101,7 @@ internal fun HeatingRangeSliderTextFieldsPortraitComposablePreview() {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 HeatingRangeSliderTextFieldsPortraitComposable(
-                    myHeatingSetValsViewModel = null,
+                    heatingSetValsViewModel = mockHeatingSetValsViewModel,
                     heatingInitialSetVals = HeatingSetVals(
                         heatingSwitchOffTemp = 28.0, heatingSwitchOnTemp = 22.0
                     )

@@ -17,36 +17,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.NumericDoubleOutlinedTextFieldComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun VentilationRangeSliderTextFieldsPortraitComposable(
-    myVentilationSetValsViewModel: VentilationSetValsViewModel?,
+    ventilationSetValsViewModel: VentilationSetValsViewModelInterface,
     ventilationInitialSetVals: VentilationSetVals
 ) {
     // This composable displays a slider and two text fields.
     // The slider is arrange on top of the two text fields.
     // This composable shall be exclusively used for portrait mode.
 
-    val ventilationSetValsViewModel = myVentilationSetValsViewModel ?: viewModel(
-        factory = VentilationSetValsViewModelFactory(ventilationInitialSetVals)
-    )
-
     // Use derived state for slider position
-    val sliderRange by ventilationSetValsViewModel.sliderRange.observeAsState(
-        initial =
-        ventilationInitialSetVals.ventilationSwitchOnTemp.toFloat()..
-                ventilationInitialSetVals.ventilationSwitchOffTemp.toFloat()
-    )
+    val sliderRange: ClosedFloatingPointRange<Float> by
+        ventilationSetValsViewModel.sliderRange.observeAsState(
+            initial =
+            ventilationInitialSetVals.ventilationSwitchOnTemp.toFloat()..
+                    ventilationInitialSetVals.ventilationSwitchOffTemp.toFloat()
+        )
 
     // Use a separate mutable state for the text field values
-    val lowerBoundValue by ventilationSetValsViewModel.lowerBoundValue.observeAsState(
+    val lowerBoundValue: Double by ventilationSetValsViewModel.lowerBoundValue.observeAsState(
         initial = ventilationInitialSetVals.ventilationSwitchOnTemp
     )
-    val upperBoundValue by ventilationSetValsViewModel.upperBoundValue.observeAsState(
-        ventilationInitialSetVals.ventilationSwitchOffTemp
+    val upperBoundValue: Double by ventilationSetValsViewModel.upperBoundValue.observeAsState(
+        initial = ventilationInitialSetVals.ventilationSwitchOffTemp
     )
 
     RangeSlider(
@@ -106,7 +102,7 @@ internal fun VentilationRangeSliderTextFieldsPortraitComposablePreview() {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 VentilationRangeSliderTextFieldsPortraitComposable(
-                    myVentilationSetValsViewModel = null,
+                    ventilationSetValsViewModel = mockVentilationSetValsViewModel,
                     ventilationInitialSetVals = VentilationSetVals(
                         ventilationSwitchOffTemp = 23.0, ventilationSwitchOnTemp = 27.0
                     )

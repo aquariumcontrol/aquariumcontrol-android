@@ -50,7 +50,14 @@ fun HeatingButtonsComposable(
 
 }
 
-val mockHeatingSetValsViewModel = MockHeatingSetValsViewModel()
+val mockHeatingSetValsViewModel = MockHeatingSetValsViewModel(
+    heatingSetValsUiState = HeatingSetValsUiState.Success(
+        HeatingSetVals(
+            heatingSwitchOffTemp = 28.0,
+            heatingSwitchOnTemp = 22.0
+        )
+    )
+)
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)

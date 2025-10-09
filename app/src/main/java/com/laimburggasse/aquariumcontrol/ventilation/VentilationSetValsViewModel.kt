@@ -25,22 +25,22 @@ class VentilationSetValsViewModel(
     private val _sliderRange = MutableLiveData<ClosedFloatingPointRange<Float>>()
     private val _lowerBoundValue = MutableLiveData<Double>()
     private val _upperBoundValue = MutableLiveData<Double>()
-    val sliderRange: LiveData<ClosedFloatingPointRange<Float>> = _sliderRange
-    val lowerBoundValue: LiveData<Double> = _lowerBoundValue
-    val upperBoundValue: LiveData<Double> = _upperBoundValue
+    override val sliderRange: LiveData<ClosedFloatingPointRange<Float>> = _sliderRange
+    override val lowerBoundValue: LiveData<Double> = _lowerBoundValue
+    override val upperBoundValue: LiveData<Double> = _upperBoundValue
 
-    var ventilationSetValsUiState: VentilationSetValsUiState by mutableStateOf(value = VentilationSetValsUiState.Loading)
-        private set
+    override var ventilationSetValsUiState: VentilationSetValsUiState by
+        mutableStateOf(value = VentilationSetValsUiState.Loading)
 
-    val onRangeChangedBySlider: (Float, Float) -> Unit = { start, end ->
+    override val onRangeChangedBySlider: (Float, Float) -> Unit = { start, end ->
         Log.d("VentilationSetValsViewModel", "onRangeChangedBySlider: $start - $end")
         _sliderRange.value = start..end
         _lowerBoundValue.value = start.toDouble()
         _upperBoundValue.value = end.toDouble()
     }
 
-    val onLowerValueChanged: (Float) -> Unit = { value ->
-        val currentRange = _sliderRange.value
+    override val onLowerValueChanged: (Float) -> Unit = { value ->
+        val currentRange: ClosedFloatingPointRange<Float>? = _sliderRange.value
         if (currentRange != null && value < currentRange.endInclusive) {
             Log.d("VentilationSetValsViewModel", "onLowerValueChanged: $value")
             _sliderRange.value = value..currentRange.endInclusive
@@ -48,7 +48,7 @@ class VentilationSetValsViewModel(
         }
     }
 
-    val onUpperValueChanged: (Float) -> Unit = { value ->
+    override val onUpperValueChanged: (Float) -> Unit = { value ->
         val currentRange = _sliderRange.value
         if (currentRange != null && value > currentRange.start) {
             Log.d("VentilationSetValsViewModel", "onUpperValueChanged: $value")
@@ -86,15 +86,6 @@ class VentilationSetValsViewModel(
         }
     }
 
-    fun setValues(newVentilationSetVals: VentilationSetVals) {
-        this.ventilationSetVals.ventilationSwitchOnTemp = newVentilationSetVals.ventilationSwitchOnTemp
-        this.ventilationSetVals.ventilationSwitchOffTemp = newVentilationSetVals.ventilationSwitchOffTemp
-        _sliderRange.value =
-            this.ventilationSetVals.ventilationSwitchOffTemp.toFloat()..this.ventilationSetVals.ventilationSwitchOnTemp.toFloat()
-        _lowerBoundValue.value = ventilationSetVals.ventilationSwitchOffTemp
-        _upperBoundValue.value = ventilationSetVals.ventilationSwitchOnTemp
-    }
-
     fun getVentilationSwitchOnTempString(): String {
         Log.d("VentilationSetValsViewModel", "getVentilationSwitchOnTempString: ${ventilationSetVals.ventilationSwitchOnTemp}")
         return ventilationSetVals.ventilationSwitchOnTemp.toString()
@@ -105,7 +96,7 @@ class VentilationSetValsViewModel(
         return ventilationSetVals.ventilationSwitchOffTemp.toString()
     }
 
-    fun loadData(mainViewModel: MainViewModel) {
+    override fun loadData(mainViewModel: MainViewModel) {
         viewModelScope.launch {
             val result: DataFetchResult<List<VentilationSetVals>> = fetchVentilationSetVals(
                 mainViewModel

@@ -18,11 +18,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -115,7 +112,7 @@ fun HeatingScreen(
                                                 }
                                                 Row {
                                                     HeatingRangeSliderTextFieldsLandscapeComposable(
-                                                        myHeatingSetValsViewModel = heatingSetValsViewModel,
+                                                        heatingSetValsViewModel = heatingSetValsViewModel,
                                                         heatingInitialSetVals = heatingInitialSetVals
                                                     )
                                                 }
@@ -133,7 +130,7 @@ fun HeatingScreen(
                                                     )
                                                 )
                                                 HeatingRangeSliderTextFieldsPortraitComposable(
-                                                    myHeatingSetValsViewModel = heatingSetValsViewModel,
+                                                    heatingSetValsViewModel = heatingSetValsViewModel,
                                                     heatingInitialSetVals = heatingInitialSetVals
                                                 )
                                             }
@@ -303,11 +300,14 @@ fun HeatingScreenPreviewSuccess() {
             heatingSwitchOnTemp = 22.5
         )
     )
-    val mockHeatingStatsUiState = HeatingStatsUiState.Success(createMockStatsData())
+    val mockHeatingSetValsViewModel = MockHeatingSetValsViewModel(mockHeatingSetValsUiState)
+    val mockHeatingStatsUiState = HeatingStatsUiState.Success(heatingStats = createMockStatsData())
+    val mockHeatingStatsViewModel = MockHeatingStatsViewModel(mockHeatingStatsUiState)
+
     HeatingScreen(
-        mockHeatingSetValsUiState = mockHeatingSetValsUiState,
-        mockHeatingStatsUiState = mockHeatingStatsUiState,
-        mainViewModel = mockMainViewModel
+        mainViewModel = mockMainViewModel,
+        heatingStatsViewModel = mockHeatingStatsViewModel,
+        heatingSetValsViewModel = mockHeatingSetValsViewModel
     )
 }
 
@@ -315,10 +315,16 @@ fun HeatingScreenPreviewSuccess() {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 fun HeatingScreenPreviewError() {
+    val mockHeatingSetValsViewModel = MockHeatingSetValsViewModel(
+        heatingSetValsUiState = HeatingSetValsUiState.Error(errorMessage = "Error message"),
+    )
+    val mockHeatingStatsViewModel = MockHeatingStatsViewModel(
+        heatingStatsUiState = HeatingStatsUiState.Error(errorMessage = "Error message")
+    )
     HeatingScreen(
-        mockHeatingSetValsUiState = HeatingSetValsUiState.Error(errorMessage = "Error message"),
-        mockHeatingStatsUiState = HeatingStatsUiState.Error(errorMessage = "Error message"),
-        mainViewModel = mockMainViewModel
+        mainViewModel = mockMainViewModel,
+        heatingStatsViewModel = mockHeatingStatsViewModel,
+        heatingSetValsViewModel = mockHeatingSetValsViewModel
     )
 }
 
@@ -326,9 +332,15 @@ fun HeatingScreenPreviewError() {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 fun HeatingScreenPreviewLoading() {
+    val mockHeatingSetValsViewModel = MockHeatingSetValsViewModel(
+        heatingSetValsUiState = HeatingSetValsUiState.Loading,
+    )
+    val mockHeatingStatsViewModel = MockHeatingStatsViewModel(
+        heatingStatsUiState = HeatingStatsUiState.Loading
+    )
     HeatingScreen(
-        mockHeatingSetValsUiState = HeatingSetValsUiState.Loading,
-        mockHeatingStatsUiState = HeatingStatsUiState.Loading,
-        mainViewModel = mockMainViewModel
+        mainViewModel = mockMainViewModel,
+        heatingStatsViewModel = mockHeatingStatsViewModel,
+        heatingSetValsViewModel = mockHeatingSetValsViewModel
     )
 }
