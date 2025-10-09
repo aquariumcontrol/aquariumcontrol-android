@@ -15,6 +15,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,7 +54,7 @@ fun BallingScreen(
 
     val ballingViewModel: BallingViewModel = viewModel(factory = ballingViewModelFactory)
 
-    val ballingUiState: BallingUiState by remember { ballingViewModel::ballingUiState }
+    val ballingUiState: BallingUiState by ballingViewModel.ballingUiState.collectAsState()
 
     val configuration: Configuration = LocalConfiguration.current
 

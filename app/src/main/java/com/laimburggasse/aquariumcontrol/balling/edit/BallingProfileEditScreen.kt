@@ -16,8 +16,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -58,8 +62,8 @@ fun BallingProfileEditScreen(
         factory = ballingProfileEditViewModelFactory
     )
 
-    val context: Context = LocalContext.current // for Toasts
-
+    val uiState = ballingProfileEditViewModel.ballingProfileEditUiState
+    val context: Context = LocalContext.current
     val configuration: Configuration = LocalConfiguration.current
 
     AquariumControllerTheme(darkTheme) {
@@ -82,7 +86,7 @@ fun BallingProfileEditScreen(
                             .weight(weight = 1f)
                             .fillMaxWidth()
                     ) {
-                        when (ballingProfileEditViewModel.ballingProfileEditUiState) {
+                        when (uiState) {
 
                             is BallingProfileEditUiState.Error -> {
                                 val errorMessage: String = (ballingProfileEditViewModel.ballingProfileEditUiState
@@ -96,14 +100,18 @@ fun BallingProfileEditScreen(
                                 Text(text = "Balling profile not found")
                             }
                             is BallingProfileEditUiState.Success -> {
-                                val ballingProfile: BallingProfile =
-                                    (ballingProfileEditViewModel.ballingProfileEditUiState as
-                                     BallingProfileEditUiState.Success).ballingProfile
-                                val sliderPositionNewDosingVolume: Double by
-                                ballingProfileEditViewModel.ballingNewDosingVolume.observeAsState(
-                                    initial = ballingProfile.volume
-                                )
+                                val ballingProfile = uiState.ballingProfile
+
+                                var sliderPositionNewDosingVolume by remember {
+                                    mutableDoubleStateOf(ballingProfile.volume)
+                                }
+
+                                LaunchedEffect(ballingProfile.volume) {
+                                    sliderPositionNewDosingVolume = ballingProfile.volume
+                                }
+
                                 BallingProfileSummaryComposable(ballingProfile = ballingProfile)
+
                                 when (configuration.orientation) {
                                     Configuration.ORIENTATION_LANDSCAPE -> {
                                         Row(
@@ -129,7 +137,7 @@ fun BallingProfileEditScreen(
                                         .fillMaxWidth()
                                         .padding(horizontal = 8.dp),
                                     onClick = {
-                                        ballingProfileEditViewModel.onConfirmDosing()
+                                        ballingProfileEditViewModel.onConfirmDosing(sliderPositionNewDosingVolume)
                                         Toast.makeText(
                                             context,
                                             context.getString(R.string.sent_request_to_controller_for_updating_dosing_volume),

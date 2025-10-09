@@ -1,47 +1,43 @@
 package com.laimburggasse.aquariumcontrol.balling
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class BallingViewModel(
     private val ballingRepository: BallingRepository
-): ViewModel(), BallingViewModelInterface {
+): ViewModel() { //BallingViewModelInterface
 
-    override var ballingUiState: BallingUiState by mutableStateOf(value = BallingUiState.Loading)
-    override var isRefreshing by mutableStateOf(value = false)
+    val ballingUiState: StateFlow<BallingUiState> = ballingRepository.profilesFlow
+        .map { result ->
+            when (result) {
+                is DataFetchResult.Error -> BallingUiState.Error(errorMessage = result.errorMessage)
+                is DataFetchResult.Success -> {
+                    if (result.data.isEmpty()) {
+                        BallingUiState.Empty
+                    } else {
+                        BallingUiState.Success(ballingProfiles = result.data)
+                    }
+                }
+            }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = BallingUiState.Loading // The UI starts in a loading state
+        )
 
     init {
-        // initial loading is required so that preview also displays content
         loadData()
     }
 
-    override fun loadData() {
+    fun loadData() {
         viewModelScope.launch {
-            isRefreshing = true
-
-            val result: DataFetchResult<List<BallingProfile>> = ballingRepository.fetchBallingProfiles()
-
-            ballingUiState = when(result) {
-                is DataFetchResult.Success -> {
-                    val ballingProfiles: List<BallingProfile> = result.data
-                    if (ballingProfiles.isEmpty()) {
-                        BallingUiState.Empty
-                    }
-                    else {
-                        BallingUiState.Success(ballingProfiles)
-                    }
-                }
-                is DataFetchResult.Error -> {
-                    BallingUiState.Error(errorMessage = result.errorMessage)
-                }
-            }
-
-            isRefreshing = false
+            ballingRepository.fetchBallingProfiles()
         }
     }
 }

@@ -3,8 +3,6 @@ package com.laimburggasse.aquariumcontrol.balling.edit
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.balling.BallingProfile
@@ -17,59 +15,49 @@ class BallingProfileEditViewModel(
     private val repository: BallingRepository,
 ) : ViewModel() {
     // This class will allow the user to edit the Balling dosing profile.
-    private val _ballingNewDosingVolume = MutableLiveData<Double>()
-    private val _ballingConfirmedDosingVolume = MutableLiveData<Double>()
-
     var ballingProfileEditUiState: BallingProfileEditUiState by mutableStateOf(
         value = BallingProfileEditUiState.Loading
     )
-
-    val ballingNewDosingVolume: LiveData<Double> = _ballingNewDosingVolume
+        private set
 
     init {
-        viewModelScope.launch {
-            val result: DataFetchResult<List<BallingProfile>> = repository.fetchBallingProfiles()
-            when (result) {
-                is DataFetchResult.Success -> {
-                    val ballingProfile: BallingProfile? = result.data.find {
-                        it.pumpId == ballingProfileId
-                    }
-                    ballingProfileEditUiState = if (ballingProfile != null) {
-                        BallingProfileEditUiState.Success(ballingProfile)
-                    } else {
-                        BallingProfileEditUiState.NotFound
-                    }
-                }
-                is DataFetchResult.Error -> {
-                    // Handle the case where the repository couldn't fetch data
-                    ballingProfileEditUiState = BallingProfileEditUiState.Error(result.errorMessage)
-                }
-            }
-        }    }
+        val currentRepoState: DataFetchResult<List<BallingProfile>> = repository.profilesFlow.value
 
-    fun onVolumeChange(volume: Double) {
-        _ballingNewDosingVolume.value = volume
+        if (currentRepoState is DataFetchResult.Success) {
+            val profile: BallingProfile? = currentRepoState.data.find {
+                it.pumpId == ballingProfileId
+            }
+            ballingProfileEditUiState = if (profile != null) {
+                BallingProfileEditUiState.Success(ballingProfile = profile)
+            } else {
+                BallingProfileEditUiState.NotFound
+            }
+        } else {
+            ballingProfileEditUiState = BallingProfileEditUiState.Error(
+                errorMessage = "Data not available. Go back and try again."
+            )
+        }
     }
 
-    fun onConfirmDosing() {
-        _ballingConfirmedDosingVolume.value = _ballingNewDosingVolume.value
-        when (ballingProfileEditUiState) {
-            BallingProfileEditUiState.Loading -> {
-                // do nothing
+    fun onConfirmDosing(newVolume: Double) {
+        val currentState: BallingProfileEditUiState = ballingProfileEditUiState
+        if (currentState is BallingProfileEditUiState.Success) {
+            val updatedProfile = currentState.ballingProfile.copy(volume = newVolume)
+
+            ballingProfileEditUiState = BallingProfileEditUiState.Success(updatedProfile)
+
+            viewModelScope.launch {
+                repository.updateBallingProfile(ballingProfile = updatedProfile)
             }
-            BallingProfileEditUiState.NotFound -> {
-                // do nothing
-            }
-            is BallingProfileEditUiState.Error -> {
-                // do nothing
-            }
-            is BallingProfileEditUiState.Success -> {
-                val ballingProfile: BallingProfile = (ballingProfileEditUiState as BallingProfileEditUiState.Success).ballingProfile
-                ballingProfile.volume = _ballingNewDosingVolume.value!!
-                viewModelScope.launch {
-                    repository.updateBallingProfile(ballingProfile)
-                }
-            }
+        }
+    }
+
+    fun onVolumeChange(newVolume: Double) {
+        val currentState = ballingProfileEditUiState
+        if (currentState is BallingProfileEditUiState.Success) {
+            ballingProfileEditUiState = currentState.copy(
+                ballingProfile = currentState.ballingProfile.copy(volume = newVolume)
+            )
         }
     }
 }
