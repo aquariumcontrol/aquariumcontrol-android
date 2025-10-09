@@ -5,24 +5,26 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
-import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class BallingViewModel: ViewModel(), BallingViewModelInterface {
+class BallingViewModel(
+    private val ballingRepository: BallingRepository
+): ViewModel(), BallingViewModelInterface {
 
     override var ballingUiState: BallingUiState by mutableStateOf(value = BallingUiState.Loading)
-
     override var isRefreshing by mutableStateOf(value = false)
 
-    override fun loadData(mainViewModel: MainViewModel) {
+    init {
+        // initial loading is required so that preview also displays content
+        loadData()
+    }
+
+    override fun loadData() {
         viewModelScope.launch {
             isRefreshing = true
 
-            val result: DataFetchResult<List<BallingProfile>> = fetchBallingProfiles(mainViewModel)
+            val result: DataFetchResult<List<BallingProfile>> = ballingRepository.fetchBallingProfiles()
 
             ballingUiState = when(result) {
                 is DataFetchResult.Success -> {
@@ -40,14 +42,6 @@ class BallingViewModel: ViewModel(), BallingViewModelInterface {
             }
 
             isRefreshing = false
-        }
-    }
-    
-    suspend fun fetchBallingProfiles(mainViewModel: MainViewModel): DataFetchResult<List<BallingProfile>> {
-        val url = "http://" + mainViewModel.getControllerAddress() + WebApiUrls.BALLING_GET_SET_VALS
-        val reader = BallingProfileReader(url)
-        return withContext(Dispatchers.IO) {
-            reader.readBallingProfiles()
         }
     }
 }

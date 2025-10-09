@@ -18,14 +18,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun BallingProfileSummaryComposable(
     navHostController: NavHostController? = null,
-    mainViewModel: MainViewModel? = null,
     ballingProfile: BallingProfile
 ) {
     // This composable displays one Balling dosing profile.
@@ -42,8 +40,7 @@ fun BallingProfileSummaryComposable(
             .padding(all = 8.dp)
             .clickable {
                 Log.d("BallingProfileSummaryScreen", "Clicked on {${ballingProfile.label}}")
-                mainViewModel?.updateSelectedBallingProfile(ballingProfile)
-                navHostController?.navigate(route = ViewNavigationRoutes.ballingEdit)
+                navHostController?.navigate(route = ViewNavigationRoutes.ballingEdit(ballingProfileId = ballingProfile.pumpId))
             }
     ) {
         Column(
@@ -88,7 +85,6 @@ internal fun BallingProfileSummaryPreview() {
         Surface {
             BallingProfileSummaryComposable(
                 navHostController = null,
-                mainViewModel = null,
                 ballingProfile = mockBallingProfile
             )
         }

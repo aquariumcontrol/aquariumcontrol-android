@@ -6,7 +6,7 @@ class MockBallingViewModel(
     override var ballingUiState: BallingUiState,
     override var isRefreshing: Boolean
 ) : BallingViewModelInterface {
-    override fun loadData(mainViewModel: MainViewModel) {
+    override fun loadData() {
         // do nothing
     }
 }

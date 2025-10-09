@@ -18,7 +18,10 @@ object ViewNavigationRoutes {
     var balling = "balling"
     var ballingHistory24h = "ballingHistory24h"
     var ballingHistory7d = "ballingHistory7d"
-    var ballingEdit = "ballingEdit"
+
+    private const val BALLING_PROFILE_ARG_ID = "ballingProfileId"
+    var ballingEdit = "ballingEdit/{$BALLING_PROFILE_ARG_ID}"
+
     var refill = "refill"
     var refillHistory24h = "refillHistory24h"
     var refillHistory7d = "refillHistory7d"
@@ -35,5 +38,9 @@ object ViewNavigationRoutes {
     fun feedSchedule(profileName: String, timestamp: Timestamp?): String {
         val milliSecondsSinceEpoch = timestamp?.time ?: 0
         return "feedSchedule/$profileName/$milliSecondsSinceEpoch"
+    }
+
+    fun ballingEdit(ballingProfileId: Int): String {
+        return "ballingEdit/$ballingProfileId"
     }
 }

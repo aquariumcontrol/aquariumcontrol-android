@@ -14,8 +14,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.room.Room
+import com.laimburggasse.aquariumcontrol.balling.BallingRepository
 import com.laimburggasse.aquariumcontrol.balling.BallingScreen
+import com.laimburggasse.aquariumcontrol.balling.BallingViewModelFactory
 import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditScreen
+import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditViewModelFactory
 import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryScreen
 import com.laimburggasse.aquariumcontrol.controller.ControllerAddScreen
 import com.laimburggasse.aquariumcontrol.controller.ControllerEditScreen
@@ -84,6 +87,8 @@ class MainActivity : ComponentActivity() {
             }
         }
     )
+
+    private val ballingRepository by lazy { BallingRepository(mainViewModel = mainViewModel) }
 
     override fun onPause() {
         super.onPause()
@@ -192,6 +197,7 @@ class MainActivity : ComponentActivity() {
                     composable(route = ViewNavigationRoutes.balling) {
                         BallingScreen(
                             navHostController = navHostController,
+                            ballingViewModelFactory = BallingViewModelFactory(ballingRepository),
                             mainViewModel = mainViewModel
                         )
                     }
@@ -209,13 +215,24 @@ class MainActivity : ComponentActivity() {
                             mainViewModel = mainViewModel
                         )
                     }
-                    composable(route = ViewNavigationRoutes.ballingEdit) {
-                        if (mainViewModel.getMySelectedBallingProfile() != null) {
+                    composable(route = ViewNavigationRoutes.ballingEdit,
+                        arguments = listOf(
+                            navArgument(name = "ballingProfileId") { type = NavType.IntType }
+                        )
+                    ) { backStackEntry ->
+                        val ballingProfileId: Int? = backStackEntry.arguments?.getInt("ballingProfileId")
+                        if (ballingProfileId != null) {
                             BallingProfileEditScreen(
                                 navHostController = navHostController,
-                                ballingProfile = mainViewModel.getMySelectedBallingProfile()!!,
-                                mainViewModel = mainViewModel
+                                mainViewModel = mainViewModel,
+                                ballingProfileEditViewModelFactory = BallingProfileEditViewModelFactory(
+                                    ballingProfileId = ballingProfileId,
+                                    ballingRepository = ballingRepository
+                                )
                             )
+                        }
+                        else {
+                            // @todo: handle error case (e.g. navigate back)
                         }
                     }
                     composable(route = ViewNavigationRoutes.refill) {

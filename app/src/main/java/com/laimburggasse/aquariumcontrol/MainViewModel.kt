@@ -33,10 +33,6 @@ open class MainViewModel: ViewModel() {
         selectedController = controllerProfile
     }
 
-    fun updateSelectedBallingProfile(ballingProfile: BallingProfile) {
-        selectedBallingProfile = ballingProfile
-    }
-
     fun isControllerLoaded(): Boolean {
         return selectedController != null
     }

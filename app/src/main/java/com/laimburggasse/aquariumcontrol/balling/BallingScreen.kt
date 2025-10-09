@@ -15,7 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,12 +36,13 @@ import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
 fun BallingScreen(
     navHostController: NavHostController? = null,
     mainViewModel: MainViewModel,
-    ballingViewModel: BallingViewModelInterface = viewModel<BallingViewModel>(),
+    ballingViewModelFactory: BallingViewModelFactory,
     darkTheme: Boolean? = null,
 ) {
     // This screen displays
@@ -50,13 +50,11 @@ fun BallingScreen(
     // - a button for visualizing all Balling dosing events of the last 7 days
     // - all Balling profiles downloaded from the controller
 
+    val ballingViewModel: BallingViewModel = viewModel(factory = ballingViewModelFactory)
+
     val ballingUiState: BallingUiState by remember { ballingViewModel::ballingUiState }
 
-    val configuration = LocalConfiguration.current
-
-    LaunchedEffect(Unit) {
-        ballingViewModel.loadData(mainViewModel)
-    }
+    val configuration: Configuration = LocalConfiguration.current
 
     AquariumControllerTheme(darkTheme) {
         Surface(
@@ -82,7 +80,7 @@ fun BallingScreen(
                                     navHostController = navHostController,
                                     modifier = Modifier
                                         .padding(vertical = 8.dp)
-                                        .weight(0.5f)
+                                        .weight(weight = 0.5f)
                                 )
                             }
                         }
@@ -103,7 +101,7 @@ fun BallingScreen(
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Bold
                                 ),
-                                modifier = Modifier.weight(1f),
+                                modifier = Modifier.weight(weight = 1f),
                                 textAlign = TextAlign.Center
                             )
                         }
@@ -114,7 +112,7 @@ fun BallingScreen(
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Bold
                                 ),
-                                modifier = Modifier.weight(1f),
+                                modifier = Modifier.weight(weight = 1f),
                                 textAlign = TextAlign.Center
                             )
                         }
@@ -125,7 +123,7 @@ fun BallingScreen(
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Bold
                                 ),
-                                modifier = Modifier.weight(1f),
+                                modifier = Modifier.weight(weight = 1f),
                                 textAlign = TextAlign.Center
                             )
                         }
@@ -133,16 +131,15 @@ fun BallingScreen(
                             val ballingProfiles: List<BallingProfile> =
                                 (ballingUiState as BallingUiState.Success).ballingProfiles
                             val modifier: Modifier = Modifier
-                                .height(3000.dp) // Set a fixed height
+                                .height(height = 3000.dp) // Set a fixed height
                                 .fillMaxWidth()
-                                .padding(16.dp)
+                                .padding(all = 16.dp)
                             if (LocalInspectionMode.current) {
                                 // running in preview
                                 Column(modifier) {
                                     ballingProfiles.forEach { ballingProfile ->
                                         BallingProfileSummaryComposable(
                                             navHostController = navHostController,
-                                            mainViewModel = mainViewModel,
                                             ballingProfile = ballingProfile
                                         )
                                     }
@@ -154,7 +151,6 @@ fun BallingScreen(
                                     items(items = ballingProfiles) { ballingProfile ->
                                         BallingProfileSummaryComposable(
                                             navHostController = navHostController,
-                                            mainViewModel = mainViewModel,
                                             ballingProfile = ballingProfile
                                         )
                                     }
@@ -179,23 +175,6 @@ val mockBallingProfile1 = BallingProfile(pumpId = 1, volume = 2.1, label = "mock
 val mockBallingProfile2 = BallingProfile(pumpId = 2, volume = 3.1, label = "mock2")
 val mockBallingProfiles: List<BallingProfile> = listOf(mockBallingProfile1, mockBallingProfile2)
 
-val mockBallingUiStateSuccess = BallingUiState.Success(ballingProfiles = mockBallingProfiles)
-
-val mockBallingViewModelSuccess = MockBallingViewModel(ballingUiState = mockBallingUiStateSuccess, isRefreshing = false)
-
-val mockBallingUiStateError = BallingUiState.Error(errorMessage = "Error message")
-
-val mockBallingViewModelError = MockBallingViewModel(ballingUiState = mockBallingUiStateError, isRefreshing = false)
-
-val mockBallingUiStateLoading = BallingUiState.Loading
-
-val mockBallingViewModelLoading = MockBallingViewModel(ballingUiState = mockBallingUiStateLoading, isRefreshing = false)
-
-val mockBallingUiStateEmpty = BallingUiState.Empty
-
-val mockBallingViewModelEmpty = MockBallingViewModel(ballingUiState = mockBallingUiStateEmpty, isRefreshing = false)
-
-
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
@@ -210,9 +189,10 @@ val mockBallingViewModelEmpty = MockBallingViewModel(ballingUiState = mockBallin
 )
 @Composable
 internal fun BallingScreenPreviewSuccess() {
+    val mockRepositorySuccess = MockBallingRepository(result = DataFetchResult.Success(data = mockBallingProfiles))
     BallingScreen(
         mainViewModel = mockMainViewModel,
-        ballingViewModel = mockBallingViewModelSuccess,
+        ballingViewModelFactory = BallingViewModelFactory(ballingRepository = mockRepositorySuccess)
     )
 }
 
@@ -220,9 +200,10 @@ internal fun BallingScreenPreviewSuccess() {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun BallingScreenPreviewError() {
+    val mockRepositoryError = MockBallingRepository(result = DataFetchResult.Error(exception = null, errorMessage = "Error message"))
     BallingScreen(
         mainViewModel = mockMainViewModel,
-        ballingViewModel = mockBallingViewModelError,
+        ballingViewModelFactory = BallingViewModelFactory(ballingRepository = mockRepositoryError),
     )
 }
 
@@ -232,7 +213,7 @@ internal fun BallingScreenPreviewError() {
 internal fun BallingScreenPreviewLoading() {
     BallingScreen(
         mainViewModel = mockMainViewModel,
-        ballingViewModel = mockBallingViewModelLoading,
+        ballingViewModelFactory = BallingViewModelFactory(ballingRepository = MockLongLoadingBallingRepository()),
     )
 }
 
@@ -240,8 +221,9 @@ internal fun BallingScreenPreviewLoading() {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun BallingScreenPreviewEmpty() {
+    val mockRepositoryEmpty = MockBallingRepository(result = DataFetchResult.Success(data = emptyList()))
     BallingScreen(
         mainViewModel = mockMainViewModel,
-        ballingViewModel = mockBallingViewModelEmpty,
+        ballingViewModelFactory = BallingViewModelFactory(ballingRepository = mockRepositoryEmpty),
     )
 }
