@@ -39,10 +39,13 @@ import com.laimburggasse.aquariumcontrol.heating.HeatingScreen
 import com.laimburggasse.aquariumcontrol.info.InfoScreen
 import com.laimburggasse.aquariumcontrol.overview.OverviewScreen
 import com.laimburggasse.aquariumcontrol.refill.RefillScreen
+import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryRepository
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryScreen
+import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryViewModelFactory
 import com.laimburggasse.aquariumcontrol.schedule.ScheduleScreen
 import com.laimburggasse.aquariumcontrol.timedata.TimeDataScreen
 import com.laimburggasse.aquariumcontrol.ventilation.VentilationScreen
+import kotlin.getValue
 
 @Suppress("UNCHECKED_CAST")
 class MainActivity : ComponentActivity() {
@@ -96,6 +99,8 @@ class MainActivity : ComponentActivity() {
     private val ballingHistoryRepository by lazy { BallingHistoryRepository(mainViewModel = mainViewModel) }
 
     private val feedHistoryRepository by lazy { FeedHistoryRepository(mainViewModel = mainViewModel) }
+
+    private val refillHistoryRepository by lazy { RefillHistoryRepository(mainViewModel = mainViewModel) }
 
     override fun onPause() {
         super.onPause()
@@ -264,6 +269,9 @@ class MainActivity : ComponentActivity() {
                         RefillHistoryScreen(
                             navHostController = navHostController,
                             showFullWeek = false,
+                            refillHistoryViewModelFactory = RefillHistoryViewModelFactory(
+                                refillHistoryRepository
+                            ),
                             mainViewModel = mainViewModel
                         )
                     }
@@ -271,7 +279,10 @@ class MainActivity : ComponentActivity() {
                         RefillHistoryScreen(
                             navHostController = navHostController,
                             showFullWeek = true,
-                            mainViewModel = mainViewModel
+                            mainViewModel = mainViewModel,
+                            refillHistoryViewModelFactory = RefillHistoryViewModelFactory(
+                                refillHistoryRepository
+                            )
                         )
                     }
                     composable(route = ViewNavigationRoutes.heating) {

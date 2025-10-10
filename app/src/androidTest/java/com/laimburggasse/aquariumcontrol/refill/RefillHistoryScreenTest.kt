@@ -7,8 +7,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.overview.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryScreen
-import com.laimburggasse.aquariumcontrol.refill.history.mockRefillHistoryViewModelEmpty
-import com.laimburggasse.aquariumcontrol.refill.history.mockRefillHistoryViewModelSuccess
+import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryViewModelFactory
+import com.laimburggasse.aquariumcontrol.refill.history.mockRefillHistoryRepositoryEmpty
+import com.laimburggasse.aquariumcontrol.refill.history.mockRefillHistoryRepositorySuccess
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -28,7 +29,9 @@ class RefillHistoryScreenTest {
         composeTestRule.setContent {
             RefillHistoryScreen(
                 showFullWeek = true,
-                refillHistoryViewModel = mockRefillHistoryViewModelEmpty,
+                refillHistoryViewModelFactory = RefillHistoryViewModelFactory(
+                    refillHistoryRepository = mockRefillHistoryRepositoryEmpty
+                ),
                 mainViewModel = mockMainViewModel,
                 darkTheme = true
             )
@@ -47,7 +50,9 @@ class RefillHistoryScreenTest {
         composeTestRule.setContent {
             RefillHistoryScreen(
                 showFullWeek = true,
-                refillHistoryViewModel = mockRefillHistoryViewModelEmpty,
+                refillHistoryViewModelFactory = RefillHistoryViewModelFactory(
+                    refillHistoryRepository = mockRefillHistoryRepositoryEmpty
+                ),
                 mainViewModel = mockMainViewModel,
                 darkTheme = false
             )
@@ -65,7 +70,9 @@ class RefillHistoryScreenTest {
         composeTestRule.setContent {
             RefillHistoryScreen(
                 showFullWeek = true,
-                refillHistoryViewModel = mockRefillHistoryViewModelSuccess,
+                refillHistoryViewModelFactory = RefillHistoryViewModelFactory(
+                    refillHistoryRepository = mockRefillHistoryRepositorySuccess
+                ),
                 mainViewModel = mockMainViewModel,
                 darkTheme = true
             )
@@ -84,7 +91,9 @@ class RefillHistoryScreenTest {
         composeTestRule.setContent {
             RefillHistoryScreen(
                 showFullWeek = true,
-                refillHistoryViewModel = mockRefillHistoryViewModelSuccess,
+                refillHistoryViewModelFactory = RefillHistoryViewModelFactory(
+                    refillHistoryRepository = mockRefillHistoryRepositorySuccess
+                ),
                 mainViewModel = mockMainViewModel,
                 darkTheme = false
             )

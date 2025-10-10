@@ -8,12 +8,12 @@ import okhttp3.Request
 import okhttp3.Response
 
 
-class RefillEventReader(private val url: String) {
+class RefillHistoryEventReader(private val url: String) {
     // This class reads the refill events from the server using a GET request.
     private val client = OkHttpClient()
     private val json = Json { ignoreUnknownKeys = true }
 
-    fun readRefillEvents(mainViewModel: MainViewModel? = null): DataFetchResult<List<RefillEvent>> {
+    fun readRefillEvents(mainViewModel: MainViewModel? = null): DataFetchResult<List<RefillHistoryEvent>> {
         val request: Request = Request.Builder().url(url).build()
 
         val isControllerLoaded: Boolean = mainViewModel?.isControllerLoaded() == true
@@ -30,7 +30,7 @@ class RefillEventReader(private val url: String) {
                     return DataFetchResult.Success(data = emptyList())
                 }
                 try {
-                    val decodedData: List<RefillEvent> = json.decodeFromString<List<RefillEvent>>(string = responseBody)
+                    val decodedData: List<RefillHistoryEvent> = json.decodeFromString<List<RefillHistoryEvent>>(string = responseBody)
                     return DataFetchResult.Success(decodedData)
                 } catch (e: Exception) {
                     return DataFetchResult.Error(exception = e, errorMessage = "Error decoding data sent from server: ${e.message}")

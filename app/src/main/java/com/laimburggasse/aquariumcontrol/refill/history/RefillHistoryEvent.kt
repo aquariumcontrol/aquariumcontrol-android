@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 import java.sql.Timestamp
 
 @Serializable
-data class RefillEvent(
+data class RefillHistoryEvent(
     @SerialName("Timestamp")
     val timestamp: String,
     @SerialName("Duration")

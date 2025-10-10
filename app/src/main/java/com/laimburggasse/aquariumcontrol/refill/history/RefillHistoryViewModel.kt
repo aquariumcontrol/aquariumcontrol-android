@@ -6,55 +6,46 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryUiState
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class RefillHistoryViewModel: ViewModel(), RefillHistoryViewModelInterface {
-    override var refillHistoryUiState: RefillHistoryUiState by mutableStateOf(RefillHistoryUiState.Loading)
-        private set
-
-    override var isRefreshing by mutableStateOf(value = false)
-        private set
-
-    override fun loadData(mainViewModel: MainViewModel, showFullWeek: Boolean) {
-        viewModelScope.launch {
-            isRefreshing = true
-
-            val result: DataFetchResult<List<RefillEvent>> = fetchRefillEvents(mainViewModel, showFullWeek)
-
-            refillHistoryUiState = when(result) {
+class RefillHistoryViewModel(
+    private val refillHistoryRepository: RefillHistoryRepository
+): ViewModel() {
+    
+    val refillHistoryUiState: StateFlow<RefillHistoryUiState> = refillHistoryRepository.refillHistoryEventFlow
+        .map { result ->
+            when (result) {
+                is DataFetchResult.Error -> RefillHistoryUiState.Error(errorMessage = result.errorMessage)
                 is DataFetchResult.Success -> {
-                    val refillEvents: List<RefillEvent> = result.data
-                    if (refillEvents.isEmpty()) {
+                    if (result.data.isEmpty()) {
                         RefillHistoryUiState.Empty
+                    } else {
+                        RefillHistoryUiState.Success(refillHistoryEvents = result.data)
                     }
-                    else {
-                        RefillHistoryUiState.Success(refillHistory = refillEvents)
-                    }
-                }
-                is DataFetchResult.Error -> {
-                    RefillHistoryUiState.Error(result.errorMessage)
                 }
             }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = RefillHistoryUiState.Loading
+        )
 
-            isRefreshing = false
-        }
+    init {
+        loadData(showFullWeek = false)
     }
 
-    private suspend fun fetchRefillEvents(
-        mainViewModel: MainViewModel,
-        showFullWeek: Boolean,
-    ): DataFetchResult<List<RefillEvent>> {
-        return withContext(context = Dispatchers.IO) {
-            val url = when {
-                showFullWeek -> "http://" + mainViewModel.getControllerAddress() + WebApiUrls.REFILL_GET_EVENTS_7D
-                else -> "http://" + mainViewModel.getControllerAddress() + WebApiUrls.REFILL_GET_EVENTS_24H
-            }
-            val reader = RefillEventReader(url)
-            reader.readRefillEvents(mainViewModel)
+    fun loadData(showFullWeek: Boolean) {
+        viewModelScope.launch {
+            refillHistoryRepository.fetchRefillHistoryEvents(showFullWeek)
         }
     }
 }

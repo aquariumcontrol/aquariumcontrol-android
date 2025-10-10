@@ -1,6 +1,7 @@
 package com.laimburggasse.aquariumcontrol.refill.history
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,6 +24,8 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,6 +46,7 @@ import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposabl
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.overview.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import java.sql.Timestamp
 
 @Composable
@@ -50,20 +54,25 @@ fun RefillHistoryScreen(
     navHostController: NavHostController? = null,
     showFullWeek: Boolean,
     mainViewModel: MainViewModel,
-    refillHistoryViewModel: RefillHistoryViewModelInterface = viewModel<RefillHistoryViewModel>(),
+    refillHistoryViewModelFactory: RefillHistoryViewModelFactory,
     darkTheme: Boolean? = null
 ) {
     // This screen displays
     // - headline
     // - subhead line
     // - a list of refill events downloaded from the server using a GET request.
+
+    val refillHistoryViewModel: RefillHistoryViewModel = viewModel(
+        factory = refillHistoryViewModelFactory
+    )
+    
     val isControllerAddressValid: Boolean = !mainViewModel.getControllerAddress().isNullOrBlank()
-    val isRefreshing: Boolean by remember { refillHistoryViewModel::isRefreshing }
-    val refillHistoryUiState: RefillHistoryUiState by remember { refillHistoryViewModel::refillHistoryUiState }
+    
+    val refillHistoryUiState: RefillHistoryUiState by refillHistoryViewModel.refillHistoryUiState.collectAsState()
 
     LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
         if (isControllerAddressValid) {
-            refillHistoryViewModel.loadData(mainViewModel, showFullWeek)
+            refillHistoryViewModel.loadData(showFullWeek)
         }
     }
 
@@ -71,101 +80,103 @@ fun RefillHistoryScreen(
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
-            Box {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    ScreenHeadlineComposable(
-                        stringResource(R.string.refill_log)
-                    )
-                    val subHeadlineText: String =
-                        if (showFullWeek) {
-                            stringResource(R.string.refill_events_last_7d)
-                        } else {
-                            stringResource(R.string.refill_events_last_24h)
-                        }
-                    Text(text = subHeadlineText)
-                    Scaffold(
-                        topBar = { },
-                        bottomBar = { },
-                        floatingActionButton = {},
-                        snackbarHost = { SnackbarHost(remember { SnackbarHostState() })}
-                    ) { innerPadding ->
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(innerPadding),
-                            horizontalAlignment = Alignment.CenterHorizontally
+            Scaffold(
+                topBar = { },
+                bottomBar = { },
+                floatingActionButton = {},
+                snackbarHost = { SnackbarHost(remember { SnackbarHostState() })}
+            ) { innerPadding ->
+                Box {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        ScreenHeadlineComposable(
+                            stringResource(R.string.refill_log)
+                        )
+                        val subHeadlineText: String =
+                            if (showFullWeek) {
+                                stringResource(R.string.refill_events_last_7d)
+                            } else {
+                                stringResource(R.string.refill_events_last_24h)
+                            }
+                        Text(text = subHeadlineText)
+
+                        PullToRefreshBox(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center,
+                            state = rememberPullToRefreshState(),
+                            isRefreshing = refillHistoryUiState is RefillHistoryUiState.Loading,
+                            onRefresh = { refillHistoryViewModel.loadData(showFullWeek) },
+                            indicator = {
+                                if (refillHistoryUiState is RefillHistoryUiState.Loading) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(150.dp),
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                            }
                         ) {
-                            PullToRefreshBox(
+                            Row(
                                 modifier = Modifier
-                                    .fillMaxWidth(),
-                                contentAlignment = Alignment.Center,
-                                state = rememberPullToRefreshState(),
-                                isRefreshing = isRefreshing,
-                                onRefresh = { refillHistoryViewModel.loadData(mainViewModel, showFullWeek) },
-                                indicator = {
-                                    if (isRefreshing) {
-                                        CircularProgressIndicator(
-                                            modifier = Modifier
-                                                .size(150.dp),
-                                            color = MaterialTheme.colorScheme.primary
+                                    .fillMaxSize()
+                                    .padding(16.dp),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                when (refillHistoryUiState) {
+                                    is RefillHistoryUiState.Empty -> {
+                                        Text(
+                                            text = stringResource(R.string.no_refill_events_found),
+                                            style = TextStyle(
+                                                fontSize = 16.sp,
+                                                fontWeight = FontWeight.Bold
+                                            ),
+                                            modifier = Modifier.weight(1f),
+                                            textAlign = TextAlign.Center
                                         )
                                     }
-                                }
-                            ) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(16.dp)
-                                        .verticalScroll(state = rememberScrollState())
-                                ) {
-                                    when(refillHistoryUiState) {
-                                        is RefillHistoryUiState.Empty -> {
-                                            Text(
-                                                text = stringResource(R.string.no_refill_events_found),
-                                                style = TextStyle(
-                                                    fontSize = 16.sp,
-                                                    fontWeight = FontWeight.Bold
-                                                ),
-                                                modifier = Modifier.weight(1f),
-                                                textAlign = TextAlign.Center
-                                            )
-                                        }
-                                        is RefillHistoryUiState.Error -> {
-                                            Text(
-                                                "Error loading data: ${(refillHistoryUiState as RefillHistoryUiState.Error).errorMessage}",
-                                                style = TextStyle(
-                                                    fontSize = 16.sp,
-                                                    fontWeight = FontWeight.Bold
-                                                ),
-                                                modifier = Modifier.weight(1f),
-                                                textAlign = TextAlign.Center
-                                            )
-                                        }
-                                        is RefillHistoryUiState.Loading -> {
-                                            Text(
-                                                text = stringResource(R.string.loading_refill_events),
-                                                style = TextStyle(
-                                                    fontSize = 16.sp,
-                                                    fontWeight = FontWeight.Bold
-                                                ),
-                                                modifier = Modifier.weight(1f),
-                                                textAlign = TextAlign.Center
-                                            )
-                                        }
-                                        is RefillHistoryUiState.Success -> {
-                                            val refillEvents = (refillHistoryUiState as RefillHistoryUiState.Success).refillHistory
-                                            if (LocalInspectionMode.current) {
-                                                Column(modifier = Modifier.fillMaxSize()) {
-                                                    refillEvents.forEach { refillEvent ->
-                                                        RefillEventComposable(refillEvent)
-                                                    }
+
+                                    is RefillHistoryUiState.Error -> {
+                                        Text(
+                                            "Error loading data: ${(refillHistoryUiState as RefillHistoryUiState.Error).errorMessage}",
+                                            style = TextStyle(
+                                                fontSize = 16.sp,
+                                                fontWeight = FontWeight.Bold
+                                            ),
+                                            modifier = Modifier.weight(1f),
+                                            textAlign = TextAlign.Center
+                                        )
+                                    }
+
+                                    is RefillHistoryUiState.Loading -> {
+                                        Text(
+                                            text = stringResource(R.string.loading_refill_events),
+                                            style = TextStyle(
+                                                fontSize = 16.sp,
+                                                fontWeight = FontWeight.Bold
+                                            ),
+                                            modifier = Modifier.weight(1f),
+                                            textAlign = TextAlign.Center
+                                        )
+                                    }
+
+                                    is RefillHistoryUiState.Success -> {
+                                        val refillEvents =
+                                            (refillHistoryUiState as RefillHistoryUiState.Success).refillHistoryEvents
+                                        if (LocalInspectionMode.current) {
+                                            // In Preview: Render a simple, static Column instead of LazyColumn
+                                            Column(modifier = Modifier.fillMaxSize()) {
+                                                refillEvents.forEach { refillEvent ->
+                                                    RefillEventComposable(refillEvent)
                                                 }
                                             }
-                                            else {
-                                                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                                    items(refillEvents) { refillEvent ->
-                                                        RefillEventComposable(refillEvent)
-                                                    }
+                                        } else {
+                                            // In App Runtime: Use the performant LazyColumn
+                                            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                                items(refillEvents) { refillEvent ->
+                                                    RefillEventComposable(refillEvent)
                                                 }
                                             }
                                         }
@@ -185,32 +196,32 @@ fun RefillHistoryScreen(
     }
 }
 
-val mockRefillHistoryUiStateSuccess = RefillHistoryUiState.Success(listOf(
-    RefillEvent(
+val mockRefillHistoryEvents = listOf(
+    RefillHistoryEvent(
         timestamp = Timestamp(0L),
         duration = 60.0,
         volume = 10.0
     ),
-    RefillEvent(
+    RefillHistoryEvent(
         timestamp = Timestamp(1000L),
         duration = 30.0,
         volume = 5.0
     )
-))
+)
 
-val mockRefillHistoryViewModelSuccess = MockRefillHistoryViewModel(mockRefillHistoryUiState = mockRefillHistoryUiStateSuccess)
+val mockRefillHistoryRepositorySuccess = MockRefillHistoryRepository(
+    mockData = DataFetchResult.Success(data = mockRefillHistoryEvents)
+)
 
-val mockRefillHistoryUiStateError = RefillHistoryUiState.Error(errorMessage = "Error message")
+val mockRefillHistoryRepositoryEmpty = MockRefillHistoryRepository(
+    mockData = DataFetchResult.Success(data = emptyList())
+)
 
-val mockRefillHistoryViewModelError = MockRefillHistoryViewModel(mockRefillHistoryUiState = mockRefillHistoryUiStateError)
+val mockRefillHistoryRepositoryError = MockRefillHistoryRepository(
+    mockData = DataFetchResult.Error(exception = null, errorMessage = "Error message")
+)
 
-val mockRefillHistoryUiStateLoading = RefillHistoryUiState.Loading
 
-val mockRefillHistoryViewModelLoading = MockRefillHistoryViewModel(mockRefillHistoryUiState = mockRefillHistoryUiStateLoading)
-
-val mockRefillHistoryUiStateEmpty = RefillHistoryUiState.Empty
-
-val mockRefillHistoryViewModelEmpty = MockRefillHistoryViewModel(mockRefillHistoryUiState = mockRefillHistoryUiStateEmpty)
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -228,7 +239,9 @@ val mockRefillHistoryViewModelEmpty = MockRefillHistoryViewModel(mockRefillHisto
 internal fun RefillHistoryScreenPreviewSuccess() {
     RefillHistoryScreen(
         showFullWeek = true,
-        refillHistoryViewModel = mockRefillHistoryViewModelSuccess,
+        refillHistoryViewModelFactory = RefillHistoryViewModelFactory(
+            refillHistoryRepository = mockRefillHistoryRepositorySuccess
+        ),
         mainViewModel = mockMainViewModel
     )
 }
@@ -239,18 +252,9 @@ internal fun RefillHistoryScreenPreviewSuccess() {
 internal fun RefillHistoryScreenPreviewError() {
     RefillHistoryScreen(
         showFullWeek = true,
-        refillHistoryViewModel = mockRefillHistoryViewModelError,
-        mainViewModel = mockMainViewModel
-    )
-}
-
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Composable
-internal fun RefillHistoryScreenPreviewLoading() {
-    RefillHistoryScreen(
-        showFullWeek = true,
-        refillHistoryViewModel = mockRefillHistoryViewModelLoading,
+        refillHistoryViewModelFactory = RefillHistoryViewModelFactory(
+            refillHistoryRepository = mockRefillHistoryRepositoryError
+        ),
         mainViewModel = mockMainViewModel
     )
 }
@@ -261,7 +265,24 @@ internal fun RefillHistoryScreenPreviewLoading() {
 internal fun RefillHistoryScreenPreviewEmpty() {
     RefillHistoryScreen(
         showFullWeek = true,
-        refillHistoryViewModel = mockRefillHistoryViewModelEmpty,
+        refillHistoryViewModelFactory = RefillHistoryViewModelFactory(
+            refillHistoryRepository = mockRefillHistoryRepositoryEmpty
+        ),
         mainViewModel = mockMainViewModel
     )
 }
+
+/* deactivated until update of DataFetchResult
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+internal fun RefillHistoryScreenPreviewLoading() {
+    RefillHistoryScreen(
+        showFullWeek = true,
+        refillHistoryViewModelFactory = RefillHistoryViewModelFactory(
+            refillHistoryRepository = mockRefillHistoryRepositorySuccess
+        ),
+        mainViewModel = mockMainViewModel
+    )
+}
+*/
