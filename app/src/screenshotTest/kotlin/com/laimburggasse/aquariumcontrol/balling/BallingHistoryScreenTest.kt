@@ -3,9 +3,8 @@ package com.laimburggasse.aquariumcontrol.balling
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryScreenEmptyPreview
-import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryScreenPreview
+import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryScreenPreviewEmpty
+import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryScreenPreviewSuccess
 
 @Suppress("unused")
 class BallingHistoryScreenTest {
@@ -23,14 +22,14 @@ class BallingHistoryScreenTest {
         device = "spec:width=600dp,height=400dp,orientation=landscape"
     )
     @Composable
-    fun BallingHistoryScreenSnapshotTest() {
-        BallingHistoryScreenPreview()
+    fun BallingHistoryScreenSnapshotSuccessTest() {
+        BallingHistoryScreenPreviewSuccess()
     }
 
     //@PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Composable
-    fun BallingHistoryScreenEmptySnapshotTest() {
-        BallingHistoryScreenEmptyPreview()
+    fun BallingHistoryScreenSnapshotEmptyTest() {
+        BallingHistoryScreenPreviewEmpty()
     }
 }

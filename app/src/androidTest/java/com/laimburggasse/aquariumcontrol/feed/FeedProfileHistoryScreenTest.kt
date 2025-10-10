@@ -6,10 +6,11 @@ import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
-import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryEvent
 import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryScreen
-import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryUiState
-import com.laimburggasse.aquariumcontrol.feed.history.MockFeedHistoryViewModel
+import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryViewModelFactory
+import com.laimburggasse.aquariumcontrol.feed.history.MockFeedHistoryRepository
+import com.laimburggasse.aquariumcontrol.feed.history.mockFeedHistoryEvents
+import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,30 +25,15 @@ class FeedProfileHistoryScreenTest {
 
     private val subfolder = "feed"
 
-    val mockEvents = listOf(
-        FeedHistoryEvent(
-            timestamp = "2025-01-18 12:00:00",
-            feederOnTime = 20000,
-            profileName = "Mock feed profile 1",
-            idx = 1
-        ),
-        FeedHistoryEvent(
-            timestamp = "2025-01-18 12:00:00",
-            feederOnTime = 10000,
-            profileName = "Mock feed profile 2",
-            idx = 2
-        ),
+    val mockFeedHistoryRepositorySuccess = MockFeedHistoryRepository(
+        mockData = DataFetchResult.Success(data = mockFeedHistoryEvents)
     )
 
-    val mockFeedHistoryUiStateSuccess = FeedHistoryUiState.Success(feedHistory = mockEvents)
-
-    val mockFeedHistoryViewModelSuccess = MockFeedHistoryViewModel(mockFeedHistoryUiState = mockFeedHistoryUiStateSuccess)
+    val mockFeedHistoryRepositoryEmpty = MockFeedHistoryRepository(
+        mockData = DataFetchResult.Success(data = emptyList())
+    )
 
     val mockMainViewModel = MockMainViewModel()
-
-    val mockFeedHistoryUiStateEmpty = FeedHistoryUiState.Empty
-
-    val mockFeedHistoryViewModelEmpty = MockFeedHistoryViewModel(mockFeedHistoryUiState = mockFeedHistoryUiStateEmpty)
 
     @Test
     fun feedProfileHistoryScreenDarkEmptyTest() {
@@ -55,7 +41,9 @@ class FeedProfileHistoryScreenTest {
             FeedHistoryScreen(
                 showFullWeek = false,
                 mainViewModel = mockMainViewModel,
-                feedHistoryViewModel = mockFeedHistoryViewModelEmpty,
+                feedHistoryViewModelFactory = FeedHistoryViewModelFactory(
+                    feedHistoryRepository = mockFeedHistoryRepositoryEmpty
+                ),
                 darkTheme = true
             )
         }
@@ -74,7 +62,9 @@ class FeedProfileHistoryScreenTest {
             FeedHistoryScreen(
                 showFullWeek = false,
                 mainViewModel = mockMainViewModel,
-                feedHistoryViewModel = mockFeedHistoryViewModelEmpty,
+                feedHistoryViewModelFactory = FeedHistoryViewModelFactory(
+                    feedHistoryRepository = mockFeedHistoryRepositoryEmpty
+                ),
                 darkTheme = false
             )
         }
@@ -92,7 +82,9 @@ class FeedProfileHistoryScreenTest {
             FeedHistoryScreen(
                 showFullWeek = false,
                 mainViewModel = mockMainViewModel,
-                feedHistoryViewModel = mockFeedHistoryViewModelSuccess,
+                feedHistoryViewModelFactory = FeedHistoryViewModelFactory(
+                    feedHistoryRepository = mockFeedHistoryRepositorySuccess
+                ),
                 darkTheme = true
             )
         }
@@ -111,7 +103,9 @@ class FeedProfileHistoryScreenTest {
             FeedHistoryScreen(
                 showFullWeek = false,
                 mainViewModel = mockMainViewModel,
-                feedHistoryViewModel = mockFeedHistoryViewModelSuccess,
+                feedHistoryViewModelFactory = FeedHistoryViewModelFactory(
+                    feedHistoryRepository = mockFeedHistoryRepositorySuccess
+                ),
                 darkTheme = false
             )
         }

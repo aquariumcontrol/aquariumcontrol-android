@@ -31,7 +31,9 @@ import com.laimburggasse.aquariumcontrol.feed.FeedProfilesViewModel
 import com.laimburggasse.aquariumcontrol.feed.FeedScreen
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddScreen
 import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditScreen
+import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryRepository
 import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryScreen
+import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryViewModelFactory
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedProfileScheduleScreen
 import com.laimburggasse.aquariumcontrol.heating.HeatingScreen
 import com.laimburggasse.aquariumcontrol.info.InfoScreen
@@ -93,6 +95,8 @@ class MainActivity : ComponentActivity() {
     private val ballingRepository by lazy { BallingRepository(mainViewModel = mainViewModel) }
     private val ballingHistoryRepository by lazy { BallingHistoryRepository(mainViewModel = mainViewModel) }
 
+    private val feedHistoryRepository by lazy { FeedHistoryRepository(mainViewModel = mainViewModel) }
+
     override fun onPause() {
         super.onPause()
         val sharedPrefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
@@ -153,14 +157,20 @@ class MainActivity : ComponentActivity() {
                         FeedHistoryScreen(
                             navHostController = navHostController,
                             showFullWeek = false,
-                            mainViewModel = mainViewModel
+                            mainViewModel = mainViewModel,
+                            feedHistoryViewModelFactory = FeedHistoryViewModelFactory(
+                                feedHistoryRepository
+                            )
                         )
                     }
                     composable(route = ViewNavigationRoutes.feedHistory7d) {
                         FeedHistoryScreen(
                             navHostController = navHostController,
                             showFullWeek = true,
-                            mainViewModel = mainViewModel
+                            mainViewModel = mainViewModel,
+                            feedHistoryViewModelFactory = FeedHistoryViewModelFactory(
+                                feedHistoryRepository
+                            )
                         )
                     }
                     composable(route = ViewNavigationRoutes.feedEdit) {
