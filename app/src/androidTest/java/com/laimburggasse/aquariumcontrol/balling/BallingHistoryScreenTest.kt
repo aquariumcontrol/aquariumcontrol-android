@@ -8,8 +8,9 @@ import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryDosingEvent
 import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryScreen
-import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryUiState
-import com.laimburggasse.aquariumcontrol.balling.history.MockBallingHistoryViewModel
+import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryViewModelFactory
+import com.laimburggasse.aquariumcontrol.balling.history.MockBallingHistoryRepository
+import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -39,18 +40,12 @@ class BallingHistoryScreenTest {
         ),
     )
 
-    val mockBallingHistoryUiStateEmpty = BallingHistoryUiState.Empty
-
-    val mockBallingHistoryUiStateSuccess = BallingHistoryUiState.Success(
-        ballingHistoryDosingEvents = mockBallingHistoryEvents
+    val mockBallingHistoryRepositorySuccess = MockBallingHistoryRepository(
+        mockData = DataFetchResult.Success(data = mockBallingHistoryEvents)
     )
 
-    val mockBallingHistoryViewModelSuccess = MockBallingHistoryViewModel(
-        mockBallingHistoryUiState = mockBallingHistoryUiStateSuccess
-    )
-
-    val mockBallingHistoryViewModelEmpty = MockBallingHistoryViewModel(
-        mockBallingHistoryUiState = mockBallingHistoryUiStateEmpty
+    val mockBallingHistoryRepositoryEmpty = MockBallingHistoryRepository(
+        mockData = DataFetchResult.Success(data = emptyList())
     )
 
     val mockMainViewModel = MockMainViewModel()
@@ -61,7 +56,9 @@ class BallingHistoryScreenTest {
             BallingHistoryScreen(
                 showFullWeek = false,
                 mainViewModel = mockMainViewModel,
-                ballingHistoryViewModel = mockBallingHistoryViewModelEmpty,
+                ballingHistoryViewModelFactory = BallingHistoryViewModelFactory(
+                    ballingHistoryRepository = mockBallingHistoryRepositoryEmpty
+                ),
                 darkTheme = true
             )
         }
@@ -80,7 +77,9 @@ class BallingHistoryScreenTest {
             BallingHistoryScreen(
                 showFullWeek = false,
                 mainViewModel = mockMainViewModel,
-                ballingHistoryViewModel = mockBallingHistoryViewModelEmpty,
+                ballingHistoryViewModelFactory = BallingHistoryViewModelFactory(
+                    ballingHistoryRepository = mockBallingHistoryRepositoryEmpty
+                ),
                 darkTheme = false
             )
         }
@@ -98,7 +97,9 @@ class BallingHistoryScreenTest {
             BallingHistoryScreen(
                 showFullWeek = false,
                 mainViewModel = mockMainViewModel,
-                ballingHistoryViewModel = mockBallingHistoryViewModelSuccess,
+                ballingHistoryViewModelFactory = BallingHistoryViewModelFactory(
+                    ballingHistoryRepository = mockBallingHistoryRepositorySuccess
+                ),
                 darkTheme = true
             )
         }
@@ -117,7 +118,9 @@ class BallingHistoryScreenTest {
             BallingHistoryScreen(
                 showFullWeek = false,
                 mainViewModel = mockMainViewModel,
-                ballingHistoryViewModel = mockBallingHistoryViewModelSuccess,
+                ballingHistoryViewModelFactory = BallingHistoryViewModelFactory(
+                    ballingHistoryRepository = mockBallingHistoryRepositorySuccess
+                ),
                 darkTheme = false
             )
         }

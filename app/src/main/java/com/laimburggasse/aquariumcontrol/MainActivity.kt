@@ -19,7 +19,9 @@ import com.laimburggasse.aquariumcontrol.balling.BallingScreen
 import com.laimburggasse.aquariumcontrol.balling.BallingViewModelFactory
 import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditScreen
 import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditViewModelFactory
+import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryRepository
 import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryScreen
+import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryViewModelFactory
 import com.laimburggasse.aquariumcontrol.controller.ControllerAddScreen
 import com.laimburggasse.aquariumcontrol.controller.ControllerEditScreen
 import com.laimburggasse.aquariumcontrol.controller.ControllerProfileDatabase
@@ -89,6 +91,7 @@ class MainActivity : ComponentActivity() {
     )
 
     private val ballingRepository by lazy { BallingRepository(mainViewModel = mainViewModel) }
+    private val ballingHistoryRepository by lazy { BallingHistoryRepository(mainViewModel = mainViewModel) }
 
     override fun onPause() {
         super.onPause()
@@ -205,6 +208,9 @@ class MainActivity : ComponentActivity() {
                         BallingHistoryScreen(
                             navHostController = navHostController,
                             showFullWeek = false,
+                            ballingHistoryViewModelFactory = BallingHistoryViewModelFactory(
+                                ballingHistoryRepository
+                            ),
                             mainViewModel = mainViewModel
                         )
                     }
@@ -212,6 +218,9 @@ class MainActivity : ComponentActivity() {
                         BallingHistoryScreen(
                             navHostController = navHostController,
                             showFullWeek = true,
+                            ballingHistoryViewModelFactory = BallingHistoryViewModelFactory(
+                                ballingHistoryRepository
+                            ),
                             mainViewModel = mainViewModel
                         )
                     }

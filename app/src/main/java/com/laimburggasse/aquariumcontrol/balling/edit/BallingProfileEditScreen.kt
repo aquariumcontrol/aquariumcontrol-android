@@ -18,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -187,7 +186,7 @@ val mockMainViewModel = MockMainViewModel()
 @Composable
 internal fun BallingProfileEditScreenPreview() {
     val mockBallingRepositorySuccess = MockBallingRepository(
-        result = DataFetchResult.Success(data = listOf(mockBallingProfile))
+        mockData = DataFetchResult.Success(data = listOf(mockBallingProfile))
     )
     BallingProfileEditScreen(
         mainViewModel = mockMainViewModel,

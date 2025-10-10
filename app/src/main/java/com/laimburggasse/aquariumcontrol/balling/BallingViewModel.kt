@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class BallingViewModel(
-    private val ballingRepository: BallingRepository
-): ViewModel() { //BallingViewModelInterface
+    val ballingRepository: BallingRepository
+): ViewModel() {
 
     val ballingUiState: StateFlow<BallingUiState> = ballingRepository.profilesFlow
         .map { result ->
@@ -27,7 +27,7 @@ class BallingViewModel(
             }
         }.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
+            started = SharingStarted.Eagerly,
             initialValue = BallingUiState.Loading // The UI starts in a loading state
         )
 

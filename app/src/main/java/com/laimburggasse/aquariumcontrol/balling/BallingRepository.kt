@@ -15,9 +15,9 @@ import kotlinx.coroutines.withContext
 
 open class BallingRepository(private val mainViewModel: MainViewModel) {
     private val _profilesFlow = MutableStateFlow<DataFetchResult<List<BallingProfile>>>(
-        value = DataFetchResult.Success(emptyList())
+        value = DataFetchResult.Success(data = emptyList())
     )
-    val profilesFlow = _profilesFlow.asStateFlow()
+    open val profilesFlow = _profilesFlow.asStateFlow()
 
     open suspend fun fetchBallingProfiles() {
         val url: String = "http://" + mainViewModel.getControllerAddress() + WebApiUrls.BALLING_GET_SET_VALS

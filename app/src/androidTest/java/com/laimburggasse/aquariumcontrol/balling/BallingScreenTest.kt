@@ -6,6 +6,7 @@ import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
+import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,9 +25,9 @@ class BallingScreenTest {
     val mockBallingProfile2 = BallingProfile(pumpId = 2, volume = 3.1, label = "mock2")
     val mockBallingProfiles = listOf(mockBallingProfile1, mockBallingProfile2)
 
-    val mockBallingUiState = BallingUiState.Success(ballingProfiles = mockBallingProfiles)
-
-    val mockBallingViewModel = MockBallingViewModel(ballingUiState = mockBallingUiState, isRefreshing = false)
+    val mockBallingRepositorySuccess = MockBallingRepository(
+        mockData = DataFetchResult.Success(data = mockBallingProfiles)
+    )
 
     val mockMainViewModel = MockMainViewModel()
 
@@ -36,7 +37,9 @@ class BallingScreenTest {
             BallingScreen(
                 navHostController = null,
                 mainViewModel = mockMainViewModel,
-                ballingViewModel = mockBallingViewModel,
+                ballingViewModelFactory = BallingViewModelFactory(
+                    ballingRepository = mockBallingRepositorySuccess
+                ),
                 darkTheme = true
             )
         }
@@ -55,7 +58,9 @@ class BallingScreenTest {
             BallingScreen(
                 navHostController = null,
                 mainViewModel = mockMainViewModel,
-                ballingViewModel = mockBallingViewModel,
+                ballingViewModelFactory = BallingViewModelFactory(
+                    ballingRepository = mockBallingRepositorySuccess
+                ),
                 darkTheme = false
             )
         }
@@ -67,5 +72,4 @@ class BallingScreenTest {
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
-
 }

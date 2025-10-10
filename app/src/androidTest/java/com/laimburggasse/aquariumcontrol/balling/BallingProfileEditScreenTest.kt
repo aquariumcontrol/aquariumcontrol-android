@@ -7,6 +7,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditScreen
+import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditViewModelFactory
+import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,6 +29,11 @@ class BallingProfileEditScreenTest {
         label = "MockDosingUnit 1",
     )
 
+    val mockBallingProfiles = listOf(mockBallingProfile)
+
+    val mockBallingRepositorySuccess = MockBallingRepository(
+        mockData = DataFetchResult.Success(data = mockBallingProfiles)
+    )
     val mockMainViewModel = MockMainViewModel()
 
     @Test
@@ -35,7 +42,10 @@ class BallingProfileEditScreenTest {
             BallingProfileEditScreen(
                 navHostController = null,
                 mainViewModel = mockMainViewModel,
-                ballingProfile = mockBallingProfile,
+                ballingProfileEditViewModelFactory = BallingProfileEditViewModelFactory(
+                    ballingProfileId = 1,
+                    ballingRepository = mockBallingRepositorySuccess
+                ),
                 darkTheme = true
             )
         }
@@ -54,7 +64,10 @@ class BallingProfileEditScreenTest {
             BallingProfileEditScreen(
                 navHostController = null,
                 mainViewModel = mockMainViewModel,
-                ballingProfile = mockBallingProfile,
+                ballingProfileEditViewModelFactory = BallingProfileEditViewModelFactory(
+                    ballingProfileId = 1,
+                    ballingRepository = mockBallingRepositorySuccess
+                ),
                 darkTheme = false
             )
         }

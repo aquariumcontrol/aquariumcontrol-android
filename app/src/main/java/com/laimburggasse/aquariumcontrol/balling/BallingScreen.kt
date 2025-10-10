@@ -17,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -191,7 +190,7 @@ val mockBallingProfiles: List<BallingProfile> = listOf(mockBallingProfile1, mock
 )
 @Composable
 internal fun BallingScreenPreviewSuccess() {
-    val mockRepositorySuccess = MockBallingRepository(result = DataFetchResult.Success(data = mockBallingProfiles))
+    val mockRepositorySuccess = MockBallingRepository(mockData = DataFetchResult.Success(data = mockBallingProfiles))
     BallingScreen(
         mainViewModel = mockMainViewModel,
         ballingViewModelFactory = BallingViewModelFactory(ballingRepository = mockRepositorySuccess)
@@ -202,7 +201,7 @@ internal fun BallingScreenPreviewSuccess() {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun BallingScreenPreviewError() {
-    val mockRepositoryError = MockBallingRepository(result = DataFetchResult.Error(exception = null, errorMessage = "Error message"))
+    val mockRepositoryError = MockBallingRepository(mockData = DataFetchResult.Error(exception = null, errorMessage = "Error message"))
     BallingScreen(
         mainViewModel = mockMainViewModel,
         ballingViewModelFactory = BallingViewModelFactory(ballingRepository = mockRepositoryError),
@@ -223,7 +222,7 @@ internal fun BallingScreenPreviewLoading() {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun BallingScreenPreviewEmpty() {
-    val mockRepositoryEmpty = MockBallingRepository(result = DataFetchResult.Success(data = emptyList()))
+    val mockRepositoryEmpty = MockBallingRepository(mockData = DataFetchResult.Success(data = emptyList()))
     BallingScreen(
         mainViewModel = mockMainViewModel,
         ballingViewModelFactory = BallingViewModelFactory(ballingRepository = mockRepositoryEmpty),

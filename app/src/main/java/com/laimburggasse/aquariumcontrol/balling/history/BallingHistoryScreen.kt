@@ -22,6 +22,8 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,13 +44,14 @@ import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposabl
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.overview.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
 fun BallingHistoryScreen(
     navHostController: NavHostController? = null,
     showFullWeek: Boolean,
     mainViewModel: MainViewModel,
-    ballingHistoryViewModel: BallingHistoryViewModelInterface = viewModel<BallingHistoryViewModel>(),
+    ballingHistoryViewModelFactory: BallingHistoryViewModelFactory,
     darkTheme: Boolean? = null,
 ) {
     // This screen displays:
@@ -56,13 +59,17 @@ fun BallingHistoryScreen(
     // - sub headline (last 7 days or last 24 hours)
     // - list of balling events
 
+    val ballingHistoryViewModel: BallingHistoryViewModel = viewModel(
+        factory = ballingHistoryViewModelFactory
+    )
+
     val isControllerAddressValid: Boolean = !mainViewModel.getControllerAddress().isNullOrBlank()
-    val isRefreshing: Boolean by remember { ballingHistoryViewModel::isRefreshing }
-    val ballingHistoryUiState: BallingHistoryUiState by remember { ballingHistoryViewModel::ballingHistoryUiState }
+
+    val ballingHistoryUiState: BallingHistoryUiState by ballingHistoryViewModel.ballingHistoryUiState.collectAsState()
 
     LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
         if (isControllerAddressValid) {
-            ballingHistoryViewModel.loadData(mainViewModel, showFullWeek)
+            ballingHistoryViewModel.loadData(showFullWeek = showFullWeek)
         }
     }
 
@@ -104,10 +111,10 @@ fun BallingHistoryScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 contentAlignment = Alignment.Center,
                                 state = rememberPullToRefreshState(),
-                                isRefreshing = isRefreshing,
-                                onRefresh = { ballingHistoryViewModel.loadData(mainViewModel, showFullWeek) },
+                                isRefreshing = ballingHistoryUiState is BallingHistoryUiState.Loading,
+                                onRefresh = { ballingHistoryViewModel.loadData(showFullWeek) },
                                 indicator = {
-                                    if (isRefreshing) {
+                                    if (ballingHistoryUiState is BallingHistoryUiState.Loading) {
                                         CircularProgressIndicator(
                                             modifier = Modifier.size(150.dp),
                                             color = MaterialTheme.colorScheme.primary
@@ -191,7 +198,7 @@ fun BallingHistoryScreen(
     }
 }
 
-val ballingHistoryScreenMockData = listOf(
+val mockBallingHistoryDosingEvents = listOf(
     BallingHistoryDosingEvent(
         timestamp = "2025-01-18 12:00:00",
         pumpId = 1,
@@ -206,21 +213,17 @@ val ballingHistoryScreenMockData = listOf(
     ),
 )
 
-val mockBallingHistoryUiStateSuccess = BallingHistoryUiState.Success(ballingHistoryDosingEvents = ballingHistoryScreenMockData)
+val mockBallingHistoryRepositorySuccess = MockBallingHistoryRepository(
+    mockData = DataFetchResult.Success(data = mockBallingHistoryDosingEvents)
+)
 
-val mockBallingHistoryViewModelSuccess = MockBallingHistoryViewModel(mockBallingHistoryUiState = mockBallingHistoryUiStateSuccess)
+val mockBallingHistoryRepositoryEmpty = MockBallingHistoryRepository(
+    mockData = DataFetchResult.Success(data = emptyList())
+)
 
-val mockBallingHistoryUiStateError = BallingHistoryUiState.Error(errorMessage = "Error message")
-
-val mockBallingHistoryViewModelError = MockBallingHistoryViewModel(mockBallingHistoryUiState = mockBallingHistoryUiStateError)
-
-val mockBallingHistoryUiStateLoading = BallingHistoryUiState.Loading
-
-val mockBallingHistoryViewModelLoading = MockBallingHistoryViewModel(mockBallingHistoryUiState = mockBallingHistoryUiStateLoading)
-
-val mockBallingHistoryUiStateEmpty = BallingHistoryUiState.Empty
-
-val mockBallingHistoryViewModelEmpty = MockBallingHistoryViewModel(mockBallingHistoryUiState = mockBallingHistoryUiStateEmpty)
+val mockBallingHistoryRepositoryError = MockBallingHistoryRepository(
+    mockData = DataFetchResult.Error(exception = null, errorMessage = "Error message")
+)
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -239,7 +242,9 @@ internal fun BallingHistoryScreenPreviewSuccess() {
     BallingHistoryScreen(
         showFullWeek = false,
         mainViewModel = mockMainViewModel,
-        ballingHistoryViewModel = mockBallingHistoryViewModelSuccess,
+        ballingHistoryViewModelFactory = BallingHistoryViewModelFactory(
+            ballingHistoryRepository = mockBallingHistoryRepositorySuccess
+        ),
     )
 }
 
@@ -249,7 +254,9 @@ internal fun BallingHistoryScreenPreviewEmpty() {
     BallingHistoryScreen(
         showFullWeek = false,
         mainViewModel = mockMainViewModel,
-        ballingHistoryViewModel = mockBallingHistoryViewModelEmpty,
+        ballingHistoryViewModelFactory = BallingHistoryViewModelFactory(
+            ballingHistoryRepository = mockBallingHistoryRepositoryEmpty
+        ),
     )
 }
 
@@ -259,10 +266,13 @@ internal fun BallingHistoryScreenPreviewError() {
     BallingHistoryScreen(
         showFullWeek = false,
         mainViewModel = mockMainViewModel,
-        ballingHistoryViewModel = mockBallingHistoryViewModelError,
+        ballingHistoryViewModelFactory = BallingHistoryViewModelFactory(
+            ballingHistoryRepository = mockBallingHistoryRepositoryError
+        ),
     )
 }
 
+/* deactivated until after update of DataFetchResult
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 internal fun BallingHistoryScreenPreviewLoading() {
@@ -272,3 +282,4 @@ internal fun BallingHistoryScreenPreviewLoading() {
         ballingHistoryViewModel = mockBallingHistoryViewModelLoading,
     )
 }
+*/
