@@ -17,7 +17,9 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.R
+import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntryComposable
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleUiState
@@ -26,7 +28,8 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun FeedScheduleSelectionComposable(
-    feedScheduleViewModel: FeedScheduleViewModel,
+    navHostController: NavHostController? = null,
+    feedScheduleViewModel: FeedScheduleViewModel
 ) {
     // This composable displays a label "Feed Schedule"
     // and a list of feed schedule entries
@@ -61,20 +64,31 @@ fun FeedScheduleSelectionComposable(
                         .padding(all = 16.dp)
                 ) {
                     items(items = feedScheduleEntries) { feedScheduleEntry ->
-                        FeedScheduleEntryComposable(
-                            feedScheduleEntry = feedScheduleEntry,
-                            onEditClick = {
-                                // mainViewModel.updateSelectedFeedScheduleEntry(feedScheduleEntry)
-                                // @todo: add navigation?
-                            },
-                            onDeleteClick = {
-                                // mainViewModel.updateSelectedFeedScheduleEntry(null)
-                                // @todo: add navigation?
-                                feedScheduleViewModel.deleteFeedScheduleEntry(
-                                    feedScheduleEntry = feedScheduleEntry,
-                                )
-                            }
+                        val feedProfileId: Int? = feedScheduleViewModel.getFeedProfileIdByName(
+                            feedScheduleEntry.profileName
                         )
+                        if (feedProfileId != null) {
+                            FeedScheduleEntryComposable(
+                                feedScheduleEntry = feedScheduleEntry,
+                                onEditClick = {
+                                    navHostController?.navigate(
+                                        route = ViewNavigationRoutes.feedSchedule(
+                                            feedProfileId = feedProfileId,
+                                            isNewScheduleEntry = true,
+                                            millisSinceEpoch = feedScheduleEntry.timestamp.time
+                                        )
+                                    )
+                                },
+                                onDeleteClick = {
+                                    feedScheduleViewModel.deleteFeedScheduleEntry(
+                                        feedScheduleEntry = feedScheduleEntry,
+                                    )
+                                }
+                            )
+                        }
+                        else {
+                            // @todo: handle error case (e.g. Toast)
+                        }
                     }
                 }
             }

@@ -6,11 +6,13 @@ object ViewNavigationRoutes {
     var feedHistory24h = "feedHistory24h"
     var feedHistory7d = "feedHistory7d"
 
-    private const val FEED_ARG_PROFILE_ID = "feedProfileId"
+    const val FEED_ARG_PROFILE_ID = "feedProfileId"
+    const val FEED_ARG_IS_NEW_SCHEDULE_ENTRY = "isNewScheduleEntry"
+    const val FEED_ARG_MILLIS_SINCE_EPOCH = "millisSinceEpoch"
     var feedEdit = "feedEdit/{$FEED_ARG_PROFILE_ID}"
     var feedAddProfile = "feedAdd"
 
-    var feedSchedule = "feedSchedule/{$FEED_ARG_PROFILE_ID}"
+    var feedSchedule = "feedSchedule/{$FEED_ARG_PROFILE_ID}/{$FEED_ARG_IS_NEW_SCHEDULE_ENTRY}/{$FEED_ARG_MILLIS_SINCE_EPOCH}"
 
     var balling = "balling"
     var ballingHistory24h = "ballingHistory24h"
@@ -32,8 +34,8 @@ object ViewNavigationRoutes {
     var controllerEdit = "controllerEdit"
     var overView = "overView"
 
-    fun feedSchedule(feedProfileId: Int): String {
-        return "feedSchedule/$feedProfileId"
+    fun feedSchedule(feedProfileId: Int, isNewScheduleEntry: Boolean, millisSinceEpoch: Long): String {
+        return "feedSchedule/$feedProfileId/$isNewScheduleEntry/$millisSinceEpoch"
     }
 
     fun ballingEdit(ballingProfileId: Int): String {

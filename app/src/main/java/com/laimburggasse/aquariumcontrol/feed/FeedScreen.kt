@@ -57,7 +57,7 @@ fun FeedScreen(
     // - feed schedule entries
     // - floating action button for adding feed profile
 
-    val configuration = LocalConfiguration.current
+    val configuration: Configuration = LocalConfiguration.current
 
     val feedProfilesViewModel: FeedProfilesViewModel = viewModel(factory = feedProfilesViewModelFactory)
     val feedScheduleViewModel: FeedScheduleViewModel = viewModel(factory = feedScheduleViewModelFactory)
@@ -87,7 +87,7 @@ fun FeedScreen(
                                 || feedScheduleUiState is FeedScheduleUiState.Loading) {
                                 CircularProgressIndicator(
                                     modifier = Modifier
-                                        .size(150.dp),
+                                        .size(size = 150.dp),
                                     color = MaterialTheme.colorScheme.primary
                                 )
                             } else {
@@ -97,9 +97,9 @@ fun FeedScreen(
                                         modifier = Modifier.weight(1f)
                                     ) {
                                         FeedProfileSelectionComposable(
-                                            navHostController = navHostController,
-                                            feedProfilesViewModelFactory = feedProfilesViewModelFactory,
                                             modifier = Modifier.align(Alignment.End),
+                                            navHostController,
+                                            feedProfilesViewModelFactory,
                                         )
                                     }
                                     Column(
@@ -107,7 +107,8 @@ fun FeedScreen(
                                         modifier = Modifier.weight(1f)
                                     ) {
                                         FeedScheduleSelectionComposable(
-                                            feedScheduleViewModel = feedScheduleViewModel,
+                                            navHostController,
+                                            feedScheduleViewModel,
                                         )
                                     }
                                 }
@@ -129,11 +130,12 @@ fun FeedScreen(
                             } else {
                                 FeedProfileSelectionComposable(
                                     modifier = Modifier.align(Alignment.End),
-                                    feedProfilesViewModelFactory = feedProfilesViewModelFactory,
-                                    navHostController = navHostController,
+                                    navHostController,
+                                    feedProfilesViewModelFactory,
                                 )
                                 FeedScheduleSelectionComposable(
-                                    feedScheduleViewModel = feedScheduleViewModel,
+                                    navHostController,
+                                    feedScheduleViewModel,
                                 )
                             }
                         }

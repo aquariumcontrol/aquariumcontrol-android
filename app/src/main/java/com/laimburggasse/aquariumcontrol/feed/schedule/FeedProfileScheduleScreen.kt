@@ -64,6 +64,8 @@ fun FeedProfileScheduleScreen(
     feedProfileId: Int,
     feedScheduleViewModelFactory: FeedScheduleViewModelFactory,
     feedProfilesViewModelFactory: FeedProfilesViewModelFactory,
+    isNewScheduleEntry: Boolean,
+    millisSinceEpoch: Long,
     darkTheme: Boolean? = null
 ) {
     // This screen displays:
@@ -87,11 +89,20 @@ fun FeedProfileScheduleScreen(
         FeedScheduleEntryUiState.Error(errorMessage = "Feed profile with ID $feedProfileId not found")
     }
     else {
-        FeedScheduleEntryUiState.Success(feedScheduleEntry = FeedScheduleEntry(
-            timestamp = Timestamp(System.currentTimeMillis()),
-            profileName = feedProfile.profileName,
-            isDaily = repeatDaily
-        ))
+        // use current time if no millisSinceEpoch is provided
+        val timestamp = if (isNewScheduleEntry) {
+            Timestamp(System.currentTimeMillis())
+        }
+        else {
+            Timestamp(millisSinceEpoch)
+        }
+        FeedScheduleEntryUiState.Success(
+            feedScheduleEntry = FeedScheduleEntry(
+                timestamp,
+                profileName = feedProfile.profileName,
+                isDaily = repeatDaily
+            )
+        )
     }
 
     val context: Context = LocalContext.current // context for Toasts
@@ -324,7 +335,8 @@ fun FeedProfileScheduleScreenPreviewSuccess() {
         feedProfileId = 1,
         feedScheduleViewModelFactory = mockFeedScheduleViewModelFactory,
         feedProfilesViewModelFactory = mockFeedProfilesViewModelFactory,
-        darkTheme = false,
+        isNewScheduleEntry = false,
+        millisSinceEpoch = 0,
     )
 }
 
@@ -357,6 +369,7 @@ internal fun FeedProfileScheduleScreenPreviewError() {
         feedProfileId = 1,
         feedScheduleViewModelFactory = mockFeedScheduleViewModelFactory,
         feedProfilesViewModelFactory = mockFeedProfilesViewModelFactory,
-        darkTheme = false
+        isNewScheduleEntry = false,
+        millisSinceEpoch = 0,
     )
 }

@@ -219,17 +219,29 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(route = ViewNavigationRoutes.feedSchedule,
                         arguments = listOf(
-                            navArgument(name = "feedProfileId") { type = NavType.IntType },
+                            navArgument(name = ViewNavigationRoutes.FEED_ARG_PROFILE_ID) { type = NavType.IntType },
+                            navArgument(name = ViewNavigationRoutes.FEED_ARG_IS_NEW_SCHEDULE_ENTRY) { type = NavType.BoolType },
+                            navArgument(name = ViewNavigationRoutes.FEED_ARG_MILLIS_SINCE_EPOCH) { type = NavType.LongType }
                         )
                     ) { backStackEntry ->
-                        val feedProfileId = backStackEntry.arguments?.getInt("feedProfileId")
-                        if (feedProfileId != null) {
+                        val feedProfileId: Int? = backStackEntry.arguments?.getInt(
+                            ViewNavigationRoutes.FEED_ARG_PROFILE_ID
+                        )
+                        val isNewScheduleEntry: Boolean? = backStackEntry.arguments?.getBoolean(
+                            ViewNavigationRoutes.FEED_ARG_IS_NEW_SCHEDULE_ENTRY
+                        )
+                        val millisSinceEpoch: Long? = backStackEntry.arguments?.getLong(
+                            ViewNavigationRoutes.FEED_ARG_MILLIS_SINCE_EPOCH
+                        )
+                        if (feedProfileId != null && isNewScheduleEntry != null && millisSinceEpoch != null) {
                             FeedProfileScheduleScreen(
                                 navHostController = navHostController,
                                 mainViewModel = mainViewModel,
                                 feedProfileId = feedProfileId,
                                 feedScheduleViewModelFactory = feedScheduleViewModelFactory,
                                 feedProfilesViewModelFactory = feedProfilesViewModelFactory,
+                                isNewScheduleEntry = isNewScheduleEntry,
+                                millisSinceEpoch = millisSinceEpoch,
                             )
                         }
                         else {

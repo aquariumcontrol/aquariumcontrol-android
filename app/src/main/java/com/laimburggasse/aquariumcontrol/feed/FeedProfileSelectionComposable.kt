@@ -86,7 +86,9 @@ fun FeedProfileSelectionComposable(
                             onScheduleClick = {
                                 navHostController?.navigate(
                                     route = ViewNavigationRoutes.feedSchedule(
-                                        feedProfileId = feedProfile.profileID
+                                        feedProfileId = feedProfile.profileID,
+                                        isNewScheduleEntry = true,
+                                        millisSinceEpoch = 0 // will be overwritten
                                     )
                                 )
                             },

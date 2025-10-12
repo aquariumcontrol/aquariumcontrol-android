@@ -64,4 +64,9 @@ class FeedScheduleViewModel(
             )
         }
     }
+
+    fun getFeedProfileIdByName(name: String): Int? {
+        val feedProfile: FeedProfile? = feedProfilesRepository.findProfileByName(profileName = name)
+        return feedProfile?.profileID
+    }
 }
