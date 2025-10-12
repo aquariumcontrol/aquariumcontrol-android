@@ -4,12 +4,16 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddScreen
+import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddViewModelFactory
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+
+val mockFeedProfileAddViewModelFactory = FeedProfileAddViewModelFactory(
+    feedProfilesRepository = mockFeedProfilesRepository
+)
 
 @RunWith(value = AndroidJUnit4::class)
 class FeedProfileAddScreenTest {
@@ -21,19 +25,13 @@ class FeedProfileAddScreenTest {
 
     private val subfolder = "feed"
 
-    val mockMainViewModel = MockMainViewModel()
-
-    val mockFeedProfilesViewModel = FeedProfilesViewModelFactory(
-        feedProfiles = emptyList()
-    ).create(FeedProfilesViewModel::class.java)
-
     @Test
     fun feedAddScreenDarkTest() {
         composeTestRule.setContent {
             FeedProfileAddScreen(
                 darkTheme = true,
                 mainViewModel = mockMainViewModel,
-                feedProfilesViewModel = mockFeedProfilesViewModel
+                feedProfileAddViewModelFactory = mockFeedProfileAddViewModelFactory
             )
         }
         composeTestRule.waitForIdle()
@@ -51,7 +49,7 @@ class FeedProfileAddScreenTest {
             FeedProfileAddScreen(
                 darkTheme = false,
                 mainViewModel = mockMainViewModel,
-                feedProfilesViewModel = mockFeedProfilesViewModel
+                feedProfileAddViewModelFactory = mockFeedProfileAddViewModelFactory
             )
         }
         composeTestRule.waitForIdle()
@@ -62,5 +60,4 @@ class FeedProfileAddScreenTest {
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
-
 }

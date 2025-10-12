@@ -20,6 +20,7 @@ import com.laimburggasse.aquariumcontrol.feed.FeedProfileImport
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
+import com.laimburggasse.aquariumcontrol.feed.mockFeedProfilesRepository
 
 const val chartValAllowedDelta = 0.001f
 
@@ -329,7 +330,13 @@ internal fun FeedProfileDisplayComposablePreview() {
 
     val mockFeedProfile = FeedProfile(mockFeedProfileImport)
 
-    val feedProfileEditViewModel = FeedProfileEditViewModel(mockFeedProfile)
+    val feedProfileEditViewModelFactory = FeedProfileEditViewModelFactory(
+        feedProfile = mockFeedProfile,
+        feedProfilesRepository = mockFeedProfilesRepository
+    )
+
+    val mockFeedProfileEditViewModel: FeedProfileEditViewModel =
+        feedProfileEditViewModelFactory.create(FeedProfileEditViewModel::class.java)
 
     AquariumControllerTheme {
         Surface(
@@ -337,7 +344,7 @@ internal fun FeedProfileDisplayComposablePreview() {
         ) {
             Column {
                 FeedProfileDisplayComposable(
-                    feedProfileEditViewModel = feedProfileEditViewModel
+                    feedProfileEditViewModel = mockFeedProfileEditViewModel
                 )
             }
         }

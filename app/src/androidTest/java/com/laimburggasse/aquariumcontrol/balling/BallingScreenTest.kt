@@ -25,7 +25,7 @@ class BallingScreenTest {
     val mockBallingProfile2 = BallingProfile(pumpId = 2, volume = 3.1, label = "mock2")
     val mockBallingProfiles = listOf(mockBallingProfile1, mockBallingProfile2)
 
-    val mockBallingRepositorySuccess = MockBallingRepository(
+    val mockBallingRepositorySuccess = MockBallingProfilesRepository(
         mockData = DataFetchResult.Success(data = mockBallingProfiles)
     )
 
@@ -38,7 +38,7 @@ class BallingScreenTest {
                 navHostController = null,
                 mainViewModel = mockMainViewModel,
                 ballingViewModelFactory = BallingViewModelFactory(
-                    ballingRepository = mockBallingRepositorySuccess
+                    ballingProfilesRepository = mockBallingRepositorySuccess
                 ),
                 darkTheme = true
             )
@@ -59,7 +59,7 @@ class BallingScreenTest {
                 navHostController = null,
                 mainViewModel = mockMainViewModel,
                 ballingViewModelFactory = BallingViewModelFactory(
-                    ballingRepository = mockBallingRepositorySuccess
+                    ballingProfilesRepository = mockBallingRepositorySuccess
                 ),
                 darkTheme = false
             )

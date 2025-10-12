@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 
-open class BallingRepository(private val mainViewModel: MainViewModel) {
+open class BallingProfilesRepository(private val mainViewModel: MainViewModel) {
     private val _profilesFlow = MutableStateFlow<DataFetchResult<List<BallingProfile>>>(
         value = DataFetchResult.Success(data = emptyList())
     )

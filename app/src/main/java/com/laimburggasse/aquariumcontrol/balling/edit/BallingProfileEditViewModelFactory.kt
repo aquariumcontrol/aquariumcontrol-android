@@ -2,17 +2,16 @@ package com.laimburggasse.aquariumcontrol.balling.edit
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.laimburggasse.aquariumcontrol.balling.BallingProfile
-import com.laimburggasse.aquariumcontrol.balling.BallingRepository
+import com.laimburggasse.aquariumcontrol.balling.BallingProfilesRepository
 import javax.inject.Singleton
 
 @Singleton
 class BallingProfileEditViewModelFactory(
     ballingProfileId: Int,
-    ballingRepository: BallingRepository
+    ballingProfilesRepository: BallingProfilesRepository
 ) : ViewModelProvider.Factory {
     // This class creates the view model BallingProfileEditViewModel
-    private val viewModel = BallingProfileEditViewModel(ballingProfileId, ballingRepository)
+    private val viewModel = BallingProfileEditViewModel(ballingProfileId, ballingProfilesRepository)
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

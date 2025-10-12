@@ -66,7 +66,6 @@ fun FeedHistoryScreen(
 
     val feedHistoryUiState: FeedHistoryUiState by feedHistoryViewModel.feedHistoryUiState.collectAsState()
 
-    @Suppress("UNCHECKED_CAST")
     LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
         if (isControllerAddressValid) {
             feedHistoryViewModel.loadData(showFullWeek)
@@ -100,9 +99,8 @@ fun FeedHistoryScreen(
                             } else {
                                 stringResource(R.string.feed_events_last_24h)
                             }
-                        Text(
-                            text = subHeadlineText,
-                        )
+                        Text(text = subHeadlineText)
+
                         PullToRefreshBox(
                             modifier = Modifier.fillMaxWidth(),
                             contentAlignment = Alignment.Center,

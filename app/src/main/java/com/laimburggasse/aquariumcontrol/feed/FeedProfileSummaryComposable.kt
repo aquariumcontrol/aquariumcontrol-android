@@ -25,11 +25,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun FeedProfileSummaryComposable(
-    feedProfile: FeedProfile,
+    feedProfileId: Int,
+    feedProfilesViewModelFactory: FeedProfilesViewModelFactory,
     onEditClick: () -> Unit,
     onScheduleClick: () -> Unit,
     onDeleteClick: () -> Unit,
@@ -42,73 +44,75 @@ fun FeedProfileSummaryComposable(
     // - The delete icon
     // When the user clicks on one of the icons, the corresponding action is triggered.
 
+    val feedProfileViewModel: FeedProfilesViewModel = viewModel(factory = feedProfilesViewModelFactory)
+
+    val feedProfile: FeedProfile? = feedProfileViewModel.findProfileById(profileID = feedProfileId)
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .border(
                 border = BorderStroke(
-                    1.dp,
-                    MaterialTheme.colorScheme.onSurface
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             )
-            .padding(8.dp)
+            .padding(all = 8.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .weight(1f)
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = "ID: ${feedProfile.profileID}",
-                    fontSize = 12.sp
-                )
+        if (feedProfile != null) {
+            Column(modifier = Modifier.weight(weight = 1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "ID: ${feedProfile.profileID}",
+                        fontSize = 12.sp
+                    )
+                }
             }
-        }
 
-        Column(
-            modifier = Modifier.weight(3f)
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = "Name: ${feedProfile.profileName}",
-                    fontSize = 12.sp
-                )
+            Column(modifier = Modifier.weight(weight = 3f)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "Name: ${feedProfile.profileName}",
+                        fontSize = 12.sp
+                    )
+                }
+            }
+            Column(horizontalAlignment = Alignment.End) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Filled.Edit,
+                        contentDescription = "Edit",
+                        modifier = Modifier
+                            .size(size = 48.dp)
+                            .clickable {
+                                onEditClick()
+                            }
+                    )
+                    Spacer(modifier = Modifier.width(width = 16.dp))
+                    Icon(
+                        imageVector = Icons.Filled.Schedule,
+                        contentDescription = "Schedule",
+                        modifier = Modifier
+                            .size(size = 48.dp)
+                            .clickable {
+                                onScheduleClick()
+                            }
+                    )
+                    Spacer(modifier = Modifier.width(width = 16.dp))
+                    Icon(
+                        imageVector = Icons.Filled.Delete,
+                        contentDescription = "Delete",
+                        modifier = Modifier
+                            .size(size = 48.dp)
+                            .clickable {
+                                onDeleteClick()
+                            }
+                    )
+                }
             }
         }
-        Column(
-            horizontalAlignment = Alignment.End
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Filled.Edit,
-                    contentDescription = "Edit",
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clickable {
-                            onEditClick()
-                        }
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Icon(
-                    imageVector = Icons.Filled.Schedule,
-                    contentDescription = "Schedule",
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clickable {
-                            onScheduleClick()
-                        }
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Icon(
-                    imageVector = Icons.Filled.Delete,
-                    contentDescription = "Delete",
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clickable {
-                            onDeleteClick()
-                        }
-                )
-            }
+        else {
+            Text(text = "Feed profile not found")
         }
     }
 }
@@ -117,18 +121,13 @@ fun FeedProfileSummaryComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun FeedProfileSummaryComposablePreview() {
-    val mockFeedProfileImport = FeedProfileImport()
-    mockFeedProfileImport.profileId = 1
-    mockFeedProfileImport.profileName = "Test Profile"
-
-    val mockFeedProfile = FeedProfile(mockFeedProfileImport)
-
     AquariumControllerTheme {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
             FeedProfileSummaryComposable(
-                feedProfile = mockFeedProfile,
+                feedProfileId = 1,
+                feedProfilesViewModelFactory = mockFeedProfilesViewModelFactory,
                 onEditClick = {},
                 onScheduleClick = {},
                 onDeleteClick = {},

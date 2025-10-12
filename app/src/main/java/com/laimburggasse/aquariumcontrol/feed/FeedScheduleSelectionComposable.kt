@@ -9,42 +9,41 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.laimburggasse.aquariumcontrol.MainViewModel
-import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
+import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntryComposable
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleUiState
-import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleViewModelInterface
-import com.laimburggasse.aquariumcontrol.feed.schedule.MockFeedScheduleViewModel
+import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleViewModel
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun FeedScheduleSelectionComposable(
-    myFeedScheduleViewModel: FeedScheduleViewModelInterface,
-    mainViewModel: MainViewModel
+    feedScheduleViewModel: FeedScheduleViewModel,
 ) {
     // This composable displays a label "Feed Schedule"
     // and a list of feed schedule entries
-
-    val feedScheduleUiState: FeedScheduleUiState = myFeedScheduleViewModel.feedScheduleUiState
+    val feedScheduleUiState: FeedScheduleUiState by feedScheduleViewModel.feedScheduleUiState.collectAsState()
 
     Text(text = stringResource(R.string.feed_schedule))
     when (feedScheduleUiState) {
         is FeedScheduleUiState.Success -> {
-            val feedScheduleEntries = feedScheduleUiState.feedScheduleEntries
+            val feedScheduleEntries: List<FeedScheduleEntry> =
+                (feedScheduleUiState as FeedScheduleUiState.Success).feedScheduleEntries
 
             if (LocalInspectionMode.current) {
                 // In Preview: Render a simple, static Column instead of LazyColumn
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
+                        .padding(all = 16.dp)
                 ) {
                     feedScheduleEntries.forEach { feedScheduleEntry ->
                         FeedScheduleEntryComposable(
@@ -59,19 +58,20 @@ fun FeedScheduleSelectionComposable(
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
+                        .padding(all = 16.dp)
                 ) {
                     items(items = feedScheduleEntries) { feedScheduleEntry ->
                         FeedScheduleEntryComposable(
                             feedScheduleEntry = feedScheduleEntry,
                             onEditClick = {
-                                mainViewModel.updateSelectedFeedScheduleEntry(feedScheduleEntry)
+                                // mainViewModel.updateSelectedFeedScheduleEntry(feedScheduleEntry)
+                                // @todo: add navigation?
                             },
                             onDeleteClick = {
-                                mainViewModel.updateSelectedFeedScheduleEntry(null)
-                                myFeedScheduleViewModel.deleteFeedScheduleEntry(
+                                // mainViewModel.updateSelectedFeedScheduleEntry(null)
+                                // @todo: add navigation?
+                                feedScheduleViewModel.deleteFeedScheduleEntry(
                                     feedScheduleEntry = feedScheduleEntry,
-                                    mainViewModel = mainViewModel
                                 )
                             }
                         )
@@ -83,7 +83,7 @@ fun FeedScheduleSelectionComposable(
             Text(text = "Loading...")
         }
         is FeedScheduleUiState.Error -> {
-            Text(text = feedScheduleUiState.errorMessage)
+            Text(text = (feedScheduleUiState as FeedScheduleUiState.Error).errorMessage)
         }
         is FeedScheduleUiState.Empty -> {
             Text(text = "No feed schedule entries found.")
@@ -91,15 +91,9 @@ fun FeedScheduleSelectionComposable(
     }
 }
 
-val mockFeedScheduleEntries = createMockFeedSchedule()
-
-val mockFeedScheduleViewModelSuccess = MockFeedScheduleViewModel(
-    feedScheduleUiState = FeedScheduleUiState.Success(feedScheduleEntries = mockFeedScheduleEntries),
-    isRefreshing = false,
-    feedScheduleEntries = mockFeedScheduleEntries
+val mockFeedScheduleViewModelSuccess = mockFeedScheduleViewModelFactory.create(
+   FeedScheduleViewModel::class.java
 )
-
-val mockMainViewModel = MockMainViewModel()
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -119,8 +113,7 @@ internal fun FeedScheduleSelectionComposablePreview() {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 FeedScheduleSelectionComposable(
-                    mainViewModel = mockMainViewModel,
-                    myFeedScheduleViewModel = mockFeedScheduleViewModelSuccess
+                    feedScheduleViewModel = mockFeedScheduleViewModelSuccess,
                 )
             }
         }

@@ -51,9 +51,9 @@ fun BallingScreen(
     // - a button for visualizing all Balling dosing events of the last 7 days
     // - all Balling profiles downloaded from the controller
 
-    val ballingViewModel: BallingViewModel = viewModel(factory = ballingViewModelFactory)
+    val ballingViewModel: BallingProfilesViewModel = viewModel(factory = ballingViewModelFactory)
 
-    val ballingUiState: BallingUiState by ballingViewModel.ballingUiState.collectAsState()
+    val ballingProfilesUiState: BallingProfilesUiState by ballingViewModel.ballingProfilesUiState.collectAsState()
 
     val configuration: Configuration = LocalConfiguration.current
 
@@ -94,8 +94,8 @@ fun BallingScreen(
                             )
                         }
                     }
-                    when (ballingUiState) {
-                        is BallingUiState.Empty -> {
+                    when (ballingProfilesUiState) {
+                        is BallingProfilesUiState.Empty -> {
                             Text(
                                 text = stringResource(id = R.string.no_balling_profiles_found),
                                 style = TextStyle(
@@ -106,9 +106,9 @@ fun BallingScreen(
                                 textAlign = TextAlign.Center
                             )
                         }
-                        is BallingUiState.Error -> {
+                        is BallingProfilesUiState.Error -> {
                             Text(
-                                text = "Error loading data: ${(ballingUiState as BallingUiState.Error).errorMessage}",
+                                text = "Error loading data: ${(ballingProfilesUiState as BallingProfilesUiState.Error).errorMessage}",
                                 style = TextStyle(
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Bold
@@ -117,7 +117,7 @@ fun BallingScreen(
                                 textAlign = TextAlign.Center
                             )
                         }
-                        is BallingUiState.Loading -> {
+                        is BallingProfilesUiState.Loading -> {
                             Text(
                                 text = stringResource(id = R.string.loading_balling_profiles),
                                 style = TextStyle(
@@ -128,9 +128,9 @@ fun BallingScreen(
                                 textAlign = TextAlign.Center
                             )
                         }
-                        is BallingUiState.Success -> {
+                        is BallingProfilesUiState.Success -> {
                             val ballingProfiles: List<BallingProfile> =
-                                (ballingUiState as BallingUiState.Success).ballingProfiles
+                                (ballingProfilesUiState as BallingProfilesUiState.Success).ballingProfiles
                             val modifier: Modifier = Modifier
                                 .height(height = 3000.dp) // Set a fixed height
                                 .fillMaxWidth()
@@ -190,10 +190,10 @@ val mockBallingProfiles: List<BallingProfile> = listOf(mockBallingProfile1, mock
 )
 @Composable
 internal fun BallingScreenPreviewSuccess() {
-    val mockRepositorySuccess = MockBallingRepository(mockData = DataFetchResult.Success(data = mockBallingProfiles))
+    val mockRepositorySuccess = MockBallingProfilesRepository(mockData = DataFetchResult.Success(data = mockBallingProfiles))
     BallingScreen(
         mainViewModel = mockMainViewModel,
-        ballingViewModelFactory = BallingViewModelFactory(ballingRepository = mockRepositorySuccess)
+        ballingViewModelFactory = BallingViewModelFactory(ballingProfilesRepository = mockRepositorySuccess)
     )
 }
 
@@ -201,10 +201,10 @@ internal fun BallingScreenPreviewSuccess() {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun BallingScreenPreviewError() {
-    val mockRepositoryError = MockBallingRepository(mockData = DataFetchResult.Error(exception = null, errorMessage = "Error message"))
+    val mockRepositoryError = MockBallingProfilesRepository(mockData = DataFetchResult.Error(exception = null, errorMessage = "Error message"))
     BallingScreen(
         mainViewModel = mockMainViewModel,
-        ballingViewModelFactory = BallingViewModelFactory(ballingRepository = mockRepositoryError),
+        ballingViewModelFactory = BallingViewModelFactory(ballingProfilesRepository = mockRepositoryError),
     )
 }
 
@@ -214,7 +214,7 @@ internal fun BallingScreenPreviewError() {
 internal fun BallingScreenPreviewLoading() {
     BallingScreen(
         mainViewModel = mockMainViewModel,
-        ballingViewModelFactory = BallingViewModelFactory(ballingRepository = MockLongLoadingBallingRepository()),
+        ballingViewModelFactory = BallingViewModelFactory(ballingProfilesRepository = MockLongLoadingBallingProfilesRepository()),
     )
 }
 
@@ -222,9 +222,9 @@ internal fun BallingScreenPreviewLoading() {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun BallingScreenPreviewEmpty() {
-    val mockRepositoryEmpty = MockBallingRepository(mockData = DataFetchResult.Success(data = emptyList()))
+    val mockRepositoryEmpty = MockBallingProfilesRepository(mockData = DataFetchResult.Success(data = emptyList()))
     BallingScreen(
         mainViewModel = mockMainViewModel,
-        ballingViewModelFactory = BallingViewModelFactory(ballingRepository = mockRepositoryEmpty),
+        ballingViewModelFactory = BallingViewModelFactory(ballingProfilesRepository = mockRepositoryEmpty),
     )
 }

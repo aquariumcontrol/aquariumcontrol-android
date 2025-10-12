@@ -13,71 +13,93 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleUiState
-import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleViewModelInterface
-import com.laimburggasse.aquariumcontrol.feed.schedule.MockFeedScheduleViewModel
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun FeedProfileSelectionComposable(
     modifier: Modifier? = Modifier,
     navHostController: NavHostController? = null,
-    mainViewModel: MainViewModel,
-    myFeedProfilesViewModel: FeedProfilesViewModelInterface,
-    feedScheduleViewModel: FeedScheduleViewModelInterface,
+    feedProfilesViewModelFactory: FeedProfilesViewModelFactory,
 ) {
     // This composable displays a label "Feed Profiles"
     // and a list of feed profiles.
 
+    val feedProfilesViewModel: FeedProfilesViewModel = viewModel(
+        factory = feedProfilesViewModelFactory
+    )
+    val feedProfilesUiState: FeedProfilesUiState by feedProfilesViewModel.feedProfilesUiState.collectAsState()
+
     Text(text = stringResource(R.string.feed_profiles))
 
-    val columnModifier: Modifier = Modifier.fillMaxWidth().padding(8.dp)
-    if (LocalInspectionMode.current) {
-        Column(modifier = columnModifier) {
-            myFeedProfilesViewModel.getFeedProfileList().forEach { feedProfile ->
-                FeedProfileSummaryComposable(
-                    feedProfile = feedProfile,
-                    onEditClick = {},
-                    onScheduleClick = {},
-                    onDeleteClick = {}
-                )
+    val columnModifier: Modifier = Modifier
+        .fillMaxWidth()
+        .padding(8.dp)
+    when (feedProfilesUiState) {
+        is FeedProfilesUiState.Loading -> {
+            Text(text = "Loading...")
+        }
+        is FeedProfilesUiState.Error -> {
+            val errorMessage: String = (feedProfilesUiState as FeedProfilesUiState.Error).errorMessage
+            Text(text = "Error: $errorMessage")
+        }
+        is FeedProfilesUiState.Success -> {
+            val feedProfiles: List<FeedProfile> =
+                (feedProfilesUiState as FeedProfilesUiState.Success).feedProfiles
+            if (LocalInspectionMode.current) {
+                val feedProfiles: List<FeedProfile> =
+                    (feedProfilesUiState as FeedProfilesUiState.Success).feedProfiles
+                feedProfiles.forEach { feedProfile ->
+                    FeedProfileSummaryComposable(
+                        feedProfileId = feedProfile.profileID,
+                        feedProfilesViewModelFactory = feedProfilesViewModelFactory,
+                        onEditClick = {},
+                        onScheduleClick = {},
+                        onDeleteClick = {}
+                    )
+                }
+            }
+            else {
+                LazyColumn(modifier = columnModifier) {
+                    items(items = feedProfiles) { feedProfile ->
+                        FeedProfileSummaryComposable(
+                            feedProfileId = feedProfile.profileID,
+                            feedProfilesViewModelFactory = feedProfilesViewModelFactory,
+                            onEditClick = {
+                                navHostController?.navigate(
+                                    route = ViewNavigationRoutes.feedEdit(
+                                        feedProfileId = feedProfile.profileID
+                                    )
+                                )
+                            },
+                            onScheduleClick = {
+                                navHostController?.navigate(
+                                    route = ViewNavigationRoutes.feedSchedule(
+                                        feedProfileId = feedProfile.profileID
+                                    )
+                                )
+                            },
+                            onDeleteClick = {
+                                feedProfilesViewModel.deleteFeedProfile(feedProfile)
+                            }
+                        )
+                    }
+                }
             }
         }
-    }
-    else {
-        LazyColumn(modifier = columnModifier) {
-            items(items = myFeedProfilesViewModel.getFeedProfileList()) { feedProfile ->
-                FeedProfileSummaryComposable(
-                    feedProfile = feedProfile,
-                    onEditClick = {
-                        mainViewModel.updateSelectedFeedProfile(feedProfile)
-                        navHostController?.navigate(route = ViewNavigationRoutes.feedEdit)
-                    },
-                    onScheduleClick = {
-                        mainViewModel.updateSelectedFeedProfile(feedProfile)
-                        mainViewModel.updateSelectedFeedScheduleEntry(null)
-                        mainViewModel.setMyFeedScheduleViewModel(feedScheduleViewModel)
-                        mainViewModel.setMyFeedProfileViewModel(myFeedProfilesViewModel)
-                        navHostController?.navigate(route = ViewNavigationRoutes.feedSchedule(
-                            profileName = feedProfile.profileName,
-                            timestamp = null // new feed schedule entry shall be created
-                        ))
-                    },
-                    onDeleteClick = {
-                        myFeedProfilesViewModel.deleteFeedProfile(feedProfile)
-                    }
-                )
-            }
+        is FeedProfilesUiState.Empty -> {
+            Text(text = "Empty")
         }
     }
     FloatingActionButton(
@@ -95,20 +117,6 @@ fun FeedProfileSelectionComposable(
         )
     }
 }
-
-val mockFeedProfiles = createMockFeedProfiles()
-
-val mockFeedProfileViewModel = MockFeedProfilesViewModel(
-    feedProfilesUiState = FeedProfilesUiState.Success(feedProfiles = mockFeedProfiles),
-    isRefreshing = false,
-    feedProfiles = mockFeedProfiles
-)
-
-val mockFeedScheduleViewModel = MockFeedScheduleViewModel(
-    feedScheduleUiState = FeedScheduleUiState.Success(feedScheduleEntries = emptyList()),
-    feedScheduleEntries = emptyList(),
-    isRefreshing = false
-)
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -128,9 +136,7 @@ internal fun FeedProfileSelectionComposablePreview() {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 FeedProfileSelectionComposable(
-                    mainViewModel = mockMainViewModel,
-                    myFeedProfilesViewModel = mockFeedProfileViewModel,
-                    feedScheduleViewModel = mockFeedScheduleViewModel,
+                    feedProfilesViewModelFactory = mockFeedProfilesViewModelFactory,
                 )
             }
         }

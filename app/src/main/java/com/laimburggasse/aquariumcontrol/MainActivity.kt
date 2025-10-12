@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,13 +9,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.room.Room
-import com.laimburggasse.aquariumcontrol.balling.BallingRepository
+import com.laimburggasse.aquariumcontrol.balling.BallingProfilesRepository
 import com.laimburggasse.aquariumcontrol.balling.BallingScreen
 import com.laimburggasse.aquariumcontrol.balling.BallingViewModelFactory
 import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditScreen
@@ -26,15 +28,22 @@ import com.laimburggasse.aquariumcontrol.controller.ControllerAddScreen
 import com.laimburggasse.aquariumcontrol.controller.ControllerEditScreen
 import com.laimburggasse.aquariumcontrol.controller.ControllerProfileDatabase
 import com.laimburggasse.aquariumcontrol.controller.ControllerSelectionScreen
+import com.laimburggasse.aquariumcontrol.controller.ControllerState
 import com.laimburggasse.aquariumcontrol.controller.ControllerViewModel
-import com.laimburggasse.aquariumcontrol.feed.FeedProfilesViewModel
+import com.laimburggasse.aquariumcontrol.feed.FeedProfile
+import com.laimburggasse.aquariumcontrol.feed.FeedProfilesRepository
+import com.laimburggasse.aquariumcontrol.feed.FeedProfilesViewModelFactory
 import com.laimburggasse.aquariumcontrol.feed.FeedScreen
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddScreen
+import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddViewModelFactory
 import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditScreen
+import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditViewModelFactory
 import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryRepository
 import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryScreen
 import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryViewModelFactory
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedProfileScheduleScreen
+import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleRepository
+import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleViewModelFactory
 import com.laimburggasse.aquariumcontrol.heating.HeatingScreen
 import com.laimburggasse.aquariumcontrol.info.InfoScreen
 import com.laimburggasse.aquariumcontrol.overview.OverviewScreen
@@ -85,22 +94,15 @@ class MainActivity : ComponentActivity() {
         }
     )
 
-    private val feedProfilesViewModel by viewModels<FeedProfilesViewModel>(
-        factoryProducer = {
-            object : ViewModelProvider.Factory {
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return FeedProfilesViewModel() as T
-                }
-            }
-        }
-    )
-
-    private val ballingRepository by lazy { BallingRepository(mainViewModel = mainViewModel) }
+    private val ballingProfilesRepository by lazy { BallingProfilesRepository(mainViewModel = mainViewModel) }
     private val ballingHistoryRepository by lazy { BallingHistoryRepository(mainViewModel = mainViewModel) }
-
+    private val feedProfilesRepository by lazy { FeedProfilesRepository(mainViewModel = mainViewModel) }
+    private val feedScheduleRepository by lazy { FeedScheduleRepository(mainViewModel = mainViewModel) }
     private val feedHistoryRepository by lazy { FeedHistoryRepository(mainViewModel = mainViewModel) }
-
     private val refillHistoryRepository by lazy { RefillHistoryRepository(mainViewModel = mainViewModel) }
+    private val feedProfilesViewModelFactory by lazy { FeedProfilesViewModelFactory(feedProfilesRepository) }
+    private val feedScheduleViewModelFactory by lazy { FeedScheduleViewModelFactory(feedScheduleRepository, feedProfilesRepository) }
+    private val feedProfileAddViewModelFactory by lazy { FeedProfileAddViewModelFactory(feedProfilesRepository) }
 
     override fun onPause() {
         super.onPause()
@@ -114,13 +116,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val sharedPrefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
-        val defaultProfileId = sharedPrefs.getLong(KEY_DEFAULT_PROFILE_ID, -1) // -1 for no default
+        val sharedPrefs: SharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+        val defaultProfileId: Long = sharedPrefs.getLong( KEY_DEFAULT_PROFILE_ID, -1) // -1 for no default
         mainViewModel.setDefaultControllerProfileId(defaultProfileId)
 
         setContent {
-            val navHostController = rememberNavController()
-            val state by controllerViewModel.state.collectAsState()
+            val navHostController: NavHostController = rememberNavController()
+            val state: ControllerState by controllerViewModel.state.collectAsState()
             NavHost(
                 navController = navHostController,
                 startDestination = ViewNavigationRoutes.controllerSelection,
@@ -156,6 +158,8 @@ class MainActivity : ComponentActivity() {
                         FeedScreen(
                             navHostController = navHostController,
                             mainViewModel = mainViewModel,
+                            feedProfilesViewModelFactory = feedProfilesViewModelFactory,
+                            feedScheduleViewModelFactory = feedScheduleViewModelFactory
                         )
                     }
                     composable(route = ViewNavigationRoutes.feedHistory24h) {
@@ -178,34 +182,54 @@ class MainActivity : ComponentActivity() {
                             )
                         )
                     }
-                    composable(route = ViewNavigationRoutes.feedEdit) {
-                        FeedProfileEditScreen(
-                            navHostController = navHostController,
-                            mainViewModel = mainViewModel,
-                            feedProfile = mainViewModel.getMySelectedFeedProfile()!!
+                    composable(route = ViewNavigationRoutes.feedEdit,
+                        arguments = listOf(
+                            navArgument(name = "feedProfileId") { type = NavType.IntType }
                         )
+                    ) { backStackEntry ->
+                        val feedProfileId: Int? = backStackEntry.arguments?.getInt("feedProfileId")
+                        if (feedProfileId != null) {
+                            val feedProfile: FeedProfile? = feedProfilesRepository.findProfileById(feedProfileId)
+                            if (feedProfile != null) {
+                                val feedProfileEditViewModelFactory =
+                                    FeedProfileEditViewModelFactory(
+                                        feedProfile = feedProfile,
+                                        feedProfilesRepository = feedProfilesRepository
+                                    )
+                                FeedProfileEditScreen(
+                                    navHostController = navHostController,
+                                    mainViewModel = mainViewModel,
+                                    feedProfileEditViewModelFactory = feedProfileEditViewModelFactory,
+                                )
+                            }
+                            else {
+                                // @todo: handle error case (e.g. navigate back)
+                            }
+                        }
+                        else {
+                            // @todo: handle error case (e.g. navigate back)
+                        }
                     }
                     composable(route = ViewNavigationRoutes.feedAddProfile) {
                         FeedProfileAddScreen(
                             navHostController = navHostController,
                             mainViewModel = mainViewModel,
-                            feedProfilesViewModel = feedProfilesViewModel
+                            feedProfileAddViewModelFactory = feedProfileAddViewModelFactory,
                         )
                     }
                     composable(route = ViewNavigationRoutes.feedSchedule,
                         arguments = listOf(
-                            navArgument(name = "profileName") { type = NavType.StringType },
-                            navArgument(name = "timestamp") { type = NavType.LongType }
+                            navArgument(name = "feedProfileId") { type = NavType.IntType },
                         )
                     ) { backStackEntry ->
-                        val profileName = backStackEntry.arguments?.getString("profileName")
-                        val milliSecondsSinceEpoch = backStackEntry.arguments?.getLong("milliSecondsSinceEpoch")
-                        if (profileName != null && milliSecondsSinceEpoch != null) {
+                        val feedProfileId = backStackEntry.arguments?.getInt("feedProfileId")
+                        if (feedProfileId != null) {
                             FeedProfileScheduleScreen(
                                 navHostController = navHostController,
                                 mainViewModel = mainViewModel,
-                                profileName = profileName,
-                                milliSecondsSinceEpoch = milliSecondsSinceEpoch
+                                feedProfileId = feedProfileId,
+                                feedScheduleViewModelFactory = feedScheduleViewModelFactory,
+                                feedProfilesViewModelFactory = feedProfilesViewModelFactory,
                             )
                         }
                         else {
@@ -215,7 +239,7 @@ class MainActivity : ComponentActivity() {
                     composable(route = ViewNavigationRoutes.balling) {
                         BallingScreen(
                             navHostController = navHostController,
-                            ballingViewModelFactory = BallingViewModelFactory(ballingRepository),
+                            ballingViewModelFactory = BallingViewModelFactory(ballingProfilesRepository),
                             mainViewModel = mainViewModel
                         )
                     }
@@ -251,7 +275,7 @@ class MainActivity : ComponentActivity() {
                                 mainViewModel = mainViewModel,
                                 ballingProfileEditViewModelFactory = BallingProfileEditViewModelFactory(
                                     ballingProfileId = ballingProfileId,
-                                    ballingRepository = ballingRepository
+                                    ballingProfilesRepository = ballingProfilesRepository
                                 )
                             )
                         }

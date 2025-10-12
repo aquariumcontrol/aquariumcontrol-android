@@ -6,13 +6,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.balling.BallingProfile
-import com.laimburggasse.aquariumcontrol.balling.BallingRepository
+import com.laimburggasse.aquariumcontrol.balling.BallingProfilesRepository
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.coroutines.launch
 
 class BallingProfileEditViewModel(
     ballingProfileId: Int,
-    private val repository: BallingRepository,
+    private val repository: BallingProfilesRepository,
 ) : ViewModel() {
     // This class will allow the user to edit the Balling dosing profile.
     var ballingProfileEditUiState: BallingProfileEditUiState by mutableStateOf(

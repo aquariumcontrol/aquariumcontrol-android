@@ -31,7 +31,7 @@ class BallingProfileEditScreenTest {
 
     val mockBallingProfiles = listOf(mockBallingProfile)
 
-    val mockBallingRepositorySuccess = MockBallingRepository(
+    val mockBallingRepositorySuccess = MockBallingProfilesRepository(
         mockData = DataFetchResult.Success(data = mockBallingProfiles)
     )
     val mockMainViewModel = MockMainViewModel()
@@ -44,7 +44,7 @@ class BallingProfileEditScreenTest {
                 mainViewModel = mockMainViewModel,
                 ballingProfileEditViewModelFactory = BallingProfileEditViewModelFactory(
                     ballingProfileId = 1,
-                    ballingRepository = mockBallingRepositorySuccess
+                    ballingProfilesRepository = mockBallingRepositorySuccess
                 ),
                 darkTheme = true
             )
@@ -66,7 +66,7 @@ class BallingProfileEditScreenTest {
                 mainViewModel = mockMainViewModel,
                 ballingProfileEditViewModelFactory = BallingProfileEditViewModelFactory(
                     ballingProfileId = 1,
-                    ballingRepository = mockBallingRepositorySuccess
+                    ballingProfilesRepository = mockBallingRepositorySuccess
                 ),
                 darkTheme = false
             )

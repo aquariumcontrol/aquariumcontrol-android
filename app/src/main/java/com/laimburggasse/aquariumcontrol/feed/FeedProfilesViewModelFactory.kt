@@ -6,10 +6,10 @@ import javax.inject.Singleton
 
 @Singleton
 class FeedProfilesViewModelFactory(
-    feedProfiles: List<FeedProfile>?,
+    feedProfilesRepository: FeedProfilesRepository
 ) : ViewModelProvider.Factory {
     // This class creates the view model FeedProfilesViewModel
-    private val viewModel = FeedProfilesViewModel(myFeedProfiles = feedProfiles)
+    private val viewModel = FeedProfilesViewModel(feedProfilesRepository)
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

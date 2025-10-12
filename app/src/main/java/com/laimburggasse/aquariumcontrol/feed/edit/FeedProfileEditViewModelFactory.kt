@@ -3,14 +3,17 @@ package com.laimburggasse.aquariumcontrol.feed.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.laimburggasse.aquariumcontrol.feed.FeedProfile
+import com.laimburggasse.aquariumcontrol.feed.FeedProfilesRepository
 import javax.inject.Singleton
 
 @Singleton
 class FeedProfileEditViewModelFactory(
     feedProfile: FeedProfile,
+    feedProfilesRepository: FeedProfilesRepository
 ) : ViewModelProvider.Factory {
     // This class creates the view model FeedProfileEditViewModel
-    private val viewModel = FeedProfileEditViewModel(feedProfile)
+    private val viewModel = FeedProfileEditViewModel(feedProfile, feedProfilesRepository)
+
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

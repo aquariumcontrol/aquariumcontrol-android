@@ -5,9 +5,9 @@ import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class MockBallingRepository(
+class MockBallingProfilesRepository(
     mockData: DataFetchResult<List<BallingProfile>>
-) : BallingRepository(mainViewModel = MockMainViewModel()) {
+) : BallingProfilesRepository(mainViewModel = MockMainViewModel()) {
 
     private val _profilesFlow = MutableStateFlow(value = mockData)
 

@@ -13,16 +13,22 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.feed.FeedProfilesRepository
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
-class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewModel() {
+class FeedProfileEditViewModel(
+    private val feedProfile: FeedProfile,
+    private val feedProfilesRepository: FeedProfilesRepository
+) : ViewModel() {
+    // @todo: use repository for updating server data
 
     var phaseMenuItems: List<FeedProfileEditMenuItem>
 
+    // @todo: convert to Stateflow
     private var _lineDataFeedProfileFeeder = MutableLiveData<LineData>()
     private var _lineDataFeedProfileSkimmer = MutableLiveData<LineData>()
     private var _lineDataFeedProfileMainPump1 = MutableLiveData<LineData>()
@@ -42,7 +48,7 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
     init {
         phaseMenuItems = createFeedProfileEditMenuItems()
         transformFeedProfileToChartData()
-        _totalDuration.value = myFeedProfile.calcDuration()
+        _totalDuration.value = feedProfile.calcDuration()
     }
 
     private fun calcFeederChartValue(isRunning: Boolean): Float {
@@ -84,7 +90,7 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
         val valuesAuxPump2 = ArrayList<Entry>()
 
         val itFeedProfilePhases: Iterator<FeedProfilePhase> =
-            myFeedProfile.feedProfilePhases.iterator()
+            feedProfile.feedProfilePhases.iterator()
 
         var feedProfilePhase: FeedProfilePhase
         var cumulatedTime = 0.0
@@ -357,7 +363,7 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
                                 text = "Duration",
                                 isNumericInput = true,
                                 phaseType = FeedProfileEditPhaseType.PAUSE,
-                                durationInitialValue = myFeedProfile.feedProfilePhases[index * 2].duration,
+                                durationInitialValue = feedProfile.feedProfilePhases[index * 2].duration,
                                 isToggleButton = false,
                             ),
                             FeedProfileEditMenuItem(
@@ -369,7 +375,7 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
                                 isNumericInput = false,
                                 phaseType = FeedProfileEditPhaseType.PAUSE,
                                 isChecked = mutableStateOf(
-                                    myFeedProfile.feedProfilePhases[index * 2].skimmer
+                                    feedProfile.feedProfilePhases[index * 2].skimmer
                                 ),
                             ),
                             FeedProfileEditMenuItem(
@@ -381,7 +387,7 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
                                 isNumericInput = false,
                                 phaseType = FeedProfileEditPhaseType.PAUSE,
                                 isChecked = mutableStateOf(
-                                    myFeedProfile.feedProfilePhases[index * 2].mainPump1
+                                    feedProfile.feedProfilePhases[index * 2].mainPump1
                                 ),
                             ),
                             FeedProfileEditMenuItem(
@@ -393,7 +399,7 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
                                 isNumericInput = false,
                                 phaseType = FeedProfileEditPhaseType.PAUSE,
                                 isChecked = mutableStateOf(
-                                    myFeedProfile.feedProfilePhases[index * 2].mainPump2
+                                    feedProfile.feedProfilePhases[index * 2].mainPump2
                                 ),
                             ),
                             FeedProfileEditMenuItem(
@@ -405,7 +411,7 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
                                 isNumericInput = false,
                                 phaseType = FeedProfileEditPhaseType.PAUSE,
                                 isChecked = mutableStateOf(
-                                    myFeedProfile.feedProfilePhases[index * 2].auxPump1
+                                    feedProfile.feedProfilePhases[index * 2].auxPump1
                                 ),
                             ),
                             FeedProfileEditMenuItem(
@@ -417,7 +423,7 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
                                 isNumericInput = false,
                                 phaseType = FeedProfileEditPhaseType.PAUSE,
                                 isChecked = mutableStateOf(
-                                    myFeedProfile.feedProfilePhases[index * 2].auxPump2
+                                    feedProfile.feedProfilePhases[index * 2].auxPump2
                                 ),
                             ),
                         ),
@@ -436,7 +442,7 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
                                 isToggleButton = false,
                                 isNumericInput = true,
                                 phaseType = FeedProfileEditPhaseType.FEED,
-                                durationInitialValue = myFeedProfile.feedProfilePhases[index * 2 + 1].duration,
+                                durationInitialValue = feedProfile.feedProfilePhases[index * 2 + 1].duration,
                             ),
                             FeedProfileEditMenuItem(
                                 id = index * 2 + 1,
@@ -447,7 +453,7 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
                                 isNumericInput = false,
                                 phaseType = FeedProfileEditPhaseType.FEED,
                                 isChecked = mutableStateOf(
-                                    myFeedProfile.feedProfilePhases[index * 2 + 1].skimmer
+                                    feedProfile.feedProfilePhases[index * 2 + 1].skimmer
                                 ),
                             ),
                             FeedProfileEditMenuItem(
@@ -459,7 +465,7 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
                                 isNumericInput = false,
                                 phaseType = FeedProfileEditPhaseType.FEED,
                                 isChecked = mutableStateOf(
-                                    myFeedProfile.feedProfilePhases[index * 2 + 1].mainPump1
+                                    feedProfile.feedProfilePhases[index * 2 + 1].mainPump1
                                 ),
                             ),
                             FeedProfileEditMenuItem(
@@ -471,7 +477,7 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
                                 isNumericInput = false,
                                 phaseType = FeedProfileEditPhaseType.FEED,
                                 isChecked = mutableStateOf(
-                                    myFeedProfile.feedProfilePhases[index * 2 + 1].mainPump2
+                                    feedProfile.feedProfilePhases[index * 2 + 1].mainPump2
                                 ),
                             ),
                             FeedProfileEditMenuItem(
@@ -483,7 +489,7 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
                                 isNumericInput = false,
                                 phaseType = FeedProfileEditPhaseType.FEED,
                                 isChecked = mutableStateOf(
-                                    myFeedProfile.feedProfilePhases[index * 2 + 1].auxPump1
+                                    feedProfile.feedProfilePhases[index * 2 + 1].auxPump1
                                 ),
                             ),
                             FeedProfileEditMenuItem(
@@ -495,7 +501,7 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
                                 isNumericInput = false,
                                 phaseType = FeedProfileEditPhaseType.FEED,
                                 isChecked = mutableStateOf(
-                                    myFeedProfile.feedProfilePhases[index * 2 + 1].auxPump2
+                                    feedProfile.feedProfilePhases[index * 2 + 1].auxPump2
                                 ),
                             ),
                         ),
@@ -507,33 +513,33 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
 
     fun updatePhaseDuration(phaseIndex: Int, newDuration: Double) {
         Log.d("FeedProfileEditViewModel", "Updating phase($phaseIndex) duration to $newDuration")
-        myFeedProfile.feedProfilePhases[phaseIndex].duration = newDuration
-        _totalDuration.value = myFeedProfile.calcDuration()
+        feedProfile.feedProfilePhases[phaseIndex].duration = newDuration
+        _totalDuration.value = feedProfile.calcDuration()
         transformFeedProfileToChartData()
     }
 
     fun updateSkimmer(phaseIndex: Int, newValue: Boolean) {
-        myFeedProfile.feedProfilePhases[phaseIndex].skimmer = newValue
+        feedProfile.feedProfilePhases[phaseIndex].skimmer = newValue
         transformFeedProfileToChartData()
     }
 
     fun updateMainPump1(phaseIndex: Int, newValue: Boolean) {
-        myFeedProfile.feedProfilePhases[phaseIndex].mainPump1 = newValue
+        feedProfile.feedProfilePhases[phaseIndex].mainPump1 = newValue
         transformFeedProfileToChartData()
     }
 
     fun updateMainPump2(phaseIndex: Int, newValue: Boolean) {
-        myFeedProfile.feedProfilePhases[phaseIndex].mainPump2 = newValue
+        feedProfile.feedProfilePhases[phaseIndex].mainPump2 = newValue
         transformFeedProfileToChartData()
     }
 
     fun updateAuxPump1(phaseIndex: Int, newValue: Boolean) {
-        myFeedProfile.feedProfilePhases[phaseIndex].auxPump1 = newValue
+        feedProfile.feedProfilePhases[phaseIndex].auxPump1 = newValue
         transformFeedProfileToChartData()
     }
 
     fun updateAuxPump2(phaseIndex: Int, newValue: Boolean) {
-        myFeedProfile.feedProfilePhases[phaseIndex].auxPump2 = newValue
+        feedProfile.feedProfilePhases[phaseIndex].auxPump2 = newValue
         transformFeedProfileToChartData()
     }
 
@@ -547,44 +553,44 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
                                 FeedProfileEditToggleButtonType.Skimmer -> {
                                     Log.d(
                                         "FeedProfileEditViewModel",
-                                        "setting value3.updateIsChecked(${myFeedProfile.feedProfilePhases[index * 2].skimmer})"
+                                        "setting value3.updateIsChecked(${feedProfile.feedProfilePhases[index * 2].skimmer})"
                                     )
                                     value3.updateIsChecked(
-                                        myFeedProfile.feedProfilePhases[index * 2].skimmer
+                                        feedProfile.feedProfilePhases[index * 2].skimmer
                                     )
                                 }
 
                                 FeedProfileEditToggleButtonType.MainPump1 -> {
                                     value3.updateIsChecked(
-                                        myFeedProfile.feedProfilePhases[index * 2].mainPump1
+                                        feedProfile.feedProfilePhases[index * 2].mainPump1
                                     )
                                 }
 
                                 FeedProfileEditToggleButtonType.MainPump2 -> {
                                     value3.updateIsChecked(
-                                        myFeedProfile.feedProfilePhases[index * 2].mainPump2
+                                        feedProfile.feedProfilePhases[index * 2].mainPump2
                                     )
                                 }
 
                                 FeedProfileEditToggleButtonType.AuxPump1 -> {
                                     value3.updateIsChecked(
-                                        myFeedProfile.feedProfilePhases[index * 2].auxPump1
+                                        feedProfile.feedProfilePhases[index * 2].auxPump1
                                     )
                                 }
 
                                 FeedProfileEditToggleButtonType.AuxPump2 -> {
                                     value3.updateIsChecked(
-                                        myFeedProfile.feedProfilePhases[index * 2].auxPump2
+                                        feedProfile.feedProfilePhases[index * 2].auxPump2
                                     )
                                 }
 
                                 null -> {
                                     value3.updateInputValue(
-                                        myFeedProfile.feedProfilePhases[index * 2].duration
+                                        feedProfile.feedProfilePhases[index * 2].duration
                                     )
                                     Log.d(
                                         "FeedProfileEditViewModel",
-                                        "setting myFeedProfile.value.feedProfilePhases[${index * 2}].duration = ${myFeedProfile.feedProfilePhases[index * 2].duration}"
+                                        "setting myFeedProfile.value.feedProfilePhases[${index * 2}].duration = ${feedProfile.feedProfilePhases[index * 2].duration}"
                                     )
                                 }
                             }
@@ -596,41 +602,41 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
                             when (value3.toggleButtonType) {
                                 FeedProfileEditToggleButtonType.Skimmer -> {
                                     value3.updateIsChecked(
-                                        myFeedProfile.feedProfilePhases[index * 2 + 1].skimmer
+                                        feedProfile.feedProfilePhases[index * 2 + 1].skimmer
                                     )
                                 }
 
                                 FeedProfileEditToggleButtonType.MainPump1 -> {
                                     value3.updateIsChecked(
-                                        myFeedProfile.feedProfilePhases[index * 2 + 1].mainPump1
+                                        feedProfile.feedProfilePhases[index * 2 + 1].mainPump1
                                     )
                                 }
 
                                 FeedProfileEditToggleButtonType.MainPump2 -> {
                                     value3.updateIsChecked(
-                                        myFeedProfile.feedProfilePhases[index * 2 + 1].mainPump2
+                                        feedProfile.feedProfilePhases[index * 2 + 1].mainPump2
                                     )
                                 }
 
                                 FeedProfileEditToggleButtonType.AuxPump1 -> {
                                     value3.updateIsChecked(
-                                        myFeedProfile.feedProfilePhases[index * 2 + 1].auxPump1
+                                        feedProfile.feedProfilePhases[index * 2 + 1].auxPump1
                                     )
                                 }
 
                                 FeedProfileEditToggleButtonType.AuxPump2 -> {
                                     value3.updateIsChecked(
-                                        myFeedProfile.feedProfilePhases[index * 2 + 1].auxPump2
+                                        feedProfile.feedProfilePhases[index * 2 + 1].auxPump2
                                     )
                                 }
 
                                 null -> {
                                     value3.updateInputValue(
-                                        myFeedProfile.feedProfilePhases[index * 2 + 1].duration
+                                        feedProfile.feedProfilePhases[index * 2 + 1].duration
                                     )
                                     Log.d(
                                         "FeedProfileEditViewModel",
-                                        "setting myFeedProfile.value.feedProfilePhases[${index * 2 + 1}].duration = ${myFeedProfile.feedProfilePhases[index * 2 + 1].duration}"
+                                        "setting myFeedProfile.value.feedProfilePhases[${index * 2 + 1}].duration = ${feedProfile.feedProfilePhases[index * 2 + 1].duration}"
                                     )
                                 }
                             }
@@ -646,7 +652,7 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
     }
 
     fun resetFeedProfile() {
-        myFeedProfile.reset()           // copy content from backup data structure
+        feedProfile.reset()           // copy content from backup data structure
         resetFeedProfileEditMenuItems() // copy from myFeedProfile to phaseMenuItems
     }
 
@@ -658,15 +664,15 @@ class FeedProfileEditViewModel(private val myFeedProfile: FeedProfile) : ViewMod
                 webApiPostRequest = WebApiPostRequest(),
                 optionalGetParams = getApiCallParameters()
             )
-            myFeedProfile.update()          // overwrite backup data structure
+            feedProfile.update()          // overwrite backup data structure
         }
     }
 
     fun getApiCallParameters(): Map<String, String> {
-        return myFeedProfile.getFeedProfileApiCallParameters()
+        return feedProfile.getFeedProfileApiCallParameters()
     }
 
     fun getPhaseDuration(id: Int): Double {
-        return myFeedProfile.feedProfilePhases[id].duration
+        return feedProfile.feedProfilePhases[id].duration
     }
 }

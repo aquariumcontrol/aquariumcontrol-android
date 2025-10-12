@@ -13,11 +13,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -27,24 +24,27 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntryImport
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleUiState
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleViewModel
-import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleViewModelInterface
-import com.laimburggasse.aquariumcontrol.feed.schedule.MockFeedScheduleViewModel
+import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleViewModelFactory
+import com.laimburggasse.aquariumcontrol.feed.schedule.MockFeedScheduleRepository
+import com.laimburggasse.aquariumcontrol.feed.schedule.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
 fun FeedScreen(
     navHostController: NavHostController? = null,
     mainViewModel: MainViewModel,
-    feedProfilesViewModel: FeedProfilesViewModelInterface = viewModel<FeedProfilesViewModel>(),
-    feedScheduleViewModel: FeedScheduleViewModelInterface = viewModel<FeedScheduleViewModel>(),
+    feedScheduleViewModelFactory: FeedScheduleViewModelFactory,
+    feedProfilesViewModelFactory: FeedProfilesViewModelFactory,
     darkTheme: Boolean? = null
 ) {
     // This screen displays
@@ -59,23 +59,10 @@ fun FeedScreen(
 
     val configuration = LocalConfiguration.current
 
-    var isLoadingProfiles: Boolean by remember {
-        mutableStateOf(value = feedProfilesViewModel.feedProfilesUiState is FeedProfilesUiState.Loading)
-    }
-    var isLoadingScheduleEntries: Boolean by remember {
-        mutableStateOf(value = feedScheduleViewModel.feedScheduleUiState is FeedScheduleUiState.Loading)
-    }
-
-    fun loadData() {
-        if (mainViewModel.getControllerAddress() != null) {
-            feedScheduleViewModel.loadData(mainViewModel)
-            feedProfilesViewModel.loadData(mainViewModel)
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        loadData()
-    }
+    val feedProfilesViewModel: FeedProfilesViewModel = viewModel(factory = feedProfilesViewModelFactory)
+    val feedScheduleViewModel: FeedScheduleViewModel = viewModel(factory = feedScheduleViewModelFactory)
+    val feedProfilesUiState: FeedProfilesUiState by feedProfilesViewModel.feedProfilesUiState.collectAsState()
+    val feedScheduleUiState: FeedScheduleUiState by feedScheduleViewModel.feedScheduleUiState.collectAsState()
 
     AquariumControllerTheme(darkTheme) {
         Surface(
@@ -96,7 +83,8 @@ fun FeedScreen(
                                 FeedHistorySelectionButtonsComposable(navHostController = navHostController)
                             }
                             Spacer(modifier = Modifier.height(16.dp))
-                            if (isLoadingProfiles || isLoadingScheduleEntries) {
+                            if (feedProfilesUiState is FeedProfilesUiState.Loading
+                                || feedScheduleUiState is FeedScheduleUiState.Loading) {
                                 CircularProgressIndicator(
                                     modifier = Modifier
                                         .size(150.dp),
@@ -110,10 +98,8 @@ fun FeedScreen(
                                     ) {
                                         FeedProfileSelectionComposable(
                                             navHostController = navHostController,
-                                            myFeedProfilesViewModel = feedProfilesViewModel,
+                                            feedProfilesViewModelFactory = feedProfilesViewModelFactory,
                                             modifier = Modifier.align(Alignment.End),
-                                            mainViewModel = mainViewModel,
-                                            feedScheduleViewModel = feedScheduleViewModel
                                         )
                                     }
                                     Column(
@@ -121,8 +107,7 @@ fun FeedScreen(
                                         modifier = Modifier.weight(1f)
                                     ) {
                                         FeedScheduleSelectionComposable(
-                                            myFeedScheduleViewModel = feedScheduleViewModel,
-                                            mainViewModel = mainViewModel
+                                            feedScheduleViewModel = feedScheduleViewModel,
                                         )
                                     }
                                 }
@@ -134,7 +119,8 @@ fun FeedScreen(
                                 modifier = Modifier.fillMaxWidth()
                             )
                             Spacer(modifier = Modifier.height(16.dp))
-                            if (isLoadingProfiles || isLoadingScheduleEntries) {
+                            if (feedProfilesUiState is FeedProfilesUiState.Loading
+                                || feedScheduleUiState is FeedScheduleUiState.Loading) {
                                 CircularProgressIndicator(
                                     modifier = Modifier
                                         .size(150.dp),
@@ -143,14 +129,11 @@ fun FeedScreen(
                             } else {
                                 FeedProfileSelectionComposable(
                                     modifier = Modifier.align(Alignment.End),
-                                    myFeedProfilesViewModel = feedProfilesViewModel,
-                                    mainViewModel = mainViewModel,
+                                    feedProfilesViewModelFactory = feedProfilesViewModelFactory,
                                     navHostController = navHostController,
-                                    feedScheduleViewModel = feedScheduleViewModel
                                 )
                                 FeedScheduleSelectionComposable(
-                                    myFeedScheduleViewModel = feedScheduleViewModel,
-                                    mainViewModel = mainViewModel
+                                    feedScheduleViewModel = feedScheduleViewModel,
                                 )
                             }
                         }
@@ -206,6 +189,26 @@ fun createMockFeedSchedule(): List<FeedScheduleEntry> {
     return listOf(mockFeedScheduleEntry1, mockFeedScheduleEntry2)
 }
 
+val mockFeedScheduleRepository = MockFeedScheduleRepository(
+    mockFeedScheduleEntries = DataFetchResult.Success(data = createMockFeedSchedule())
+)
+
+val mockFeedProfilesRepository = MockFeedProfilesRepository(
+    mockFeedProfiles = DataFetchResult.Success(data = createMockFeedProfiles())
+)
+
+val mockFeedScheduleViewModelFactory = FeedScheduleViewModelFactory(
+    feedScheduleRepository = mockFeedScheduleRepository,
+    feedProfilesRepository = mockFeedProfilesRepository
+)
+
+
+val mockFeedProfilesViewModelFactory = FeedProfilesViewModelFactory(
+    feedProfilesRepository = mockFeedProfilesRepository
+)
+
+val mockMainViewModel = MockMainViewModel()
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
@@ -220,28 +223,10 @@ fun createMockFeedSchedule(): List<FeedScheduleEntry> {
 )
 @Composable
 fun FeedScreenPreviewSuccess() {
-    val mockFeedProfiles: List<FeedProfile> = createMockFeedProfiles()
-    val mockFeedScheduleEntries: List<FeedScheduleEntry> = createMockFeedSchedule()
-
-    val mockFeedProfilesViewModel = MockFeedProfilesViewModel(
-        feedProfilesUiState = FeedProfilesUiState.Success(feedProfiles = mockFeedProfiles),
-        isRefreshing = false,
-        feedProfiles = mockFeedProfiles
-    )
-
-    val mockFeedScheduleViewModel = MockFeedScheduleViewModel(
-        feedScheduleUiState = FeedScheduleUiState.Success(feedScheduleEntries = mockFeedScheduleEntries),
-        isRefreshing = false,
-        feedScheduleEntries = mockFeedScheduleEntries
-    )
-
-    mockMainViewModel.setMyFeedScheduleViewModel(mockFeedScheduleViewModel)
-    mockMainViewModel.setMyFeedProfileViewModel(mockFeedProfilesViewModel)
-
     FeedScreen(
+        feedProfilesViewModelFactory = mockFeedProfilesViewModelFactory,
         mainViewModel = mockMainViewModel,
-        feedProfilesViewModel = mockFeedProfilesViewModel,
-        feedScheduleViewModel = mockFeedScheduleViewModel,
+        feedScheduleViewModelFactory = mockFeedScheduleViewModelFactory,
     )
 }
 
@@ -259,24 +244,18 @@ fun FeedScreenPreviewSuccess() {
 )
 @Composable
 fun FeedScreenPreviewError() {
-    val mockFeedProfilesViewModel = MockFeedProfilesViewModel(
-        feedProfilesUiState = FeedProfilesUiState.Error(errorMessage = "Error loading feed profiles"),
-        isRefreshing = false,
-        feedProfiles = emptyList()
+    val mockFeedProfilesRepositoryError = MockFeedProfilesRepository(
+        mockFeedProfiles = DataFetchResult.Error(
+            exception = null,
+            errorMessage = "Error loading feed profiles"
+        )
     )
-
-    val mockFeedScheduleViewModel = MockFeedScheduleViewModel(
-        feedScheduleUiState = FeedScheduleUiState.Error(errorMessage = "Error loading feed schedule"),
-        isRefreshing = false,
-        feedScheduleEntries = emptyList()
-    )
-
-    mockMainViewModel.setMyFeedScheduleViewModel(mockFeedScheduleViewModel)
-    mockMainViewModel.setMyFeedProfileViewModel(mockFeedProfilesViewModel)
 
     FeedScreen(
         mainViewModel = mockMainViewModel,
-        feedProfilesViewModel = mockFeedProfilesViewModel,
-        feedScheduleViewModel = mockFeedScheduleViewModel,
+        feedProfilesViewModelFactory = FeedProfilesViewModelFactory(
+            feedProfilesRepository = mockFeedProfilesRepositoryError
+        ),
+        feedScheduleViewModelFactory = mockFeedScheduleViewModelFactory,
     )
 }

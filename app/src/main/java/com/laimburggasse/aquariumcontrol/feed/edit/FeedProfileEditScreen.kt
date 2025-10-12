@@ -17,20 +17,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.FeedProfileImport
+import com.laimburggasse.aquariumcontrol.feed.mockFeedProfilesRepository
 import com.laimburggasse.aquariumcontrol.feed.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun FeedProfileEditScreen(
     navHostController: NavHostController? = null,
-    feedProfile: FeedProfile,
+    feedProfileEditViewModelFactory: FeedProfileEditViewModelFactory,
     mainViewModel: MainViewModel,
     darkTheme: Boolean? = null
 ) {
@@ -42,7 +43,7 @@ fun FeedProfileEditScreen(
     // - a hierarchical menu for editing the feed profile
 
     val feedProfileEditViewModel: FeedProfileEditViewModel = viewModel(
-        factory = FeedProfileEditViewModelFactory(feedProfile)
+        factory = feedProfileEditViewModelFactory
     )
 
     val configuration: Configuration = LocalConfiguration.current
@@ -62,7 +63,7 @@ fun FeedProfileEditScreen(
                         text = stringResource(id = R.string.feed_profile_editing)
                     )
 
-                    FeedProfileDisplayComposable(feedProfileEditViewModel = feedProfileEditViewModel)
+                    FeedProfileDisplayComposable(feedProfileEditViewModel)
 
                     FeedProfileDisplayLegendComposable()
 
@@ -241,8 +242,13 @@ internal fun FeedProfileEditScreenPreview() {
 
     val mockFeedProfile = FeedProfile(mockFeedProfileImport)
 
-    FeedProfileEditScreen(
+    val mockFeedProfileEditViewModelFactory = FeedProfileEditViewModelFactory(
         feedProfile = mockFeedProfile,
+        feedProfilesRepository = mockFeedProfilesRepository
+    )
+
+    FeedProfileEditScreen(
+        feedProfileEditViewModelFactory = mockFeedProfileEditViewModelFactory,
         mainViewModel = mockMainViewModel
     )
 }

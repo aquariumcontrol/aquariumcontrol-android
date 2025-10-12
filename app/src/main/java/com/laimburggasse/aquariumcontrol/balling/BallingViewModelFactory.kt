@@ -4,11 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
 class BallingViewModelFactory(
-    ballingRepository: BallingRepository
+    ballingProfilesRepository: BallingProfilesRepository
 ) : ViewModelProvider.Factory {
 
     // This class creates the view model BallingProfileViewModel
-    private val viewModel = BallingViewModel(ballingRepository)
+    private val viewModel = BallingProfilesViewModel(ballingProfilesRepository)
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

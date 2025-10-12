@@ -4,13 +4,10 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedProfileScheduleScreen
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntryImport
-import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleUiState
-import com.laimburggasse.aquariumcontrol.feed.schedule.MockFeedScheduleViewModel
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -41,41 +38,19 @@ class FeedProfileScheduleScreenTest {
         ).transformToFeedScheduleEntry()
     }
 
-    fun generateMockMainViewModel(): MockMainViewModel {
-        val mockMainViewModel = MockMainViewModel()
-        mockMainViewModel.updateSelectedFeedProfile(feedProfile = generateMockFeedProfile())
-        mockMainViewModel.updateSelectedFeedScheduleEntry(feedScheduleEntry = generateMockFeedScheduleEntry())
-        return mockMainViewModel
-    }
-
     @Test
     fun feedScheduleScreenDarkTest() {
         val mockFeedProfileImport = FeedProfileImport()
         mockFeedProfileImport.profileId = 1
         mockFeedProfileImport.profileName = "Test Profile 1"
-        val mockFeedProfile = FeedProfile(mockFeedProfileImport)
-        val mockFeedScheduleEntry: FeedScheduleEntry = generateMockFeedScheduleEntry()
-        val mockFeedScheduleEntries: List<FeedScheduleEntry> = listOf(mockFeedScheduleEntry)
-        val mockFeedScheduleViewModel = MockFeedScheduleViewModel(
-            feedScheduleUiState = FeedScheduleUiState.Success(feedScheduleEntries = mockFeedScheduleEntries),
-            isRefreshing = false,
-            feedScheduleEntries = mockFeedScheduleEntries
-        )
-        val mockFeedProfiles: List<FeedProfile> = listOf(mockFeedProfile)
-        val mockFeedProfilesViewModel = MockFeedProfilesViewModel(
-            feedProfilesUiState = FeedProfilesUiState.Success(mockFeedProfiles),
-            isRefreshing = false,
-            feedProfiles = mockFeedProfiles
-        )
-        mockMainViewModel.setMyFeedScheduleViewModel(mockFeedScheduleViewModel)
-        mockMainViewModel.setMyFeedProfileViewModel(mockFeedProfilesViewModel)
 
         composeTestRule.setContent {
             FeedProfileScheduleScreen(
-                mainViewModel = generateMockMainViewModel(),
+                mainViewModel = mockMainViewModel,
                 darkTheme = true,
-                profileName = mockFeedProfile.profileName,
-                milliSecondsSinceEpoch = mockFeedScheduleEntry.timestamp.time
+                feedProfileId = mockFeedProfileImport.profileId,
+                feedProfilesViewModelFactory = mockFeedProfilesViewModelFactory,
+                feedScheduleViewModelFactory = mockFeedScheduleViewModelFactory
             )
         }
         composeTestRule.waitForIdle()
@@ -92,28 +67,14 @@ class FeedProfileScheduleScreenTest {
         val mockFeedProfileImport = FeedProfileImport()
         mockFeedProfileImport.profileId = 1
         mockFeedProfileImport.profileName = "Test Profile 1"
-        val mockFeedProfile = FeedProfile(mockFeedProfileImport)
-        val mockFeedScheduleEntry: FeedScheduleEntry = generateMockFeedScheduleEntry()
-        val mockFeedScheduleEntries: List<FeedScheduleEntry> = listOf(mockFeedScheduleEntry)
-        val mockFeedScheduleViewModel = MockFeedScheduleViewModel(
-            feedScheduleUiState = FeedScheduleUiState.Success(feedScheduleEntries = mockFeedScheduleEntries),
-            isRefreshing = false,
-            feedScheduleEntries = mockFeedScheduleEntries
-        )
-        val mockFeedProfiles: List<FeedProfile> = listOf(mockFeedProfile)
-        val mockFeedProfilesViewModel = MockFeedProfilesViewModel(
-            feedProfilesUiState = FeedProfilesUiState.Success(mockFeedProfiles),
-            isRefreshing = false,
-            feedProfiles = mockFeedProfiles
-        )
-        mockMainViewModel.setMyFeedScheduleViewModel(mockFeedScheduleViewModel)
-        mockMainViewModel.setMyFeedProfileViewModel(mockFeedProfilesViewModel)
+
         composeTestRule.setContent {
             FeedProfileScheduleScreen(
-                mainViewModel = generateMockMainViewModel(),
+                mainViewModel = mockMainViewModel,
                 darkTheme = false,
-                profileName = mockFeedProfile.profileName,
-                milliSecondsSinceEpoch = mockFeedScheduleEntry.timestamp.time
+                feedProfileId = mockFeedProfileImport.profileId,
+                feedScheduleViewModelFactory = mockFeedScheduleViewModelFactory,
+                feedProfilesViewModelFactory = mockFeedProfilesViewModelFactory
             )
         }
         composeTestRule.waitForIdle()

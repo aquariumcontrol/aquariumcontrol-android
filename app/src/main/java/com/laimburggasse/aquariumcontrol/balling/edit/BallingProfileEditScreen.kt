@@ -37,7 +37,7 @@ import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.balling.BallingProfile
 import com.laimburggasse.aquariumcontrol.balling.BallingProfileSummaryComposable
-import com.laimburggasse.aquariumcontrol.balling.MockBallingRepository
+import com.laimburggasse.aquariumcontrol.balling.MockBallingProfilesRepository
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
@@ -185,14 +185,14 @@ val mockMainViewModel = MockMainViewModel()
 )
 @Composable
 internal fun BallingProfileEditScreenPreview() {
-    val mockBallingRepositorySuccess = MockBallingRepository(
+    val mockBallingRepositorySuccess = MockBallingProfilesRepository(
         mockData = DataFetchResult.Success(data = listOf(mockBallingProfile))
     )
     BallingProfileEditScreen(
         mainViewModel = mockMainViewModel,
         ballingProfileEditViewModelFactory = BallingProfileEditViewModelFactory(
             ballingProfileId = 1,
-            ballingRepository = mockBallingRepositorySuccess
+            ballingProfilesRepository = mockBallingRepositorySuccess
         ),
     )
 }

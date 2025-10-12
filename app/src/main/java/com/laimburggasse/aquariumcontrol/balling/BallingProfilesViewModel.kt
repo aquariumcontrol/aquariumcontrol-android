@@ -9,26 +9,26 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class BallingViewModel(
-    val ballingRepository: BallingRepository
+class BallingProfilesViewModel(
+    val ballingProfilesRepository: BallingProfilesRepository
 ): ViewModel() {
 
-    val ballingUiState: StateFlow<BallingUiState> = ballingRepository.profilesFlow
+    val ballingProfilesUiState: StateFlow<BallingProfilesUiState> = ballingProfilesRepository.profilesFlow
         .map { result ->
             when (result) {
-                is DataFetchResult.Error -> BallingUiState.Error(errorMessage = result.errorMessage)
+                is DataFetchResult.Error -> BallingProfilesUiState.Error(errorMessage = result.errorMessage)
                 is DataFetchResult.Success -> {
                     if (result.data.isEmpty()) {
-                        BallingUiState.Empty
+                        BallingProfilesUiState.Empty
                     } else {
-                        BallingUiState.Success(ballingProfiles = result.data)
+                        BallingProfilesUiState.Success(ballingProfiles = result.data)
                     }
                 }
             }
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.Eagerly,
-            initialValue = BallingUiState.Loading // The UI starts in a loading state
+            initialValue = BallingProfilesUiState.Loading // The UI starts in a loading state
         )
 
     init {
@@ -37,7 +37,7 @@ class BallingViewModel(
 
     fun loadData() {
         viewModelScope.launch {
-            ballingRepository.fetchBallingProfiles()
+            ballingProfilesRepository.fetchBallingProfiles()
         }
     }
 }
