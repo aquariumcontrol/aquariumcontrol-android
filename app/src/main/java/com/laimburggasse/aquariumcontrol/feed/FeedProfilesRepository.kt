@@ -40,15 +40,23 @@ open class FeedProfilesRepository(private val mainViewModel: MainViewModel) {
         }
     }
 
-    open fun deleteFeedProfile(feedProfile: FeedProfile) {
+    open suspend fun deleteFeedProfile(feedProfile: FeedProfile) {
         when (val result: DataFetchResult<List<FeedProfile>> = _profilesFlow.value) {
             is DataFetchResult.Error -> {
                 // do nothing
             }
             is DataFetchResult.Success -> {
+                withContext(context = Dispatchers.IO) {
+                    webApiPostRequestExecution(
+                        apiUrl = WebApiUrls.FEED_POST_REMOVE_PROFILE,
+                        mainViewModel = mainViewModel,
+                        webApiPostRequest = WebApiPostRequest(),
+                        optionalGetParams = feedProfile.getFeedProfileApiCallParameters()
+                    )
+                }
                 val currentList: MutableList<FeedProfile> = result.data.toMutableList()
                 currentList.remove(element = feedProfile)
-                // @todo: API call
+                _profilesFlow.value = DataFetchResult.Success(data = currentList)
             }
         }
     }

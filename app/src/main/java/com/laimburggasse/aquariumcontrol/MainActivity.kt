@@ -54,7 +54,6 @@ import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryViewModelFa
 import com.laimburggasse.aquariumcontrol.schedule.ScheduleScreen
 import com.laimburggasse.aquariumcontrol.timedata.TimeDataScreen
 import com.laimburggasse.aquariumcontrol.ventilation.VentilationScreen
-import kotlin.getValue
 
 @Suppress("UNCHECKED_CAST")
 class MainActivity : ComponentActivity() {

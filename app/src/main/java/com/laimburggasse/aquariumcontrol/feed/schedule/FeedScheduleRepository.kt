@@ -43,31 +43,19 @@ open class FeedScheduleRepository(private val mainViewModel: MainViewModel) {
     }
     
     open suspend fun deleteFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry) {
-        withContext(context = Dispatchers.IO) {
-            webApiPostRequestExecution(
-                apiUrl = WebApiUrls.FEED_POST_SCHEDULE_REMOVE_ENTRY,
-                mainViewModel = mainViewModel,
-                webApiPostRequest = WebApiPostRequest(),
-                optionalGetParams = feedScheduleEntry.getApiParameters()
-            )
-            val currentResult = _scheduleFlow.value
-            if (currentResult is DataFetchResult.Success) {
-                val updatedList = currentResult.data.toMutableList()
-                updatedList.remove(feedScheduleEntry)
-                _scheduleFlow.value = DataFetchResult.Success(updatedList)
+        val currentResult: DataFetchResult<List<FeedScheduleEntry>> = _scheduleFlow.value
+        if (currentResult is DataFetchResult.Success) {
+            withContext(context = Dispatchers.IO) {
+                webApiPostRequestExecution(
+                    apiUrl = WebApiUrls.FEED_POST_SCHEDULE_REMOVE_ENTRY,
+                    mainViewModel = mainViewModel,
+                    webApiPostRequest = WebApiPostRequest(),
+                    optionalGetParams = feedScheduleEntry.getApiParameters()
+                )
             }
-        }
-    }
-
-    fun getFeedScheduleEntry(profileName: String, milliSecondsSinceEpoch: Long): FeedScheduleEntry? {
-        val currentResult = _scheduleFlow.value
-        return if (currentResult is DataFetchResult.Success) {
-            currentResult.data.find {
-                it.profileName == profileName &&
-                        it.timestamp.time == milliSecondsSinceEpoch
-            }
-        } else {
-            null
+            val updatedList: MutableList<FeedScheduleEntry> = currentResult.data.toMutableList()
+            updatedList.remove(element = feedScheduleEntry)
+            _scheduleFlow.value = DataFetchResult.Success(data = updatedList)
         }
     }
 
@@ -78,7 +66,15 @@ open class FeedScheduleRepository(private val mainViewModel: MainViewModel) {
     ) {
         val currentResult: DataFetchResult<List<FeedScheduleEntry>> = _scheduleFlow.value
         if (currentResult is DataFetchResult.Success) {
-            val apiUrl: String = WebApiUrls.FEED_POST_PROFILE_UPDATE_SCHEDULE
+            val timestamp = Timestamp(selectedCalendar.timeInMillis)
+            val newFeedScheduleEntry = FeedScheduleEntry(
+                profileName = feedProfile.profileName,
+                repeatDaily = repeatDaily,
+                timestamp = timestamp
+            )
+            var currentData: List<FeedScheduleEntry> = currentResult.data
+            currentData = currentData + newFeedScheduleEntry
+            _scheduleFlow.value = DataFetchResult.Success(data = currentData)
 
             val optionalGetParams: Map<String, String>? =
                 feedProfile.getFeedProfileSchedulingApiCallParameters(
@@ -87,12 +83,14 @@ open class FeedScheduleRepository(private val mainViewModel: MainViewModel) {
                 )
 
             if (optionalGetParams != null) {
-                webApiPostRequestExecution(
-                    mainViewModel = mainViewModel,
-                    webApiPostRequest = WebApiPostRequest(),
-                    optionalGetParams = optionalGetParams,
-                    apiUrl = apiUrl
-                )
+                withContext(context = Dispatchers.IO) {
+                    webApiPostRequestExecution(
+                        mainViewModel = mainViewModel,
+                        webApiPostRequest = WebApiPostRequest(),
+                        optionalGetParams = optionalGetParams,
+                        apiUrl = WebApiUrls.FEED_POST_PROFILE_UPDATE_SCHEDULE
+                    )
+                }
             }
         }
     }

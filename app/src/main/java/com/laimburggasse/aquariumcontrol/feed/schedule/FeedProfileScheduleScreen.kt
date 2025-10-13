@@ -100,7 +100,7 @@ fun FeedProfileScheduleScreen(
             feedScheduleEntry = FeedScheduleEntry(
                 timestamp,
                 profileName = feedProfile.profileName,
-                isDaily = repeatDaily
+                repeatDaily = repeatDaily
             )
         )
     }

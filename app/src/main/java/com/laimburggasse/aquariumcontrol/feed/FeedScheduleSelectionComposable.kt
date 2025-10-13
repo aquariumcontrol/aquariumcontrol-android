@@ -74,7 +74,7 @@ fun FeedScheduleSelectionComposable(
                                     navHostController?.navigate(
                                         route = ViewNavigationRoutes.feedSchedule(
                                             feedProfileId = feedProfileId,
-                                            isNewScheduleEntry = true,
+                                            isNewScheduleEntry = false,
                                             millisSinceEpoch = feedScheduleEntry.timestamp.time
                                         )
                                     )

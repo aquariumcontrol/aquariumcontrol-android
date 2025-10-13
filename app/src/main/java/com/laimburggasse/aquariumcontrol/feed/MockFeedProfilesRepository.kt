@@ -17,7 +17,7 @@ class MockFeedProfilesRepository(
         // do nothing
     }
 
-    override fun deleteFeedProfile(feedProfile: FeedProfile) {
+    override suspend fun deleteFeedProfile(feedProfile: FeedProfile) {
         // do nothing
     }
 }

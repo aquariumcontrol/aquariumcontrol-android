@@ -65,7 +65,7 @@ fun FeedScheduleEntryComposable(
             )
             Text(
                 text = stringResource(R.string.repeat_daily_label) +
-                        if (feedScheduleEntry.isDaily)
+                        if (feedScheduleEntry.repeatDaily)
                             stringResource(R.string.yes)
                         else stringResource(R.string.no),
                 fontSize = 12.sp
