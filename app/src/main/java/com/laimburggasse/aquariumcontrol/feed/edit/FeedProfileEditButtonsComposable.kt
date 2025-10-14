@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol.feed.edit
 
+import android.content.Context
 import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
@@ -31,12 +32,10 @@ fun FeedProfileEditButtonsComposable(
     // This composable displays the buttons for updating the feed profile.
     // The arrangement of the buttons follows the device orientation.
 
-    val context = LocalContext.current // context for web API request and Toasts
+    val context: Context = LocalContext.current // context for Toasts
 
     Button(
-        modifier = modifier?.then(Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp)) ?: Modifier,
+        modifier = modifier?.then(other = Modifier.fillMaxWidth().padding(horizontal = 8.dp)) ?: Modifier,
         onClick = {
             if (mainViewModel != null) {
                 feedProfileEditViewModel?.updateFeedProfile(mainViewModel)

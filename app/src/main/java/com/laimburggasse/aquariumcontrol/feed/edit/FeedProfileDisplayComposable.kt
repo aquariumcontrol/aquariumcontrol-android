@@ -9,8 +9,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -20,29 +20,28 @@ import com.laimburggasse.aquariumcontrol.feed.FeedProfileImport
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.LineData
 import com.laimburggasse.aquariumcontrol.feed.mockFeedProfilesRepository
 
-const val chartValAllowedDelta = 0.001f
-
 @Composable
-fun FeedProfileDisplayComposable(feedProfileEditViewModel: FeedProfileEditViewModel) {
+fun FeedProfileDisplayComposable(
+    lineDataFeedProfileFeeder: LineData?,
+    lineDataFeedProfileSkimmer: LineData?,
+    lineDataFeedProfileMainPump1: LineData?,
+    lineDataFeedProfileMainPump2: LineData?,
+    lineDataFeedProfileAuxPump1: LineData?,
+    lineDataFeedProfileAuxPump2: LineData?,
+    totalDuration: Float
+) {
     // This composable displays a set of charts based on the provided feed profile data.
-    
-    val isDarkMode = isSystemInDarkTheme()
 
-    val chartDataFeeder by feedProfileEditViewModel.lineDataFeedProfileFeeder.observeAsState()
-    val chartDataSkimmer by feedProfileEditViewModel.lineDataFeedProfileSkimmer.observeAsState()
-    val chartDataMainPump1 by feedProfileEditViewModel.lineDataFeedProfileMainPump1.observeAsState()
-    val chartDataMainPump2 by feedProfileEditViewModel.lineDataFeedProfileMainPump2.observeAsState()
-    val chartDataAuxPump1 by feedProfileEditViewModel.lineDataFeedProfileAuxPump1.observeAsState()
-    val chartDataAuxPump2 by feedProfileEditViewModel.lineDataFeedProfileAuxPump2.observeAsState()
-    val totalDuration by feedProfileEditViewModel.totalDuration.observeAsState()
+    val isDarkMode = isSystemInDarkTheme()
 
     AndroidView(modifier = Modifier
         .fillMaxWidth()
         .height(50.dp), factory = { context ->
         LineChart(context).apply {
-            data = chartDataFeeder
+            data = lineDataFeedProfileFeeder
             description.isEnabled = false
             legend.isEnabled = false
             axisRight.isEnabled = false
@@ -52,15 +51,14 @@ fun FeedProfileDisplayComposable(feedProfileEditViewModel: FeedProfileEditViewMo
             axisLeft.setDrawTopYLabelEntry(true)
             setScaleEnabled(false)
             xAxis.isEnabled = false
-            val valueFormatter =
-                totalDuration?.let { FeedProfileAxisValueFormatter(it) }
+            val valueFormatter = FeedProfileAxisValueFormatter(totalDuration)
             axisLeft.valueFormatter = valueFormatter
             val axisLabelColor = if (isDarkMode) Color.WHITE else Color.BLACK
             axisLeft.textColor = axisLabelColor
         }
     }, update = { lineChart ->
         // Update the chart data or settings as needed
-        lineChart.data = chartDataFeeder
+        lineChart.data = lineDataFeedProfileFeeder
         lineChart.notifyDataSetChanged()
         lineChart.invalidate()
     })
@@ -69,7 +67,7 @@ fun FeedProfileDisplayComposable(feedProfileEditViewModel: FeedProfileEditViewMo
         .fillMaxWidth()
         .height(50.dp), factory = { context ->
         LineChart(context).apply {
-            data = chartDataSkimmer
+            data = lineDataFeedProfileSkimmer
             description.isEnabled = false
             legend.isEnabled = false
             axisRight.isEnabled = false
@@ -79,15 +77,14 @@ fun FeedProfileDisplayComposable(feedProfileEditViewModel: FeedProfileEditViewMo
             axisLeft.setDrawTopYLabelEntry(true)
             setScaleEnabled(false)
             xAxis.isEnabled = false
-            val valueFormatter =
-                totalDuration?.let { FeedProfileAxisValueFormatter(it) }
+            val valueFormatter = FeedProfileAxisValueFormatter(totalDuration)
             axisLeft.valueFormatter = valueFormatter
             // Set axis label colors based on dark mode
             val axisLabelColor = if (isDarkMode) Color.WHITE else Color.BLACK
             axisLeft.textColor = axisLabelColor
         }
     }, update = { lineChart ->
-        lineChart.data = chartDataSkimmer
+        lineChart.data = lineDataFeedProfileSkimmer
         lineChart.notifyDataSetChanged()
         lineChart.invalidate()
     })
@@ -96,7 +93,7 @@ fun FeedProfileDisplayComposable(feedProfileEditViewModel: FeedProfileEditViewMo
         .fillMaxWidth()
         .height(50.dp), factory = { context ->
         LineChart(context).apply {
-            data = chartDataMainPump1
+            data = lineDataFeedProfileMainPump1
             description.isEnabled = false
             legend.isEnabled = false
             axisRight.isEnabled = false
@@ -106,14 +103,13 @@ fun FeedProfileDisplayComposable(feedProfileEditViewModel: FeedProfileEditViewMo
             axisLeft.setDrawTopYLabelEntry(true)
             setScaleEnabled(false)
             xAxis.isEnabled = false
-            val valueFormatter =
-                totalDuration?.let { FeedProfileAxisValueFormatter(it) }
+            val valueFormatter = FeedProfileAxisValueFormatter(totalDuration)
             axisLeft.valueFormatter = valueFormatter
             val axisLabelColor = if (isDarkMode) Color.WHITE else Color.BLACK
             axisLeft.textColor = axisLabelColor
         }
     }, update = { lineChart ->
-        lineChart.data = chartDataMainPump1
+        lineChart.data = lineDataFeedProfileMainPump1
         lineChart.notifyDataSetChanged()
         lineChart.invalidate()
     })
@@ -122,7 +118,7 @@ fun FeedProfileDisplayComposable(feedProfileEditViewModel: FeedProfileEditViewMo
         .fillMaxWidth()
         .height(50.dp), factory = { context ->
         LineChart(context).apply {
-            data = chartDataMainPump2
+            data = lineDataFeedProfileMainPump2
             description.isEnabled = false
             legend.isEnabled = false
             axisRight.isEnabled = false
@@ -132,14 +128,13 @@ fun FeedProfileDisplayComposable(feedProfileEditViewModel: FeedProfileEditViewMo
             axisLeft.setDrawTopYLabelEntry(true)
             setScaleEnabled(false)
             xAxis.isEnabled = false
-            val valueFormatter =
-                totalDuration?.let { FeedProfileAxisValueFormatter(it) }
+            val valueFormatter = FeedProfileAxisValueFormatter(totalDuration)
             axisLeft.valueFormatter = valueFormatter
             val axisLabelColor = if (isDarkMode) Color.WHITE else Color.BLACK
             axisLeft.textColor = axisLabelColor
         }
     }, update = { lineChart ->
-        lineChart.data = chartDataMainPump2
+        lineChart.data = lineDataFeedProfileMainPump2
         lineChart.notifyDataSetChanged()
         lineChart.invalidate()
     })
@@ -148,7 +143,7 @@ fun FeedProfileDisplayComposable(feedProfileEditViewModel: FeedProfileEditViewMo
         .fillMaxWidth()
         .height(50.dp), factory = { context ->
         LineChart(context).apply {
-            data = chartDataAuxPump1
+            data = lineDataFeedProfileAuxPump1
             description.isEnabled = false
             legend.isEnabled = false
             axisRight.isEnabled = false
@@ -158,14 +153,13 @@ fun FeedProfileDisplayComposable(feedProfileEditViewModel: FeedProfileEditViewMo
             axisLeft.setDrawTopYLabelEntry(true)
             setScaleEnabled(false)
             xAxis.isEnabled = false
-            val valueFormatter =
-                totalDuration?.let { FeedProfileAxisValueFormatter(it) }
+            val valueFormatter = FeedProfileAxisValueFormatter(totalDuration)
             axisLeft.valueFormatter = valueFormatter
             val axisLabelColor = if (isDarkMode) Color.WHITE else Color.BLACK
             axisLeft.textColor = axisLabelColor
         }
     }, update = { lineChart ->
-        lineChart.data = chartDataAuxPump1
+        lineChart.data = lineDataFeedProfileAuxPump1
         lineChart.notifyDataSetChanged()
         lineChart.invalidate()
     })
@@ -174,7 +168,7 @@ fun FeedProfileDisplayComposable(feedProfileEditViewModel: FeedProfileEditViewMo
         .fillMaxWidth()
         .height(50.dp), factory = { context ->
         LineChart(context).apply {
-            data = chartDataAuxPump2
+            data = lineDataFeedProfileAuxPump2
             description.isEnabled = false
             legend.isEnabled = false
             axisRight.isEnabled = false
@@ -184,17 +178,16 @@ fun FeedProfileDisplayComposable(feedProfileEditViewModel: FeedProfileEditViewMo
             axisLeft.setDrawTopYLabelEntry(true)
             setScaleEnabled(false)
             xAxis.setDrawGridLines(false)
-            val valueFormatter =
-                totalDuration?.let { FeedProfileAxisValueFormatter(it) }
+            val valueFormatter = FeedProfileAxisValueFormatter(totalDuration)
             axisLeft.valueFormatter = valueFormatter
             xAxis.valueFormatter = valueFormatter
-            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM)
+            xAxis.position = XAxis.XAxisPosition.BOTTOM
             val axisLabelColor = if (isDarkMode) Color.WHITE else Color.BLACK
             xAxis.textColor = axisLabelColor
             axisLeft.textColor = axisLabelColor
         }
     }, update = { lineChart ->
-        lineChart.data = chartDataAuxPump2
+        lineChart.data = lineDataFeedProfileAuxPump2
         lineChart.notifyDataSetChanged()
         lineChart.invalidate()
     })
@@ -338,13 +331,28 @@ internal fun FeedProfileDisplayComposablePreview() {
     val mockFeedProfileEditViewModel: FeedProfileEditViewModel =
         feedProfileEditViewModelFactory.create(FeedProfileEditViewModel::class.java)
 
+    val lineDataFeedProfileFeeder by mockFeedProfileEditViewModel.lineDataFeedProfileFeeder.collectAsState()
+    val lineDataFeedProfileSkimmer by mockFeedProfileEditViewModel.lineDataFeedProfileSkimmer.collectAsState()
+    val lineDataFeedProfileMainPump1 by mockFeedProfileEditViewModel.lineDataFeedProfileMainPump1.collectAsState()
+    val lineDataFeedProfileMainPump2 by mockFeedProfileEditViewModel.lineDataFeedProfileMainPump2.collectAsState()
+    val lineDataFeedProfileAuxPump1 by mockFeedProfileEditViewModel.lineDataFeedProfileAuxPump1.collectAsState()
+    val lineDataFeedProfileAuxPump2 by mockFeedProfileEditViewModel.lineDataFeedProfileAuxPump2.collectAsState()
+    val totalDuration by mockFeedProfileEditViewModel.totalDuration.collectAsState()
+
+
     AquariumControllerTheme {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
             Column {
                 FeedProfileDisplayComposable(
-                    feedProfileEditViewModel = mockFeedProfileEditViewModel
+                    lineDataFeedProfileFeeder,
+                    lineDataFeedProfileSkimmer,
+                    lineDataFeedProfileMainPump1,
+                    lineDataFeedProfileMainPump2,
+                    lineDataFeedProfileAuxPump1,
+                    lineDataFeedProfileAuxPump2,
+                    totalDuration
                 )
             }
         }

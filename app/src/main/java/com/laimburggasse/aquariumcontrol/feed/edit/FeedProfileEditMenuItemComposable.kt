@@ -13,85 +13,52 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.laimburggasse.aquariumcontrol.feed.mockFeedProfilesRepository
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun FeedProfileEditMenuItemComposable(
     feedProfileEditMenuItem: FeedProfileEditMenuItem,
-    feedProfileEditViewModel: FeedProfileEditViewModel? = null
+    feedProfileEditViewModel: FeedProfileEditViewModel
 ) {
+    val isExpanded: Boolean = feedProfileEditViewModel.expandedItemIds.collectAsState().value.
+            contains(feedProfileEditMenuItem.id)
+
     // This composable displays one item of the feed profile edit menu:
     // - text describing the actuator
     // - switch allowing to enable/disable the actuator in the phase of the feed profile
-
     Row(
         modifier = Modifier
             .clickable {
                 if (feedProfileEditMenuItem.children.isNotEmpty()) {
-                    feedProfileEditMenuItem.updateIsExpanded(newValue = !feedProfileEditMenuItem.isExpanded.value)
+                    feedProfileEditViewModel.onExpanded(itemId = feedProfileEditMenuItem.id)
                 }
             }
             .padding(start = (feedProfileEditMenuItem.level * 16).dp, top = 8.dp, bottom = 8.dp),
     ) {
         if (feedProfileEditMenuItem.children.isNotEmpty()) {
-            Text(feedProfileEditMenuItem.text, Modifier.padding(top = 8.dp))
-            Spacer(Modifier.weight(1f))
+            Text(text = feedProfileEditMenuItem.text, Modifier.padding(top = 8.dp))
+            Spacer(Modifier.weight(weight = 1f))
         }
         if (feedProfileEditMenuItem.isToggleButton) {
-            Text(feedProfileEditMenuItem.text, Modifier.padding(top = 8.dp))
-            Spacer(Modifier.weight(1f))
-            if (feedProfileEditMenuItem.children.isNotEmpty() && !feedProfileEditMenuItem.isExpanded.value) {
+            Text(text = feedProfileEditMenuItem.text, Modifier.padding(top = 8.dp))
+            Spacer(Modifier.weight(weight = 1f))
+            if (feedProfileEditMenuItem.children.isNotEmpty() && !isExpanded) {
                 // Icon to indicate expandability
                 Icon(imageVector = Icons.Default.MoreVert, contentDescription = "More options")
             }
             Switch(
-                checked = feedProfileEditMenuItem.isChecked.value,
+                checked = feedProfileEditMenuItem.isChecked,
                 onCheckedChange = {
-                    feedProfileEditMenuItem.updateIsChecked(it)
-                    if (feedProfileEditViewModel != null) {
-                        when (feedProfileEditMenuItem.toggleButtonType) {
-                            FeedProfileEditToggleButtonType.Skimmer -> {
-                                feedProfileEditViewModel.updateSkimmer(
-                                    feedProfileEditMenuItem.id,
-                                    it
-                                )
-                            }
-
-                            FeedProfileEditToggleButtonType.MainPump1 -> {
-                                feedProfileEditViewModel.updateMainPump1(
-                                    feedProfileEditMenuItem.id,
-                                    it
-                                )
-                            }
-
-                            FeedProfileEditToggleButtonType.MainPump2 -> {
-                                feedProfileEditViewModel.updateMainPump2(
-                                    feedProfileEditMenuItem.id,
-                                    it
-                                )
-                            }
-
-                            FeedProfileEditToggleButtonType.AuxPump1 -> {
-                                feedProfileEditViewModel.updateAuxPump1(
-                                    feedProfileEditMenuItem.id,
-                                    it
-                                )
-                            }
-
-                            FeedProfileEditToggleButtonType.AuxPump2 -> {
-                                feedProfileEditViewModel.updateAuxPump2(
-                                    feedProfileEditMenuItem.id,
-                                    it
-                                )
-                            }
-
-                            null -> { /* do nothing */
-                            }
-                        }
-                    }
+                    feedProfileEditViewModel.onToggleStateChange(
+                        phaseId = feedProfileEditMenuItem.id,
+                        toggleButtonType = feedProfileEditMenuItem.toggleButtonType!!,
+                        isChecked = it
+                    )
                 })
         }
         if (feedProfileEditMenuItem.isNumericInput) {
@@ -101,7 +68,7 @@ fun FeedProfileEditMenuItemComposable(
             )
         }
     }
-    if (feedProfileEditMenuItem.isExpanded.value) {
+    if (isExpanded) {
         FeedProfileEditMenuComposable(
             feedProfileEditMenuItems = feedProfileEditMenuItem.children,
             feedProfileEditViewModel = feedProfileEditViewModel
@@ -120,6 +87,19 @@ internal fun FeedProfileEditMenuItemComposablePreview() {
         text = "Preview",
         isToggleButton = true,
         children = emptyList(),
+        phaseType = FeedProfileEditPhaseType.FEED,
+        toggleButtonType = FeedProfileEditToggleButtonType.Skimmer,
+        isNumericInput = false,
+        isChecked = true,
+        duration = 0.0,
+    )
+
+    val mockInitialExpandedItemIds: Set<Int> = emptySet()
+
+    val mockFeedProfileEditViewModelFactory = FeedProfileEditViewModelFactory(
+        feedProfile = mockFeedProfile,
+        feedProfilesRepository = mockFeedProfilesRepository,
+        initialExpandedItemIds = mockInitialExpandedItemIds
     )
 
     AquariumControllerTheme {
@@ -127,7 +107,10 @@ internal fun FeedProfileEditMenuItemComposablePreview() {
             color = MaterialTheme.colorScheme.background
         ) {
             FeedProfileEditMenuItemComposable(
-                feedProfileEditMenuItem = mockFeedProfileEditMenuItem
+                feedProfileEditMenuItem = mockFeedProfileEditMenuItem,
+                feedProfileEditViewModel = mockFeedProfileEditViewModelFactory.create(
+                    FeedProfileEditViewModel::class.java
+                )
             )
         }
     }

@@ -10,24 +10,23 @@ suspend fun webApiPostRequestExecution(
     webApiPostRequest: WebApiPostRequest,
     optionalGetParams: Map<String, String> = emptyMap()
 ): Boolean {
-    val user = mainViewModel.getControllerUser()
-    val password = mainViewModel.getControllerPassword()
+    val user: String? = mainViewModel.getControllerUser()
+    val password: String? = mainViewModel.getControllerPassword()
 
     if (user == null || password == null) {
         return false
     }
-    var url =
-        "http://" + mainViewModel.getControllerAddress() + apiUrl + "?"
+    var url: String = "http://" + mainViewModel.getControllerAddress() + apiUrl + "?"
 
-    for ((index, entry) in optionalGetParams.entries.withIndex()) {
-        val (key, value) = entry
+    for ((index: Int, entry: Map.Entry<String, String>) in optionalGetParams.entries.withIndex()) {
+        val (key: String, value: String) = entry
         url += "$key=$value"
         if (index != optionalGetParams.size - 1) {
             url += "&"
         }
     }
 
-    return withContext(Dispatchers.IO) {
+    return withContext(context = Dispatchers.IO) {
         webApiPostRequest.postData(url, username = user, password).isSuccess
     }
     // @todo: handle the error case

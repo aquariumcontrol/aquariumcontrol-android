@@ -10,6 +10,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -17,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.github.mikephil.charting.data.LineData
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
@@ -27,6 +31,168 @@ import com.laimburggasse.aquariumcontrol.feed.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
+
+fun createFeedProfileEditMenuItems(currentFeedProfile: FeedProfile): List<FeedProfileEditMenuItem> {
+    return List(10) { index ->
+        FeedProfileEditMenuItem(
+            id = index,
+            level = 1,
+            text = "Phase ${index + 1}",
+            isToggleButton = false,
+            isNumericInput = false,
+            isChecked = false,
+            duration = 0.0,
+            children = mutableListOf(
+                FeedProfileEditMenuItem(
+                    id = 0,
+                    level = 2,
+                    text = "Pause",
+                    isToggleButton = false,
+                    isNumericInput = false,
+                    isChecked = false,
+                    duration = 0.0,
+                    phaseType = FeedProfileEditPhaseType.PAUSE,
+                    children = mutableListOf(
+                        FeedProfileEditMenuItem(
+                            id = 0,
+                            level = 3,
+                            text = "Duration",
+                            isToggleButton = false,
+                            phaseType = FeedProfileEditPhaseType.PAUSE,
+                            isNumericInput = true,
+                            isChecked = false,
+                            duration = currentFeedProfile.feedProfilePhases[index * 2].duration,
+                        ),
+                        FeedProfileEditMenuItem(
+                            id = (index * 2) * 10 + 1,
+                            level = 3,
+                            text = "Skimmer",
+                            isToggleButton = true,
+                            phaseType = FeedProfileEditPhaseType.PAUSE,
+                            toggleButtonType = FeedProfileEditToggleButtonType.Skimmer,
+                            isNumericInput = false,
+                            isChecked = currentFeedProfile.feedProfilePhases[index * 2].skimmer,
+                            duration = 0.0,
+                        ),
+                        FeedProfileEditMenuItem(
+                            id = (index * 2) * 10 + 2,
+                            level = 3,
+                            text = "Main Pump 1",
+                            phaseType = FeedProfileEditPhaseType.PAUSE,
+                            toggleButtonType = FeedProfileEditToggleButtonType.MainPump1,
+                            isNumericInput = false,
+                            isChecked = currentFeedProfile.feedProfilePhases[index * 2].mainPump1,
+                            duration = 0.0,
+                        ),
+                        FeedProfileEditMenuItem(
+                            id = (index * 2) * 10 + 3,
+                            level = 3,
+                            text = "Main Pump 2",
+                            phaseType = FeedProfileEditPhaseType.PAUSE,
+                            toggleButtonType = FeedProfileEditToggleButtonType.MainPump2,
+                            isNumericInput = false,
+                            isChecked = currentFeedProfile.feedProfilePhases[index * 2].mainPump2,
+                            duration = 0.0,
+                        ),
+                        FeedProfileEditMenuItem(
+                            id = (index * 2) * 10 + 4,
+                            level = 3,
+                            text = "Aux. Pump 1",
+                            phaseType = FeedProfileEditPhaseType.PAUSE,
+                            toggleButtonType = FeedProfileEditToggleButtonType.AuxPump1,
+                            isNumericInput = false,
+                            isChecked = currentFeedProfile.feedProfilePhases[index * 2].auxPump1,
+                            duration = 0.0,
+                        ),
+                        FeedProfileEditMenuItem(
+                            id = (index * 2) * 10 + 5,
+                            level = 3,
+                            text = "Aux. Pump 2",
+                            phaseType = FeedProfileEditPhaseType.PAUSE,
+                            toggleButtonType = FeedProfileEditToggleButtonType.AuxPump2,
+                            isNumericInput = false,
+                            isChecked = currentFeedProfile.feedProfilePhases[index * 2].auxPump2,
+                            duration = 0.0,
+                        ),
+                    )
+                ),
+                FeedProfileEditMenuItem(
+                    id = 1,
+                    level = 2,
+                    text = "Feed",
+                    isToggleButton = false,
+                    isNumericInput = false,
+                    isChecked = false,
+                    duration = 0.0,
+                    phaseType = FeedProfileEditPhaseType.FEED,
+                    children = mutableListOf(
+                        FeedProfileEditMenuItem(
+                            id = (index * 2 + 1) * 10 + 0,
+                            level = 3,
+                            text = "Duration",
+                            isToggleButton = false,
+                            phaseType = FeedProfileEditPhaseType.FEED,
+                            isNumericInput = true,
+                            isChecked = false,
+                            duration = currentFeedProfile.feedProfilePhases[index * 2 + 1].duration,
+                        ),
+                        FeedProfileEditMenuItem(
+                            id = (index * 2 + 1) * 10 + 1,
+                            level = 3,
+                            text = "Skimmer",
+                            isToggleButton = true,
+                            phaseType = FeedProfileEditPhaseType.FEED,
+                            toggleButtonType = FeedProfileEditToggleButtonType.Skimmer,
+                            isNumericInput = false,
+                            isChecked = currentFeedProfile.feedProfilePhases[index * 2 + 1].skimmer,
+                            duration = 0.0,
+                        ),
+                        FeedProfileEditMenuItem(
+                            id = (index * 2 + 1) * 10 + 2,
+                            level = 3,
+                            text = "Main Pump 1",
+                            phaseType = FeedProfileEditPhaseType.FEED,
+                            toggleButtonType = FeedProfileEditToggleButtonType.MainPump1,
+                            isNumericInput = false,
+                            isChecked = currentFeedProfile.feedProfilePhases[index * 2 + 1].mainPump1,
+                            duration = 0.0,
+                        ),
+                        FeedProfileEditMenuItem(
+                            id = (index * 2 + 1) * 10 + 3,
+                            level = 3,
+                            text = "Main Pump 2",
+                            phaseType = FeedProfileEditPhaseType.FEED,
+                            toggleButtonType = FeedProfileEditToggleButtonType.MainPump2,
+                            isNumericInput = false,
+                            isChecked = currentFeedProfile.feedProfilePhases[index * 2 + 1].mainPump2,
+                            duration = 0.0,
+                        ),
+                        FeedProfileEditMenuItem(
+                            id = (index * 2 + 1) * 10 + 4,
+                            level = 3,
+                            text = "Aux. Pump 1",
+                            phaseType = FeedProfileEditPhaseType.FEED,
+                            toggleButtonType = FeedProfileEditToggleButtonType.AuxPump1,
+                            isNumericInput = false,
+                            isChecked = currentFeedProfile.feedProfilePhases[index * 2 + 1].auxPump1,
+                            duration = 0.0,
+                        ),
+                        FeedProfileEditMenuItem(
+                            id = (index * 2 + 1) * 10 + 5,
+                            level = 3,
+                            text = "Aux. Pump 2",
+                            phaseType = FeedProfileEditPhaseType.FEED,
+                            toggleButtonType = FeedProfileEditToggleButtonType.AuxPump2,
+                            isNumericInput = false,
+                            isChecked = currentFeedProfile.feedProfilePhases[index * 2 + 1].auxPump2,
+                            duration = 0.0,
+                        )
+                    )
+                )
+            )
+        )
+    }
+}
 
 @Composable
 fun FeedProfileEditScreen(
@@ -46,6 +212,12 @@ fun FeedProfileEditScreen(
         factory = feedProfileEditViewModelFactory
     )
 
+    val profile: FeedProfile by feedProfileEditViewModel.feedProfileUiState.collectAsState()
+
+    val menuItems: List<FeedProfileEditMenuItem> = remember(key1 = profile) {
+        createFeedProfileEditMenuItems(currentFeedProfile = profile)
+    }
+
     val configuration: Configuration = LocalConfiguration.current
 
     AquariumControllerTheme(darkTheme) {
@@ -63,7 +235,30 @@ fun FeedProfileEditScreen(
                         text = stringResource(id = R.string.feed_profile_editing)
                     )
 
-                    FeedProfileDisplayComposable(feedProfileEditViewModel)
+                    val lineDataFeedProfileFeeder: LineData? by
+                        feedProfileEditViewModel.lineDataFeedProfileFeeder.collectAsState()
+                    val lineDataFeedProfileSkimmer: LineData? by
+                        feedProfileEditViewModel.lineDataFeedProfileSkimmer.collectAsState()
+                    val lineDataFeedProfileMainPump1: LineData? by
+                        feedProfileEditViewModel.lineDataFeedProfileMainPump1.collectAsState()
+                    val lineDataFeedProfileMainPump2: LineData? by
+                        feedProfileEditViewModel.lineDataFeedProfileMainPump2.collectAsState()
+                    val lineDataFeedProfileAuxPump1: LineData? by
+                        feedProfileEditViewModel.lineDataFeedProfileAuxPump1.collectAsState()
+                    val lineDataFeedProfileAuxPump2: LineData? by
+                        feedProfileEditViewModel.lineDataFeedProfileAuxPump2.collectAsState()
+                    val totalDuration: Float by
+                        feedProfileEditViewModel.totalDuration.collectAsState()
+
+                    FeedProfileDisplayComposable(
+                        lineDataFeedProfileFeeder,
+                        lineDataFeedProfileSkimmer,
+                        lineDataFeedProfileMainPump1,
+                        lineDataFeedProfileMainPump2,
+                        lineDataFeedProfileAuxPump1,
+                        lineDataFeedProfileAuxPump2,
+                        totalDuration
+                    )
 
                     FeedProfileDisplayLegendComposable()
 
@@ -86,7 +281,7 @@ fun FeedProfileEditScreen(
                     }
 
                     FeedProfileEditMenuComposable(
-                        feedProfileEditMenuItems = feedProfileEditViewModel.phaseMenuItems,
+                        feedProfileEditMenuItems = menuItems,
                         feedProfileEditViewModel = feedProfileEditViewModel
                     )
                 }
@@ -100,20 +295,7 @@ fun FeedProfileEditScreen(
     }
 }
 
-@Preview(showBackground = true, heightDp = 1100, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, heightDp = 1100, uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    device = "spec:width=600dp,height=1100dp,orientation=landscape"
-)
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    device = "spec:width=600dp,height=1100dp,orientation=landscape"
-)
-@Composable
-internal fun FeedProfileEditScreenPreview() {
+fun createMockFeedProfile(): FeedProfile {
     val mockFeedProfileImport = FeedProfileImport()
     mockFeedProfileImport.profileId = 1
     mockFeedProfileImport.profileName = "Test Profile"
@@ -240,13 +422,30 @@ internal fun FeedProfileEditScreenPreview() {
     mockFeedProfileImport.feed09auxPump2 = 0
     mockFeedProfileImport.feed10auxPump2 = 0
 
-    val mockFeedProfile = FeedProfile(mockFeedProfileImport)
+    return FeedProfile(mockFeedProfileImport)
+}
 
-    val mockFeedProfileEditViewModelFactory = FeedProfileEditViewModelFactory(
-        feedProfile = mockFeedProfile,
-        feedProfilesRepository = mockFeedProfilesRepository
-    )
+val mockFeedProfile = createMockFeedProfile()
 
+val mockFeedProfileEditViewModelFactory = FeedProfileEditViewModelFactory(
+    feedProfile = mockFeedProfile,
+    feedProfilesRepository = mockFeedProfilesRepository
+)
+
+@Preview(showBackground = true, heightDp = 1100, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, heightDp = 1100, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    device = "spec:width=600dp,height=1100dp,orientation=landscape"
+)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=600dp,height=1100dp,orientation=landscape"
+)
+@Composable
+internal fun FeedProfileEditScreenPreview() {
     FeedProfileEditScreen(
         feedProfileEditViewModelFactory = mockFeedProfileEditViewModelFactory,
         mainViewModel = mockMainViewModel

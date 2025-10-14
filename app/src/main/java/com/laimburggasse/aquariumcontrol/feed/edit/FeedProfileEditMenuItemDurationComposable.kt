@@ -10,55 +10,49 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.laimburggasse.aquariumcontrol.lib_composables.NumericDoubleOutlinedTextFieldComposable
 import com.laimburggasse.aquariumcontrol.R
+import com.laimburggasse.aquariumcontrol.lib_composables.NumericDoubleOutlinedTextFieldComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun FeedProfileEditMenuItemDurationComposable(
     feedProfileEditMenuItem: FeedProfileEditMenuItem,
-    feedProfileEditViewModel: FeedProfileEditViewModel? = null
+    feedProfileEditViewModel: FeedProfileEditViewModel
 ) {
     // This composable displays
     // - text describing the phase
     // - text field for editing the duration of a phase
     // - slider for editing the duration of a phase
 
-    val durationInputValue by feedProfileEditMenuItem.inputValue.observeAsState(
-        initial = feedProfileEditViewModel?.getPhaseDuration(feedProfileEditMenuItem.id) ?: 0.0
-    )
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Row {
-            Text(feedProfileEditMenuItem.text, Modifier.padding(top = 8.dp))
-            Spacer(Modifier.weight(1f))
+            Text(text = feedProfileEditMenuItem.text, Modifier.padding(top = 8.dp))
+            Spacer(Modifier.weight(weight = 1f))
         }
         NumericDoubleOutlinedTextFieldComposable(
-            value = durationInputValue,
+            value = feedProfileEditMenuItem.duration,
             onValueChange = { newStringValue ->
                 if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
-                    val newNumericValue = newStringValue.toDouble()
-                    feedProfileEditMenuItem.updateInputValue(newValue = newNumericValue)
-                    feedProfileEditViewModel?.updatePhaseDuration(
-                        feedProfileEditMenuItem.id, newNumericValue
+                    val newNumericValue:Double = newStringValue.toDouble()
+                    feedProfileEditViewModel.onDurationChange(
+                        phaseId = feedProfileEditMenuItem.id, duration = newNumericValue
                     )
                 }
             },
             label = stringResource(id = R.string.duration_in_seconds),
             textAlign = TextAlign.Center
         )
-        Slider(value = durationInputValue.toFloat(),
-            modifier = Modifier.padding(16.dp),
+        Slider(value = feedProfileEditMenuItem.duration.toFloat(),
+            modifier = Modifier.padding(all = 16.dp),
             onValueChange = {
-                feedProfileEditViewModel?.updatePhaseDuration(
-                    feedProfileEditMenuItem.id, it.toDouble()
+                feedProfileEditViewModel.onDurationChange(
+                    phaseId = feedProfileEditMenuItem.id, duration = it.toDouble()
                 )
             },
             valueRange = FeedProfileEditSliderRange.RANGE
@@ -77,13 +71,21 @@ internal fun FeedProfileEditMenuItemDurationComposablePreview() {
         isToggleButton = false,
         children = emptyList(),
         isNumericInput = true,
+        duration = 12.3,
+        phaseType = FeedProfileEditPhaseType.FEED,
+        isChecked = false
     )
-    
+
+    val mockFeedProfileEditViewModel: FeedProfileEditViewModel =
+        mockFeedProfileEditViewModelFactory.create(FeedProfileEditViewModel::class.java)
+
     AquariumControllerTheme {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
-            FeedProfileEditMenuItemDurationComposable(mockFeedProfileEditMenuItem)
+            FeedProfileEditMenuItemDurationComposable(
+                feedProfileEditMenuItem = mockFeedProfileEditMenuItem,
+                feedProfileEditViewModel = mockFeedProfileEditViewModel)
         }
     }
 }

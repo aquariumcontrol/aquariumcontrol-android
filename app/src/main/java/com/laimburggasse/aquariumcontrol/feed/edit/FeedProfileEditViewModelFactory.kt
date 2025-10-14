@@ -9,11 +9,15 @@ import javax.inject.Singleton
 @Singleton
 class FeedProfileEditViewModelFactory(
     feedProfile: FeedProfile,
-    feedProfilesRepository: FeedProfilesRepository
+    feedProfilesRepository: FeedProfilesRepository,
+    initialExpandedItemIds: Set<Int> = emptySet(),
 ) : ViewModelProvider.Factory {
     // This class creates the view model FeedProfileEditViewModel
-    private val viewModel = FeedProfileEditViewModel(feedProfile, feedProfilesRepository)
-
+    private val viewModel = FeedProfileEditViewModel(
+        feedProfile,
+        feedProfilesRepository,
+        initialExpandedItemIds
+    )
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

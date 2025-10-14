@@ -1,54 +1,69 @@
 package com.laimburggasse.aquariumcontrol.feed.edit
 
-import android.util.Log
-import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.feed.FeedProfile
-import com.laimburggasse.aquariumcontrol.feed.FeedProfilePhase
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.feed.FeedProfile
+import com.laimburggasse.aquariumcontrol.feed.FeedProfilePhase
 import com.laimburggasse.aquariumcontrol.feed.FeedProfilesRepository
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.math.abs
+
+private const val chartValAllowedDelta = 0.0001
 
 class FeedProfileEditViewModel(
     private val feedProfile: FeedProfile,
-    private val feedProfilesRepository: FeedProfilesRepository
+    private val feedProfilesRepository: FeedProfilesRepository,
+    private val initialExpandedItemIds: Set<Int> = emptySet()
 ) : ViewModel() {
-    // @todo: use repository for updating server data
 
-    var phaseMenuItems: List<FeedProfileEditMenuItem>
+    private val _feedProfileUiState = MutableStateFlow(value = feedProfile)
+    val feedProfileUiState: StateFlow<FeedProfile> = _feedProfileUiState.asStateFlow()
+    private val _expandedItemIds = MutableStateFlow(value = initialExpandedItemIds)
+    val expandedItemIds: StateFlow<Set<Int>> = _expandedItemIds.asStateFlow()
 
-    // @todo: convert to Stateflow
-    private var _lineDataFeedProfileFeeder = MutableLiveData<LineData>()
-    private var _lineDataFeedProfileSkimmer = MutableLiveData<LineData>()
-    private var _lineDataFeedProfileMainPump1 = MutableLiveData<LineData>()
-    private var _lineDataFeedProfileMainPump2 = MutableLiveData<LineData>()
-    private var _lineDataFeedProfileAuxPump1 = MutableLiveData<LineData>()
-    private var _lineDataFeedProfileAuxPump2 = MutableLiveData<LineData>()
-    private var _totalDuration = MutableLiveData<Float>()
+    private val _lineDataFeedProfileFeeder = MutableStateFlow<LineData?>(null)
+    val lineDataFeedProfileFeeder: StateFlow<LineData?> = _lineDataFeedProfileFeeder.asStateFlow()
 
-    var lineDataFeedProfileFeeder: LiveData<LineData> = _lineDataFeedProfileFeeder
-    var lineDataFeedProfileSkimmer: LiveData<LineData> = _lineDataFeedProfileSkimmer
-    var lineDataFeedProfileMainPump1: LiveData<LineData> = _lineDataFeedProfileMainPump1
-    var lineDataFeedProfileMainPump2: LiveData<LineData> = _lineDataFeedProfileMainPump2
-    var lineDataFeedProfileAuxPump1: LiveData<LineData> = _lineDataFeedProfileAuxPump1
-    var lineDataFeedProfileAuxPump2: LiveData<LineData> = _lineDataFeedProfileAuxPump2
-    var totalDuration: LiveData<Float> = _totalDuration
+    private val _lineDataFeedProfileSkimmer = MutableStateFlow<LineData?>(null)
+    val lineDataFeedProfileSkimmer: StateFlow<LineData?> = _lineDataFeedProfileSkimmer.asStateFlow()
+
+    private val _lineDataFeedProfileMainPump1 = MutableStateFlow<LineData?>(null)
+    val lineDataFeedProfileMainPump1: StateFlow<LineData?> =
+        _lineDataFeedProfileMainPump1.asStateFlow()
+
+    private val _lineDataFeedProfileMainPump2 = MutableStateFlow<LineData?>(null)
+    val lineDataFeedProfileMainPump2: StateFlow<LineData?> =
+        _lineDataFeedProfileMainPump2.asStateFlow()
+
+    private val _lineDataFeedProfileAuxPump1 = MutableStateFlow<LineData?>(null)
+    val lineDataFeedProfileAuxPump1: StateFlow<LineData?> =
+        _lineDataFeedProfileAuxPump1.asStateFlow()
+
+    private val _lineDataFeedProfileAuxPump2 = MutableStateFlow<LineData?>(null)
+    val lineDataFeedProfileAuxPump2: StateFlow<LineData?> =
+        _lineDataFeedProfileAuxPump2.asStateFlow()
+
+    private val _totalDuration = MutableStateFlow(0f)
+    val totalDuration: StateFlow<Float> = _totalDuration.asStateFlow()
 
     init {
-        phaseMenuItems = createFeedProfileEditMenuItems()
-        transformFeedProfileToChartData()
-        _totalDuration.value = feedProfile.calcDuration()
+        viewModelScope.launch {
+            transformFeedProfileToChartData()
+            _totalDuration.value = feedProfile.calcDuration()
+        }
     }
 
     private fun calcFeederChartValue(isRunning: Boolean): Float {
@@ -342,337 +357,67 @@ class FeedProfileEditViewModel(
         _lineDataFeedProfileAuxPump2.value = tempLineDataSetAuxPump2
     }
 
-    private fun createFeedProfileEditMenuItems(): List<FeedProfileEditMenuItem> {
-        return List(10) { index ->
-            FeedProfileEditMenuItem(
-                id = index,
-                level = 1,
-                text = "Phase ${index + 1}",
-                isToggleButton = false,
-                children = mutableListOf(
-                    FeedProfileEditMenuItem(
-                        id = 0,
-                        level = 2,
-                        text = "Pause",
-                        isToggleButton = false,
-                        phaseType = FeedProfileEditPhaseType.PAUSE,
-                        children = mutableListOf(
-                            FeedProfileEditMenuItem(
-                                id = index * 2,
-                                level = 3,
-                                text = "Duration",
-                                isNumericInput = true,
-                                phaseType = FeedProfileEditPhaseType.PAUSE,
-                                durationInitialValue = feedProfile.feedProfilePhases[index * 2].duration,
-                                isToggleButton = false,
-                            ),
-                            FeedProfileEditMenuItem(
-                                id = index * 2,
-                                level = 3,
-                                text = "Skimmer",
-                                toggleButtonType = FeedProfileEditToggleButtonType.Skimmer,
-                                isToggleButton = true,
-                                isNumericInput = false,
-                                phaseType = FeedProfileEditPhaseType.PAUSE,
-                                isChecked = mutableStateOf(
-                                    feedProfile.feedProfilePhases[index * 2].skimmer
-                                ),
-                            ),
-                            FeedProfileEditMenuItem(
-                                id = index * 2,
-                                level = 3,
-                                text = "Main Pump 1",
-                                toggleButtonType = FeedProfileEditToggleButtonType.MainPump1,
-                                isToggleButton = true,
-                                isNumericInput = false,
-                                phaseType = FeedProfileEditPhaseType.PAUSE,
-                                isChecked = mutableStateOf(
-                                    feedProfile.feedProfilePhases[index * 2].mainPump1
-                                ),
-                            ),
-                            FeedProfileEditMenuItem(
-                                id = index * 2,
-                                level = 3,
-                                text = "Main Pump 2",
-                                toggleButtonType = FeedProfileEditToggleButtonType.MainPump2,
-                                isToggleButton = true,
-                                isNumericInput = false,
-                                phaseType = FeedProfileEditPhaseType.PAUSE,
-                                isChecked = mutableStateOf(
-                                    feedProfile.feedProfilePhases[index * 2].mainPump2
-                                ),
-                            ),
-                            FeedProfileEditMenuItem(
-                                id = index * 2,
-                                level = 3,
-                                text = "Aux. Pump 1",
-                                toggleButtonType = FeedProfileEditToggleButtonType.AuxPump1,
-                                isToggleButton = true,
-                                isNumericInput = false,
-                                phaseType = FeedProfileEditPhaseType.PAUSE,
-                                isChecked = mutableStateOf(
-                                    feedProfile.feedProfilePhases[index * 2].auxPump1
-                                ),
-                            ),
-                            FeedProfileEditMenuItem(
-                                id = index * 2,
-                                level = 3,
-                                text = "Aux. Pump 2",
-                                toggleButtonType = FeedProfileEditToggleButtonType.AuxPump2,
-                                isToggleButton = true,
-                                isNumericInput = false,
-                                phaseType = FeedProfileEditPhaseType.PAUSE,
-                                isChecked = mutableStateOf(
-                                    feedProfile.feedProfilePhases[index * 2].auxPump2
-                                ),
-                            ),
-                        ),
-                    ),
-                    FeedProfileEditMenuItem(
-                        id = 1,
-                        level = 2,
-                        text = "Feed",
-                        isToggleButton = false,
-                        phaseType = FeedProfileEditPhaseType.FEED,
-                        children = mutableListOf(
-                            FeedProfileEditMenuItem(
-                                id = index * 2 + 1,
-                                level = 3,
-                                text = "Duration",
-                                isToggleButton = false,
-                                isNumericInput = true,
-                                phaseType = FeedProfileEditPhaseType.FEED,
-                                durationInitialValue = feedProfile.feedProfilePhases[index * 2 + 1].duration,
-                            ),
-                            FeedProfileEditMenuItem(
-                                id = index * 2 + 1,
-                                level = 3,
-                                text = "Skimmer",
-                                toggleButtonType = FeedProfileEditToggleButtonType.Skimmer,
-                                isToggleButton = true,
-                                isNumericInput = false,
-                                phaseType = FeedProfileEditPhaseType.FEED,
-                                isChecked = mutableStateOf(
-                                    feedProfile.feedProfilePhases[index * 2 + 1].skimmer
-                                ),
-                            ),
-                            FeedProfileEditMenuItem(
-                                id = index * 2 + 1,
-                                level = 3,
-                                text = "Main Pump 1",
-                                toggleButtonType = FeedProfileEditToggleButtonType.MainPump1,
-                                isToggleButton = true,
-                                isNumericInput = false,
-                                phaseType = FeedProfileEditPhaseType.FEED,
-                                isChecked = mutableStateOf(
-                                    feedProfile.feedProfilePhases[index * 2 + 1].mainPump1
-                                ),
-                            ),
-                            FeedProfileEditMenuItem(
-                                id = index * 2 + 1,
-                                level = 3,
-                                text = "Main Pump 2",
-                                toggleButtonType = FeedProfileEditToggleButtonType.MainPump2,
-                                isToggleButton = true,
-                                isNumericInput = false,
-                                phaseType = FeedProfileEditPhaseType.FEED,
-                                isChecked = mutableStateOf(
-                                    feedProfile.feedProfilePhases[index * 2 + 1].mainPump2
-                                ),
-                            ),
-                            FeedProfileEditMenuItem(
-                                id = index * 2 + 1,
-                                level = 3,
-                                text = "Aux. Pump 1",
-                                toggleButtonType = FeedProfileEditToggleButtonType.AuxPump1,
-                                isToggleButton = true,
-                                isNumericInput = false,
-                                phaseType = FeedProfileEditPhaseType.FEED,
-                                isChecked = mutableStateOf(
-                                    feedProfile.feedProfilePhases[index * 2 + 1].auxPump1
-                                ),
-                            ),
-                            FeedProfileEditMenuItem(
-                                id = index * 2 + 1,
-                                level = 3,
-                                text = "Aux. Pump 2",
-                                toggleButtonType = FeedProfileEditToggleButtonType.AuxPump2,
-                                isToggleButton = true,
-                                isNumericInput = false,
-                                phaseType = FeedProfileEditPhaseType.FEED,
-                                isChecked = mutableStateOf(
-                                    feedProfile.feedProfilePhases[index * 2 + 1].auxPump2
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            )
-        }
-    }
-
-    fun updatePhaseDuration(phaseIndex: Int, newDuration: Double) {
-        Log.d("FeedProfileEditViewModel", "Updating phase($phaseIndex) duration to $newDuration")
-        feedProfile.feedProfilePhases[phaseIndex].duration = newDuration
+    fun onDurationChange(phaseId: Int, duration: Double) {
+        feedProfile.feedProfilePhases[phaseId].duration = duration
+        transformFeedProfileToChartData()
         _totalDuration.value = feedProfile.calcDuration()
-        transformFeedProfileToChartData()
     }
 
-    fun updateSkimmer(phaseIndex: Int, newValue: Boolean) {
-        feedProfile.feedProfilePhases[phaseIndex].skimmer = newValue
+    fun onToggleStateChange(
+        phaseId: Int,
+        toggleButtonType: FeedProfileEditToggleButtonType,
+        isChecked: Boolean
+    ) {
+        when (toggleButtonType) {
+            FeedProfileEditToggleButtonType.Skimmer -> feedProfile.feedProfilePhases[phaseId].skimmer =
+                isChecked
+
+            FeedProfileEditToggleButtonType.MainPump1 -> feedProfile.feedProfilePhases[phaseId].mainPump1 =
+                isChecked
+
+            FeedProfileEditToggleButtonType.MainPump2 -> feedProfile.feedProfilePhases[phaseId].mainPump2 =
+                isChecked
+
+            FeedProfileEditToggleButtonType.AuxPump1 -> feedProfile.feedProfilePhases[phaseId].auxPump1 =
+                isChecked
+
+            FeedProfileEditToggleButtonType.AuxPump2 -> feedProfile.feedProfilePhases[phaseId].auxPump2 =
+                isChecked
+        }
         transformFeedProfileToChartData()
+        _totalDuration.value = feedProfile.calcDuration()
     }
 
-    fun updateMainPump1(phaseIndex: Int, newValue: Boolean) {
-        feedProfile.feedProfilePhases[phaseIndex].mainPump1 = newValue
-        transformFeedProfileToChartData()
-    }
-
-    fun updateMainPump2(phaseIndex: Int, newValue: Boolean) {
-        feedProfile.feedProfilePhases[phaseIndex].mainPump2 = newValue
-        transformFeedProfileToChartData()
-    }
-
-    fun updateAuxPump1(phaseIndex: Int, newValue: Boolean) {
-        feedProfile.feedProfilePhases[phaseIndex].auxPump1 = newValue
-        transformFeedProfileToChartData()
-    }
-
-    fun updateAuxPump2(phaseIndex: Int, newValue: Boolean) {
-        feedProfile.feedProfilePhases[phaseIndex].auxPump2 = newValue
-        transformFeedProfileToChartData()
-    }
-
-    private fun resetFeedProfileEditMenuItems() {
-        for ((index, value) in phaseMenuItems.withIndex()) {
-            for (value2 in value.children) {
-                when (value2.phaseType) {
-                    FeedProfileEditPhaseType.PAUSE -> {
-                        for (value3 in value2.children) {
-                            when (value3.toggleButtonType) {
-                                FeedProfileEditToggleButtonType.Skimmer -> {
-                                    Log.d(
-                                        "FeedProfileEditViewModel",
-                                        "setting value3.updateIsChecked(${feedProfile.feedProfilePhases[index * 2].skimmer})"
-                                    )
-                                    value3.updateIsChecked(
-                                        feedProfile.feedProfilePhases[index * 2].skimmer
-                                    )
-                                }
-
-                                FeedProfileEditToggleButtonType.MainPump1 -> {
-                                    value3.updateIsChecked(
-                                        feedProfile.feedProfilePhases[index * 2].mainPump1
-                                    )
-                                }
-
-                                FeedProfileEditToggleButtonType.MainPump2 -> {
-                                    value3.updateIsChecked(
-                                        feedProfile.feedProfilePhases[index * 2].mainPump2
-                                    )
-                                }
-
-                                FeedProfileEditToggleButtonType.AuxPump1 -> {
-                                    value3.updateIsChecked(
-                                        feedProfile.feedProfilePhases[index * 2].auxPump1
-                                    )
-                                }
-
-                                FeedProfileEditToggleButtonType.AuxPump2 -> {
-                                    value3.updateIsChecked(
-                                        feedProfile.feedProfilePhases[index * 2].auxPump2
-                                    )
-                                }
-
-                                null -> {
-                                    value3.updateInputValue(
-                                        feedProfile.feedProfilePhases[index * 2].duration
-                                    )
-                                    Log.d(
-                                        "FeedProfileEditViewModel",
-                                        "setting myFeedProfile.value.feedProfilePhases[${index * 2}].duration = ${feedProfile.feedProfilePhases[index * 2].duration}"
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    FeedProfileEditPhaseType.FEED -> {
-                        for (value3 in value2.children) {
-                            when (value3.toggleButtonType) {
-                                FeedProfileEditToggleButtonType.Skimmer -> {
-                                    value3.updateIsChecked(
-                                        feedProfile.feedProfilePhases[index * 2 + 1].skimmer
-                                    )
-                                }
-
-                                FeedProfileEditToggleButtonType.MainPump1 -> {
-                                    value3.updateIsChecked(
-                                        feedProfile.feedProfilePhases[index * 2 + 1].mainPump1
-                                    )
-                                }
-
-                                FeedProfileEditToggleButtonType.MainPump2 -> {
-                                    value3.updateIsChecked(
-                                        feedProfile.feedProfilePhases[index * 2 + 1].mainPump2
-                                    )
-                                }
-
-                                FeedProfileEditToggleButtonType.AuxPump1 -> {
-                                    value3.updateIsChecked(
-                                        feedProfile.feedProfilePhases[index * 2 + 1].auxPump1
-                                    )
-                                }
-
-                                FeedProfileEditToggleButtonType.AuxPump2 -> {
-                                    value3.updateIsChecked(
-                                        feedProfile.feedProfilePhases[index * 2 + 1].auxPump2
-                                    )
-                                }
-
-                                null -> {
-                                    value3.updateInputValue(
-                                        feedProfile.feedProfilePhases[index * 2 + 1].duration
-                                    )
-                                    Log.d(
-                                        "FeedProfileEditViewModel",
-                                        "setting myFeedProfile.value.feedProfilePhases[${index * 2 + 1}].duration = ${feedProfile.feedProfilePhases[index * 2 + 1].duration}"
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    null -> {
-                        // do nothing
-                    }
-                }
+    fun updateFeedProfile(mainViewModel: MainViewModel) {
+        viewModelScope.launch {
+            val apiCallParameters: Map<String, String> =
+                feedProfile.getFeedProfileApiCallParameters()
+            withContext(context = Dispatchers.IO) {
+                // @todo: move this code to repository
+                webApiPostRequestExecution(
+                    mainViewModel = mainViewModel,
+                    apiUrl = WebApiUrls.FEED_POST_PROFILE_UPDATE,
+                    webApiPostRequest = WebApiPostRequest(),
+                    optionalGetParams = apiCallParameters
+                )
             }
         }
     }
 
     fun resetFeedProfile() {
-        feedProfile.reset()           // copy content from backup data structure
-        resetFeedProfileEditMenuItems() // copy from myFeedProfile to phaseMenuItems
+        // @todo: recreate this functionality elsewhere
+        // Re-create the menu items and chart data to discard any changes
+        // phaseMenuItems = createFeedProfileEditMenuItems(currentFeedProfile = feedProfile)
+        transformFeedProfileToChartData()
     }
 
-    fun updateFeedProfile(mainViewModel: MainViewModel) {
-        viewModelScope.launch {
-            webApiPostRequestExecution(
-                mainViewModel = mainViewModel,
-                apiUrl = WebApiUrls.FEED_POST_PROFILE_UPDATE,
-                webApiPostRequest = WebApiPostRequest(),
-                optionalGetParams = getApiCallParameters()
-            )
-            feedProfile.update()          // overwrite backup data structure
+    fun onExpanded(itemId: Int) {
+        _expandedItemIds.value = _expandedItemIds.value.let { currentIds ->
+            if (itemId in currentIds) {
+                currentIds - itemId // Item was expanded, so collapse it by removing its ID
+            } else {
+                currentIds + itemId // Item was collapsed, so expand it by adding its ID
+            }
         }
-    }
-
-    fun getApiCallParameters(): Map<String, String> {
-        return feedProfile.getFeedProfileApiCallParameters()
-    }
-
-    fun getPhaseDuration(id: Int): Double {
-        return feedProfile.feedProfilePhases[id].duration
     }
 }

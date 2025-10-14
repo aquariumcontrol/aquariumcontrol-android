@@ -16,6 +16,7 @@ class ScheduleEntryViewModel(
     // - Ventilation
     // - Heating
 
+    // @todo: convert to Stateflow
     private val _sliderRange = MutableLiveData<ClosedFloatingPointRange<Float>>()
     private val _lowerBoundValue = MutableLiveData<Float>()
     private val _upperBoundValue = MutableLiveData<Float>()
