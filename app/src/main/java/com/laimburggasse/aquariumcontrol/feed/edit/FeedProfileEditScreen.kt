@@ -12,7 +12,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -32,168 +31,6 @@ import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposabl
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
-fun createFeedProfileEditMenuItems(currentFeedProfile: FeedProfile): List<FeedProfileEditMenuItem> {
-    return List(10) { index ->
-        FeedProfileEditMenuItem(
-            id = index,
-            level = 1,
-            text = "Phase ${index + 1}",
-            isToggleButton = false,
-            isNumericInput = false,
-            isChecked = false,
-            duration = 0.0,
-            children = mutableListOf(
-                FeedProfileEditMenuItem(
-                    id = 0,
-                    level = 2,
-                    text = "Pause",
-                    isToggleButton = false,
-                    isNumericInput = false,
-                    isChecked = false,
-                    duration = 0.0,
-                    phaseType = FeedProfileEditPhaseType.PAUSE,
-                    children = mutableListOf(
-                        FeedProfileEditMenuItem(
-                            id = 0,
-                            level = 3,
-                            text = "Duration",
-                            isToggleButton = false,
-                            phaseType = FeedProfileEditPhaseType.PAUSE,
-                            isNumericInput = true,
-                            isChecked = false,
-                            duration = currentFeedProfile.feedProfilePhases[index * 2].duration,
-                        ),
-                        FeedProfileEditMenuItem(
-                            id = (index * 2) * 10 + 1,
-                            level = 3,
-                            text = "Skimmer",
-                            isToggleButton = true,
-                            phaseType = FeedProfileEditPhaseType.PAUSE,
-                            toggleButtonType = FeedProfileEditToggleButtonType.Skimmer,
-                            isNumericInput = false,
-                            isChecked = currentFeedProfile.feedProfilePhases[index * 2].skimmer,
-                            duration = 0.0,
-                        ),
-                        FeedProfileEditMenuItem(
-                            id = (index * 2) * 10 + 2,
-                            level = 3,
-                            text = "Main Pump 1",
-                            phaseType = FeedProfileEditPhaseType.PAUSE,
-                            toggleButtonType = FeedProfileEditToggleButtonType.MainPump1,
-                            isNumericInput = false,
-                            isChecked = currentFeedProfile.feedProfilePhases[index * 2].mainPump1,
-                            duration = 0.0,
-                        ),
-                        FeedProfileEditMenuItem(
-                            id = (index * 2) * 10 + 3,
-                            level = 3,
-                            text = "Main Pump 2",
-                            phaseType = FeedProfileEditPhaseType.PAUSE,
-                            toggleButtonType = FeedProfileEditToggleButtonType.MainPump2,
-                            isNumericInput = false,
-                            isChecked = currentFeedProfile.feedProfilePhases[index * 2].mainPump2,
-                            duration = 0.0,
-                        ),
-                        FeedProfileEditMenuItem(
-                            id = (index * 2) * 10 + 4,
-                            level = 3,
-                            text = "Aux. Pump 1",
-                            phaseType = FeedProfileEditPhaseType.PAUSE,
-                            toggleButtonType = FeedProfileEditToggleButtonType.AuxPump1,
-                            isNumericInput = false,
-                            isChecked = currentFeedProfile.feedProfilePhases[index * 2].auxPump1,
-                            duration = 0.0,
-                        ),
-                        FeedProfileEditMenuItem(
-                            id = (index * 2) * 10 + 5,
-                            level = 3,
-                            text = "Aux. Pump 2",
-                            phaseType = FeedProfileEditPhaseType.PAUSE,
-                            toggleButtonType = FeedProfileEditToggleButtonType.AuxPump2,
-                            isNumericInput = false,
-                            isChecked = currentFeedProfile.feedProfilePhases[index * 2].auxPump2,
-                            duration = 0.0,
-                        ),
-                    )
-                ),
-                FeedProfileEditMenuItem(
-                    id = 1,
-                    level = 2,
-                    text = "Feed",
-                    isToggleButton = false,
-                    isNumericInput = false,
-                    isChecked = false,
-                    duration = 0.0,
-                    phaseType = FeedProfileEditPhaseType.FEED,
-                    children = mutableListOf(
-                        FeedProfileEditMenuItem(
-                            id = (index * 2 + 1) * 10 + 0,
-                            level = 3,
-                            text = "Duration",
-                            isToggleButton = false,
-                            phaseType = FeedProfileEditPhaseType.FEED,
-                            isNumericInput = true,
-                            isChecked = false,
-                            duration = currentFeedProfile.feedProfilePhases[index * 2 + 1].duration,
-                        ),
-                        FeedProfileEditMenuItem(
-                            id = (index * 2 + 1) * 10 + 1,
-                            level = 3,
-                            text = "Skimmer",
-                            isToggleButton = true,
-                            phaseType = FeedProfileEditPhaseType.FEED,
-                            toggleButtonType = FeedProfileEditToggleButtonType.Skimmer,
-                            isNumericInput = false,
-                            isChecked = currentFeedProfile.feedProfilePhases[index * 2 + 1].skimmer,
-                            duration = 0.0,
-                        ),
-                        FeedProfileEditMenuItem(
-                            id = (index * 2 + 1) * 10 + 2,
-                            level = 3,
-                            text = "Main Pump 1",
-                            phaseType = FeedProfileEditPhaseType.FEED,
-                            toggleButtonType = FeedProfileEditToggleButtonType.MainPump1,
-                            isNumericInput = false,
-                            isChecked = currentFeedProfile.feedProfilePhases[index * 2 + 1].mainPump1,
-                            duration = 0.0,
-                        ),
-                        FeedProfileEditMenuItem(
-                            id = (index * 2 + 1) * 10 + 3,
-                            level = 3,
-                            text = "Main Pump 2",
-                            phaseType = FeedProfileEditPhaseType.FEED,
-                            toggleButtonType = FeedProfileEditToggleButtonType.MainPump2,
-                            isNumericInput = false,
-                            isChecked = currentFeedProfile.feedProfilePhases[index * 2 + 1].mainPump2,
-                            duration = 0.0,
-                        ),
-                        FeedProfileEditMenuItem(
-                            id = (index * 2 + 1) * 10 + 4,
-                            level = 3,
-                            text = "Aux. Pump 1",
-                            phaseType = FeedProfileEditPhaseType.FEED,
-                            toggleButtonType = FeedProfileEditToggleButtonType.AuxPump1,
-                            isNumericInput = false,
-                            isChecked = currentFeedProfile.feedProfilePhases[index * 2 + 1].auxPump1,
-                            duration = 0.0,
-                        ),
-                        FeedProfileEditMenuItem(
-                            id = (index * 2 + 1) * 10 + 5,
-                            level = 3,
-                            text = "Aux. Pump 2",
-                            phaseType = FeedProfileEditPhaseType.FEED,
-                            toggleButtonType = FeedProfileEditToggleButtonType.AuxPump2,
-                            isNumericInput = false,
-                            isChecked = currentFeedProfile.feedProfilePhases[index * 2 + 1].auxPump2,
-                            duration = 0.0,
-                        )
-                    )
-                )
-            )
-        )
-    }
-}
-
 @Composable
 fun FeedProfileEditScreen(
     navHostController: NavHostController? = null,
@@ -211,12 +48,8 @@ fun FeedProfileEditScreen(
     val feedProfileEditViewModel: FeedProfileEditViewModel = viewModel(
         factory = feedProfileEditViewModelFactory
     )
-
-    val profile: FeedProfile by feedProfileEditViewModel.feedProfileUiState.collectAsState()
-
-    val menuItems: List<FeedProfileEditMenuItem> = remember(key1 = profile) {
-        createFeedProfileEditMenuItems(currentFeedProfile = profile)
-    }
+    val itemsToRender: List<FeedProfileEditMenuItem> by
+        feedProfileEditViewModel.feedProfileMenuItems.collectAsState()
 
     val configuration: Configuration = LocalConfiguration.current
 
@@ -281,7 +114,7 @@ fun FeedProfileEditScreen(
                     }
 
                     FeedProfileEditMenuComposable(
-                        feedProfileEditMenuItems = menuItems,
+                        itemsToRender,
                         feedProfileEditViewModel = feedProfileEditViewModel
                     )
                 }
