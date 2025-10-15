@@ -1,6 +1,7 @@
 package com.laimburggasse.aquariumcontrol.feed.edit
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,8 +30,8 @@ fun FeedProfileEditMenuItemDurationComposable(
     feedProfileEditViewModel: FeedProfileEditViewModel
 ) {
     val profileState: FeedProfile by feedProfileEditViewModel.feedProfileUiState.collectAsState()
-    val phaseId = feedProfileEditMenuItem.id / 10
-    val currentDuration = if (phaseId < profileState.feedProfilePhases.size) {
+    val phaseId: Int = mapMenuItemIdToPhaseId(id = feedProfileEditMenuItem.id)
+    val currentDuration: Double = if (phaseId < profileState.feedProfilePhases.size) {
         profileState.feedProfilePhases[phaseId].duration
     } else {
         0.0 // Default/fallback value

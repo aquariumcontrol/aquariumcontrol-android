@@ -23,17 +23,17 @@ data class FeedProfile(
                 auxPump1 = false,
                 auxPump2 = false,
                 isPause = index % 2 == 0, // Even indices are pause phases, uneven are feed phases
-                idx = index / 2
+                idx = index
             )
         }
     )
 
     companion object {
         fun fromFeedProfileImport(feedProfileImport: FeedProfileImport): FeedProfile {
-            val phases = List(20) { index ->
-                val isPause = index % 2 == 0
-                val phaseNum = (index / 2) + 1 // e.g., 0,1 -> 1; 2,3 -> 2
-                val importPrefix = if (isPause) "pause%02d".format(phaseNum) else "feed%02d".format(phaseNum)
+            val phases: List<FeedProfilePhase> = List(size = 20) { index ->
+                val isPause: Boolean = index % 2 == 0
+                val phaseNum: Int = (index / 2) + 1 // e.g., 0,1 -> 1; 2,3 -> 2
+                val importPrefix: String = if (isPause) "pause%02d".format(phaseNum) else "feed%02d".format(phaseNum)
 
                 // This is a more advanced way using reflection to avoid the massive wall of text.
                 // It dynamically gets the property from the import object.
@@ -68,7 +68,7 @@ data class FeedProfile(
                     auxPump1 = getImportBoolProperty("${importPrefix}auxPump1"),
                     auxPump2 = getImportBoolProperty("${importPrefix}auxPump2"),
                     isPause = isPause,
-                    idx = phaseNum - 1
+                    idx = index
                 )
             }
 

@@ -1,7 +1,6 @@
 package com.laimburggasse.aquariumcontrol.feed.edit
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -45,7 +44,6 @@ fun FeedProfileEditMenuItemComposable(
             null -> false // Not a toggle button
         }
     } else {
-        Log.d("FeedProfileEditMenuItemComposable", "phaseId out of bounds: $phaseId")
         false // Default value if phaseId is out of bounds
     }
 

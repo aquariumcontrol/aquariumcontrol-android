@@ -54,7 +54,6 @@ class FeedProfileAxisValueFormatter(private var totalDuration: Float) : ValueFor
     @SuppressLint("DefaultLocale")
     override fun getAxisLabel(value: Float, axis: AxisBase?): String {
         if (axis is YAxis) {
-            Log.d("FeedProfileAxisValueFormatter", "getAxisLabel: $value")
             if (isFeederChartValue(value)) {
                 return if ((value > FeedProfileDisplayYAxisValueDefinition.FEEDER_OFF +
                             FeedProfileDisplayYAxisValueDefinition.THRESHOLD)

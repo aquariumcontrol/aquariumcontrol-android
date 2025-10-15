@@ -20,7 +20,7 @@ fun mapIndexToMenuItemId(
 // Mapping of unique menu item id to feed profile phase id in the range
 // of 0...19
 fun mapMenuItemIdToPhaseId(id: Int): Int {
-    val base = id / 100
+    val base: Int = id / 100
     return (base - 1) * 2 + if (id % 100 >= 10) 1 else 0
 }
 
@@ -45,8 +45,8 @@ fun createFeedProfileEditMenuItem(
         }
         else -> ""
     }
-    val id = mapIndexToMenuItemId(level, phaseType, index, toggleButtonType)
-    Log.d("createFeedProfileEditMenuItem", "id: $id, level: $level, text: $text")
+    val id: Int = mapIndexToMenuItemId(level, phaseType, index, toggleButtonType)
+    //Log.d("createFeedProfileEditMenuItem", "id: $id, level: $level, text: $text")
 
     return FeedProfileEditMenuItem(
         id,
@@ -119,7 +119,7 @@ object FeedProfileEditMenuItems {
                         createFeedProfileEditMenuItem(
                             level = 3,
                             index = index,
-                            phaseType = FeedProfileEditPhaseType.PAUSE,
+                            phaseType = FeedProfileEditPhaseType.FEED,
                         ),
                         createFeedProfileEditMenuItem(
                             level = 3,
