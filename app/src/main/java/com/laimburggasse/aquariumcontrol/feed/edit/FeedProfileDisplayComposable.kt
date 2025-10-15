@@ -321,7 +321,7 @@ internal fun FeedProfileDisplayComposablePreview() {
     mockFeedProfileImport.feed09auxPump2 = 0
     mockFeedProfileImport.feed10auxPump2 = 0
 
-    val mockFeedProfile = FeedProfile(mockFeedProfileImport)
+    val mockFeedProfile: FeedProfile = FeedProfile.fromFeedProfileImport(mockFeedProfileImport)
 
     val feedProfileEditViewModelFactory = FeedProfileEditViewModelFactory(
         feedProfile = mockFeedProfile,

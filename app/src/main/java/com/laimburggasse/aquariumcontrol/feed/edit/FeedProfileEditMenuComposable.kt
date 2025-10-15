@@ -8,8 +8,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,9 +17,10 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun FeedProfileEditMenuComposable(
-    itemsToRender: List<FeedProfileEditMenuItem>,
     feedProfileEditViewModel: FeedProfileEditViewModel
 ) {
+    val itemsToRender: List<FeedProfileEditMenuItem> = FeedProfileEditMenuItems.phases
+
     // This composable acts as container for the feed profile edit menu items.
     if (LocalInspectionMode.current) {
         // In Preview: Render a simple, static Column instead of LazyColumn
@@ -52,17 +51,11 @@ internal fun FeedProfileEditMenuComposablePreview() {
         initialExpandedItemIds = mockInitialExpandedItemIds
     )
 
-    val feedProfileEditViewModel: FeedProfileEditViewModel = mockFeedProfileEditViewModelFactory.create(
-        FeedProfileEditViewModel::class.java
-    )
-    val itemsToRender = feedProfileEditViewModel.feedProfileMenuItems.collectAsState().value
-
     AquariumControllerTheme {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
             FeedProfileEditMenuComposable(
-                itemsToRender = itemsToRender,
                 feedProfileEditViewModel = mockFeedProfileEditViewModelFactory.create(
                     FeedProfileEditViewModel::class.java
                 )

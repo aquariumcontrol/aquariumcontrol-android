@@ -48,8 +48,6 @@ fun FeedProfileEditScreen(
     val feedProfileEditViewModel: FeedProfileEditViewModel = viewModel(
         factory = feedProfileEditViewModelFactory
     )
-    val itemsToRender: List<FeedProfileEditMenuItem> by
-        feedProfileEditViewModel.feedProfileMenuItems.collectAsState()
 
     val configuration: Configuration = LocalConfiguration.current
 
@@ -114,7 +112,6 @@ fun FeedProfileEditScreen(
                     }
 
                     FeedProfileEditMenuComposable(
-                        itemsToRender,
                         feedProfileEditViewModel = feedProfileEditViewModel
                     )
                 }
@@ -255,7 +252,7 @@ fun createMockFeedProfile(): FeedProfile {
     mockFeedProfileImport.feed09auxPump2 = 0
     mockFeedProfileImport.feed10auxPump2 = 0
 
-    return FeedProfile(mockFeedProfileImport)
+    return FeedProfile.fromFeedProfileImport(mockFeedProfileImport)
 }
 
 val mockFeedProfile = createMockFeedProfile()

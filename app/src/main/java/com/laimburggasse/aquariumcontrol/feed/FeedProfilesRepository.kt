@@ -33,7 +33,9 @@ open class FeedProfilesRepository(private val mainViewModel: MainViewModel) {
                 is DataFetchResult.Success -> {
                     val feedProfileImports: List<FeedProfileImport> = result.data
                     _profilesFlow.value = DataFetchResult.Success(
-                        data = feedProfileImports.toFeedProfileList()
+                        data = feedProfileImports.map {
+                            importItem -> FeedProfile.fromFeedProfileImport(feedProfileImport = importItem)
+                        }
                     )
                 }
             }

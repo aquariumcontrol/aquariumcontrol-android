@@ -313,7 +313,7 @@ fun FeedProfileScheduleScreenPreviewSuccess() {
     val mockFeedProfileImport = FeedProfileImport()
     mockFeedProfileImport.profileId = 1
     mockFeedProfileImport.profileName = "Test Profile 1"
-    val mockFeedProfile = FeedProfile(mockFeedProfileImport)
+    val mockFeedProfile: FeedProfile = FeedProfile.fromFeedProfileImport(mockFeedProfileImport)
     val mockFeedScheduleEntry: FeedScheduleEntry = FeedScheduleEntryImport(
         timestampString = "2024-02-16 12:00:00",
         profileName = "MockProfile",
@@ -348,7 +348,7 @@ internal fun FeedProfileScheduleScreenPreviewError() {
     val mockFeedProfileImport = FeedProfileImport()
     mockFeedProfileImport.profileId = 1
     mockFeedProfileImport.profileName = "Test Profile 1"
-    val mockFeedProfile = FeedProfile(mockFeedProfileImport)
+    val mockFeedProfile: FeedProfile = FeedProfile.fromFeedProfileImport(mockFeedProfileImport)
     val mockFeedScheduleEntry: FeedScheduleEntry = FeedScheduleEntryImport(
         timestampString = "2024-02-16 12:00:00",
         profileName = "MockProfile",
