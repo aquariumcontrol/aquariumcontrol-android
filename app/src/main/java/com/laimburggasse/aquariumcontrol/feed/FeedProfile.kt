@@ -49,13 +49,24 @@ data class FeedProfile(
                     }
                 }
 
+                fun getImportBoolProperty(name: String): Boolean {
+                    return try {
+                        feedProfileImport::class.java.getDeclaredField(name).let { field ->
+                            field.isAccessible = true
+                            (field.get(feedProfileImport) as Boolean)
+                        }
+                    } catch (_: Exception) {
+                        false
+                    }
+                }
+
                 FeedProfilePhase(
                     duration = getImportProperty("${importPrefix}duration", 0.0),
-                    skimmer = getImportProperty("${importPrefix}skimmer", false),
-                    mainPump1 = getImportProperty("${importPrefix}mainPump1", false),
-                    mainPump2 = getImportProperty("${importPrefix}mainPump2", false),
-                    auxPump1 = getImportProperty("${importPrefix}auxPump1", false),
-                    auxPump2 = getImportProperty("${importPrefix}auxPump2", false),
+                    skimmer = getImportBoolProperty("${importPrefix}skimmer"),
+                    mainPump1 = getImportBoolProperty("${importPrefix}mainPump1"),
+                    mainPump2 = getImportBoolProperty("${importPrefix}mainPump2"),
+                    auxPump1 = getImportBoolProperty("${importPrefix}auxPump1"),
+                    auxPump2 = getImportBoolProperty("${importPrefix}auxPump2"),
                     isPause = isPause,
                     idx = phaseNum - 1
                 )

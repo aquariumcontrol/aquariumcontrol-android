@@ -52,7 +52,7 @@ fun FeedProfileEditMenuItemDurationComposable(
                 if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
                     val newNumericValue:Double = newStringValue.toDouble()
                     feedProfileEditViewModel.onDurationChange(
-                        phaseId = feedProfileEditMenuItem.id, duration = newNumericValue
+                        id = feedProfileEditMenuItem.id, duration = newNumericValue
                     )
                 }
             },
@@ -63,7 +63,7 @@ fun FeedProfileEditMenuItemDurationComposable(
             modifier = Modifier.padding(all = 16.dp),
             onValueChange = {
                 feedProfileEditViewModel.onDurationChange(
-                    phaseId = feedProfileEditMenuItem.id, duration = it.toDouble()
+                    id = feedProfileEditMenuItem.id, duration = it.toDouble()
                 )
             },
             valueRange = FeedProfileEditSliderRange.RANGE

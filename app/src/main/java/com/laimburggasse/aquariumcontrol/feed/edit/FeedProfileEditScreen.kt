@@ -25,11 +25,13 @@ import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.FeedProfileImport
+import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditMenuItem
 import com.laimburggasse.aquariumcontrol.feed.mockFeedProfilesRepository
 import com.laimburggasse.aquariumcontrol.feed.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
+import kotlin.collections.List
 
 @Composable
 fun FeedProfileEditScreen(
@@ -48,6 +50,7 @@ fun FeedProfileEditScreen(
     val feedProfileEditViewModel: FeedProfileEditViewModel = viewModel(
         factory = feedProfileEditViewModelFactory
     )
+    val uiState = feedProfileEditViewModel.feedProfileUiState.collectAsState()
 
     val configuration: Configuration = LocalConfiguration.current
 
@@ -65,7 +68,6 @@ fun FeedProfileEditScreen(
                     ScreenHeadlineComposable(
                         text = stringResource(id = R.string.feed_profile_editing)
                     )
-
                     val lineDataFeedProfileFeeder: LineData? by
                         feedProfileEditViewModel.lineDataFeedProfileFeeder.collectAsState()
                     val lineDataFeedProfileSkimmer: LineData? by
@@ -112,6 +114,7 @@ fun FeedProfileEditScreen(
                     }
 
                     FeedProfileEditMenuComposable(
+                        itemsToRender = FeedProfileEditMenuItems.phases, // all items shall be rendered
                         feedProfileEditViewModel = feedProfileEditViewModel
                     )
                 }

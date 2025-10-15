@@ -17,10 +17,9 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun FeedProfileEditMenuComposable(
+    itemsToRender: List<FeedProfileEditMenuItem>,
     feedProfileEditViewModel: FeedProfileEditViewModel
 ) {
-    val itemsToRender: List<FeedProfileEditMenuItem> = FeedProfileEditMenuItems.phases
-
     // This composable acts as container for the feed profile edit menu items.
     if (LocalInspectionMode.current) {
         // In Preview: Render a simple, static Column instead of LazyColumn
@@ -56,6 +55,7 @@ internal fun FeedProfileEditMenuComposablePreview() {
             color = MaterialTheme.colorScheme.background
         ) {
             FeedProfileEditMenuComposable(
+                itemsToRender = FeedProfileEditMenuItems.phases,
                 feedProfileEditViewModel = mockFeedProfileEditViewModelFactory.create(
                     FeedProfileEditViewModel::class.java
                 )

@@ -1,6 +1,6 @@
 package com.laimburggasse.aquariumcontrol.feed.edit
 
-import androidx.compose.animation.core.copy
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.mikephil.charting.components.YAxis
@@ -359,7 +359,8 @@ class FeedProfileEditViewModel(
         _lineDataFeedProfileAuxPump2.value = tempLineDataSetAuxPump2
     }
 
-    fun onDurationChange(phaseId: Int, duration: Double) {
+    fun onDurationChange(id: Int, duration: Double) {
+        val phaseId = mapMenuItemIdToPhaseId(id)
         val currentProfile: FeedProfile = _feedProfileUiState.value
         val newPhases: MutableList<FeedProfilePhase> = currentProfile.feedProfilePhases.toMutableList()
         if (phaseId >= newPhases.size) return // Safety check (defensive programming)
@@ -370,10 +371,11 @@ class FeedProfileEditViewModel(
     }
 
     fun onToggleStateChange(
-        phaseId: Int,
+        id: Int,
         toggleButtonType: FeedProfileEditToggleButtonType,
         isChecked: Boolean
     ) {
+        val phaseId = mapMenuItemIdToPhaseId(id)
         val currentProfile: FeedProfile = _feedProfileUiState.value
         val newPhases: MutableList<FeedProfilePhase> = currentProfile.feedProfilePhases.toMutableList()
         if (phaseId >= newPhases.size) return // Safety check (defensive programming)
@@ -381,10 +383,10 @@ class FeedProfileEditViewModel(
 
         val newPhase: FeedProfilePhase = when (toggleButtonType) {
             FeedProfileEditToggleButtonType.Skimmer -> oldPhase.copy(skimmer = isChecked)
-            FeedProfileEditToggleButtonType.MainPump1 -> oldPhase.copy(skimmer = isChecked)
-            FeedProfileEditToggleButtonType.MainPump2 -> oldPhase.copy(skimmer = isChecked)
-            FeedProfileEditToggleButtonType.AuxPump1 -> oldPhase.copy(skimmer = isChecked)
-            FeedProfileEditToggleButtonType.AuxPump2 -> oldPhase.copy(skimmer = isChecked)
+            FeedProfileEditToggleButtonType.MainPump1 -> oldPhase.copy(mainPump1 = isChecked)
+            FeedProfileEditToggleButtonType.MainPump2 -> oldPhase.copy(mainPump2 = isChecked)
+            FeedProfileEditToggleButtonType.AuxPump1 -> oldPhase.copy(auxPump1 = isChecked)
+            FeedProfileEditToggleButtonType.AuxPump2 -> oldPhase.copy(auxPump2 = isChecked)
         }
         newPhases[phaseId] = newPhase
 

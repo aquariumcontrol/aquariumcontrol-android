@@ -1,135 +1,158 @@
 package com.laimburggasse.aquariumcontrol.feed.edit
 
+import android.util.Log
+
+fun mapIndexToMenuItemId(
+    level: Int,
+    phaseType: FeedProfileEditPhaseType?,
+    index: Int,
+    toggleButtonType: FeedProfileEditToggleButtonType? = null,
+): Int {
+    val isFeedPhase = phaseType == FeedProfileEditPhaseType.FEED
+    return when (level) {
+        1 -> index
+        2 -> (index + 1) * 10 + if (isFeedPhase) 1 else 0
+        3 -> (index + 1) * 100 + (if (isFeedPhase) 10 else 0) + (toggleButtonType?.value ?: 0)
+        else -> 0
+    }
+}
+
+// Mapping of unique menu item id to feed profile phase id in the range
+// of 0...19
+fun mapMenuItemIdToPhaseId(id: Int): Int {
+    val base = id / 100
+    return (base - 1) * 2 + if (id % 100 >= 10) 1 else 0
+}
+
+fun createFeedProfileEditMenuItem(
+    level: Int,
+    index: Int,
+    phaseType: FeedProfileEditPhaseType? = null,
+    toggleButtonType: FeedProfileEditToggleButtonType? = null,
+    children: List<FeedProfileEditMenuItem>? = null,
+): FeedProfileEditMenuItem {
+    val feedProfileNumber = index + 1
+    val text = when (level) {
+        1 -> "Phase $feedProfileNumber"
+        2 -> if (phaseType == FeedProfileEditPhaseType.FEED) "Feed" else "Pause"
+        3 -> when (toggleButtonType) {
+            FeedProfileEditToggleButtonType.Skimmer -> "Skimmer"
+            FeedProfileEditToggleButtonType.MainPump1 -> "Main Pump 1"
+            FeedProfileEditToggleButtonType.MainPump2 -> "Main Pump 2"
+            FeedProfileEditToggleButtonType.AuxPump1 -> "Aux. Pump 1"
+            FeedProfileEditToggleButtonType.AuxPump2 -> "Aux. Pump 2"
+            null -> ""
+        }
+        else -> ""
+    }
+    val id = mapIndexToMenuItemId(level, phaseType, index, toggleButtonType)
+    Log.d("createFeedProfileEditMenuItem", "id: $id, level: $level, text: $text")
+
+    return FeedProfileEditMenuItem(
+        id,
+        level,
+        text,
+        isToggleButton = toggleButtonType != null,
+        phaseType,
+        toggleButtonType,
+        isNumericInput = (level == 3) && (toggleButtonType == null),
+        children = children ?: emptyList()
+    )
+}
+
 // This class is used as a helper to define the structure of the UI.
 // It shall not hold any state nor any UI elements.
 // It is a recursive data structure of elements of type FeedProfileEditMenuItem
 object FeedProfileEditMenuItems {
     val phases: List<FeedProfileEditMenuItem> = List(size = 10) { index ->
-        FeedProfileEditMenuItem(
-            id = index,
+        createFeedProfileEditMenuItem(
             level = 1,
-            text = "Phase ${index + 1}",
-            isToggleButton = false,
-            isNumericInput = false,
+            index = index,
             children = mutableListOf(
-                FeedProfileEditMenuItem(
-                    id = 0,
+                createFeedProfileEditMenuItem(
                     level = 2,
-                    text = "Pause",
-                    isToggleButton = false,
-                    isNumericInput = false,
+                    index = index,
                     phaseType = FeedProfileEditPhaseType.PAUSE,
                     children = mutableListOf(
-                        FeedProfileEditMenuItem(
-                            id = 0,
+                        createFeedProfileEditMenuItem(
                             level = 3,
-                            text = "Duration",
-                            isToggleButton = false,
+                            index = index,
                             phaseType = FeedProfileEditPhaseType.PAUSE,
-                            isNumericInput = true,
                         ),
-                        FeedProfileEditMenuItem(
-                            id = (index * 2) * 10 + 1,
+                        createFeedProfileEditMenuItem(
                             level = 3,
-                            text = "Skimmer",
-                            isToggleButton = true,
+                            index = index,
                             phaseType = FeedProfileEditPhaseType.PAUSE,
                             toggleButtonType = FeedProfileEditToggleButtonType.Skimmer,
-                            isNumericInput = false,
                         ),
-                        FeedProfileEditMenuItem(
-                            id = (index * 2) * 10 + 2,
+                        createFeedProfileEditMenuItem(
                             level = 3,
-                            text = "Main Pump 1",
+                            index = index,
                             phaseType = FeedProfileEditPhaseType.PAUSE,
                             toggleButtonType = FeedProfileEditToggleButtonType.MainPump1,
-                            isNumericInput = false,
                         ),
-                        FeedProfileEditMenuItem(
-                            id = (index * 2) * 10 + 3,
+                        createFeedProfileEditMenuItem(
                             level = 3,
-                            text = "Main Pump 2",
+                            index = index,
                             phaseType = FeedProfileEditPhaseType.PAUSE,
                             toggleButtonType = FeedProfileEditToggleButtonType.MainPump2,
-                            isNumericInput = false,
                         ),
-                        FeedProfileEditMenuItem(
-                            id = (index * 2) * 10 + 4,
+                        createFeedProfileEditMenuItem(
                             level = 3,
-                            text = "Aux. Pump 1",
+                            index = index,
                             phaseType = FeedProfileEditPhaseType.PAUSE,
                             toggleButtonType = FeedProfileEditToggleButtonType.AuxPump1,
-                            isNumericInput = false,
                         ),
-                        FeedProfileEditMenuItem(
-                            id = (index * 2) * 10 + 5,
+                        createFeedProfileEditMenuItem(
                             level = 3,
-                            text = "Aux. Pump 2",
+                            index = index,
                             phaseType = FeedProfileEditPhaseType.PAUSE,
                             toggleButtonType = FeedProfileEditToggleButtonType.AuxPump2,
-                            isNumericInput = false,
                         ),
                     )
                 ),
-                FeedProfileEditMenuItem(
-                    id = 1,
+                createFeedProfileEditMenuItem(
                     level = 2,
-                    text = "Feed",
-                    isToggleButton = false,
-                    isNumericInput = false,
+                    index = index,
                     phaseType = FeedProfileEditPhaseType.FEED,
                     children = mutableListOf(
-                        FeedProfileEditMenuItem(
-                            id = (index * 2 + 1) * 10 + 0,
+                        createFeedProfileEditMenuItem(
                             level = 3,
-                            text = "Duration",
-                            isToggleButton = false,
-                            phaseType = FeedProfileEditPhaseType.FEED,
-                            isNumericInput = true,
+                            index = index,
+                            phaseType = FeedProfileEditPhaseType.PAUSE,
                         ),
-                        FeedProfileEditMenuItem(
-                            id = (index * 2 + 1) * 10 + 1,
+                        createFeedProfileEditMenuItem(
                             level = 3,
-                            text = "Skimmer",
-                            isToggleButton = true,
+                            index = index,
                             phaseType = FeedProfileEditPhaseType.FEED,
                             toggleButtonType = FeedProfileEditToggleButtonType.Skimmer,
-                            isNumericInput = false,
                         ),
-                        FeedProfileEditMenuItem(
-                            id = (index * 2 + 1) * 10 + 2,
+                        createFeedProfileEditMenuItem(
                             level = 3,
-                            text = "Main Pump 1",
+                            index = index,
                             phaseType = FeedProfileEditPhaseType.FEED,
                             toggleButtonType = FeedProfileEditToggleButtonType.MainPump1,
-                            isNumericInput = false,
                         ),
-                        FeedProfileEditMenuItem(
-                            id = (index * 2 + 1) * 10 + 3,
+                        createFeedProfileEditMenuItem(
                             level = 3,
-                            text = "Main Pump 2",
+                            index = index,
                             phaseType = FeedProfileEditPhaseType.FEED,
                             toggleButtonType = FeedProfileEditToggleButtonType.MainPump2,
-                            isNumericInput = false,
                         ),
-                        FeedProfileEditMenuItem(
-                            id = (index * 2 + 1) * 10 + 4,
+                        createFeedProfileEditMenuItem(
                             level = 3,
-                            text = "Aux. Pump 1",
+                            index = index,
                             phaseType = FeedProfileEditPhaseType.FEED,
                             toggleButtonType = FeedProfileEditToggleButtonType.AuxPump1,
-                            isNumericInput = false,
                         ),
-                        FeedProfileEditMenuItem(
-                            id = (index * 2 + 1) * 10 + 5,
+                        createFeedProfileEditMenuItem(
                             level = 3,
-                            text = "Aux. Pump 2",
+                            index = index,
                             phaseType = FeedProfileEditPhaseType.FEED,
                             toggleButtonType = FeedProfileEditToggleButtonType.AuxPump2,
-                            isNumericInput = false,
-                        )
+                        ),
                     )
-                )
+                ),
             )
         )
     }

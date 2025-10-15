@@ -1,6 +1,7 @@
 package com.laimburggasse.aquariumcontrol.feed.edit
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,7 +32,7 @@ fun FeedProfileEditMenuItemComposable(
     val profileState: FeedProfile by feedProfileEditViewModel.feedProfileUiState.collectAsState()
 
     // conversion of unique ID of menu item to feed profile phase ID
-    val phaseId: Int = feedProfileEditMenuItem.id / 10
+    val phaseId: Int = mapMenuItemIdToPhaseId(id = feedProfileEditMenuItem.id)
     val isThisItemExpanded = feedProfileEditMenuItem.id in isExpanded
 
     val isChecked: Boolean = if (phaseId < profileState.feedProfilePhases.size) {
@@ -44,6 +45,7 @@ fun FeedProfileEditMenuItemComposable(
             null -> false // Not a toggle button
         }
     } else {
+        Log.d("FeedProfileEditMenuItemComposable", "phaseId out of bounds: $phaseId")
         false // Default value if phaseId is out of bounds
     }
 
@@ -54,7 +56,9 @@ fun FeedProfileEditMenuItemComposable(
         modifier = Modifier
             .clickable {
                 if (feedProfileEditMenuItem.children.isNotEmpty()) {
-                    feedProfileEditViewModel.onExpanded(itemId = feedProfileEditMenuItem.id)
+                    feedProfileEditViewModel.onExpanded(
+                        itemId = feedProfileEditMenuItem.id
+                    )
                 }
             }
             .padding(start = (feedProfileEditMenuItem.level * 16).dp, top = 8.dp, bottom = 8.dp),
@@ -74,7 +78,7 @@ fun FeedProfileEditMenuItemComposable(
                 checked = isChecked,
                 onCheckedChange = {
                     feedProfileEditViewModel.onToggleStateChange(
-                        phaseId = feedProfileEditMenuItem.id,
+                        id = feedProfileEditMenuItem.id,
                         toggleButtonType = feedProfileEditMenuItem.toggleButtonType!!,
                         isChecked = it
                     )
@@ -89,6 +93,7 @@ fun FeedProfileEditMenuItemComposable(
     }
     if (isThisItemExpanded) {
         FeedProfileEditMenuComposable(
+            itemsToRender = feedProfileEditMenuItem.children,
             feedProfileEditViewModel = feedProfileEditViewModel
         )
     }
