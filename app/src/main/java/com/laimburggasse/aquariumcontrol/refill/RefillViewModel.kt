@@ -2,43 +2,24 @@ package com.laimburggasse.aquariumcontrol.refill
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.MainViewModel
-import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
-import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
-import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
 import kotlinx.coroutines.launch
 
-class RefillViewModel: ViewModel() {
-    fun sendStartRequest(mainViewModel: MainViewModel) {
+class RefillViewModel(private val refillRepository: RefillRepository): ViewModel() {
+    fun sendStartRequest() {
         viewModelScope.launch {
-            val webApiPostRequest = WebApiPostRequest()
-            webApiPostRequestExecution(
-                mainViewModel = mainViewModel,
-                apiUrl = WebApiUrls.REFILL_POST_CONTROL_START,
-                webApiPostRequest = webApiPostRequest,
-            )
+            refillRepository.sendStartRequest()
         }
     }
 
-    fun sendStopRequest(mainViewModel: MainViewModel) {
+    fun sendStopRequest() {
         viewModelScope.launch {
-            val webApiPostRequest = WebApiPostRequest()
-            webApiPostRequestExecution(
-                mainViewModel = mainViewModel,
-                apiUrl = WebApiUrls.REFILL_POST_CONTROL_STOP,
-                webApiPostRequest = webApiPostRequest,
-            )
+            refillRepository.sendStopRequest()
         }
     }
 
-    fun sendResetRequest(mainViewModel: MainViewModel) {
+    fun sendResetRequest() {
         viewModelScope.launch {
-            val webApiPostRequest = WebApiPostRequest()
-            webApiPostRequestExecution(
-                mainViewModel = mainViewModel,
-                apiUrl = WebApiUrls.REFILL_POST_CONTROL_RESET,
-                webApiPostRequest = webApiPostRequest,
-            )
+            refillRepository.sendResetRequest()
         }
     }
 

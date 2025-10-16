@@ -47,7 +47,9 @@ import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleViewModelFact
 import com.laimburggasse.aquariumcontrol.heating.HeatingScreen
 import com.laimburggasse.aquariumcontrol.info.InfoScreen
 import com.laimburggasse.aquariumcontrol.overview.OverviewScreen
+import com.laimburggasse.aquariumcontrol.refill.RefillRepository
 import com.laimburggasse.aquariumcontrol.refill.RefillScreen
+import com.laimburggasse.aquariumcontrol.refill.RefillViewModelFactory
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryRepository
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryScreen
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryViewModelFactory
@@ -99,9 +101,13 @@ class MainActivity : ComponentActivity() {
     private val feedScheduleRepository by lazy { FeedScheduleRepository(mainViewModel = mainViewModel) }
     private val feedHistoryRepository by lazy { FeedHistoryRepository(mainViewModel = mainViewModel) }
     private val refillHistoryRepository by lazy { RefillHistoryRepository(mainViewModel = mainViewModel) }
+    private val refillRepository by lazy { RefillRepository(mainViewModel = mainViewModel) }
+    private val refillViewModelFactory by lazy { RefillViewModelFactory(refillRepository) }
+
     private val feedProfilesViewModelFactory by lazy { FeedProfilesViewModelFactory(feedProfilesRepository) }
     private val feedScheduleViewModelFactory by lazy { FeedScheduleViewModelFactory(feedScheduleRepository, feedProfilesRepository) }
     private val feedProfileAddViewModelFactory by lazy { FeedProfileAddViewModelFactory(feedProfilesRepository) }
+
 
     override fun onPause() {
         super.onPause()
@@ -296,8 +302,9 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(route = ViewNavigationRoutes.refill) {
                         RefillScreen(
-                            navHostController = navHostController,
-                            mainViewModel = mainViewModel
+                            navHostController,
+                            mainViewModel,
+                            refillViewModelFactory,
                         )
                     }
                     composable(route = ViewNavigationRoutes.refillHistory24h) {

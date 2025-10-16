@@ -38,7 +38,8 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 fun RefillScreen(
     navHostController: NavHostController? = null,
     mainViewModel: MainViewModel,
-    darkTheme: Boolean? = null
+    refillViewModelFactory: RefillViewModelFactory,
+    darkTheme: Boolean? = null,
 ) {
     // This screen displays
     // - a button for visualizing all refill events of the last 24h
@@ -51,7 +52,7 @@ fun RefillScreen(
     val isControllerAddressValid: Boolean = !mainViewModel.getControllerAddress().isNullOrBlank()
     val context = LocalContext.current // context for web API request and Toasts
 
-    val refillViewModel: RefillViewModel = viewModel(factory = RefillViewModelFactory())
+    val refillViewModel: RefillViewModel = viewModel(factory = refillViewModelFactory)
 
     AquariumControllerTheme(darkTheme) {
         Surface(
@@ -119,7 +120,7 @@ fun RefillScreen(
                                             .padding(horizontal = 8.dp),
                                         onClick = {
                                             if (isControllerLoaded && isControllerAddressValid) {
-                                                refillViewModel.sendStartRequest(mainViewModel)
+                                                refillViewModel.sendStartRequest()
                                                 Toast.makeText(
                                                     context,
                                                     context.getString(R.string.sent_request_to_controller_for_starting_refill_control),
@@ -139,7 +140,7 @@ fun RefillScreen(
                                             .padding(horizontal = 8.dp),
                                         onClick = {
                                             if (isControllerLoaded && isControllerAddressValid) {
-                                                refillViewModel.sendStartRequest(mainViewModel)
+                                                refillViewModel.sendStopRequest()
                                                 Toast.makeText(
                                                     context,
                                                     context.getString(R.string.sent_request_to_controller_for_stopping_refill_control),
@@ -159,7 +160,7 @@ fun RefillScreen(
                                             .padding(horizontal = 8.dp),
                                         onClick = {
                                             if (isControllerLoaded && isControllerAddressValid) {
-                                                refillViewModel.sendResetRequest(mainViewModel)
+                                                refillViewModel.sendResetRequest()
                                                 Toast.makeText(
                                                     context,
                                                     context.getString(R.string.sent_request_to_controller_for_resetting_errors),
@@ -189,6 +190,9 @@ fun RefillScreen(
 }
 
 val mockMainViewModel = MockMainViewModel()
+val mockRefillRepository = MockRefillRepository()
+
+val mockRefillViewModelFactory = RefillViewModelFactory(mockRefillRepository)
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -205,5 +209,8 @@ val mockMainViewModel = MockMainViewModel()
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 internal fun RefillScreenPreview() {
-    RefillScreen(mainViewModel = mockMainViewModel)
+    RefillScreen(
+        mainViewModel = mockMainViewModel,
+        refillViewModelFactory = mockRefillViewModelFactory
+    )
 }
