@@ -95,4 +95,29 @@ open class FeedProfilesRepository(private val mainViewModel: MainViewModel) {
             null
         }
     }
+
+    suspend fun updateFeedProfile(modifiedFeedProfile: FeedProfile) {
+        val apiCallParameters: Map<String, String> = modifiedFeedProfile.getFeedProfileApiCallParameters()
+        withContext(context = Dispatchers.IO) {
+            webApiPostRequestExecution(
+                mainViewModel = mainViewModel,
+                apiUrl = WebApiUrls.FEED_POST_PROFILE_UPDATE,
+                webApiPostRequest = WebApiPostRequest(),
+                optionalGetParams = apiCallParameters
+            )
+        }
+
+        // Update the local list of profiles
+        val currentResult: DataFetchResult<List<FeedProfile>> = _profilesFlow.value
+        if (currentResult is DataFetchResult.Success) {
+            val updatedList: List<FeedProfile> = currentResult.data.map { existingProfile ->
+                if (existingProfile.profileID == modifiedFeedProfile.profileID) {
+                    modifiedFeedProfile
+                } else {
+                    existingProfile
+                }
+            }
+            _profilesFlow.value = DataFetchResult.Success(data = updatedList)
+        }
+    }
 }

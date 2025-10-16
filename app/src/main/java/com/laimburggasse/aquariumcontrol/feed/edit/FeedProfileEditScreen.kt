@@ -99,14 +99,12 @@ fun FeedProfileEditScreen(
                         Configuration.ORIENTATION_LANDSCAPE -> {
                             Row {
                                 FeedProfileEditButtonsComposable(
-                                    mainViewModel = mainViewModel,
                                     feedProfileEditViewModel = feedProfileEditViewModel
                                 )
                             }
                         }
                         else -> {
                             FeedProfileEditButtonsComposable(
-                                mainViewModel = mainViewModel,
                                 feedProfileEditViewModel = feedProfileEditViewModel,
                                 modifier = Modifier.fillMaxWidth()
                             )

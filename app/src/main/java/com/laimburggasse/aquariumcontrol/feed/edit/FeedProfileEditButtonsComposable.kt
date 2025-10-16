@@ -27,7 +27,6 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 fun FeedProfileEditButtonsComposable(
     modifier: Modifier? = Modifier,
     feedProfileEditViewModel: FeedProfileEditViewModel? = null,
-    mainViewModel: MainViewModel? = null,
 ) {
     // This composable displays the buttons for updating the feed profile.
     // The arrangement of the buttons follows the device orientation.
@@ -37,14 +36,12 @@ fun FeedProfileEditButtonsComposable(
     Button(
         modifier = modifier?.then(other = Modifier.fillMaxWidth().padding(horizontal = 8.dp)) ?: Modifier,
         onClick = {
-            if (mainViewModel != null) {
-                feedProfileEditViewModel?.updateFeedProfile(mainViewModel)
-                Toast.makeText(
-                    context,
-                    context.getString(R.string.sent_request_to_controller_for_updating_feed_profile),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+            feedProfileEditViewModel?.updateFeedProfile()
+            Toast.makeText(
+                context,
+                context.getString(R.string.sent_request_to_controller_for_updating_feed_profile),
+                Toast.LENGTH_SHORT
+            ).show()
         },
     ) {
         Text(
