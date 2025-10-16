@@ -1,147 +1,79 @@
 package com.laimburggasse.aquariumcontrol.schedule
 
-import android.app.TimePickerDialog
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RangeSlider
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.runtime.LaunchedEffect
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
-import java.util.Calendar
 import java.util.Locale
 
+/**
+ * A stateless composable for adjusting a time-based schedule.
+ * It receives all data to display and emits events for user interactions.
+ * It has no knowledge of ViewModels.
+ */
 @Composable
 fun ScheduleAdjustmentComposable(
-    myViewModel: ScheduleEntryViewModel,
-    title: String
+    modifier: Modifier = Modifier,
+    title: String,
+    startTime: Float,
+    stopTime: Float,
+    isLimitationActive: Boolean,
+    onStartTimeChanged: (Float) -> Unit,
+    onStopTimeChanged: (Float) -> Unit,
+    onLimitationActiveChanged: (Boolean) -> Unit
 ) {
-    // This composable displays:
-    // - Range slider for setting the start and stop time
-    // - Time pickers for setting the start and stop time
-    // - Text labels informing the chosen start and stop time
-    // - Switch for choosing to enable the schedule restriction
-
     val configuration = LocalConfiguration.current
 
-    // Use derived state for slider position
-    val sliderRange by myViewModel.sliderRange.observeAsState()
+    // State for controlling the visibility of the Time Picker Dialogs
+    var showStartTimeDialog by remember { mutableStateOf(false) }
+    var showStopTimeDialog by remember { mutableStateOf(false) }
 
-    // Use a separate mutable state for the text field values
-    val lowerBoundValue by myViewModel.lowerBoundValue.observeAsState()
-    val upperBoundValue by myViewModel.upperBoundValue.observeAsState()
-
-    val isScheduleLimitationActive by myViewModel.isLimitationActive.observeAsState()
-
-    // Get the initial date and time from the timestamp
-    val initialCalendar = Calendar.getInstance(Locale.getDefault()).apply {
-        timeInMillis = System.currentTimeMillis()
-        // initial value is replaced by view model - loading initiated by upper-level composable
-    }
-
-    var selectedHourStart by remember { mutableIntStateOf(
-            if (lowerBoundValue != null)
-                myViewModel.getHour(lowerBoundValue!!)
-            else
-                initialCalendar.get(Calendar.HOUR_OF_DAY)
-        )
-    }
-    var selectedMinuteStart by remember { mutableIntStateOf(
-            if (lowerBoundValue != null)
-                myViewModel.getMinute(lowerBoundValue!!)
-            else
-                initialCalendar.get(Calendar.MINUTE)
-        )
-    }
-    var selectedHourStop by remember { mutableIntStateOf(
-            if (upperBoundValue != null)
-                myViewModel.getHour(upperBoundValue!!)
-            else
-                initialCalendar.get(Calendar.HOUR_OF_DAY)
-        )
-    }
-    var selectedMinuteStop by remember { mutableIntStateOf(
-            if (upperBoundValue != null)
-                myViewModel.getMinute(upperBoundValue!!)
-            else
-                initialCalendar.get(Calendar.MINUTE)
+    // --- DIALOG COMPOSABLES ---
+    // When showStartTimeDialog is true, this dialog will be displayed.
+    if (showStartTimeDialog) {
+        TimePickerDialog(
+            initialHour = getHour(startTime),
+            initialMinute = getMinute(startTime),
+            onTimeSelected = { hour, minute ->
+                onStartTimeChanged(hour + minute / 60f)
+                showStartTimeDialog = false // Hide the dialog
+            },
+            onDismiss = {
+                showStartTimeDialog = false // Hide the dialog on dismissal
+            }
         )
     }
 
-    // Update selectedHourStart and selectedMinuteStart when lowerBoundValue changes
-    LaunchedEffect(lowerBoundValue) {
-        lowerBoundValue?.let {
-            selectedHourStart = myViewModel.getHour(it)
-            selectedMinuteStart = myViewModel.getMinute(it)
-        }
+    // When showStopTimeDialog is true, this dialog will be displayed.
+    if (showStopTimeDialog) {
+        TimePickerDialog(
+            initialHour = getHour(stopTime),
+            initialMinute = getMinute(stopTime),
+            onTimeSelected = { hour, minute ->
+                onStopTimeChanged(hour + minute / 60f)
+                showStopTimeDialog = false // Hide the dialog
+            },
+            onDismiss = {
+                showStopTimeDialog = false // Hide the dialog on dismissal
+            }
+        )
     }
-
-    // Update selectedHourStop and selectedMinuteStop when upperBoundValue changes
-    LaunchedEffect(upperBoundValue) {
-        upperBoundValue?.let {
-            selectedHourStop = myViewModel.getHour(it)
-            selectedMinuteStop = myViewModel.getMinute(it)
-        }
-    }
-
-    val timePickerDialogStart = TimePickerDialog(
-        /* context = */ LocalContext.current,
-        /* listener = */ { _, hourOfDay, minute ->
-            selectedHourStart = hourOfDay
-            selectedMinuteStart = minute
-            // Update the ViewModel with the new start time
-            val newStartTime = hourOfDay + minute / 60f
-            myViewModel.onLowerValueChanged(newStartTime)
-        },
-        /* hourOfDay = */ selectedHourStart,
-        /* minute = */ selectedMinuteStart,
-        /* is24HourView = */ true // Use 24-hour format
-    )
-
-    val timePickerDialogStop = TimePickerDialog(
-        /* context = */ LocalContext.current,
-        /* listener = */ { _, hourOfDay, minute ->
-            selectedHourStop = hourOfDay
-            selectedMinuteStop = minute
-            // Update the ViewModel with the new stop time
-            val newStopTime = hourOfDay + minute / 60f
-            myViewModel.onUpperValueChanged(newStopTime)
-        },
-        /* hourOfDay = */ selectedHourStop,
-        /* minute = */ selectedMinuteStop,
-        /* is24HourView = */ true // Use 24-hour format
-    )
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .border(
                 border = BorderStroke(
@@ -155,95 +87,81 @@ fun ScheduleAdjustmentComposable(
             text = title,
             style = MaterialTheme.typography.headlineSmall,
         )
+
+        val sliderRange = startTime..stopTime
+
         when (configuration.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> {
                 Row(verticalAlignment = Alignment.CenterVertically) {
+                    // Start Time Button
                     Column(
                         modifier = Modifier.weight(0.25f),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        val startTimeString =
-                            myViewModel.formatTime(lowerBoundValue!!)
                         Text(
-                            text = stringResource(R.string.start_time) + startTimeString,
-                            modifier = Modifier
-                                .padding(top = 16.dp)
+                            text = stringResource(R.string.start_time) + formatTime(startTime),
+                            modifier = Modifier.padding(top = 16.dp)
                         )
-                        Button(onClick = { timePickerDialogStart.show() }) {
+                        Button(onClick = { showStartTimeDialog = true }) {
                             Text(stringResource(R.string.select_time))
                         }
                     }
+                    // Range Slider
                     Column(modifier = Modifier.weight(0.5f)) {
                         RangeSlider(
-                            value = sliderRange!!,
-                            onValueChange = { newValue ->
-                                myViewModel.onRangeChangedBySlider(
-                                    newValue.start,
-                                    newValue.endInclusive
-                                )
+                            value = sliderRange,
+                            onValueChange = { newRange ->
+                                onStartTimeChanged(newRange.start)
+                                onStopTimeChanged(newRange.endInclusive)
                             },
                             valueRange = 0f..24f,
-                            modifier = Modifier
-                                .fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
+                    // Stop Time Button
                     Column(
                         modifier = Modifier.weight(0.25f),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        val stopTimeString =
-                            myViewModel.formatTime(upperBoundValue!!)
                         Text(
-                            text = stringResource(R.string.stop_time) + stopTimeString,
-                            modifier = Modifier
-                                .padding(top = 16.dp)
+                            text = stringResource(R.string.stop_time) + formatTime(stopTime),
+                            modifier = Modifier.padding(top = 16.dp)
                         )
-                        Button(onClick = { timePickerDialogStop.show() }) {
+                        Button(onClick = { showStopTimeDialog = true }) {
                             Text(stringResource(R.string.select_time))
                         }
                     }
                 }
-
             }
-
-            else -> {
+            else -> { // Portrait orientation
                 Column {
                     RangeSlider(
-                        value = sliderRange!!,
-                        onValueChange = { newValue ->
-                            myViewModel.onRangeChangedBySlider(
-                                newValue.start,
-                                newValue.endInclusive
-                            )
+                        value = sliderRange,
+                        onValueChange = { newRange ->
+                            onStartTimeChanged(newRange.start)
+                            onStopTimeChanged(newRange.endInclusive)
                         },
                         valueRange = 0f..24f,
-                        modifier = Modifier
-                            .fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
                 Row {
                     Column {
-                        val startTimeString =
-                            myViewModel.formatTime(lowerBoundValue!!)
                         Text(
-                            text = stringResource(R.string.start_time) + startTimeString,
-                            modifier = Modifier
-                                .padding(top = 16.dp)
+                            text = stringResource(R.string.start_time) + formatTime(startTime),
+                            modifier = Modifier.padding(top = 16.dp)
                         )
-                        Button(onClick = { timePickerDialogStart.show() }) {
+                        Button(onClick = { showStartTimeDialog = true }) {
                             Text(text = stringResource(R.string.select_time))
                         }
                     }
                     Spacer(modifier = Modifier.size(width = 72.dp, height = 10.dp))
                     Column {
-                        val stopTimeString =
-                            myViewModel.formatTime(upperBoundValue!!)
                         Text(
-                            text = stringResource(R.string.stop_time) + stopTimeString,
-                            modifier = Modifier
-                                .padding(top = 16.dp)
+                            text = stringResource(R.string.stop_time) + formatTime(stopTime),
+                            modifier = Modifier.padding(top = 16.dp)
                         )
-                        Button(onClick = { timePickerDialogStop.show() }) {
+                        Button(onClick = { showStopTimeDialog = true }) {
                             Text(text = stringResource(R.string.select_time))
                         }
                     }
@@ -255,10 +173,8 @@ fun ScheduleAdjustmentComposable(
             modifier = Modifier.height(IntrinsicSize.Min)
         ) {
             Switch(
-                checked = isScheduleLimitationActive!!,
-                onCheckedChange = {
-                    myViewModel.setLimitationActive(it)
-                },
+                checked = isLimitationActive,
+                onCheckedChange = onLimitationActiveChanged,
             )
             Text(
                 text = stringResource(R.string.activate_schedule_restriction),
@@ -267,6 +183,47 @@ fun ScheduleAdjustmentComposable(
         }
     }
 }
+
+/**
+ * A wrapper composable for the Android TimePickerDialog to make it work cleanly with Compose state.
+ */
+@Composable
+private fun TimePickerDialog(
+    initialHour: Int,
+    initialMinute: Int,
+    onTimeSelected: (Int, Int) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val dialog = remember {
+        android.app.TimePickerDialog(
+            context,
+            { _, hour, minute -> onTimeSelected(hour, minute) },
+            initialHour,
+            initialMinute,
+            true // 24-hour view
+        )
+    }
+
+    dialog.setOnDismissListener { onDismiss() }
+
+    // Use LaunchedEffect to show the dialog safely within the composition
+    LaunchedEffect(Unit) {
+        dialog.show()
+    }
+}
+
+// --- Helper functions for time conversion ---
+
+private fun formatTime(value: Float): String {
+    val hours = getHour(value)
+    val minutes = getMinute(value)
+    return String.format(Locale.US, "%02d:%02d", hours, minutes)
+}
+
+private fun getHour(value: Float): Int = value.toInt()
+private fun getMinute(value: Float): Int = ((value - getHour(value)) * 60).toInt()
+
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -280,39 +237,20 @@ fun ScheduleAdjustmentComposable(
     uiMode = Configuration.UI_MODE_NIGHT_NO,
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
+
+@Preview(showBackground = true)
 @Composable
 internal fun ScheduleAdjustmentComposablePreview() {
-    val mockScheduleEntries = ScheduleEntries(
-        ballingStartTime = 2F,
-        ballingStopTime = 22F,
-        ballingLimitationActive = false,
-        refillStartTime = 3F,
-        refillStopTime = 21F,
-        refillLimitationActive = true,
-        ventilationStartTime = 4F,
-        ventilationStopTime = 20F,
-        ventilationLimitationActive = false,
-        heatingStartTime = 5F,
-        heatingStopTime = 19F,
-        heatingLimitationActive = true,
-    )
-
-    // create a view model instance for preview
-    val myViewModel: ScheduleEntryViewModel = viewModel(
-        factory = ScheduleEntryViewModelFactory(
-            setValStartTime = mockScheduleEntries.ballingStartTime,
-            setValStopTime = mockScheduleEntries.ballingStopTime,
-            setValLimitationActive = mockScheduleEntries.ballingLimitationActive
-        )
-    )
-
     AquariumControllerTheme {
-        Surface(
-            color = MaterialTheme.colorScheme.background
-        ) {
+        Surface {
             ScheduleAdjustmentComposable(
-                myViewModel = myViewModel,
-                title = "Balling dosing schedule",
+                title = "Balling Dosing Schedule",
+                startTime = 8.5f, // 08:30
+                stopTime = 20.25f, // 20:15
+                isLimitationActive = true,
+                onStartTimeChanged = {},
+                onStopTimeChanged = {},
+                onLimitationActiveChanged = {}
             )
         }
     }

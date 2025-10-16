@@ -6,39 +6,42 @@ import java.util.Locale
 
 @SuppressLint("SimpleDateFormat")
 
-class ScheduleEntries(
+data class ScheduleEntries(
     var ballingStartTime: Float,
     var ballingStopTime: Float,
     var ballingLimitationActive: Boolean,
+    var ballingScheduleLoaded: Boolean,
     var refillStartTime: Float,
     var refillStopTime: Float,
     var refillLimitationActive: Boolean,
+    var refillScheduleLoaded: Boolean,
     var ventilationStartTime: Float,
     var ventilationStopTime: Float,
     var ventilationLimitationActive: Boolean,
+    var ventilationScheduleLoaded: Boolean,
     var heatingStartTime: Float,
     var heatingStopTime: Float,
     var heatingLimitationActive: Boolean,
+    var heatingScheduleLoaded: Boolean
 ) {
-    fun updateFromViewModels(
-        ballingScheduleEntryViewModel: ScheduleEntryViewModel,
-        refillScheduleEntryViewModel: ScheduleEntryViewModel,
-        ventilationScheduleEntryViewModel: ScheduleEntryViewModel,
-        heatingScheduleEntryViewModel: ScheduleEntryViewModel
-    ) {
-        ballingStartTime = ballingScheduleEntryViewModel.getStartTime()
-        ballingStopTime = ballingScheduleEntryViewModel.getStopTime()
-        ballingLimitationActive = ballingScheduleEntryViewModel.isLimitationActive()
-        refillStartTime = refillScheduleEntryViewModel.getStartTime()
-        refillStopTime = refillScheduleEntryViewModel.getStopTime()
-        refillLimitationActive = refillScheduleEntryViewModel.isLimitationActive()
-        ventilationStartTime = ventilationScheduleEntryViewModel.getStartTime()
-        ventilationStopTime = ventilationScheduleEntryViewModel.getStopTime()
-        ventilationLimitationActive = ventilationScheduleEntryViewModel.isLimitationActive()
-        heatingStartTime = heatingScheduleEntryViewModel.getStartTime()
-        heatingStopTime = heatingScheduleEntryViewModel.getStopTime()
-        heatingLimitationActive = heatingScheduleEntryViewModel.isLimitationActive()
-    }
+    constructor() : this(
+        ballingStartTime = 0.0f,
+        ballingStopTime = 0.0f,
+        ballingLimitationActive = false,
+        ballingScheduleLoaded = true,
+        refillStartTime = 0.0f,
+        refillStopTime = 0.0f,
+        refillLimitationActive = false,
+        refillScheduleLoaded = true,
+        ventilationStartTime = 0.0f,
+        ventilationStopTime = 0.0f,
+        ventilationLimitationActive = false,
+        ventilationScheduleLoaded = true,
+        heatingStartTime = 0.0f,
+        heatingStopTime = 0.0f,
+        heatingLimitationActive = false,
+        heatingScheduleLoaded = true
+    )
 
     private fun formatTime(value: Float): String {
         val hours = value.toInt()

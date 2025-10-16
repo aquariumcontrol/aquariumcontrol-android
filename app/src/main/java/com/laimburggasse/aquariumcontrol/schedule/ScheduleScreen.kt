@@ -18,7 +18,8 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,70 +36,22 @@ import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
 fun ScheduleScreen(
     navHostController: NavHostController? = null,
     mainViewModel: MainViewModel,
-    scheduleViewModel: ScheduleViewModelInterface = viewModel<ScheduleViewModel>(),
+    scheduleViewModelFactory: ScheduleViewModelFactory,
     darkTheme: Boolean? = null,
 ) {
     // This screen displays for each of (Balling, Refill, schedule, Heating)
     // - a range slider for setting the start and stop time
+    val scheduleViewModel: ScheduleViewModel = viewModel(factory = scheduleViewModelFactory)
 
-    val isControllerAddressValid: Boolean = !mainViewModel.getControllerAddress().isNullOrBlank()
+    val configuration: Configuration = LocalConfiguration.current
 
-    val configuration = LocalConfiguration.current
-
-    val ballingScheduleEntryViewModel: ScheduleEntryViewModel = viewModel(
-        factory = ScheduleEntryViewModelFactory(
-            setValStartTime = 0F,
-            setValStopTime = 24F,
-            setValLimitationActive = false
-        ),
-        key = ScheduleType.BALLING.key // Unique key for Balling ViewModel
-    )
-
-    val refillScheduleEntryViewModel: ScheduleEntryViewModel = viewModel(
-        factory = ScheduleEntryViewModelFactory(
-            setValStartTime = 0F,
-            setValStopTime = 24F,
-            setValLimitationActive = false
-        ),
-        key = ScheduleType.REFILL.key // Unique key for Refill
-    )
-
-    val ventilationScheduleEntryViewModel: ScheduleEntryViewModel = viewModel(
-        factory = ScheduleEntryViewModelFactory(
-            setValStartTime = 0F,
-            setValStopTime = 24F,
-            setValLimitationActive = false
-        ),
-        key = ScheduleType.VENTILATION.key // Unique key for Ventilation
-    )
-
-    val heatingScheduleEntryViewModel: ScheduleEntryViewModel = viewModel(
-        factory = ScheduleEntryViewModelFactory(
-            setValStartTime = 0F,
-            setValStopTime = 24F,
-            setValLimitationActive = false
-        ),
-        key = ScheduleType.HEATING.key // Unique key for Heating
-    )
-
-    val scheduleUiState: ScheduleUiState by remember { scheduleViewModel::scheduleUiState }
-
-    LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
-        if (isControllerAddressValid) { // Check for null and validity
-            scheduleViewModel.loadData(
-                mainViewModel = mainViewModel,
-                ballingScheduleEntryViewModel = ballingScheduleEntryViewModel,
-                refillScheduleEntryViewModel = refillScheduleEntryViewModel,
-                ventilationScheduleEntryViewModel = ventilationScheduleEntryViewModel,
-                heatingScheduleEntryViewModel = heatingScheduleEntryViewModel
-            )
-        }
-    }
+    val scheduleUiState: ScheduleUiState by scheduleViewModel.scheduleUiState.collectAsState()
 
     AquariumControllerTheme(darkTheme) {
         Surface(
@@ -117,26 +70,16 @@ fun ScheduleScreen(
                                 Configuration.ORIENTATION_LANDSCAPE -> {
                                     Row {
                                         ScheduleUpdateResetButtonsComposable(
-                                            ballingScheduleEntryViewModel = ballingScheduleEntryViewModel,
-                                            refillScheduleEntryViewModel = refillScheduleEntryViewModel,
-                                            ventilationScheduleEntryViewModel = ventilationScheduleEntryViewModel,
-                                            heatingScheduleEntryViewModel = heatingScheduleEntryViewModel,
                                             scheduleEntries = scheduleEntries,
-                                            scheduleViewModel = scheduleViewModel,
-                                            mainViewModel = mainViewModel
+                                            scheduleViewModel = scheduleViewModel
                                         )
                                     }
                                 }
 
                                 else -> {
                                     ScheduleUpdateResetButtonsComposable(
-                                        ballingScheduleEntryViewModel = ballingScheduleEntryViewModel,
-                                        refillScheduleEntryViewModel = refillScheduleEntryViewModel,
-                                        ventilationScheduleEntryViewModel = ventilationScheduleEntryViewModel,
-                                        heatingScheduleEntryViewModel = heatingScheduleEntryViewModel,
                                         scheduleViewModel = scheduleViewModel,
-                                        scheduleEntries = scheduleEntries,
-                                        mainViewModel = mainViewModel
+                                        scheduleEntries = scheduleEntries
                                     )
                                 }
                             }
@@ -162,21 +105,72 @@ fun ScheduleScreen(
                                                     rememberScrollState()
                                                 )
                                             ) {
+                                                // --- Balling Adjustment ---
                                                 ScheduleAdjustmentComposable(
-                                                    myViewModel = ballingScheduleEntryViewModel,
-                                                    title = stringResource(R.string.balling_dosing_schedule)
+                                                    title = "Balling",
+                                                    startTime = scheduleEntries.ballingStartTime,
+                                                    stopTime = scheduleEntries.ballingStopTime,
+                                                    isLimitationActive = scheduleEntries.ballingLimitationActive,
+                                                    onStartTimeChanged = { newTime ->
+                                                        scheduleViewModel.onTimeChange(ScheduleType.BALLING, TimeType.START, newTime)
+                                                    },
+                                                    onStopTimeChanged = { newTime ->
+                                                        scheduleViewModel.onTimeChange(ScheduleType.BALLING, TimeType.STOP, newTime)
+                                                    },
+                                                    onLimitationActiveChanged = { isActive ->
+                                                        scheduleViewModel.onLimitationActiveChange(ScheduleType.BALLING, isActive)
+                                                    }
                                                 )
+
+                                                // --- Refill Adjustment ---
                                                 ScheduleAdjustmentComposable(
-                                                    myViewModel = refillScheduleEntryViewModel,
-                                                    title = stringResource(R.string.refill_schedule)
+                                                    title = "Refill",
+                                                    startTime = scheduleEntries.refillStartTime,
+                                                    stopTime = scheduleEntries.refillStopTime,
+                                                    isLimitationActive = scheduleEntries.refillLimitationActive,
+                                                    onStartTimeChanged = { newTime ->
+                                                        scheduleViewModel.onTimeChange(ScheduleType.REFILL, TimeType.START, newTime)
+                                                    },
+                                                    onStopTimeChanged = { newTime ->
+                                                        scheduleViewModel.onTimeChange(ScheduleType.REFILL, TimeType.STOP, newTime)
+                                                    },
+                                                    onLimitationActiveChanged = { isActive ->
+                                                        scheduleViewModel.onLimitationActiveChange(ScheduleType.REFILL, isActive)
+                                                    }
                                                 )
+
+                                                // --- Ventilation Adjustment ---
                                                 ScheduleAdjustmentComposable(
-                                                    myViewModel = ventilationScheduleEntryViewModel,
-                                                    title = stringResource(R.string.ventilation_schedule)
+                                                    title = "Ventilation",
+                                                    startTime = scheduleEntries.ventilationStartTime,
+                                                    stopTime = scheduleEntries.ventilationStopTime,
+                                                    isLimitationActive = scheduleEntries.ventilationLimitationActive,
+                                                    onStartTimeChanged = { newTime ->
+                                                        scheduleViewModel.onTimeChange(ScheduleType.VENTILATION, TimeType.START, newTime)
+                                                    },
+                                                    onStopTimeChanged = { newTime ->
+                                                        scheduleViewModel.onTimeChange(ScheduleType.VENTILATION, TimeType.STOP, newTime)
+                                                    },
+                                                    onLimitationActiveChanged = { isActive ->
+                                                        scheduleViewModel.onLimitationActiveChange(ScheduleType.VENTILATION, isActive)
+                                                    }
                                                 )
+
+                                                // --- Ventilation Adjustment ---
                                                 ScheduleAdjustmentComposable(
-                                                    myViewModel = heatingScheduleEntryViewModel,
-                                                    title = stringResource(R.string.heating_schedule)
+                                                    title = "Heating",
+                                                    startTime = scheduleEntries.heatingStartTime,
+                                                    stopTime = scheduleEntries.heatingStopTime,
+                                                    isLimitationActive = scheduleEntries.heatingLimitationActive,
+                                                    onStartTimeChanged = { newTime ->
+                                                        scheduleViewModel.onTimeChange(ScheduleType.HEATING, TimeType.START, newTime)
+                                                    },
+                                                    onStopTimeChanged = { newTime ->
+                                                        scheduleViewModel.onTimeChange(ScheduleType.HEATING, TimeType.STOP, newTime)
+                                                    },
+                                                    onLimitationActiveChanged = { isActive ->
+                                                        scheduleViewModel.onLimitationActiveChange(ScheduleType.HEATING, isActive)
+                                                    }
                                                 )
                                             }
                                         }
@@ -225,34 +219,39 @@ val mockScheduleEntries = ScheduleEntries(
     ballingStartTime = 2F,
     ballingStopTime = 22F,
     ballingLimitationActive = false,
+    ballingScheduleLoaded = true,
     refillStartTime = 3F,
     refillStopTime = 21F,
     refillLimitationActive = true,
+    refillScheduleLoaded = true,
     ventilationStartTime = 4F,
     ventilationStopTime = 20F,
     ventilationLimitationActive = false,
+    ventilationScheduleLoaded = true,
     heatingStartTime = 5F,
     heatingStopTime = 19F,
     heatingLimitationActive = true,
+    heatingScheduleLoaded = true
 )
 
-val mockScheduleUiStateSuccess = ScheduleUiState.Success(
-    scheduleEntries = mockScheduleEntries
+val mockScheduleRepositorySuccess = MockScheduleRepository(
+    mockScheduleDataFetchResult = DataFetchResult.Success(data = mockScheduleEntries)
 )
 
-val mockScheduleViewModelSuccess = MockScheduleViewModel(scheduleUiState = mockScheduleUiStateSuccess)
+val mockScheduleViewModelFactorySuccess = ScheduleViewModelFactory(
+    scheduleRepository = mockScheduleRepositorySuccess
+)
 
-val mockScheduleUiStateError = ScheduleUiState.Error(errorMessage = "Error message")
+val mockScheduleRepositoryError = MockScheduleRepository(
+    mockScheduleDataFetchResult = DataFetchResult.Error(
+        exception = null,
+        errorMessage = "Error loading data",
+    )
+)
 
-val mockScheduleViewModelError = MockScheduleViewModel(scheduleUiState = mockScheduleUiStateError)
-
-val mockScheduleUiStateLoading = ScheduleUiState.Loading
-
-val mockScheduleViewModelLoading = MockScheduleViewModel(scheduleUiState = mockScheduleUiStateLoading)
-
-val mockScheduleUiStateEmpty = ScheduleUiState.Empty
-
-val mockScheduleViewModelEmpty = MockScheduleViewModel(scheduleUiState = mockScheduleUiStateEmpty)
+val mockScheduleViewModelFactoryError = ScheduleViewModelFactory(
+    scheduleRepository = mockScheduleRepositoryError
+)
 
 val mockMainViewModel = MockMainViewModel()
 
@@ -271,8 +270,8 @@ val mockMainViewModel = MockMainViewModel()
 @Composable
 internal fun ScheduleScreenPreviewSuccess() {
     ScheduleScreen(
-        scheduleViewModel = mockScheduleViewModelSuccess,
         mainViewModel = mockMainViewModel,
+        scheduleViewModelFactory = mockScheduleViewModelFactorySuccess
     )
 }
 
@@ -284,33 +283,7 @@ internal fun ScheduleScreenPreviewSuccess() {
 @Composable
 internal fun ScheduleScreenPreviewError() {
     ScheduleScreen(
-        scheduleViewModel = mockScheduleViewModelError,
         mainViewModel = mockMainViewModel,
-    )
-}
-
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    device = "spec:width=1200dp,height=950dp,orientation=landscape"
-)
-@Composable
-internal fun ScheduleScreenPreviewLoading() {
-    ScheduleScreen(
-        scheduleViewModel = mockScheduleViewModelLoading,
-        mainViewModel = mockMainViewModel,
-    )
-}
-
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    device = "spec:width=1200dp,height=950dp,orientation=landscape"
-)
-@Composable
-internal fun ScheduleScreenPreviewEmpty() {
-    ScheduleScreen(
-        scheduleViewModel = mockScheduleViewModelEmpty,
-        mainViewModel = mockMainViewModel,
+        scheduleViewModelFactory = mockScheduleViewModelFactoryError
     )
 }

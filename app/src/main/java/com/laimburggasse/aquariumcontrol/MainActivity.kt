@@ -53,7 +53,9 @@ import com.laimburggasse.aquariumcontrol.refill.RefillViewModelFactory
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryRepository
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryScreen
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryViewModelFactory
+import com.laimburggasse.aquariumcontrol.schedule.ScheduleRepository
 import com.laimburggasse.aquariumcontrol.schedule.ScheduleScreen
+import com.laimburggasse.aquariumcontrol.schedule.ScheduleViewModelFactory
 import com.laimburggasse.aquariumcontrol.timedata.TimeDataScreen
 import com.laimburggasse.aquariumcontrol.ventilation.VentilationScreen
 
@@ -108,6 +110,9 @@ class MainActivity : ComponentActivity() {
     private val feedScheduleViewModelFactory by lazy { FeedScheduleViewModelFactory(feedScheduleRepository, feedProfilesRepository) }
     private val feedProfileAddViewModelFactory by lazy { FeedProfileAddViewModelFactory(feedProfilesRepository) }
 
+    private val scheduleRepository by lazy { ScheduleRepository(mainViewModel = mainViewModel) }
+
+    private val scheduleViewModelFactory by lazy { ScheduleViewModelFactory(scheduleRepository) }
 
     override fun onPause() {
         super.onPause()
@@ -348,7 +353,8 @@ class MainActivity : ComponentActivity() {
                     composable(route = ViewNavigationRoutes.schedule) {
                         ScheduleScreen(
                             navHostController = navHostController,
-                            mainViewModel = mainViewModel
+                            mainViewModel = mainViewModel,
+                            scheduleViewModelFactory,
                         )
                     }
                     composable(route = ViewNavigationRoutes.info) {
