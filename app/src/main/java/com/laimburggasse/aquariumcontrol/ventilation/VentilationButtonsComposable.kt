@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol.ventilation
 
+import android.content.Context
 import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
@@ -16,23 +17,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun VentilationButtonsComposable(
-    ventilationSetValsViewModel: VentilationSetValsViewModelInterface,
-    mainViewModel: MainViewModel,
+    onUpdateClicked: () -> Unit,
+    onResetClicked: () -> Unit,
 ) {
     // This composable displays two buttons for the Ventilation control.
     // Arrangement of the buttons follows the device's orientation.
 
-    val context = LocalContext.current // context for web API request and Toasts
+    val context: Context = LocalContext.current // context for web API request and Toasts
 
     Button(
         onClick = {
-            ventilationSetValsViewModel.updateValues(mainViewModel)
+            onUpdateClicked()
             Toast.makeText(
                 context,
                 context.getString(R.string.sent_request_to_controller_for_updating_ventilation_set_values),
@@ -44,22 +44,11 @@ fun VentilationButtonsComposable(
     }
     Spacer(modifier = Modifier.width(10.dp))
     Button(
-        onClick = { ventilationSetValsViewModel.resetValues() }
+        onClick = { onResetClicked() }
     ) {
         Text(text = stringResource(R.string.reset_ventilation_controller_values))
     }
 }
-
-
-val mockVentilationSetValsViewModel = MockVentilationSetValsViewModel(
-    ventilationSetValsUiState = VentilationSetValsUiState.Success(
-        VentilationSetVals(
-            ventilationSwitchOffTemp = 23.5,
-            ventilationSwitchOnTemp = 27.5
-        )
-    )
-)
-
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -69,8 +58,8 @@ internal fun VentilationButtonsComposablePortraitPreview() {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 VentilationButtonsComposable(
-                    mainViewModel = mockMainViewModel,
-                    ventilationSetValsViewModel = mockVentilationSetValsViewModel
+                    onUpdateClicked = { },
+                    onResetClicked = { }
                 )
             }
         }
@@ -93,8 +82,8 @@ internal fun VentilationButtonsComposableLandscapePreview() {
         Surface {
             Row {
                 VentilationButtonsComposable(
-                    mainViewModel = mockMainViewModel,
-                    ventilationSetValsViewModel = mockVentilationSetValsViewModel
+                    onUpdateClicked = { },
+                    onResetClicked = { }
                 )
             }
         }

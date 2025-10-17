@@ -13,8 +13,6 @@ class ScheduleViewModel(
     private val scheduleRepository: ScheduleRepository
 ): ViewModel() {
 
-    //override var scheduleUiState by mutableStateOf<ScheduleUiState>(value = ScheduleUiState.Loading)
-    //    private set
     val scheduleUiState: StateFlow<ScheduleUiState> = scheduleRepository.scheduleFlow
         .map { result ->
             when (result) {

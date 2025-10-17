@@ -24,7 +24,8 @@ class RefillScreenTest {
         composeTestRule.setContent {
             RefillScreen(
                 mainViewModel = mockMainViewModel,
-                darkTheme = true
+                darkTheme = true,
+                refillViewModelFactory = mockRefillViewModelFactory
             )
         }
         composeTestRule.waitForIdle()
@@ -41,7 +42,8 @@ class RefillScreenTest {
         composeTestRule.setContent {
             RefillScreen(
                 mainViewModel = mockMainViewModel,
-                darkTheme = false
+                darkTheme = false,
+                refillViewModelFactory = mockRefillViewModelFactory
             )
         }
         composeTestRule.waitForIdle()

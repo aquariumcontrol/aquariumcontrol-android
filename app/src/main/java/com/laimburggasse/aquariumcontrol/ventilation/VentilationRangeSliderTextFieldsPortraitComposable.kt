@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -22,36 +20,22 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun VentilationRangeSliderTextFieldsPortraitComposable(
-    ventilationSetValsViewModel: VentilationSetValsViewModelInterface,
-    ventilationInitialSetVals: VentilationSetVals
+    ventilationSwitchOffTemp: Double,
+    ventilationSwitchOnTemp: Double,
+    onLowerValueChanged: (Double) -> Unit,
+    onUpperValueChanged: (Double) -> Unit,
+    onSliderValueChanged: (Float, Float) -> Unit
 ) {
     // This composable displays a slider and two text fields.
     // The slider is arrange on top of the two text fields.
     // This composable shall be exclusively used for portrait mode.
 
-    // Use derived state for slider position
-    val sliderRange: ClosedFloatingPointRange<Float> by
-        ventilationSetValsViewModel.sliderRange.observeAsState(
-            initial =
-            ventilationInitialSetVals.ventilationSwitchOnTemp.toFloat()..
-                    ventilationInitialSetVals.ventilationSwitchOffTemp.toFloat()
-        )
-
-    // Use a separate mutable state for the text field values
-    val lowerBoundValue: Double by ventilationSetValsViewModel.lowerBoundValue.observeAsState(
-        initial = ventilationInitialSetVals.ventilationSwitchOnTemp
-    )
-    val upperBoundValue: Double by ventilationSetValsViewModel.upperBoundValue.observeAsState(
-        initial = ventilationInitialSetVals.ventilationSwitchOffTemp
-    )
+    val sliderRange: ClosedFloatingPointRange<Float> = ventilationSwitchOffTemp.toFloat()..ventilationSwitchOnTemp.toFloat()
 
     RangeSlider(
         value = sliderRange,
         onValueChange = { newValue ->
-            ventilationSetValsViewModel.onRangeChangedBySlider(
-                newValue.start,
-                newValue.endInclusive
-            )
+            onSliderValueChanged(newValue.start, newValue.endInclusive)
         },
         valueRange = 20f..30f,
         modifier = Modifier
@@ -59,13 +43,10 @@ fun VentilationRangeSliderTextFieldsPortraitComposable(
     )
     Row {
         NumericDoubleOutlinedTextFieldComposable(
-            value = lowerBoundValue,
+            value = ventilationSwitchOffTemp,
             onValueChange = { newStringValue ->
                 if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
-                    val newNumericValue = newStringValue.toFloat()
-                    ventilationSetValsViewModel.onLowerValueChanged(
-                        newNumericValue
-                    )
+                    onLowerValueChanged(newStringValue.toDouble())
                 }
             },
             label = "Switch on at",
@@ -76,13 +57,10 @@ fun VentilationRangeSliderTextFieldsPortraitComposable(
         )
         Spacer(modifier = Modifier.size(width = 72.dp, height = 10.dp))
         NumericDoubleOutlinedTextFieldComposable(
-            value = upperBoundValue,
+            value = ventilationSwitchOnTemp,
             onValueChange = { newStringValue ->
                 if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
-                    val newNumericValue = newStringValue.toFloat()
-                    ventilationSetValsViewModel.onUpperValueChanged(
-                        newNumericValue
-                    )
+                    onUpperValueChanged(newStringValue.toDouble())
                 }
             },
             label = "Switch off at",
@@ -102,10 +80,11 @@ internal fun VentilationRangeSliderTextFieldsPortraitComposablePreview() {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 VentilationRangeSliderTextFieldsPortraitComposable(
-                    ventilationSetValsViewModel = mockVentilationSetValsViewModel,
-                    ventilationInitialSetVals = VentilationSetVals(
-                        ventilationSwitchOffTemp = 23.0, ventilationSwitchOnTemp = 27.0
-                    )
+                    ventilationSwitchOffTemp = 23.0,
+                    ventilationSwitchOnTemp = 27.0,
+                    onLowerValueChanged = {},
+                    onUpperValueChanged = {},
+                    onSliderValueChanged = {lowerValue, upperValue -> }
                 )
             }
         }

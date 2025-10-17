@@ -1,132 +1,70 @@
 package com.laimburggasse.aquariumcontrol.ventilation
 
-import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
-import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
-import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
-import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
-import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class VentilationSetValsViewModel(
-    private var ventilationSetVals: VentilationSetVals
-) : ViewModel(), VentilationSetValsViewModelInterface {
-    // This class will allow the user to edit the ventilation control parameters
-    private val _sliderRange = MutableLiveData<ClosedFloatingPointRange<Float>>()
-    private val _lowerBoundValue = MutableLiveData<Double>()
-    private val _upperBoundValue = MutableLiveData<Double>()
-    override val sliderRange: LiveData<ClosedFloatingPointRange<Float>> = _sliderRange
-    override val lowerBoundValue: LiveData<Double> = _lowerBoundValue
-    override val upperBoundValue: LiveData<Double> = _upperBoundValue
+    private val ventilationSetValsRepository: VentilationSetValsRepository
+) : ViewModel() {
 
-    override var ventilationSetValsUiState: VentilationSetValsUiState by
-        mutableStateOf(value = VentilationSetValsUiState.Loading)
-
-    override val onRangeChangedBySlider: (Float, Float) -> Unit = { start, end ->
-        Log.d("VentilationSetValsViewModel", "onRangeChangedBySlider: $start - $end")
-        _sliderRange.value = start..end
-        _lowerBoundValue.value = start.toDouble()
-        _upperBoundValue.value = end.toDouble()
-    }
-
-    override val onLowerValueChanged: (Float) -> Unit = { value ->
-        val currentRange: ClosedFloatingPointRange<Float>? = _sliderRange.value
-        if (currentRange != null && value < currentRange.endInclusive) {
-            Log.d("VentilationSetValsViewModel", "onLowerValueChanged: $value")
-            _sliderRange.value = value..currentRange.endInclusive
-            _lowerBoundValue.value = value.toDouble()
-        }
-    }
-
-    override val onUpperValueChanged: (Float) -> Unit = { value ->
-        val currentRange = _sliderRange.value
-        if (currentRange != null && value > currentRange.start) {
-            Log.d("VentilationSetValsViewModel", "onUpperValueChanged: $value")
-            _sliderRange.value = currentRange.start..value
-            _upperBoundValue.value = value.toDouble()
-        }
-    }
-
-    override fun resetValues() {
-        _sliderRange.value =
-            ventilationSetVals.ventilationSwitchOffTemp.toFloat()..
-                    ventilationSetVals.ventilationSwitchOnTemp.toFloat()
-
-        _lowerBoundValue.value = ventilationSetVals.ventilationSwitchOffTemp
-        _upperBoundValue.value = ventilationSetVals.ventilationSwitchOnTemp
-    }
-
-    override fun updateValues(mainViewModel: MainViewModel) {
-        if (_sliderRange.value != null) {
-            ventilationSetVals.ventilationSwitchOffTemp = sliderRange.value!!.start.toDouble()
-            ventilationSetVals.ventilationSwitchOnTemp = sliderRange.value!!.endInclusive.toDouble()
-            viewModelScope.launch {
-                webApiPostRequestExecution(
-                    mainViewModel = mainViewModel,
-                    apiUrl = WebApiUrls.VENTILATION_POST_SET_VALS,
-                    webApiPostRequest = WebApiPostRequest(),
-                    optionalGetParams = mapOf(
-                        WebApiParams.VENTILATION_SWITCH_ON_TEMPERATURE to getVentilationSwitchOnTempString(),
-                        WebApiParams.VENTILATION_SWITCH_OFF_TEMPERATURE to getVentilationSwitchOffTempString()
-                    ),
-                )
-            }
-        } else {
-            Log.d("VentilationSetValsViewModel", "updateValues: _sliderRange.value is null")
-        }
-    }
-
-    fun getVentilationSwitchOnTempString(): String {
-        Log.d("VentilationSetValsViewModel", "getVentilationSwitchOnTempString: ${ventilationSetVals.ventilationSwitchOnTemp}")
-        return ventilationSetVals.ventilationSwitchOnTemp.toString()
-    }
-
-    fun getVentilationSwitchOffTempString(): String {
-        Log.d("VentilationSetValsViewModel", "getVentilationSwitchOffTempString: ${ventilationSetVals.ventilationSwitchOffTemp}")
-        return ventilationSetVals.ventilationSwitchOffTemp.toString()
-    }
-
-    override fun loadData(mainViewModel: MainViewModel) {
-        viewModelScope.launch {
-            val result: DataFetchResult<List<VentilationSetVals>> = fetchVentilationSetVals(
-                mainViewModel
-            )
-            // @ todo: transfer content of UiState to other class attributes
-            ventilationSetValsUiState = when(result) {
+    val ventilationSetValsUiState: StateFlow<VentilationSetValsUiState> = ventilationSetValsRepository.ventilationSetValsFlow
+        .map { result ->
+            when (result) {
+                is DataFetchResult.Error -> VentilationSetValsUiState.Error(errorMessage = result.errorMessage)
                 is DataFetchResult.Success -> {
-                    val ventilationSetValsList: List<VentilationSetVals> = result.data
-                    if (ventilationSetValsList.isEmpty()) {
-                        VentilationSetValsUiState.Empty
-                    }
-                    else {
-                        VentilationSetValsUiState.Success(ventilationSetVals = ventilationSetValsList.first())
-                    }
-                }
-                is DataFetchResult.Error -> {
-                    VentilationSetValsUiState.Error(errorMessage = result.errorMessage)
+                    VentilationSetValsUiState.Success(ventilationSetVals = result.data)
                 }
             }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = VentilationSetValsUiState.Loading // The UI starts in a loading state
+        )
+
+    fun onRangeChangedBySlider(start: Float, end: Float) {
+        ventilationSetValsRepository.updateLocalValues(
+            VentilationSetVals(
+                ventilationSwitchOffTemp = start.toDouble(),
+                ventilationSwitchOnTemp = end.toDouble()
+            )
+        )
+    }
+
+    fun onLowerValueChanged(value: Float) {
+        if (ventilationSetValsUiState.value is VentilationSetValsUiState.Success) {
+            val currentSetVals: VentilationSetVals = (ventilationSetValsUiState.value as VentilationSetValsUiState.Success).ventilationSetVals
+            currentSetVals.ventilationSwitchOffTemp = value.toDouble()
+            ventilationSetValsRepository.updateLocalValues(ventilationSetVals = currentSetVals)
         }
     }
 
-    private suspend fun fetchVentilationSetVals(
-        mainViewModel: MainViewModel,
-    ): DataFetchResult<List<VentilationSetVals>> {
-        return withContext(Dispatchers.IO) {
-            val url: String = "http://" + mainViewModel.getControllerAddress() + WebApiUrls.HEATING_GET_SET_VALS
-            val ventilationSetValsReader = VentilationSetValsReader(url)
-            ventilationSetValsReader.readVentilationSetVals()
+    fun onUpperValueChanged(value: Float) {
+        if (ventilationSetValsUiState.value is VentilationSetValsUiState.Success) {
+            val currentSetVals = (ventilationSetValsUiState.value as VentilationSetValsUiState.Success).ventilationSetVals
+            currentSetVals.ventilationSwitchOffTemp = value.toDouble()
+            ventilationSetValsRepository.updateLocalValues(ventilationSetVals = currentSetVals)
         }
     }
 
+    fun resetValues() {
+        ventilationSetValsRepository.reset()
+    }
+
+    fun loadData() {
+        viewModelScope.launch {
+            ventilationSetValsRepository.fetchVentilationSetVals()
+        }
+    }
+
+    fun updateValues() {
+        viewModelScope.launch {
+            ventilationSetValsRepository.updateValues()
+        }
+    }
 }

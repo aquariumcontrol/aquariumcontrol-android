@@ -6,10 +6,10 @@ import javax.inject.Singleton
 
 @Singleton
 class VentilationSetValsViewModelFactory (
-    ventilationSetVals: VentilationSetVals,
+    ventilationSetValsRepository: VentilationSetValsRepository,
 ) : ViewModelProvider.Factory {
     // This class creates the view model VentilationSetValsViewModel
-    private val viewModel = VentilationSetValsViewModel(ventilationSetVals)
+    private val viewModel = VentilationSetValsViewModel(ventilationSetValsRepository)
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

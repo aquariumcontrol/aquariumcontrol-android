@@ -58,6 +58,8 @@ import com.laimburggasse.aquariumcontrol.schedule.ScheduleScreen
 import com.laimburggasse.aquariumcontrol.schedule.ScheduleViewModelFactory
 import com.laimburggasse.aquariumcontrol.timedata.TimeDataScreen
 import com.laimburggasse.aquariumcontrol.ventilation.VentilationScreen
+import com.laimburggasse.aquariumcontrol.ventilation.VentilationSetValsRepository
+import com.laimburggasse.aquariumcontrol.ventilation.VentilationSetValsViewModelFactory
 
 @Suppress("UNCHECKED_CAST")
 class MainActivity : ComponentActivity() {
@@ -113,6 +115,15 @@ class MainActivity : ComponentActivity() {
     private val scheduleRepository by lazy { ScheduleRepository(mainViewModel = mainViewModel) }
 
     private val scheduleViewModelFactory by lazy { ScheduleViewModelFactory(scheduleRepository) }
+
+    private val ventilationSetValsRepository by lazy { VentilationSetValsRepository(mainViewModel = mainViewModel) }
+
+    private val ventilationSetValsViewModelFactory by lazy {
+        VentilationSetValsViewModelFactory(
+            ventilationSetValsRepository
+        )
+    }
+
 
     override fun onPause() {
         super.onPause()
@@ -341,7 +352,8 @@ class MainActivity : ComponentActivity() {
                     composable(route = ViewNavigationRoutes.ventilation) {
                         VentilationScreen(
                             navHostController = navHostController,
-                            mainViewModel = mainViewModel
+                            mainViewModel = mainViewModel,
+                            ventilationSetValsViewModelFactory
                         )
                     }
                     composable(route = ViewNavigationRoutes.timeData) {

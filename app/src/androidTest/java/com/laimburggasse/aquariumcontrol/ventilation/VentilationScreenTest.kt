@@ -19,21 +19,13 @@ class VentilationScreenTest {
 
     private val subfolder = "ventilation"
 
-    val mockVentilationSetValsUiState = VentilationSetValsUiState.Success(
-        VentilationSetVals(
-            ventilationSwitchOffTemp = 23.5,
-            ventilationSwitchOnTemp = 27.5
-        )
-    )
-    val mockVentilationSetValsViewModel = MockVentilationSetValsViewModel(mockVentilationSetValsUiState)
-
     @Test
     fun ventilationScreenDarkTest() {
         composeTestRule.setContent {
             VentilationScreen(
                 mainViewModel = mockMainViewModel,
-                ventilationSetValsViewModel = mockVentilationSetValsViewModel,
-                darkTheme = true
+                darkTheme = true,
+                ventilationSetValsViewModelFactory = mockVentilationSetValsViewModelFactorySuccess
             )
         }
         composeTestRule.waitForIdle()
@@ -50,7 +42,7 @@ class VentilationScreenTest {
         composeTestRule.setContent {
             VentilationScreen(
                 mainViewModel = mockMainViewModel,
-                ventilationSetValsViewModel = mockVentilationSetValsViewModel,
+                ventilationSetValsViewModelFactory = mockVentilationSetValsViewModelFactorySuccess,
                 darkTheme = false
             )
         }

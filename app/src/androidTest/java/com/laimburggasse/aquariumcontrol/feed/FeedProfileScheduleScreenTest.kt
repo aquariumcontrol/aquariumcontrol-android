@@ -6,8 +6,6 @@ import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedProfileScheduleScreen
-import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntry
-import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntryImport
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -22,22 +20,6 @@ class FeedProfileScheduleScreenTest {
 
     private val subfolder = "feed"
 
-    fun generateMockFeedProfile(): FeedProfile {
-        val mockFeedProfileImport = FeedProfileImport()
-        mockFeedProfileImport.profileId = 1
-        mockFeedProfileImport.profileName = "Test Profile 1"
-
-        return FeedProfile(mockFeedProfileImport)
-    }
-
-    fun generateMockFeedScheduleEntry(): FeedScheduleEntry {
-        return FeedScheduleEntryImport(
-            timestampString = "2024-02-16 12:00:00",
-            profileName = "MockProfile",
-            isDaily = 1
-        ).transformToFeedScheduleEntry()
-    }
-
     @Test
     fun feedScheduleScreenDarkTest() {
         val mockFeedProfileImport = FeedProfileImport()
@@ -47,10 +29,12 @@ class FeedProfileScheduleScreenTest {
         composeTestRule.setContent {
             FeedProfileScheduleScreen(
                 mainViewModel = mockMainViewModel,
-                darkTheme = true,
-                feedProfileId = mockFeedProfileImport.profileId,
+                feedProfileId = 1,
+                feedScheduleViewModelFactory = mockFeedScheduleViewModelFactory,
                 feedProfilesViewModelFactory = mockFeedProfilesViewModelFactory,
-                feedScheduleViewModelFactory = mockFeedScheduleViewModelFactory
+                isNewScheduleEntry = false,
+                millisSinceEpoch = 0,
+                darkTheme = true
             )
         }
         composeTestRule.waitForIdle()
@@ -71,10 +55,12 @@ class FeedProfileScheduleScreenTest {
         composeTestRule.setContent {
             FeedProfileScheduleScreen(
                 mainViewModel = mockMainViewModel,
-                darkTheme = false,
-                feedProfileId = mockFeedProfileImport.profileId,
+                feedProfileId = 1,
                 feedScheduleViewModelFactory = mockFeedScheduleViewModelFactory,
-                feedProfilesViewModelFactory = mockFeedProfilesViewModelFactory
+                feedProfilesViewModelFactory = mockFeedProfilesViewModelFactory,
+                isNewScheduleEntry = false,
+                millisSinceEpoch = 0,
+                darkTheme = false
             )
         }
         composeTestRule.waitForIdle()
