@@ -6,10 +6,10 @@ import javax.inject.Singleton
 
 @Singleton
 class HeatingSetValsViewModelFactory (
-    heatingSetVals: HeatingSetVals,
+    heatingSetValsRepository: HeatingSetValsRepository,
 ) : ViewModelProvider.Factory {
     // This class creates the view model HeatingSetValsViewModel
-    private val viewModel = HeatingSetValsViewModel(heatingSetVals)
+    private val viewModel = HeatingSetValsViewModel(heatingSetValsRepository)
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

@@ -15,6 +15,7 @@ class VentilationSetValsViewModel(
 
     val ventilationSetValsUiState: StateFlow<VentilationSetValsUiState> = ventilationSetValsRepository.ventilationSetValsFlow
         .map { result ->
+            // @todo: add functionality for sanity check on values
             when (result) {
                 is DataFetchResult.Error -> VentilationSetValsUiState.Error(errorMessage = result.errorMessage)
                 is DataFetchResult.Success -> {
@@ -37,18 +38,20 @@ class VentilationSetValsViewModel(
     }
 
     fun onLowerValueChanged(value: Float) {
-        if (ventilationSetValsUiState.value is VentilationSetValsUiState.Success) {
-            val currentSetVals: VentilationSetVals = (ventilationSetValsUiState.value as VentilationSetValsUiState.Success).ventilationSetVals
-            currentSetVals.ventilationSwitchOffTemp = value.toDouble()
-            ventilationSetValsRepository.updateLocalValues(ventilationSetVals = currentSetVals)
+        // @todo: implement range limitation
+        val uiState: VentilationSetValsUiState = ventilationSetValsUiState.value
+        if (uiState is VentilationSetValsUiState.Success) {
+            val updatedSetVals: VentilationSetVals = uiState.ventilationSetVals.copy(ventilationSwitchOffTemp = value.toDouble())
+            ventilationSetValsRepository.updateLocalValues(ventilationSetVals = updatedSetVals)
         }
     }
 
     fun onUpperValueChanged(value: Float) {
-        if (ventilationSetValsUiState.value is VentilationSetValsUiState.Success) {
-            val currentSetVals = (ventilationSetValsUiState.value as VentilationSetValsUiState.Success).ventilationSetVals
-            currentSetVals.ventilationSwitchOffTemp = value.toDouble()
-            ventilationSetValsRepository.updateLocalValues(ventilationSetVals = currentSetVals)
+        // @todo: implement range limitation
+        val uiState: VentilationSetValsUiState = ventilationSetValsUiState.value
+        if (uiState is VentilationSetValsUiState.Success) {
+            val updatedSetVals: VentilationSetVals = uiState.ventilationSetVals.copy(ventilationSwitchOnTemp = value.toDouble())
+            ventilationSetValsRepository.updateLocalValues(ventilationSetVals = updatedSetVals)
         }
     }
 

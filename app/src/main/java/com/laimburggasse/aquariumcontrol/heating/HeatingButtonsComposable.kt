@@ -15,13 +15,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun HeatingButtonsComposable(
-    heatingSetValsViewModel: HeatingSetValsViewModelInterface,
-    mainViewModel: MainViewModel,
+    onUpdateClicked: () -> Unit,
+    onResetClicked: () -> Unit,
 ) {
     // This composable displays two buttons for the heating control.
     // Arrangement of the buttons follows the device's orientation.
@@ -30,7 +29,7 @@ fun HeatingButtonsComposable(
 
     Button(
         onClick = {
-            heatingSetValsViewModel.updateValues(mainViewModel)
+            onUpdateClicked()
             // Show the Toast after the API call
             Toast.makeText(
                 context,
@@ -43,21 +42,12 @@ fun HeatingButtonsComposable(
     }
     Spacer(modifier = Modifier.width(10.dp))
     Button(
-        onClick = { heatingSetValsViewModel.resetValues() }
+        onClick = { onResetClicked }
     ) {
         Text(text = "Reset Heating Controller Values")
     }
 
 }
-
-val mockHeatingSetValsViewModel = MockHeatingSetValsViewModel(
-    heatingSetValsUiState = HeatingSetValsUiState.Success(
-        HeatingSetVals(
-            heatingSwitchOffTemp = 28.0,
-            heatingSwitchOnTemp = 22.0
-        )
-    )
-)
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -67,8 +57,8 @@ internal fun HeatingButtonsComposablePortraitPreview() {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 HeatingButtonsComposable(
-                    mainViewModel = mockMainViewModel,
-                    heatingSetValsViewModel = mockHeatingSetValsViewModel
+                    onUpdateClicked = { },
+                    onResetClicked = { }
                 )
             }
         }
@@ -91,8 +81,8 @@ internal fun HeatingButtonsComposableLandscapePreview() {
         Surface {
             Row {
                 HeatingButtonsComposable(
-                    mainViewModel = mockMainViewModel,
-                    heatingSetValsViewModel = mockHeatingSetValsViewModel
+                    onUpdateClicked = { },
+                    onResetClicked = { }
                 )
             }
         }

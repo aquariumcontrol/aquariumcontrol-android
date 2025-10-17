@@ -49,7 +49,7 @@ fun VentilationRangeSliderTextFieldsPortraitComposable(
                     onLowerValueChanged(newStringValue.toDouble())
                 }
             },
-            label = "Switch on at",
+            label = "Switch off at",
             modifier = Modifier
                 .padding(top = 16.dp)
                 .size(width = 128.dp, height = 72.dp),
@@ -63,7 +63,7 @@ fun VentilationRangeSliderTextFieldsPortraitComposable(
                     onUpperValueChanged(newStringValue.toDouble())
                 }
             },
-            label = "Switch off at",
+            label = "Switch on at",
             modifier = Modifier
                 .padding(top = 16.dp)
                 .size(width = 128.dp, height = 72.dp),

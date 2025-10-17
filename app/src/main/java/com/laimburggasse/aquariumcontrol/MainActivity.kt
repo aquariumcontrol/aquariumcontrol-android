@@ -9,6 +9,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -45,6 +46,10 @@ import com.laimburggasse.aquariumcontrol.feed.schedule.FeedProfileScheduleScreen
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleRepository
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleViewModelFactory
 import com.laimburggasse.aquariumcontrol.heating.HeatingScreen
+import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsRepository
+import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsViewModelFactory
+import com.laimburggasse.aquariumcontrol.heating.HeatingStatsRepository
+import com.laimburggasse.aquariumcontrol.heating.HeatingStatsViewModelFactory
 import com.laimburggasse.aquariumcontrol.info.InfoScreen
 import com.laimburggasse.aquariumcontrol.overview.OverviewScreen
 import com.laimburggasse.aquariumcontrol.refill.RefillRepository
@@ -116,14 +121,38 @@ class MainActivity : ComponentActivity() {
 
     private val scheduleViewModelFactory by lazy { ScheduleViewModelFactory(scheduleRepository) }
 
-    private val ventilationSetValsRepository by lazy { VentilationSetValsRepository(mainViewModel = mainViewModel) }
+    private val ventilationSetValsRepository by lazy { VentilationSetValsRepository(
+        mainViewModel = mainViewModel,
+        externalScope = lifecycleScope
+    ) }
 
     private val ventilationSetValsViewModelFactory by lazy {
         VentilationSetValsViewModelFactory(
-            ventilationSetValsRepository
+            ventilationSetValsRepository,
         )
     }
 
+    private val heatingSetValsRepository by lazy { HeatingSetValsRepository(
+        mainViewModel = mainViewModel,
+        externalScope = lifecycleScope
+    ) }
+
+    private val heatingSetValsViewModelFactory by lazy {
+        HeatingSetValsViewModelFactory(
+            heatingSetValsRepository,
+        )
+    }
+
+    private val heatingStatsRepository by lazy { HeatingStatsRepository(
+        mainViewModel = mainViewModel,
+        externalScope = lifecycleScope
+    ) }
+
+    private val heatingStatsViewModelFactory by lazy {
+        HeatingStatsViewModelFactory(
+            heatingStatsRepository
+        )
+    }
 
     override fun onPause() {
         super.onPause()
@@ -346,7 +375,9 @@ class MainActivity : ComponentActivity() {
                     composable(route = ViewNavigationRoutes.heating) {
                         HeatingScreen(
                             navHostController = navHostController,
-                            mainViewModel = mainViewModel
+                            mainViewModel = mainViewModel,
+                            heatingSetValsViewModelFactory,
+                            heatingStatsViewModelFactory
                         )
                     }
                     composable(route = ViewNavigationRoutes.ventilation) {

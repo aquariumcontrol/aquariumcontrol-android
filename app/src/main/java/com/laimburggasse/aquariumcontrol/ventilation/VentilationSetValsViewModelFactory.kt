@@ -6,7 +6,7 @@ import javax.inject.Singleton
 
 @Singleton
 class VentilationSetValsViewModelFactory (
-    ventilationSetValsRepository: VentilationSetValsRepository,
+    ventilationSetValsRepository: VentilationSetValsRepository
 ) : ViewModelProvider.Factory {
     // This class creates the view model VentilationSetValsViewModel
     private val viewModel = VentilationSetValsViewModel(ventilationSetValsRepository)

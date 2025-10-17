@@ -5,9 +5,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class HeatingSetVals(
-    @SerialName("heatingSwitchOffTemp")
-    var heatingSwitchOffTemp: Double,
-
     @SerialName("heatingSwitchOnTemp")
-    var heatingSwitchOnTemp: Double
+    var heatingSwitchOnTemp: Double,
+
+    @SerialName("heatingSwitchOffTemp")
+    var heatingSwitchOffTemp: Double
 )

@@ -5,9 +5,11 @@ import androidx.lifecycle.ViewModelProvider
 import javax.inject.Singleton
 
 @Singleton
-class HeatingStatsViewModelFactory () : ViewModelProvider.Factory {
+class HeatingStatsViewModelFactory (
+    heatingStatsRepository: HeatingStatsRepository
+) : ViewModelProvider.Factory {
     // This class creates the view model HeatingStatsViewModel
-    private val viewModel = HeatingStatsViewModel()
+    private val viewModel = HeatingStatsViewModel(heatingStatsRepository)
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

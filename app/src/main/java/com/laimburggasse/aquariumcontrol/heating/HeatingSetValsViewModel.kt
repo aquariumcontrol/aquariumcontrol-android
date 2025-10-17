@@ -1,128 +1,73 @@
 package com.laimburggasse.aquariumcontrol.heating
 
-import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
-import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
-import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
-import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
-import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class HeatingSetValsViewModel(
-    private var heatingSetVals: HeatingSetVals,
-) : ViewModel(), HeatingSetValsViewModelInterface {
-    // This class will allow the user to edit the heating control parameters
-    private val _sliderRange = MutableLiveData<ClosedFloatingPointRange<Float>>()
-    private val _lowerBoundValue = MutableLiveData<Double>()
-    private val _upperBoundValue = MutableLiveData<Double>()
-    override val sliderRange: LiveData<ClosedFloatingPointRange<Float>> = _sliderRange
-    override val lowerBoundValue: LiveData<Double> = _lowerBoundValue
-    override val upperBoundValue: LiveData<Double> = _upperBoundValue
-
-    override var heatingSetValsUiState: HeatingSetValsUiState by mutableStateOf(value = HeatingSetValsUiState.Loading)
-
-    override val onRangeChangedBySlider: (Float, Float) -> Unit = { start, end ->
-        Log.d("HeatingSetValsViewModel", "onRangeChangedBySlider: $start - $end")
-        _sliderRange.value = start..end
-        _lowerBoundValue.value = start.toDouble()
-        _upperBoundValue.value = end.toDouble()
-    }
-
-    override val onLowerValueChanged: (Float) -> Unit = { value ->
-        val currentRange = _sliderRange.value
-        if (currentRange != null && value < currentRange.endInclusive) {
-            Log.d("HeatingSetValsViewModel", "onLowerValueChanged: $value")
-            _sliderRange.value = value..currentRange.endInclusive
-            _lowerBoundValue.value = value.toDouble()
-        }
-    }
-
-    override val onUpperValueChanged: (Float) -> Unit = { value ->
-        val currentRange = _sliderRange.value
-        if (currentRange != null && value > currentRange.start) {
-            Log.d("HeatingSetValsViewModel", "onUpperValueChanged: $value")
-            _sliderRange.value = currentRange.start..value
-            _upperBoundValue.value = value.toDouble()
-        }
-    }
-
-    override fun resetValues() {
-        _sliderRange.value =
-            heatingSetVals.heatingSwitchOnTemp.toFloat()..
-                    heatingSetVals.heatingSwitchOffTemp.toFloat()
-
-        _lowerBoundValue.value = heatingSetVals.heatingSwitchOnTemp
-        _upperBoundValue.value = heatingSetVals.heatingSwitchOffTemp
-    }
-
-    override fun updateValues(mainViewModel: MainViewModel) {
-        if (_sliderRange.value != null) {
-            heatingSetVals.heatingSwitchOnTemp = sliderRange.value!!.start.toDouble()
-            heatingSetVals.heatingSwitchOffTemp = sliderRange.value!!.endInclusive.toDouble()
-            viewModelScope.launch {
-                webApiPostRequestExecution(
-                    mainViewModel = mainViewModel,
-                    apiUrl = WebApiUrls.HEATING_POST_SET_VALS,
-                    webApiPostRequest = WebApiPostRequest(),
-                    optionalGetParams = mapOf(
-                        WebApiParams.HEATING_SWITCH_ON_TEMPERATURE to getHeatingSwitchOnTempString(),
-                        WebApiParams.HEATING_SWITCH_OFF_TEMPERATURE to getHeatingSwitchOffTempString()
-                    ),
-                )
-            }
-        } else {
-            Log.d("HeatingSetValsViewModel", "updateValues: _sliderRange.value is null")
-        }
-    }
-
-    fun getHeatingSwitchOnTempString(): String {
-        return heatingSetVals.heatingSwitchOnTemp.toString()
-    }
-
-    fun getHeatingSwitchOffTempString(): String {
-        return heatingSetVals.heatingSwitchOffTemp.toString()
-    }
-
-    override fun loadData(mainViewModel: MainViewModel) {
-        viewModelScope.launch {
-            val result: DataFetchResult<List<HeatingSetVals>> = fetchHeatingSetVals(
-                mainViewModel
-            )
-            // @ todo: transfer content of UiState to other class attributes
-            heatingSetValsUiState = when(result) {
+    private var heatingSetValsRepository: HeatingSetValsRepository,
+) : ViewModel() {
+    val heatingSetValsUiState: StateFlow<HeatingSetValsUiState> = heatingSetValsRepository.heatingSetValsFlow
+        .map { result ->
+            // @todo: add functionality for sanity check on values
+            when (result) {
+                is DataFetchResult.Error -> HeatingSetValsUiState.Error(errorMessage = result.errorMessage)
                 is DataFetchResult.Success -> {
-                    val heatingSetValsList: List<HeatingSetVals> = result.data
-                    if (heatingSetValsList.isEmpty()) {
-                        HeatingSetValsUiState.Empty
-                    }
-                    else {
-                        HeatingSetValsUiState.Success(heatingSetVals = heatingSetValsList.first())
-                    }
-                }
-                is DataFetchResult.Error -> {
-                    HeatingSetValsUiState.Error(errorMessage = result.errorMessage)
+                    HeatingSetValsUiState.Success(heatingSetVals = result.data)
                 }
             }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = HeatingSetValsUiState.Loading // The UI starts in a loading state
+        )
+
+    val onRangeChangedBySlider: (Float, Float) -> Unit = { start, end ->
+        heatingSetValsRepository.updateLocalValues(
+            HeatingSetVals(
+                heatingSwitchOnTemp = start.toDouble(),
+                heatingSwitchOffTemp = end.toDouble()
+            )
+        )
+
+    }
+
+    fun onLowerValueChanged(value: Float) {
+        // @todo: implement range limitation
+        val uiState: HeatingSetValsUiState = heatingSetValsUiState.value
+        if (uiState is HeatingSetValsUiState.Success) {
+            val updatedSetVals: HeatingSetVals = uiState.heatingSetVals.copy(heatingSwitchOnTemp = value.toDouble())
+            heatingSetValsRepository.updateLocalValues(heatingSetVals = updatedSetVals)
         }
     }
 
-    private suspend fun fetchHeatingSetVals(
-        mainViewModel: MainViewModel,
-    ): DataFetchResult<List<HeatingSetVals>> {
-        return withContext(Dispatchers.IO) {
-            val url: String = "http://" + mainViewModel.getControllerAddress() + WebApiUrls.HEATING_GET_SET_VALS
-            val heatingSetValsReader = HeatingSetValsReader(url)
-            heatingSetValsReader.readHeatingSetVals()
+    fun onUpperValueChanged(value: Float) {
+        // @todo: implement range limitation
+        val uiState: HeatingSetValsUiState = heatingSetValsUiState.value
+        if (uiState is HeatingSetValsUiState.Success) {
+            val updatedSetVals: HeatingSetVals = uiState.heatingSetVals.copy(heatingSwitchOffTemp = value.toDouble())
+            heatingSetValsRepository.updateLocalValues(heatingSetVals = updatedSetVals)
+        }
+    }
+
+    fun resetValues() {
+        heatingSetValsRepository.reset()
+    }
+
+    fun loadData() {
+        viewModelScope.launch {
+            heatingSetValsRepository.fetchHeatingSetVals()
+        }
+    }
+
+    fun updateValues() {
+        viewModelScope.launch {
+            heatingSetValsRepository.updateValues()
         }
     }
 }

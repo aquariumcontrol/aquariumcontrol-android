@@ -6,16 +6,19 @@ import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 const val ventilationSetValsSwitchOnTempInitVal = 28.0
 const val ventilationSetValsSwitchOffTempInitVal = 22.0
 
 open class VentilationSetValsRepository(
-    private val mainViewModel: MainViewModel
+    private val mainViewModel: MainViewModel,
+    externalScope: CoroutineScope? = null
 ) {
     private val _ventilationSetValsFlow = MutableStateFlow<DataFetchResult<VentilationSetVals>>(
         value = DataFetchResult.Success(data = VentilationSetVals(
@@ -33,23 +36,26 @@ open class VentilationSetValsRepository(
 
     open suspend fun fetchVentilationSetVals() {
         return withContext(context = Dispatchers.IO) {
-            val url: String = "http://" + mainViewModel.getControllerAddress() + WebApiUrls.HEATING_GET_SET_VALS
+            val url: String = "http://" + mainViewModel.getControllerAddress() + WebApiUrls.VENTILATION_GET_SET_VALS
             val ventilationSetValsReader = VentilationSetValsReader(url)
-            val result: DataFetchResult<VentilationSetVals> =
-                when (val setValsList: DataFetchResult<List<VentilationSetVals>> =
-                    ventilationSetValsReader.readVentilationSetVals()) {
-                is DataFetchResult.Success -> {
-                    ventilationSetValsBackup = setValsList.data.first()
-                    DataFetchResult.Success(data = setValsList.data.first())
-                }
-                is DataFetchResult.Error -> {
-                    DataFetchResult.Error(
-                        exception = setValsList.exception,
-                        errorMessage = setValsList.errorMessage
-                    )
-                }
+            withContext(context = Dispatchers.IO) {
+                val result: DataFetchResult<VentilationSetVals> =
+                    when (val setValsList: DataFetchResult<List<VentilationSetVals>> =
+                        ventilationSetValsReader.readVentilationSetVals()) {
+                        is DataFetchResult.Success -> {
+                            ventilationSetValsBackup = setValsList.data.first()
+                            DataFetchResult.Success(data = setValsList.data.first())
+                        }
+
+                        is DataFetchResult.Error -> {
+                            DataFetchResult.Error(
+                                exception = setValsList.exception,
+                                errorMessage = setValsList.errorMessage
+                            )
+                        }
+                    }
+                _ventilationSetValsFlow.value = result
             }
-            _ventilationSetValsFlow.value = result
         }
     }
 
@@ -69,8 +75,16 @@ open class VentilationSetValsRepository(
     }
 
     fun reset() {
-        if (ventilationSetValsBackup != null) {
+        ventilationSetValsBackup?.let {
             _ventilationSetValsFlow.value = DataFetchResult.Success(data = ventilationSetValsBackup!!)
+        }
+    }
+
+    init {
+        externalScope?.let {
+            externalScope.launch {
+                fetchVentilationSetVals()
+            }
         }
     }
 }

@@ -23,21 +23,11 @@ class HeatingScreenTest {
     val mockMainViewModel = MockMainViewModel()
     @Test
     fun heatingScreenDarkTest() {
-        val mockHeatingSetValsUiState = HeatingSetValsUiState.Success(
-            HeatingSetVals(
-                heatingSwitchOffTemp = 27.5,
-                heatingSwitchOnTemp = 22.5
-            )
-        )
-        val mockHeatingSetValsViewModel = MockHeatingSetValsViewModel(mockHeatingSetValsUiState)
-        val mockHeatingStatsUiState = HeatingStatsUiState.Success(heatingStats = createMockStatsData())
-        val mockHeatingStatsViewModel = MockHeatingStatsViewModel(mockHeatingStatsUiState)
-
         composeTestRule.setContent {
             HeatingScreen(
                 mainViewModel = com.laimburggasse.aquariumcontrol.heating.mockMainViewModel,
-                heatingStatsViewModel = mockHeatingStatsViewModel,
-                heatingSetValsViewModel = mockHeatingSetValsViewModel,
+                heatingStatsViewModelFactory = mockHeatingStatsViewModelFactorySuccess,
+                heatingSetValsViewModelFactory = mockHeatingSetValsViewModelFactorySuccess,
                 darkTheme = true
             )
         }
@@ -52,20 +42,11 @@ class HeatingScreenTest {
 
     @Test
     fun heatingScreenLightTest() {
-        val mockHeatingSetValsUiState = HeatingSetValsUiState.Success(
-            HeatingSetVals(
-                heatingSwitchOffTemp = 27.5,
-                heatingSwitchOnTemp = 22.5
-            )
-        )
-        val mockHeatingSetValsViewModel = MockHeatingSetValsViewModel(mockHeatingSetValsUiState)
-        val mockHeatingStatsUiState = HeatingStatsUiState.Success(heatingStats = createMockStatsData())
-        val mockHeatingStatsViewModel = MockHeatingStatsViewModel(mockHeatingStatsUiState)
         composeTestRule.setContent {
             HeatingScreen(
                 mainViewModel = com.laimburggasse.aquariumcontrol.heating.mockMainViewModel,
-                heatingStatsViewModel = mockHeatingStatsViewModel,
-                heatingSetValsViewModel = mockHeatingSetValsViewModel,
+                heatingStatsViewModelFactory = mockHeatingStatsViewModelFactorySuccess,
+                heatingSetValsViewModelFactory = mockHeatingSetValsViewModelFactorySuccess,
                 darkTheme = false
             )
         }

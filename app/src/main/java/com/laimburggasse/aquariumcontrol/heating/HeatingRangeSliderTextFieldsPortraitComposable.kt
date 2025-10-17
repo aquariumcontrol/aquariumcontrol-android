@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -22,35 +20,22 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun HeatingRangeSliderTextFieldsPortraitComposable(
-    heatingSetValsViewModel: HeatingSetValsViewModelInterface,
-    heatingInitialSetVals: HeatingSetVals
+    heatingSwitchOffTemp: Double,
+    heatingSwitchOnTemp: Double,
+    onLowerValueChanged: (Double) -> Unit,
+    onUpperValueChanged: (Double) -> Unit,
+    onSliderValueChanged: (Float, Float) -> Unit
 ) {
     // This composable displays a slider and two text fields.
     // The slider is arrange on top of the two text fields.
     // This composable shall be exclusively used for portrait mode.
 
-    // Use derived state for slider position
-    val sliderRange: ClosedFloatingPointRange<Float> by heatingSetValsViewModel.sliderRange.observeAsState(
-        initial =
-        heatingInitialSetVals.heatingSwitchOnTemp.toFloat()..
-                heatingInitialSetVals.heatingSwitchOffTemp.toFloat()
-    )
-
-    // Use a separate mutable state for the text field values
-    val lowerBoundValue: Double by heatingSetValsViewModel.lowerBoundValue.observeAsState(
-        initial = heatingInitialSetVals.heatingSwitchOnTemp
-    )
-    val upperBoundValue: Double by heatingSetValsViewModel.upperBoundValue.observeAsState(
-        heatingInitialSetVals.heatingSwitchOffTemp
-    )
+    val sliderRange: ClosedFloatingPointRange<Float> = heatingSwitchOnTemp.toFloat()..heatingSwitchOffTemp.toFloat()
 
     RangeSlider(
         value = sliderRange,
         onValueChange = { newValue ->
-            heatingSetValsViewModel.onRangeChangedBySlider(
-                newValue.start,
-                newValue.endInclusive
-            )
+            onSliderValueChanged(newValue.start, newValue.endInclusive)
         },
         valueRange = 20f..30f,
         modifier = Modifier
@@ -58,13 +43,10 @@ fun HeatingRangeSliderTextFieldsPortraitComposable(
     )
     Row {
         NumericDoubleOutlinedTextFieldComposable(
-            value = lowerBoundValue,
+            value = heatingSwitchOnTemp,
             onValueChange = { newStringValue ->
                 if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
-                    val newNumericValue = newStringValue.toFloat()
-                    heatingSetValsViewModel.onLowerValueChanged(
-                        newNumericValue
-                    )
+                    onLowerValueChanged(newStringValue.toDouble())
                 }
             },
             label = "Switch on at",
@@ -75,13 +57,10 @@ fun HeatingRangeSliderTextFieldsPortraitComposable(
         )
         Spacer(modifier = Modifier.size(width = 72.dp, height = 10.dp))
         NumericDoubleOutlinedTextFieldComposable(
-            value = upperBoundValue,
+            value = heatingSwitchOffTemp,
             onValueChange = { newStringValue ->
                 if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
-                    val newNumericValue = newStringValue.toFloat()
-                    heatingSetValsViewModel.onUpperValueChanged(
-                        newNumericValue
-                    )
+                    onUpperValueChanged(newStringValue.toDouble())
                 }
             },
             label = "Switch off at",
@@ -101,10 +80,11 @@ internal fun HeatingRangeSliderTextFieldsPortraitComposablePreview() {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 HeatingRangeSliderTextFieldsPortraitComposable(
-                    heatingSetValsViewModel = mockHeatingSetValsViewModel,
-                    heatingInitialSetVals = HeatingSetVals(
-                        heatingSwitchOffTemp = 28.0, heatingSwitchOnTemp = 22.0
-                    )
+                    heatingSwitchOffTemp = 23.0,
+                    heatingSwitchOnTemp = 27.0,
+                    onLowerValueChanged = {},
+                    onUpperValueChanged = {},
+                    onSliderValueChanged = {lowerValue, upperValue -> }
                 )
             }
         }
