@@ -32,10 +32,10 @@ class ScheduleViewModel(
      * This function uses the immutable `copy()` pattern to ensure StateFlow updates.
      */
     fun onTimeChange(scheduleType: ScheduleType, timeType: TimeType, newTime: Float) {
-        val currentState = scheduleUiState.value
+        val currentState: ScheduleUiState = scheduleUiState.value
         if (currentState is ScheduleUiState.Success) {
-            val currentEntries = currentState.scheduleEntries
-            val updatedEntries = when (scheduleType) {
+            val currentEntries: ScheduleEntries = currentState.scheduleEntries
+            val updatedEntries: ScheduleEntries = when (scheduleType) {
                 ScheduleType.BALLING -> when (timeType) {
                     TimeType.START -> currentEntries.copy(ballingStartTime = newTime)
                     TimeType.STOP -> currentEntries.copy(ballingStopTime = newTime)
@@ -61,27 +61,33 @@ class ScheduleViewModel(
      * Updates the "limitation active" status for a specific schedule type.
      */
     fun onLimitationActiveChange(scheduleType: ScheduleType, isActive: Boolean) {
-        val currentState = scheduleUiState.value
+        val currentState: ScheduleUiState = scheduleUiState.value
         if (currentState is ScheduleUiState.Success) {
-            val currentEntries = currentState.scheduleEntries
-            val updatedEntries = when (scheduleType) {
+            val currentEntries: ScheduleEntries = currentState.scheduleEntries
+            val updatedEntries: ScheduleEntries = when (scheduleType) {
                 ScheduleType.BALLING -> currentEntries.copy(ballingLimitationActive = isActive)
                 ScheduleType.REFILL -> currentEntries.copy(refillLimitationActive = isActive)
                 ScheduleType.VENTILATION -> currentEntries.copy(ventilationLimitationActive = isActive)
                 ScheduleType.HEATING -> currentEntries.copy(heatingLimitationActive = isActive)
             }
-            scheduleRepository.updateLocalSchedule(updatedEntries)
+            scheduleRepository.updateLocalSchedule(newScheduleEntries = updatedEntries)
         }
     }
 
     fun updateSchedule(
         scheduleEntries: ScheduleEntries
     ) {
-        val currentState = scheduleUiState.value
+        val currentState: ScheduleUiState = scheduleUiState.value
         if (currentState is ScheduleUiState.Success) {
             viewModelScope.launch {
                 scheduleRepository.updateSchedule(scheduleEntries)
             }
+        }
+    }
+
+    init {
+        viewModelScope.launch {
+            scheduleRepository.fetchScheduleSetVals()
         }
     }
 }

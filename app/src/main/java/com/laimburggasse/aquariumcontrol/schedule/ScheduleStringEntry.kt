@@ -7,7 +7,7 @@ import java.util.Calendar
 import java.util.Locale
 
 @Serializable
-class ScheduleStringEntry (
+data class ScheduleStringEntry (
     @SerialName("scheduleType") var scheduleType: String,
     @SerialName("startTime") var startTime: String,
     @SerialName("stopTime") var stopTime: String,
@@ -33,8 +33,8 @@ class ScheduleStringEntry (
     fun transformToSetVal(): ScheduleEntry {
         return ScheduleEntry(
             scheduleType = scheduleType,
-            startTime = stringTimeToFloat(startTime, 0f),
-            stopTime = stringTimeToFloat(stopTime, 24f),
+            startTime = stringTimeToFloat(timeString = startTime, alternativeValue = 0f),
+            stopTime = stringTimeToFloat(timeString = stopTime, alternativeValue = 24f),
             isLimitationActive = isLimitationActive > 0
         )
     }

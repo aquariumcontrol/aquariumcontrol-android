@@ -1,7 +1,5 @@
 package com.laimburggasse.aquariumcontrol.schedule
 
-import android.util.Log
-
 class ScheduleEntriesFactory (
     private val scheduleEntryList: List<ScheduleEntry>
 ) {
@@ -29,7 +27,6 @@ class ScheduleEntriesFactory (
         
         if (scheduleEntryList.isNotEmpty()) {
             for (scheduleSetVal in scheduleEntryList) {
-                Log.d("ScheduleSetValsFactory", "parsing scheduleSetVal: ${scheduleSetVal.scheduleType}")
                 when (scheduleSetVal.scheduleType) {
                     ScheduleType.BALLING.key -> {
                         ballingStartTime = scheduleSetVal.startTime
@@ -61,19 +58,6 @@ class ScheduleEntriesFactory (
                 }
             }
         }
-
-        Log.d("ScheduleSetValsFactory", "ballingStartTime: $ballingStartTime")
-        Log.d("ScheduleSetValsFactory", "ballingStopTime: $ballingStopTime")
-        Log.d("ScheduleSetValsFactory", "ballingLimitationActive: $ballingLimitationActive")
-        Log.d("ScheduleSetValsFactory", "refillStartTime: $refillStartTime")
-        Log.d("ScheduleSetValsFactory", "refillStopTime: $refillStopTime")
-        Log.d("ScheduleSetValsFactory", "refillLimitationActive: $refillLimitationActive")
-        Log.d("ScheduleSetValsFactory", "ventilationStartTime: $ventilationStartTime")
-        Log.d("ScheduleSetValsFactory", "ventilationStopTime: $ventilationStopTime")
-        Log.d("ScheduleSetValsFactory", "ventilationLimitationActive: $ventilationLimitationActive")
-        Log.d("ScheduleSetValsFactory", "heatingStartTime: $heatingStartTime")
-        Log.d("ScheduleSetValsFactory", "heatingStopTime: $heatingStopTime")
-        Log.d("ScheduleSetValsFactory", "heatingLimitationActive: $heatingLimitationActive")
 
         return ScheduleEntries(
             ballingStartTime,

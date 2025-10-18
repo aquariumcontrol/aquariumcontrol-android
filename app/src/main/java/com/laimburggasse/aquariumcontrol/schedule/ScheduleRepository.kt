@@ -51,7 +51,7 @@ open class ScheduleRepository(
             when (result) {
                 is DataFetchResult.Success -> {
                     val scheduleStringEntryList: List<ScheduleStringEntry> = result.data
-                    if (!scheduleStringEntryList.isNotEmpty()) {
+                    if (scheduleStringEntryList.isNotEmpty()) {
                         // Convert the list of TimeDataStringSample to a list of TimeDataSample
                         val scheduleEntryList : List<ScheduleEntry> =
                             scheduleStringEntryList.map { scheduleStringEntry ->
@@ -61,12 +61,17 @@ open class ScheduleRepository(
                         _scheduleFlow.value = DataFetchResult.Success(data = scheduleEntries)
                     }
                     else {
-                        val scheduleEntriesEmpty: ScheduleEntries = ScheduleEntriesFactory(scheduleEntryList = emptyList()).create()
+                        val scheduleEntriesEmpty: ScheduleEntries = ScheduleEntriesFactory(
+                            scheduleEntryList = emptyList()
+                        ).create()
                         _scheduleFlow.value = DataFetchResult.Success(data = scheduleEntriesEmpty)
                     }
                 }
                 is DataFetchResult.Error -> {
-                    _scheduleFlow.value = DataFetchResult.Error(exception = result.exception, errorMessage = result.errorMessage)
+                    _scheduleFlow.value = DataFetchResult.Error(
+                        exception = result.exception,
+                        errorMessage = result.errorMessage
+                    )
                 }
             }
         }

@@ -4,6 +4,7 @@ import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.Response
 
 class ScheduleEntryReader(private val url: String) {
     // This class reads the schedule set values from the server using a GET request
@@ -12,28 +13,35 @@ class ScheduleEntryReader(private val url: String) {
     private val json = Json { ignoreUnknownKeys = true }
 
     fun readScheduleEntryList(): DataFetchResult<List<ScheduleStringEntry>> {
-        val request = Request.Builder()
-            .url(url)
-            .build()
-
+        val request: Request = Request.Builder().url(url).build()
         try {
-            val response = client.newCall(request).execute()
+            val response: Response = client.newCall(request).execute()
             if (response.isSuccessful) {
-                val responseBody = response.body.string()
+                val responseBody: String = response.body.string()
                 if (responseBody.isEmpty()) {
                     return DataFetchResult.Success(data = emptyList())
                 }
                 try {
-                    val decodedData = json.decodeFromString<List<ScheduleStringEntry>>(responseBody)
+                    val decodedData: List<ScheduleStringEntry> =
+                        json.decodeFromString<List<ScheduleStringEntry>>(string = responseBody)
                     return DataFetchResult.Success(decodedData)
-                } catch (e: Exception) {
-                    return DataFetchResult.Error(e, "Error decoding data sent from server: ${e.message}")
+                } catch (exception: Exception) {
+                    return DataFetchResult.Error(
+                        exception,
+                        errorMessage = "Error decoding data sent from server: ${exception.message}"
+                    )
                 }
             } else {
-                return DataFetchResult.Error(null, "Server responded with error code: ${response.code}")
+                return DataFetchResult.Error(
+                    exception = null,
+                    errorMessage = "Server responded with error code: ${response.code}"
+                )
             }
-        } catch (e: Exception) {
-            return DataFetchResult.Error(e, "An unexpected error occurred during preparation of server communication.")
+        } catch (exception: Exception) {
+            return DataFetchResult.Error(
+                exception,
+                errorMessage = "An unexpected error occurred during preparation of server communication."
+            )
         }
     }
 }
