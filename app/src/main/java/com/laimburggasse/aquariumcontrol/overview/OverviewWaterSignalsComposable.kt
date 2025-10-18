@@ -76,7 +76,7 @@ fun OverviewWaterSignalsComposable(overviewData: OverviewData) {
 internal fun OverviewWaterSignalsComposablePreview() {
     AquariumControllerTheme {
         Surface {
-            OverviewWaterSignalsComposable(createMockOverviewData())
+            OverviewWaterSignalsComposable(mockOverviewData)
         }
     }
 }

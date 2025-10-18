@@ -20,8 +20,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -39,12 +39,13 @@ import com.laimburggasse.aquariumcontrol.controller.ControllerProfile
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
 fun OverviewScreen(
     navHostController: NavHostController? = null,
     mainViewModel: MainViewModel,
-    overviewViewModel: OverviewViewModelInterface = viewModel<OverviewViewModel>(),
+    overviewViewModelFactory: OverviewViewModelFactory,
     darkTheme: Boolean? = null
 ) {
     // This screen displays
@@ -52,23 +53,15 @@ fun OverviewScreen(
     // - the overview data of the aquarium: Text for signal description and current value
     // - a button to update the overview data
 
+    val overviewViewModel: OverviewViewModel = viewModel(factory = overviewViewModelFactory)
     val configuration: Configuration = LocalConfiguration.current
     val isControllerAddressValid: Boolean = !mainViewModel.getControllerAddress().isNullOrBlank()
-    val isRefreshing: Boolean by remember { overviewViewModel::isRefreshing }
-    val overviewUiState: OverviewUiState by remember { overviewViewModel::overviewUiState }
+    val overviewUiState: OverviewUiState by overviewViewModel.overviewUiState.collectAsState()
 
     val controllerProfileName: String? = mainViewModel.getControllerName()
     val controllerAddress: String? = mainViewModel.getControllerAddress()
     val controllerUsername: String? = mainViewModel.getControllerUser()
     val controllerPort: Int? = mainViewModel.getControllerPort()
-
-
-    // Use a LaunchedEffect to fetch data on initial composition
-    LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
-        if (isControllerAddressValid) {
-            overviewViewModel.loadData(mainViewModel)
-        }
-    }
 
     AquariumControllerTheme(darkTheme) {
         // A surface container using the 'background' color from the theme
@@ -88,11 +81,11 @@ fun OverviewScreen(
                     PullToRefreshBox(
                         modifier = Modifier.fillMaxWidth(),
                         state = rememberPullToRefreshState(),
-                        isRefreshing = isRefreshing,
+                        isRefreshing = overviewUiState == OverviewUiState.Loading,
                         contentAlignment = Alignment.Center,
-                        onRefresh = { overviewViewModel.loadData(mainViewModel) },
+                        onRefresh = { overviewViewModel.loadData() },
                         indicator = {
-                            if (isRefreshing) {
+                            if (overviewUiState == OverviewUiState.Loading) {
                                 CircularProgressIndicator(
                                     modifier = Modifier
                                         .size(150.dp),
@@ -170,7 +163,7 @@ fun OverviewScreen(
                                     .padding(horizontal = 8.dp),
                                 onClick = {
                                     if (isControllerAddressValid) {
-                                        overviewViewModel.loadData(mainViewModel)
+                                        overviewViewModel.loadData()
                                     }
                                 },
                             ) {
@@ -192,8 +185,7 @@ fun OverviewScreen(
     }
 }
 
-fun createMockOverviewData(): OverviewData {
-    return OverviewData(
+val mockOverviewData = OverviewData(
         timestamp = "2023-05-01 12:00:00",
         temperatureWater = 25.0,
         temperatureWaterFiltered = 25.5,
@@ -207,7 +199,6 @@ fun createMockOverviewData(): OverviewData {
         humidityAmbient = 60.0,
         heater = "OFF"
     )
-}
 
 val mockControllerProfile = ControllerProfile(
     name = "Controller 1",
@@ -215,15 +206,26 @@ val mockControllerProfile = ControllerProfile(
     port = 80,
     user = "user",
 )
-val mockOverviewViewModelSuccess = MockOverviewViewModel(
-    mockOverviewUiState = OverviewUiState.Success(overviewData = createMockOverviewData())
+
+val mockOverviewRepositorySuccess = MockOverviewRepository(
+    mockOverviewDataFetchResult = DataFetchResult.Success(mockOverviewData)
 )
-val mockOverviewViewModelError = MockOverviewViewModel(
-    mockOverviewUiState = OverviewUiState.Error(errorMessage = "Error message")
+
+val mockOverviewViewModelFactorySuccess = OverviewViewModelFactory(
+    overviewRepository = mockOverviewRepositorySuccess
 )
-val mockOverviewViewModelLoading = MockOverviewViewModel(
-    mockOverviewUiState = OverviewUiState.Loading
+
+val mockOverviewRepositoryError = MockOverviewRepository(
+    mockOverviewDataFetchResult = DataFetchResult.Error(
+        exception = null,
+        errorMessage = "Error loading data"
+    )
 )
+
+val mockOverviewViewModelFactoryError = OverviewViewModelFactory(
+    overviewRepository = mockOverviewRepositoryError
+)
+
 val mockMainViewModel = MockMainViewModel(controller = mockControllerProfile)
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
@@ -242,7 +244,7 @@ val mockMainViewModel = MockMainViewModel(controller = mockControllerProfile)
 fun OverviewScreenPreviewSuccess() {
     OverviewScreen(
         mainViewModel = mockMainViewModel,
-        overviewViewModel = mockOverviewViewModelSuccess,
+        overviewViewModelFactory = mockOverviewViewModelFactorySuccess,
     )
 }
 
@@ -252,16 +254,6 @@ fun OverviewScreenPreviewSuccess() {
 fun OverviewScreenPreviewError() {
     OverviewScreen(
         mainViewModel = mockMainViewModel,
-        overviewViewModel = mockOverviewViewModelError,
-    )
-}
-
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Composable
-fun OverviewScreenPreviewLoading() {
-    OverviewScreen(
-        mainViewModel = mockMainViewModel,
-        overviewViewModel = mockOverviewViewModelLoading,
+        overviewViewModelFactory = mockOverviewViewModelFactoryError,
     )
 }

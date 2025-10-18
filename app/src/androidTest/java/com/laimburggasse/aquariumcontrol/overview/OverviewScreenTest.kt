@@ -24,7 +24,7 @@ class OverviewScreenTest {
         composeTestRule.setContent {
             OverviewScreen(
                 mainViewModel = mockMainViewModel,
-                overviewViewModel = mockOverviewViewModelSuccess,
+                overviewViewModelFactory = mockOverviewViewModelFactorySuccess,
                 darkTheme = true
             )
         }
@@ -42,7 +42,7 @@ class OverviewScreenTest {
         composeTestRule.setContent {
             OverviewScreen(
                 mainViewModel = mockMainViewModel,
-                overviewViewModel = mockOverviewViewModelSuccess,
+                overviewViewModelFactory = mockOverviewViewModelFactorySuccess,
                 darkTheme = false
             )
         }

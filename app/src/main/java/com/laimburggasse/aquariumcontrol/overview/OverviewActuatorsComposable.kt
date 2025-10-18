@@ -74,7 +74,7 @@ fun OverviewActuatorsComposable(overviewData: OverviewData) {
 internal fun OverviewActuatorsComposablePreview() {
     AquariumControllerTheme {
         Surface {
-            OverviewActuatorsComposable(createMockOverviewData())
+            OverviewActuatorsComposable(mockOverviewData)
         }
     }
 }

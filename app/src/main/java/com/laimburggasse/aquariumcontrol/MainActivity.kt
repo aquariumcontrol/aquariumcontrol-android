@@ -51,7 +51,9 @@ import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsViewModelFactory
 import com.laimburggasse.aquariumcontrol.heating.HeatingStatsRepository
 import com.laimburggasse.aquariumcontrol.heating.HeatingStatsViewModelFactory
 import com.laimburggasse.aquariumcontrol.info.InfoScreen
+import com.laimburggasse.aquariumcontrol.overview.OverviewRepository
 import com.laimburggasse.aquariumcontrol.overview.OverviewScreen
+import com.laimburggasse.aquariumcontrol.overview.OverviewViewModelFactory
 import com.laimburggasse.aquariumcontrol.refill.RefillRepository
 import com.laimburggasse.aquariumcontrol.refill.RefillScreen
 import com.laimburggasse.aquariumcontrol.refill.RefillViewModelFactory
@@ -103,6 +105,10 @@ class MainActivity : ComponentActivity() {
             }
         }
     )
+
+    private val overviewRepository by lazy { OverviewRepository(mainViewModel = mainViewModel) }
+
+    private val overviewViewModelFactory by lazy { OverviewViewModelFactory(overviewRepository) }
 
     private val ballingProfilesRepository by lazy { BallingProfilesRepository(mainViewModel = mainViewModel) }
     private val ballingHistoryRepository by lazy { BallingHistoryRepository(mainViewModel = mainViewModel) }
@@ -409,7 +415,8 @@ class MainActivity : ComponentActivity() {
                     composable(route = ViewNavigationRoutes.overView) {
                         OverviewScreen(
                             navHostController = navHostController,
-                            mainViewModel = mainViewModel
+                            mainViewModel = mainViewModel,
+                            overviewViewModelFactory
                         )
                     }
                 }

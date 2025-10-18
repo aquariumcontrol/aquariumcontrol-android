@@ -64,7 +64,7 @@ fun OverviewAmbientComposable(overviewData: OverviewData) {
 internal fun OverviewAmbientComposablePreview() {
     AquariumControllerTheme {
         Surface {
-            OverviewAmbientComposable(createMockOverviewData())
+            OverviewAmbientComposable(mockOverviewData)
         }
     }
 }

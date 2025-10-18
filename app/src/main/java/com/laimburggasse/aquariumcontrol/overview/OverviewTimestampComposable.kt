@@ -52,7 +52,7 @@ fun OverviewTimestampComposable(overviewData: OverviewData) {
 internal fun OverviewTimestampComposablePreview() {
     AquariumControllerTheme {
         Surface {
-            OverviewTimestampComposable(createMockOverviewData())
+            OverviewTimestampComposable(mockOverviewData)
         }
     }
 }

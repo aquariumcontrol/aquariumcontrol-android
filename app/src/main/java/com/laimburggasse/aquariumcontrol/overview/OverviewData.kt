@@ -14,4 +14,19 @@ data class OverviewData(
     val temperatureAmbient: Double,
     val humidityAmbient: Double,
     val heater: String,
-)
+) {
+    constructor() : this(
+        timestamp = "00:00:00",
+        temperatureWater = 0.0,
+        temperatureWaterFiltered = 0.0,
+        pH = 0.0,
+        pHFiltered = 0.0,
+        conductivity = 0.0,
+        conductivityFiltered = 0.0,
+        tankLevelSwitchPosition = "Unknown",
+        surfaceVentilation = "Unknown",
+        temperatureAmbient = 0.0,
+        humidityAmbient = 0.0,
+        heater = "Unknown"
+    )
+}
