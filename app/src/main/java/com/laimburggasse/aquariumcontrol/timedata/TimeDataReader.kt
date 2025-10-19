@@ -6,6 +6,7 @@ import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.Response
 import java.sql.Date
 import java.sql.Time
 import java.util.Calendar
@@ -17,54 +18,62 @@ class TimeDataReader(private val urlWithoutParameters: String) {
 
     fun readTimeDataSeries(): DataFetchResult<List<TimeDataStringSample>> {
         try {
-            val calendar24hAgo = Calendar.getInstance()
+            val calendar24hAgo: Calendar = Calendar.getInstance()
             calendar24hAgo.add(Calendar.HOUR, -24)
 
-            val calendarNow = Calendar.getInstance()
+            val calendarNow: Calendar = Calendar.getInstance()
 
             val dateTimeInMillis24hAgo: Long = calendar24hAgo.time.time
             val date24hAgo = Date(dateTimeInMillis24hAgo)
             val time24hAgo = Time(dateTimeInMillis24hAgo)
 
-            val dateTimeInMillisNow = calendarNow.time.time
+            val dateTimeInMillisNow: Long = calendarNow.time.time
             val dateNow = Date(dateTimeInMillisNow)
             val timeNow = Time(dateTimeInMillisNow)
 
+            // @todo: change the api to give last 24h data based on server time
             val optionalGetParams: Map<String, String> = mapOf(
-                WebApiParams.START_DATE to date24hAgo.toString().replace(':', '-'),
-                WebApiParams.STOP_DATE to dateNow.toString().replace(':', '-'),
+                WebApiParams.START_DATE to date24hAgo.toString().replace(oldChar = ':', newChar =  '-'),
+                WebApiParams.STOP_DATE to dateNow.toString().replace(oldChar = ':', newChar = '-'),
                 WebApiParams.START_TIME to time24hAgo.toString(),
                 WebApiParams.STOP_TIME to timeNow.toString())
 
             var url = "$urlWithoutParameters?"
 
-            for ((key, value) in optionalGetParams) {
+            for ((key: String, value: String) in optionalGetParams) {
                 url += "$key=$value&"
             }
+            Log.d("TimeDataReader", "URL: $url")
 
-            val request = Request.Builder()
-                .url(url)
-                .build()
+            val request: Request = Request.Builder().url(url).build()
 
-            val response = client.newCall(request).execute()
+            val response: Response = client.newCall(request).execute()
             if (response.isSuccessful) {
-                Log.d("TimeDataReader", "Successful http request.")
-                val responseBody = response.body.string()
+                val responseBody: String = response.body.string()
+                if (responseBody.isEmpty()) {
+                    return DataFetchResult.Success(data = emptyList())
+                }
                 try {
-                    val decodedData = json.decodeFromString<List<TimeDataStringSample>>(responseBody)
-                    Log.d("TimeDataReader", "Successfully decoded ${decodedData.size} items.")
+                    val decodedData:List<TimeDataStringSample> = json.
+                        decodeFromString<List<TimeDataStringSample>>(string = responseBody)
                     return DataFetchResult.Success(decodedData)
-                } catch (e: Exception) {
-                    Log.e("TimeDataReader", "Error decoding JSON: ${e.message}", e)
-                    return DataFetchResult.Error(e, "Error decoding data sent from server: ${e.message}")
+                } catch (exception: Exception) {
+                    return DataFetchResult.Error(
+                        exception,
+                        errorMessage = "Error decoding data sent from server: ${exception.message}"
+                    )
                 }
             } else {
-                Log.d("TimeDataReader", "Error: ${response.code}")
-                return DataFetchResult.Error(null, "Server responded with error code: ${response.code}")
+                return DataFetchResult.Error(
+                    exception = null,
+                    errorMessage = "Server responded with error code: ${response.code}"
+                )
             }
-        } catch (e: Exception) {
-            Log.e("TimeDatReader", "Unexpected error during data fetching: ${e.message}")
-            return DataFetchResult.Error(e, "An unexpected error occurred during preparation of server communication.")
+        } catch (exception: Exception) {
+            return DataFetchResult.Error(
+                exception,
+                errorMessage = "An unexpected error occurred during preparation of server communication."
+            )
         }
     }
 }

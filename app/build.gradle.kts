@@ -80,7 +80,6 @@ dependencies {
     implementation(libs.androidx.core.ktx.v1120)
     implementation(libs.kotlin.stdlib.jdk8.v1922)
     implementation(libs.androidx.tracing.perfetto.handshake)
-    implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.junit.ktx)
     implementation(libs.core.ktx)
     implementation(libs.androidx.compose.material3)

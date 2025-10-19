@@ -22,18 +22,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
@@ -45,11 +42,6 @@ import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState.Loading
 import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState.Success
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
-import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.sql.Timestamp
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -64,65 +56,22 @@ const val axisGranularityTime = 14400f
 fun TimeDataScreen(
     navHostController: NavHostController? = null,
     mainViewModel: MainViewModel? = null,
-    mockTimeDataUiState: TimeDataUiState? = null,
+    timeDataViewModelFactory: TimeDataViewModelFactory,
     darkTheme: Boolean? = null
 ) {
-    // This screen is only displaying time data charts without any user interaction.
-    // Therefore, this screen does not use a view model.
+    // This screen is only displaying time data charts without data flow back to server.
+    val timeDataViewModel: TimeDataViewModel = viewModel(factory = timeDataViewModelFactory)
+
+    val timeDataUiState: TimeDataUiState by timeDataViewModel.timeDataUiState.collectAsState()
+
     val isDarkMode = isSystemInDarkTheme()
 
     val textColor = if (isDarkMode) Color.WHITE else Color.BLACK
 
-    val isControllerAddressValid: Boolean = !mainViewModel?.getControllerAddress().isNullOrBlank()
+    !mainViewModel?.getControllerAddress().isNullOrBlank()
 
-    var timeDataUiState by remember { mutableStateOf(mockTimeDataUiState ?:Loading) }
-
-    val coroutineScope = rememberCoroutineScope()
-
-    val configuration = LocalConfiguration.current
-
-    val displayCircularProgressIndicatorInPreview: Boolean = when (configuration.orientation) {
-        Configuration.ORIENTATION_LANDSCAPE -> {
-            false
-        }
-        else -> {
-            if (mockTimeDataUiState != null) {
-                mockTimeDataUiState is Loading
-            }
-            else {
-                false
-            }
-        }
-    }
-
-    var isRefreshing by remember {
-        mutableStateOf(
-            displayCircularProgressIndicatorInPreview
-        )
-    }
-
-    // Function to trigger data fetching
-    fun loadData() {
-        coroutineScope.launch {
-            if (mockTimeDataUiState != null) { // For preview and testing
-                timeDataUiState = mockTimeDataUiState
-            } else {
-                if (mainViewModel != null) {
-                    fetchTimeData(mainViewModel) { newState ->
-                        timeDataUiState = newState
-                    }
-                }
-            }
-        }
-    }
-
-    // Use a LaunchedEffect to fetch data on initial composition
-    LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
-        if (mainViewModel != null && isControllerAddressValid) { // Check for null and validity
-            loadData()
-            isRefreshing = false
-        }
-    }
+    val displayCircularProgressIndicatorInPreview: Boolean =
+        LocalConfiguration.current.orientation != Configuration.ORIENTATION_LANDSCAPE
 
     AquariumControllerTheme(darkTheme) {
         Surface(
@@ -138,24 +87,15 @@ fun TimeDataScreen(
                     PullToRefreshBox(
                         modifier = Modifier.fillMaxWidth(),
                         state = rememberPullToRefreshState(),
-                        isRefreshing = isRefreshing,
+                        isRefreshing = timeDataUiState is Loading,
                         contentAlignment = Alignment.Center,
                         onRefresh = {
-                            isRefreshing = true
-                            coroutineScope.launch {
-                                if (isControllerAddressValid) {
-                                    loadData()
-                                    delay(timeMillis = 500)
-                                }
-                                isRefreshing = false // Reset the refresh state
-                            }
+                            timeDataViewModel.loadData()
                         },
                         indicator = {
-                            if (isRefreshing) {
+                            if (timeDataUiState is Loading && displayCircularProgressIndicatorInPreview) {
                                 CircularProgressIndicator(
-                                    modifier = Modifier
-                                        .size(64.dp)
-                                        .fillMaxWidth(),
+                                    modifier = Modifier.size(size = 64.dp).fillMaxWidth(),
                                     color = MaterialTheme.colorScheme.primary,
                                     strokeWidth = 5.dp
                                 )
@@ -164,17 +104,28 @@ fun TimeDataScreen(
                     ) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.verticalScroll(rememberScrollState())
+                            modifier = Modifier.fillMaxSize().verticalScroll(state = rememberScrollState())
                         ) {
                             when (timeDataUiState) {
                                 is TimeDataUiState.Empty -> {
-                                    Text("No data available.")
+                                    Column(
+                                        modifier = Modifier.fillMaxSize().padding(16.dp),
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Text(
+                                            text = "No data available.",
+                                            style = MaterialTheme.typography.titleMedium
+                                        )
+                                        Spacer(modifier = Modifier.height(height = 8.dp))
+                                        Button(onClick = { timeDataViewModel.loadData() }) { // Retry button
+                                            Text("Retry")
+                                        }
+                                    }
                                 }
                                 is Error -> {
                                     Column(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .padding(16.dp),
+                                        modifier = Modifier.fillMaxSize().padding(16.dp),
                                         verticalArrangement = Arrangement.Center,
                                         horizontalAlignment = Alignment.CenterHorizontally
                                     ) {
@@ -182,14 +133,14 @@ fun TimeDataScreen(
                                             text = "Error loading data:",
                                             style = MaterialTheme.typography.titleMedium
                                         )
-                                        Spacer(modifier = Modifier.height(8.dp))
+                                        Spacer(modifier = Modifier.height(height = 8.dp))
                                         Text(
                                             text = (timeDataUiState as Error).errorMessage,
                                             style = MaterialTheme.typography.bodyMedium,
                                             color = MaterialTheme.colorScheme.error
                                         )
-                                        Spacer(modifier = Modifier.height(16.dp))
-                                        Button(onClick = { loadData() }) { // Retry button
+                                        Spacer(modifier = Modifier.height(height = 16.dp))
+                                        Button(onClick = { timeDataViewModel.loadData() }) { // Retry button
                                             Text("Retry")
                                         }
                                     }
@@ -198,7 +149,7 @@ fun TimeDataScreen(
                                     Text("Loading...")
                                 }
                                 is Success -> {
-                                    val timeDataSets = (timeDataUiState as Success).timeDataSets
+                                    val timeDataSets: TimeDataSets = (timeDataUiState as Success).timeDataSets
                                     TimeDataTemperatureChartComposable(
                                         temperatureDataSet = timeDataSets.dataTemperature,
                                         textColor = textColor
@@ -234,41 +185,6 @@ fun TimeDataScreen(
                     navigationRouteSource = ViewNavigationRoutes.timeData,
                     mainViewModel = mainViewModel
                 )
-            }
-        }
-    }
-}
-
-private suspend fun fetchTimeData(
-    mainViewModel: MainViewModel,
-    updateUiState: (TimeDataUiState) -> Unit,
-) {
-    updateUiState(Loading) // Indicate loading state
-    withContext(Dispatchers.IO) {
-        val url =
-            "http://" + mainViewModel.getControllerAddress() + WebApiUrls.DATA_GET_START_STOP
-        val reader = TimeDataReader(url)
-        when (val result = reader.readTimeDataSeries()) {
-            is DataFetchResult.Success -> {
-                val timeDataStringList = result.data
-                if (timeDataStringList.isNotEmpty()) {
-                    val timeDataSamples =
-                        timeDataStringList.map { timeDataStringSample ->
-                            timeDataStringSample.transformToTimeDataSample()
-                        }
-                    withContext(context = Dispatchers.Main) {
-                        updateUiState(Success(TimeDataSets(timeData = timeDataSamples)))
-                    }
-                } else {
-                    withContext(context = Dispatchers.Main) {
-                        updateUiState(TimeDataUiState.Empty)
-                    }
-                }
-            }
-            is DataFetchResult.Error -> {
-                withContext(context = Dispatchers.Main) {
-                    updateUiState(Error(errorMessage = result.errorMessage))
-                }
             }
         }
     }
@@ -370,6 +286,30 @@ fun generateMockTimeData(): List<TimeDataSample> {
     return samples
 }
 
+val mockTimeDataRepositorySuccess = MockTimeDataRepository(
+    mockTimeDataFetchResult = DataFetchResult.Success(data = generateMockTimeData())
+)
+
+val mockTimeDataRepositoryError = MockTimeDataRepository(
+    mockTimeDataFetchResult = DataFetchResult.Error(exception = null, errorMessage = "Error message")
+)
+
+val mockTimeDataRepositoryEmpty = MockTimeDataRepository(
+    mockTimeDataFetchResult = DataFetchResult.Success(data = emptyList())
+)
+
+val mockTimeDataViewModelFactorySuccess = TimeDataViewModelFactory(
+    timeDataRepository = mockTimeDataRepositorySuccess
+)
+
+val mockTimeDataViewModelFactoryError = TimeDataViewModelFactory(
+    timeDataRepository = mockTimeDataRepositoryError
+)
+
+val mockTimeDataViewModelFactoryEmpty = TimeDataViewModelFactory(
+    timeDataRepository = mockTimeDataRepositoryEmpty
+)
+
 @Preview(showBackground = true, heightDp = 1250, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, heightDp = 1250, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
@@ -384,7 +324,7 @@ fun generateMockTimeData(): List<TimeDataSample> {
 )
 @Composable
 internal fun TimeDataScreenPreviewSuccess() {
-    TimeDataScreen(mockTimeDataUiState = Success(TimeDataSets(generateMockTimeData())))
+    TimeDataScreen(timeDataViewModelFactory = mockTimeDataViewModelFactorySuccess)
 }
 
 @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_YES)
@@ -401,12 +341,22 @@ internal fun TimeDataScreenPreviewSuccess() {
 )
 @Composable
 internal fun TimeDataScreenPreviewError() {
-    TimeDataScreen(mockTimeDataUiState = Error("Error message"))
+    TimeDataScreen(timeDataViewModelFactory = mockTimeDataViewModelFactoryError)
 }
 
 @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    device = "spec:width=250dp,height=350dp,orientation=landscape"
+)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=250dp,height=350dp,orientation=landscape"
+)
 @Composable
-internal fun TimeDataScreenPreviewLoading() {
-    TimeDataScreen(mockTimeDataUiState = Loading)
+internal fun TimeDataScreenPreviewEmpty() {
+    TimeDataScreen(timeDataViewModelFactory = mockTimeDataViewModelFactoryEmpty)
 }

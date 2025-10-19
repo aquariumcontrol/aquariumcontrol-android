@@ -63,7 +63,9 @@ import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryViewModelFa
 import com.laimburggasse.aquariumcontrol.schedule.ScheduleRepository
 import com.laimburggasse.aquariumcontrol.schedule.ScheduleScreen
 import com.laimburggasse.aquariumcontrol.schedule.ScheduleViewModelFactory
+import com.laimburggasse.aquariumcontrol.timedata.TimeDataRepository
 import com.laimburggasse.aquariumcontrol.timedata.TimeDataScreen
+import com.laimburggasse.aquariumcontrol.timedata.TimeDataViewModelFactory
 import com.laimburggasse.aquariumcontrol.ventilation.VentilationScreen
 import com.laimburggasse.aquariumcontrol.ventilation.VentilationSetValsRepository
 import com.laimburggasse.aquariumcontrol.ventilation.VentilationSetValsViewModelFactory
@@ -137,6 +139,10 @@ class MainActivity : ComponentActivity() {
             ventilationSetValsRepository,
         )
     }
+
+    private val timeDataRepository by lazy { TimeDataRepository(mainViewModel = mainViewModel) }
+
+    private val timeDataViewModelFactory by lazy { TimeDataViewModelFactory(timeDataRepository) }
 
     private val heatingSetValsRepository by lazy { HeatingSetValsRepository(
         mainViewModel = mainViewModel,
@@ -396,7 +402,8 @@ class MainActivity : ComponentActivity() {
                     composable(route = ViewNavigationRoutes.timeData) {
                         TimeDataScreen(
                             navHostController = navHostController,
-                            mainViewModel = mainViewModel
+                            mainViewModel = mainViewModel,
+                            timeDataViewModelFactory
                         )
                     }
                     composable(route = ViewNavigationRoutes.schedule) {

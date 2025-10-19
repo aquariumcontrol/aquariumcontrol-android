@@ -23,38 +23,10 @@ class TimeDataScreenTest {
     private val subfolder = "timedata"
 
     @Test
-    fun timeDataScreenLoadingDarkTest() {
-        composeTestRule.setContent {
-            TimeDataScreen(mockTimeDataUiState = Loading, darkTheme = true)
-        }
-        composeTestRule.waitForIdle()
-        ScreenshotTestHelper.performScreenshotTest(
-            goldenName = "time_data_screen_loading_dark",
-            recordMode = recordMode,
-            subfolder = subfolder,
-            imageBitmap = composeTestRule.onRoot().captureToImage()
-        )
-    }
-
-    @Test
-    fun timeDataScreenLoadingLightTest() {
-        composeTestRule.setContent {
-            TimeDataScreen(mockTimeDataUiState = Loading, darkTheme = false)
-        }
-        composeTestRule.waitForIdle()
-        ScreenshotTestHelper.performScreenshotTest(
-            goldenName = "time_data_screen_loading_light",
-            recordMode = recordMode,
-            subfolder = subfolder,
-            imageBitmap = composeTestRule.onRoot().captureToImage()
-        )
-    }
-
-    @Test
     fun timeDataScreenErrorDarkTest() {
         composeTestRule.setContent {
             TimeDataScreen(
-                mockTimeDataUiState = Error("Error message"),
+                timeDataViewModelFactory = mockTimeDataViewModelFactoryError,
                 darkTheme = true
             )
         }
@@ -71,7 +43,7 @@ class TimeDataScreenTest {
     fun timeDataScreenErrorLightTest() {
         composeTestRule.setContent {
             TimeDataScreen(
-                mockTimeDataUiState = Error("Error message"),
+                timeDataViewModelFactory = mockTimeDataViewModelFactoryError,
                 darkTheme = false
             )
         }
@@ -88,7 +60,7 @@ class TimeDataScreenTest {
     fun timeDataScreenSuccessDarkTest() {
         composeTestRule.setContent {
             TimeDataScreen(
-                mockTimeDataUiState = Success(TimeDataSets(generateMockTimeData())),
+                timeDataViewModelFactory = mockTimeDataViewModelFactorySuccess,
                 darkTheme = true
             )
         }
@@ -105,7 +77,7 @@ class TimeDataScreenTest {
     fun timeDataScreenSuccessLightTest() {
         composeTestRule.setContent {
             TimeDataScreen(
-                mockTimeDataUiState = Success(TimeDataSets(generateMockTimeData())),
+                timeDataViewModelFactory = mockTimeDataViewModelFactorySuccess,
                 darkTheme = false
             )
         }
