@@ -34,6 +34,7 @@ import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.MockFeedProfilesRepository
 import com.laimburggasse.aquariumcontrol.feed.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
@@ -43,7 +44,8 @@ fun FeedProfileAddScreen(
     navHostController: NavHostController? = null,
     mainViewModel: MainViewModel,
     darkTheme: Boolean? = null,
-    feedProfileAddViewModelFactory: FeedProfileAddViewModelFactory
+    feedProfileAddViewModelFactory: FeedProfileAddViewModelFactory,
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     // This screen displays
     // - a graphic visualizing the feed profile
@@ -116,9 +118,9 @@ fun FeedProfileAddScreen(
                     }
                 }
                 MainDropdownMenuComposable(
-                    navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.feed,
-                    mainViewModel = mainViewModel
+                    mainViewModel = mainViewModel,
+                    onNavigate
                 )
             }
         }
@@ -147,6 +149,7 @@ internal fun FeedProfileAddScreenPreview() {
         mainViewModel = mockMainViewModel,
         feedProfileAddViewModelFactory = FeedProfileAddViewModelFactory(
             feedProfilesRepository = mockFeedProfilesRepositoryEmpty,
-        )
+        ),
+        onNavigate = {}
     )
 }

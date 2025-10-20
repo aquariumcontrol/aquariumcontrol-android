@@ -30,23 +30,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.controller.ControllerProfile
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
 fun OverviewScreen(
-    navHostController: NavHostController? = null,
     mainViewModel: MainViewModel,
     overviewViewModelFactory: OverviewViewModelFactory,
-    darkTheme: Boolean? = null
+    darkTheme: Boolean? = null,
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     // This screen displays
     // - headline
@@ -176,9 +176,9 @@ fun OverviewScreen(
                     }
                 }
                 MainDropdownMenuComposable(
-                    navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.overView,
-                    mainViewModel = mainViewModel
+                    mainViewModel = mainViewModel,
+                    onNavigate
                 )
             }
         }
@@ -245,6 +245,7 @@ fun OverviewScreenPreviewSuccess() {
     OverviewScreen(
         mainViewModel = mockMainViewModel,
         overviewViewModelFactory = mockOverviewViewModelFactorySuccess,
+        onNavigate = {}
     )
 }
 
@@ -255,5 +256,6 @@ fun OverviewScreenPreviewError() {
     OverviewScreen(
         mainViewModel = mockMainViewModel,
         overviewViewModelFactory = mockOverviewViewModelFactoryError,
+        onNavigate = {}
     )
 }

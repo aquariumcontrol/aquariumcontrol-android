@@ -24,18 +24,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun MainDropdownMenuComposable(
-    navHostController: NavHostController? = null,
     navigationRouteSource: String,
-    mainViewModel: MainViewModel? = null
+    mainViewModel: MainViewModel? = null,
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
-    val isControllerLoaded = mainViewModel?.isControllerLoaded() == true
+    val isControllerLoaded: Boolean = mainViewModel?.isControllerLoaded() == true
 
     var expanded by remember { mutableStateOf(false) }
 
@@ -58,53 +57,53 @@ fun MainDropdownMenuComposable(
             onDismissRequest = { expanded = false },
         ) {
             MainDropDownMenuItemOverviewComposable(
-                navHostController = navHostController,
                 isControllerLoaded = isControllerLoaded,
-                navigationRouteSource = navigationRouteSource
+                navigationRouteSource = navigationRouteSource,
+                onNavigate
             )
             MainDropDownMenuItemDisplayDataComposable(
-                navHostController = navHostController,
                 isControllerLoaded = isControllerLoaded,
-                navigationRouteSource = navigationRouteSource
+                navigationRouteSource = navigationRouteSource,
+                onNavigate
             )
             MainDropDownMenuItemBallingComposable(
-                navHostController = navHostController,
                 isControllerLoaded = isControllerLoaded,
-                navigationRouteSource = navigationRouteSource
+                navigationRouteSource = navigationRouteSource,
+                onNavigate
             )
             MainDropDownMenuItemRefillComposable(
-                navHostController = navHostController,
                 isControllerLoaded = isControllerLoaded,
-                navigationRouteSource = navigationRouteSource
+                navigationRouteSource = navigationRouteSource,
+                onNavigate
             )
             MainDropDownMenuItemFeedComposable(
-                navHostController = navHostController,
                 isControllerLoaded = isControllerLoaded,
-                navigationRouteSource = navigationRouteSource
+                navigationRouteSource = navigationRouteSource,
+                onNavigate
             )
             MainDropDownMenuItemHeatingComposable(
-                navHostController = navHostController,
                 isControllerLoaded = isControllerLoaded,
-                navigationRouteSource = navigationRouteSource
+                navigationRouteSource = navigationRouteSource,
+                onNavigate
             )
             MainDropDownMenuItemVentilationComposable(
-                navHostController = navHostController,
                 isControllerLoaded = isControllerLoaded,
-                navigationRouteSource = navigationRouteSource
+                navigationRouteSource = navigationRouteSource,
+                onNavigate
             )
             MainDropDownMenuItemScheduleComposable(
-                navHostController = navHostController,
                 isControllerLoaded = isControllerLoaded,
-                navigationRouteSource = navigationRouteSource
+                navigationRouteSource = navigationRouteSource,
+                onNavigate
             )
             HorizontalDivider()
             MainDropDownMenuItemControllerSelectionComposable(
-                navHostController = navHostController,
-                navigationRouteSource = navigationRouteSource
+                navigationRouteSource = navigationRouteSource,
+                onNavigate
             )
             MainDropDownMenuItemInfoComposable(
-                navHostController = navHostController,
-                navigationRouteSource = navigationRouteSource
+                navigationRouteSource = navigationRouteSource,
+                onNavigate
             )
         }
     }
@@ -121,17 +120,20 @@ internal fun MainDropdownMenuComposablePreview() {
             color = MaterialTheme.colorScheme.background,
         ) {
             Column {
-                MainDropDownMenuItemOverviewComposable(isControllerLoaded = true)
-                MainDropDownMenuItemDisplayDataComposable(isControllerLoaded = true)
-                MainDropDownMenuItemBallingComposable(isControllerLoaded = true)
-                MainDropDownMenuItemRefillComposable(isControllerLoaded = true)
-                MainDropDownMenuItemFeedComposable(isControllerLoaded = true)
-                MainDropDownMenuItemHeatingComposable(isControllerLoaded = true)
-                MainDropDownMenuItemVentilationComposable(isControllerLoaded = true)
-                MainDropDownMenuItemScheduleComposable(isControllerLoaded = true)
+                MainDropDownMenuItemOverviewComposable(
+                    isControllerLoaded = true,
+                    onNavigate = {}
+                )
+                MainDropDownMenuItemDisplayDataComposable(isControllerLoaded = true, onNavigate = {})
+                MainDropDownMenuItemBallingComposable(isControllerLoaded = true, onNavigate = {})
+                MainDropDownMenuItemRefillComposable(isControllerLoaded = true, onNavigate = {})
+                MainDropDownMenuItemFeedComposable(isControllerLoaded = true, onNavigate = {})
+                MainDropDownMenuItemHeatingComposable(isControllerLoaded = true, onNavigate = {})
+                MainDropDownMenuItemVentilationComposable(isControllerLoaded = true, onNavigate = {})
+                MainDropDownMenuItemScheduleComposable(isControllerLoaded = true, onNavigate = {})
                 HorizontalDivider()
-                MainDropDownMenuItemControllerSelectionComposable()
-                MainDropDownMenuItemInfoComposable()
+                MainDropDownMenuItemControllerSelectionComposable(onNavigate = {})
+                MainDropDownMenuItemInfoComposable(onNavigate = {})
             }
         }
     }

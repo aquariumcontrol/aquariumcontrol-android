@@ -34,6 +34,7 @@ import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
@@ -44,6 +45,7 @@ fun ControllerEditScreen(
     mainViewModel: MainViewModel? = null,
     mockIsDefaultProfile: Boolean? = false,
     darkTheme: Boolean? = null,
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     // This screen allows editing of a controller profile and selecting if the profile shall be
     // the default profile.
@@ -181,9 +183,9 @@ fun ControllerEditScreen(
                     }
                 }
                 MainDropdownMenuComposable(
-                    navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.info,
-                    mainViewModel = mainViewModel
+                    mainViewModel = mainViewModel,
+                    onNavigate
                 )
             }
         }
@@ -211,5 +213,5 @@ internal fun ControllerEditScreenPreview() {
         controllerProfileUser = "user",
         controllerProfilePassword = "password",
     )
-    ControllerEditScreen(state = mockControllerState, onEvent = {}, mockIsDefaultProfile = true)
+    ControllerEditScreen(state = mockControllerState, onEvent = {}, mockIsDefaultProfile = true, onNavigate = {})
 }

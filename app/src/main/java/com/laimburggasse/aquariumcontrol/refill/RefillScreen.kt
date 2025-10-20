@@ -31,6 +31,7 @@ import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
@@ -40,6 +41,7 @@ fun RefillScreen(
     mainViewModel: MainViewModel,
     refillViewModelFactory: RefillViewModelFactory,
     darkTheme: Boolean? = null,
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     // This screen displays
     // - a button for visualizing all refill events of the last 24h
@@ -180,9 +182,9 @@ fun RefillScreen(
                     }
                 }
                 MainDropdownMenuComposable(
-                    navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.refill,
-                    mainViewModel = mainViewModel
+                    mainViewModel = mainViewModel,
+                    onNavigate
                 )
             }
         }
@@ -211,6 +213,7 @@ val mockRefillViewModelFactory = RefillViewModelFactory(mockRefillRepository)
 internal fun RefillScreenPreview() {
     RefillScreen(
         mainViewModel = mockMainViewModel,
-        refillViewModelFactory = mockRefillViewModelFactory
+        refillViewModelFactory = mockRefillViewModelFactory,
+        onNavigate = {}
     )
 }

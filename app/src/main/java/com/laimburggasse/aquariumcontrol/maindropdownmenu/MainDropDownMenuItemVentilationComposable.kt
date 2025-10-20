@@ -11,22 +11,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun MainDropDownMenuItemVentilationComposable(
-    navHostController: NavHostController? = null,
     isControllerLoaded: Boolean = false,
-    navigationRouteSource: String? = null
+    navigationRouteSource: String? = null,
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     DropdownMenuItem(
-        text = { Text(stringResource(R.string.ventilation)) },
-        onClick = {
-            navHostController?.navigate(ViewNavigationRoutes.ventilation)
-        },
+        text = { Text(text = stringResource(R.string.ventilation)) },
+        onClick = { onNavigate(MainDropDownMenuNavigationEvent.ToVentilation) },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Outlined.AcUnit,
@@ -45,7 +42,10 @@ internal fun MainDropdownMenuItemVentilationEnabledPreview() {
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {
-            MainDropDownMenuItemVentilationComposable(isControllerLoaded = true)
+            MainDropDownMenuItemVentilationComposable(
+                isControllerLoaded = true,
+                onNavigate = {}
+            )
         }
     }
 }
@@ -58,7 +58,10 @@ internal fun MainDropdownMenuItemVentilationDisabledPreview() {
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {
-            MainDropDownMenuItemVentilationComposable(isControllerLoaded = false)
+            MainDropDownMenuItemVentilationComposable(
+                isControllerLoaded = false,
+                onNavigate = {}
+            )
         }
     }
 }

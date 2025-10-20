@@ -31,11 +31,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState.Error
 import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState.Loading
@@ -54,10 +54,10 @@ const val axisGranularityTime = 14400f
 
 @Composable
 fun TimeDataScreen(
-    navHostController: NavHostController? = null,
     mainViewModel: MainViewModel? = null,
     timeDataViewModelFactory: TimeDataViewModelFactory,
-    darkTheme: Boolean? = null
+    darkTheme: Boolean? = null,
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     // This screen is only displaying time data charts without data flow back to server.
     val timeDataViewModel: TimeDataViewModel = viewModel(factory = timeDataViewModelFactory)
@@ -181,9 +181,9 @@ fun TimeDataScreen(
                     }
                 }
                 MainDropdownMenuComposable(
-                    navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.timeData,
-                    mainViewModel = mainViewModel
+                    mainViewModel = mainViewModel,
+                    onNavigate
                 )
             }
         }
@@ -324,7 +324,7 @@ val mockTimeDataViewModelFactoryEmpty = TimeDataViewModelFactory(
 )
 @Composable
 internal fun TimeDataScreenPreviewSuccess() {
-    TimeDataScreen(timeDataViewModelFactory = mockTimeDataViewModelFactorySuccess)
+    TimeDataScreen(timeDataViewModelFactory = mockTimeDataViewModelFactorySuccess, onNavigate = {})
 }
 
 @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_YES)
@@ -341,7 +341,7 @@ internal fun TimeDataScreenPreviewSuccess() {
 )
 @Composable
 internal fun TimeDataScreenPreviewError() {
-    TimeDataScreen(timeDataViewModelFactory = mockTimeDataViewModelFactoryError)
+    TimeDataScreen(timeDataViewModelFactory = mockTimeDataViewModelFactoryError, onNavigate = {})
 }
 
 @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_YES)
@@ -358,5 +358,5 @@ internal fun TimeDataScreenPreviewError() {
 )
 @Composable
 internal fun TimeDataScreenPreviewEmpty() {
-    TimeDataScreen(timeDataViewModelFactory = mockTimeDataViewModelFactoryEmpty)
+    TimeDataScreen(timeDataViewModelFactory = mockTimeDataViewModelFactoryEmpty, onNavigate = {})
 }

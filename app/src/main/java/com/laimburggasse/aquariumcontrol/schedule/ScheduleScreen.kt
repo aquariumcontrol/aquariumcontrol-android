@@ -28,22 +28,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
 fun ScheduleScreen(
-    navHostController: NavHostController? = null,
     mainViewModel: MainViewModel,
     scheduleViewModelFactory: ScheduleViewModelFactory,
     darkTheme: Boolean? = null,
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     // This screen displays for each of (Balling, Refill, schedule, Heating)
     // - a range slider for setting the start and stop time
@@ -206,9 +206,9 @@ fun ScheduleScreen(
                     }
                 }
                 MainDropdownMenuComposable(
-                    navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.schedule,
-                    mainViewModel = mainViewModel
+                    mainViewModel = mainViewModel,
+                    onNavigate
                 )
             }
         }
@@ -271,7 +271,8 @@ val mockMainViewModel = MockMainViewModel()
 internal fun ScheduleScreenPreviewSuccess() {
     ScheduleScreen(
         mainViewModel = mockMainViewModel,
-        scheduleViewModelFactory = mockScheduleViewModelFactorySuccess
+        scheduleViewModelFactory = mockScheduleViewModelFactorySuccess,
+        onNavigate = {}
     )
 }
 
@@ -284,6 +285,7 @@ internal fun ScheduleScreenPreviewSuccess() {
 internal fun ScheduleScreenPreviewError() {
     ScheduleScreen(
         mainViewModel = mockMainViewModel,
-        scheduleViewModelFactory = mockScheduleViewModelFactoryError
+        scheduleViewModelFactory = mockScheduleViewModelFactoryError,
+        onNavigate = {}
     )
 }

@@ -18,27 +18,25 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.github.mikephil.charting.data.LineData
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.FeedProfileImport
-import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditMenuItem
 import com.laimburggasse.aquariumcontrol.feed.mockFeedProfilesRepository
 import com.laimburggasse.aquariumcontrol.feed.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
-import kotlin.collections.List
 
 @Composable
 fun FeedProfileEditScreen(
-    navHostController: NavHostController? = null,
     feedProfileEditViewModelFactory: FeedProfileEditViewModelFactory,
     mainViewModel: MainViewModel,
-    darkTheme: Boolean? = null
+    darkTheme: Boolean? = null,
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     // This screen displays
     // - a graphic visualizing the feed profile
@@ -50,7 +48,6 @@ fun FeedProfileEditScreen(
     val feedProfileEditViewModel: FeedProfileEditViewModel = viewModel(
         factory = feedProfileEditViewModelFactory
     )
-    val uiState = feedProfileEditViewModel.feedProfileUiState.collectAsState()
 
     val configuration: Configuration = LocalConfiguration.current
 
@@ -117,9 +114,9 @@ fun FeedProfileEditScreen(
                     )
                 }
                 MainDropdownMenuComposable(
-                    navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.feed,
-                    mainViewModel = mainViewModel
+                    mainViewModel = mainViewModel,
+                    onNavigate
                 )
             }
         }
@@ -279,6 +276,7 @@ val mockFeedProfileEditViewModelFactory = FeedProfileEditViewModelFactory(
 internal fun FeedProfileEditScreenPreview() {
     FeedProfileEditScreen(
         feedProfileEditViewModelFactory = mockFeedProfileEditViewModelFactory,
-        mainViewModel = mockMainViewModel
+        mainViewModel = mockMainViewModel,
+        onNavigate = {}
     )
 }

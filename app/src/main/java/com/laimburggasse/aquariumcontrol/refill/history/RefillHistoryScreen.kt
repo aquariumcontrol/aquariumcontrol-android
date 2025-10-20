@@ -36,11 +36,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.overview.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
@@ -49,11 +49,11 @@ import java.sql.Timestamp
 
 @Composable
 fun RefillHistoryScreen(
-    navHostController: NavHostController? = null,
     showFullWeek: Boolean,
     mainViewModel: MainViewModel,
     refillHistoryViewModelFactory: RefillHistoryViewModelFactory,
-    darkTheme: Boolean? = null
+    darkTheme: Boolean? = null,
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     // This screen displays
     // - headline
@@ -185,9 +185,9 @@ fun RefillHistoryScreen(
                     }
                 }
                 MainDropdownMenuComposable(
-                    navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.refill,
-                    mainViewModel = mainViewModel
+                    mainViewModel = mainViewModel,
+                    onNavigate = onNavigate
                 )
             }
         }
@@ -240,7 +240,8 @@ internal fun RefillHistoryScreenPreviewSuccess() {
         refillHistoryViewModelFactory = RefillHistoryViewModelFactory(
             refillHistoryRepository = mockRefillHistoryRepositorySuccess
         ),
-        mainViewModel = mockMainViewModel
+        mainViewModel = mockMainViewModel,
+        onNavigate = {}
     )
 }
 
@@ -253,7 +254,8 @@ internal fun RefillHistoryScreenPreviewError() {
         refillHistoryViewModelFactory = RefillHistoryViewModelFactory(
             refillHistoryRepository = mockRefillHistoryRepositoryError
         ),
-        mainViewModel = mockMainViewModel
+        mainViewModel = mockMainViewModel,
+        onNavigate = {}
     )
 }
 
@@ -266,7 +268,8 @@ internal fun RefillHistoryScreenPreviewEmpty() {
         refillHistoryViewModelFactory = RefillHistoryViewModelFactory(
             refillHistoryRepository = mockRefillHistoryRepositoryEmpty
         ),
-        mainViewModel = mockMainViewModel
+        mainViewModel = mockMainViewModel,
+        onNavigate = {}
     )
 }
 

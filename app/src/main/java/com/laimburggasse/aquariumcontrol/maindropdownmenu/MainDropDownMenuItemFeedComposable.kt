@@ -11,22 +11,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun MainDropDownMenuItemFeedComposable(
-    navHostController: NavHostController? = null,
     isControllerLoaded: Boolean = false,
-    navigationRouteSource: String? = null
+    navigationRouteSource: String? = null,
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     DropdownMenuItem(
         text = { Text(stringResource(R.string.feed)) },
-        onClick = {
-            navHostController?.navigate(ViewNavigationRoutes.feed)
-        },
+        onClick = { onNavigate(MainDropDownMenuNavigationEvent.ToFeed) },
         leadingIcon = {
             Icon(
                 imageVector = Icons.AutoMirrored.Outlined.RotateRight,
@@ -51,7 +48,10 @@ internal fun MainDropdownMenuItemFeedEnabledPreview() {
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {
-            MainDropDownMenuItemFeedComposable(isControllerLoaded = true)
+            MainDropDownMenuItemFeedComposable(
+                isControllerLoaded = true,
+                onNavigate = {}
+            )
         }
     }
 }
@@ -64,7 +64,10 @@ internal fun MainDropdownMenuItemFeedDisabledPreview() {
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {
-            MainDropDownMenuItemFeedComposable(isControllerLoaded = false)
+            MainDropDownMenuItemFeedComposable(
+                isControllerLoaded = false,
+                onNavigate = {}
+            )
         }
     }
 }

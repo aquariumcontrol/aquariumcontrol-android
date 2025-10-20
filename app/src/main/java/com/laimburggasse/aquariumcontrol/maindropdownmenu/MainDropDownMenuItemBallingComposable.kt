@@ -11,22 +11,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun MainDropDownMenuItemBallingComposable(
-    navHostController: NavHostController? = null,
     isControllerLoaded: Boolean = false,
-    navigationRouteSource: String? = null
+    navigationRouteSource: String? = null,
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     DropdownMenuItem(
-        text = { Text(stringResource(R.string.balling_mineral_dosing)) },
-        onClick = {
-            navHostController?.navigate(ViewNavigationRoutes.balling)
-        },
+        text = { Text(text = stringResource(R.string.balling_mineral_dosing)) },
+        onClick = { onNavigate(MainDropDownMenuNavigationEvent.ToBalling) },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Outlined.Science,
@@ -48,7 +45,10 @@ internal fun MainDropdownMenuItemBallingEnabledPreview() {
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {
-            MainDropDownMenuItemBallingComposable(isControllerLoaded = true)
+            MainDropDownMenuItemBallingComposable(
+                isControllerLoaded = true,
+                onNavigate = {}
+            )
         }
     }
 }
@@ -61,7 +61,10 @@ internal fun MainDropdownMenuItemBallingDataDisabledPreview() {
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {
-            MainDropDownMenuItemBallingComposable(isControllerLoaded = false)
+            MainDropDownMenuItemBallingComposable(
+                isControllerLoaded = false,
+                onNavigate = {}
+            )
         }
     }
 }

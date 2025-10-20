@@ -36,6 +36,7 @@ import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import kotlinx.coroutines.Dispatchers
@@ -50,6 +51,7 @@ fun ControllerSelectionScreen(
     mainViewModel: MainViewModel? = null,
     mockProgress: Float? = null,
     darkTheme: Boolean? = null,
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit,
 ) {
     // This screen displays:
     // - headline
@@ -173,9 +175,9 @@ fun ControllerSelectionScreen(
                     }
                 }
                 MainDropdownMenuComposable(
-                    navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.controllerSelection,
-                    mainViewModel = mainViewModel
+                    mainViewModel = mainViewModel,
+                    onNavigate = onNavigate,
                 )
             }
         }
@@ -223,7 +225,8 @@ internal fun ControllerSelectionScreenPreview() {
     ControllerSelectionScreen(
         state = mockControllerState,
         onEvent = {},
-        mockProgress = 0.3f
+        mockProgress = 0.3f,
+        onNavigate = {}
     )
 }
 

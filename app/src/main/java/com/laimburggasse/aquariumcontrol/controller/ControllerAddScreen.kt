@@ -28,6 +28,7 @@ import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
@@ -37,6 +38,7 @@ fun ControllerAddScreen(
     onEvent: (ControllerEvent) -> Unit,
     mainViewModel: MainViewModel? = null,
     darkTheme: Boolean? = null,
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     // This screen displays a form for adding a new controller profile:
     // - editable text field for the controller profile name
@@ -130,9 +132,9 @@ fun ControllerAddScreen(
                     }
                 }
                 MainDropdownMenuComposable(
-                    navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.info,
-                    mainViewModel = mainViewModel
+                    mainViewModel = mainViewModel,
+                    onNavigate
                 )
             }
         }
@@ -153,5 +155,5 @@ fun ControllerAddScreen(
 )
 @Composable
 internal fun ControllerAddScreenPreview() {
-    ControllerAddScreen(state = ControllerState(), onEvent = {})
+    ControllerAddScreen(state = ControllerState(), onEvent = {}, onNavigate = {})
 }

@@ -11,22 +11,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun MainDropDownMenuItemDisplayDataComposable(
-    navHostController: NavHostController? = null,
     isControllerLoaded: Boolean = false,
-    navigationRouteSource: String? = null
+    navigationRouteSource: String? = null,
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     DropdownMenuItem(
-        text = { Text(stringResource(R.string.display_data)) },
-        onClick = {
-            navHostController?.navigate(ViewNavigationRoutes.timeData)
-        },
+        text = { Text(text = stringResource(R.string.display_data)) },
+        onClick = { onNavigate(MainDropDownMenuNavigationEvent.ToDisplayData) },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Outlined.LineAxis,
@@ -45,7 +42,10 @@ internal fun MainDropdownMenuItemDisplayDataEnabledPreview() {
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {
-            MainDropDownMenuItemDisplayDataComposable(isControllerLoaded = true)
+            MainDropDownMenuItemDisplayDataComposable(
+                isControllerLoaded = true,
+                onNavigate = {}
+            )
         }
     }
 }
@@ -58,7 +58,10 @@ internal fun MainDropdownMenuItemDisplayDataDisabledPreview() {
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {
-            MainDropDownMenuItemDisplayDataComposable(isControllerLoaded = false)
+            MainDropDownMenuItemDisplayDataComposable(
+                isControllerLoaded = false,
+                onNavigate = {}
+            )
         }
     }
 }

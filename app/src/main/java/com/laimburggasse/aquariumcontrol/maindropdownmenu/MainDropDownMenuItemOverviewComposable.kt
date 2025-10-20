@@ -11,28 +11,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun MainDropDownMenuItemOverviewComposable(
-    navHostController: NavHostController? = null,
     isControllerLoaded: Boolean = false,
-    navigationRouteSource: String? = null
+    navigationRouteSource: String? = null,
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     DropdownMenuItem(
-        text = {
-            Text(
-                stringResource(
-                    id = R.string.overview
-                )
-            )
-        },
-        onClick = {
-            navHostController?.navigate(ViewNavigationRoutes.overView)
-        },
+        text = { Text(text = stringResource(id = R.string.overview)) },
+        onClick = { onNavigate(MainDropDownMenuNavigationEvent.ToOverview) },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Outlined.Stars,
@@ -53,7 +44,10 @@ internal fun MainDropdownMenuItemOverviewEnabledPreview() {
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {
-            MainDropDownMenuItemOverviewComposable(isControllerLoaded = true)
+            MainDropDownMenuItemOverviewComposable(
+                isControllerLoaded = true,
+                onNavigate = {}
+            )
         }
     }
 }
@@ -66,7 +60,10 @@ internal fun MainDropdownMenuItemOverviewDisabledPreview() {
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {
-            MainDropDownMenuItemOverviewComposable(isControllerLoaded = false)
+            MainDropDownMenuItemOverviewComposable(
+                isControllerLoaded = false,
+                onNavigate = {}
+            )
         }
     }
 }

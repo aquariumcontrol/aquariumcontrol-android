@@ -11,22 +11,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun MainDropDownMenuItemHeatingComposable(
-    navHostController: NavHostController? = null,
     isControllerLoaded: Boolean = false,
-    navigationRouteSource: String? = null
+    navigationRouteSource: String? = null,
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     DropdownMenuItem(
-        text = { Text(stringResource(R.string.heating)) },
-        onClick = {
-            navHostController?.navigate(ViewNavigationRoutes.heating)
-        },
+        text = { Text(text = stringResource(R.string.heating)) },
+        onClick = { onNavigate(MainDropDownMenuNavigationEvent.ToHeating) },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Outlined.DeviceThermostat,
@@ -45,7 +42,10 @@ internal fun MainDropdownMenuItemHeatingEnabledPreview() {
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {
-            MainDropDownMenuItemHeatingComposable(isControllerLoaded = true)
+            MainDropDownMenuItemHeatingComposable(
+                isControllerLoaded = true,
+                onNavigate = {}
+            )
         }
     }
 }
@@ -58,7 +58,10 @@ internal fun MainDropdownMenuItemHeatingDisabledPreview() {
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {
-            MainDropDownMenuItemHeatingComposable(isControllerLoaded = false)
+            MainDropDownMenuItemHeatingComposable(
+                isControllerLoaded = false,
+                onNavigate = {}
+            )
         }
     }
 }

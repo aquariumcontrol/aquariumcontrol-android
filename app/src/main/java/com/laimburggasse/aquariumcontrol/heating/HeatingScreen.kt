@@ -27,23 +27,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
 fun HeatingScreen(
-    navHostController: NavHostController? = null,
     mainViewModel: MainViewModel,
     heatingSetValsViewModelFactory: HeatingSetValsViewModelFactory,
     heatingStatsViewModelFactory: HeatingStatsViewModelFactory,
-    darkTheme: Boolean? = null
+    darkTheme: Boolean? = null,
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     // This screen displays
     // - a button to update the heating controller values
@@ -218,9 +218,9 @@ fun HeatingScreen(
                     }
                 }
                 MainDropdownMenuComposable(
-                    navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.heating,
-                    mainViewModel = mainViewModel
+                    mainViewModel = mainViewModel,
+                    onNavigate
                 )
             }
         }
@@ -311,6 +311,7 @@ fun HeatingScreenPreviewSuccess() {
         mainViewModel = mockMainViewModel,
         heatingSetValsViewModelFactory = mockHeatingSetValsViewModelFactorySuccess,
         heatingStatsViewModelFactory = mockHeatingStatsViewModelFactorySuccess,
+        onNavigate = {}
     )
 }
 
@@ -322,5 +323,6 @@ fun HeatingScreenPreviewError() {
         mainViewModel = mockMainViewModel,
         heatingSetValsViewModelFactory = mockHeatingSetValsViewModelFactoryError,
         heatingStatsViewModelFactory = mockHeatingStatsViewModelFactoryError,
+        onNavigate = {}
     )
 }

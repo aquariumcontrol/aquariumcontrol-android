@@ -36,11 +36,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.overview.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
@@ -48,11 +48,11 @@ import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
 fun BallingHistoryScreen(
-    navHostController: NavHostController? = null,
     showFullWeek: Boolean,
     mainViewModel: MainViewModel,
     ballingHistoryViewModelFactory: BallingHistoryViewModelFactory,
     darkTheme: Boolean? = null,
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     // This screen displays:
     // - headline
@@ -189,9 +189,9 @@ fun BallingHistoryScreen(
                     }
                 }
                 MainDropdownMenuComposable(
-                    navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.balling,
-                    mainViewModel = mainViewModel
+                    mainViewModel = mainViewModel,
+                    onNavigate
                 )
             }
         }
@@ -245,6 +245,7 @@ internal fun BallingHistoryScreenPreviewSuccess() {
         ballingHistoryViewModelFactory = BallingHistoryViewModelFactory(
             ballingHistoryRepository = mockBallingHistoryRepositorySuccess
         ),
+        onNavigate = {}
     )
 }
 
@@ -257,6 +258,7 @@ internal fun BallingHistoryScreenPreviewEmpty() {
         ballingHistoryViewModelFactory = BallingHistoryViewModelFactory(
             ballingHistoryRepository = mockBallingHistoryRepositoryEmpty
         ),
+        onNavigate = {}
     )
 }
 
@@ -269,9 +271,11 @@ internal fun BallingHistoryScreenPreviewError() {
         ballingHistoryViewModelFactory = BallingHistoryViewModelFactory(
             ballingHistoryRepository = mockBallingHistoryRepositoryError
         ),
+        onNavigate = {}
     )
 }
 
+// @todo: reactivate
 /* deactivated until after update of DataFetchResult
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable

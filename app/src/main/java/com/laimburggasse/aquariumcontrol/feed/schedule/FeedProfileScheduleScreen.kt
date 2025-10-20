@@ -50,6 +50,7 @@ import com.laimburggasse.aquariumcontrol.feed.FeedProfilesViewModelFactory
 import com.laimburggasse.aquariumcontrol.feed.MockFeedProfilesRepository
 import com.laimburggasse.aquariumcontrol.feed.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
@@ -66,7 +67,8 @@ fun FeedProfileScheduleScreen(
     feedProfilesViewModelFactory: FeedProfilesViewModelFactory,
     isNewScheduleEntry: Boolean,
     millisSinceEpoch: Long,
-    darkTheme: Boolean? = null
+    darkTheme: Boolean? = null,
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     // This screen displays:
     // - Headline
@@ -285,9 +287,9 @@ fun FeedProfileScheduleScreen(
                     }
                 }
                 MainDropdownMenuComposable(
-                    navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.feed,
-                    mainViewModel = mainViewModel
+                    mainViewModel = mainViewModel,
+                    onNavigate
                 )
             }
         }
@@ -337,6 +339,7 @@ fun FeedProfileScheduleScreenPreviewSuccess() {
         feedProfilesViewModelFactory = mockFeedProfilesViewModelFactory,
         isNewScheduleEntry = false,
         millisSinceEpoch = 0,
+        onNavigate = {}
     )
 }
 
@@ -371,5 +374,6 @@ internal fun FeedProfileScheduleScreenPreviewError() {
         feedProfilesViewModelFactory = mockFeedProfilesViewModelFactory,
         isNewScheduleEntry = false,
         millisSinceEpoch = 0,
+        onNavigate = {}
     )
 }

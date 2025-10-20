@@ -51,7 +51,8 @@ class ControllerSelectionScreenTest {
                 state = mockControllerState,
                 onEvent = {},
                 mockProgress = 0.3f,
-                darkTheme = true
+                darkTheme = true,
+                onNavigate = {}
             )
         }
         composeTestRule.waitForIdle()
@@ -72,7 +73,8 @@ class ControllerSelectionScreenTest {
                 state = mockControllerState,
                 onEvent = {},
                 mockProgress = 0.3f,
-                darkTheme = false
+                darkTheme = false,
+                onNavigate = {}
             )
         }
         composeTestRule.waitForIdle()

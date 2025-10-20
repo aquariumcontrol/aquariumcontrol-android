@@ -11,21 +11,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun MainDropDownMenuItemControllerSelectionComposable(
-    navHostController: NavHostController? = null,
-    navigationRouteSource: String? = null
+    navigationRouteSource: String? = null,
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     DropdownMenuItem(
-        text = { Text(stringResource(R.string.select_controller)) },
-        onClick = {
-            navHostController?.navigate(ViewNavigationRoutes.controllerSelection)
-        },
+        text = { Text(text = stringResource(R.string.select_controller)) },
+        onClick = { onNavigate(MainDropDownMenuNavigationEvent.ToControllerSelection) },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Outlined.Settings,
@@ -46,7 +43,9 @@ internal fun MainDropdownMenuItemControllerSelectionPreview() {
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {
-            MainDropDownMenuItemControllerSelectionComposable()
+            MainDropDownMenuItemControllerSelectionComposable(
+                onNavigate = {}
+            )
         }
     }
 }

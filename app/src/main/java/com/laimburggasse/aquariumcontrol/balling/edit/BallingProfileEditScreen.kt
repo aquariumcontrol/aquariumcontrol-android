@@ -30,7 +30,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
@@ -39,16 +38,17 @@ import com.laimburggasse.aquariumcontrol.balling.BallingProfile
 import com.laimburggasse.aquariumcontrol.balling.BallingProfileSummaryComposable
 import com.laimburggasse.aquariumcontrol.balling.MockBallingProfilesRepository
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
 fun BallingProfileEditScreen(
-    navHostController: NavHostController? = null,
     mainViewModel: MainViewModel,
     ballingProfileEditViewModelFactory: BallingProfileEditViewModelFactory,
     darkTheme: Boolean? = null,
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     // This screen displays:
     // - Headline
@@ -154,9 +154,9 @@ fun BallingProfileEditScreen(
                     }
                 }
                 MainDropdownMenuComposable(
-                    navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.balling,
-                    mainViewModel = mainViewModel
+                    mainViewModel,
+                    onNavigate
                 )
             }
         }
@@ -194,5 +194,6 @@ internal fun BallingProfileEditScreenPreview() {
             ballingProfileId = 1,
             ballingProfilesRepository = mockBallingRepositorySuccess
         ),
+        onNavigate = {}
     )
 }

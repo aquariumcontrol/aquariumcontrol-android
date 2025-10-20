@@ -35,6 +35,7 @@ import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
@@ -45,6 +46,7 @@ fun BallingScreen(
     mainViewModel: MainViewModel,
     ballingViewModelFactory: BallingViewModelFactory,
     darkTheme: Boolean? = null,
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     // This screen displays
     // - a button for visualizing all Balling dosing events of the last 24h
@@ -161,9 +163,9 @@ fun BallingScreen(
                     }
                 }
                 MainDropdownMenuComposable(
-                    navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.balling,
-                    mainViewModel = mainViewModel
+                    mainViewModel = mainViewModel,
+                    onNavigate
                 )
             }
         }
@@ -193,7 +195,8 @@ internal fun BallingScreenPreviewSuccess() {
     val mockRepositorySuccess = MockBallingProfilesRepository(mockData = DataFetchResult.Success(data = mockBallingProfiles))
     BallingScreen(
         mainViewModel = mockMainViewModel,
-        ballingViewModelFactory = BallingViewModelFactory(ballingProfilesRepository = mockRepositorySuccess)
+        ballingViewModelFactory = BallingViewModelFactory(ballingProfilesRepository = mockRepositorySuccess),
+        onNavigate = {}
     )
 }
 
@@ -205,6 +208,7 @@ internal fun BallingScreenPreviewError() {
     BallingScreen(
         mainViewModel = mockMainViewModel,
         ballingViewModelFactory = BallingViewModelFactory(ballingProfilesRepository = mockRepositoryError),
+        onNavigate = {}
     )
 }
 
@@ -215,6 +219,7 @@ internal fun BallingScreenPreviewLoading() {
     BallingScreen(
         mainViewModel = mockMainViewModel,
         ballingViewModelFactory = BallingViewModelFactory(ballingProfilesRepository = MockLongLoadingBallingProfilesRepository()),
+        onNavigate = {}
     )
 }
 
@@ -226,5 +231,6 @@ internal fun BallingScreenPreviewEmpty() {
     BallingScreen(
         mainViewModel = mockMainViewModel,
         ballingViewModelFactory = BallingViewModelFactory(ballingProfilesRepository = mockRepositoryEmpty),
+        onNavigate = {}
     )
 }

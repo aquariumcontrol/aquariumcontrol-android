@@ -36,23 +36,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
 fun FeedHistoryScreen(
-    navHostController: NavHostController? = null,
     showFullWeek: Boolean,
     mainViewModel: MainViewModel,
     feedHistoryViewModelFactory: FeedHistoryViewModelFactory,
-    darkTheme: Boolean? = null
+    darkTheme: Boolean? = null,
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     // This screen displays:
     // - headline
@@ -176,9 +176,9 @@ fun FeedHistoryScreen(
                     }
                 }
                 MainDropdownMenuComposable(
-                    navHostController = navHostController,
                     navigationRouteSource = ViewNavigationRoutes.feedHistory,
-                    mainViewModel = mainViewModel
+                    mainViewModel = mainViewModel,
+                    onNavigate
                 )
             }
         }
@@ -232,7 +232,8 @@ internal fun FeedHistoryScreenPreviewSuccess() {
         feedHistoryViewModelFactory = FeedHistoryViewModelFactory(
             feedHistoryRepository = mockFeedHistoryRepositorySuccess
         ),
-        mainViewModel = mockMainViewModel
+        mainViewModel = mockMainViewModel,
+        onNavigate = {}
     )
 }
 
@@ -245,7 +246,8 @@ internal fun FeedHistoryScreenPreviewError() {
         feedHistoryViewModelFactory = FeedHistoryViewModelFactory(
             feedHistoryRepository = mockFeedHistoryRepositoryError
         ),
-        mainViewModel = mockMainViewModel
+        mainViewModel = mockMainViewModel,
+        onNavigate = {}
     )
 }
 
@@ -258,10 +260,12 @@ internal fun FeedHistoryScreenPreviewEmpty() {
         feedHistoryViewModelFactory = FeedHistoryViewModelFactory(
             feedHistoryRepository = mockFeedHistoryRepositoryEmpty
         ),
-        mainViewModel = mockMainViewModel
+        mainViewModel = mockMainViewModel,
+        onNavigate = {}
     )
 }
 
+// @todo: Reactivate
 /* deactivated until after update of DataFetchResult
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
