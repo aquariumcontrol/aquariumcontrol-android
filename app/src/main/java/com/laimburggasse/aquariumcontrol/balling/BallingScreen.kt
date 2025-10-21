@@ -46,7 +46,8 @@ fun BallingScreen(
     mainViewModel: MainViewModel,
     ballingViewModelFactory: BallingViewModelFactory,
     darkTheme: Boolean? = null,
-    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit,
+    onNavigateFromBalling: (BallingNavigationEvent, Int?) -> Unit
 ) {
     // This screen displays
     // - a button for visualizing all Balling dosing events of the last 24h
@@ -80,19 +81,15 @@ fun BallingScreen(
                                 horizontalArrangement = Arrangement.Center
                             ) {
                                 BallingDosingHistorySelectionButtonsComposable(
-                                    navHostController = navHostController,
-                                    modifier = Modifier
-                                        .padding(vertical = 8.dp)
-                                        .weight(weight = 0.5f)
+                                    modifier = Modifier.padding(vertical = 8.dp).weight(weight = 0.5f),
+                                    onNavigateFromBalling
                                 )
                             }
                         }
                         else -> {
                             BallingDosingHistorySelectionButtonsComposable(
-                                navHostController = navHostController,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 8.dp),
+                                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                                onNavigateFromBalling
                             )
                         }
                     }
@@ -196,7 +193,8 @@ internal fun BallingScreenPreviewSuccess() {
     BallingScreen(
         mainViewModel = mockMainViewModel,
         ballingViewModelFactory = BallingViewModelFactory(ballingProfilesRepository = mockRepositorySuccess),
-        onNavigate = {}
+        onNavigate = {},
+        onNavigateFromBalling = { event, pumpId -> }
     )
 }
 
@@ -208,7 +206,8 @@ internal fun BallingScreenPreviewError() {
     BallingScreen(
         mainViewModel = mockMainViewModel,
         ballingViewModelFactory = BallingViewModelFactory(ballingProfilesRepository = mockRepositoryError),
-        onNavigate = {}
+        onNavigate = {},
+        onNavigateFromBalling = { event, pumpId -> }
     )
 }
 
@@ -219,7 +218,8 @@ internal fun BallingScreenPreviewLoading() {
     BallingScreen(
         mainViewModel = mockMainViewModel,
         ballingViewModelFactory = BallingViewModelFactory(ballingProfilesRepository = MockLongLoadingBallingProfilesRepository()),
-        onNavigate = {}
+        onNavigate = {},
+        onNavigateFromBalling = { event, pumpId -> }
     )
 }
 
@@ -231,6 +231,7 @@ internal fun BallingScreenPreviewEmpty() {
     BallingScreen(
         mainViewModel = mockMainViewModel,
         ballingViewModelFactory = BallingViewModelFactory(ballingProfilesRepository = mockRepositoryEmpty),
-        onNavigate = {}
+        onNavigate = {},
+        onNavigateFromBalling = { event, pumpId -> }
     )
 }

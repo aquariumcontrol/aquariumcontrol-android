@@ -15,24 +15,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.R
-import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun FeedHistorySelectionButtonsComposable(
     modifier: Modifier? = Modifier,
-    navHostController: NavHostController? = null,
+    onNavigateFromFeed: (FeedNavigationEvent, Int?, Boolean?, Long?) -> Unit
 ) {
     // This composable displays the feed history selection buttons.
     // The arrangement of the buttons follows the device orientation.
 
     Button(
         modifier = modifier?.then(Modifier.padding(horizontal = 8.dp)) ?: Modifier,
-        onClick = {
-            navHostController?.navigate(ViewNavigationRoutes.feedHistory24h)
-        },
+        onClick = { onNavigateFromFeed(FeedNavigationEvent.ToFeedHistory24h, null, null, null) },
     ) {
         Text(
             text = stringResource(id = R.string.view_feed_events_24h),
@@ -42,9 +38,7 @@ fun FeedHistorySelectionButtonsComposable(
     Spacer(modifier = Modifier.width(10.dp))
     Button(
         modifier = modifier?.then(Modifier.padding(horizontal = 8.dp)) ?: Modifier,
-        onClick = {
-            navHostController?.navigate(ViewNavigationRoutes.feedHistory7d)
-        },
+        onClick = { onNavigateFromFeed(FeedNavigationEvent.ToFeedHistory7d, null, null, null) },
     ) {
         Text(
             text = stringResource(id = R.string.view_feed_events_7d),
@@ -60,7 +54,7 @@ internal fun FeedHistorySelectionButtonsComposablePortraitPreview() {
     AquariumControllerTheme {
         Surface {
             Column {
-                FeedHistorySelectionButtonsComposable()
+                FeedHistorySelectionButtonsComposable( onNavigateFromFeed = { event, id, isNew, millis -> })
             }
         }
     }
@@ -81,7 +75,7 @@ internal fun FeedHistorySelectionButtonsComposableLandscapePreview() {
     AquariumControllerTheme {
         Surface {
             Row {
-                FeedHistorySelectionButtonsComposable()
+                FeedHistorySelectionButtonsComposable( onNavigateFromFeed = { event, id, isNew, millis -> })
             }
         }
     }

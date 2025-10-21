@@ -25,7 +25,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
@@ -37,11 +36,11 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun RefillScreen(
-    navHostController: NavHostController? = null,
     mainViewModel: MainViewModel,
     refillViewModelFactory: RefillViewModelFactory,
     darkTheme: Boolean? = null,
-    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit,
+    onNavigateFromRefill: (RefillNavigationEvent) -> Unit,
 ) {
     // This screen displays
     // - a button for visualizing all refill events of the last 24h
@@ -94,9 +93,7 @@ fun RefillScreen(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(horizontal = 8.dp),
-                                        onClick = {
-                                            navHostController?.navigate(ViewNavigationRoutes.refillHistory24h)
-                                        },
+                                        onClick = { onNavigateFromRefill(RefillNavigationEvent.ToRefillHistory24h) },
                                     ) {
                                         Text(
                                             text = stringResource(id = R.string.view_refill_events_24h),
@@ -107,9 +104,7 @@ fun RefillScreen(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(horizontal = 8.dp),
-                                        onClick = {
-                                            navHostController?.navigate(ViewNavigationRoutes.refillHistory7d)
-                                        },
+                                        onClick = { onNavigateFromRefill(RefillNavigationEvent.ToRefillHistory7d) },
                                     ) {
                                         Text(
                                             text = stringResource(id = R.string.view_refill_events_7d),
@@ -214,6 +209,7 @@ internal fun RefillScreenPreview() {
     RefillScreen(
         mainViewModel = mockMainViewModel,
         refillViewModelFactory = mockRefillViewModelFactory,
-        onNavigate = {}
+        onNavigate = {},
+        onNavigateFromRefill = { event -> }
     )
 }

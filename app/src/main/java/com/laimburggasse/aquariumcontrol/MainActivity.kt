@@ -22,6 +22,7 @@ import com.laimburggasse.aquariumcontrol.balling.BallingScreen
 import com.laimburggasse.aquariumcontrol.balling.BallingViewModelFactory
 import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditScreen
 import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditViewModelFactory
+import com.laimburggasse.aquariumcontrol.balling.handleBallingNavigation
 import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryRepository
 import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryScreen
 import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryViewModelFactory
@@ -31,6 +32,7 @@ import com.laimburggasse.aquariumcontrol.controller.ControllerProfileDatabase
 import com.laimburggasse.aquariumcontrol.controller.ControllerSelectionScreen
 import com.laimburggasse.aquariumcontrol.controller.ControllerState
 import com.laimburggasse.aquariumcontrol.controller.ControllerViewModel
+import com.laimburggasse.aquariumcontrol.controller.handleControllerNavigation
 import com.laimburggasse.aquariumcontrol.feed.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.FeedProfilesRepository
 import com.laimburggasse.aquariumcontrol.feed.FeedProfilesViewModelFactory
@@ -39,6 +41,7 @@ import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddScreen
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddViewModelFactory
 import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditScreen
 import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditViewModelFactory
+import com.laimburggasse.aquariumcontrol.feed.handleFeedNavigation
 import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryRepository
 import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryScreen
 import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryViewModelFactory
@@ -58,6 +61,7 @@ import com.laimburggasse.aquariumcontrol.overview.OverviewViewModelFactory
 import com.laimburggasse.aquariumcontrol.refill.RefillRepository
 import com.laimburggasse.aquariumcontrol.refill.RefillScreen
 import com.laimburggasse.aquariumcontrol.refill.RefillViewModelFactory
+import com.laimburggasse.aquariumcontrol.refill.handleRefillNavigation
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryRepository
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryScreen
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryViewModelFactory
@@ -118,6 +122,7 @@ class MainActivity : ComponentActivity() {
     private val feedProfilesRepository by lazy { FeedProfilesRepository(mainViewModel = mainViewModel) }
     private val feedScheduleRepository by lazy { FeedScheduleRepository(mainViewModel = mainViewModel) }
     private val feedHistoryRepository by lazy { FeedHistoryRepository(mainViewModel = mainViewModel) }
+    private val feedHistoryViewModelFactory by lazy { FeedHistoryViewModelFactory(feedHistoryRepository) }
     private val refillHistoryRepository by lazy { RefillHistoryRepository(mainViewModel = mainViewModel) }
     private val refillRepository by lazy { RefillRepository(mainViewModel = mainViewModel) }
     private val refillViewModelFactory by lazy { RefillViewModelFactory(refillRepository) }
@@ -191,54 +196,88 @@ class MainActivity : ComponentActivity() {
                 navController = navHostController,
                 startDestination = ViewNavigationRoutes.controllerSelection,
                 builder = {
-                    composable(route = ViewNavigationRoutes.controllerSelection)
-                    {
-                        ControllerSelectionScreen(
-                            navHostController = navHostController,
-                            state = state,
-                            onEvent = controllerViewModel::onEvent,
-                            mainViewModel = mainViewModel,
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event)}
+                    composable(route = ViewNavigationRoutes.controllerSelection,
+                        arguments = listOf(
+                            navArgument(name = "controllerProfileId") {
+                                type = NavType.IntType
+                                defaultValue = -1L
+                            }
                         )
+                    ) { backStackEntry ->
+                        val controllerProfileId: Long? = backStackEntry.arguments?.getLong("controllerProfileId") ?: -1L
+                        if (controllerProfileId != null) {
+                            ControllerSelectionScreen(
+                                state = state,
+                                onEvent = controllerViewModel::onEvent,
+                                mainViewModel = mainViewModel,
+                                onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) },
+                                onNavigateFromController = { event, controllerProfileId ->
+                                    navHostController.handleControllerNavigation(event, controllerProfileId)
+                                }
+                            )
+                        }
                     }
                     composable(route = ViewNavigationRoutes.controllerAdd)
                     {
                         ControllerAddScreen(
-                            navHostController = navHostController,
                             state = state,
                             onEvent = controllerViewModel::onEvent,
                             mainViewModel = mainViewModel,
                             onNavigate = { event ->
                                 navHostController.handleMainDropDownMenuNavigation(event)
+                            },
+                            onNavigateFromController = { event, controllerProfileId ->
+                                navHostController.handleControllerNavigation(event, controllerProfileId)
                             }
                         )
                     }
-                    composable(route = ViewNavigationRoutes.controllerEdit)
-                    {
-                        ControllerEditScreen(
-                            navHostController = navHostController,
-                            state = state,
-                            onEvent = controllerViewModel::onEvent,
-                            mainViewModel = mainViewModel,
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
+                    composable(route = ViewNavigationRoutes.controllerEdit,
+                        arguments = listOf(
+                            navArgument(name = "controllerProfileId") {
+                                type = NavType.IntType
+                                defaultValue = -1L
+                            }
                         )
+                    )
+                    { backStackEntry ->
+                        val controllerProfileId: Long? = backStackEntry.arguments?.getLong("controllerProfileId") ?: -1L
+                        if (controllerProfileId != null) {
+                            ControllerEditScreen(
+                                state = state,
+                                onEvent = controllerViewModel::onEvent,
+                                mainViewModel = mainViewModel,
+                                onNavigate = { event ->
+                                    navHostController.handleMainDropDownMenuNavigation(
+                                        event
+                                    )
+                                },
+                                onNavigateFromController = { event, controllerProfileId ->
+                                    navHostController.handleControllerNavigation(event, controllerProfileId)
+                                }
+                            )
+                        }
                     }
                     composable(route = ViewNavigationRoutes.feed) {
                         FeedScreen(
-                            navHostController = navHostController,
                             mainViewModel = mainViewModel,
                             feedProfilesViewModelFactory = feedProfilesViewModelFactory,
                             feedScheduleViewModelFactory = feedScheduleViewModelFactory,
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
+                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) },
+                            onNavigateFromFeed = { event, feedProfileId, isNewScheduleEntry, millisSinceEpoch ->
+                                navHostController.handleFeedNavigation(
+                                    event,
+                                    feedProfileId,
+                                    isNewScheduleEntry,
+                                    millisSinceEpoch
+                                )
+                            }
                         )
                     }
                     composable(route = ViewNavigationRoutes.feedHistory24h) {
                         FeedHistoryScreen(
                             showFullWeek = false,
                             mainViewModel = mainViewModel,
-                            feedHistoryViewModelFactory = FeedHistoryViewModelFactory(
-                                feedHistoryRepository
-                            ),
+                            feedHistoryViewModelFactory = feedHistoryViewModelFactory,
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
                         )
                     }
@@ -246,9 +285,7 @@ class MainActivity : ComponentActivity() {
                         FeedHistoryScreen(
                             showFullWeek = true,
                             mainViewModel = mainViewModel,
-                            feedHistoryViewModelFactory = FeedHistoryViewModelFactory(
-                                feedHistoryRepository
-                            ),
+                            feedHistoryViewModelFactory = feedHistoryViewModelFactory,
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
                         )
                     }
@@ -261,6 +298,7 @@ class MainActivity : ComponentActivity() {
                         if (feedProfileId != null) {
                             val feedProfile: FeedProfile? = feedProfilesRepository.findProfileById(feedProfileId)
                             if (feedProfile != null) {
+                                // view model factory needs to be created with dedicated feed profile
                                 val feedProfileEditViewModelFactory =
                                     FeedProfileEditViewModelFactory(
                                         feedProfile = feedProfile,
@@ -282,10 +320,16 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(route = ViewNavigationRoutes.feedAddProfile) {
                         FeedProfileAddScreen(
-                            navHostController = navHostController,
                             mainViewModel = mainViewModel,
                             feedProfileAddViewModelFactory = feedProfileAddViewModelFactory,
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
+                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) },
+                            onNavigateFromFeed = { event, feedProfileId, isNewScheduleEntry, millisSinceEpoch ->
+                                navHostController.handleFeedNavigation(
+                                    event,
+                                    feedProfileId,
+                                    isNewScheduleEntry,
+                                    millisSinceEpoch)
+                            }
                         )
                     }
                     composable(route = ViewNavigationRoutes.feedSchedule,
@@ -306,14 +350,21 @@ class MainActivity : ComponentActivity() {
                         )
                         if (feedProfileId != null && isNewScheduleEntry != null && millisSinceEpoch != null) {
                             FeedProfileScheduleScreen(
-                                navHostController = navHostController,
                                 mainViewModel = mainViewModel,
                                 feedProfileId = feedProfileId,
                                 feedScheduleViewModelFactory = feedScheduleViewModelFactory,
                                 feedProfilesViewModelFactory = feedProfilesViewModelFactory,
                                 isNewScheduleEntry = isNewScheduleEntry,
                                 millisSinceEpoch = millisSinceEpoch,
-                                onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
+                                onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) },
+                                onNavigateFromFeed = { event, profileId, isNew, millis ->
+                                    navHostController.handleFeedNavigation(
+                                        event,
+                                        feedProfileId,
+                                        isNewScheduleEntry,
+                                        millisSinceEpoch
+                                    )
+                                }
                             )
                         }
                         else {
@@ -322,10 +373,12 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(route = ViewNavigationRoutes.balling) {
                         BallingScreen(
-                            navHostController = navHostController,
                             ballingViewModelFactory = BallingViewModelFactory(ballingProfilesRepository),
                             mainViewModel = mainViewModel,
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
+                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) },
+                            onNavigateFromBalling = {
+                                event, pumpId -> navHostController.handleBallingNavigation(event, pumpId)
+                            }
                         )
                     }
                     composable(route = ViewNavigationRoutes.ballingHistory24h) {
@@ -370,10 +423,12 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(route = ViewNavigationRoutes.refill) {
                         RefillScreen(
-                            navHostController,
                             mainViewModel,
                             refillViewModelFactory,
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
+                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) },
+                            onNavigateFromRefill = {
+                                event -> navHostController.handleRefillNavigation(event)
+                            }
                         )
                     }
                     composable(route = ViewNavigationRoutes.refillHistory24h) {

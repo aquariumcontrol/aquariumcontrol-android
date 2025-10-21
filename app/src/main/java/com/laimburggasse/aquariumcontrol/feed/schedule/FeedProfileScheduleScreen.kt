@@ -38,11 +38,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.feed.FeedNavigationEvent
 import com.laimburggasse.aquariumcontrol.feed.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.FeedProfileImport
 import com.laimburggasse.aquariumcontrol.feed.FeedProfilesViewModel
@@ -60,7 +60,6 @@ import java.util.Locale
 
 @Composable
 fun FeedProfileScheduleScreen(
-    navHostController: NavHostController? = null,
     mainViewModel: MainViewModel,
     feedProfileId: Int,
     feedScheduleViewModelFactory: FeedScheduleViewModelFactory,
@@ -68,7 +67,8 @@ fun FeedProfileScheduleScreen(
     isNewScheduleEntry: Boolean,
     millisSinceEpoch: Long,
     darkTheme: Boolean? = null,
-    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit,
+    onNavigateFromFeed: (FeedNavigationEvent, Int?, Boolean?, Long?) -> Unit
 ) {
     // This screen displays:
     // - Headline
@@ -277,7 +277,7 @@ fun FeedProfileScheduleScreen(
                                             context.getString(R.string.sent_request_to_controller_for_updating_feed_schedule),
                                             Toast.LENGTH_SHORT
                                         ).show()
-                                        navHostController?.navigate(ViewNavigationRoutes.feed)
+                                        onNavigateFromFeed(FeedNavigationEvent.ToFeedMain, null, null, null)
                                     },
                                 ) {
                                     Text(stringResource(R.string.confirm_scheduling))
@@ -339,7 +339,8 @@ fun FeedProfileScheduleScreenPreviewSuccess() {
         feedProfilesViewModelFactory = mockFeedProfilesViewModelFactory,
         isNewScheduleEntry = false,
         millisSinceEpoch = 0,
-        onNavigate = {}
+        onNavigate = {},
+        onNavigateFromFeed = {event, id, isNew, millis -> }
     )
 }
 
@@ -374,6 +375,7 @@ internal fun FeedProfileScheduleScreenPreviewError() {
         feedProfilesViewModelFactory = mockFeedProfilesViewModelFactory,
         isNewScheduleEntry = false,
         millisSinceEpoch = 0,
-        onNavigate = {}
+        onNavigate = {},
+        onNavigateFromFeed = {event, id, isNew, millis -> }
     )
 }

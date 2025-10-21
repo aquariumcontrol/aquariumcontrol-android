@@ -18,15 +18,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.R
-import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun BallingDosingHistorySelectionButtonsComposable(
     modifier: Modifier? = Modifier,
-    navHostController: NavHostController? = null,
+    onNavigateFromBalling: (BallingNavigationEvent, Int?) -> Unit
 ) {
     // This composable contains content separated from BallingScreen to allow
     // dynamic placement depending on screen orientation:
@@ -35,9 +33,7 @@ fun BallingDosingHistorySelectionButtonsComposable(
     // The arrangement of the buttons follows the device orientation.
 
     Button(
-        onClick = {
-            navHostController?.navigate(ViewNavigationRoutes.ballingHistory24h)
-        },
+        onClick = { onNavigateFromBalling(BallingNavigationEvent.ToBallingHistory24h, null) },
         modifier = modifier ?: Modifier
     ) {
         Text(
@@ -47,9 +43,7 @@ fun BallingDosingHistorySelectionButtonsComposable(
     }
     Spacer(modifier = Modifier.width(10.dp))
     Button(
-        onClick = {
-            navHostController?.navigate(ViewNavigationRoutes.ballingHistory7d)
-        },
+        onClick = { onNavigateFromBalling(BallingNavigationEvent.ToBallingHistory7d, null) },
         modifier = modifier ?: Modifier,
     ) {
         Text(
@@ -67,9 +61,8 @@ internal fun BallingDosingHistorySelectionButtonsComposablePortraitPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 BallingDosingHistorySelectionButtonsComposable(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                    onNavigateFromBalling = { ballingNavigationEvent, ballingPumpId -> }
                 )
             }
         }
@@ -92,8 +85,8 @@ internal fun BallingDosingHistorySelectionButtonsComposableLandscapePreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             Row {
                 BallingDosingHistorySelectionButtonsComposable(
-                    modifier = Modifier
-                        .padding(vertical = 8.dp).weight(0.5f),
+                    modifier = Modifier.padding(vertical = 8.dp).weight(weight = 0.5f),
+                    onNavigateFromBalling = { ballingNavigationEvent, ballingPumpId -> }
                 )
             }
         }

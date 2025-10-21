@@ -17,9 +17,7 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.R
-import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntryComposable
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleUiState
@@ -28,8 +26,8 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun FeedScheduleSelectionComposable(
-    navHostController: NavHostController? = null,
-    feedScheduleViewModel: FeedScheduleViewModel
+    feedScheduleViewModel: FeedScheduleViewModel,
+    onNavigateFromFeed: (FeedNavigationEvent, Int?, Boolean?, Long?) -> Unit
 ) {
     // This composable displays a label "Feed Schedule"
     // and a list of feed schedule entries
@@ -71,12 +69,11 @@ fun FeedScheduleSelectionComposable(
                             FeedScheduleEntryComposable(
                                 feedScheduleEntry = feedScheduleEntry,
                                 onEditClick = {
-                                    navHostController?.navigate(
-                                        route = ViewNavigationRoutes.feedSchedule(
-                                            feedProfileId = feedProfileId,
-                                            isNewScheduleEntry = false,
-                                            millisSinceEpoch = feedScheduleEntry.timestamp.time
-                                        )
+                                    onNavigateFromFeed(
+                                        FeedNavigationEvent.ToFeedScheduling,
+                                        feedProfileId,
+                                        false,
+                                        feedScheduleEntry.timestamp.time
                                     )
                                 },
                                 onDeleteClick = {
@@ -128,6 +125,7 @@ internal fun FeedScheduleSelectionComposablePreview() {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 FeedScheduleSelectionComposable(
                     feedScheduleViewModel = mockFeedScheduleViewModelSuccess,
+                    onNavigateFromFeed = { event, id, isNew, millis -> },
                 )
             }
         }

@@ -31,7 +31,6 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
@@ -45,13 +44,13 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun ControllerSelectionScreen(
-    navHostController: NavHostController? = null,
     state: ControllerState,
     onEvent: (ControllerEvent) -> Unit,
     mainViewModel: MainViewModel? = null,
     mockProgress: Float? = null,
     darkTheme: Boolean? = null,
     onNavigate: (MainDropDownMenuNavigationEvent) -> Unit,
+    onNavigateFromController: (ControllerNavigationEvent, Long?) -> Unit
 ) {
     // This screen displays:
     // - headline
@@ -86,7 +85,7 @@ fun ControllerSelectionScreen(
                 mainViewModel?.setFirstLoad()
                 withContext(Dispatchers.Main) { // Switch to the main thread
                     mainViewModel?.updateSelectedControllerProfile(defaultProfile)
-                    navHostController?.navigate(ViewNavigationRoutes.overView)
+                    onNavigateFromController(ControllerNavigationEvent.ToOverview, defaultProfile.id)
                 }
             }
         }
@@ -127,7 +126,7 @@ fun ControllerSelectionScreen(
                         floatingActionButton = {
                             FloatingActionButton(
                                 onClick = {
-                                    navHostController?.navigate(ViewNavigationRoutes.controllerAdd)
+                                    onNavigateFromController(ControllerNavigationEvent.ToControllerAdd, null)
                                 },
                                 modifier = Modifier.padding(16.dp)
                             ) {
@@ -151,10 +150,10 @@ fun ControllerSelectionScreen(
                                     val items = state.controllerProfileList
                                     items.forEach { item ->
                                         ControllerProfileComposable(
-                                            navHostController = null,
                                             onEvent =  { },
                                             controllerProfile = item,
                                             mainViewModel = null,
+                                            onNavigateFromController = onNavigateFromController
                                         )
                                     }
                                 }
@@ -163,10 +162,10 @@ fun ControllerSelectionScreen(
                                 LazyColumn(modifier) {
                                     items(items =state.controllerProfileList) { controllerProfile ->
                                         ControllerProfileComposable(
-                                            navHostController = navHostController,
                                             onEvent = onEvent,
                                             controllerProfile = controllerProfile,
                                             mainViewModel = mainViewModel,
+                                            onNavigateFromController = onNavigateFromController
                                         )
                                     }
                                 }
@@ -226,7 +225,8 @@ internal fun ControllerSelectionScreenPreview() {
         state = mockControllerState,
         onEvent = {},
         mockProgress = 0.3f,
-        onNavigate = {}
+        onNavigate = {},
+        onNavigateFromController = { event, profileId -> }
     )
 }
 

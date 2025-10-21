@@ -28,10 +28,10 @@ object ViewNavigationRoutes {
     var heating = "heating"
     var schedule = "schedule"
     var timeData = "timeData"
-    var controllerSelection = "controllerSelection"
+    var controllerSelection = "controllerSelection/(controllerProfileId)"
     var info = "info"
     var controllerAdd = "controllerAdd"
-    var controllerEdit = "controllerEdit"
+    var controllerEdit = "controllerEdit/{controllerId}"
     var overView = "overView"
 
     fun feedSchedule(feedProfileId: Int, isNewScheduleEntry: Boolean, millisSinceEpoch: Long): String {
@@ -45,4 +45,9 @@ object ViewNavigationRoutes {
     fun feedEdit(feedProfileId: Int): String {
         return "feedEdit/$feedProfileId"
     }
+
+    fun controllerEdit(controllerProfileId: Long): String {
+        return "controllerEdit/$controllerProfileId"
+    }
+
 }

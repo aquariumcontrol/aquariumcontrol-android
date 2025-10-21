@@ -22,7 +22,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
@@ -42,12 +41,12 @@ import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
 fun FeedScreen(
-    navHostController: NavHostController? = null,
     mainViewModel: MainViewModel,
     feedScheduleViewModelFactory: FeedScheduleViewModelFactory,
     feedProfilesViewModelFactory: FeedProfilesViewModelFactory,
     darkTheme: Boolean? = null,
-    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit,
+    onNavigateFromFeed: (FeedNavigationEvent, Int?, Boolean?, Long?) -> Unit
 ) {
     // This screen displays
     // - headline
@@ -82,7 +81,7 @@ fun FeedScreen(
                     when (configuration.orientation) {
                         Configuration.ORIENTATION_LANDSCAPE -> {
                             Row {
-                                FeedHistorySelectionButtonsComposable(navHostController = navHostController)
+                                FeedHistorySelectionButtonsComposable(onNavigateFromFeed = onNavigateFromFeed)
                             }
                             Spacer(modifier = Modifier.height(16.dp))
                             if (feedProfilesUiState is FeedProfilesUiState.Loading
@@ -100,8 +99,8 @@ fun FeedScreen(
                                     ) {
                                         FeedProfileSelectionComposable(
                                             modifier = Modifier.align(Alignment.End),
-                                            navHostController,
                                             feedProfilesViewModelFactory,
+                                            onNavigateFromFeed
                                         )
                                     }
                                     Column(
@@ -109,8 +108,8 @@ fun FeedScreen(
                                         modifier = Modifier.weight(1f)
                                     ) {
                                         FeedScheduleSelectionComposable(
-                                            navHostController,
                                             feedScheduleViewModel,
+                                            onNavigateFromFeed
                                         )
                                     }
                                 }
@@ -118,8 +117,8 @@ fun FeedScreen(
                         }
                         else -> {
                             FeedHistorySelectionButtonsComposable(
-                                navHostController = navHostController,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
+                                onNavigateFromFeed
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             if (feedProfilesUiState is FeedProfilesUiState.Loading
@@ -132,12 +131,12 @@ fun FeedScreen(
                             } else {
                                 FeedProfileSelectionComposable(
                                     modifier = Modifier.align(Alignment.End),
-                                    navHostController,
                                     feedProfilesViewModelFactory,
+                                    onNavigateFromFeed
                                 )
                                 FeedScheduleSelectionComposable(
-                                    navHostController,
                                     feedScheduleViewModel,
+                                    onNavigateFromFeed
                                 )
                             }
                         }
@@ -231,7 +230,8 @@ fun FeedScreenPreviewSuccess() {
         feedProfilesViewModelFactory = mockFeedProfilesViewModelFactory,
         mainViewModel = mockMainViewModel,
         feedScheduleViewModelFactory = mockFeedScheduleViewModelFactory,
-        onNavigate = {}
+        onNavigate = {},
+        onNavigateFromFeed = { event, id, isNew, millis -> }
     )
 }
 
@@ -262,6 +262,7 @@ fun FeedScreenPreviewError() {
             feedProfilesRepository = mockFeedProfilesRepositoryError
         ),
         feedScheduleViewModelFactory = mockFeedScheduleViewModelFactory,
-        onNavigate = {}
+        onNavigate = {},
+        onNavigateFromFeed = { event, id, isNew, millis -> }
     )
 }

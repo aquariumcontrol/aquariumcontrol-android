@@ -22,16 +22,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.R
-import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun FeedProfileSelectionComposable(
     modifier: Modifier? = Modifier,
-    navHostController: NavHostController? = null,
     feedProfilesViewModelFactory: FeedProfilesViewModelFactory,
+    onNavigateFromFeed: (FeedNavigationEvent, Int?, Boolean?, Long?) -> Unit
 ) {
     // This composable displays a label "Feed Profiles"
     // and a list of feed profiles.
@@ -77,19 +75,19 @@ fun FeedProfileSelectionComposable(
                             feedProfileId = feedProfile.profileID,
                             feedProfilesViewModelFactory = feedProfilesViewModelFactory,
                             onEditClick = {
-                                navHostController?.navigate(
-                                    route = ViewNavigationRoutes.feedEdit(
-                                        feedProfileId = feedProfile.profileID
-                                    )
+                                onNavigateFromFeed(
+                                    FeedNavigationEvent.ToFeedProfileEdit,
+                                    feedProfile.profileID,
+                                    null,
+                                    null
                                 )
                             },
                             onScheduleClick = {
-                                navHostController?.navigate(
-                                    route = ViewNavigationRoutes.feedSchedule(
-                                        feedProfileId = feedProfile.profileID,
-                                        isNewScheduleEntry = true,
-                                        millisSinceEpoch = 0 // will be overwritten
-                                    )
+                                onNavigateFromFeed(
+                                    FeedNavigationEvent.ToFeedScheduling,
+                                    feedProfile.profileID,
+                                    true,
+                                    0
                                 )
                             },
                             onDeleteClick = {
@@ -105,9 +103,7 @@ fun FeedProfileSelectionComposable(
         }
     }
     FloatingActionButton(
-        onClick = {
-            navHostController?.navigate(ViewNavigationRoutes.feedAddProfile)
-        },
+        onClick = { onNavigateFromFeed(FeedNavigationEvent.ToFeedProfileAdd, null, null, null) },
         modifier = modifier?.then(
             Modifier
                 .padding(horizontal = 8.dp)
@@ -139,6 +135,7 @@ internal fun FeedProfileSelectionComposablePreview() {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 FeedProfileSelectionComposable(
                     feedProfilesViewModelFactory = mockFeedProfilesViewModelFactory,
+                    onNavigateFromFeed = { event, id, isNew, millis -> }
                 )
             }
         }

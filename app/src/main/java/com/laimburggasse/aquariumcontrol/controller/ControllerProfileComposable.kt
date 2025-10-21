@@ -27,19 +27,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
-import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun ControllerProfileComposable(
-    navHostController: NavHostController? = null,
     onEvent: (ControllerEvent) -> Unit,
     controllerProfile: ControllerProfile,
     mainViewModel: MainViewModel? = null,
-    mockIsDefaultProfile: Boolean = false
+    mockIsDefaultProfile: Boolean = false,
+    onNavigateFromController: (ControllerNavigationEvent, Long) -> Unit
 ) {
     // This composable displays:
     // - text with the name of the controller profile
@@ -77,7 +75,7 @@ fun ControllerProfileComposable(
                     if (mainViewModel != null) {
                         mainViewModel.setFirstLoad()
                         mainViewModel.updateSelectedControllerProfile(controllerProfile)
-                        navHostController?.navigate(ViewNavigationRoutes.overView)
+                        onNavigateFromController(ControllerNavigationEvent.ToOverview, controllerProfile.id)
                     }
                 }
         ) {
@@ -167,8 +165,9 @@ fun ControllerProfileComposable(
                                 controllerProfile
                             )
                         )
-                        navHostController?.navigate(
-                            ViewNavigationRoutes.controllerEdit
+                        onNavigateFromController(
+                            ControllerNavigationEvent.ToControllerEdit,
+                            controllerProfile.id
                         )
                     },
                 ) {
@@ -215,7 +214,8 @@ internal fun ControllerProfileComposablePreview() {
             ControllerProfileComposable(
                 onEvent = {},
                 controllerProfile = mockControllerProfile1,
-                mockIsDefaultProfile = true
+                mockIsDefaultProfile = true,
+                onNavigateFromController = { event, profileId -> }
             )
         }
     }
