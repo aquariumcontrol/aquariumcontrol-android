@@ -2,7 +2,6 @@ package com.laimburggasse.aquariumcontrol.heating
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,11 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -27,23 +24,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
-import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
-import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
-import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
 fun HeatingScreen(
-    mainViewModel: MainViewModel,
     heatingSetValsViewModelFactory: HeatingSetValsViewModelFactory,
     heatingStatsViewModelFactory: HeatingStatsViewModelFactory,
-    darkTheme: Boolean? = null,
-    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     // This screen displays
     // - a button to update the heating controller values
@@ -60,168 +51,149 @@ fun HeatingScreen(
 
     val configuration: Configuration = LocalConfiguration.current
 
-    AquariumControllerTheme(darkTheme) {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            Box {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    ScreenHeadlineComposable(
-                        text = stringResource(id = R.string.heating_control)
-                    )
-                    Scaffold(
-                        topBar = { },
-                        bottomBar = { },
-                        floatingActionButton = {},
-                        snackbarHost = { SnackbarHost(hostState = remember { SnackbarHostState() })}
-                    ) { innerPadding ->
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.padding(paddingValues = innerPadding)
-                        ) {
-                            when (heatingSetValsUiState) {
-                                is HeatingSetValsUiState.Success -> {
-                                    val heatingSetVals: HeatingSetVals = (heatingSetValsUiState as HeatingSetValsUiState.Success).heatingSetVals
-                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                        when (configuration.orientation) {
-                                            Configuration.ORIENTATION_LANDSCAPE -> {
-                                                Row {
-                                                    HeatingButtonsComposable(
-                                                        onUpdateClicked = { heatingSetValsViewModel.updateValues() },
-                                                        onResetClicked = { heatingSetValsViewModel.resetValues() },                                                    )
-                                                }
-                                                Row {
-                                                    HeatingRangeSliderTextFieldsLandscapeComposable(
-                                                        heatingSwitchOnTemp = heatingSetVals.heatingSwitchOnTemp,
-                                                        heatingSwitchOffTemp = heatingSetVals.heatingSwitchOffTemp,
-                                                        onLowerValueChanged = { newValue -> heatingSetValsViewModel.onLowerValueChanged(value = newValue.toFloat()) },
-                                                        onUpperValueChanged = { newValue -> heatingSetValsViewModel.onUpperValueChanged(value = newValue.toFloat()) },
-                                                        onSliderValueChanged = { newLowerValue, newUpperValue -> heatingSetValsViewModel.onRangeChangedBySlider(newLowerValue, newUpperValue) }
-                                                    )
-                                                }
-                                            }
-
-                                            else -> {
-                                                HeatingButtonsComposable(
-                                                    onUpdateClicked = { heatingSetValsViewModel.updateValues() },
-                                                    onResetClicked = { heatingSetValsViewModel.resetValues() },
-                                                )
-                                                Spacer(modifier = Modifier.size(width = 10.dp,height = 10.dp))
-                                                HeatingRangeSliderTextFieldsPortraitComposable(
-                                                    heatingSwitchOnTemp = heatingSetVals.heatingSwitchOnTemp,
-                                                    heatingSwitchOffTemp = heatingSetVals.heatingSwitchOffTemp,
-                                                    onLowerValueChanged = { newValue -> heatingSetValsViewModel.onLowerValueChanged(value = newValue.toFloat()) },
-                                                    onUpperValueChanged = { newValue -> heatingSetValsViewModel.onUpperValueChanged(value = newValue.toFloat()) },
-                                                    onSliderValueChanged = { newLowerValue, newUpperValue -> heatingSetValsViewModel.onRangeChangedBySlider(newLowerValue, newUpperValue) },
-                                                )
-                                            }
-                                        }
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        ScreenHeadlineComposable(text = stringResource(id = R.string.heating_control))
+        Scaffold(
+            topBar = { },
+            bottomBar = { },
+            floatingActionButton = {},
+            snackbarHost = { SnackbarHost(hostState = remember { SnackbarHostState() })}
+        ) { innerPadding ->
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(paddingValues = innerPadding)
+            ) {
+                when (heatingSetValsUiState) {
+                    is HeatingSetValsUiState.Success -> {
+                        val heatingSetVals: HeatingSetVals = (heatingSetValsUiState as HeatingSetValsUiState.Success).heatingSetVals
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            when (configuration.orientation) {
+                                Configuration.ORIENTATION_LANDSCAPE -> {
+                                    Row {
+                                        HeatingButtonsComposable(
+                                            onUpdateClicked = { heatingSetValsViewModel.updateValues() },
+                                            onResetClicked = { heatingSetValsViewModel.resetValues() },                                                    )
+                                    }
+                                    Row {
+                                        HeatingRangeSliderTextFieldsLandscapeComposable(
+                                            heatingSwitchOnTemp = heatingSetVals.heatingSwitchOnTemp,
+                                            heatingSwitchOffTemp = heatingSetVals.heatingSwitchOffTemp,
+                                            onLowerValueChanged = { newValue -> heatingSetValsViewModel.onLowerValueChanged(value = newValue.toFloat()) },
+                                            onUpperValueChanged = { newValue -> heatingSetValsViewModel.onUpperValueChanged(value = newValue.toFloat()) },
+                                            onSliderValueChanged = { newLowerValue, newUpperValue -> heatingSetValsViewModel.onRangeChangedBySlider(newLowerValue, newUpperValue) }
+                                        )
                                     }
                                 }
-                                is HeatingSetValsUiState.Error -> {
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.Center
-                                    ) {
-                                        Column(
-                                            verticalArrangement = Arrangement.Center,
-                                            horizontalAlignment = Alignment.CenterHorizontally
-                                        ) {
-                                            Text("Error loading set value data: ${(heatingSetValsUiState as HeatingSetValsUiState.Error).errorMessage}")
-                                        }
-                                    }
-                                }
-                                is HeatingSetValsUiState.Loading -> {
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.Center
-                                    ) {
-                                        Column(
-                                            verticalArrangement = Arrangement.Center,
-                                            horizontalAlignment = Alignment.CenterHorizontally
-                                        ) {
-                                            Text("Loading set value data...")
-                                        }
-                                    }
-                                }
-                                is HeatingSetValsUiState.Empty -> {
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.Center
-                                    ) {
-                                        Column(
-                                            modifier = Modifier.fillMaxSize().padding(16.dp),
-                                            verticalArrangement = Arrangement.Center,
-                                            horizontalAlignment = Alignment.CenterHorizontally
-                                        ) {
-                                            Text("No set values configured - check server configuration.")
-                                        }
-                                    }
-                                }
-                            }
-
-                            when (heatingStatsUiState) {
-                                is HeatingStatsUiState.Error -> {
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.Center
-                                    ) {
-                                        Column(
-                                            modifier = Modifier.fillMaxSize().padding(16.dp),
-                                            verticalArrangement = Arrangement.Center,
-                                            horizontalAlignment = Alignment.CenterHorizontally
-                                        ) {
-                                            Text("Error loading statistical data: ${(heatingStatsUiState as HeatingStatsUiState.Error).errorMessage}")
-                                        }
-                                    }
-                                }
-                                HeatingStatsUiState.Loading -> {
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.Center
-                                    ) {
-                                        Column(
-                                            modifier = Modifier.fillMaxSize().padding(16.dp),
-                                            verticalArrangement = Arrangement.Center,
-                                            horizontalAlignment = Alignment.CenterHorizontally
-                                        ) {
-                                            Text("Loading statistical data...")
-                                        }
-                                    }
-                                }
-                                is HeatingStatsUiState.Success -> {
-                                    val heatingStats: List<HeatingStatsEntry> = (heatingStatsUiState as HeatingStatsUiState.Success).heatingStats
-                                    HeatingStatsComposable(
-                                        heatingStats = heatingStats,
-                                        updateData = { heatingStatsViewModel.loadData() }
+                                else -> {
+                                    HeatingButtonsComposable(
+                                        onUpdateClicked = { heatingSetValsViewModel.updateValues() },
+                                        onResetClicked = { heatingSetValsViewModel.resetValues() },
                                     )
-                                }
-                                is HeatingStatsUiState.Empty -> {
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.Center
-                                    ) {
-                                        Column(
-                                            modifier = Modifier.fillMaxSize().padding(16.dp),
-                                            verticalArrangement = Arrangement.Center,
-                                            horizontalAlignment = Alignment.CenterHorizontally
-                                        ) {
-                                            Text("No heating stats available.")
-                                        }
-                                    }
+                                    Spacer(modifier = Modifier.size(width = 10.dp,height = 10.dp))
+                                    HeatingRangeSliderTextFieldsPortraitComposable(
+                                        heatingSwitchOnTemp = heatingSetVals.heatingSwitchOnTemp,
+                                        heatingSwitchOffTemp = heatingSetVals.heatingSwitchOffTemp,
+                                        onLowerValueChanged = { newValue -> heatingSetValsViewModel.onLowerValueChanged(value = newValue.toFloat()) },
+                                        onUpperValueChanged = { newValue -> heatingSetValsViewModel.onUpperValueChanged(value = newValue.toFloat()) },
+                                        onSliderValueChanged = { newLowerValue, newUpperValue -> heatingSetValsViewModel.onRangeChangedBySlider(newLowerValue, newUpperValue) },
+                                    )
                                 }
                             }
                         }
                     }
+                    is HeatingSetValsUiState.Error -> {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Column(
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(text = "Error loading set value data: ${(heatingSetValsUiState as HeatingSetValsUiState.Error).errorMessage}")
+                            }
+                        }
+                    }
+                    is HeatingSetValsUiState.Loading -> {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Column(
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(text = "Loading set value data...")
+                            }
+                        }
+                    }
+                    is HeatingSetValsUiState.Empty -> {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Column(
+                                modifier = Modifier.fillMaxSize().padding(16.dp),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(text = "No set values configured - check server configuration.")
+                            }
+                        }
+                    }
                 }
-                MainDropdownMenuComposable(
-                    navigationRouteSource = ViewNavigationRoutes.heating,
-                    mainViewModel = mainViewModel,
-                    onNavigate
-                )
+
+                when (heatingStatsUiState) {
+                    is HeatingStatsUiState.Error -> {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Column(
+                                modifier = Modifier.fillMaxSize().padding(16.dp),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(text = "Error loading statistical data: ${(heatingStatsUiState as HeatingStatsUiState.Error).errorMessage}")
+                            }
+                        }
+                    }
+                    HeatingStatsUiState.Loading -> {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Column(
+                                modifier = Modifier.fillMaxSize().padding(16.dp),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(text = "Loading statistical data...")
+                            }
+                        }
+                    }
+                    is HeatingStatsUiState.Success -> {
+                        val heatingStats: List<HeatingStatsEntry> = (heatingStatsUiState as HeatingStatsUiState.Success).heatingStats
+                        HeatingStatsComposable(
+                            heatingStats = heatingStats,
+                            updateData = { heatingStatsViewModel.loadData() }
+                        )
+                    }
+                    is HeatingStatsUiState.Empty -> {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Column(
+                                modifier = Modifier.fillMaxSize().padding(16.dp),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(text = "No heating stats available.")
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -307,10 +279,15 @@ val mockMainViewModel = MockMainViewModel()
 )
 @Composable
 fun HeatingScreenPreviewSuccess() {
-    HeatingScreen(
-        mainViewModel = mockMainViewModel,
-        heatingSetValsViewModelFactory = mockHeatingSetValsViewModelFactorySuccess,
-        heatingStatsViewModelFactory = mockHeatingStatsViewModelFactorySuccess,
+    MainScaffold(
+        mainViewModel = com.laimburggasse.aquariumcontrol.balling.mockMainViewModel,
+        navigationRouteSource = ViewNavigationRoutes.heating,
+        screenContent = {
+            HeatingScreen(
+                heatingSetValsViewModelFactory = mockHeatingSetValsViewModelFactorySuccess,
+                heatingStatsViewModelFactory = mockHeatingStatsViewModelFactorySuccess,
+            )
+        },
         onNavigate = {}
     )
 }
@@ -319,10 +296,15 @@ fun HeatingScreenPreviewSuccess() {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 fun HeatingScreenPreviewError() {
-    HeatingScreen(
-        mainViewModel = mockMainViewModel,
-        heatingSetValsViewModelFactory = mockHeatingSetValsViewModelFactoryError,
-        heatingStatsViewModelFactory = mockHeatingStatsViewModelFactoryError,
+    MainScaffold(
+        mainViewModel = com.laimburggasse.aquariumcontrol.balling.mockMainViewModel,
+        navigationRouteSource = ViewNavigationRoutes.heating,
+        screenContent = {
+            HeatingScreen(
+                heatingSetValsViewModelFactory = mockHeatingSetValsViewModelFactoryError,
+                heatingStatsViewModelFactory = mockHeatingStatsViewModelFactoryError,
+            )
+        },
         onNavigate = {}
     )
 }

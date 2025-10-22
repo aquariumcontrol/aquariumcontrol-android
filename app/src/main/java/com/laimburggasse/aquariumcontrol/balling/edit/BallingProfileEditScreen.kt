@@ -3,17 +3,13 @@ package com.laimburggasse.aquariumcontrol.balling.edit
 import android.content.Context
 import android.content.res.Configuration
 import android.widget.Toast
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,25 +26,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.balling.BallingProfile
 import com.laimburggasse.aquariumcontrol.balling.BallingProfileSummaryComposable
 import com.laimburggasse.aquariumcontrol.balling.MockBallingProfilesRepository
+import com.laimburggasse.aquariumcontrol.balling.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
-import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
-import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
-import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
 fun BallingProfileEditScreen(
-    mainViewModel: MainViewModel,
     ballingProfileEditViewModelFactory: BallingProfileEditViewModelFactory,
-    darkTheme: Boolean? = null,
-    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     // This screen displays:
     // - Headline
@@ -65,99 +56,88 @@ fun BallingProfileEditScreen(
     val context: Context = LocalContext.current
     val configuration: Configuration = LocalConfiguration.current
 
-    AquariumControllerTheme(darkTheme) {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background,
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        ScreenHeadlineComposable(
+            text = stringResource(id = R.string.balling_dosing)
+        )
+        Spacer(modifier = Modifier.size(size = 10.dp))
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .padding(all = 16.dp)
+                .weight(weight = 1f)
+                .fillMaxWidth()
         ) {
-            Box {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    ScreenHeadlineComposable(
-                        text = stringResource(id = R.string.balling_dosing)
+            when (uiState) {
+
+                is BallingProfileEditUiState.Error -> {
+                    val errorMessage: String = (ballingProfileEditViewModel.ballingProfileEditUiState
+                            as BallingProfileEditUiState.Error).errorMessage
+                    Text(text = "Error loading data: $errorMessage")
+                }
+                BallingProfileEditUiState.Loading -> {
+                    Text(text = "Loading...")
+                }
+                BallingProfileEditUiState.NotFound -> {
+                    Text(text = "Balling profile not found")
+                }
+                is BallingProfileEditUiState.Success -> {
+                    val ballingProfile = uiState.ballingProfile
+
+                    var sliderPositionNewDosingVolume by remember {
+                        mutableDoubleStateOf(ballingProfile.volume)
+                    }
+
+                    LaunchedEffect(ballingProfile.volume) {
+                        sliderPositionNewDosingVolume = ballingProfile.volume
+                    }
+
+                    BallingProfileSummaryComposable(
+                        ballingProfile = ballingProfile,
+                        onNavigateFromBalling = {event, pumpId -> }
                     )
-                    Spacer(modifier = Modifier.size(size = 10.dp))
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .padding(all = 16.dp)
-                            .weight(weight = 1f)
-                            .fillMaxWidth()
-                    ) {
-                        when (uiState) {
 
-                            is BallingProfileEditUiState.Error -> {
-                                val errorMessage: String = (ballingProfileEditViewModel.ballingProfileEditUiState
-                                        as BallingProfileEditUiState.Error).errorMessage
-                                Text(text = "Error loading data: $errorMessage")
-                            }
-                            BallingProfileEditUiState.Loading -> {
-                                Text(text = "Loading...")
-                            }
-                            BallingProfileEditUiState.NotFound -> {
-                                Text(text = "Balling profile not found")
-                            }
-                            is BallingProfileEditUiState.Success -> {
-                                val ballingProfile = uiState.ballingProfile
-
-                                var sliderPositionNewDosingVolume by remember {
-                                    mutableDoubleStateOf(ballingProfile.volume)
-                                }
-
-                                LaunchedEffect(ballingProfile.volume) {
-                                    sliderPositionNewDosingVolume = ballingProfile.volume
-                                }
-
-                                BallingProfileSummaryComposable(ballingProfile = ballingProfile)
-
-                                when (configuration.orientation) {
-                                    Configuration.ORIENTATION_LANDSCAPE -> {
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            modifier = Modifier.padding(20.dp)
-                                        ) {
-                                            BallingProfileEditTextFieldSliderComposable(
-                                                sliderPositionNewDosingVolume = sliderPositionNewDosingVolume,
-                                                ballingProfileEditViewModel = ballingProfileEditViewModel
-                                            )
-                                        }
-                                    }
-
-                                    else -> {
-                                        BallingProfileEditTextFieldSliderComposable(
-                                            sliderPositionNewDosingVolume = sliderPositionNewDosingVolume,
-                                            ballingProfileEditViewModel = ballingProfileEditViewModel
-                                        )
-                                    }
-                                }
-                                Button(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 8.dp),
-                                    onClick = {
-                                        ballingProfileEditViewModel.onConfirmDosing(sliderPositionNewDosingVolume)
-                                        Toast.makeText(
-                                            context,
-                                            context.getString(R.string.sent_request_to_controller_for_updating_dosing_volume),
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    },
-                                ) {
-                                    Text(
-                                        text = stringResource(id = R.string.update_dosing_value),
-                                        fontSize = 16.sp
-                                    )
-                                }
+                    when (configuration.orientation) {
+                        Configuration.ORIENTATION_LANDSCAPE -> {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(20.dp)
+                            ) {
+                                BallingProfileEditTextFieldSliderComposable(
+                                    sliderPositionNewDosingVolume = sliderPositionNewDosingVolume,
+                                    ballingProfileEditViewModel = ballingProfileEditViewModel
+                                )
                             }
                         }
+
+                        else -> {
+                            BallingProfileEditTextFieldSliderComposable(
+                                sliderPositionNewDosingVolume = sliderPositionNewDosingVolume,
+                                ballingProfileEditViewModel = ballingProfileEditViewModel
+                            )
+                        }
+                    }
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                        onClick = {
+                            ballingProfileEditViewModel.onConfirmDosing(sliderPositionNewDosingVolume)
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.sent_request_to_controller_for_updating_dosing_volume),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        },
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.update_dosing_value),
+                            fontSize = 16.sp
+                        )
                     }
                 }
-                MainDropdownMenuComposable(
-                    navigationRouteSource = ViewNavigationRoutes.balling,
-                    mainViewModel,
-                    onNavigate
-                )
             }
         }
     }
@@ -188,12 +168,17 @@ internal fun BallingProfileEditScreenPreview() {
     val mockBallingRepositorySuccess = MockBallingProfilesRepository(
         mockData = DataFetchResult.Success(data = listOf(mockBallingProfile))
     )
-    BallingProfileEditScreen(
+    MainScaffold(
         mainViewModel = mockMainViewModel,
-        ballingProfileEditViewModelFactory = BallingProfileEditViewModelFactory(
-            ballingProfileId = 1,
-            ballingProfilesRepository = mockBallingRepositorySuccess
-        ),
+        navigationRouteSource = ViewNavigationRoutes.balling,
+        screenContent = {
+            BallingProfileEditScreen(
+                ballingProfileEditViewModelFactory = BallingProfileEditViewModelFactory(
+                    ballingProfileId = 1,
+                    ballingProfilesRepository = mockBallingRepositorySuccess
+                )
+            )
+        },
         onNavigate = {}
     )
 }

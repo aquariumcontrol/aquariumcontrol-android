@@ -25,10 +25,8 @@ class HeatingScreenTest {
     fun heatingScreenDarkTest() {
         composeTestRule.setContent {
             HeatingScreen(
-                mainViewModel = com.laimburggasse.aquariumcontrol.heating.mockMainViewModel,
                 heatingStatsViewModelFactory = mockHeatingStatsViewModelFactorySuccess,
-                heatingSetValsViewModelFactory = mockHeatingSetValsViewModelFactorySuccess,
-                darkTheme = true
+                heatingSetValsViewModelFactory = mockHeatingSetValsViewModelFactorySuccess
             )
         }
         composeTestRule.waitForIdle()
@@ -44,10 +42,8 @@ class HeatingScreenTest {
     fun heatingScreenLightTest() {
         composeTestRule.setContent {
             HeatingScreen(
-                mainViewModel = com.laimburggasse.aquariumcontrol.heating.mockMainViewModel,
                 heatingStatsViewModelFactory = mockHeatingStatsViewModelFactorySuccess,
-                heatingSetValsViewModelFactory = mockHeatingSetValsViewModelFactorySuccess,
-                darkTheme = false
+                heatingSetValsViewModelFactory = mockHeatingSetValsViewModelFactorySuccess
             )
         }
         composeTestRule.waitForIdle()

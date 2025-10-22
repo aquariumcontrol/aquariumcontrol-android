@@ -25,13 +25,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.balling.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
+import com.laimburggasse.aquariumcontrol.overview.OverviewScreen
+import com.laimburggasse.aquariumcontrol.overview.mockOverviewViewModelFactoryError
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
@@ -39,7 +43,6 @@ fun RefillScreen(
     mainViewModel: MainViewModel,
     refillViewModelFactory: RefillViewModelFactory,
     darkTheme: Boolean? = null,
-    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit,
     onNavigateFromRefill: (RefillNavigationEvent) -> Unit,
 ) {
     // This screen displays
@@ -55,136 +58,104 @@ fun RefillScreen(
 
     val refillViewModel: RefillViewModel = viewModel(factory = refillViewModelFactory)
 
-    AquariumControllerTheme(darkTheme) {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            Box {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    ScreenHeadlineComposable(
-                        text = stringResource(id = R.string.refill_control)
-                    )
-                    Scaffold(
-                        topBar = { },
-                        bottomBar = { },
-                        floatingActionButton = {},
-                        snackbarHost = { SnackbarHost(remember { SnackbarHostState() })}
-                    ) { innerPadding ->
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(innerPadding),
-                            horizontalAlignment = Alignment.CenterHorizontally
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        ScreenHeadlineComposable(text = stringResource(id = R.string.refill_control))
+        Scaffold(
+            topBar = { },
+            bottomBar = { },
+            floatingActionButton = {},
+            snackbarHost = { SnackbarHost(hostState = remember { SnackbarHostState() })}
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier.fillMaxSize().padding(paddingValues = innerPadding),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(modifier = Modifier.padding(all = 8.dp)) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth().padding(paddingValues = innerPadding),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Button(
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                            onClick = { onNavigateFromRefill(RefillNavigationEvent.ToRefillHistory24h) },
                         ) {
-                            Row(
-                                modifier = Modifier
-                                    .padding(8.dp)
-                            ) {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(innerPadding),
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Button(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 8.dp),
-                                        onClick = { onNavigateFromRefill(RefillNavigationEvent.ToRefillHistory24h) },
-                                    ) {
-                                        Text(
-                                            text = stringResource(id = R.string.view_refill_events_24h),
-                                            fontSize = 16.sp
-                                        )
-                                    }
-                                    Button(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 8.dp),
-                                        onClick = { onNavigateFromRefill(RefillNavigationEvent.ToRefillHistory7d) },
-                                    ) {
-                                        Text(
-                                            text = stringResource(id = R.string.view_refill_events_7d),
-                                            fontSize = 16.sp
-                                        )
-                                    }
-                                    Button(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 8.dp),
-                                        onClick = {
-                                            if (isControllerLoaded && isControllerAddressValid) {
-                                                refillViewModel.sendStartRequest()
-                                                Toast.makeText(
-                                                    context,
-                                                    context.getString(R.string.sent_request_to_controller_for_starting_refill_control),
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            }
-                                        },
-                                    ) {
-                                        Text(
-                                            text = stringResource(id = R.string.start_refill_control),
-                                            fontSize = 16.sp
-                                        )
-                                    }
-                                    Button(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 8.dp),
-                                        onClick = {
-                                            if (isControllerLoaded && isControllerAddressValid) {
-                                                refillViewModel.sendStopRequest()
-                                                Toast.makeText(
-                                                    context,
-                                                    context.getString(R.string.sent_request_to_controller_for_stopping_refill_control),
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            }
-                                        },
-                                    ) {
-                                        Text(
-                                            text = stringResource(id = R.string.stop_refill_control),
-                                            fontSize = 16.sp
-                                        )
-                                    }
-                                    Button(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 8.dp),
-                                        onClick = {
-                                            if (isControllerLoaded && isControllerAddressValid) {
-                                                refillViewModel.sendResetRequest()
-                                                Toast.makeText(
-                                                    context,
-                                                    context.getString(R.string.sent_request_to_controller_for_resetting_errors),
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            }
-                                        },
-                                    ) {
-                                        Text(
-                                            text = stringResource(id = R.string.reset_errors),
-                                            fontSize = 16.sp
-                                        )
-                                    }
+                            Text(
+                                text = stringResource(id = R.string.view_refill_events_24h),
+                                fontSize = 16.sp
+                            )
+                        }
+                        Button(
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                            onClick = { onNavigateFromRefill(RefillNavigationEvent.ToRefillHistory7d) },
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.view_refill_events_7d),
+                                fontSize = 16.sp
+                            )
+                        }
+                        Button(
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                            onClick = {
+                                if (isControllerLoaded && isControllerAddressValid) {
+                                    refillViewModel.sendStartRequest()
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.sent_request_to_controller_for_starting_refill_control),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
-                            }
+                            },
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.start_refill_control),
+                                fontSize = 16.sp
+                            )
+                        }
+                        Button(
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                            onClick = {
+                                if (isControllerLoaded && isControllerAddressValid) {
+                                    refillViewModel.sendStopRequest()
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.sent_request_to_controller_for_stopping_refill_control),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            },
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.stop_refill_control),
+                                fontSize = 16.sp
+                            )
+                        }
+                        Button(
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                            onClick = {
+                                if (isControllerLoaded && isControllerAddressValid) {
+                                    refillViewModel.sendResetRequest()
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.sent_request_to_controller_for_resetting_errors),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            },
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.reset_errors),
+                                fontSize = 16.sp
+                            )
                         }
                     }
                 }
-                MainDropdownMenuComposable(
-                    navigationRouteSource = ViewNavigationRoutes.refill,
-                    mainViewModel = mainViewModel,
-                    onNavigate
-                )
             }
         }
     }
 }
+
 
 val mockMainViewModel = MockMainViewModel()
 val mockRefillRepository = MockRefillRepository()
@@ -206,10 +177,16 @@ val mockRefillViewModelFactory = RefillViewModelFactory(mockRefillRepository)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 internal fun RefillScreenPreview() {
-    RefillScreen(
+    MainScaffold(
         mainViewModel = mockMainViewModel,
-        refillViewModelFactory = mockRefillViewModelFactory,
-        onNavigate = {},
-        onNavigateFromRefill = { event -> }
+        navigationRouteSource = ViewNavigationRoutes.refill,
+        screenContent = {
+            RefillScreen(
+                mainViewModel = mockMainViewModel,
+                refillViewModelFactory = mockRefillViewModelFactory,
+                onNavigateFromRefill = { event -> }
+            )
+        },
+        onNavigate = {}
     )
 }

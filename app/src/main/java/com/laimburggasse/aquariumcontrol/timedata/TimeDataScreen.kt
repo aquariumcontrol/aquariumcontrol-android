@@ -4,7 +4,6 @@ import android.content.res.Configuration
 import android.graphics.Color
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,7 +16,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -31,16 +29,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.feed.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
-import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
-import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState.Error
 import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState.Loading
 import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState.Success
-import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import java.sql.Timestamp
 import java.time.LocalDateTime
@@ -56,8 +53,6 @@ const val axisGranularityTime = 14400f
 fun TimeDataScreen(
     mainViewModel: MainViewModel? = null,
     timeDataViewModelFactory: TimeDataViewModelFactory,
-    darkTheme: Boolean? = null,
-    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     // This screen is only displaying time data charts without data flow back to server.
     val timeDataViewModel: TimeDataViewModel = viewModel(factory = timeDataViewModelFactory)
@@ -73,122 +68,106 @@ fun TimeDataScreen(
     val displayCircularProgressIndicatorInPreview: Boolean =
         LocalConfiguration.current.orientation != Configuration.ORIENTATION_LANDSCAPE
 
-    AquariumControllerTheme(darkTheme) {
-        Surface(
-            modifier = Modifier,
-            color = MaterialTheme.colorScheme.background
-        ) {
-            Box {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    ScreenHeadlineComposable(
-                        modifier = Modifier,
-                        text = stringResource(id = R.string.time_data_series),
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        ScreenHeadlineComposable(text = stringResource(id = R.string.time_data_series))
+        PullToRefreshBox(
+            modifier = Modifier.fillMaxWidth(),
+            state = rememberPullToRefreshState(),
+            isRefreshing = timeDataUiState is Loading,
+            contentAlignment = Alignment.Center,
+            onRefresh = {
+                timeDataViewModel.loadData()
+            },
+            indicator = {
+                if (timeDataUiState is Loading && displayCircularProgressIndicatorInPreview) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(size = 64.dp).fillMaxWidth(),
+                        color = MaterialTheme.colorScheme.primary,
+                        strokeWidth = 5.dp
                     )
-                    PullToRefreshBox(
-                        modifier = Modifier.fillMaxWidth(),
-                        state = rememberPullToRefreshState(),
-                        isRefreshing = timeDataUiState is Loading,
-                        contentAlignment = Alignment.Center,
-                        onRefresh = {
-                            timeDataViewModel.loadData()
-                        },
-                        indicator = {
-                            if (timeDataUiState is Loading && displayCircularProgressIndicatorInPreview) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(size = 64.dp).fillMaxWidth(),
-                                    color = MaterialTheme.colorScheme.primary,
-                                    strokeWidth = 5.dp
-                                )
-                            }
-                        }
-                    ) {
+                }
+            }
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxSize().verticalScroll(state = rememberScrollState())
+            ) {
+                when (timeDataUiState) {
+                    is TimeDataUiState.Empty -> {
                         Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.fillMaxSize().verticalScroll(state = rememberScrollState())
+                            modifier = Modifier.fillMaxSize().padding(all = 16.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            when (timeDataUiState) {
-                                is TimeDataUiState.Empty -> {
-                                    Column(
-                                        modifier = Modifier.fillMaxSize().padding(16.dp),
-                                        verticalArrangement = Arrangement.Center,
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
-                                        Text(
-                                            text = "No data available.",
-                                            style = MaterialTheme.typography.titleMedium
-                                        )
-                                        Spacer(modifier = Modifier.height(height = 8.dp))
-                                        Button(onClick = { timeDataViewModel.loadData() }) { // Retry button
-                                            Text("Retry")
-                                        }
-                                    }
-                                }
-                                is Error -> {
-                                    Column(
-                                        modifier = Modifier.fillMaxSize().padding(16.dp),
-                                        verticalArrangement = Arrangement.Center,
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
-                                        Text(
-                                            text = "Error loading data:",
-                                            style = MaterialTheme.typography.titleMedium
-                                        )
-                                        Spacer(modifier = Modifier.height(height = 8.dp))
-                                        Text(
-                                            text = (timeDataUiState as Error).errorMessage,
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            color = MaterialTheme.colorScheme.error
-                                        )
-                                        Spacer(modifier = Modifier.height(height = 16.dp))
-                                        Button(onClick = { timeDataViewModel.loadData() }) { // Retry button
-                                            Text("Retry")
-                                        }
-                                    }
-                                }
-                                is Loading -> {
-                                    Text("Loading...")
-                                }
-                                is Success -> {
-                                    val timeDataSets: TimeDataSets = (timeDataUiState as Success).timeDataSets
-                                    TimeDataTemperatureChartComposable(
-                                        temperatureDataSet = timeDataSets.dataTemperature,
-                                        textColor = textColor
-                                    )
-
-                                    TimeDatapHChartComposable(
-                                        pHDataSet = timeDataSets.datapH,
-                                        textColor = textColor
-                                    )
-
-                                    TimeDataConductivityChartComposable(
-                                        conductivityDataSet = timeDataSets.dataConductivity,
-                                        textColor = textColor
-                                    )
-
-                                    TimeDataTankLevelChartComposable(
-                                        tankLevelDataSet = timeDataSets.dataTankLevel,
-                                        textColor = textColor
-                                    )
-
-                                    TimeDataAmbientChartComposable(
-                                        ambientDataSet = timeDataSets.dataAmbient,
-                                        textColor = textColor
-                                    )
-
-                                }
+                            Text(
+                                text = "No data available.",
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Spacer(modifier = Modifier.height(height = 8.dp))
+                            Button(onClick = { timeDataViewModel.loadData() }) {
+                                Text(text = "Retry")
                             }
                         }
                     }
+                    is Error -> {
+                        Column(
+                            modifier = Modifier.fillMaxSize().padding(16.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Error loading data:",
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Spacer(modifier = Modifier.height(height = 8.dp))
+                            Text(
+                                text = (timeDataUiState as Error).errorMessage,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.error
+                            )
+                            Spacer(modifier = Modifier.height(height = 16.dp))
+                            Button(onClick = { timeDataViewModel.loadData() }) { // Retry button
+                                Text("Retry")
+                            }
+                        }
+                    }
+                    is Loading -> {
+                        Text("Loading...")
+                    }
+                    is Success -> {
+                        val timeDataSets: TimeDataSets = (timeDataUiState as Success).timeDataSets
+                        TimeDataTemperatureChartComposable(
+                            temperatureDataSet = timeDataSets.dataTemperature,
+                            textColor = textColor
+                        )
+
+                        TimeDatapHChartComposable(
+                            pHDataSet = timeDataSets.datapH,
+                            textColor = textColor
+                        )
+
+                        TimeDataConductivityChartComposable(
+                            conductivityDataSet = timeDataSets.dataConductivity,
+                            textColor = textColor
+                        )
+
+                        TimeDataTankLevelChartComposable(
+                            tankLevelDataSet = timeDataSets.dataTankLevel,
+                            textColor = textColor
+                        )
+
+                        TimeDataAmbientChartComposable(
+                            ambientDataSet = timeDataSets.dataAmbient,
+                            textColor = textColor
+                        )
+
+                    }
                 }
-                MainDropdownMenuComposable(
-                    navigationRouteSource = ViewNavigationRoutes.timeData,
-                    mainViewModel = mainViewModel,
-                    onNavigate
-                )
             }
         }
     }
 }
+
 
 fun generateMockTimeData(): List<TimeDataSample> {
     val startTime = LocalDateTime.of(2024, 10, 24, 0, 0) // October 24th, 2024, 0:00 AM
@@ -324,7 +303,12 @@ val mockTimeDataViewModelFactoryEmpty = TimeDataViewModelFactory(
 )
 @Composable
 internal fun TimeDataScreenPreviewSuccess() {
-    TimeDataScreen(timeDataViewModelFactory = mockTimeDataViewModelFactorySuccess, onNavigate = {})
+    MainScaffold(
+        mainViewModel = mockMainViewModel,
+        navigationRouteSource = ViewNavigationRoutes.timeData,
+        screenContent = { TimeDataScreen(timeDataViewModelFactory = mockTimeDataViewModelFactorySuccess) },
+        onNavigate = {}
+    )
 }
 
 @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_YES)
@@ -341,7 +325,12 @@ internal fun TimeDataScreenPreviewSuccess() {
 )
 @Composable
 internal fun TimeDataScreenPreviewError() {
-    TimeDataScreen(timeDataViewModelFactory = mockTimeDataViewModelFactoryError, onNavigate = {})
+    MainScaffold(
+        mainViewModel = mockMainViewModel,
+        navigationRouteSource = ViewNavigationRoutes.timeData,
+        screenContent = { TimeDataScreen(timeDataViewModelFactory = mockTimeDataViewModelFactoryError) },
+        onNavigate = {}
+    )
 }
 
 @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_YES)
@@ -358,5 +347,10 @@ internal fun TimeDataScreenPreviewError() {
 )
 @Composable
 internal fun TimeDataScreenPreviewEmpty() {
-    TimeDataScreen(timeDataViewModelFactory = mockTimeDataViewModelFactoryEmpty, onNavigate = {})
+    MainScaffold(
+        mainViewModel = mockMainViewModel,
+        navigationRouteSource = ViewNavigationRoutes.timeData,
+        screenContent = { TimeDataScreen(timeDataViewModelFactory = mockTimeDataViewModelFactoryEmpty) },
+        onNavigate = {}
+    )
 }

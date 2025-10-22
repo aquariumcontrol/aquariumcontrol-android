@@ -3,7 +3,6 @@ package com.laimburggasse.aquariumcontrol.feed.add
 import android.content.Context
 import android.content.res.Configuration
 import android.widget.Toast
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,8 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,25 +23,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.FeedNavigationEvent
 import com.laimburggasse.aquariumcontrol.feed.MockFeedProfilesRepository
-import com.laimburggasse.aquariumcontrol.feed.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
-import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
-import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
-import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
 fun FeedProfileAddScreen(
-    mainViewModel: MainViewModel,
-    darkTheme: Boolean? = null,
     feedProfileAddViewModelFactory: FeedProfileAddViewModelFactory,
-    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit,
     onNavigateFromFeed: (FeedNavigationEvent, Int?, Boolean?, Long?) -> Unit
 ) {
     // This screen displays
@@ -60,7 +50,7 @@ fun FeedProfileAddScreen(
 
     val feedProfileName by feedProfileAddViewModel.feedProfileName.collectAsState()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(key1 = Unit) {
         feedProfileAddViewModel.eventFlow.collect { event ->
             when (event) {
                 is FeedProfileAddEvent.Success -> {
@@ -78,51 +68,31 @@ fun FeedProfileAddScreen(
         }
     }
 
-    AquariumControllerTheme(darkTheme) {
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.background
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize().verticalScroll(state = rememberScrollState())
+    ) {
+        ScreenHeadlineComposable(text = stringResource(id = R.string.feed_profile_add))
+
+        FeedProfileAddNameEditableOutlinedFieldComposable(
+            onFeedProfileNameChange = {
+                feedProfileAddViewModel.setFeedProfileName(it)
+            },
+            modifier = Modifier.padding(16.dp)
+        )
+
+        Button(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+            enabled = feedProfileName.isNotEmpty(),
+            onClick = {
+                feedProfileAddViewModel.addFeedProfile()
+                onNavigateFromFeed(FeedNavigationEvent.ToFeedMain, null, null, null)
+            },
         ) {
-            Box {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                ) {
-                    ScreenHeadlineComposable(
-                        text = stringResource(id = R.string.feed_profile_add)
-                    )
-
-                    FeedProfileAddNameEditableOutlinedFieldComposable(
-                        onFeedProfileNameChange = {
-                            feedProfileAddViewModel.setFeedProfileName(it)
-                        },
-                        modifier = Modifier.padding(16.dp)
-                    )
-
-                    Button(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp),
-                        enabled = feedProfileName.isNotEmpty(),
-                        onClick = {
-                            feedProfileAddViewModel.addFeedProfile()
-                            // @todo: Add navigation to previous screen
-                        },
-                    ) {
-                        Text(
-                            text = stringResource(R.string.add_feed_profile),
-                            fontSize = 16.sp
-                        )
-                    }
-                }
-                MainDropdownMenuComposable(
-                    navigationRouteSource = ViewNavigationRoutes.feed,
-                    mainViewModel = mainViewModel,
-                    onNavigate
-                )
-            }
+            Text(
+                text = stringResource(R.string.add_feed_profile),
+                fontSize = 16.sp
+            )
         }
     }
 }
@@ -145,12 +115,17 @@ val mockMainViewModel = MockMainViewModel()
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )@Composable
 internal fun FeedProfileAddScreenPreview() {
-    FeedProfileAddScreen(
-        mainViewModel = mockMainViewModel,
-        feedProfileAddViewModelFactory = FeedProfileAddViewModelFactory(
-            feedProfilesRepository = mockFeedProfilesRepositoryEmpty,
-        ),
-        onNavigate = {},
-        onNavigateFromFeed = {event, id, isNew, time ->}
+    MainScaffold(
+        mainViewModel = com.laimburggasse.aquariumcontrol.balling.mockMainViewModel,
+        navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
+        screenContent = {
+            FeedProfileAddScreen(
+                feedProfileAddViewModelFactory = FeedProfileAddViewModelFactory(
+                    feedProfilesRepository = mockFeedProfilesRepositoryEmpty,
+                ),
+                onNavigateFromFeed = {event, id, isNew, time ->}
+            )
+        },
+        onNavigate = {}
     )
 }

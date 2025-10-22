@@ -2,17 +2,13 @@ package com.laimburggasse.aquariumcontrol.balling
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -29,24 +25,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
-import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
-import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
-import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
-import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
 fun BallingScreen(
-    navHostController: NavHostController? = null,
-    mainViewModel: MainViewModel,
     ballingViewModelFactory: BallingViewModelFactory,
-    darkTheme: Boolean? = null,
-    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit,
     onNavigateFromBalling: (BallingNavigationEvent, Int?) -> Unit
 ) {
     // This screen displays
@@ -60,110 +48,81 @@ fun BallingScreen(
 
     val configuration: Configuration = LocalConfiguration.current
 
-    AquariumControllerTheme(darkTheme) {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background,
-        ) {
-            Box {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        ScreenHeadlineComposable(text = stringResource(id = R.string.balling_dosing))
+        when (configuration.orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    ScreenHeadlineComposable(
-                        text = stringResource(id = R.string.balling_dosing)
+                    BallingDosingHistorySelectionButtonsComposable(
+                        modifier = Modifier.padding(vertical = 8.dp).weight(weight = 0.5f),
+                        onNavigateFromBalling
                     )
-                    when (configuration.orientation) {
-                        Configuration.ORIENTATION_LANDSCAPE -> {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 8.dp),
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                BallingDosingHistorySelectionButtonsComposable(
-                                    modifier = Modifier.padding(vertical = 8.dp).weight(weight = 0.5f),
-                                    onNavigateFromBalling
-                                )
-                            }
-                        }
-                        else -> {
-                            BallingDosingHistorySelectionButtonsComposable(
-                                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                }
+            }
+            else -> {
+                BallingDosingHistorySelectionButtonsComposable(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                    onNavigateFromBalling
+                )
+            }
+        }
+        when (ballingProfilesUiState) {
+            is BallingProfilesUiState.Empty -> {
+                Text(
+                    text = stringResource(id = R.string.no_balling_profiles_found),
+                    style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold),
+                    modifier = Modifier.weight(weight = 1f),
+                    textAlign = TextAlign.Center
+                )
+            }
+            is BallingProfilesUiState.Error -> {
+                Text(
+                    text = "Error loading data: ${(ballingProfilesUiState as BallingProfilesUiState.Error).errorMessage}",
+                    style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold),
+                    modifier = Modifier.weight(weight = 1f),
+                    textAlign = TextAlign.Center
+                )
+            }
+            is BallingProfilesUiState.Loading -> {
+                Text(
+                    text = stringResource(id = R.string.loading_balling_profiles),
+                    style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold),
+                    modifier = Modifier.weight(weight = 1f),
+                    textAlign = TextAlign.Center
+                )
+            }
+            is BallingProfilesUiState.Success -> {
+                val ballingProfiles: List<BallingProfile> =
+                    (ballingProfilesUiState as BallingProfilesUiState.Success).ballingProfiles
+                val modifier: Modifier = Modifier
+                    .height(height = 3000.dp) // Set a fixed height
+                    .fillMaxWidth()
+                    .padding(all = 16.dp)
+                if (LocalInspectionMode.current) {
+                    // running in preview
+                    Column(modifier) {
+                        ballingProfiles.forEach { ballingProfile ->
+                            BallingProfileSummaryComposable(
+                                ballingProfile = ballingProfile,
                                 onNavigateFromBalling
                             )
                         }
                     }
-                    when (ballingProfilesUiState) {
-                        is BallingProfilesUiState.Empty -> {
-                            Text(
-                                text = stringResource(id = R.string.no_balling_profiles_found),
-                                style = TextStyle(
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold
-                                ),
-                                modifier = Modifier.weight(weight = 1f),
-                                textAlign = TextAlign.Center
+                }
+                else {
+                    // running on device or emulator
+                    LazyColumn(modifier = Modifier) {
+                        items(items = ballingProfiles) { ballingProfile ->
+                            BallingProfileSummaryComposable(
+                                ballingProfile = ballingProfile,
+                                onNavigateFromBalling
                             )
-                        }
-                        is BallingProfilesUiState.Error -> {
-                            Text(
-                                text = "Error loading data: ${(ballingProfilesUiState as BallingProfilesUiState.Error).errorMessage}",
-                                style = TextStyle(
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold
-                                ),
-                                modifier = Modifier.weight(weight = 1f),
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                        is BallingProfilesUiState.Loading -> {
-                            Text(
-                                text = stringResource(id = R.string.loading_balling_profiles),
-                                style = TextStyle(
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold
-                                ),
-                                modifier = Modifier.weight(weight = 1f),
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                        is BallingProfilesUiState.Success -> {
-                            val ballingProfiles: List<BallingProfile> =
-                                (ballingProfilesUiState as BallingProfilesUiState.Success).ballingProfiles
-                            val modifier: Modifier = Modifier
-                                .height(height = 3000.dp) // Set a fixed height
-                                .fillMaxWidth()
-                                .padding(all = 16.dp)
-                            if (LocalInspectionMode.current) {
-                                // running in preview
-                                Column(modifier) {
-                                    ballingProfiles.forEach { ballingProfile ->
-                                        BallingProfileSummaryComposable(
-                                            navHostController = navHostController,
-                                            ballingProfile = ballingProfile
-                                        )
-                                    }
-                                }
-                            }
-                            else {
-                                // running on device or emulator
-                                LazyColumn(modifier = Modifier) {
-                                    items(items = ballingProfiles) { ballingProfile ->
-                                        BallingProfileSummaryComposable(
-                                            navHostController = navHostController,
-                                            ballingProfile = ballingProfile
-                                        )
-                                    }
-                                }
-                            }
                         }
                     }
                 }
-                MainDropdownMenuComposable(
-                    navigationRouteSource = ViewNavigationRoutes.balling,
-                    mainViewModel = mainViewModel,
-                    onNavigate
-                )
             }
         }
     }
@@ -189,12 +148,19 @@ val mockBallingProfiles: List<BallingProfile> = listOf(mockBallingProfile1, mock
 )
 @Composable
 internal fun BallingScreenPreviewSuccess() {
-    val mockRepositorySuccess = MockBallingProfilesRepository(mockData = DataFetchResult.Success(data = mockBallingProfiles))
-    BallingScreen(
+    val mockBallingData = DataFetchResult.Success(data = mockBallingProfiles)
+    val mockBallingRepositorySuccess = MockBallingProfilesRepository(mockData = mockBallingData)
+    val mockBallingViewModelFactory = BallingViewModelFactory(ballingProfilesRepository = mockBallingRepositorySuccess)
+    MainScaffold(
         mainViewModel = mockMainViewModel,
-        ballingViewModelFactory = BallingViewModelFactory(ballingProfilesRepository = mockRepositorySuccess),
-        onNavigate = {},
-        onNavigateFromBalling = { event, pumpId -> }
+        navigationRouteSource = ViewNavigationRoutes.balling,
+        screenContent = {
+            BallingScreen(
+                ballingViewModelFactory = mockBallingViewModelFactory,
+                onNavigateFromBalling = { event, pumpId -> }
+            )
+        },
+        onNavigate = {}
     )
 }
 
@@ -202,12 +168,19 @@ internal fun BallingScreenPreviewSuccess() {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun BallingScreenPreviewError() {
-    val mockRepositoryError = MockBallingProfilesRepository(mockData = DataFetchResult.Error(exception = null, errorMessage = "Error message"))
-    BallingScreen(
+    val mockBallingData = DataFetchResult.Error(exception = null, errorMessage = "Error message")
+    val mockBallingRepositoryError = MockBallingProfilesRepository(mockData = mockBallingData)
+    val mockBallingViewModelFactory = BallingViewModelFactory(ballingProfilesRepository = mockBallingRepositoryError)
+    MainScaffold(
         mainViewModel = mockMainViewModel,
-        ballingViewModelFactory = BallingViewModelFactory(ballingProfilesRepository = mockRepositoryError),
-        onNavigate = {},
-        onNavigateFromBalling = { event, pumpId -> }
+        navigationRouteSource = ViewNavigationRoutes.balling,
+        screenContent = {
+            BallingScreen(
+                ballingViewModelFactory = mockBallingViewModelFactory,
+                onNavigateFromBalling = { event, pumpId -> }
+            )
+        },
+        onNavigate = {}
     )
 }
 
@@ -215,11 +188,18 @@ internal fun BallingScreenPreviewError() {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun BallingScreenPreviewLoading() {
-    BallingScreen(
+    val mockBallingRepositoryLoading = MockLongLoadingBallingProfilesRepository()
+    val mockBallingViewModelFactory = BallingViewModelFactory(ballingProfilesRepository = mockBallingRepositoryLoading)
+    MainScaffold(
         mainViewModel = mockMainViewModel,
-        ballingViewModelFactory = BallingViewModelFactory(ballingProfilesRepository = MockLongLoadingBallingProfilesRepository()),
-        onNavigate = {},
-        onNavigateFromBalling = { event, pumpId -> }
+        navigationRouteSource = ViewNavigationRoutes.balling,
+        screenContent = {
+            BallingScreen(
+                ballingViewModelFactory = mockBallingViewModelFactory,
+                onNavigateFromBalling = { event, pumpId -> }
+            )
+        },
+        onNavigate = {}
     )
 }
 
@@ -228,10 +208,16 @@ internal fun BallingScreenPreviewLoading() {
 @Composable
 internal fun BallingScreenPreviewEmpty() {
     val mockRepositoryEmpty = MockBallingProfilesRepository(mockData = DataFetchResult.Success(data = emptyList()))
-    BallingScreen(
+    val mockBallingViewModelFactory = BallingViewModelFactory(ballingProfilesRepository = mockRepositoryEmpty)
+    MainScaffold(
         mainViewModel = mockMainViewModel,
-        ballingViewModelFactory = BallingViewModelFactory(ballingProfilesRepository = mockRepositoryEmpty),
-        onNavigate = {},
-        onNavigateFromBalling = { event, pumpId -> }
+        navigationRouteSource = ViewNavigationRoutes.balling,
+        screenContent = {
+            BallingScreen(
+                ballingViewModelFactory = mockBallingViewModelFactory,
+                onNavigateFromBalling = { event, pumpId -> }
+            )
+        },
+        onNavigate = {}
     )
 }

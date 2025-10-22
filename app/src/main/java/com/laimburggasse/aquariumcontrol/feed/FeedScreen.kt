@@ -1,17 +1,14 @@
 package com.laimburggasse.aquariumcontrol.feed
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -22,7 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
@@ -32,20 +29,13 @@ import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleUiState
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleViewModel
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleViewModelFactory
 import com.laimburggasse.aquariumcontrol.feed.schedule.MockFeedScheduleRepository
-import com.laimburggasse.aquariumcontrol.feed.schedule.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
-import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
-import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
-import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
 fun FeedScreen(
-    mainViewModel: MainViewModel,
     feedScheduleViewModelFactory: FeedScheduleViewModelFactory,
     feedProfilesViewModelFactory: FeedProfilesViewModelFactory,
-    darkTheme: Boolean? = null,
-    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit,
     onNavigateFromFeed: (FeedNavigationEvent, Int?, Boolean?, Long?) -> Unit
 ) {
     // This screen displays
@@ -65,88 +55,68 @@ fun FeedScreen(
     val feedProfilesUiState: FeedProfilesUiState by feedProfilesViewModel.feedProfilesUiState.collectAsState()
     val feedScheduleUiState: FeedScheduleUiState by feedScheduleViewModel.feedScheduleUiState.collectAsState()
 
-    AquariumControllerTheme(darkTheme) {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            Box {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    ScreenHeadlineComposable(
-                        stringResource(id = R.string.feed_control)
-                    )
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        ScreenHeadlineComposable(text = stringResource(id = R.string.feed_control))
 
-                    when (configuration.orientation) {
-                        Configuration.ORIENTATION_LANDSCAPE -> {
-                            Row {
-                                FeedHistorySelectionButtonsComposable(onNavigateFromFeed = onNavigateFromFeed)
-                            }
-                            Spacer(modifier = Modifier.height(16.dp))
-                            if (feedProfilesUiState is FeedProfilesUiState.Loading
-                                || feedScheduleUiState is FeedScheduleUiState.Loading) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier
-                                        .size(size = 150.dp),
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            } else {
-                                Row {
-                                    Column(
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        modifier = Modifier.weight(1f)
-                                    ) {
-                                        FeedProfileSelectionComposable(
-                                            modifier = Modifier.align(Alignment.End),
-                                            feedProfilesViewModelFactory,
-                                            onNavigateFromFeed
-                                        )
-                                    }
-                                    Column(
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        modifier = Modifier.weight(1f)
-                                    ) {
-                                        FeedScheduleSelectionComposable(
-                                            feedScheduleViewModel,
-                                            onNavigateFromFeed
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                        else -> {
-                            FeedHistorySelectionButtonsComposable(
-                                modifier = Modifier.fillMaxWidth(),
+        when (configuration.orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> {
+                Row {
+                    FeedHistorySelectionButtonsComposable(onNavigateFromFeed = onNavigateFromFeed)
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                if (feedProfilesUiState is FeedProfilesUiState.Loading
+                    || feedScheduleUiState is FeedScheduleUiState.Loading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(size = 150.dp),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                } else {
+                    Row {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            FeedProfileSelectionComposable(
+                                modifier = Modifier.align(Alignment.End),
+                                feedProfilesViewModelFactory,
                                 onNavigateFromFeed
                             )
-                            Spacer(modifier = Modifier.height(16.dp))
-                            if (feedProfilesUiState is FeedProfilesUiState.Loading
-                                || feedScheduleUiState is FeedScheduleUiState.Loading) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier
-                                        .size(150.dp),
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            } else {
-                                FeedProfileSelectionComposable(
-                                    modifier = Modifier.align(Alignment.End),
-                                    feedProfilesViewModelFactory,
-                                    onNavigateFromFeed
-                                )
-                                FeedScheduleSelectionComposable(
-                                    feedScheduleViewModel,
-                                    onNavigateFromFeed
-                                )
-                            }
+                        }
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            FeedScheduleSelectionComposable(
+                                feedScheduleViewModel,
+                                onNavigateFromFeed
+                            )
                         }
                     }
                 }
-                MainDropdownMenuComposable(
-                    navigationRouteSource = ViewNavigationRoutes.feed,
-                    mainViewModel = mainViewModel,
-                    onNavigate = onNavigate
+            }
+            else -> {
+                FeedHistorySelectionButtonsComposable(
+                    modifier = Modifier.fillMaxWidth(),
+                    onNavigateFromFeed
                 )
+                Spacer(modifier = Modifier.height(height = 16.dp))
+                if (feedProfilesUiState is FeedProfilesUiState.Loading
+                    || feedScheduleUiState is FeedScheduleUiState.Loading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(size = 150.dp),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                } else {
+                    FeedProfileSelectionComposable(
+                        modifier = Modifier.align(Alignment.End),
+                        feedProfilesViewModelFactory,
+                        onNavigateFromFeed
+                    )
+                    FeedScheduleSelectionComposable(
+                        feedScheduleViewModel,
+                        onNavigateFromFeed
+                    )
+                }
             }
         }
     }
@@ -228,9 +198,7 @@ val mockMainViewModel = MockMainViewModel()
 fun FeedScreenPreviewSuccess() {
     FeedScreen(
         feedProfilesViewModelFactory = mockFeedProfilesViewModelFactory,
-        mainViewModel = mockMainViewModel,
         feedScheduleViewModelFactory = mockFeedScheduleViewModelFactory,
-        onNavigate = {},
         onNavigateFromFeed = { event, id, isNew, millis -> }
     )
 }
@@ -256,13 +224,18 @@ fun FeedScreenPreviewError() {
         )
     )
 
-    FeedScreen(
-        mainViewModel = mockMainViewModel,
-        feedProfilesViewModelFactory = FeedProfilesViewModelFactory(
-            feedProfilesRepository = mockFeedProfilesRepositoryError
-        ),
-        feedScheduleViewModelFactory = mockFeedScheduleViewModelFactory,
-        onNavigate = {},
-        onNavigateFromFeed = { event, id, isNew, millis -> }
+    MainScaffold(
+        mainViewModel = com.laimburggasse.aquariumcontrol.balling.mockMainViewModel,
+        navigationRouteSource = ViewNavigationRoutes.feed,
+        screenContent = {
+            FeedScreen(
+                feedProfilesViewModelFactory = FeedProfilesViewModelFactory(
+                    feedProfilesRepository = mockFeedProfilesRepositoryError
+                ),
+                feedScheduleViewModelFactory = mockFeedScheduleViewModelFactory,
+                onNavigateFromFeed = { event, id, isNew, millis -> }
+            )
+        },
+        onNavigate = {}
     )
 }

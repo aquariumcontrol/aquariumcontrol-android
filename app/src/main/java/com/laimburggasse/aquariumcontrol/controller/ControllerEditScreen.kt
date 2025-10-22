@@ -1,8 +1,6 @@
 package com.laimburggasse.aquariumcontrol.controller
 
 import android.content.res.Configuration
-import android.util.Log
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,9 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,13 +24,12 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.balling.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
-import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
-import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
-import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun ControllerEditScreen(
@@ -42,8 +37,6 @@ fun ControllerEditScreen(
     onEvent: (ControllerEvent) -> Unit,
     mainViewModel: MainViewModel? = null,
     mockIsDefaultProfile: Boolean? = false,
-    darkTheme: Boolean? = null,
-    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit,
     onNavigateFromController: (ControllerNavigationEvent, Long?) -> Unit
 ) {
     // This screen allows editing of a controller profile and selecting if the profile shall be
@@ -76,117 +69,95 @@ fun ControllerEditScreen(
     }
 
     // This screen displays a form for editing an existing controller profile.
-    AquariumControllerTheme(darkTheme) {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            Box {
-                Column(
+    Column(
+        modifier = Modifier.fillMaxSize().padding(all = 8.dp).verticalScroll(state = rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        ScreenHeadlineComposable(text = stringResource(id = R.string.edit_profile))
+
+        OutlinedTextField(
+            value = state.controllerProfileName,
+            onValueChange = {
+                onEvent(ControllerEvent.SetControllerProfileName(controllerProfileName = it))
+            },
+            label = { Text(stringResource(id = R.string.profile_name)) },
+            modifier = Modifier.fillMaxWidth(),
+        )
+
+        when (configuration.orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> {
+                Row(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(8.dp)
-                        .verticalScroll(rememberScrollState()),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .padding(horizontal = 8.dp),
                 ) {
-                    ScreenHeadlineComposable(
-                        text = stringResource(id = R.string.edit_profile)
+                    ControllerAddEditHostnamePortnumberComposable(
+                        state = state,
+                        onEvent = onEvent,
+                        modifier = Modifier.weight(0.5f)
                     )
-
-                    OutlinedTextField(
-                        value = state.controllerProfileName,
-                        onValueChange = {
-                            Log.d(this::class.simpleName, "Setting controller profile name: $it")
-                            onEvent(ControllerEvent.SetControllerProfileName(it))
-                        },
-                        label = { Text(stringResource(id = R.string.profile_name)) },
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-
-                    when (configuration.orientation) {
-                        Configuration.ORIENTATION_LANDSCAPE -> {
-                            Row(
-                                modifier = Modifier
-                                    .padding(horizontal = 8.dp),
-                            ) {
-                                ControllerAddEditHostnamePortnumberComposable(
-                                    state = state,
-                                    onEvent = onEvent,
-                                    modifier = Modifier.weight(0.5f)
-                                )
-                            }
-                            Row(
-                                modifier = Modifier
-                                    .padding(horizontal = 8.dp),
-                            ) {
-                                ControllerAddEditUsernamePasswordComposable(
-                                    state = state,
-                                    onEvent = onEvent,
-                                    modifier = Modifier.weight(0.5f)
-                                )
-                            }
-                        }
-                        else -> {
-                            ControllerAddEditHostnamePortnumberComposable(
-                                state = state,
-                                onEvent = onEvent,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                            ControllerAddEditUsernamePasswordComposable(
-                                state = state,
-                                onEvent = onEvent,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-                    }
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Switch(
-                            checked = isDefaultProfile,
-                            onCheckedChange = {
-                                if (it) {
-                                    previousDefaultProfileId =
-                                        mainViewModel?.getDefaultControllerProfileId()
-                                    mainViewModel?.setDefaultControllerProfileId(state.controllerProfileId)
-                                    isDefaultProfile = true
-                                } else {
-                                    mainViewModel?.setDefaultControllerProfileId(
-                                        previousDefaultProfileId ?: -1
-                                    )
-                                    isDefaultProfile = false
-                                }
-                            }
-                        )
-                        Text(
-                            text = stringResource(id = R.string.app_shall_use_as_default),
-                            modifier = Modifier.padding(start = 8.dp)
-                        )
-                    }
-
-                    Button(
-                        onClick = {
-                            onEvent(ControllerEvent.UpdateControllerProfile)
-                            onNavigateFromController(ControllerNavigationEvent.ToControllerMain, null)
-                        },
-                        enabled = state.controllerProfileName.isNotBlank() && state.validControllerAddress,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp)
-                    ) {
-                        Text(stringResource(id = R.string.update_controller_profile))
-                    }
                 }
-                MainDropdownMenuComposable(
-                    navigationRouteSource = ViewNavigationRoutes.info,
-                    mainViewModel = mainViewModel,
-                    onNavigate
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp),
+                ) {
+                    ControllerAddEditUsernamePasswordComposable(
+                        state = state,
+                        onEvent = onEvent,
+                        modifier = Modifier.weight(0.5f)
+                    )
+                }
+            }
+            else -> {
+                ControllerAddEditHostnamePortnumberComposable(
+                    state = state,
+                    onEvent = onEvent,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                ControllerAddEditUsernamePasswordComposable(
+                    state = state,
+                    onEvent = onEvent,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Switch(
+                checked = isDefaultProfile,
+                onCheckedChange = {
+                    if (it) {
+                        previousDefaultProfileId =
+                            mainViewModel?.getDefaultControllerProfileId()
+                        mainViewModel?.setDefaultControllerProfileId(state.controllerProfileId)
+                        isDefaultProfile = true
+                    } else {
+                        mainViewModel?.setDefaultControllerProfileId(
+                            previousDefaultProfileId ?: -1
+                        )
+                        isDefaultProfile = false
+                    }
+                }
+            )
+            Text(
+                text = stringResource(id = R.string.app_shall_use_as_default),
+                modifier = Modifier.padding(start = 8.dp)
+            )
+        }
+
+        Button(
+            onClick = {
+                onEvent(ControllerEvent.UpdateControllerProfile)
+                onNavigateFromController(ControllerNavigationEvent.ToControllerMain, null)
+            },
+            enabled = state.controllerProfileName.isNotBlank() && state.validControllerAddress,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp)
+        ) {
+            Text(text = stringResource(id = R.string.update_controller_profile))
         }
     }
 }
@@ -212,5 +183,17 @@ internal fun ControllerEditScreenPreview() {
         controllerProfileUser = "user",
         controllerProfilePassword = "password",
     )
-    ControllerEditScreen(state = mockControllerState, onEvent = {}, mockIsDefaultProfile = true, onNavigate = {}, onNavigateFromController = {event, id -> })
+
+    MainScaffold(
+        mainViewModel = mockMainViewModel,
+        navigationRouteSource = ViewNavigationRoutes.controllerEdit,
+        screenContent = {
+            ControllerEditScreen(
+                state = mockControllerState,
+                onEvent = {},
+                mockIsDefaultProfile = true,
+                onNavigateFromController = {event, id -> }
+            ) },
+        onNavigate = {}
+    )
 }

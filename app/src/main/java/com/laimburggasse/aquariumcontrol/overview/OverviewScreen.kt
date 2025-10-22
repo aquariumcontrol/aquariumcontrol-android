@@ -2,7 +2,6 @@ package com.laimburggasse.aquariumcontrol.overview
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,7 +14,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -30,23 +28,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.balling.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.controller.ControllerProfile
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
-import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
-import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
-import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
 fun OverviewScreen(
     mainViewModel: MainViewModel,
     overviewViewModelFactory: OverviewViewModelFactory,
-    darkTheme: Boolean? = null,
-    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     // This screen displays
     // - headline
@@ -63,123 +58,101 @@ fun OverviewScreen(
     val controllerUsername: String? = mainViewModel.getControllerUser()
     val controllerPort: Int? = mainViewModel.getControllerPort()
 
-    AquariumControllerTheme(darkTheme) {
-        // A surface container using the 'background' color from the theme
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            Box {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-
-                    ScreenHeadlineComposable(
-                        text = stringResource(id = R.string.overview)
+    Column(
+        modifier = Modifier.padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        ScreenHeadlineComposable(text = stringResource(id = R.string.overview))
+        PullToRefreshBox(
+            modifier = Modifier.fillMaxWidth(),
+            state = rememberPullToRefreshState(),
+            isRefreshing = overviewUiState == OverviewUiState.Loading,
+            contentAlignment = Alignment.Center,
+            onRefresh = { overviewViewModel.loadData() },
+            indicator = {
+                if (overviewUiState == OverviewUiState.Loading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(150.dp),
+                        color = MaterialTheme.colorScheme.primary
                     )
-                    PullToRefreshBox(
-                        modifier = Modifier.fillMaxWidth(),
-                        state = rememberPullToRefreshState(),
-                        isRefreshing = overviewUiState == OverviewUiState.Loading,
-                        contentAlignment = Alignment.Center,
-                        onRefresh = { overviewViewModel.loadData() },
-                        indicator = {
-                            if (overviewUiState == OverviewUiState.Loading) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier
-                                        .size(150.dp),
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                        }
-                    )
-                    {
+                }
+            }
+        )
+        {
+            Column(
+                modifier = Modifier.fillMaxWidth().verticalScroll(state = rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                when (overviewUiState) {
+                    is OverviewUiState.Error -> {
                         Column(
-                            modifier = Modifier.fillMaxWidth().verticalScroll(state = rememberScrollState()),
+                            modifier = Modifier.fillMaxSize().padding(16.dp),
+                            verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            when (overviewUiState) {
-                                is OverviewUiState.Error -> {
-                                    Column(
-                                        modifier = Modifier.fillMaxSize().padding(16.dp),
-                                        verticalArrangement = Arrangement.Center,
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
-                                        Text("Error loading data: ${(overviewUiState as OverviewUiState.Error).errorMessage}")
-                                    }                                }
-                                OverviewUiState.Loading -> {
-                                    Column(
-                                        modifier = Modifier.fillMaxSize().padding(16.dp),
-                                        verticalArrangement = Arrangement.Center,
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
-                                        Text("Loading...")
+                            Text(text = "Error loading data: ${(overviewUiState as OverviewUiState.Error).errorMessage}")
+                        }                                }
+                    OverviewUiState.Loading -> {
+                        Column(
+                            modifier = Modifier.fillMaxSize().padding(16.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(text = "Loading...")
+                        }
+                    }
+                    is OverviewUiState.Success -> {
+                        val overviewData = (overviewUiState as OverviewUiState.Success).overviewData
+                        when (configuration.orientation) {
+                            Configuration.ORIENTATION_LANDSCAPE -> {
+                                Row {
+                                    Column(modifier = Modifier.weight(weight = 0.5f)) {
+                                        OverviewControllerComposable(
+                                            controllerProfileName = controllerProfileName!!,
+                                            controllerAddress = controllerAddress!!,
+                                            controllerPort = controllerPort!!,
+                                            controllerUsername = controllerUsername!!
+                                        )
+                                        OverviewAmbientComposable(overviewData = overviewData)
                                     }
-                                }
-                                is OverviewUiState.Success -> {
-                                    val overviewData = (overviewUiState as OverviewUiState.Success).overviewData
-                                    when (configuration.orientation) {
-                                        Configuration.ORIENTATION_LANDSCAPE -> {
-                                            Row {
-                                                Column(modifier = Modifier.weight(0.5f)) {
-                                                    OverviewControllerComposable(
-                                                        controllerProfileName = controllerProfileName!!,
-                                                        controllerAddress = controllerAddress!!,
-                                                        controllerPort = controllerPort!!,
-                                                        controllerUsername = controllerUsername!!
-                                                    )
-                                                    OverviewAmbientComposable(overviewData = overviewData)
-                                                }
-                                                Column(modifier = Modifier.weight(0.5f)) {
-                                                    OverviewTimestampComposable(overviewData = overviewData)
-                                                    OverviewWaterSignalsComposable(overviewData = overviewData)
-                                                    OverviewActuatorsComposable(overviewData = overviewData)
-                                                }
-                                            }
-                                        }
-
-                                        else -> {
-                                            OverviewControllerComposable(
-                                                controllerProfileName = controllerProfileName!!,
-                                                controllerAddress = controllerAddress!!,
-                                                controllerPort = controllerPort!!,
-                                                controllerUsername = controllerUsername!!
-                                            )
-                                            OverviewTimestampComposable(overviewData = overviewData)
-                                            OverviewWaterSignalsComposable(overviewData = overviewData)
-                                            OverviewActuatorsComposable(overviewData = overviewData)
-                                            OverviewAmbientComposable(overviewData = overviewData)
-                                        }
+                                    Column(modifier = Modifier.weight(weight = 0.5f)) {
+                                        OverviewTimestampComposable(overviewData = overviewData)
+                                        OverviewWaterSignalsComposable(overviewData = overviewData)
+                                        OverviewActuatorsComposable(overviewData = overviewData)
                                     }
                                 }
                             }
-                            Spacer(
-                                modifier = Modifier.padding(vertical = 8.dp)
-                            )
-                            Button(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 8.dp),
-                                onClick = {
-                                    if (isControllerAddressValid) {
-                                        overviewViewModel.loadData()
-                                    }
-                                },
-                            ) {
-                                Text(
-                                    text = stringResource(id = R.string.update_overview_data),
-                                    fontSize = 16.sp
+
+                            else -> {
+                                OverviewControllerComposable(
+                                    controllerProfileName = controllerProfileName!!,
+                                    controllerAddress = controllerAddress!!,
+                                    controllerPort = controllerPort!!,
+                                    controllerUsername = controllerUsername!!
                                 )
+                                OverviewTimestampComposable(overviewData = overviewData)
+                                OverviewWaterSignalsComposable(overviewData = overviewData)
+                                OverviewActuatorsComposable(overviewData = overviewData)
+                                OverviewAmbientComposable(overviewData = overviewData)
                             }
                         }
                     }
                 }
-                MainDropdownMenuComposable(
-                    navigationRouteSource = ViewNavigationRoutes.overView,
-                    mainViewModel = mainViewModel,
-                    onNavigate
-                )
+                Spacer(modifier = Modifier.padding(vertical = 8.dp))
+                Button(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                    onClick = {
+                        if (isControllerAddressValid) {
+                            overviewViewModel.loadData()
+                        }
+                    },
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.update_overview_data),
+                        fontSize = 16.sp
+                    )
+                }
             }
         }
     }
@@ -242,9 +215,15 @@ val mockMainViewModel = MockMainViewModel(controller = mockControllerProfile)
 )
 @Composable
 fun OverviewScreenPreviewSuccess() {
-    OverviewScreen(
+    MainScaffold(
         mainViewModel = mockMainViewModel,
-        overviewViewModelFactory = mockOverviewViewModelFactorySuccess,
+        navigationRouteSource = ViewNavigationRoutes.overView,
+        screenContent = {
+            OverviewScreen(
+                mainViewModel = mockMainViewModel,
+                overviewViewModelFactory = mockOverviewViewModelFactorySuccess,
+            )
+        },
         onNavigate = {}
     )
 }
@@ -253,9 +232,15 @@ fun OverviewScreenPreviewSuccess() {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 fun OverviewScreenPreviewError() {
-    OverviewScreen(
+    MainScaffold(
         mainViewModel = mockMainViewModel,
-        overviewViewModelFactory = mockOverviewViewModelFactoryError,
+        navigationRouteSource = ViewNavigationRoutes.overView,
+        screenContent = {
+            OverviewScreen(
+                mainViewModel = mockMainViewModel,
+                overviewViewModelFactory = mockOverviewViewModelFactoryError,
+            )
+        },
         onNavigate = {}
     )
 }

@@ -25,8 +25,7 @@ class FeedScreenTest {
             FeedScreen(
                 mainViewModel = mockMainViewModel,
                 feedProfilesViewModelFactory = mockFeedProfilesViewModelFactory,
-                feedScheduleViewModelFactory = mockFeedScheduleViewModelFactory,
-                darkTheme = true
+                feedScheduleViewModelFactory = mockFeedScheduleViewModelFactory
             )
         }
         composeTestRule.waitForIdle()
@@ -44,8 +43,7 @@ class FeedScreenTest {
             FeedScreen(
                 mainViewModel = mockMainViewModel,
                 feedProfilesViewModelFactory = mockFeedProfilesViewModelFactory,
-                feedScheduleViewModelFactory = mockFeedScheduleViewModelFactory,
-                darkTheme = false
+                feedScheduleViewModelFactory = mockFeedScheduleViewModelFactory
             )
         }
         composeTestRule.waitForIdle()

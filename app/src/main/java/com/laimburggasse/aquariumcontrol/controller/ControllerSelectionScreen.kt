@@ -1,7 +1,6 @@
 package com.laimburggasse.aquariumcontrol.controller
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,9 +13,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,13 +28,12 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.balling.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
-import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
-import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
-import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -48,8 +44,6 @@ fun ControllerSelectionScreen(
     onEvent: (ControllerEvent) -> Unit,
     mainViewModel: MainViewModel? = null,
     mockProgress: Float? = null,
-    darkTheme: Boolean? = null,
-    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit,
     onNavigateFromController: (ControllerNavigationEvent, Long?) -> Unit
 ) {
     // This screen displays:
@@ -91,93 +85,79 @@ fun ControllerSelectionScreen(
         }
     }
 
-    AquariumControllerTheme(darkTheme) {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        ScreenHeadlineComposable(text = stringResource(id = R.string.list_of_controllers))
+
+        // Progress bar at the top to be visualized
+        // - for preview OR:
+        // - after data is loaded AND
+        // - default profile has been selected before AND
+        // - screen is invoked at startup AND
+        // - list of controller profiles is not empty
+        if (mockProgress != null || // Display progress bar if mockProgress is provided
+            (isDataLoaded && defaultProfileId > 0 &&
+                    mainViewModel?.isFirstLoad() != false &&
+                    state.controllerProfileList.isNotEmpty())
         ) {
-            Box {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
+            Text(text = stringResource(R.string.loading_default_profile))
+            LinearProgressIndicator(
+                progress = { progress },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            )
+        }
+
+        Scaffold(
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = {
+                        onNavigateFromController(ControllerNavigationEvent.ToControllerAdd, null)
+                    },
+                    modifier = Modifier.padding(16.dp)
                 ) {
-                    ScreenHeadlineComposable(text = stringResource(id = R.string.list_of_controllers))
+                    Icon(
+                        imageVector = Icons.Filled.Add,
+                        contentDescription = stringResource(R.string.create_new_profile)
+                    )
+                }
+            }
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                val modifier = Modifier.padding(16.dp).wrapContentSize()
 
-                    // Progress bar at the top to be visualized
-                    // - for preview OR:
-                    // - after data is loaded AND
-                    // - default profile has been selected before AND
-                    // - screen is invoked at startup AND
-                    // - list of controller profiles is not empty
-                    if (mockProgress != null || // Display progress bar if mockProgress is provided
-                        (isDataLoaded && defaultProfileId > 0 &&
-                                mainViewModel?.isFirstLoad() != false &&
-                                state.controllerProfileList.isNotEmpty())
-                    ) {
-                        Text(text = stringResource(R.string.loading_default_profile))
-                        LinearProgressIndicator(
-                            progress = { progress },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                        )
-                    }
-
-                    Scaffold(
-                        floatingActionButton = {
-                            FloatingActionButton(
-                                onClick = {
-                                    onNavigateFromController(ControllerNavigationEvent.ToControllerAdd, null)
-                                },
-                                modifier = Modifier.padding(16.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Add,
-                                    contentDescription = stringResource(R.string.create_new_profile)
-                                )
-                            }
-                        }
-                    ) { innerPadding ->
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(innerPadding),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            val modifier = Modifier.padding(16.dp).wrapContentSize()
-
-                            if (LocalInspectionMode.current) {
-                                Column(modifier) {
-                                    val items = state.controllerProfileList
-                                    items.forEach { item ->
-                                        ControllerProfileComposable(
-                                            onEvent =  { },
-                                            controllerProfile = item,
-                                            mainViewModel = null,
-                                            onNavigateFromController = onNavigateFromController
-                                        )
-                                    }
-                                }
-                            }
-                            else {
-                                LazyColumn(modifier) {
-                                    items(items =state.controllerProfileList) { controllerProfile ->
-                                        ControllerProfileComposable(
-                                            onEvent = onEvent,
-                                            controllerProfile = controllerProfile,
-                                            mainViewModel = mainViewModel,
-                                            onNavigateFromController = onNavigateFromController
-                                        )
-                                    }
-                                }
-                            }
+                if (LocalInspectionMode.current) {
+                    Column(modifier) {
+                        val items = state.controllerProfileList
+                        items.forEach { item ->
+                            ControllerProfileComposable(
+                                onEvent =  { },
+                                controllerProfile = item,
+                                mainViewModel = null,
+                                onNavigateFromController = onNavigateFromController
+                            )
                         }
                     }
                 }
-                MainDropdownMenuComposable(
-                    navigationRouteSource = ViewNavigationRoutes.controllerSelection,
-                    mainViewModel = mainViewModel,
-                    onNavigate = onNavigate,
-                )
+                else {
+                    LazyColumn(modifier) {
+                        items(items =state.controllerProfileList) { controllerProfile ->
+                            ControllerProfileComposable(
+                                onEvent = onEvent,
+                                controllerProfile = controllerProfile,
+                                mainViewModel = mainViewModel,
+                                onNavigateFromController = onNavigateFromController
+                            )
+                        }
+                    }
+                }
             }
         }
     }
@@ -221,12 +201,18 @@ internal fun ControllerSelectionScreenPreview() {
     val mockControllerState = ControllerState()
     mockControllerState.controllerProfileList = controllerProfileList
 
-    ControllerSelectionScreen(
-        state = mockControllerState,
-        onEvent = {},
-        mockProgress = 0.3f,
-        onNavigate = {},
-        onNavigateFromController = { event, profileId -> }
+    MainScaffold(
+        mainViewModel = mockMainViewModel,
+        navigationRouteSource = ViewNavigationRoutes.controllerSelection,
+        screenContent = {
+            ControllerSelectionScreen(
+                state = mockControllerState,
+                onEvent = {},
+                mockProgress = 0.3f,
+                onNavigateFromController = { event, profileId -> }
+            )
+         },
+        onNavigate = {}
     )
 }
 
