@@ -26,11 +26,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.feed.FeedNavigationEvent
 import com.laimburggasse.aquariumcontrol.feed.MockFeedProfilesRepository
 import com.laimburggasse.aquariumcontrol.feed.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
@@ -41,11 +41,11 @@ import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
 fun FeedProfileAddScreen(
-    navHostController: NavHostController? = null,
     mainViewModel: MainViewModel,
     darkTheme: Boolean? = null,
     feedProfileAddViewModelFactory: FeedProfileAddViewModelFactory,
-    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit,
+    onNavigateFromFeed: (FeedNavigationEvent, Int?, Boolean?, Long?) -> Unit
 ) {
     // This screen displays
     // - a graphic visualizing the feed profile
@@ -64,7 +64,7 @@ fun FeedProfileAddScreen(
         feedProfileAddViewModel.eventFlow.collect { event ->
             when (event) {
                 is FeedProfileAddEvent.Success -> {
-                    navHostController?.navigate(route = ViewNavigationRoutes.feed)
+                    onNavigateFromFeed(FeedNavigationEvent.ToFeedMain, null, null, null)
                 }
 
                 is FeedProfileAddEvent.Failure -> {
@@ -150,6 +150,7 @@ internal fun FeedProfileAddScreenPreview() {
         feedProfileAddViewModelFactory = FeedProfileAddViewModelFactory(
             feedProfilesRepository = mockFeedProfilesRepositoryEmpty,
         ),
-        onNavigate = {}
+        onNavigate = {},
+        onNavigateFromFeed = {event, id, isNew, time ->}
     )
 }

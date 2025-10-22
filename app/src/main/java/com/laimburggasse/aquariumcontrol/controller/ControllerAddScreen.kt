@@ -22,23 +22,22 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
+import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun ControllerAddScreen(
-    navHostController: NavHostController? = null,
     state: ControllerState,
     onEvent: (ControllerEvent) -> Unit,
     mainViewModel: MainViewModel? = null,
     darkTheme: Boolean? = null,
-    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit,
+    onNavigateFromController: (ControllerNavigationEvent, Long?) -> Unit
 ) {
     // This screen displays a form for adding a new controller profile:
     // - editable text field for the controller profile name
@@ -121,7 +120,7 @@ fun ControllerAddScreen(
                     Button(
                         onClick = {
                             onEvent(ControllerEvent.AddControllerProfile)
-                            navHostController?.navigate(ViewNavigationRoutes.controllerSelection)
+                            onNavigateFromController(ControllerNavigationEvent.ToControllerMain, null)
                         },
                         enabled = state.controllerProfileName.isNotBlank() && state.validControllerAddress,
                         modifier = Modifier
@@ -155,5 +154,5 @@ fun ControllerAddScreen(
 )
 @Composable
 internal fun ControllerAddScreenPreview() {
-    ControllerAddScreen(state = ControllerState(), onEvent = {}, onNavigate = {})
+    ControllerAddScreen(state = ControllerState(), onEvent = {}, onNavigate = {}, onNavigateFromController = {event, id -> })
 }

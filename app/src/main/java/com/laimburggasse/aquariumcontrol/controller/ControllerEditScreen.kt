@@ -28,24 +28,23 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropDownMenuNavigationEvent
+import com.laimburggasse.aquariumcontrol.maindropdownmenu.MainDropdownMenuComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun ControllerEditScreen(
-    navHostController: NavHostController? = null,
     state: ControllerState,
     onEvent: (ControllerEvent) -> Unit,
     mainViewModel: MainViewModel? = null,
     mockIsDefaultProfile: Boolean? = false,
     darkTheme: Boolean? = null,
-    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
+    onNavigate: (MainDropDownMenuNavigationEvent) -> Unit,
+    onNavigateFromController: (ControllerNavigationEvent, Long?) -> Unit
 ) {
     // This screen allows editing of a controller profile and selecting if the profile shall be
     // the default profile.
@@ -172,7 +171,7 @@ fun ControllerEditScreen(
                     Button(
                         onClick = {
                             onEvent(ControllerEvent.UpdateControllerProfile)
-                            navHostController?.navigate(ViewNavigationRoutes.controllerSelection)
+                            onNavigateFromController(ControllerNavigationEvent.ToControllerMain, null)
                         },
                         enabled = state.controllerProfileName.isNotBlank() && state.validControllerAddress,
                         modifier = Modifier
@@ -213,5 +212,5 @@ internal fun ControllerEditScreenPreview() {
         controllerProfileUser = "user",
         controllerProfilePassword = "password",
     )
-    ControllerEditScreen(state = mockControllerState, onEvent = {}, mockIsDefaultProfile = true, onNavigate = {})
+    ControllerEditScreen(state = mockControllerState, onEvent = {}, mockIsDefaultProfile = true, onNavigate = {}, onNavigateFromController = {event, id -> })
 }
