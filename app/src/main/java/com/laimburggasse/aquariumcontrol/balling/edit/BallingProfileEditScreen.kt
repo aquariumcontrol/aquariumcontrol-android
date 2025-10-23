@@ -3,6 +3,7 @@ package com.laimburggasse.aquariumcontrol.balling.edit
 import android.content.Context
 import android.content.res.Configuration
 import android.widget.Toast
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -167,6 +168,7 @@ internal fun BallingProfileEditScreenPreview() {
                 onEvent = {}
             )
         },
-        onNavigate = {}
+        onNavigate = {},
+        darkTheme = isSystemInDarkTheme()
     )
 }

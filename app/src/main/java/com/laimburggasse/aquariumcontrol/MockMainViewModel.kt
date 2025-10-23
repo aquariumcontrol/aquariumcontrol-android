@@ -1,6 +1,6 @@
 package com.laimburggasse.aquariumcontrol
 
-import com.laimburggasse.aquariumcontrol.controller.ControllerProfile
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 
 class MockMainViewModel(private val controller: ControllerProfile? = null) : MainViewModel() {
     override fun getControllerName(): String? = controller?.name

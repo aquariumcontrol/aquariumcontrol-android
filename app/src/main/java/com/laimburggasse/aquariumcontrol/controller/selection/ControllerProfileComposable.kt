@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.controller
+package com.laimburggasse.aquariumcontrol.controller.selection
 
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
@@ -27,16 +27,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerEvent
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerNavigationEvent
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun ControllerProfileComposable(
     onEvent: (ControllerEvent) -> Unit,
     controllerProfile: ControllerProfile,
-    mainViewModel: MainViewModel? = null,
-    mockIsDefaultProfile: Boolean = false,
+    isDefaultProfile: Boolean = false,
     onNavigateFromController: (ControllerNavigationEvent, Long) -> Unit
 ) {
     // This composable displays:
@@ -49,52 +50,28 @@ fun ControllerProfileComposable(
     // - button to delete the controller profile
     // - star icon if the controller profile is the default profile
     
-    // use either stored profile id to check if profile is default profile or use mock data for preview
-    val isDefaultProfile: Boolean = if (mainViewModel != null) {
-        mainViewModel.getDefaultControllerProfileId() == controllerProfile.id
-    } else {
-        mockIsDefaultProfile
-    }
-
     // This composable displays a single controller profile.
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .border(
-                border = BorderStroke(
-                    1.dp,
-                    MaterialTheme.colorScheme.onSurface
-                )
-            )
-            .padding(8.dp)
+            .border(border = BorderStroke(width = 1.dp,color = MaterialTheme.colorScheme.onSurface))
+            .padding(all = 8.dp)
     ) {
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .clickable {
-                    if (mainViewModel != null) {
-                        mainViewModel.setFirstLoad()
-                        mainViewModel.updateSelectedControllerProfile(controllerProfile)
-                        onNavigateFromController(ControllerNavigationEvent.ToOverview, controllerProfile.id)
-                    }
-                }
+            modifier = Modifier.weight(weight = 1f).clickable {
+                onEvent(ControllerEvent.SelectControllerProfile(controllerProfile))
+                onNavigateFromController(ControllerNavigationEvent.ToOverview, controllerProfile.id)
+            }
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
             ) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                ) {
+                Column(modifier = Modifier.weight(weight = 1f)) {
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 8.dp),
+                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
                         horizontalArrangement = Arrangement.Start
                     ) {
-                        Column(
-                            horizontalAlignment = Alignment.Start) {
+                        Column(horizontalAlignment = Alignment.Start) {
                             Text(
                                 text = controllerProfile.name,
                                 fontSize = 24.sp,
@@ -102,10 +79,9 @@ fun ControllerProfileComposable(
                             )
                         }
                         Column(
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier.weight(weight = 1f),
                             horizontalAlignment = Alignment.End) {
                             if (isDefaultProfile) {
-                                //Spacer(modifier = Modifier.width(10.dp))
                                 Icon(
                                     imageVector = Icons.Outlined.Star,
                                     contentDescription = "DefaultProfile",
@@ -115,18 +91,14 @@ fun ControllerProfileComposable(
                     }
                 }
             }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-            ) {
+            Row(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     text = "Address: " + controllerProfile.address,
                     fontSize = 12.sp
                 )
 
             }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-            ) {
+            Row(modifier = Modifier.fillMaxWidth()) {
                 Column {
                     Text(
                         text = stringResource(R.string.port) + controllerProfile.port,
@@ -160,11 +132,7 @@ fun ControllerProfileComposable(
                 Button(
                     modifier = Modifier.padding(end = 4.dp),
                     onClick = {
-                        onEvent(
-                            ControllerEvent.SelectControllerProfile(
-                                controllerProfile
-                            )
-                        )
+                        onEvent(ControllerEvent.SelectControllerProfile(controllerProfile))
                         onNavigateFromController(
                             ControllerNavigationEvent.ToControllerEdit,
                             controllerProfile.id
@@ -178,11 +146,7 @@ fun ControllerProfileComposable(
                 }
                 Button(
                     onClick = {
-                        onEvent(
-                            ControllerEvent.DeleteControllerProfile(
-                                controllerProfile
-                            )
-                        )
+                        onEvent(ControllerEvent.DeleteControllerProfile(controllerProfile))
                     }) {
                     Icon(
                         imageVector = Icons.Outlined.Delete,
@@ -214,7 +178,7 @@ internal fun ControllerProfileComposablePreview() {
             ControllerProfileComposable(
                 onEvent = {},
                 controllerProfile = mockControllerProfile1,
-                mockIsDefaultProfile = true,
+                isDefaultProfile = true,
                 onNavigateFromController = { event, profileId -> }
             )
         }

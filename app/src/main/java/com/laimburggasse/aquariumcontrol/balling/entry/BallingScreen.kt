@@ -1,6 +1,7 @@
 package com.laimburggasse.aquariumcontrol.balling.entry
 
 import android.content.res.Configuration
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -156,7 +157,8 @@ internal fun BallingScreenPreviewSuccess() {
                 onNavigateFromBalling = { event, pumpId -> }
             )
         },
-        onNavigate = {}
+        onNavigate = {},
+        darkTheme = isSystemInDarkTheme()
     )
 }
 
@@ -173,7 +175,8 @@ internal fun BallingScreenPreviewError() {
                 onNavigateFromBalling = { event, pumpId -> }
             )
         },
-        onNavigate = {}
+        onNavigate = {},
+        darkTheme = isSystemInDarkTheme()
     )
 }
 
@@ -190,7 +193,8 @@ internal fun BallingScreenPreviewLoading() {
                 onNavigateFromBalling = { event, pumpId -> }
             )
         },
-        onNavigate = {}
+        onNavigate = {},
+        darkTheme = isSystemInDarkTheme()
     )
 }
 
@@ -207,6 +211,7 @@ internal fun BallingScreenPreviewEmpty() {
                 onNavigateFromBalling = { event, pumpId -> }
             )
         },
-        onNavigate = {}
+        onNavigate = {},
+        darkTheme = isSystemInDarkTheme()
     )
 }

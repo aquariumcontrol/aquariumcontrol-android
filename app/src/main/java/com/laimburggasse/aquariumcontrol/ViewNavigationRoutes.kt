@@ -1,5 +1,7 @@
 package com.laimburggasse.aquariumcontrol
 
+import android.util.Log
+
 object ViewNavigationRoutes {
     var feed = "feed"
     var feedHistory = "feedHistory"
@@ -28,11 +30,13 @@ object ViewNavigationRoutes {
     var heating = "heating"
     var schedule = "schedule"
     var timeData = "timeData"
-    var controllerSelection = "controllerSelection/(controllerProfileId)"
+
+    const val CONTROLLER_ARG_ID = "controllerProfileId"
+    var controllerSelection = "controllerSelection/{$CONTROLLER_ARG_ID}"
     var info = "info"
     var controllerAdd = "controllerAdd"
-    var controllerEdit = "controllerEdit/{controllerId}"
-    var overView = "overView"
+    var controllerEdit = "controllerEdit/{$CONTROLLER_ARG_ID}"
+    var overView = "overView/{$CONTROLLER_ARG_ID}"
 
     fun feedSchedule(feedProfileId: Int, isNewScheduleEntry: Boolean, millisSinceEpoch: Long): String {
         return "feedSchedule/$feedProfileId/$isNewScheduleEntry/$millisSinceEpoch"
@@ -48,6 +52,14 @@ object ViewNavigationRoutes {
 
     fun controllerEdit(controllerProfileId: Long): String {
         return "controllerEdit/$controllerProfileId"
+    }
+
+    fun controllerSelection(controllerProfileId: Long): String {
+        return "controllerSelection/$controllerProfileId"
+    }
+
+    fun overView(controllerProfileId: Long): String {
+        return "overView/$controllerProfileId"
     }
 
 }

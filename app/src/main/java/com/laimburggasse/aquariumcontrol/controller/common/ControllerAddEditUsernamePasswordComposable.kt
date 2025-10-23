@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.controller
+package com.laimburggasse.aquariumcontrol.controller.common
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
@@ -13,36 +13,38 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.R
-import com.laimburggasse.aquariumcontrol.lib_composables.NumericIntOutlinedTextFieldComposable
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerState
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
-fun ControllerAddEditHostnamePortnumberComposable(
+fun ControllerAddEditUsernamePasswordComposable(
     onEvent: (ControllerEvent) -> Unit,
     modifier: Modifier? = Modifier,
-    state: ControllerState? = null
+    state: ControllerState? = null,
 ) {
-    // This composable displays text fields for host name and port number.
+    // This composable displays text fields for user name and password.
     // The arrangement of the fields follows the device orientation.
 
     OutlinedTextField(
-        value = state?.controllerProfileAddress ?: "mock.hostname.com",
+        value = state?.controllerProfileUser ?: "mock_user",
         onValueChange = {
-            onEvent(ControllerEvent.SetControllerAddress(it))
+            onEvent(ControllerEvent.SetControllerUser(it))
         },
-        label = { Text(stringResource(id = R.string.hostname)) },
+        label = { Text(stringResource(id = R.string.user_name)) },
         modifier = modifier?.then(Modifier.padding(top = 16.dp)) ?: Modifier
     )
     Spacer(modifier = Modifier.width(10.dp))
-    NumericIntOutlinedTextFieldComposable(
-        value = state?.controllerProfilePort ?: 80,
+    OutlinedTextField(
+        value = state?.controllerProfilePassword ?: "mock password",
         onValueChange = {
-            onEvent(ControllerEvent.SetControllerPort(it))
+            onEvent(ControllerEvent.SetControllerPassword(it))
         },
-        label = stringResource(id = R.string.port_number),
+        label = { Text(stringResource(id = R.string.password)) },
+        visualTransformation = PasswordVisualTransformation(), // Hide password
         modifier = modifier?.then(Modifier.padding(top = 16.dp)) ?: Modifier
     )
 }
@@ -50,11 +52,11 @@ fun ControllerAddEditHostnamePortnumberComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun ControllerAddEditHostnamePortnumberComposablePortraitPreview() {
+internal fun ControllerAddEditUsernamePasswordComposablePortraitPreview() {
     AquariumControllerTheme {
         Surface {
             Column {
-                ControllerAddEditHostnamePortnumberComposable(
+                ControllerAddEditUsernamePasswordComposable(
                     onEvent = {},
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -63,24 +65,16 @@ internal fun ControllerAddEditHostnamePortnumberComposablePortraitPreview() {
     }
 }
 
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    device = "spec:width=600dp,height=400dp,orientation=landscape"
-)
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    device = "spec:width=600dp,height=400dp,orientation=landscape"
-)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun ControllerAddEditHostnamePortnumberComposableLandscapePreview() {
+internal fun ControllerAddEditUsernamePasswordComposableLandscapePreview() {
     AquariumControllerTheme {
         Surface {
             Row {
-                ControllerAddEditHostnamePortnumberComposable(
+                ControllerAddEditUsernamePasswordComposable(
                     onEvent = {},
-                    modifier = Modifier.weight(0.5f),
+                    modifier = Modifier.weight(0.5f)
                 )
             }
         }

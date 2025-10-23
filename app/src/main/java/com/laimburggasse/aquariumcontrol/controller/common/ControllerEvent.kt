@@ -1,4 +1,6 @@
-package com.laimburggasse.aquariumcontrol.controller
+package com.laimburggasse.aquariumcontrol.controller.common
+
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 
 sealed interface ControllerEvent {
     // This interface defines all events that can be triggered from
@@ -17,4 +19,8 @@ sealed interface ControllerEvent {
     data class SetControllerUser(val controllerUser: String) : ControllerEvent
     data class SetControllerPassword(val controllerPassword: String) : ControllerEvent
     data class SelectControllerProfile(val controllerProfile: ControllerProfile): ControllerEvent
+
+    data class SetDefaultControllerId(val controllerProfileId: Long): ControllerEvent
+    data object UnsetDefaultControllerId : ControllerEvent
+    data object AutoNavigationFinished: ControllerEvent
 }

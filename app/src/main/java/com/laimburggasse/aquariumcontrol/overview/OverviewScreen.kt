@@ -29,18 +29,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.laimburggasse.aquariumcontrol.MainScaffold
-import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel
-import com.laimburggasse.aquariumcontrol.controller.ControllerProfile
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
 fun OverviewScreen(
-    mainViewModel: MainViewModel,
+    controllerProfile: ControllerProfile,
     overviewViewModelFactory: OverviewViewModelFactory,
 ) {
     // This screen displays
@@ -50,13 +49,7 @@ fun OverviewScreen(
 
     val overviewViewModel: OverviewViewModel = viewModel(factory = overviewViewModelFactory)
     val configuration: Configuration = LocalConfiguration.current
-    val isControllerAddressValid: Boolean = !mainViewModel.getControllerAddress().isNullOrBlank()
     val overviewUiState: OverviewUiState by overviewViewModel.overviewUiState.collectAsState()
-
-    val controllerProfileName: String? = mainViewModel.getControllerName()
-    val controllerAddress: String? = mainViewModel.getControllerAddress()
-    val controllerUsername: String? = mainViewModel.getControllerUser()
-    val controllerPort: Int? = mainViewModel.getControllerPort()
 
     Column(
         modifier = Modifier.padding(16.dp),
@@ -103,16 +96,16 @@ fun OverviewScreen(
                         }
                     }
                     is OverviewUiState.Success -> {
-                        val overviewData = (overviewUiState as OverviewUiState.Success).overviewData
+                        val overviewData: OverviewData = (overviewUiState as OverviewUiState.Success).overviewData
                         when (configuration.orientation) {
                             Configuration.ORIENTATION_LANDSCAPE -> {
                                 Row {
                                     Column(modifier = Modifier.weight(weight = 0.5f)) {
                                         OverviewControllerComposable(
-                                            controllerProfileName = controllerProfileName!!,
-                                            controllerAddress = controllerAddress!!,
-                                            controllerPort = controllerPort!!,
-                                            controllerUsername = controllerUsername!!
+                                            controllerProfileName = controllerProfile.name,
+                                            controllerAddress = controllerProfile.address,
+                                            controllerPort = controllerProfile.port,
+                                            controllerUsername = controllerProfile.user
                                         )
                                         OverviewAmbientComposable(overviewData = overviewData)
                                     }
@@ -126,10 +119,10 @@ fun OverviewScreen(
 
                             else -> {
                                 OverviewControllerComposable(
-                                    controllerProfileName = controllerProfileName!!,
-                                    controllerAddress = controllerAddress!!,
-                                    controllerPort = controllerPort!!,
-                                    controllerUsername = controllerUsername!!
+                                    controllerProfileName = controllerProfile.name,
+                                    controllerAddress = controllerProfile.address,
+                                    controllerPort = controllerProfile.port,
+                                    controllerUsername = controllerProfile.user
                                 )
                                 OverviewTimestampComposable(overviewData = overviewData)
                                 OverviewWaterSignalsComposable(overviewData = overviewData)
@@ -142,11 +135,7 @@ fun OverviewScreen(
                 Spacer(modifier = Modifier.padding(vertical = 8.dp))
                 Button(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
-                    onClick = {
-                        if (isControllerAddressValid) {
-                            overviewViewModel.loadData()
-                        }
-                    },
+                    onClick = {overviewViewModel.loadData() },
                 ) {
                     Text(
                         text = stringResource(id = R.string.update_overview_data),
@@ -220,7 +209,7 @@ fun OverviewScreenPreviewSuccess() {
         navigationRouteSource = ViewNavigationRoutes.overView,
         screenContent = {
             OverviewScreen(
-                mainViewModel = mockMainViewModel,
+                controllerProfile = mockControllerProfile,
                 overviewViewModelFactory = mockOverviewViewModelFactorySuccess,
             )
         },
@@ -237,7 +226,7 @@ fun OverviewScreenPreviewError() {
         navigationRouteSource = ViewNavigationRoutes.overView,
         screenContent = {
             OverviewScreen(
-                mainViewModel = mockMainViewModel,
+                controllerProfile = mockControllerProfile,
                 overviewViewModelFactory = mockOverviewViewModelFactoryError,
             )
         },

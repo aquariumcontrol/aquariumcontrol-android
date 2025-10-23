@@ -1,57 +1,77 @@
 package com.laimburggasse.aquariumcontrol
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import android.content.SharedPreferences
+import android.util.Log
+import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
-import com.laimburggasse.aquariumcontrol.controller.ControllerProfile
+import com.laimburggasse.aquariumcontrol.MainActivity.Companion.KEY_DEFAULT_PROFILE_ID
+import com.laimburggasse.aquariumcontrol.MainActivity.Companion.NO_DEFAULT_ID
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
-open class MainViewModel: ViewModel() {
-    private var selectedController: ControllerProfile? by mutableStateOf(null)
-    private var defaultControllerProfileId: Long = 0
-    private var firstLoad: Boolean = true
+open class MainViewModel(
+    private val sharedPreferences: SharedPreferences? = null
+): ViewModel() {
+    private val _selectedControllerProfile = MutableStateFlow<ControllerProfile?>(value = null)
+    val selectedControllerProfile: StateFlow<ControllerProfile?> = _selectedControllerProfile.asStateFlow()
 
-    fun getDefaultControllerProfileId(): Long {
-        return defaultControllerProfileId
-    }
+    private var previousControllerProfileId: Long? = null
 
-    fun setDefaultControllerProfileId(id: Long) {
-        this.defaultControllerProfileId = id
+    private val _defaultControllerProfileId = MutableStateFlow(
+        value = sharedPreferences?.getLong(KEY_DEFAULT_PROFILE_ID, NO_DEFAULT_ID).let {
+            if (it == NO_DEFAULT_ID) null else it
+        }
+    )
+    val defaultControllerProfileId: StateFlow<Long?> = _defaultControllerProfileId.asStateFlow()
+
+    private val _isFirstLoad = MutableStateFlow(value = true)
+    val isFirstLoad: StateFlow<Boolean> = _isFirstLoad.asStateFlow()
+
+    fun saveDefaultControllerProfileId(id: Long) {
+        Log.d("MainViewModel", "Saving default controller ID: $id")
+        sharedPreferences?.edit {
+            putLong(KEY_DEFAULT_PROFILE_ID, id)
+        } // .apply() writes asynchronously in the background.
+        _defaultControllerProfileId.value = id
     }
 
     fun updateSelectedControllerProfile(controllerProfile: ControllerProfile) {
-        selectedController = controllerProfile
+        _selectedControllerProfile.value = controllerProfile
     }
 
     fun isControllerLoaded(): Boolean {
-        return selectedController != null
+        return selectedControllerProfile.value != null
     }
 
     open fun getControllerAddress(): String? {
-        return selectedController?.address
+        return selectedControllerProfile.value?.address
     }
 
     open fun getControllerUser(): String? {
-        return selectedController?.user
+        return selectedControllerProfile.value?.user
     }
 
     fun getControllerPassword(): String? {
-        return selectedController?.password
+        return selectedControllerProfile.value?.password
     }
 
     open fun getControllerPort(): Int? {
-        return selectedController?.port
+        return selectedControllerProfile.value?.port
     }
 
     open fun getControllerName(): String? {
-        return selectedController?.name
-    }
-
-    fun isFirstLoad(): Boolean {
-        return firstLoad
+        return selectedControllerProfile.value?.name
     }
 
     fun setFirstLoad() {
-        firstLoad = false
+        _isFirstLoad.value = false
+    }
+
+    fun unsetDefaultControllerId() {
+        if (previousControllerProfileId != null) {
+            _defaultControllerProfileId.value = previousControllerProfileId!!
+        }
     }
 }

@@ -4,7 +4,12 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
+import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel
+import com.laimburggasse.aquariumcontrol.controller.add.ControllerAddScreen
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerState
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -22,7 +27,18 @@ class ControllerAddScreenTest {
     @Test
     fun controllerAddScreenDarkTest() {
         composeTestRule.setContent {
-            ControllerAddScreen(state = ControllerState(), onEvent = {}, darkTheme = true)
+            MainScaffold(
+                mainViewModel = mockMainViewModel,
+                navigationRouteSource = ViewNavigationRoutes.controllerAdd,
+                screenContent = {
+                    ControllerAddScreen(
+                        state = ControllerState(),
+                        onEvent = {},
+                        onNavigateFromController = { event, id -> }
+                    ) },
+                onNavigate = {},
+                darkTheme = true
+            )
         }
         composeTestRule.waitForIdle()
         ScreenshotTestHelper.performScreenshotTest(
@@ -36,7 +52,18 @@ class ControllerAddScreenTest {
     @Test
     fun controllerAddScreenLightTest() {
         composeTestRule.setContent {
-            ControllerAddScreen(state = ControllerState(), onEvent = {}, darkTheme = false)
+            MainScaffold(
+                mainViewModel = mockMainViewModel,
+                navigationRouteSource = ViewNavigationRoutes.controllerAdd,
+                screenContent = {
+                    ControllerAddScreen(
+                        state = ControllerState(),
+                        onEvent = {},
+                        onNavigateFromController = { event, id -> }
+                    ) },
+                onNavigate = {},
+                darkTheme = false
+            )
         }
         composeTestRule.waitForIdle()
         ScreenshotTestHelper.performScreenshotTest(

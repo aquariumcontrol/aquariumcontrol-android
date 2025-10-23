@@ -1,7 +1,7 @@
 package com.laimburggasse.aquariumcontrol
 
-import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -19,27 +19,27 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.room.Room
 import com.laimburggasse.aquariumcontrol.balling.common.BallingProfilesRepository
-import com.laimburggasse.aquariumcontrol.balling.entry.BallingScreen
-import com.laimburggasse.aquariumcontrol.balling.entry.BallingProfilesViewModelFactory
-import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditScreen
-import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditViewModelFactory
 import com.laimburggasse.aquariumcontrol.balling.common.handleBallingNavigation
+import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditScreen
 import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditUiState
 import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditViewModel
+import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditViewModelFactory
 import com.laimburggasse.aquariumcontrol.balling.entry.BallingProfilesUiState
 import com.laimburggasse.aquariumcontrol.balling.entry.BallingProfilesViewModel
+import com.laimburggasse.aquariumcontrol.balling.entry.BallingProfilesViewModelFactory
+import com.laimburggasse.aquariumcontrol.balling.entry.BallingScreen
 import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryRepository
 import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryScreen
 import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryUiState
 import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryViewModel
 import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryViewModelFactory
-import com.laimburggasse.aquariumcontrol.controller.ControllerAddScreen
-import com.laimburggasse.aquariumcontrol.controller.ControllerEditScreen
-import com.laimburggasse.aquariumcontrol.controller.ControllerProfileDatabase
-import com.laimburggasse.aquariumcontrol.controller.ControllerSelectionScreen
-import com.laimburggasse.aquariumcontrol.controller.ControllerState
-import com.laimburggasse.aquariumcontrol.controller.ControllerViewModel
-import com.laimburggasse.aquariumcontrol.controller.handleControllerNavigation
+import com.laimburggasse.aquariumcontrol.controller.add.ControllerAddScreen
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfileDatabase
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerState
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerViewModel
+import com.laimburggasse.aquariumcontrol.controller.common.handleControllerNavigation
+import com.laimburggasse.aquariumcontrol.controller.edit.ControllerEditScreen
+import com.laimburggasse.aquariumcontrol.controller.selection.ControllerSelectionScreen
 import com.laimburggasse.aquariumcontrol.feed.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.FeedProfilesRepository
 import com.laimburggasse.aquariumcontrol.feed.FeedProfilesViewModelFactory
@@ -87,7 +87,9 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         private const val PREFS_NAME = "app_prefs"
-        private const val KEY_DEFAULT_PROFILE_ID = "default_profile_id"
+        const val KEY_DEFAULT_PROFILE_ID = "default_profile_id"
+
+        const val NO_DEFAULT_ID = -1L
     }
 
     private val db by lazy {
@@ -98,11 +100,14 @@ class MainActivity : ComponentActivity() {
         ).build()
     }
 
+    private val sharedPreferences by lazy {
+        getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+    }
     private val mainViewModel by viewModels<MainViewModel>(
         factoryProducer = {
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return MainViewModel() as T
+                    return MainViewModel(sharedPreferences) as T
                 }
             }
         }
@@ -113,7 +118,8 @@ class MainActivity : ComponentActivity() {
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
                     return ControllerViewModel(
-                        db.controllerProfileDao()
+                        dao = db.controllerProfileDao(),
+                        mainViewModel
                     ) as T
                 }
             }
@@ -186,17 +192,18 @@ class MainActivity : ComponentActivity() {
         super.onPause()
         val sharedPrefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
         with(sharedPrefs.edit()) {
-            putLong(KEY_DEFAULT_PROFILE_ID, mainViewModel.getDefaultControllerProfileId())
-            apply()
+            mainViewModel.defaultControllerProfileId.value.let {
+                putLong(
+                    KEY_DEFAULT_PROFILE_ID,
+                    mainViewModel.defaultControllerProfileId.value!!
+                )
+                apply()
+            }
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val sharedPrefs: SharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
-        val defaultProfileId: Long = sharedPrefs.getLong( KEY_DEFAULT_PROFILE_ID, -1) // -1 for no default
-        mainViewModel.setDefaultControllerProfileId(defaultProfileId)
 
         setContent {
             val navHostController: NavHostController = rememberNavController()
@@ -206,42 +213,33 @@ class MainActivity : ComponentActivity() {
                 navController = navHostController,
                 startDestination = ViewNavigationRoutes.controllerSelection,
                 builder = {
-                    composable(route = ViewNavigationRoutes.controllerSelection,
-                        arguments = listOf(
-                            navArgument(name = "controllerProfileId") {
-                                type = NavType.IntType
-                                defaultValue = -1L
-                            }
+                    composable(route = ViewNavigationRoutes.controllerSelection) {
+                        MainScaffold(
+                            mainViewModel,
+                            navigationRouteSource = ViewNavigationRoutes.controllerSelection,
+                            screenContent = {
+                                ControllerSelectionScreen(
+                                    state,
+                                    onEvent = controllerViewModel::onEvent,
+                                    onNavigateFromController = { event, controllerProfileId ->
+                                        navHostController.handleControllerNavigation(event, controllerProfileId)
+                                    },
+                                    canStartWaitForNavigation = controllerViewModel.canStartWaitForDefaultNavigation.collectAsState(),
+                                    progressToDefaultNavigation = controllerViewModel.progressToDefaultNavigation.collectAsState(),
+                                ) },
+                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
                         )
-                    ) { backStackEntry ->
-                        val controllerProfileId: Long = backStackEntry.arguments?.getLong("controllerProfileId") ?: -1L
-                        if (controllerProfileId >= 0L) {
-                            MainScaffold(
-                                mainViewModel,
-                                navigationRouteSource = ViewNavigationRoutes.controllerSelection,
-                                screenContent = {
-                                    ControllerSelectionScreen(
-                                        state = state,
-                                        onEvent = controllerViewModel::onEvent,
-                                        mainViewModel = mainViewModel,
-                                        onNavigateFromController = { event, controllerProfileId ->
-                                            navHostController.handleControllerNavigation(event, controllerProfileId)
-                                        }
-                                    )                                },
-                                onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
-                            )
-                        }
                     }
                     composable(route = ViewNavigationRoutes.controllerAdd)
                     {
+                        mainViewModel.setFirstLoad()
                         MainScaffold(
                             mainViewModel = mainViewModel,
                             navigationRouteSource = ViewNavigationRoutes.controllerAdd,
                             screenContent = {
                                 ControllerAddScreen(
-                                    state = state,
+                                    state,
                                     onEvent = controllerViewModel::onEvent,
-                                    mainViewModel = mainViewModel,
                                     onNavigateFromController = { event, controllerProfileId ->
                                         navHostController.handleControllerNavigation(
                                             event,
@@ -256,12 +254,13 @@ class MainActivity : ComponentActivity() {
                     composable(route = ViewNavigationRoutes.controllerEdit,
                         arguments = listOf(
                             navArgument(name = "controllerProfileId") {
-                                type = NavType.IntType
+                                type = NavType.LongType
                                 defaultValue = -1L
                             }
                         )
                     )
                     { backStackEntry ->
+                        mainViewModel.setFirstLoad()
                         val controllerProfileId: Long = backStackEntry.arguments?.getLong("controllerProfileId") ?: -1L
                         if (controllerProfileId >= 0L) {
                             MainScaffold(
@@ -269,9 +268,9 @@ class MainActivity : ComponentActivity() {
                                 navigationRouteSource = ViewNavigationRoutes.controllerEdit,
                                 screenContent = {
                                     ControllerEditScreen(
-                                        state = state,
+                                        state,
                                         onEvent = controllerViewModel::onEvent,
-                                        mainViewModel = mainViewModel,
+                                        isDefaultProfileInitialValue = mainViewModel.defaultControllerProfileId.collectAsState().value == controllerProfileId,
                                         onNavigateFromController = { event, controllerProfileId ->
                                             navHostController.handleControllerNavigation(event, controllerProfileId)
                                         }
@@ -605,15 +604,31 @@ class MainActivity : ComponentActivity() {
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) },
                         )
                     }
-                    composable(route = ViewNavigationRoutes.overView) {
-                        MainScaffold(
-                            mainViewModel,
-                            navigationRouteSource = ViewNavigationRoutes.overView,
-                            screenContent = {
-                                OverviewScreen(mainViewModel, overviewViewModelFactory)
-                            },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
+                    composable(route = ViewNavigationRoutes.overView,
+                        arguments = listOf(
+                            navArgument(name = "controllerProfileId") {
+                                type = NavType.LongType
+                                defaultValue = -1L
+                            }
                         )
+                    ) {
+                        Log.d("MainActivity", "Navigating to overview screen")
+                        val controllerProfile = mainViewModel.selectedControllerProfile.collectAsState()
+                        if (controllerProfile.value != null) {
+                            mainViewModel.setFirstLoad() // Controller selection may navigate here without user interaction
+                            MainScaffold(
+                                mainViewModel,
+                                navigationRouteSource = ViewNavigationRoutes.overView,
+                                screenContent = {
+                                    OverviewScreen(controllerProfile = controllerProfile.value!!, overviewViewModelFactory)
+                                },
+                                onNavigate = { event ->
+                                    navHostController.handleMainDropDownMenuNavigation(
+                                        event
+                                    )
+                                }
+                            )
+                        }
                     }
                 }
             )

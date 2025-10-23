@@ -1,7 +1,8 @@
-package com.laimburggasse.aquariumcontrol.controller
+package com.laimburggasse.aquariumcontrol.controller.common
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 
 @Database(entities = [ControllerProfile::class], version = 4, exportSchema = false)
 abstract class ControllerProfileDatabase : RoomDatabase() {

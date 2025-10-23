@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.controller
+package com.laimburggasse.aquariumcontrol.controller.common
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

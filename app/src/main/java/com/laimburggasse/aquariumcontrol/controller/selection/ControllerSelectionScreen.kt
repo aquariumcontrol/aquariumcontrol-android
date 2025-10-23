@@ -1,6 +1,8 @@
-package com.laimburggasse.aquariumcontrol.controller
+package com.laimburggasse.aquariumcontrol.controller.selection
 
 import android.content.res.Configuration
+import android.util.Log
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,11 +19,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -29,58 +30,45 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.MainScaffold
-import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerEvent
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerNavigationEvent
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerState
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 @Composable
 fun ControllerSelectionScreen(
     state: ControllerState,
     onEvent: (ControllerEvent) -> Unit,
-    mainViewModel: MainViewModel? = null,
-    mockProgress: Float? = null,
-    onNavigateFromController: (ControllerNavigationEvent, Long?) -> Unit
+    defaultProfileId: Long? = null,
+    onNavigateFromController: (ControllerNavigationEvent, Long?) -> Unit,
+    canStartWaitForNavigation: State<Boolean>,
+    progressToDefaultNavigation: State<Float>
 ) {
     // This screen displays:
     // - headline
     // - list of controller profiles
     // - floating action button to add new controller profile
 
-    var progress by remember { mutableFloatStateOf(0f) }
-    val defaultProfileId = mainViewModel?.getDefaultControllerProfileId() ?: -1L
-    var isDataLoaded by remember { mutableStateOf(false) } // Flag to track data loading
-
-    // Trigger data loading when the screen is composed
-    LaunchedEffect(key1 = Unit) {
-        // This will trigger the database read operation in the view model
-        onEvent(ControllerEvent.LoadControllerProfiles)
-        delay(100) // delay for data loading
-        isDataLoaded = true
-    }
+    val isWaitFinished = progressToDefaultNavigation.value >= 1.0f
 
     // Countdown and navigation logic
-    LaunchedEffect(key1 = isDataLoaded) {
-        if (isDataLoaded && defaultProfileId > 0 && mainViewModel?.isFirstLoad() != false && state.controllerProfileList.isNotEmpty()) {
-            // fine grained progressbar for visualization
-            (1..40).forEach { _ ->
-                delay(100)
-                progress += 0.025f
-            }
-
-            // Time has passed without user interaction, navigate to the default profile
-            val defaultProfile =
-                state.controllerProfileList.firstOrNull { it.id == defaultProfileId }
-            if (defaultProfile != null) {
-                mainViewModel?.setFirstLoad()
-                withContext(Dispatchers.Main) { // Switch to the main thread
-                    mainViewModel?.updateSelectedControllerProfile(defaultProfile)
-                    onNavigateFromController(ControllerNavigationEvent.ToOverview, defaultProfile.id)
-                }
+    LaunchedEffect(key1 = isWaitFinished) {
+        Log.d("ControllerSelectionScreen", "Countdown finished")
+        // Time has passed without user interaction, navigate to the default profile
+        val defaultProfile: ControllerProfile? =
+            state.controllerProfileList.firstOrNull { it.id == defaultProfileId }
+        defaultProfile?.let {
+            withContext(context = Dispatchers.Main) { // Switch to the main thread
+                onNavigateFromController(
+                    ControllerNavigationEvent.ToOverview,
+                    defaultProfile.id
+                )
             }
         }
     }
@@ -90,23 +78,11 @@ fun ControllerSelectionScreen(
     ) {
         ScreenHeadlineComposable(text = stringResource(id = R.string.list_of_controllers))
 
-        // Progress bar at the top to be visualized
-        // - for preview OR:
-        // - after data is loaded AND
-        // - default profile has been selected before AND
-        // - screen is invoked at startup AND
-        // - list of controller profiles is not empty
-        if (mockProgress != null || // Display progress bar if mockProgress is provided
-            (isDataLoaded && defaultProfileId > 0 &&
-                    mainViewModel?.isFirstLoad() != false &&
-                    state.controllerProfileList.isNotEmpty())
-        ) {
+        if (canStartWaitForNavigation.value) {
             Text(text = stringResource(R.string.loading_default_profile))
             LinearProgressIndicator(
-                progress = { progress },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+                progress = { progressToDefaultNavigation.value },
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
             )
         }
 
@@ -128,19 +104,18 @@ fun ControllerSelectionScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding),
+                    .padding(paddingValues = innerPadding),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val modifier = Modifier.padding(16.dp).wrapContentSize()
+                val modifier: Modifier = Modifier.padding(all = 16.dp).wrapContentSize()
 
                 if (LocalInspectionMode.current) {
                     Column(modifier) {
-                        val items = state.controllerProfileList
+                        val items: List<ControllerProfile> = state.controllerProfileList
                         items.forEach { item ->
                             ControllerProfileComposable(
-                                onEvent =  { },
+                                onEvent = { },
                                 controllerProfile = item,
-                                mainViewModel = null,
                                 onNavigateFromController = onNavigateFromController
                             )
                         }
@@ -152,7 +127,6 @@ fun ControllerSelectionScreen(
                             ControllerProfileComposable(
                                 onEvent = onEvent,
                                 controllerProfile = controllerProfile,
-                                mainViewModel = mainViewModel,
                                 onNavigateFromController = onNavigateFromController
                             )
                         }
@@ -208,11 +182,14 @@ internal fun ControllerSelectionScreenPreview() {
             ControllerSelectionScreen(
                 state = mockControllerState,
                 onEvent = {},
-                mockProgress = 0.3f,
-                onNavigateFromController = { event, profileId -> }
+                progressToDefaultNavigation = remember { mutableFloatStateOf(value = 0.3f) },
+                onNavigateFromController = { event, profileId -> },
+                defaultProfileId = 1,
+                canStartWaitForNavigation = remember { mutableStateOf(true) },
             )
          },
-        onNavigate = {}
+        onNavigate = {},
+        darkTheme = isSystemInDarkTheme()
     )
 }
 
