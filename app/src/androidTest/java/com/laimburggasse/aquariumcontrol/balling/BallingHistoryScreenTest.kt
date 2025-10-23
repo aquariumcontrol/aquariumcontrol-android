@@ -4,13 +4,13 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
-import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryDosingEvent
+import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryScreen
-import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryViewModelFactory
-import com.laimburggasse.aquariumcontrol.balling.history.MockBallingHistoryRepository
-import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
+import com.laimburggasse.aquariumcontrol.balling.history.mockBallingHistoryViewModelFactoryEmpty
+import com.laimburggasse.aquariumcontrol.balling.history.mockBallingHistoryViewModelFactorySuccess
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -25,40 +25,22 @@ class BallingHistoryScreenTest {
 
     private val subfolder = "balling"
 
-    val mockBallingHistoryEvents = listOf(
-        BallingHistoryDosingEvent(
-            timestamp = "2025-01-18 12:00:00",
-            pumpId = 1,
-            volume = 1.5,
-            label = "MockDosingUnit 1"
-        ),
-        BallingHistoryDosingEvent(
-            timestamp = "2025-01-18 12:00:00",
-            pumpId = 2,
-            volume = 2.5,
-            label = "MockDosingUnit 2"
-        ),
-    )
-
-    val mockBallingHistoryRepositorySuccess = MockBallingHistoryRepository(
-        mockData = DataFetchResult.Success(data = mockBallingHistoryEvents)
-    )
-
-    val mockBallingHistoryRepositoryEmpty = MockBallingHistoryRepository(
-        mockData = DataFetchResult.Success(data = emptyList())
-    )
-
     val mockMainViewModel = MockMainViewModel()
 
     @Test
     fun ballingHistoryScreenDarkEmptyTest() {
         composeTestRule.setContent {
-            BallingHistoryScreen(
-                showFullWeek = false,
+            MainScaffold(
                 mainViewModel = mockMainViewModel,
-                ballingHistoryViewModelFactory = BallingHistoryViewModelFactory(
-                    ballingHistoryRepository = mockBallingHistoryRepositoryEmpty
-                ),
+                navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
+                screenContent = {
+                    BallingHistoryScreen(
+                        showFullWeek = false,
+                        mainViewModel = com.laimburggasse.aquariumcontrol.overview.mockMainViewModel,
+                        ballingHistoryViewModelFactory = mockBallingHistoryViewModelFactoryEmpty,
+                    )
+                },
+                onNavigate = {},
                 darkTheme = true
             )
         }
@@ -74,12 +56,17 @@ class BallingHistoryScreenTest {
     @Test
     fun ballingHistoryScreenLightEmptyTest() {
         composeTestRule.setContent {
-            BallingHistoryScreen(
-                showFullWeek = false,
+            MainScaffold(
                 mainViewModel = mockMainViewModel,
-                ballingHistoryViewModelFactory = BallingHistoryViewModelFactory(
-                    ballingHistoryRepository = mockBallingHistoryRepositoryEmpty
-                ),
+                navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
+                screenContent = {
+                    BallingHistoryScreen(
+                        showFullWeek = false,
+                        mainViewModel = com.laimburggasse.aquariumcontrol.overview.mockMainViewModel,
+                        ballingHistoryViewModelFactory = mockBallingHistoryViewModelFactoryEmpty,
+                    )
+                },
+                onNavigate = {},
                 darkTheme = false
             )
         }
@@ -94,12 +81,17 @@ class BallingHistoryScreenTest {
     @Test
     fun ballingHistoryScreenDarkDataTest() {
         composeTestRule.setContent {
-            BallingHistoryScreen(
-                showFullWeek = false,
+            MainScaffold(
                 mainViewModel = mockMainViewModel,
-                ballingHistoryViewModelFactory = BallingHistoryViewModelFactory(
-                    ballingHistoryRepository = mockBallingHistoryRepositorySuccess
-                ),
+                navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
+                screenContent = {
+                    BallingHistoryScreen(
+                        showFullWeek = false,
+                        mainViewModel = com.laimburggasse.aquariumcontrol.overview.mockMainViewModel,
+                        ballingHistoryViewModelFactory = mockBallingHistoryViewModelFactorySuccess,
+                    )
+                },
+                onNavigate = {},
                 darkTheme = true
             )
         }
@@ -115,12 +107,17 @@ class BallingHistoryScreenTest {
     @Test
     fun ballingHistoryScreenLightDataTest() {
         composeTestRule.setContent {
-            BallingHistoryScreen(
-                showFullWeek = false,
+            MainScaffold(
                 mainViewModel = mockMainViewModel,
-                ballingHistoryViewModelFactory = BallingHistoryViewModelFactory(
-                    ballingHistoryRepository = mockBallingHistoryRepositorySuccess
-                ),
+                navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
+                screenContent = {
+                    BallingHistoryScreen(
+                        showFullWeek = false,
+                        mainViewModel = com.laimburggasse.aquariumcontrol.overview.mockMainViewModel,
+                        ballingHistoryViewModelFactory = mockBallingHistoryViewModelFactorySuccess,
+                    )
+                },
+                onNavigate = {},
                 darkTheme = false
             )
         }
@@ -132,5 +129,4 @@ class BallingHistoryScreenTest {
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
-
 }

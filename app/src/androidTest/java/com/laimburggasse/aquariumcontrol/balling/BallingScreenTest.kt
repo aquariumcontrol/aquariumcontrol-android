@@ -4,9 +4,10 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
-import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
+import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -21,25 +22,21 @@ class BallingScreenTest {
 
     private val subfolder = "balling"
 
-    val mockBallingProfile1 = BallingProfile(pumpId = 1, volume = 2.1, label = "mock1")
-    val mockBallingProfile2 = BallingProfile(pumpId = 2, volume = 3.1, label = "mock2")
-    val mockBallingProfiles = listOf(mockBallingProfile1, mockBallingProfile2)
-
-    val mockBallingRepositorySuccess = MockBallingProfilesRepository(
-        mockData = DataFetchResult.Success(data = mockBallingProfiles)
-    )
-
     val mockMainViewModel = MockMainViewModel()
 
     @Test
     fun ballingScreenDarkTest() {
         composeTestRule.setContent {
-            BallingScreen(
-                navHostController = null,
-                mainViewModel = mockMainViewModel,
-                ballingViewModelFactory = BallingViewModelFactory(
-                    ballingProfilesRepository = mockBallingRepositorySuccess
-                ),
+            MainScaffold(
+                mainViewModel = com.laimburggasse.aquariumcontrol.balling.mockMainViewModel,
+                navigationRouteSource = ViewNavigationRoutes.balling,
+                screenContent = {
+                    BallingScreen(
+                        ballingViewModelFactory = mockBallingViewModelFactorySuccess,
+                        onNavigateFromBalling = { event, pumpId -> }
+                    )
+                },
+                onNavigate = {},
                 darkTheme = true
             )
         }
@@ -55,12 +52,16 @@ class BallingScreenTest {
     @Test
     fun ballingScreenLightTest() {
         composeTestRule.setContent {
-            BallingScreen(
-                navHostController = null,
-                mainViewModel = mockMainViewModel,
-                ballingViewModelFactory = BallingViewModelFactory(
-                    ballingProfilesRepository = mockBallingRepositorySuccess
-                ),
+            MainScaffold(
+                mainViewModel = com.laimburggasse.aquariumcontrol.balling.mockMainViewModel,
+                navigationRouteSource = ViewNavigationRoutes.balling,
+                screenContent = {
+                    BallingScreen(
+                        ballingViewModelFactory = mockBallingViewModelFactorySuccess,
+                        onNavigateFromBalling = { event, pumpId -> }
+                    )
+                },
+                onNavigate = {},
                 darkTheme = false
             )
         }

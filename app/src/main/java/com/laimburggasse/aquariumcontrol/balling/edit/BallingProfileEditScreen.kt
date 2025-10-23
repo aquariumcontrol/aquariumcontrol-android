@@ -151,6 +151,15 @@ val mockBallingProfile = BallingProfile(
 
 val mockMainViewModel = MockMainViewModel()
 
+val mockBallingRepositorySuccess = MockBallingProfilesRepository(
+    mockData = DataFetchResult.Success(data = listOf(mockBallingProfile))
+)
+
+val mockBallingProfileEditViewModelFactory = BallingProfileEditViewModelFactory(
+    ballingProfileId = 1,
+    ballingProfilesRepository = mockBallingRepositorySuccess
+)
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
@@ -165,18 +174,12 @@ val mockMainViewModel = MockMainViewModel()
 )
 @Composable
 internal fun BallingProfileEditScreenPreview() {
-    val mockBallingRepositorySuccess = MockBallingProfilesRepository(
-        mockData = DataFetchResult.Success(data = listOf(mockBallingProfile))
-    )
     MainScaffold(
         mainViewModel = mockMainViewModel,
         navigationRouteSource = ViewNavigationRoutes.balling,
         screenContent = {
             BallingProfileEditScreen(
-                ballingProfileEditViewModelFactory = BallingProfileEditViewModelFactory(
-                    ballingProfileId = 1,
-                    ballingProfilesRepository = mockBallingRepositorySuccess
-                )
+                ballingProfileEditViewModelFactory = mockBallingProfileEditViewModelFactory
             )
         },
         onNavigate = {}

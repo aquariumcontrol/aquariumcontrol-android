@@ -133,6 +133,11 @@ val mockMainViewModel = MockMainViewModel()
 val mockBallingProfile1 = BallingProfile(pumpId = 1, volume = 2.1, label = "mock1")
 val mockBallingProfile2 = BallingProfile(pumpId = 2, volume = 3.1, label = "mock2")
 val mockBallingProfiles: List<BallingProfile> = listOf(mockBallingProfile1, mockBallingProfile2)
+val mockRepositoryEmpty = MockBallingProfilesRepository(mockData = DataFetchResult.Success(data = emptyList()))
+val mockBallingViewModelFactoryEmpty = BallingViewModelFactory(ballingProfilesRepository = mockRepositoryEmpty)
+val mockBallingData = DataFetchResult.Success(data = mockBallingProfiles)
+val mockBallingRepositorySuccess = MockBallingProfilesRepository(mockData = mockBallingData)
+val mockBallingViewModelFactorySuccess = BallingViewModelFactory(ballingProfilesRepository = mockBallingRepositorySuccess)
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -148,15 +153,12 @@ val mockBallingProfiles: List<BallingProfile> = listOf(mockBallingProfile1, mock
 )
 @Composable
 internal fun BallingScreenPreviewSuccess() {
-    val mockBallingData = DataFetchResult.Success(data = mockBallingProfiles)
-    val mockBallingRepositorySuccess = MockBallingProfilesRepository(mockData = mockBallingData)
-    val mockBallingViewModelFactory = BallingViewModelFactory(ballingProfilesRepository = mockBallingRepositorySuccess)
     MainScaffold(
         mainViewModel = mockMainViewModel,
         navigationRouteSource = ViewNavigationRoutes.balling,
         screenContent = {
             BallingScreen(
-                ballingViewModelFactory = mockBallingViewModelFactory,
+                ballingViewModelFactory = mockBallingViewModelFactorySuccess,
                 onNavigateFromBalling = { event, pumpId -> }
             )
         },
@@ -207,14 +209,12 @@ internal fun BallingScreenPreviewLoading() {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun BallingScreenPreviewEmpty() {
-    val mockRepositoryEmpty = MockBallingProfilesRepository(mockData = DataFetchResult.Success(data = emptyList()))
-    val mockBallingViewModelFactory = BallingViewModelFactory(ballingProfilesRepository = mockRepositoryEmpty)
     MainScaffold(
         mainViewModel = mockMainViewModel,
         navigationRouteSource = ViewNavigationRoutes.balling,
         screenContent = {
             BallingScreen(
-                ballingViewModelFactory = mockBallingViewModelFactory,
+                ballingViewModelFactory = mockBallingViewModelFactoryEmpty,
                 onNavigateFromBalling = { event, pumpId -> }
             )
         },

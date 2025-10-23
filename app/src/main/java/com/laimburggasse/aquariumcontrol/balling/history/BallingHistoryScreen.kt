@@ -197,6 +197,18 @@ val mockBallingHistoryRepositoryError = MockBallingHistoryRepository(
     mockData = DataFetchResult.Error(exception = null, errorMessage = "Error message")
 )
 
+val mockBallingHistoryViewModelFactorySuccess = BallingHistoryViewModelFactory(
+    ballingHistoryRepository = mockBallingHistoryRepositorySuccess
+)
+
+val mockBallingHistoryViewModelFactoryError = BallingHistoryViewModelFactory(
+    ballingHistoryRepository = mockBallingHistoryRepositoryError
+)
+
+val mockBallingHistoryViewModelFactoryEmpty = BallingHistoryViewModelFactory(
+    ballingHistoryRepository = mockBallingHistoryRepositoryEmpty
+)
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
@@ -211,25 +223,36 @@ val mockBallingHistoryRepositoryError = MockBallingHistoryRepository(
 )
 @Composable
 internal fun BallingHistoryScreenPreviewSuccess() {
-    BallingHistoryScreen(
-        showFullWeek = false,
+    MainScaffold(
         mainViewModel = mockMainViewModel,
-        ballingHistoryViewModelFactory = BallingHistoryViewModelFactory(
-            ballingHistoryRepository = mockBallingHistoryRepositorySuccess
-        )
+        navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
+        screenContent = {
+            BallingHistoryScreen(
+                showFullWeek = false,
+                mainViewModel = mockMainViewModel,
+                ballingHistoryViewModelFactory = mockBallingHistoryViewModelFactorySuccess
+            )
+        },
+        onNavigate = {}
     )
+
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun BallingHistoryScreenPreviewEmpty() {
-    BallingHistoryScreen(
-        showFullWeek = false,
+    MainScaffold(
         mainViewModel = mockMainViewModel,
-        ballingHistoryViewModelFactory = BallingHistoryViewModelFactory(
-            ballingHistoryRepository = mockBallingHistoryRepositoryEmpty
-        ),
+        navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
+        screenContent = {
+            BallingHistoryScreen(
+                showFullWeek = false,
+                mainViewModel = mockMainViewModel,
+                ballingHistoryViewModelFactory = mockBallingHistoryViewModelFactoryEmpty,
+            )
+        },
+        onNavigate = {}
     )
 }
 
@@ -239,14 +262,12 @@ internal fun BallingHistoryScreenPreviewEmpty() {
 internal fun BallingHistoryScreenPreviewError() {
     MainScaffold(
         mainViewModel = mockMainViewModel,
-        navigationRouteSource = ViewNavigationRoutes.balling,
+        navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
         screenContent = {
             BallingHistoryScreen(
                 showFullWeek = false,
                 mainViewModel = mockMainViewModel,
-                ballingHistoryViewModelFactory = BallingHistoryViewModelFactory(
-                    ballingHistoryRepository = mockBallingHistoryRepositoryError
-                ),
+                ballingHistoryViewModelFactory = mockBallingHistoryViewModelFactoryError,
             )
         },
         onNavigate = {}

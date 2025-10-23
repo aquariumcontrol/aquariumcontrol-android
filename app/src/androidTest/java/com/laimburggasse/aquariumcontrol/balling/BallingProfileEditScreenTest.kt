@@ -4,11 +4,12 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
+import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditScreen
-import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditViewModelFactory
-import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
+import com.laimburggasse.aquariumcontrol.balling.edit.mockBallingProfileEditViewModelFactory
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -23,29 +24,20 @@ class BallingProfileEditScreenTest {
 
     private val subfolder = "balling"
 
-    val mockBallingProfile = BallingProfile(
-        pumpId = 1,
-        volume = 1.5,
-        label = "MockDosingUnit 1",
-    )
-
-    val mockBallingProfiles = listOf(mockBallingProfile)
-
-    val mockBallingRepositorySuccess = MockBallingProfilesRepository(
-        mockData = DataFetchResult.Success(data = mockBallingProfiles)
-    )
     val mockMainViewModel = MockMainViewModel()
 
     @Test
     fun ballingProfileEditScreenDarkTest() {
         composeTestRule.setContent {
-            BallingProfileEditScreen(
-                navHostController = null,
-                mainViewModel = mockMainViewModel,
-                ballingProfileEditViewModelFactory = BallingProfileEditViewModelFactory(
-                    ballingProfileId = 1,
-                    ballingProfilesRepository = mockBallingRepositorySuccess
-                ),
+            MainScaffold(
+                mainViewModel = com.laimburggasse.aquariumcontrol.balling.mockMainViewModel,
+                navigationRouteSource = ViewNavigationRoutes.balling,
+                screenContent = {
+                    BallingProfileEditScreen(
+                        ballingProfileEditViewModelFactory = mockBallingProfileEditViewModelFactory
+                    )
+                },
+                onNavigate = {},
                 darkTheme = true
             )
         }
@@ -61,13 +53,15 @@ class BallingProfileEditScreenTest {
     @Test
     fun ballingProfileEditScreenLightTest() {
         composeTestRule.setContent {
-            BallingProfileEditScreen(
-                navHostController = null,
-                mainViewModel = mockMainViewModel,
-                ballingProfileEditViewModelFactory = BallingProfileEditViewModelFactory(
-                    ballingProfileId = 1,
-                    ballingProfilesRepository = mockBallingRepositorySuccess
-                ),
+            MainScaffold(
+                mainViewModel = com.laimburggasse.aquariumcontrol.balling.mockMainViewModel,
+                navigationRouteSource = ViewNavigationRoutes.balling,
+                screenContent = {
+                    BallingProfileEditScreen(
+                        ballingProfileEditViewModelFactory = mockBallingProfileEditViewModelFactory
+                    )
+                },
+                onNavigate = {},
                 darkTheme = false
             )
         }
