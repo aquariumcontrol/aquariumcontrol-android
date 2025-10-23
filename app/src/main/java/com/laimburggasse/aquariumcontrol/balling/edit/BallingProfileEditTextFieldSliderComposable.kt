@@ -22,7 +22,7 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 @Composable
 fun BallingProfileEditTextFieldSliderComposable(
     sliderPositionNewDosingVolume: Double,
-    ballingProfileEditViewModel: BallingProfileEditViewModel? = null
+    onEvent: (BallingProfileEditEvent) -> Unit = {},
 ) {
     // This composable contains content separated from BallingProfileEditScreen to allow
     // dynamic placement depending on screen orientation:
@@ -33,8 +33,8 @@ fun BallingProfileEditTextFieldSliderComposable(
         value = sliderPositionNewDosingVolume,
         onValueChange = { newStringValue ->
             if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
-                val newNumericValue = newStringValue.toDouble()
-                ballingProfileEditViewModel?.onVolumeChange(newNumericValue)
+                val newNumericValue: Double = newStringValue.toDouble()
+                onEvent(BallingProfileEditEvent.ChangeDosingVolume(newDosingValue = newNumericValue))
             }
         },
         label = stringResource(R.string.new_dosing_volume_ml_h),
@@ -47,7 +47,7 @@ fun BallingProfileEditTextFieldSliderComposable(
         value = sliderPositionNewDosingVolume.toFloat(),
         modifier = Modifier.padding(16.dp),
         onValueChange = {
-            ballingProfileEditViewModel?.onVolumeChange(it.toDouble())
+            onEvent(BallingProfileEditEvent.ChangeDosingVolume(newDosingValue = it.toDouble()))
         },
         valueRange = BallingProfileEditSliderRange.RANGE
     )

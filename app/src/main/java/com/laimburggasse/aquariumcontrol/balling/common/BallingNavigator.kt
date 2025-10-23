@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.balling
+package com.laimburggasse.aquariumcontrol.balling.common
 
 import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes

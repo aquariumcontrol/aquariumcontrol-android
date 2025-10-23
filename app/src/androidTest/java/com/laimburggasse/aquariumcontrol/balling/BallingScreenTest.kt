@@ -8,6 +8,8 @@ import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.balling.entry.BallingScreen
+import com.laimburggasse.aquariumcontrol.balling.entry.mockBallingProfilesUiStateSuccess
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -28,11 +30,11 @@ class BallingScreenTest {
     fun ballingScreenDarkTest() {
         composeTestRule.setContent {
             MainScaffold(
-                mainViewModel = com.laimburggasse.aquariumcontrol.balling.mockMainViewModel,
+                mainViewModel = com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
                 navigationRouteSource = ViewNavigationRoutes.balling,
                 screenContent = {
                     BallingScreen(
-                        ballingViewModelFactory = mockBallingViewModelFactorySuccess,
+                        ballingProfilesUiState = mockBallingProfilesUiStateSuccess,
                         onNavigateFromBalling = { event, pumpId -> }
                     )
                 },
@@ -53,12 +55,12 @@ class BallingScreenTest {
     fun ballingScreenLightTest() {
         composeTestRule.setContent {
             MainScaffold(
-                mainViewModel = com.laimburggasse.aquariumcontrol.balling.mockMainViewModel,
+                mainViewModel = com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
                 navigationRouteSource = ViewNavigationRoutes.balling,
                 screenContent = {
                     BallingScreen(
-                        ballingViewModelFactory = mockBallingViewModelFactorySuccess,
-                        onNavigateFromBalling = { event, pumpId -> }
+                        onNavigateFromBalling = { event, pumpId -> },
+                        ballingProfilesUiState = mockBallingProfilesUiStateSuccess
                     )
                 },
                 onNavigate = {},

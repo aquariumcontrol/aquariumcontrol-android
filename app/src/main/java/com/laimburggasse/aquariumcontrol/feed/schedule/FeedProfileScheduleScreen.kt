@@ -286,7 +286,7 @@ fun FeedProfileScheduleScreenPreviewSuccess() {
     val mockFeedProfilesViewModelFactory = FeedProfilesViewModelFactory(mockFeedProfilesRepository)
 
     MainScaffold(
-        mainViewModel = com.laimburggasse.aquariumcontrol.balling.mockMainViewModel,
+        mainViewModel = _root_ide_package_.com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
         navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
         screenContent = {
             FeedProfileScheduleScreen(
@@ -327,7 +327,7 @@ internal fun FeedProfileScheduleScreenPreviewError() {
     val mockFeedScheduleViewModelFactory = FeedScheduleViewModelFactory(mockFeedScheduleRepository, mockFeedProfilesRepository)
     val mockFeedProfilesViewModelFactory = FeedProfilesViewModelFactory(mockFeedProfilesRepository)
     MainScaffold(
-        mainViewModel = com.laimburggasse.aquariumcontrol.balling.mockMainViewModel,
+        mainViewModel = _root_ide_package_.com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
         navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
         screenContent = {
             FeedProfileScheduleScreen(

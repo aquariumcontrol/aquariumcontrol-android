@@ -5,8 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.balling.BallingProfile
-import com.laimburggasse.aquariumcontrol.balling.BallingProfilesRepository
+import com.laimburggasse.aquariumcontrol.balling.common.BallingProfile
+import com.laimburggasse.aquariumcontrol.balling.common.BallingProfilesRepository
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.coroutines.launch
 
@@ -42,7 +42,7 @@ class BallingProfileEditViewModel(
     fun onConfirmDosing(newVolume: Double) {
         val currentState: BallingProfileEditUiState = ballingProfileEditUiState
         if (currentState is BallingProfileEditUiState.Success) {
-            val updatedProfile = currentState.ballingProfile.copy(volume = newVolume)
+            val updatedProfile: BallingProfile = currentState.ballingProfile.copy(volume = newVolume)
 
             ballingProfileEditUiState = BallingProfileEditUiState.Success(updatedProfile)
 
@@ -58,6 +58,17 @@ class BallingProfileEditViewModel(
             ballingProfileEditUiState = currentState.copy(
                 ballingProfile = currentState.ballingProfile.copy(volume = newVolume)
             )
+        }
+    }
+
+    fun onEvent(event: BallingProfileEditEvent) {
+        when (event) {
+            is BallingProfileEditEvent.ConfirmDosingVolume -> {
+                onConfirmDosing(newVolume = event.newDosingValue)
+            }
+            is BallingProfileEditEvent.ChangeDosingVolume -> {
+                onVolumeChange(newVolume = event.newDosingValue)
+            }
         }
     }
 }

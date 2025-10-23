@@ -213,7 +213,7 @@ val mockFeedHistoryRepositoryError = MockFeedHistoryRepository(
 @Composable
 internal fun FeedHistoryScreenPreviewSuccess() {
     MainScaffold(
-        mainViewModel = com.laimburggasse.aquariumcontrol.balling.mockMainViewModel,
+        mainViewModel = _root_ide_package_.com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
         navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
         screenContent = {
             FeedHistoryScreen(
@@ -233,7 +233,7 @@ internal fun FeedHistoryScreenPreviewSuccess() {
 @Composable
 internal fun FeedHistoryScreenPreviewError() {
     MainScaffold(
-        mainViewModel = com.laimburggasse.aquariumcontrol.balling.mockMainViewModel,
+        mainViewModel = _root_ide_package_.com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
         navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
         screenContent = {
             FeedHistoryScreen(
@@ -253,7 +253,7 @@ internal fun FeedHistoryScreenPreviewError() {
 @Composable
 internal fun FeedHistoryScreenPreviewEmpty() {
     MainScaffold(
-        mainViewModel = com.laimburggasse.aquariumcontrol.balling.mockMainViewModel,
+        mainViewModel = _root_ide_package_.com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
         navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
         screenContent = {
             FeedHistoryScreen(

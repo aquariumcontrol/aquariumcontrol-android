@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.balling
+package com.laimburggasse.aquariumcontrol.balling.common
 
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke

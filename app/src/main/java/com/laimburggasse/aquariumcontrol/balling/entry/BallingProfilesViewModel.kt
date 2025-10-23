@@ -1,7 +1,8 @@
-package com.laimburggasse.aquariumcontrol.balling
+package com.laimburggasse.aquariumcontrol.balling.entry
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.laimburggasse.aquariumcontrol.balling.common.BallingProfilesRepository
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -27,7 +28,7 @@ class BallingProfilesViewModel(
             }
         }.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.Eagerly,
+            started = SharingStarted.Companion.Eagerly,
             initialValue = BallingProfilesUiState.Loading // The UI starts in a loading state
         )
 

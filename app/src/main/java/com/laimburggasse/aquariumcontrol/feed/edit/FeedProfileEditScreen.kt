@@ -248,7 +248,7 @@ val mockFeedProfileEditViewModelFactory = FeedProfileEditViewModelFactory(
 @Composable
 internal fun FeedProfileEditScreenPreview() {
     MainScaffold(
-        mainViewModel = com.laimburggasse.aquariumcontrol.balling.mockMainViewModel,
+        mainViewModel = _root_ide_package_.com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
         navigationRouteSource = ViewNavigationRoutes.feedEdit,
         screenContent = {
             FeedProfileEditScreen(

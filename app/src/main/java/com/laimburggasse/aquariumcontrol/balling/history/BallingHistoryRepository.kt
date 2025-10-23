@@ -18,13 +18,18 @@ open class BallingHistoryRepository(private val mainViewModel: MainViewModel) {
     open suspend fun fetchBallingHistoryDosingEvents(
         showFullWeek: Boolean
     ) {
-        val url = when {
+        if (mainViewModel.getControllerAddress().isNullOrBlank()) {
+            return
+        }
+
+        val url: String = when {
             showFullWeek -> "http://" + mainViewModel.getControllerAddress() + WebApiUrls.BALLING_GET_EVENTS_7D
             else -> "http://" + mainViewModel.getControllerAddress() + WebApiUrls.BALLING_GET_EVENTS_24H
         }
         val reader = BallingHistoryEventReader(url)
         withContext(context = Dispatchers.IO) {
-            val result: DataFetchResult<List<BallingHistoryDosingEvent>> = reader.readBallingEvents(mainViewModel)
+            val result: DataFetchResult<List<BallingHistoryDosingEvent>> =
+                reader.readBallingEvents(mainViewModel)
             _ballingHistoryDosingEventFlow.value = result
         }
     }

@@ -280,7 +280,7 @@ val mockMainViewModel = MockMainViewModel()
 @Composable
 fun HeatingScreenPreviewSuccess() {
     MainScaffold(
-        mainViewModel = com.laimburggasse.aquariumcontrol.balling.mockMainViewModel,
+        mainViewModel = _root_ide_package_.com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
         navigationRouteSource = ViewNavigationRoutes.heating,
         screenContent = {
             HeatingScreen(
@@ -297,7 +297,7 @@ fun HeatingScreenPreviewSuccess() {
 @Composable
 fun HeatingScreenPreviewError() {
     MainScaffold(
-        mainViewModel = com.laimburggasse.aquariumcontrol.balling.mockMainViewModel,
+        mainViewModel = _root_ide_package_.com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
         navigationRouteSource = ViewNavigationRoutes.heating,
         screenContent = {
             HeatingScreen(

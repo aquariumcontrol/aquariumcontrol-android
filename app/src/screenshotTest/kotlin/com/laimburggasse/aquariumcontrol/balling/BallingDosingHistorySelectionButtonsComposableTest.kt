@@ -4,6 +4,8 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
+import com.laimburggasse.aquariumcontrol.balling.entry.BallingDosingHistorySelectionButtonsComposableLandscapePreview
+import com.laimburggasse.aquariumcontrol.balling.entry.BallingDosingHistorySelectionButtonsComposablePortraitPreview
 
 @Suppress("unused")
 class BallingDosingHistorySelectionButtonsComposableTest {

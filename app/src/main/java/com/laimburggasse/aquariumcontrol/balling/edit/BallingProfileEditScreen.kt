@@ -25,21 +25,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.laimburggasse.aquariumcontrol.MainScaffold
-import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.balling.BallingProfile
-import com.laimburggasse.aquariumcontrol.balling.BallingProfileSummaryComposable
-import com.laimburggasse.aquariumcontrol.balling.MockBallingProfilesRepository
-import com.laimburggasse.aquariumcontrol.balling.mockMainViewModel
+import com.laimburggasse.aquariumcontrol.balling.common.BallingProfile
+import com.laimburggasse.aquariumcontrol.balling.common.BallingProfileSummaryComposable
+import com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
-import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
 fun BallingProfileEditScreen(
-    ballingProfileEditViewModelFactory: BallingProfileEditViewModelFactory,
+    ballingProfileEditUiState: BallingProfileEditUiState,
+    onEvent: (BallingProfileEditEvent) -> Unit
 ) {
     // This screen displays:
     // - Headline
@@ -48,11 +45,6 @@ fun BallingProfileEditScreen(
     // - Text to display the current dosing volume
     // - Button to confirm the new dosing volume
 
-    val ballingProfileEditViewModel: BallingProfileEditViewModel = viewModel(
-        factory = ballingProfileEditViewModelFactory
-    )
-
-    val uiState = ballingProfileEditViewModel.ballingProfileEditUiState
     val context: Context = LocalContext.current
     val configuration: Configuration = LocalConfiguration.current
 
@@ -70,11 +62,10 @@ fun BallingProfileEditScreen(
                 .weight(weight = 1f)
                 .fillMaxWidth()
         ) {
-            when (uiState) {
+            when (ballingProfileEditUiState) {
 
                 is BallingProfileEditUiState.Error -> {
-                    val errorMessage: String = (ballingProfileEditViewModel.ballingProfileEditUiState
-                            as BallingProfileEditUiState.Error).errorMessage
+                    val errorMessage: String = ballingProfileEditUiState.errorMessage
                     Text(text = "Error loading data: $errorMessage")
                 }
                 BallingProfileEditUiState.Loading -> {
@@ -84,13 +75,13 @@ fun BallingProfileEditScreen(
                     Text(text = "Balling profile not found")
                 }
                 is BallingProfileEditUiState.Success -> {
-                    val ballingProfile = uiState.ballingProfile
+                    val ballingProfile: BallingProfile = ballingProfileEditUiState.ballingProfile
 
                     var sliderPositionNewDosingVolume by remember {
                         mutableDoubleStateOf(ballingProfile.volume)
                     }
 
-                    LaunchedEffect(ballingProfile.volume) {
+                    LaunchedEffect(key1 = ballingProfile.volume) {
                         sliderPositionNewDosingVolume = ballingProfile.volume
                     }
 
@@ -103,28 +94,28 @@ fun BallingProfileEditScreen(
                         Configuration.ORIENTATION_LANDSCAPE -> {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.padding(20.dp)
+                                modifier = Modifier.padding(all = 20.dp)
                             ) {
                                 BallingProfileEditTextFieldSliderComposable(
-                                    sliderPositionNewDosingVolume = sliderPositionNewDosingVolume,
-                                    ballingProfileEditViewModel = ballingProfileEditViewModel
+                                    sliderPositionNewDosingVolume,
+                                    onEvent
                                 )
                             }
                         }
 
                         else -> {
                             BallingProfileEditTextFieldSliderComposable(
-                                sliderPositionNewDosingVolume = sliderPositionNewDosingVolume,
-                                ballingProfileEditViewModel = ballingProfileEditViewModel
+                                sliderPositionNewDosingVolume,
+                                onEvent
                             )
                         }
                     }
                     Button(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp),
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
                         onClick = {
-                            ballingProfileEditViewModel.onConfirmDosing(sliderPositionNewDosingVolume)
+                            onEvent(BallingProfileEditEvent.ConfirmDosingVolume(
+                                newDosingValue = sliderPositionNewDosingVolume)
+                            )
                             Toast.makeText(
                                 context,
                                 context.getString(R.string.sent_request_to_controller_for_updating_dosing_volume),
@@ -149,15 +140,8 @@ val mockBallingProfile = BallingProfile(
     label = "MockDosingUnit 1",
 )
 
-val mockMainViewModel = MockMainViewModel()
-
-val mockBallingRepositorySuccess = MockBallingProfilesRepository(
-    mockData = DataFetchResult.Success(data = listOf(mockBallingProfile))
-)
-
-val mockBallingProfileEditViewModelFactory = BallingProfileEditViewModelFactory(
-    ballingProfileId = 1,
-    ballingProfilesRepository = mockBallingRepositorySuccess
+val mockBallingProfileEditUiState = BallingProfileEditUiState.Success(
+    ballingProfile = mockBallingProfile
 )
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
@@ -179,7 +163,8 @@ internal fun BallingProfileEditScreenPreview() {
         navigationRouteSource = ViewNavigationRoutes.balling,
         screenContent = {
             BallingProfileEditScreen(
-                ballingProfileEditViewModelFactory = mockBallingProfileEditViewModelFactory
+                ballingProfileEditUiState = mockBallingProfileEditUiState,
+                onEvent = {}
             )
         },
         onNavigate = {}

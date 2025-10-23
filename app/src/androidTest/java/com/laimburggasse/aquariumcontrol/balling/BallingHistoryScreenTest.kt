@@ -9,8 +9,8 @@ import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryScreen
-import com.laimburggasse.aquariumcontrol.balling.history.mockBallingHistoryViewModelFactoryEmpty
-import com.laimburggasse.aquariumcontrol.balling.history.mockBallingHistoryViewModelFactorySuccess
+import com.laimburggasse.aquariumcontrol.balling.history.mockBallingHistoryUiStateEmpty
+import com.laimburggasse.aquariumcontrol.balling.history.mockBallingHistoryUiStateSuccess
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -36,8 +36,8 @@ class BallingHistoryScreenTest {
                 screenContent = {
                     BallingHistoryScreen(
                         showFullWeek = false,
-                        mainViewModel = com.laimburggasse.aquariumcontrol.overview.mockMainViewModel,
-                        ballingHistoryViewModelFactory = mockBallingHistoryViewModelFactoryEmpty,
+                        ballingHistoryUiState = mockBallingHistoryUiStateEmpty,
+                        onEvent = {}
                     )
                 },
                 onNavigate = {},
@@ -62,8 +62,8 @@ class BallingHistoryScreenTest {
                 screenContent = {
                     BallingHistoryScreen(
                         showFullWeek = false,
-                        mainViewModel = com.laimburggasse.aquariumcontrol.overview.mockMainViewModel,
-                        ballingHistoryViewModelFactory = mockBallingHistoryViewModelFactoryEmpty,
+                        ballingHistoryUiState = mockBallingHistoryUiStateEmpty,
+                        onEvent = {}
                     )
                 },
                 onNavigate = {},
@@ -87,8 +87,8 @@ class BallingHistoryScreenTest {
                 screenContent = {
                     BallingHistoryScreen(
                         showFullWeek = false,
-                        mainViewModel = com.laimburggasse.aquariumcontrol.overview.mockMainViewModel,
-                        ballingHistoryViewModelFactory = mockBallingHistoryViewModelFactorySuccess,
+                        ballingHistoryUiState = mockBallingHistoryUiStateSuccess,
+                        onEvent = {}
                     )
                 },
                 onNavigate = {},
@@ -113,8 +113,8 @@ class BallingHistoryScreenTest {
                 screenContent = {
                     BallingHistoryScreen(
                         showFullWeek = false,
-                        mainViewModel = com.laimburggasse.aquariumcontrol.overview.mockMainViewModel,
-                        ballingHistoryViewModelFactory = mockBallingHistoryViewModelFactorySuccess,
+                        ballingHistoryUiState = mockBallingHistoryUiStateSuccess,
+                        onEvent = {}
                     )
                 },
                 onNavigate = {},

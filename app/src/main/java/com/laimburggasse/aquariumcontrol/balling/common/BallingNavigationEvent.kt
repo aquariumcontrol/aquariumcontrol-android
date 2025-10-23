@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.balling
+package com.laimburggasse.aquariumcontrol.balling.common
 
 sealed class BallingNavigationEvent {
     object ToBallingHistory24h: BallingNavigationEvent()

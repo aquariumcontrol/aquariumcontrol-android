@@ -250,7 +250,7 @@ internal fun RefillHistoryScreenPreviewError() {
 @Composable
 internal fun RefillHistoryScreenPreviewEmpty() {
     MainScaffold(
-        mainViewModel = com.laimburggasse.aquariumcontrol.balling.mockMainViewModel,
+        mainViewModel = _root_ide_package_.com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
         navigationRouteSource = ViewNavigationRoutes.refillHistory24h,
         screenContent = {
             RefillHistoryScreen(

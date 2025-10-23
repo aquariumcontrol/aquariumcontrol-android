@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -17,14 +18,20 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.room.Room
-import com.laimburggasse.aquariumcontrol.balling.BallingProfilesRepository
-import com.laimburggasse.aquariumcontrol.balling.BallingScreen
-import com.laimburggasse.aquariumcontrol.balling.BallingViewModelFactory
+import com.laimburggasse.aquariumcontrol.balling.common.BallingProfilesRepository
+import com.laimburggasse.aquariumcontrol.balling.entry.BallingScreen
+import com.laimburggasse.aquariumcontrol.balling.entry.BallingProfilesViewModelFactory
 import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditScreen
 import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditViewModelFactory
-import com.laimburggasse.aquariumcontrol.balling.handleBallingNavigation
+import com.laimburggasse.aquariumcontrol.balling.common.handleBallingNavigation
+import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditUiState
+import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditViewModel
+import com.laimburggasse.aquariumcontrol.balling.entry.BallingProfilesUiState
+import com.laimburggasse.aquariumcontrol.balling.entry.BallingProfilesViewModel
 import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryRepository
 import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryScreen
+import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryUiState
+import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryViewModel
 import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryViewModelFactory
 import com.laimburggasse.aquariumcontrol.controller.ControllerAddScreen
 import com.laimburggasse.aquariumcontrol.controller.ControllerEditScreen
@@ -119,7 +126,7 @@ class MainActivity : ComponentActivity() {
 
     private val ballingProfilesRepository by lazy { BallingProfilesRepository(mainViewModel = mainViewModel) }
     private val ballingHistoryRepository by lazy { BallingHistoryRepository(mainViewModel = mainViewModel) }
-    private val ballingViewModelFactory by lazy { BallingViewModelFactory(ballingProfilesRepository) }
+    private val ballingProfilesViewModelFactory by lazy { BallingProfilesViewModelFactory(ballingProfilesRepository) }
     private val ballingHistoryViewModelFactory by lazy { BallingHistoryViewModelFactory(ballingHistoryRepository) }
 
     private val feedProfilesRepository by lazy { FeedProfilesRepository(mainViewModel = mainViewModel) }
@@ -419,12 +426,17 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                     composable(route = ViewNavigationRoutes.balling) {
+                        val ballingViewModel: BallingProfilesViewModel =
+                            viewModel(factory = ballingProfilesViewModelFactory)
+                        val ballingProfilesUiState: BallingProfilesUiState by
+                            ballingViewModel.ballingProfilesUiState.collectAsState()
+
                         MainScaffold(
                             mainViewModel,
                             navigationRouteSource = ViewNavigationRoutes.balling,
                             screenContent = {
                                 BallingScreen(
-                                    ballingViewModelFactory,
+                                    ballingProfilesUiState,
                                     onNavigateFromBalling = {
                                         event, pumpId -> navHostController.handleBallingNavigation(event, pumpId)
                                     }
@@ -434,24 +446,41 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(route = ViewNavigationRoutes.ballingHistory24h) {
+                        val ballingHistoryViewModel: BallingHistoryViewModel = viewModel(
+                            factory = ballingHistoryViewModelFactory
+                        )
+                        val ballingHistoryUiState: BallingHistoryUiState by
+                            ballingHistoryViewModel.ballingHistoryUiState.collectAsState()
                         MainScaffold(
                             mainViewModel,
                             navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
                             screenContent = {
                                 BallingHistoryScreen(
                                     showFullWeek = false,
-                                    mainViewModel,
-                                    ballingHistoryViewModelFactory,
+                                    ballingHistoryUiState,
+                                    onEvent = ballingHistoryViewModel::onEvent
                                 )
                             },
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) },
                         )
                     }
                     composable(route = ViewNavigationRoutes.ballingHistory7d) {
-                        BallingHistoryScreen(
-                            showFullWeek = true,
+                        val ballingHistoryViewModel: BallingHistoryViewModel = viewModel(
+                            factory = ballingHistoryViewModelFactory
+                        )
+                        val ballingHistoryUiState: BallingHistoryUiState by
+                        ballingHistoryViewModel.ballingHistoryUiState.collectAsState()
+                        MainScaffold(
                             mainViewModel,
-                            ballingHistoryViewModelFactory,
+                            navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
+                            screenContent = {
+                                BallingHistoryScreen(
+                                    showFullWeek = true,
+                                    ballingHistoryUiState,
+                                    onEvent = ballingHistoryViewModel::onEvent
+                                )
+                            },
+                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) },
                         )
                     }
                     composable(route = ViewNavigationRoutes.ballingEdit,
@@ -466,10 +495,20 @@ class MainActivity : ComponentActivity() {
                                 ballingProfileId,
                                 ballingProfilesRepository
                             )
+                            val ballingProfileEditViewModel: BallingProfileEditViewModel = viewModel(
+                                factory = ballingProfileEditViewModelFactory
+                            )
+                            val ballingProfileEditUiState: BallingProfileEditUiState =
+                                ballingProfileEditViewModel.ballingProfileEditUiState
                             MainScaffold(
                                 mainViewModel,
                                 navigationRouteSource = ViewNavigationRoutes.ballingEdit,
-                                screenContent = { BallingProfileEditScreen(ballingProfileEditViewModelFactory) },
+                                screenContent = {
+                                    BallingProfileEditScreen(
+                                        ballingProfileEditUiState,
+                                        onEvent = ballingProfileEditViewModel::onEvent,
+                                    )
+                                },
                                 onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) },
                             )
                         }

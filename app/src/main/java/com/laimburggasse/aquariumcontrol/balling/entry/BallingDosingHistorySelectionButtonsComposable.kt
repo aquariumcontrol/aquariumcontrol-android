@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.balling
+package com.laimburggasse.aquariumcontrol.balling.entry
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.laimburggasse.aquariumcontrol.R
+import com.laimburggasse.aquariumcontrol.balling.common.BallingNavigationEvent
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
@@ -41,7 +42,7 @@ fun BallingDosingHistorySelectionButtonsComposable(
             fontSize = 16.sp,
         )
     }
-    Spacer(modifier = Modifier.width(10.dp))
+    Spacer(modifier = Modifier.width(width = 10.dp))
     Button(
         onClick = { onNavigateFromBalling(BallingNavigationEvent.ToBallingHistory7d, null) },
         modifier = modifier ?: Modifier,

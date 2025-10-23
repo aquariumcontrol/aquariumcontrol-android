@@ -2,7 +2,7 @@ package com.laimburggasse.aquariumcontrol.balling.edit
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.laimburggasse.aquariumcontrol.balling.BallingProfilesRepository
+import com.laimburggasse.aquariumcontrol.balling.common.BallingProfilesRepository
 import javax.inject.Singleton
 
 @Singleton

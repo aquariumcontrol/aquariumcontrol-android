@@ -39,4 +39,12 @@ class BallingHistoryViewModel(
             ballingHistoryRepository.fetchBallingHistoryDosingEvents(showFullWeek)
         }
     }
+
+    fun onEvent(event: BallingHistoryEvent) {
+        when (event) {
+            is BallingHistoryEvent.Refresh -> {
+                loadData(showFullWeek = event.showFullWeek)
+            }
+        }
+    }
 }

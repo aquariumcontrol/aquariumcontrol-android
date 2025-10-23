@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.balling
+package com.laimburggasse.aquariumcontrol.balling.entry
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
@@ -11,8 +11,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -24,27 +22,24 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.balling.common.BallingNavigationEvent
+import com.laimburggasse.aquariumcontrol.balling.common.BallingProfile
+import com.laimburggasse.aquariumcontrol.balling.common.BallingProfileSummaryComposable
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
-import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
 fun BallingScreen(
-    ballingViewModelFactory: BallingViewModelFactory,
+    ballingProfilesUiState: BallingProfilesUiState,
     onNavigateFromBalling: (BallingNavigationEvent, Int?) -> Unit
 ) {
     // This screen displays
     // - a button for visualizing all Balling dosing events of the last 24h
     // - a button for visualizing all Balling dosing events of the last 7 days
     // - all Balling profiles downloaded from the controller
-
-    val ballingViewModel: BallingProfilesViewModel = viewModel(factory = ballingViewModelFactory)
-
-    val ballingProfilesUiState: BallingProfilesUiState by ballingViewModel.ballingProfilesUiState.collectAsState()
 
     val configuration: Configuration = LocalConfiguration.current
 
@@ -80,7 +75,7 @@ fun BallingScreen(
             }
             is BallingProfilesUiState.Error -> {
                 Text(
-                    text = "Error loading data: ${(ballingProfilesUiState as BallingProfilesUiState.Error).errorMessage}",
+                    text = "Error loading data: ${ballingProfilesUiState.errorMessage}",
                     style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold),
                     modifier = Modifier.weight(weight = 1f),
                     textAlign = TextAlign.Center
@@ -95,8 +90,7 @@ fun BallingScreen(
                 )
             }
             is BallingProfilesUiState.Success -> {
-                val ballingProfiles: List<BallingProfile> =
-                    (ballingProfilesUiState as BallingProfilesUiState.Success).ballingProfiles
+                val ballingProfiles: List<BallingProfile> = ballingProfilesUiState.ballingProfiles
                 val modifier: Modifier = Modifier
                     .height(height = 3000.dp) // Set a fixed height
                     .fillMaxWidth()
@@ -133,11 +127,11 @@ val mockMainViewModel = MockMainViewModel()
 val mockBallingProfile1 = BallingProfile(pumpId = 1, volume = 2.1, label = "mock1")
 val mockBallingProfile2 = BallingProfile(pumpId = 2, volume = 3.1, label = "mock2")
 val mockBallingProfiles: List<BallingProfile> = listOf(mockBallingProfile1, mockBallingProfile2)
-val mockRepositoryEmpty = MockBallingProfilesRepository(mockData = DataFetchResult.Success(data = emptyList()))
-val mockBallingViewModelFactoryEmpty = BallingViewModelFactory(ballingProfilesRepository = mockRepositoryEmpty)
-val mockBallingData = DataFetchResult.Success(data = mockBallingProfiles)
-val mockBallingRepositorySuccess = MockBallingProfilesRepository(mockData = mockBallingData)
-val mockBallingViewModelFactorySuccess = BallingViewModelFactory(ballingProfilesRepository = mockBallingRepositorySuccess)
+
+val mockBallingProfilesUiStateSuccess = BallingProfilesUiState.Success(ballingProfiles = mockBallingProfiles)
+val mockBallingProfilesUiStateError = BallingProfilesUiState.Error(errorMessage = "Error message")
+val mockBallingProfilesUiStateLoading = BallingProfilesUiState.Loading
+val mockBallingProfilesUiStateEmpty = BallingProfilesUiState.Empty
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -158,7 +152,7 @@ internal fun BallingScreenPreviewSuccess() {
         navigationRouteSource = ViewNavigationRoutes.balling,
         screenContent = {
             BallingScreen(
-                ballingViewModelFactory = mockBallingViewModelFactorySuccess,
+                ballingProfilesUiState = mockBallingProfilesUiStateSuccess,
                 onNavigateFromBalling = { event, pumpId -> }
             )
         },
@@ -170,15 +164,12 @@ internal fun BallingScreenPreviewSuccess() {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun BallingScreenPreviewError() {
-    val mockBallingData = DataFetchResult.Error(exception = null, errorMessage = "Error message")
-    val mockBallingRepositoryError = MockBallingProfilesRepository(mockData = mockBallingData)
-    val mockBallingViewModelFactory = BallingViewModelFactory(ballingProfilesRepository = mockBallingRepositoryError)
     MainScaffold(
         mainViewModel = mockMainViewModel,
         navigationRouteSource = ViewNavigationRoutes.balling,
         screenContent = {
             BallingScreen(
-                ballingViewModelFactory = mockBallingViewModelFactory,
+                ballingProfilesUiState = mockBallingProfilesUiStateError,
                 onNavigateFromBalling = { event, pumpId -> }
             )
         },
@@ -190,14 +181,12 @@ internal fun BallingScreenPreviewError() {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun BallingScreenPreviewLoading() {
-    val mockBallingRepositoryLoading = MockLongLoadingBallingProfilesRepository()
-    val mockBallingViewModelFactory = BallingViewModelFactory(ballingProfilesRepository = mockBallingRepositoryLoading)
     MainScaffold(
         mainViewModel = mockMainViewModel,
         navigationRouteSource = ViewNavigationRoutes.balling,
         screenContent = {
             BallingScreen(
-                ballingViewModelFactory = mockBallingViewModelFactory,
+                ballingProfilesUiState = mockBallingProfilesUiStateLoading,
                 onNavigateFromBalling = { event, pumpId -> }
             )
         },
@@ -214,7 +203,7 @@ internal fun BallingScreenPreviewEmpty() {
         navigationRouteSource = ViewNavigationRoutes.balling,
         screenContent = {
             BallingScreen(
-                ballingViewModelFactory = mockBallingViewModelFactoryEmpty,
+                ballingProfilesUiState = mockBallingProfilesUiStateEmpty,
                 onNavigateFromBalling = { event, pumpId -> }
             )
         },

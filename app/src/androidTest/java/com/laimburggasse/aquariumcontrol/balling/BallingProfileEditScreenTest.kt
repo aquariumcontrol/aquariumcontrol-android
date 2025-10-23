@@ -9,7 +9,7 @@ import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditScreen
-import com.laimburggasse.aquariumcontrol.balling.edit.mockBallingProfileEditViewModelFactory
+import com.laimburggasse.aquariumcontrol.balling.edit.mockBallingProfileEditUiState
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -30,11 +30,12 @@ class BallingProfileEditScreenTest {
     fun ballingProfileEditScreenDarkTest() {
         composeTestRule.setContent {
             MainScaffold(
-                mainViewModel = com.laimburggasse.aquariumcontrol.balling.mockMainViewModel,
+                mainViewModel = com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
                 navigationRouteSource = ViewNavigationRoutes.balling,
                 screenContent = {
                     BallingProfileEditScreen(
-                        ballingProfileEditViewModelFactory = mockBallingProfileEditViewModelFactory
+                        ballingProfileEditUiState = mockBallingProfileEditUiState,
+                        onEvent = {}
                     )
                 },
                 onNavigate = {},
@@ -54,11 +55,12 @@ class BallingProfileEditScreenTest {
     fun ballingProfileEditScreenLightTest() {
         composeTestRule.setContent {
             MainScaffold(
-                mainViewModel = com.laimburggasse.aquariumcontrol.balling.mockMainViewModel,
+                mainViewModel = com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
                 navigationRouteSource = ViewNavigationRoutes.balling,
                 screenContent = {
                     BallingProfileEditScreen(
-                        ballingProfileEditViewModelFactory = mockBallingProfileEditViewModelFactory
+                        ballingProfileEditUiState = mockBallingProfileEditUiState,
+                        onEvent = {}
                     )
                 },
                 onNavigate = {},

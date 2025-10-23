@@ -166,7 +166,7 @@ val mockVentilationSetValsViewModelFactoryError = VentilationSetValsViewModelFac
 @Composable
 internal fun VentilationScreenPreviewSuccess() {
     MainScaffold(
-        mainViewModel = com.laimburggasse.aquariumcontrol.balling.mockMainViewModel,
+        mainViewModel = _root_ide_package_.com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
         navigationRouteSource = ViewNavigationRoutes.ventilation,
         screenContent = {
             VentilationScreen(
@@ -182,7 +182,7 @@ internal fun VentilationScreenPreviewSuccess() {
 @Composable
 internal fun VentilationScreenPreviewError() {
     MainScaffold(
-        mainViewModel = com.laimburggasse.aquariumcontrol.balling.mockMainViewModel,
+        mainViewModel = _root_ide_package_.com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
         navigationRouteSource = ViewNavigationRoutes.ventilation,
         screenContent = {
             VentilationScreen(

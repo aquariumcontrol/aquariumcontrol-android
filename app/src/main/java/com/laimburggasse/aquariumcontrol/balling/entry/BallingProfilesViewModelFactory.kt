@@ -1,9 +1,10 @@
-package com.laimburggasse.aquariumcontrol.balling
+package com.laimburggasse.aquariumcontrol.balling.entry
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.laimburggasse.aquariumcontrol.balling.common.BallingProfilesRepository
 
-class BallingViewModelFactory(
+class BallingProfilesViewModelFactory(
     ballingProfilesRepository: BallingProfilesRepository
 ) : ViewModelProvider.Factory {
 
