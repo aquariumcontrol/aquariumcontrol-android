@@ -40,21 +40,25 @@ import com.laimburggasse.aquariumcontrol.controller.common.ControllerViewModel
 import com.laimburggasse.aquariumcontrol.controller.common.handleControllerNavigation
 import com.laimburggasse.aquariumcontrol.controller.edit.ControllerEditScreen
 import com.laimburggasse.aquariumcontrol.controller.selection.ControllerSelectionScreen
-import com.laimburggasse.aquariumcontrol.feed.FeedProfile
-import com.laimburggasse.aquariumcontrol.feed.FeedProfilesRepository
-import com.laimburggasse.aquariumcontrol.feed.FeedProfilesViewModelFactory
-import com.laimburggasse.aquariumcontrol.feed.FeedScreen
+import com.laimburggasse.aquariumcontrol.feed.common.FeedProfile
+import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilesRepository
+import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilesViewModelFactory
+import com.laimburggasse.aquariumcontrol.feed.entry.FeedScreen
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddScreen
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddViewModelFactory
+import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilesViewModel
+import com.laimburggasse.aquariumcontrol.feed.common.FeedScheduleViewModel
 import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditScreen
 import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditViewModelFactory
-import com.laimburggasse.aquariumcontrol.feed.handleFeedNavigation
+import com.laimburggasse.aquariumcontrol.feed.common.handleFeedNavigation
 import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryRepository
 import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryScreen
 import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryViewModelFactory
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedProfileScheduleScreen
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleRepository
-import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleViewModelFactory
+import com.laimburggasse.aquariumcontrol.feed.common.FeedScheduleViewModelFactory
+import com.laimburggasse.aquariumcontrol.feed.entry.FeedProfilesUiState
+import com.laimburggasse.aquariumcontrol.feed.common.FeedScheduleUiState
 import com.laimburggasse.aquariumcontrol.heating.HeatingScreen
 import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsRepository
 import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsViewModelFactory
@@ -282,13 +286,18 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                     composable(route = ViewNavigationRoutes.feed) {
+                        val feedProfilesViewModel: FeedProfilesViewModel = viewModel(factory = feedProfilesViewModelFactory)
+                        val feedScheduleViewModel: FeedScheduleViewModel = viewModel(factory = feedScheduleViewModelFactory)
+                        val feedProfilesUiState: FeedProfilesUiState by feedProfilesViewModel.feedProfilesUiState.collectAsState()
+                        val feedScheduleUiState: FeedScheduleUiState by feedScheduleViewModel.feedScheduleUiState.collectAsState()
+
                         MainScaffold(
                             mainViewModel = mainViewModel,
                             navigationRouteSource = ViewNavigationRoutes.feed,
                             screenContent = {
                                 FeedScreen(
-                                    feedProfilesViewModelFactory = feedProfilesViewModelFactory,
-                                    feedScheduleViewModelFactory = feedScheduleViewModelFactory,
+                                    feedProfilesUiState,
+                                    feedScheduleUiState,
                                     onNavigateFromFeed = { event, feedProfileId, isNewScheduleEntry, millisSinceEpoch ->
                                         navHostController.handleFeedNavigation(
                                             event,
@@ -296,7 +305,9 @@ class MainActivity : ComponentActivity() {
                                             isNewScheduleEntry,
                                             millisSinceEpoch
                                         )
-                                    }
+                                    },
+                                    onFeedProfilesUiEvent = feedProfilesViewModel::onFeedProfilesUiEvent,
+                                    onFeedSchedulesUiEvent = feedScheduleViewModel::onFeedSchedulesUiEvent,
                                 )
                             },
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) },

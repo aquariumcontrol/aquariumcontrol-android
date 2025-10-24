@@ -1,6 +1,8 @@
 package com.laimburggasse.aquariumcontrol.feed
 
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
+import com.laimburggasse.aquariumcontrol.feed.common.FeedProfile
+import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilesRepository
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

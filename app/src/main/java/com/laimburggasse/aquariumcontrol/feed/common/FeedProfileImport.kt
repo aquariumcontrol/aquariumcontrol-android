@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.feed
+package com.laimburggasse.aquariumcontrol.feed.common
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -9,7 +9,7 @@ class FeedProfileImport {
     var profileId: Int = 0
     @SerialName("ProfileName")
     var profileName: String = ""
-    
+
     // Phase #1
     @SerialName("Pause01Duration")
     var pause01duration: Int? = 0

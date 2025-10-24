@@ -4,7 +4,12 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
+import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.feed.entry.FeedScreen
+import com.laimburggasse.aquariumcontrol.feed.entry.mockFeedProfilesUiStateSuccess
+import com.laimburggasse.aquariumcontrol.feed.entry.mockFeedScheduleUiStateSuccess
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -22,10 +27,20 @@ class FeedScreenTest {
     @Test
     fun feedScreenDarkTest() {
         composeTestRule.setContent {
-            FeedScreen(
-                mainViewModel = mockMainViewModel,
-                feedProfilesViewModelFactory = mockFeedProfilesViewModelFactory,
-                feedScheduleViewModelFactory = mockFeedScheduleViewModelFactory
+            MainScaffold(
+                mainViewModel = com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
+                navigationRouteSource = ViewNavigationRoutes.feed,
+                screenContent = {
+                    FeedScreen(
+                        feedProfilesUiState = mockFeedProfilesUiStateSuccess,
+                        feedScheduleUiState = mockFeedScheduleUiStateSuccess,
+                        onNavigateFromFeed = { event, id, isNew, millis -> },
+                        onFeedProfilesUiEvent = {},
+                        onFeedSchedulesUiEvent = { event -> return@FeedScreen null }
+                    )
+                },
+                onNavigate = {},
+                darkTheme = true
             )
         }
         composeTestRule.waitForIdle()
@@ -40,10 +55,20 @@ class FeedScreenTest {
     @Test
     fun feedScreenLightTest() {
         composeTestRule.setContent {
-            FeedScreen(
-                mainViewModel = mockMainViewModel,
-                feedProfilesViewModelFactory = mockFeedProfilesViewModelFactory,
-                feedScheduleViewModelFactory = mockFeedScheduleViewModelFactory
+            MainScaffold(
+                mainViewModel = com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
+                navigationRouteSource = ViewNavigationRoutes.feed,
+                screenContent = {
+                    FeedScreen(
+                        feedProfilesUiState = mockFeedProfilesUiStateSuccess,
+                        feedScheduleUiState = mockFeedScheduleUiStateSuccess,
+                        onNavigateFromFeed = { event, id, isNew, millis -> },
+                        onFeedProfilesUiEvent = {},
+                        onFeedSchedulesUiEvent = { event -> return@FeedScreen null }
+                    )
+                },
+                onNavigate = {},
+                darkTheme = false
             )
         }
         composeTestRule.waitForIdle()

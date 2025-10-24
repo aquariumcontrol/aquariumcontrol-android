@@ -15,13 +15,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.laimburggasse.aquariumcontrol.feed.FeedProfile
-import com.laimburggasse.aquariumcontrol.feed.FeedProfileImport
+import com.laimburggasse.aquariumcontrol.feed.common.FeedProfile
+import com.laimburggasse.aquariumcontrol.feed.common.FeedProfileImport
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.LineData
-import com.laimburggasse.aquariumcontrol.feed.mockFeedProfilesRepository
+import com.laimburggasse.aquariumcontrol.feed.MockFeedProfilesRepository
+import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
 fun FeedProfileDisplayComposable(
@@ -323,6 +324,9 @@ internal fun FeedProfileDisplayComposablePreview() {
 
     val mockFeedProfile: FeedProfile = FeedProfile.fromFeedProfileImport(mockFeedProfileImport)
 
+    val mockFeedProfilesRepository = MockFeedProfilesRepository(
+        mockFeedProfiles = DataFetchResult.Success(data = listOf(mockFeedProfile))
+    )
     val feedProfileEditViewModelFactory = FeedProfileEditViewModelFactory(
         feedProfile = mockFeedProfile,
         feedProfilesRepository = mockFeedProfilesRepository

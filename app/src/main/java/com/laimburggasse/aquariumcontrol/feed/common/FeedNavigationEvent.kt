@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.feed
+package com.laimburggasse.aquariumcontrol.feed.common
 
 sealed class FeedNavigationEvent {
     object ToFeedProfileEdit: FeedNavigationEvent()

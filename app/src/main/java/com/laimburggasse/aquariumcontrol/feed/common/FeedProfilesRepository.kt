@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.feed
+package com.laimburggasse.aquariumcontrol.feed.common
 
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
@@ -30,11 +30,12 @@ open class FeedProfilesRepository(private val mainViewModel: MainViewModel) {
                         exception = result.exception, errorMessage = result.errorMessage
                     )
                 }
+
                 is DataFetchResult.Success -> {
                     val feedProfileImports: List<FeedProfileImport> = result.data
                     _profilesFlow.value = DataFetchResult.Success(
-                        data = feedProfileImports.map {
-                            importItem -> FeedProfile.fromFeedProfileImport(feedProfileImport = importItem)
+                        data = feedProfileImports.map { importItem ->
+                            FeedProfile.fromFeedProfileImport(feedProfileImport = importItem)
                         }
                     )
                 }
@@ -66,14 +67,14 @@ open class FeedProfilesRepository(private val mainViewModel: MainViewModel) {
     open suspend fun addFeedProfile(feedProfileName: String) {
         val apiCallParameters: Map<String, String> = mapOf(WebApiParams.PROFILE_NAME to feedProfileName)
 
-       withContext(context = Dispatchers.IO) {
+        withContext(context = Dispatchers.IO) {
             webApiPostRequestExecution(
                 mainViewModel = mainViewModel,
                 apiUrl = WebApiUrls.FEED_POST_PROFILE_CREATE,
                 webApiPostRequest = WebApiPostRequest(),
                 optionalGetParams = apiCallParameters
             )
-           fetchFeedProfiles()
+            fetchFeedProfiles()
         }
 
     }

@@ -1,7 +1,7 @@
 package com.laimburggasse.aquariumcontrol.feed.schedule
 
 import com.laimburggasse.aquariumcontrol.MainViewModel
-import com.laimburggasse.aquariumcontrol.feed.FeedProfile
+import com.laimburggasse.aquariumcontrol.feed.common.FeedProfile
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls

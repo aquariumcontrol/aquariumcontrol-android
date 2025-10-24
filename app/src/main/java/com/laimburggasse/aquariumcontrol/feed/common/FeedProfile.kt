@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.feed
+package com.laimburggasse.aquariumcontrol.feed.common
 
 import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
 import java.sql.Timestamp

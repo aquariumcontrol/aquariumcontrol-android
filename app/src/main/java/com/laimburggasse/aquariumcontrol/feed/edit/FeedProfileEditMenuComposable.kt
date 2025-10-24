@@ -12,8 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.laimburggasse.aquariumcontrol.feed.mockFeedProfilesRepository
+import com.laimburggasse.aquariumcontrol.feed.MockFeedProfilesRepository
+import com.laimburggasse.aquariumcontrol.feed.entry.mockFeedProfiles
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
 fun FeedProfileEditMenuComposable(
@@ -38,6 +40,9 @@ fun FeedProfileEditMenuComposable(
     }
 }
 
+val mockFeedProfilesRepository = MockFeedProfilesRepository(
+    mockFeedProfiles = DataFetchResult.Success(data = mockFeedProfiles)
+)
 @Preview(showBackground = true, heightDp = 1400, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, heightDp = 1400, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable

@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.feed
+package com.laimburggasse.aquariumcontrol.feed.common
 
 import android.annotation.SuppressLint
 import com.laimburggasse.aquariumcontrol.webapi.WebApiParams

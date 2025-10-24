@@ -1,8 +1,8 @@
-package com.laimburggasse.aquariumcontrol.feed.schedule
+package com.laimburggasse.aquariumcontrol.feed.common
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.laimburggasse.aquariumcontrol.feed.FeedProfilesRepository
+import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleRepository
 import javax.inject.Singleton
 
 @Singleton

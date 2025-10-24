@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.feed
+package com.laimburggasse.aquariumcontrol.feed.common
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

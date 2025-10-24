@@ -1,4 +1,6 @@
-package com.laimburggasse.aquariumcontrol.feed
+package com.laimburggasse.aquariumcontrol.feed.entry
+
+import com.laimburggasse.aquariumcontrol.feed.common.FeedProfile
 
 sealed class FeedProfilesUiState {
     object Empty : FeedProfilesUiState()

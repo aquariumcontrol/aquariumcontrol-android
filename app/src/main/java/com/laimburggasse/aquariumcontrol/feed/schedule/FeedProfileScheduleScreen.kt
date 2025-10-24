@@ -38,12 +38,14 @@ import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.feed.FeedNavigationEvent
-import com.laimburggasse.aquariumcontrol.feed.FeedProfile
-import com.laimburggasse.aquariumcontrol.feed.FeedProfileImport
-import com.laimburggasse.aquariumcontrol.feed.FeedProfilesViewModel
-import com.laimburggasse.aquariumcontrol.feed.FeedProfilesViewModelFactory
+import com.laimburggasse.aquariumcontrol.feed.common.FeedNavigationEvent
+import com.laimburggasse.aquariumcontrol.feed.common.FeedProfile
+import com.laimburggasse.aquariumcontrol.feed.common.FeedProfileImport
+import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilesViewModel
+import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilesViewModelFactory
 import com.laimburggasse.aquariumcontrol.feed.MockFeedProfilesRepository
+import com.laimburggasse.aquariumcontrol.feed.common.FeedScheduleViewModel
+import com.laimburggasse.aquariumcontrol.feed.common.FeedScheduleViewModelFactory
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import java.sql.Timestamp
@@ -282,7 +284,8 @@ fun FeedProfileScheduleScreenPreviewSuccess() {
     val mockFeedProfilesRepository = MockFeedProfilesRepository(
         mockFeedProfiles = DataFetchResult.Success(mockFeedProfiles)
     )
-    val mockFeedScheduleViewModelFactory = FeedScheduleViewModelFactory(mockFeedScheduleRepository, mockFeedProfilesRepository)
+    val mockFeedScheduleViewModelFactory =
+        FeedScheduleViewModelFactory(mockFeedScheduleRepository, mockFeedProfilesRepository)
     val mockFeedProfilesViewModelFactory = FeedProfilesViewModelFactory(mockFeedProfilesRepository)
 
     MainScaffold(
@@ -324,7 +327,8 @@ internal fun FeedProfileScheduleScreenPreviewError() {
     val mockFeedProfilesRepository = MockFeedProfilesRepository(
         mockFeedProfiles = DataFetchResult.Success(data = mockFeedProfiles)
     )
-    val mockFeedScheduleViewModelFactory = FeedScheduleViewModelFactory(mockFeedScheduleRepository, mockFeedProfilesRepository)
+    val mockFeedScheduleViewModelFactory =
+        FeedScheduleViewModelFactory(mockFeedScheduleRepository, mockFeedProfilesRepository)
     val mockFeedProfilesViewModelFactory = FeedProfilesViewModelFactory(mockFeedProfilesRepository)
     MainScaffold(
         mainViewModel = _root_ide_package_.com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,

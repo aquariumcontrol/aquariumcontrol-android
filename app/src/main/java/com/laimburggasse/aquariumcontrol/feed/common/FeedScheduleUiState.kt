@@ -1,4 +1,6 @@
-package com.laimburggasse.aquariumcontrol.feed.schedule
+package com.laimburggasse.aquariumcontrol.feed.common
+
+import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntry
 
 sealed class FeedScheduleUiState {
     object Loading : FeedScheduleUiState()

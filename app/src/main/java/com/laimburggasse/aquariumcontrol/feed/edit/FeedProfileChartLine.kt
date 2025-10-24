@@ -1,7 +1,7 @@
 package com.laimburggasse.aquariumcontrol.feed.edit
 
 import com.github.mikephil.charting.data.LineData
-import com.laimburggasse.aquariumcontrol.feed.FeedProfilePhase
+import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilePhase
 import kotlinx.coroutines.flow.MutableStateFlow
 
 data class FeedProfileChartLine(

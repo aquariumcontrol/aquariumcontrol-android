@@ -33,7 +33,7 @@ import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.feed.mockMainViewModel
+import com.laimburggasse.aquariumcontrol.feed.entry.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState.Error
 import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState.Loading

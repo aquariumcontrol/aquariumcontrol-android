@@ -27,7 +27,7 @@ import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.feed.FeedNavigationEvent
+import com.laimburggasse.aquariumcontrol.feed.common.FeedNavigationEvent
 import com.laimburggasse.aquariumcontrol.feed.MockFeedProfilesRepository
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult

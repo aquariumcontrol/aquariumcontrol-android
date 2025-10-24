@@ -1,9 +1,10 @@
-package com.laimburggasse.aquariumcontrol.feed.schedule
+package com.laimburggasse.aquariumcontrol.feed.common
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.feed.FeedProfile
-import com.laimburggasse.aquariumcontrol.feed.FeedProfilesRepository
+import com.laimburggasse.aquariumcontrol.feed.entry.FeedScheduleUiEvent
+import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntry
+import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleRepository
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -68,5 +69,17 @@ class FeedScheduleViewModel(
     fun getFeedProfileIdByName(name: String): Int? {
         val feedProfile: FeedProfile? = feedProfilesRepository.findProfileByName(profileName = name)
         return feedProfile?.profileID
+    }
+
+    fun onFeedSchedulesUiEvent(event: FeedScheduleUiEvent): Int? {
+        when (event) {
+            is FeedScheduleUiEvent.GetFeedProfileIdByName -> {
+                return getFeedProfileIdByName(event.feedProfileName)
+            }
+            is FeedScheduleUiEvent.DeleteFeedScheduleEntry -> {
+                deleteFeedScheduleEntry(feedScheduleEntry = event.feedScheduleEntry)
+            }
+        }
+        return null
     }
 }

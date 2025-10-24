@@ -7,6 +7,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddScreen
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddViewModelFactory
+import com.laimburggasse.aquariumcontrol.feed.entry.mockFeedProfilesRepository
+import com.laimburggasse.aquariumcontrol.feed.entry.mockMainViewModel
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

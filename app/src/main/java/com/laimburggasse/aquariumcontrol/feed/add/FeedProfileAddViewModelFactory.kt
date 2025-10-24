@@ -2,7 +2,7 @@ package com.laimburggasse.aquariumcontrol.feed.add
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.laimburggasse.aquariumcontrol.feed.FeedProfilesRepository
+import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilesRepository
 import javax.inject.Singleton
 
 @Singleton

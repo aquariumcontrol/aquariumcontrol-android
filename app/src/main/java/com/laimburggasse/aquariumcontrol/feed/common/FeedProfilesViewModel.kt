@@ -1,7 +1,9 @@
-package com.laimburggasse.aquariumcontrol.feed
+package com.laimburggasse.aquariumcontrol.feed.common
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.laimburggasse.aquariumcontrol.feed.entry.FeedProfilesUiState
+import com.laimburggasse.aquariumcontrol.feed.entry.FeedProfilesUiEvent
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -27,7 +29,7 @@ class FeedProfilesViewModel(
             }
         }.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.Eagerly,
+            started = SharingStarted.Companion.Eagerly,
             initialValue = FeedProfilesUiState.Loading // The UI starts in a loading state
         )
 
@@ -48,12 +50,19 @@ class FeedProfilesViewModel(
     }
 
     fun findProfileById(profileID: Int): FeedProfile? {
-        val result = feedProfilesRepository.profilesFlow.value
+        val result: DataFetchResult<List<FeedProfile>> = feedProfilesRepository.profilesFlow.value
         if (result is DataFetchResult.Success) {
             return result.data.find { it.profileID == profileID }
         }
         return null
     }
 
+    fun onFeedProfilesUiEvent(event: FeedProfilesUiEvent) {
+        when (event) {
+            is FeedProfilesUiEvent.DeleteFeedProfile -> {
+                deleteFeedProfile(feedProfile = event.feedProfile)
+            }
+        }
+    }
     // @todo: add functionality to avoid creating feed profiles with already existing names
 }
