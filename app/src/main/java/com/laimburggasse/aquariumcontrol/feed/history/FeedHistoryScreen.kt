@@ -19,9 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,39 +30,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.laimburggasse.aquariumcontrol.MainScaffold
-import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.feed.entry.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
-import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
 fun FeedHistoryScreen(
     showFullWeek: Boolean,
-    mainViewModel: MainViewModel,
-    feedHistoryViewModelFactory: FeedHistoryViewModelFactory,
+    feedHistoryUiState: FeedHistoryUiState,
+    onEvent: (FeedHistoryEvent) -> Unit
 ) {
     // This screen displays:
     // - headline
     // - sub headline (last 7 days or last 24 hours)
     // - list of feed events
-
-    val feedHistoryViewModel: FeedHistoryViewModel = viewModel(
-        factory = feedHistoryViewModelFactory
-    )
-
-    val isControllerAddressValid: Boolean = !mainViewModel.getControllerAddress().isNullOrBlank()
-
-    val feedHistoryUiState: FeedHistoryUiState by feedHistoryViewModel.feedHistoryUiState.collectAsState()
-
-    LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
-        if (isControllerAddressValid) {
-            feedHistoryViewModel.loadData(showFullWeek)
-        }
-    }
 
     Column(
         modifier = Modifier.fillMaxSize().padding(all = 16.dp),
@@ -96,7 +75,7 @@ fun FeedHistoryScreen(
                     contentAlignment = Alignment.Center,
                     state = rememberPullToRefreshState(),
                     isRefreshing = feedHistoryUiState is FeedHistoryUiState.Loading,
-                    onRefresh = { feedHistoryViewModel.loadData(showFullWeek) },
+                    onRefresh = { onEvent(FeedHistoryEvent.Refresh(showFullWeek)) },
                     indicator = {
                         if (feedHistoryUiState is FeedHistoryUiState.Loading) {
                             CircularProgressIndicator(
@@ -123,7 +102,7 @@ fun FeedHistoryScreen(
 
                             is FeedHistoryUiState.Error -> {
                                 Text(
-                                    text = "Error loading data: ${(feedHistoryUiState as FeedHistoryUiState.Error).errorMessage}",
+                                    text = "Error loading data: ${feedHistoryUiState.errorMessage}",
                                     style = TextStyle(
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.Bold
@@ -144,20 +123,19 @@ fun FeedHistoryScreen(
                             }
 
                             is FeedHistoryUiState.Success -> {
-                                val feedEvents =
-                                    (feedHistoryUiState as FeedHistoryUiState.Success).feedHistoryLogEntries
+                                val feedEvents = feedHistoryUiState.feedHistoryLogEntries
                                 if (LocalInspectionMode.current) {
                                     // In Preview: Render a simple, static Column instead of LazyColumn
                                     Column(modifier = Modifier.fillMaxSize()) {
-                                        feedEvents.forEach { feedHistoryEvent ->
-                                            FeedHistoryEventComposable(feedHistoryEvent)
+                                        feedEvents.forEach { feedHistoryLogEntry ->
+                                            FeedHistoryEventComposable(feedHistoryLogEntry)
                                         }
                                     }
                                 } else {
                                     // In App Runtime: Use the performant LazyColumn
                                     LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                        items(items = feedEvents) { feedHistoryEvent ->
-                                            FeedHistoryEventComposable(feedHistoryEvent)
+                                        items(items = feedEvents) { feedHistoryLogEntry ->
+                                            FeedHistoryEventComposable(feedHistoryLogEntry)
                                         }
                                     }
                                 }
@@ -185,18 +163,15 @@ val mockFeedHistoryLogEntries = listOf(
     ),
 )
 
-val mockFeedHistoryRepositorySuccess = MockFeedHistoryRepository(
-    mockData = DataFetchResult.Success(data = mockFeedHistoryLogEntries)
+val mockFeedHistoryUiStateSuccess = FeedHistoryUiState.Success(
+    feedHistoryLogEntries = mockFeedHistoryLogEntries
 )
 
-val mockFeedHistoryRepositoryEmpty = MockFeedHistoryRepository(
-    mockData = DataFetchResult.Success(data = emptyList())
+val mockFeedHistoryUiStateError = FeedHistoryUiState.Error(
+    errorMessage = "Error message"
 )
 
-val mockFeedHistoryRepositoryError = MockFeedHistoryRepository(
-    mockData = DataFetchResult.Error(exception = null, errorMessage = "Error message")
-)
-
+val mockFeedHistoryUiStateEmpty = FeedHistoryUiState.Empty
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -214,14 +189,12 @@ val mockFeedHistoryRepositoryError = MockFeedHistoryRepository(
 internal fun FeedHistoryScreenPreviewSuccess() {
     MainScaffold(
         mainViewModel = _root_ide_package_.com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
-        navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
+        navigationRouteSource = ViewNavigationRoutes.feedHistory24h,
         screenContent = {
             FeedHistoryScreen(
                 showFullWeek = false,
-                feedHistoryViewModelFactory = FeedHistoryViewModelFactory(
-                    feedHistoryRepository = mockFeedHistoryRepositorySuccess
-                ),
-                mainViewModel = mockMainViewModel,
+                feedHistoryUiState = mockFeedHistoryUiStateSuccess,
+                onEvent = {}
             )
         },
         onNavigate = {}
@@ -238,10 +211,8 @@ internal fun FeedHistoryScreenPreviewError() {
         screenContent = {
             FeedHistoryScreen(
                 showFullWeek = false,
-                feedHistoryViewModelFactory = FeedHistoryViewModelFactory(
-                    feedHistoryRepository = mockFeedHistoryRepositoryError
-                ),
-                mainViewModel = mockMainViewModel,
+                feedHistoryUiState = mockFeedHistoryUiStateError,
+                onEvent = {}
             )
         },
         onNavigate = {}
@@ -258,10 +229,8 @@ internal fun FeedHistoryScreenPreviewEmpty() {
         screenContent = {
             FeedHistoryScreen(
                 showFullWeek = false,
-                feedHistoryViewModelFactory = FeedHistoryViewModelFactory(
-                    feedHistoryRepository = mockFeedHistoryRepositoryEmpty
-                ),
-                mainViewModel = mockMainViewModel,
+                feedHistoryUiState = mockFeedHistoryUiStateEmpty,
+                onEvent = {}
             )
         },
         onNavigate = {}

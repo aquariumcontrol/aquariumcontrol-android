@@ -47,10 +47,6 @@ fun BallingHistoryScreen(
     // - sub headline (last 7 days or last 24 hours)
     // - list of balling events
 
-    //LaunchedEffect(key1 = isControllerAddressValid) { // Key on controller address validity
-    //    onEvent(BallingHistoryEvent.Refresh(showFullWeek))
-    //}
-
     Column(
         modifier = Modifier.fillMaxSize().padding(all = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -133,15 +129,15 @@ fun BallingHistoryScreen(
                                 if (LocalInspectionMode.current) {
                                     // In Preview: Render a simple, static Column instead of LazyColumn
                                     Column(modifier = Modifier.fillMaxSize()) {
-                                        ballingHistoryDosingEvents.forEach { ballingHistoryDosingEvent ->
-                                            BallingHistoryEventComposable(ballingHistoryLogEntry = ballingHistoryDosingEvent)
+                                        ballingHistoryDosingEvents.forEach { ballingHistoryLogEntry ->
+                                            BallingHistoryEventComposable(ballingHistoryLogEntry = ballingHistoryLogEntry)
                                         }
                                     }
                                 } else {
                                     // In App Runtime: Use the performant LazyColumn
                                     LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                        items(items = ballingHistoryDosingEvents) { ballingHistoryDosingEvent ->
-                                            BallingHistoryEventComposable(ballingHistoryLogEntry = ballingHistoryDosingEvent)
+                                        items(items = ballingHistoryDosingEvents) { ballingHistoryLogEntry ->
+                                            BallingHistoryEventComposable(ballingHistoryLogEntry = ballingHistoryLogEntry)
                                         }
                                     }
                                 }

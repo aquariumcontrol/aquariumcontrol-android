@@ -60,6 +60,8 @@ import com.laimburggasse.aquariumcontrol.feed.common.FeedScheduleViewModelFactor
 import com.laimburggasse.aquariumcontrol.feed.entry.FeedProfilesUiState
 import com.laimburggasse.aquariumcontrol.feed.common.FeedScheduleUiState
 import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditViewModel
+import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryUiState
+import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryViewModel
 import com.laimburggasse.aquariumcontrol.heating.HeatingScreen
 import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsRepository
 import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsViewModelFactory
@@ -315,28 +317,38 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(route = ViewNavigationRoutes.feedHistory24h) {
+                        val feedHistoryViewModel: FeedHistoryViewModel = viewModel(
+                            factory = feedHistoryViewModelFactory
+                        )
+                        val feedHistoryUiState: FeedHistoryUiState by
+                            feedHistoryViewModel.feedHistoryUiState.collectAsState()
                         MainScaffold(
                             mainViewModel,
                             navigationRouteSource = ViewNavigationRoutes.feedHistory24h,
                             screenContent = {
                                 FeedHistoryScreen(
                                     showFullWeek = false,
-                                    mainViewModel = mainViewModel,
-                                    feedHistoryViewModelFactory = feedHistoryViewModelFactory,
+                                    feedHistoryUiState,
+                                    onEvent = feedHistoryViewModel::onEvent
                                 )
                             },
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
                         )
                     }
                     composable(route = ViewNavigationRoutes.feedHistory7d) {
+                        val feedHistoryViewModel: FeedHistoryViewModel = viewModel(
+                            factory = feedHistoryViewModelFactory
+                        )
+                        val feedHistoryUiState: FeedHistoryUiState by
+                            feedHistoryViewModel.feedHistoryUiState.collectAsState()
                         MainScaffold(
                             mainViewModel,
                             navigationRouteSource = ViewNavigationRoutes.feedHistory7d,
                             screenContent = {
                                 FeedHistoryScreen(
                                     showFullWeek = true,
-                                    mainViewModel = mainViewModel,
-                                    feedHistoryViewModelFactory = feedHistoryViewModelFactory,
+                                    feedHistoryUiState,
+                                    onEvent = feedHistoryViewModel::onEvent
                                 )
                             },
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }

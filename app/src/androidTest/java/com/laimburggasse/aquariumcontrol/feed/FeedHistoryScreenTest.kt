@@ -4,13 +4,13 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
+import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryScreen
-import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryViewModelFactory
-import com.laimburggasse.aquariumcontrol.feed.history.MockFeedHistoryRepository
-import com.laimburggasse.aquariumcontrol.feed.history.mockFeedHistoryLogEntries
-import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
+import com.laimburggasse.aquariumcontrol.feed.history.mockFeedHistoryUiStateEmpty
+import com.laimburggasse.aquariumcontrol.feed.history.mockFeedHistoryUiStateSuccess
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -25,25 +25,22 @@ class FeedHistoryScreenTest {
 
     private val subfolder = "feed"
 
-    val mockFeedHistoryRepositorySuccess = MockFeedHistoryRepository(
-        mockData = DataFetchResult.Success(data = mockFeedHistoryLogEntries)
-    )
-
-    val mockFeedHistoryRepositoryEmpty = MockFeedHistoryRepository(
-        mockData = DataFetchResult.Success(data = emptyList())
-    )
-
     val mockMainViewModel = MockMainViewModel()
 
     @Test
     fun feedProfileHistoryScreenDarkEmptyTest() {
         composeTestRule.setContent {
-            FeedHistoryScreen(
-                showFullWeek = false,
-                mainViewModel = mockMainViewModel,
-                feedHistoryViewModelFactory = FeedHistoryViewModelFactory(
-                    feedHistoryRepository = mockFeedHistoryRepositoryEmpty
-                ),
+            MainScaffold(
+                mainViewModel = _root_ide_package_.com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
+                navigationRouteSource = ViewNavigationRoutes.feedHistory24h,
+                screenContent = {
+                    FeedHistoryScreen(
+                        showFullWeek = false,
+                        feedHistoryUiState = mockFeedHistoryUiStateEmpty,
+                        onEvent = {}
+                    )
+                },
+                onNavigate = {},
                 darkTheme = true
             )
         }
@@ -59,12 +56,17 @@ class FeedHistoryScreenTest {
     @Test
     fun feedProfileHistoryScreenLightEmptyTest() {
         composeTestRule.setContent {
-            FeedHistoryScreen(
-                showFullWeek = false,
-                mainViewModel = mockMainViewModel,
-                feedHistoryViewModelFactory = FeedHistoryViewModelFactory(
-                    feedHistoryRepository = mockFeedHistoryRepositoryEmpty
-                ),
+            MainScaffold(
+                mainViewModel = _root_ide_package_.com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
+                navigationRouteSource = ViewNavigationRoutes.feedHistory24h,
+                screenContent = {
+                    FeedHistoryScreen(
+                        showFullWeek = false,
+                        feedHistoryUiState = mockFeedHistoryUiStateEmpty,
+                        onEvent = {}
+                    )
+                },
+                onNavigate = {},
                 darkTheme = false
             )
         }
@@ -79,12 +81,17 @@ class FeedHistoryScreenTest {
     @Test
     fun feedProfileHistoryScreenDarkDataTest() {
         composeTestRule.setContent {
-            FeedHistoryScreen(
-                showFullWeek = false,
-                mainViewModel = mockMainViewModel,
-                feedHistoryViewModelFactory = FeedHistoryViewModelFactory(
-                    feedHistoryRepository = mockFeedHistoryRepositorySuccess
-                ),
+            MainScaffold(
+                mainViewModel = _root_ide_package_.com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
+                navigationRouteSource = ViewNavigationRoutes.feedHistory24h,
+                screenContent = {
+                    FeedHistoryScreen(
+                        showFullWeek = false,
+                        feedHistoryUiState = mockFeedHistoryUiStateSuccess,
+                        onEvent = {}
+                    )
+                },
+                onNavigate = {},
                 darkTheme = true
             )
         }
@@ -100,12 +107,17 @@ class FeedHistoryScreenTest {
     @Test
     fun feedProfileHistoryScreenLightDataTest() {
         composeTestRule.setContent {
-            FeedHistoryScreen(
-                showFullWeek = false,
-                mainViewModel = mockMainViewModel,
-                feedHistoryViewModelFactory = FeedHistoryViewModelFactory(
-                    feedHistoryRepository = mockFeedHistoryRepositorySuccess
-                ),
+            MainScaffold(
+                mainViewModel = _root_ide_package_.com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
+                navigationRouteSource = ViewNavigationRoutes.feedHistory24h,
+                screenContent = {
+                    FeedHistoryScreen(
+                        showFullWeek = false,
+                        feedHistoryUiState = mockFeedHistoryUiStateSuccess,
+                        onEvent = {}
+                    )
+                },
+                onNavigate = {},
                 darkTheme = false
             )
         }

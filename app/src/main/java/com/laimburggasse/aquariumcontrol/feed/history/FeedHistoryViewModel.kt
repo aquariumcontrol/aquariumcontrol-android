@@ -39,4 +39,12 @@ class FeedHistoryViewModel(
             feedHistoryRepository.fetchFeedHistoryEvents(showFullWeek)
         }
     }
+
+    fun onEvent(event: FeedHistoryEvent) {
+        when (event) {
+            is FeedHistoryEvent.Refresh -> {
+                loadData(showFullWeek =  event.showFullWeek)
+            }
+        }
+    }
 }
