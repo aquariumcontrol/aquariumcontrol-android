@@ -302,4 +302,8 @@ class ControllerViewModel(
     private fun isValidPortNumber(port: Int): Boolean {
         return port in 0..65535
     }
+
+    fun getSelectedControllerProfileById(id: Long): ControllerProfile? {
+        return state.value.controllerProfileList.find { it.id == id }
+    }
 }

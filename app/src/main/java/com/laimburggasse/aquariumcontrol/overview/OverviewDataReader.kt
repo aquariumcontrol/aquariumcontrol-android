@@ -4,6 +4,7 @@ import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.Response
 
 class OverviewDataReader(private val url: String) {
     // This class reads the overview data from the server using a GET request.
@@ -12,20 +13,24 @@ class OverviewDataReader(private val url: String) {
     private val json = Json { ignoreUnknownKeys = true }
 
     fun readOverviewData(): DataFetchResult<OverviewData> {
-        val request = Request.Builder()
-            .url(url)
-            .build()
+        val request: Request = Request.Builder().url(url).build()
 
-        val jsonArray = try {
-            val response = client.newCall(request).execute()
+        val jsonArray: List<String> = try {
+            val response: Response = client.newCall(request).execute()
             if (response.isSuccessful) {
-                val responseBody = response.body.string()
-                json.decodeFromString<List<String>>(responseBody)
+                val responseBody: String = response.body.string()
+                json.decodeFromString<List<String>>(string = responseBody)
             } else {
-                return DataFetchResult.Error(null, "Server responded with error code: ${response.code}")
+                return DataFetchResult.Error(
+                    exception = null,
+                    errorMessage = "Server responded with error code: ${response.code}"
+                )
             }
-        } catch (e: Exception) {
-            return DataFetchResult.Error(e, "An unexpected error occurred during preparation of server communication.")
+        } catch (exception: Exception) {
+            return DataFetchResult.Error(
+                exception,
+                errorMessage = "An unexpected error occurred during preparation of server communication: ${exception.message}"
+            )
         }
         if (jsonArray.size == 12) {
             val timestamp = jsonArray[0].replace(" ", "T")
@@ -56,7 +61,10 @@ class OverviewDataReader(private val url: String) {
                 heater = heater
             ))
         } else {
-            return DataFetchResult.Error(null, "Invalid JSON array size: ${jsonArray.size}")
+            return DataFetchResult.Error(
+                exception = null,
+                errorMessage = "Invalid JSON array size: ${jsonArray.size}"
+            )
         }
     }
 }

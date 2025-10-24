@@ -21,6 +21,7 @@ open class MainViewModel(
 
     private val _defaultControllerProfileId = MutableStateFlow(
         value = sharedPreferences?.getLong(KEY_DEFAULT_PROFILE_ID, NO_DEFAULT_ID).let {
+            Log.d("MainViewModel", "Default controller ID: $it")
             if (it == NO_DEFAULT_ID) null else it
         }
     )
@@ -28,6 +29,10 @@ open class MainViewModel(
 
     private val _isFirstLoad = MutableStateFlow(value = true)
     val isFirstLoad: StateFlow<Boolean> = _isFirstLoad.asStateFlow()
+
+    fun setSelectedControllerProfile(controllerProfile: ControllerProfile) {
+        _selectedControllerProfile.value = controllerProfile
+    }
 
     fun saveDefaultControllerProfileId(id: Long) {
         Log.d("MainViewModel", "Saving default controller ID: $id")

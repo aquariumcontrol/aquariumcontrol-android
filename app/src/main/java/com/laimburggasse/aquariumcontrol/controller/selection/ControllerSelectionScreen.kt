@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -45,40 +46,33 @@ import kotlinx.coroutines.withContext
 fun ControllerSelectionScreen(
     state: ControllerState,
     onEvent: (ControllerEvent) -> Unit,
-    defaultProfileId: Long? = null,
+    defaultProfileId: State<Long?>,
     onNavigateFromController: (ControllerNavigationEvent, Long?) -> Unit,
     canStartWaitForNavigation: State<Boolean>,
-    progressToDefaultNavigation: State<Float>
+    progressToDefaultNavigation: State<Float>,
 ) {
     // This screen displays:
     // - headline
     // - list of controller profiles
     // - floating action button to add new controller profile
 
-    val isWaitFinished = progressToDefaultNavigation.value >= 1.0f
+    val isWaitFinished: Boolean = progressToDefaultNavigation.value >= 1.0f
 
     // Countdown and navigation logic
     LaunchedEffect(key1 = isWaitFinished) {
-        Log.d("ControllerSelectionScreen", "Countdown finished")
         // Time has passed without user interaction, navigate to the default profile
-        val defaultProfile: ControllerProfile? =
-            state.controllerProfileList.firstOrNull { it.id == defaultProfileId }
-        defaultProfile?.let {
+        Log.d("ControllerSelectionScreen", "isWaitFinished: $isWaitFinished")
+        if (isWaitFinished && defaultProfileId.value != null) {
             withContext(context = Dispatchers.Main) { // Switch to the main thread
-                onNavigateFromController(
-                    ControllerNavigationEvent.ToOverview,
-                    defaultProfile.id
-                )
+                onNavigateFromController(ControllerNavigationEvent.ToOverview, defaultProfileId.value)
             }
         }
     }
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
         ScreenHeadlineComposable(text = stringResource(id = R.string.list_of_controllers))
 
-        if (canStartWaitForNavigation.value) {
+        if (canStartWaitForNavigation.value && defaultProfileId.value != null) {
             Text(text = stringResource(R.string.loading_default_profile))
             LinearProgressIndicator(
                 progress = { progressToDefaultNavigation.value },
@@ -92,7 +86,7 @@ fun ControllerSelectionScreen(
                     onClick = {
                         onNavigateFromController(ControllerNavigationEvent.ToControllerAdd, null)
                     },
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(all = 16.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Add,
@@ -102,9 +96,7 @@ fun ControllerSelectionScreen(
             }
         ) { innerPadding ->
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues = innerPadding),
+                modifier = Modifier.fillMaxSize().padding(paddingValues = innerPadding),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 val modifier: Modifier = Modifier.padding(all = 16.dp).wrapContentSize()
@@ -114,7 +106,7 @@ fun ControllerSelectionScreen(
                         val items: List<ControllerProfile> = state.controllerProfileList
                         items.forEach { item ->
                             ControllerProfileComposable(
-                                onEvent = { },
+                                onEvent = {},
                                 controllerProfile = item,
                                 onNavigateFromController = onNavigateFromController
                             )
@@ -168,7 +160,7 @@ internal fun ControllerSelectionScreenPreview() {
         password = "passwordXYZ",
     )
 
-    val controllerProfileList = listOf(
+    val controllerProfileList: List<ControllerProfile> = listOf(
         mockControllerProfile1, mockControllerProfile2
     )
 
@@ -184,8 +176,8 @@ internal fun ControllerSelectionScreenPreview() {
                 onEvent = {},
                 progressToDefaultNavigation = remember { mutableFloatStateOf(value = 0.3f) },
                 onNavigateFromController = { event, profileId -> },
-                defaultProfileId = 1,
-                canStartWaitForNavigation = remember { mutableStateOf(true) },
+                defaultProfileId = remember { mutableLongStateOf(value = 1L) },
+                canStartWaitForNavigation = remember { mutableStateOf(value = true) },
             )
          },
         onNavigate = {},

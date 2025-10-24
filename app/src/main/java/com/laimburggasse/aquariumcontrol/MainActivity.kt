@@ -224,9 +224,10 @@ class MainActivity : ComponentActivity() {
                                     onNavigateFromController = { event, controllerProfileId ->
                                         navHostController.handleControllerNavigation(event, controllerProfileId)
                                     },
+                                    defaultProfileId = mainViewModel.defaultControllerProfileId.collectAsState(),
                                     canStartWaitForNavigation = controllerViewModel.canStartWaitForDefaultNavigation.collectAsState(),
-                                    progressToDefaultNavigation = controllerViewModel.progressToDefaultNavigation.collectAsState(),
-                                ) },
+                                    progressToDefaultNavigation = controllerViewModel.progressToDefaultNavigation.collectAsState()
+                               ) },
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
                         )
                     }
@@ -611,23 +612,32 @@ class MainActivity : ComponentActivity() {
                                 defaultValue = -1L
                             }
                         )
-                    ) {
+                    ) { backStackEntry ->
+                        val controllerProfileId: Long? = backStackEntry.arguments?.getLong("controllerProfileId")
                         Log.d("MainActivity", "Navigating to overview screen")
-                        val controllerProfile = mainViewModel.selectedControllerProfile.collectAsState()
-                        if (controllerProfile.value != null) {
-                            mainViewModel.setFirstLoad() // Controller selection may navigate here without user interaction
-                            MainScaffold(
-                                mainViewModel,
-                                navigationRouteSource = ViewNavigationRoutes.overView,
-                                screenContent = {
-                                    OverviewScreen(controllerProfile = controllerProfile.value!!, overviewViewModelFactory)
-                                },
-                                onNavigate = { event ->
-                                    navHostController.handleMainDropDownMenuNavigation(
-                                        event
-                                    )
-                                }
-                            )
+                        if (controllerProfileId != null) {
+                            val controllerProfile =
+                                controllerViewModel.getSelectedControllerProfileById(
+                                    controllerProfileId
+                                )
+                            if (controllerProfile != null) {
+                                Log.d("MainActivity", "Controller profile is not null")
+                                mainViewModel.setSelectedControllerProfile(controllerProfile)
+                                mainViewModel.setFirstLoad() // Controller selection may navigate here without user interaction
+                                MainScaffold(
+                                    mainViewModel,
+                                    navigationRouteSource = ViewNavigationRoutes.overView,
+                                    screenContent = {
+                                        OverviewScreen(
+                                            controllerProfile = controllerProfile,
+                                            overviewViewModelFactory
+                                        )
+                                    },
+                                    onNavigate = { event ->
+                                        navHostController.handleMainDropDownMenuNavigation(event)
+                                    }
+                                )
+                            }
                         }
                     }
                 }
