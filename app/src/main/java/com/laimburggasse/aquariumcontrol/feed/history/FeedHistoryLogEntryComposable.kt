@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.refill.history
+package com.laimburggasse.aquariumcontrol.feed.history
 
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
@@ -12,19 +12,20 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
-import java.sql.Timestamp
+import com.laimburggasse.aquariumcontrol.R
 
 @Composable
-fun RefillEventComposable(
-    refillHistoryEvent: RefillHistoryEvent
+fun FeedHistoryEventComposable(
+    feedHistoryLogEntry: FeedHistoryLogEntry
 ) {
-    // This composable displays a refill event:
-    // Text objects for name and value of Timestamp, Duration, Volume
-
+    // This composable displays one feed dosing event:
+    // - text objects for showing timestamp
+    // - text objects for showing feed profile name
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -40,11 +41,11 @@ fun RefillEventComposable(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = "Timestamp",
+                text = stringResource(id = R.string.timestamp),
                 fontSize = 12.sp
             )
             Text(
-                text = refillHistoryEvent.timestamp,
+                text = feedHistoryLogEntry.timestamp,
                 fontSize = 12.sp
             )
         }
@@ -52,11 +53,11 @@ fun RefillEventComposable(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = "Duration: ${"%.1f".format(refillHistoryEvent.duration)} seconds",
+                text = stringResource(R.string.name),
                 fontSize = 12.sp
             )
             Text(
-                text = "Volume: ${"%.2f".format(refillHistoryEvent.volume)} Liters",
+                text = feedHistoryLogEntry.profileName,
                 fontSize = 12.sp
             )
         }
@@ -66,18 +67,19 @@ fun RefillEventComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun RefillEventComposablePreview() {
-    val fixedTimestamp = Timestamp(0L)
-
-    val mockEvent = RefillHistoryEvent(
-        timestamp = fixedTimestamp,
-        duration = 60.0,
-        volume = 10.0
+internal fun FeedHistoryEventComposablePreview() {
+    val mockEvent = FeedHistoryLogEntry(
+        timestamp = "2025-01-18 12:00:00",
+        feederOnTime = 20000,
+        profileName = "Mock feed profile 1",
+        idx = 1
     )
 
     AquariumControllerTheme {
-        Surface(color = MaterialTheme.colorScheme.background) {
-            RefillEventComposable(mockEvent)
+        Surface(
+            color = MaterialTheme.colorScheme.background
+        ) {
+            FeedHistoryEventComposable(mockEvent)
         }
     }
 }

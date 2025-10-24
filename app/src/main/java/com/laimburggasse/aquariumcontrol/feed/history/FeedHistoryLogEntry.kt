@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class FeedHistoryEvent(
+data class FeedHistoryLogEntry(
     // This data class represents a feed event.
     @SerialName("Timestamp")
     val timestamp: String,

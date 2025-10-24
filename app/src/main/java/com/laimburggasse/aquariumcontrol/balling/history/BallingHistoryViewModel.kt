@@ -20,7 +20,7 @@ class BallingHistoryViewModel(
                     if (result.data.isEmpty()) {
                         BallingHistoryUiState.Empty
                     } else {
-                        BallingHistoryUiState.Success(ballingHistoryDosingEvents = result.data)
+                        BallingHistoryUiState.Success(ballingHistoryLogEntries = result.data)
                     }
                 }
             }

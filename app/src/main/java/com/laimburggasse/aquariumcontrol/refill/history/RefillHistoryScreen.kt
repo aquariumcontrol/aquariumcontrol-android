@@ -145,19 +145,19 @@ fun RefillHistoryScreen(
                             }
                             is RefillHistoryUiState.Success -> {
                                 val refillEvents =
-                                    (refillHistoryUiState as RefillHistoryUiState.Success).refillHistoryEvents
+                                    (refillHistoryUiState as RefillHistoryUiState.Success).refillHistoryLogEntries
                                 if (LocalInspectionMode.current) {
                                     // In Preview: Render a simple, static Column instead of LazyColumn
                                     Column(modifier = Modifier.fillMaxSize()) {
                                         refillEvents.forEach { refillEvent ->
-                                            RefillEventComposable(refillHistoryEvent = refillEvent)
+                                            RefillEventComposable(refillHistoryLogEntry = refillEvent)
                                         }
                                     }
                                 } else {
                                     // In App Runtime: Use the performant LazyColumn
                                     LazyColumn(modifier = Modifier.fillMaxSize()) {
                                         items(items = refillEvents) { refillEvent ->
-                                            RefillEventComposable(refillHistoryEvent = refillEvent)
+                                            RefillEventComposable(refillHistoryLogEntry = refillEvent)
                                         }
                                     }
                                 }
@@ -170,13 +170,13 @@ fun RefillHistoryScreen(
     }
 }
 
-val mockRefillHistoryEvents = listOf(
-    RefillHistoryEvent(
+val mockRefillHistoryLogEntries = listOf(
+    RefillHistoryLogEntry(
         timestamp = Timestamp(0L),
         duration = 60.0,
         volume = 10.0
     ),
-    RefillHistoryEvent(
+    RefillHistoryLogEntry(
         timestamp = Timestamp(1000L),
         duration = 30.0,
         volume = 5.0
@@ -184,7 +184,7 @@ val mockRefillHistoryEvents = listOf(
 )
 
 val mockRefillHistoryRepositorySuccess = MockRefillHistoryRepository(
-    mockData = DataFetchResult.Success(data = mockRefillHistoryEvents)
+    mockData = DataFetchResult.Success(data = mockRefillHistoryLogEntries)
 )
 
 val mockRefillHistoryRepositoryEmpty = MockRefillHistoryRepository(

@@ -20,7 +20,7 @@ class FeedHistoryViewModel(
                     if (result.data.isEmpty()) {
                         FeedHistoryUiState.Empty
                     } else {
-                        FeedHistoryUiState.Success(feedHistoryEvents = result.data)
+                        FeedHistoryUiState.Success(feedHistoryLogEntries = result.data)
                     }
                 }
             }

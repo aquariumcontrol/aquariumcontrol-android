@@ -145,7 +145,7 @@ fun FeedHistoryScreen(
 
                             is FeedHistoryUiState.Success -> {
                                 val feedEvents =
-                                    (feedHistoryUiState as FeedHistoryUiState.Success).feedHistoryEvents
+                                    (feedHistoryUiState as FeedHistoryUiState.Success).feedHistoryLogEntries
                                 if (LocalInspectionMode.current) {
                                     // In Preview: Render a simple, static Column instead of LazyColumn
                                     Column(modifier = Modifier.fillMaxSize()) {
@@ -170,14 +170,14 @@ fun FeedHistoryScreen(
     }
 }
 
-val mockFeedHistoryEvents = listOf(
-    FeedHistoryEvent(
+val mockFeedHistoryLogEntries = listOf(
+    FeedHistoryLogEntry(
         timestamp = "2025-01-18 12:00:00",
         feederOnTime = 20000,
         profileName = "Mock feed profile 1",
         idx = 1
     ),
-    FeedHistoryEvent(
+    FeedHistoryLogEntry(
         timestamp = "2025-01-18 12:00:00",
         feederOnTime = 10000,
         profileName = "Mock feed profile 2",
@@ -186,7 +186,7 @@ val mockFeedHistoryEvents = listOf(
 )
 
 val mockFeedHistoryRepositorySuccess = MockFeedHistoryRepository(
-    mockData = DataFetchResult.Success(data = mockFeedHistoryEvents)
+    mockData = DataFetchResult.Success(data = mockFeedHistoryLogEntries)
 )
 
 val mockFeedHistoryRepositoryEmpty = MockFeedHistoryRepository(

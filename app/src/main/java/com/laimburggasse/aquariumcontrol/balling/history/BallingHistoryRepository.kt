@@ -9,11 +9,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 
 open class BallingHistoryRepository(private val mainViewModel: MainViewModel) {
-    private val _ballingHistoryDosingEventFlow = MutableStateFlow<DataFetchResult<List<BallingHistoryDosingEvent>>>(
+    private val _ballingHistoryLogEntryFlow = MutableStateFlow<DataFetchResult<List<BallingHistoryLogEntry>>>(
         value = DataFetchResult.Success(data = emptyList())
     )
 
-    open val ballingHistoryDosingEventFlow = _ballingHistoryDosingEventFlow.asStateFlow()
+    open val ballingHistoryDosingEventFlow = _ballingHistoryLogEntryFlow.asStateFlow()
 
     open suspend fun fetchBallingHistoryDosingEvents(
         showFullWeek: Boolean
@@ -26,11 +26,11 @@ open class BallingHistoryRepository(private val mainViewModel: MainViewModel) {
             showFullWeek -> "http://" + mainViewModel.getControllerAddress() + WebApiUrls.BALLING_GET_EVENTS_7D
             else -> "http://" + mainViewModel.getControllerAddress() + WebApiUrls.BALLING_GET_EVENTS_24H
         }
-        val reader = BallingHistoryEventReader(url)
+        val reader = BallingHistoryLogEntryReader(url)
         withContext(context = Dispatchers.IO) {
-            val result: DataFetchResult<List<BallingHistoryDosingEvent>> =
+            val result: DataFetchResult<List<BallingHistoryLogEntry>> =
                 reader.readBallingEvents(mainViewModel)
-            _ballingHistoryDosingEventFlow.value = result
+            _ballingHistoryLogEntryFlow.value = result
         }
     }
 }

@@ -1,18 +1,18 @@
-package com.laimburggasse.aquariumcontrol.refill
+package com.laimburggasse.aquariumcontrol.feed
 
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.refill.history.RefillEventComposablePreview
+import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryEventComposablePreview
 
 @Suppress("unused")
-class RefillEventComposableTest {
+class FeedHistoryLogEntryComposableTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun RefillEventComposableSnapshotTest() {
-        RefillEventComposablePreview()
+    fun FeedHistoryEventComposableSnapshotTest() {
+        FeedHistoryEventComposablePreview()
     }
 }

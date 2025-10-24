@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.refill.history
+package com.laimburggasse.aquariumcontrol.balling.history
 
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
@@ -7,17 +7,18 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 
-
-class RefillHistoryEventReader(private val url: String) {
-    // This class reads the refill events from the server using a GET request.
+class BallingHistoryLogEntryReader(private val url: String) {
+    // This class will read the Balling dosing events from the server using a GET request.
     private val client = OkHttpClient()
     private val json = Json { ignoreUnknownKeys = true }
 
-    fun readRefillEvents(mainViewModel: MainViewModel? = null): DataFetchResult<List<RefillHistoryEvent>> {
-        val request: Request = Request.Builder().url(url).build()
+    fun readBallingEvents(mainViewModel: MainViewModel? = null): DataFetchResult<List<BallingHistoryLogEntry>> {
+        val request = Request.Builder()
+            .url(url)
+            .build()
 
-        val isControllerLoaded: Boolean = mainViewModel?.isControllerLoaded() == true
-
+        // @todo: check if this check is necessary
+        val isControllerLoaded = mainViewModel?.isControllerLoaded() == true
         if (!isControllerLoaded) {
             return DataFetchResult.Error(null, "Controller not loaded.")
         }
@@ -30,10 +31,14 @@ class RefillHistoryEventReader(private val url: String) {
                     return DataFetchResult.Success(data = emptyList())
                 }
                 try {
-                    val decodedData: List<RefillHistoryEvent> = json.decodeFromString<List<RefillHistoryEvent>>(string = responseBody)
+                    val decodedData: List<BallingHistoryLogEntry> =
+                        json.decodeFromString<List<BallingHistoryLogEntry>>(string = responseBody)
                     return DataFetchResult.Success(decodedData)
                 } catch (e: Exception) {
-                    return DataFetchResult.Error(exception = e, errorMessage = "Error decoding data sent from server: ${e.message}")
+                    return DataFetchResult.Error(
+                        exception = e,
+                        errorMessage = "Error decoding data sent from server: ${e.message}"
+                    )
                 }
             } else {
                 return DataFetchResult.Error(exception = null, errorMessage = "Server responded with error code: ${response.code}")

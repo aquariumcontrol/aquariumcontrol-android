@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.feed.history
+package com.laimburggasse.aquariumcontrol.balling.history
 
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
@@ -16,16 +16,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.R
+import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
-fun FeedHistoryEventComposable(
-    feedHistoryEvent: FeedHistoryEvent
+fun BallingHistoryEventComposable(
+    ballingHistoryLogEntry: BallingHistoryLogEntry
 ) {
-    // This composable displays one feed dosing event:
-    // - text objects for showing timestamp
-    // - text objects for showing feed profile name
+    // This screen displays one Balling dosing event with the following information:
+    // - timestamp
+    // - pump id
+    // - dosing volume
+    // - label of the Balling profile
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -41,11 +44,11 @@ fun FeedHistoryEventComposable(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = stringResource(id = R.string.timestamp),
+                text = stringResource(R.string.timestamp),
                 fontSize = 12.sp
             )
             Text(
-                text = feedHistoryEvent.timestamp,
+                text = ballingHistoryLogEntry.timestamp,
                 fontSize = 12.sp
             )
         }
@@ -53,11 +56,17 @@ fun FeedHistoryEventComposable(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = stringResource(R.string.name),
+                text = stringResource(R.string.pump_id) + "${ballingHistoryLogEntry.pumpId}",
                 fontSize = 12.sp
             )
             Text(
-                text = feedHistoryEvent.profileName,
+                text = stringResource(R.string.dosing_volume) +
+                        "%.2f".format(ballingHistoryLogEntry.volume) +
+                        stringResource(R.string.milliliter_unit),
+                fontSize = 12.sp
+            )
+            Text(
+                text = stringResource(R.string.label) + ballingHistoryLogEntry.label,
                 fontSize = 12.sp
             )
         }
@@ -67,19 +76,19 @@ fun FeedHistoryEventComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun FeedHistoryEventComposablePreview() {
-    val mockEvent = FeedHistoryEvent(
+internal fun BallingHistoryEventComposablePreview() {
+    val mockEvent = BallingHistoryLogEntry(
         timestamp = "2025-01-18 12:00:00",
-        feederOnTime = 20000,
-        profileName = "Mock feed profile 1",
-        idx = 1
+        pumpId = 1,
+        volume = 1.5,
+        label = "MockDosingUnit 1"
     )
 
     AquariumControllerTheme {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
-            FeedHistoryEventComposable(mockEvent)
+            BallingHistoryEventComposable(mockEvent)
         }
     }
 }

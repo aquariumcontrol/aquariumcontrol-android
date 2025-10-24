@@ -9,11 +9,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 
 open class FeedHistoryRepository(private val mainViewModel: MainViewModel) {
-    private val _feedHistoryEventFlow = MutableStateFlow<DataFetchResult<List<FeedHistoryEvent>>>(
+    private val _feedHistoryLogEntryFlow = MutableStateFlow<DataFetchResult<List<FeedHistoryLogEntry>>>(
         value = DataFetchResult.Success(data = emptyList())
     )
 
-    open val feedHistoryEventFlow = _feedHistoryEventFlow.asStateFlow()
+    open val feedHistoryEventFlow = _feedHistoryLogEntryFlow.asStateFlow()
 
     open suspend fun fetchFeedHistoryEvents(
         showFullWeek: Boolean
@@ -22,10 +22,10 @@ open class FeedHistoryRepository(private val mainViewModel: MainViewModel) {
             showFullWeek -> "http://" + mainViewModel.getControllerAddress() + WebApiUrls.FEED_GET_EVENTS_7D
             else -> "http://" + mainViewModel.getControllerAddress() + WebApiUrls.FEED_GET_EVENTS_24H
         }
-        val reader = FeedHistoryEventReader(url)
+        val reader = FeedHistoryLogEntryReader(url)
         withContext(context = Dispatchers.IO) {
-            val result: DataFetchResult<List<FeedHistoryEvent>> = reader.readFeedEvents(mainViewModel)
-            _feedHistoryEventFlow.value = result
+            val result: DataFetchResult<List<FeedHistoryLogEntry>> = reader.readFeedEvents(mainViewModel)
+            _feedHistoryLogEntryFlow.value = result
         }
     }
 }

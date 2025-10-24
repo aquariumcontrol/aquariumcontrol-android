@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.balling.history
+package com.laimburggasse.aquariumcontrol.refill.history
 
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
@@ -12,22 +12,18 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
+import java.sql.Timestamp
 
 @Composable
-fun BallingHistoryEventComposable(
-    ballingHistoryDosingEvent: BallingHistoryDosingEvent
+fun RefillEventComposable(
+    refillHistoryLogEntry: RefillHistoryLogEntry
 ) {
-    // This screen displays one Balling dosing event with the following information:
-    // - timestamp
-    // - pump id
-    // - dosing volume
-    // - label of the Balling profile
+    // This composable displays a refill event:
+    // Text objects for name and value of Timestamp, Duration, Volume
 
     Row(
         modifier = Modifier
@@ -44,11 +40,11 @@ fun BallingHistoryEventComposable(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = stringResource(R.string.timestamp),
+                text = "Timestamp",
                 fontSize = 12.sp
             )
             Text(
-                text = ballingHistoryDosingEvent.timestamp,
+                text = refillHistoryLogEntry.timestamp,
                 fontSize = 12.sp
             )
         }
@@ -56,17 +52,11 @@ fun BallingHistoryEventComposable(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = stringResource(R.string.pump_id) + "${ballingHistoryDosingEvent.pumpId}",
+                text = "Duration: ${"%.1f".format(refillHistoryLogEntry.duration)} seconds",
                 fontSize = 12.sp
             )
             Text(
-                text = stringResource(R.string.dosing_volume) +
-                        "%.2f".format(ballingHistoryDosingEvent.volume) +
-                        stringResource(R.string.milliliter_unit),
-                fontSize = 12.sp
-            )
-            Text(
-                text = stringResource(R.string.label) + ballingHistoryDosingEvent.label,
+                text = "Volume: ${"%.2f".format(refillHistoryLogEntry.volume)} Liters",
                 fontSize = 12.sp
             )
         }
@@ -76,19 +66,18 @@ fun BallingHistoryEventComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun BallingHistoryEventComposablePreview() {
-    val mockEvent = BallingHistoryDosingEvent(
-        timestamp = "2025-01-18 12:00:00",
-        pumpId = 1,
-        volume = 1.5,
-        label = "MockDosingUnit 1"
+internal fun RefillEventComposablePreview() {
+    val fixedTimestamp = Timestamp(0L)
+
+    val mockEvent = RefillHistoryLogEntry(
+        timestamp = fixedTimestamp,
+        duration = 60.0,
+        volume = 10.0
     )
 
     AquariumControllerTheme {
-        Surface(
-            color = MaterialTheme.colorScheme.background
-        ) {
-            BallingHistoryEventComposable(mockEvent)
+        Surface(color = MaterialTheme.colorScheme.background) {
+            RefillEventComposable(mockEvent)
         }
     }
 }

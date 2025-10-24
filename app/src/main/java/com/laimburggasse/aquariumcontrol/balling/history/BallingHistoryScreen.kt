@@ -129,19 +129,19 @@ fun BallingHistoryScreen(
                                 )
                             }
                             is BallingHistoryUiState.Success -> {
-                                val ballingHistoryDosingEvents = ballingHistoryUiState.ballingHistoryDosingEvents
+                                val ballingHistoryDosingEvents = ballingHistoryUiState.ballingHistoryLogEntries
                                 if (LocalInspectionMode.current) {
                                     // In Preview: Render a simple, static Column instead of LazyColumn
                                     Column(modifier = Modifier.fillMaxSize()) {
                                         ballingHistoryDosingEvents.forEach { ballingHistoryDosingEvent ->
-                                            BallingHistoryEventComposable(ballingHistoryDosingEvent = ballingHistoryDosingEvent)
+                                            BallingHistoryEventComposable(ballingHistoryLogEntry = ballingHistoryDosingEvent)
                                         }
                                     }
                                 } else {
                                     // In App Runtime: Use the performant LazyColumn
                                     LazyColumn(modifier = Modifier.fillMaxSize()) {
                                         items(items = ballingHistoryDosingEvents) { ballingHistoryDosingEvent ->
-                                            BallingHistoryEventComposable(ballingHistoryDosingEvent = ballingHistoryDosingEvent)
+                                            BallingHistoryEventComposable(ballingHistoryLogEntry = ballingHistoryDosingEvent)
                                         }
                                     }
                                 }
@@ -154,14 +154,14 @@ fun BallingHistoryScreen(
     }
 }
 
-val mockBallingHistoryDosingEvents = listOf(
-    BallingHistoryDosingEvent(
+val mockBallingHistoryLogEntries = listOf(
+    BallingHistoryLogEntry(
         timestamp = "2025-01-18 12:00:00",
         pumpId = 1,
         volume = 1.5,
         label = "MockDosingUnit 1"
     ),
-    BallingHistoryDosingEvent(
+    BallingHistoryLogEntry(
         timestamp = "2025-01-18 12:00:00",
         pumpId = 2,
         volume = 2.5,
@@ -170,7 +170,7 @@ val mockBallingHistoryDosingEvents = listOf(
 )
 
 val mockBallingHistoryUiStateSuccess = BallingHistoryUiState.Success(
-    ballingHistoryDosingEvents = mockBallingHistoryDosingEvents
+    ballingHistoryLogEntries = mockBallingHistoryLogEntries
 )
 val mockBallingHistoryUiStateEmpty = BallingHistoryUiState.Empty
 val mockBallingHistoryUiStateError = BallingHistoryUiState.Error(errorMessage = "Error message")

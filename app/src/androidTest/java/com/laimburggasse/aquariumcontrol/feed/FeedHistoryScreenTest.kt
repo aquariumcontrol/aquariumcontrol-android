@@ -9,7 +9,7 @@ import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryScreen
 import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryViewModelFactory
 import com.laimburggasse.aquariumcontrol.feed.history.MockFeedHistoryRepository
-import com.laimburggasse.aquariumcontrol.feed.history.mockFeedHistoryEvents
+import com.laimburggasse.aquariumcontrol.feed.history.mockFeedHistoryLogEntries
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import org.junit.Rule
 import org.junit.Test
@@ -26,7 +26,7 @@ class FeedHistoryScreenTest {
     private val subfolder = "feed"
 
     val mockFeedHistoryRepositorySuccess = MockFeedHistoryRepository(
-        mockData = DataFetchResult.Success(data = mockFeedHistoryEvents)
+        mockData = DataFetchResult.Success(data = mockFeedHistoryLogEntries)
     )
 
     val mockFeedHistoryRepositoryEmpty = MockFeedHistoryRepository(

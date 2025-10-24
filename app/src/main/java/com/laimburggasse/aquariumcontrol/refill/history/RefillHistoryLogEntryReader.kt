@@ -1,43 +1,39 @@
-package com.laimburggasse.aquariumcontrol.feed.history
+package com.laimburggasse.aquariumcontrol.refill.history
 
-import android.util.Log
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.Response
 
-class FeedHistoryEventReader(private val url: String) {
-    // This class will read the feed events from the server using a GET request.
+
+class RefillHistoryLogEntryReader(private val url: String) {
+    // This class reads the refill events from the server using a GET request.
     private val client = OkHttpClient()
     private val json = Json { ignoreUnknownKeys = true }
 
-    fun readFeedEvents(mainViewModel: MainViewModel? = null): DataFetchResult<List<FeedHistoryEvent>> {
-        val request = Request.Builder()
-            .url(url)
-            .build()
+    fun readRefillEvents(mainViewModel: MainViewModel? = null): DataFetchResult<List<RefillHistoryLogEntry>> {
+        val request: Request = Request.Builder().url(url).build()
 
-        val isControllerLoaded = mainViewModel?.isControllerLoaded() == true
+        val isControllerLoaded: Boolean = mainViewModel?.isControllerLoaded() == true
+
         if (!isControllerLoaded) {
-            return DataFetchResult.Error(exception = null, errorMessage = "Controller not loaded.")
+            return DataFetchResult.Error(null, "Controller not loaded.")
         }
 
         try {
-            val response = client.newCall(request).execute()
+            val response: Response = client.newCall(request).execute()
             if (response.isSuccessful) {
                 val responseBody = response.body.string()
                 if (responseBody.isEmpty()) {
                     return DataFetchResult.Success(data = emptyList())
                 }
                 try {
-                    val decodedData: List<FeedHistoryEvent> =
-                        json.decodeFromString<List<FeedHistoryEvent>>(responseBody)
+                    val decodedData: List<RefillHistoryLogEntry> = json.decodeFromString<List<RefillHistoryLogEntry>>(string = responseBody)
                     return DataFetchResult.Success(decodedData)
                 } catch (e: Exception) {
-                    return DataFetchResult.Error(
-                        exception = e,
-                        errorMessage = "Error decoding data sent from server: ${e.message}"
-                    )
+                    return DataFetchResult.Error(exception = e, errorMessage = "Error decoding data sent from server: ${e.message}")
                 }
             } else {
                 return DataFetchResult.Error(exception = null, errorMessage = "Server responded with error code: ${response.code}")

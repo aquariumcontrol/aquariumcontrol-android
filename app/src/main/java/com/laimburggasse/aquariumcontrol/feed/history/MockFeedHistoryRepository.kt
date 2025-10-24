@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class MockFeedHistoryRepository(
-    mockData: DataFetchResult<List<FeedHistoryEvent>>
+    mockData: DataFetchResult<List<FeedHistoryLogEntry>>
 ): FeedHistoryRepository(mainViewModel = MockMainViewModel()) {
 
     private val _feedHistoryEventFlow = MutableStateFlow(

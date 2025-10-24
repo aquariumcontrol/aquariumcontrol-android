@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class MockRefillHistoryRepository(
-    mockData: DataFetchResult<List<RefillHistoryEvent>>
+    mockData: DataFetchResult<List<RefillHistoryLogEntry>>
 ): RefillHistoryRepository(mainViewModel = MockMainViewModel()) {
 
     private val _refillHistoryEventFlow = MutableStateFlow(

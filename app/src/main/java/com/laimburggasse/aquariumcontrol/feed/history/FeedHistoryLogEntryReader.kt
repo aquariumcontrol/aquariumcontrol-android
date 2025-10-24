@@ -1,38 +1,36 @@
-package com.laimburggasse.aquariumcontrol.balling.history
+package com.laimburggasse.aquariumcontrol.feed.history
 
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.Response
 
-class BallingHistoryEventReader(private val url: String) {
-    // This class will read the Balling dosing events from the server using a GET request.
+class FeedHistoryLogEntryReader(private val url: String) {
+    // This class will read the feed events from the server using a GET request.
     private val client = OkHttpClient()
     private val json = Json { ignoreUnknownKeys = true }
 
-    fun readBallingEvents(mainViewModel: MainViewModel? = null): DataFetchResult<List<BallingHistoryDosingEvent>> {
+    fun readFeedEvents(mainViewModel: MainViewModel? = null): DataFetchResult<List<FeedHistoryLogEntry>> {
         val request = Request.Builder()
             .url(url)
             .build()
 
-        // @todo: check if this check is necessary
         val isControllerLoaded = mainViewModel?.isControllerLoaded() == true
         if (!isControllerLoaded) {
-            return DataFetchResult.Error(null, "Controller not loaded.")
+            return DataFetchResult.Error(exception = null, errorMessage = "Controller not loaded.")
         }
 
         try {
-            val response: Response = client.newCall(request).execute()
+            val response = client.newCall(request).execute()
             if (response.isSuccessful) {
                 val responseBody = response.body.string()
                 if (responseBody.isEmpty()) {
                     return DataFetchResult.Success(data = emptyList())
                 }
                 try {
-                    val decodedData: List<BallingHistoryDosingEvent> =
-                        json.decodeFromString<List<BallingHistoryDosingEvent>>(string = responseBody)
+                    val decodedData: List<FeedHistoryLogEntry> =
+                        json.decodeFromString<List<FeedHistoryLogEntry>>(responseBody)
                     return DataFetchResult.Success(decodedData)
                 } catch (e: Exception) {
                     return DataFetchResult.Error(
