@@ -1,12 +1,20 @@
 package com.laimburggasse.aquariumcontrol.controller
 
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
+import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerState
+import com.laimburggasse.aquariumcontrol.controller.edit.ControllerEditScreen
 import com.laimburggasse.aquariumcontrol.controller.selection.ControllerSelectionScreen
 import org.junit.Rule
 import org.junit.Test
@@ -49,13 +57,21 @@ class ControllerSelectionScreenTest {
     fun controllerSelectionScreenDarkTest() {
         composeTestRule.setContent {
             mockControllerState.controllerProfileList = controllerProfileList
-
-            ControllerSelectionScreen(
-                state = mockControllerState,
-                onEvent = {},
-                mockProgress = 0.3f,
-                darkTheme = true,
-                onNavigate = {}
+            MainScaffold(
+                mainViewModel = mockMainViewModel,
+                navigationRouteSource = ViewNavigationRoutes.controllerAdd,
+                screenContent = {
+                    ControllerSelectionScreen(
+                        state = mockControllerState,
+                        onEvent = {},
+                        defaultProfileId = remember {mutableLongStateOf(value = 1)},
+                        onNavigateFromController = {event, id -> },
+                        canStartWaitForNavigation = remember {mutableStateOf(value = true)},
+                        progressToDefaultNavigation = remember {mutableFloatStateOf(value = 0.3f)}
+                    )
+                },
+                onNavigate = {},
+                darkTheme = false
             )
         }
         composeTestRule.waitForIdle()
@@ -71,13 +87,21 @@ class ControllerSelectionScreenTest {
     fun controllerSelectionScreenLightTest() {
         composeTestRule.setContent {
             mockControllerState.controllerProfileList = controllerProfileList
-
-            ControllerSelectionScreen(
-                state = mockControllerState,
-                onEvent = {},
-                mockProgress = 0.3f,
-                darkTheme = false,
-                onNavigate = {}
+            MainScaffold(
+                mainViewModel = mockMainViewModel,
+                navigationRouteSource = ViewNavigationRoutes.controllerAdd,
+                screenContent = {
+                    ControllerSelectionScreen(
+                        state = mockControllerState,
+                        onEvent = {},
+                        defaultProfileId = remember {mutableLongStateOf(value = 1)},
+                        onNavigateFromController = {event, id -> },
+                        canStartWaitForNavigation = remember {mutableStateOf(value = true)},
+                        progressToDefaultNavigation = remember {mutableFloatStateOf(value = 0.3f)}
+                    )
+                },
+                onNavigate = {},
+                darkTheme = false
             )
         }
         composeTestRule.waitForIdle()
