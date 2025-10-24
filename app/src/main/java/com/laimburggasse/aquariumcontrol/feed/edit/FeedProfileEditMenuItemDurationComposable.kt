@@ -10,8 +10,6 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -25,13 +23,13 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun FeedProfileEditMenuItemDurationComposable(
+    feedProfile: FeedProfile,
     feedProfileEditMenuItem: FeedProfileEditMenuItem,
-    feedProfileEditViewModel: FeedProfileEditViewModel
+    onFeedProfileEditUiEvent: (FeedProfileEditUiEvent) -> Unit
 ) {
-    val profileState: FeedProfile by feedProfileEditViewModel.feedProfileUiState.collectAsState()
     val phaseId: Int = mapMenuItemIdToPhaseId(id = feedProfileEditMenuItem.id)
-    val currentDuration: Double = if (phaseId < profileState.feedProfilePhases.size) {
-        profileState.feedProfilePhases[phaseId].duration
+    val currentDuration: Double = if (phaseId < feedProfile.feedProfilePhases.size) {
+        feedProfile.feedProfilePhases[phaseId].duration
     } else {
         0.0 // Default/fallback value
     }
@@ -51,8 +49,9 @@ fun FeedProfileEditMenuItemDurationComposable(
             onValueChange = { newStringValue ->
                 if (newStringValue.isNotEmpty() && newStringValue.isNotBlank()) {
                     val newNumericValue:Double = newStringValue.toDouble()
-                    feedProfileEditViewModel.onDurationChange(
-                        id = feedProfileEditMenuItem.id, duration = newNumericValue
+                    onFeedProfileEditUiEvent(FeedProfileEditUiEvent.DurationChange(
+                        menuItemId = feedProfileEditMenuItem.id,
+                        newDuration = newNumericValue)
                     )
                 }
             },
@@ -62,8 +61,9 @@ fun FeedProfileEditMenuItemDurationComposable(
         Slider(value = currentDuration.toFloat(),
             modifier = Modifier.padding(all = 16.dp),
             onValueChange = {
-                feedProfileEditViewModel.onDurationChange(
-                    id = feedProfileEditMenuItem.id, duration = it.toDouble()
+                onFeedProfileEditUiEvent(FeedProfileEditUiEvent.DurationChange(
+                    menuItemId = feedProfileEditMenuItem.id,
+                    newDuration = it.toDouble())
                 )
             },
             valueRange = FeedProfileEditSliderRange.RANGE
@@ -71,30 +71,27 @@ fun FeedProfileEditMenuItemDurationComposable(
     }
 }
 
+val mockFeedProfileEditMenuItem = FeedProfileEditMenuItem(
+    id = 1,
+    level = 1,
+    text = "Preview",
+    isToggleButton = false,
+    children = emptyList(),
+    isNumericInput = true,
+    phaseType = FeedProfileEditPhaseType.FEED,
+)
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun FeedProfileEditMenuItemDurationComposablePreview() {
-    val mockFeedProfileEditMenuItem = FeedProfileEditMenuItem(
-        id = 1,
-        level = 1,
-        text = "Preview",
-        isToggleButton = false,
-        children = emptyList(),
-        isNumericInput = true,
-        phaseType = FeedProfileEditPhaseType.FEED,
-    )
-
-    val mockFeedProfileEditViewModel: FeedProfileEditViewModel =
-        mockFeedProfileEditViewModelFactory.create(FeedProfileEditViewModel::class.java)
-
     AquariumControllerTheme {
-        Surface(
-            color = MaterialTheme.colorScheme.background
-        ) {
+        Surface(color = MaterialTheme.colorScheme.background) {
             FeedProfileEditMenuItemDurationComposable(
+                feedProfile = mockFeedProfile,
                 feedProfileEditMenuItem = mockFeedProfileEditMenuItem,
-                feedProfileEditViewModel = mockFeedProfileEditViewModel)
+                onFeedProfileEditUiEvent = {},
+            )
         }
     }
 }

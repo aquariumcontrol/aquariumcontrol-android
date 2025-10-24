@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.feed.MockFeedProfilesRepository
+import com.laimburggasse.aquariumcontrol.feed.common.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.entry.mockFeedProfiles
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
@@ -20,21 +21,33 @@ import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 @Composable
 fun FeedProfileEditMenuComposable(
     itemsToRender: List<FeedProfileEditMenuItem>,
-    feedProfileEditViewModel: FeedProfileEditViewModel
+    feedProfile: FeedProfile,
+    isExpanded: Set<Int>,
+    onFeedProfileEditUiEvent: (FeedProfileEditUiEvent) -> Unit
 ) {
     // This composable acts as container for the feed profile edit menu items.
     if (LocalInspectionMode.current) {
         // In Preview: Render a simple, static Column instead of LazyColumn
         Column(modifier = Modifier.heightIn(max = 20000.dp)) {
             itemsToRender.forEach { feedProfileEditMenuItem ->
-                FeedProfileEditMenuItemComposable(feedProfileEditMenuItem, feedProfileEditViewModel)
+                FeedProfileEditMenuItemComposable(
+                    feedProfileEditMenuItem,
+                    isExpanded,
+                    feedProfile,
+                    onFeedProfileEditUiEvent
+                )
             }
         }
     } else {
         // In App Runtime: Use the performant LazyColumn
         LazyColumn(modifier = Modifier.heightIn(max = 20000.dp)) {
             items(items = itemsToRender) { feedProfileEditMenuItem ->
-                FeedProfileEditMenuItemComposable(feedProfileEditMenuItem, feedProfileEditViewModel)
+                FeedProfileEditMenuItemComposable(
+                    feedProfileEditMenuItem,
+                    isExpanded,
+                    feedProfile,
+                    onFeedProfileEditUiEvent
+                )
             }
         }
     }
@@ -49,21 +62,15 @@ val mockFeedProfilesRepository = MockFeedProfilesRepository(
 internal fun FeedProfileEditMenuComposablePreview() {
     val mockInitialExpandedItemIds: Set<Int> = setOf(1)
 
-    val mockFeedProfileEditViewModelFactory = FeedProfileEditViewModelFactory(
-        feedProfile = mockFeedProfile,
-        feedProfilesRepository = mockFeedProfilesRepository,
-        initialExpandedItemIds = mockInitialExpandedItemIds
-    )
-
     AquariumControllerTheme {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
             FeedProfileEditMenuComposable(
                 itemsToRender = FeedProfileEditMenuItems.phases,
-                feedProfileEditViewModel = mockFeedProfileEditViewModelFactory.create(
-                    FeedProfileEditViewModel::class.java
-                )
+                feedProfile = mockFeedProfile,
+                isExpanded = mockInitialExpandedItemIds,
+                onFeedProfileEditUiEvent = {}
             )
         }
     }

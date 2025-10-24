@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.feed.entry.FeedScheduleUiEvent
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntry
+import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntryUiEvent
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleRepository
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.coroutines.flow.SharingStarted
@@ -81,5 +82,17 @@ class FeedScheduleViewModel(
             }
         }
         return null
+    }
+
+    fun onFeedScheduleEntryUiEvent(event: FeedScheduleEntryUiEvent) {
+        when (event) {
+            is FeedScheduleEntryUiEvent.UpsertFeedScheduleEntry -> {
+                addFeedScheduleEntry(
+                    feedProfile = event.feedProfile,
+                    repeatDaily = event.feedScheduleEntry.repeatDaily,
+                    selectedCalendar = event.selectedCalendar
+                )
+            }
+        }
     }
 }

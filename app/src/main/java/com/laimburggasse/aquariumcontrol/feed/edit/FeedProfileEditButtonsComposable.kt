@@ -19,14 +19,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun FeedProfileEditButtonsComposable(
     modifier: Modifier? = Modifier,
-    feedProfileEditViewModel: FeedProfileEditViewModel? = null,
+    onFeedProfileEditUiEvent: (FeedProfileEditUiEvent) -> Unit
 ) {
     // This composable displays the buttons for updating the feed profile.
     // The arrangement of the buttons follows the device orientation.
@@ -34,9 +33,11 @@ fun FeedProfileEditButtonsComposable(
     val context: Context = LocalContext.current // context for Toasts
 
     Button(
-        modifier = modifier?.then(other = Modifier.fillMaxWidth().padding(horizontal = 8.dp)) ?: Modifier,
+        modifier = modifier?.then(other = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp)) ?: Modifier,
         onClick = {
-            feedProfileEditViewModel?.updateFeedProfile()
+            onFeedProfileEditUiEvent(FeedProfileEditUiEvent.Update)
             Toast.makeText(
                 context,
                 context.getString(R.string.sent_request_to_controller_for_updating_feed_profile),
@@ -54,9 +55,7 @@ fun FeedProfileEditButtonsComposable(
         modifier = modifier?.then(Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp)) ?: Modifier,
-        onClick = {
-            feedProfileEditViewModel?.resetFeedProfile()
-        },
+        onClick = { onFeedProfileEditUiEvent(FeedProfileEditUiEvent.Reset) },
     ) {
         Text(
             text = stringResource(id = R.string.reset_changes_to_feed_profile),
@@ -72,7 +71,7 @@ internal fun FeedProfileEditButtonsComposablePortraitPreview() {
     AquariumControllerTheme {
         Surface {
             Column {
-                FeedProfileEditButtonsComposable(modifier = Modifier.fillMaxWidth())
+                FeedProfileEditButtonsComposable(modifier = Modifier.fillMaxWidth(), onFeedProfileEditUiEvent = {})
             }
         }
     }
@@ -93,7 +92,7 @@ internal fun FeedProfileEditButtonsComposableLandscapePreview() {
     AquariumControllerTheme {
         Surface {
             Row {
-                FeedProfileEditButtonsComposable()
+                FeedProfileEditButtonsComposable(onFeedProfileEditUiEvent = {})
             }
         }
     }

@@ -4,10 +4,12 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
+import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditScreen
-import com.laimburggasse.aquariumcontrol.feed.edit.mockFeedProfileEditViewModelFactory
+import com.laimburggasse.aquariumcontrol.feed.edit.mockFeedProfileEditUiState
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,10 +29,17 @@ class FeedProfileEditScreenTest {
     @Test
     fun feedEditScreenDarkTest() {
         composeTestRule.setContent {
-            FeedProfileEditScreen(
-                mainViewModel = mockMainViewModel,
-                darkTheme = true,
-                feedProfileEditViewModelFactory = mockFeedProfileEditViewModelFactory,
+            MainScaffold(
+                mainViewModel = com.laimburggasse.aquariumcontrol.feed.entry.mockMainViewModel,
+                navigationRouteSource = ViewNavigationRoutes.feedEdit,
+                screenContent = {
+                    FeedProfileEditScreen(
+                        uiState = mockFeedProfileEditUiState,
+                        onFeedProfileEditUiEvent = {}
+                    )
+                },
+                onNavigate = {},
+                darkTheme = true
             )
         }
         composeTestRule.waitForIdle()
@@ -45,9 +54,16 @@ class FeedProfileEditScreenTest {
     @Test
     fun feedEditScreenLightTest() {
         composeTestRule.setContent {
-            FeedProfileEditScreen(
-                mainViewModel = mockMainViewModel,
-                feedProfileEditViewModelFactory = mockFeedProfileEditViewModelFactory,
+            MainScaffold(
+                mainViewModel = com.laimburggasse.aquariumcontrol.feed.entry.mockMainViewModel,
+                navigationRouteSource = ViewNavigationRoutes.feedEdit,
+                screenContent = {
+                    FeedProfileEditScreen(
+                        uiState = mockFeedProfileEditUiState,
+                        onFeedProfileEditUiEvent = {}
+                    )
+                },
+                onNavigate = {},
                 darkTheme = false
             )
         }

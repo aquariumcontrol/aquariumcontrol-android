@@ -8,25 +8,23 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.github.mikephil.charting.data.LineData
 import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfileImport
+import com.laimburggasse.aquariumcontrol.feed.entry.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 
 @Composable
 fun FeedProfileEditScreen(
-    feedProfileEditViewModelFactory: FeedProfileEditViewModelFactory,
+    uiState: FeedProfileEditUiState = FeedProfileEditUiState(),
+    onFeedProfileEditUiEvent: (FeedProfileEditUiEvent) -> Unit,
 ) {
     // This screen displays
     // - a graphic visualizing the feed profile
@@ -35,40 +33,22 @@ fun FeedProfileEditScreen(
     // - button for scheduling the execution of the feed profile
     // - a hierarchical menu for editing the feed profile
 
-    val feedProfileEditViewModel: FeedProfileEditViewModel = viewModel(
-        factory = feedProfileEditViewModelFactory
-    )
-
     val configuration: Configuration = LocalConfiguration.current
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.verticalScroll(rememberScrollState())
+        modifier = Modifier.verticalScroll(state = rememberScrollState())
     ) {
         ScreenHeadlineComposable(text = stringResource(id = R.string.feed_profile_editing))
-        val lineDataFeedProfileFeeder: LineData? by
-            feedProfileEditViewModel.lineDataFeedProfileFeeder.collectAsState()
-        val lineDataFeedProfileSkimmer: LineData? by
-            feedProfileEditViewModel.lineDataFeedProfileSkimmer.collectAsState()
-        val lineDataFeedProfileMainPump1: LineData? by
-            feedProfileEditViewModel.lineDataFeedProfileMainPump1.collectAsState()
-        val lineDataFeedProfileMainPump2: LineData? by
-            feedProfileEditViewModel.lineDataFeedProfileMainPump2.collectAsState()
-        val lineDataFeedProfileAuxPump1: LineData? by
-            feedProfileEditViewModel.lineDataFeedProfileAuxPump1.collectAsState()
-        val lineDataFeedProfileAuxPump2: LineData? by
-            feedProfileEditViewModel.lineDataFeedProfileAuxPump2.collectAsState()
-        val totalDuration: Float by
-            feedProfileEditViewModel.totalDuration.collectAsState()
 
         FeedProfileDisplayComposable(
-            lineDataFeedProfileFeeder,
-            lineDataFeedProfileSkimmer,
-            lineDataFeedProfileMainPump1,
-            lineDataFeedProfileMainPump2,
-            lineDataFeedProfileAuxPump1,
-            lineDataFeedProfileAuxPump2,
-            totalDuration
+            uiState.lineDataFeeder,
+            uiState.lineDataSkimmer,
+            uiState.lineDataMainPump1,
+            uiState.lineDataMainPump2,
+            uiState.lineDataAuxPump1,
+            uiState.lineDataAuxPump2,
+            uiState.totalDuration
         )
 
         FeedProfileDisplayLegendComposable()
@@ -76,22 +56,22 @@ fun FeedProfileEditScreen(
         when (configuration.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> {
                 Row {
-                    FeedProfileEditButtonsComposable(
-                        feedProfileEditViewModel = feedProfileEditViewModel
-                    )
+                    FeedProfileEditButtonsComposable(onFeedProfileEditUiEvent = onFeedProfileEditUiEvent)
                 }
             }
             else -> {
                 FeedProfileEditButtonsComposable(
-                    feedProfileEditViewModel = feedProfileEditViewModel,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    onFeedProfileEditUiEvent = onFeedProfileEditUiEvent
                 )
             }
         }
 
         FeedProfileEditMenuComposable(
             itemsToRender = FeedProfileEditMenuItems.phases, // all items shall be rendered
-            feedProfileEditViewModel = feedProfileEditViewModel
+            feedProfile = uiState.feedProfile,
+            isExpanded = uiState.expandedItemIds,
+            onFeedProfileEditUiEvent = onFeedProfileEditUiEvent
         )
     }
 }
@@ -228,9 +208,8 @@ fun createMockFeedProfile(): FeedProfile {
 
 val mockFeedProfile = createMockFeedProfile()
 
-val mockFeedProfileEditViewModelFactory = FeedProfileEditViewModelFactory(
+val mockFeedProfileEditUiState = FeedProfileEditUiState(
     feedProfile = mockFeedProfile,
-    feedProfilesRepository = mockFeedProfilesRepository
 )
 
 @Preview(showBackground = true, heightDp = 1100, uiMode = Configuration.UI_MODE_NIGHT_YES)
@@ -248,11 +227,12 @@ val mockFeedProfileEditViewModelFactory = FeedProfileEditViewModelFactory(
 @Composable
 internal fun FeedProfileEditScreenPreview() {
     MainScaffold(
-        mainViewModel = _root_ide_package_.com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
+        mainViewModel = mockMainViewModel,
         navigationRouteSource = ViewNavigationRoutes.feedEdit,
         screenContent = {
             FeedProfileEditScreen(
-                feedProfileEditViewModelFactory = mockFeedProfileEditViewModelFactory,
+                uiState = mockFeedProfileEditUiState,
+                onFeedProfileEditUiEvent = {}
             )
         },
         onNavigate = {},

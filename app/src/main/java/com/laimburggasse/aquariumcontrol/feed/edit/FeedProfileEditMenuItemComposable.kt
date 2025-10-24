@@ -13,8 +13,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -24,22 +22,24 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 @Composable
 fun FeedProfileEditMenuItemComposable(
     feedProfileEditMenuItem: FeedProfileEditMenuItem,
-    feedProfileEditViewModel: FeedProfileEditViewModel
+    isExpanded: Set<Int>,
+    feedProfile: FeedProfile,
+    onFeedProfileEditUiEvent: (FeedProfileEditUiEvent) -> Unit
 ) {
-    val isExpanded: Set<Int> by feedProfileEditViewModel.expandedItemIds.collectAsState()
-    val profileState: FeedProfile by feedProfileEditViewModel.feedProfileUiState.collectAsState()
+    //val isExpanded: Set<Int> by feedProfileEditViewModel.expandedItemIds.collectAsState()
+    //val profileState: FeedProfile by feedProfileEditViewModel.feedProfileUiState.collectAsState()
 
     // conversion of unique ID of menu item to feed profile phase ID
     val phaseId: Int = mapMenuItemIdToPhaseId(id = feedProfileEditMenuItem.id)
     val isThisItemExpanded = feedProfileEditMenuItem.id in isExpanded
 
-    val isChecked: Boolean = if (phaseId < profileState.feedProfilePhases.size) {
+    val isChecked: Boolean = if (phaseId < feedProfile.feedProfilePhases.size) {
         when (feedProfileEditMenuItem.toggleButtonType) {
-            FeedProfileEditToggleButtonType.Skimmer -> profileState.feedProfilePhases[phaseId].skimmer
-            FeedProfileEditToggleButtonType.MainPump1 -> profileState.feedProfilePhases[phaseId].mainPump1
-            FeedProfileEditToggleButtonType.MainPump2 -> profileState.feedProfilePhases[phaseId].mainPump2
-            FeedProfileEditToggleButtonType.AuxPump1 -> profileState.feedProfilePhases[phaseId].auxPump1
-            FeedProfileEditToggleButtonType.AuxPump2 -> profileState.feedProfilePhases[phaseId].auxPump2
+            FeedProfileEditToggleButtonType.Skimmer -> feedProfile.feedProfilePhases[phaseId].skimmer
+            FeedProfileEditToggleButtonType.MainPump1 -> feedProfile.feedProfilePhases[phaseId].mainPump1
+            FeedProfileEditToggleButtonType.MainPump2 -> feedProfile.feedProfilePhases[phaseId].mainPump2
+            FeedProfileEditToggleButtonType.AuxPump1 -> feedProfile.feedProfilePhases[phaseId].auxPump1
+            FeedProfileEditToggleButtonType.AuxPump2 -> feedProfile.feedProfilePhases[phaseId].auxPump2
             null -> false // Not a toggle button
         }
     } else {
@@ -53,8 +53,8 @@ fun FeedProfileEditMenuItemComposable(
         modifier = Modifier
             .clickable {
                 if (feedProfileEditMenuItem.children.isNotEmpty()) {
-                    feedProfileEditViewModel.onExpanded(
-                        itemId = feedProfileEditMenuItem.id
+                    onFeedProfileEditUiEvent(FeedProfileEditUiEvent.ExpandChildren(
+                        menuItemId = feedProfileEditMenuItem.id)
                     )
                 }
             }
@@ -74,24 +74,27 @@ fun FeedProfileEditMenuItemComposable(
             Switch(
                 checked = isChecked,
                 onCheckedChange = {
-                    feedProfileEditViewModel.onToggleStateChange(
-                        id = feedProfileEditMenuItem.id,
+                    onFeedProfileEditUiEvent(FeedProfileEditUiEvent.SwitchToggle(
+                        menuItemId = feedProfileEditMenuItem.id,
                         toggleButtonType = feedProfileEditMenuItem.toggleButtonType!!,
                         isChecked = it
-                    )
+                    ))
                 })
         }
         if (feedProfileEditMenuItem.isNumericInput) {
             FeedProfileEditMenuItemDurationComposable(
+                feedProfile,
                 feedProfileEditMenuItem,
-                feedProfileEditViewModel
+                onFeedProfileEditUiEvent
             )
         }
     }
     if (isThisItemExpanded) {
         FeedProfileEditMenuComposable(
             itemsToRender = feedProfileEditMenuItem.children,
-            feedProfileEditViewModel = feedProfileEditViewModel
+            feedProfile,
+            isExpanded,
+            onFeedProfileEditUiEvent
         )
     }
 }
@@ -113,21 +116,13 @@ internal fun FeedProfileEditMenuItemComposablePreview() {
 
     val mockInitialExpandedItemIds: Set<Int> = emptySet()
 
-    val mockFeedProfileEditViewModelFactory = FeedProfileEditViewModelFactory(
-        feedProfile = mockFeedProfile,
-        feedProfilesRepository = mockFeedProfilesRepository,
-        initialExpandedItemIds = mockInitialExpandedItemIds
-    )
-
     AquariumControllerTheme {
-        Surface(
-            color = MaterialTheme.colorScheme.background
-        ) {
+        Surface(color = MaterialTheme.colorScheme.background) {
             FeedProfileEditMenuItemComposable(
                 feedProfileEditMenuItem = mockFeedProfileEditMenuItem,
-                feedProfileEditViewModel = mockFeedProfileEditViewModelFactory.create(
-                    FeedProfileEditViewModel::class.java
-                )
+                feedProfile = mockFeedProfile,
+                onFeedProfileEditUiEvent = {},
+                isExpanded = mockInitialExpandedItemIds,
             )
         }
     }

@@ -59,6 +59,7 @@ import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleRepository
 import com.laimburggasse.aquariumcontrol.feed.common.FeedScheduleViewModelFactory
 import com.laimburggasse.aquariumcontrol.feed.entry.FeedProfilesUiState
 import com.laimburggasse.aquariumcontrol.feed.common.FeedScheduleUiState
+import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditViewModel
 import com.laimburggasse.aquariumcontrol.heating.HeatingScreen
 import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsRepository
 import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsViewModelFactory
@@ -355,10 +356,17 @@ class MainActivity : ComponentActivity() {
                                         feedProfile = feedProfile,
                                         feedProfilesRepository = feedProfilesRepository
                                     )
+                                val feedProfileEditViewModel: FeedProfileEditViewModel = viewModel(
+                                    factory = feedProfileEditViewModelFactory
+                                )
+                                val uiState by feedProfileEditViewModel.uiState.collectAsState()
                                 MainScaffold(
                                     mainViewModel = mainViewModel,
                                     navigationRouteSource = ViewNavigationRoutes.feedEdit,
-                                    screenContent = { FeedProfileEditScreen(feedProfileEditViewModelFactory) },
+                                    screenContent = { FeedProfileEditScreen(
+                                        uiState,
+                                        onFeedProfileEditUiEvent = feedProfileEditViewModel::onFeedProfileEditUiEvent,
+                                    ) },
                                     onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
                                 )
                             }
@@ -409,28 +417,36 @@ class MainActivity : ComponentActivity() {
                             ViewNavigationRoutes.FEED_ARG_MILLIS_SINCE_EPOCH
                         )
                         if (feedProfileId != null && isNewScheduleEntry != null && millisSinceEpoch != null) {
-                            MainScaffold(
-                                mainViewModel,
-                                navigationRouteSource = ViewNavigationRoutes.feedSchedule,
-                                screenContent = {
-                                    FeedProfileScheduleScreen(
-                                        feedProfileId,
-                                        feedScheduleViewModelFactory,
-                                        feedProfilesViewModelFactory,
-                                        isNewScheduleEntry,
-                                        millisSinceEpoch,
-                                        onNavigateFromFeed = { event, profileId, isNew, millis ->
-                                            navHostController.handleFeedNavigation(
-                                                event,
-                                                feedProfileId,
-                                                isNewScheduleEntry,
-                                                millisSinceEpoch
-                                            )
-                                        }
-                                    )
-                                },
-                                onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) },
-                            )
+                            val feedProfilesViewModel: FeedProfilesViewModel = viewModel(factory = feedProfilesViewModelFactory)
+                            val feedScheduleViewModel: FeedScheduleViewModel = viewModel(factory = feedScheduleViewModelFactory)
+                            val feedProfile = feedProfilesViewModel.findProfileById(profileID = feedProfileId)
+                            if (feedProfile != null) {
+                                MainScaffold(
+                                    mainViewModel,
+                                    navigationRouteSource = ViewNavigationRoutes.feedSchedule,
+                                    screenContent = {
+                                        FeedProfileScheduleScreen(
+                                            feedProfile,
+                                            isNewScheduleEntry,
+                                            millisSinceEpoch,
+                                            onNavigateFromFeed = { event, profileId, isNew, millis ->
+                                                navHostController.handleFeedNavigation(
+                                                    event,
+                                                    feedProfileId,
+                                                    isNewScheduleEntry,
+                                                    millisSinceEpoch
+                                                )
+                                            },
+                                            onFeedScheduleEntryUiEvent = feedScheduleViewModel::onFeedScheduleEntryUiEvent
+                                        )
+                                    },
+                                    onNavigate = { event ->
+                                        navHostController.handleMainDropDownMenuNavigation(
+                                            event
+                                        )
+                                    },
+                                )
+                            }
                         }
                         else {
                             // @todo: handle error case (e.g. navigate back)

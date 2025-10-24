@@ -4,9 +4,11 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
+import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfileImport
-import com.laimburggasse.aquariumcontrol.feed.entry.mockMainViewModel
+import com.laimburggasse.aquariumcontrol.feed.edit.mockFeedProfile
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedProfileScheduleScreen
 import org.junit.Rule
 import org.junit.Test
@@ -29,13 +31,19 @@ class FeedProfileScheduleScreenTest {
         mockFeedProfileImport.profileName = "Test Profile 1"
 
         composeTestRule.setContent {
-            FeedProfileScheduleScreen(
-                mainViewModel = mockMainViewModel,
-                feedProfileId = 1,
-                feedScheduleViewModelFactory = mockFeedScheduleViewModelFactory,
-                feedProfilesViewModelFactory = mockFeedProfilesViewModelFactory,
-                isNewScheduleEntry = false,
-                millisSinceEpoch = 0,
+            MainScaffold(
+                mainViewModel = com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
+                navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
+                screenContent = {
+                    FeedProfileScheduleScreen(
+                        feedProfile = mockFeedProfile,
+                        isNewScheduleEntry = false,
+                        millisSinceEpoch = 0,
+                        onNavigateFromFeed = { event, id, isNew, millis -> },
+                        onFeedScheduleEntryUiEvent = {}
+                    )
+                },
+                onNavigate = {},
                 darkTheme = true
             )
         }
@@ -55,13 +63,19 @@ class FeedProfileScheduleScreenTest {
         mockFeedProfileImport.profileName = "Test Profile 1"
 
         composeTestRule.setContent {
-            FeedProfileScheduleScreen(
-                mainViewModel = mockMainViewModel,
-                feedProfileId = 1,
-                feedScheduleViewModelFactory = mockFeedScheduleViewModelFactory,
-                feedProfilesViewModelFactory = mockFeedProfilesViewModelFactory,
-                isNewScheduleEntry = false,
-                millisSinceEpoch = 0,
+            MainScaffold(
+                mainViewModel = com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
+                navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
+                screenContent = {
+                    FeedProfileScheduleScreen(
+                        feedProfile = mockFeedProfile,
+                        isNewScheduleEntry = false,
+                        millisSinceEpoch = 0,
+                        onNavigateFromFeed = { event, id, isNew, millis -> },
+                        onFeedScheduleEntryUiEvent = {}
+                    )
+                },
+                onNavigate = {},
                 darkTheme = false
             )
         }

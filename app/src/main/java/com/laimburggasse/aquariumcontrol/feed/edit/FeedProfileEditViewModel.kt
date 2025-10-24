@@ -2,165 +2,91 @@ package com.laimburggasse.aquariumcontrol.feed.edit
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.mikephil.charting.components.YAxis
-import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilePhase
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlin.math.abs
-
-private const val chartValAllowedDelta = 0.0001
 
 class FeedProfileEditViewModel(
     private val originalFeedProfile: FeedProfile,
     private val feedProfilesRepository: FeedProfilesRepository,
     private val initialExpandedItemIds: Set<Int> = emptySet() // for testing purposes
 ) : ViewModel() {
-    private val _feedProfileUiState = MutableStateFlow(value = originalFeedProfile)
-    val feedProfileUiState: StateFlow<FeedProfile> = _feedProfileUiState.asStateFlow()
+    private val _feedProfileState = MutableStateFlow(value = originalFeedProfile)
     private val _expandedItemIds = MutableStateFlow(value = initialExpandedItemIds)
-    val expandedItemIds: StateFlow<Set<Int>> = _expandedItemIds.asStateFlow()
+    private val _lineDataFeeder = MutableStateFlow<LineData?>(value = null)
+    private val _lineDataSkimmer = MutableStateFlow<LineData?>(value = null)
+    private val _lineDataMainPump1 = MutableStateFlow<LineData?>(value = null)
+    private val _lineDataMainPump2 = MutableStateFlow<LineData?>(value = null)
+    private val _lineDataAuxPump1 = MutableStateFlow<LineData?>(value = null)
+    private val _lineDataAuxPump2 = MutableStateFlow<LineData?>(value = null)
+    private val _totalDuration = MutableStateFlow(value = 0f)
 
-    private val _lineDataFeedProfileFeeder = MutableStateFlow<LineData?>(null)
-    val lineDataFeedProfileFeeder: StateFlow<LineData?> = _lineDataFeedProfileFeeder.asStateFlow()
+    val uiState: StateFlow<FeedProfileEditUiState> = combine(
+        _feedProfileState, _expandedItemIds, _lineDataFeeder, _lineDataSkimmer,
+        _lineDataMainPump1, _lineDataMainPump2, _lineDataAuxPump1, _lineDataAuxPump2,
+        _totalDuration
+    ) {
+        // due to high number of flows, no named parameters are available
+        latestValues: Array<Any?> ->
 
-    private val _lineDataFeedProfileSkimmer = MutableStateFlow<LineData?>(null)
-    val lineDataFeedProfileSkimmer: StateFlow<LineData?> = _lineDataFeedProfileSkimmer.asStateFlow()
+        val feedProfile = latestValues[0] as FeedProfile
+        val expandedIds: Set<Int> = latestValues[1] as Set<Int>
+        val feeder = latestValues[2] as? LineData
+        val skimmer = latestValues[3] as? LineData
+        val mainPump1 = latestValues[4] as? LineData
+        val mainPump2 = latestValues[5] as? LineData
+        val auxPump1 = latestValues[6] as? LineData
+        val auxPump2 = latestValues[7] as? LineData
+        val totalDuration = latestValues[8] as Float
 
-    private val _lineDataFeedProfileMainPump1 = MutableStateFlow<LineData?>(null)
-    val lineDataFeedProfileMainPump1: StateFlow<LineData?> =
-        _lineDataFeedProfileMainPump1.asStateFlow()
-
-    private val _lineDataFeedProfileMainPump2 = MutableStateFlow<LineData?>(null)
-    val lineDataFeedProfileMainPump2: StateFlow<LineData?> =
-        _lineDataFeedProfileMainPump2.asStateFlow()
-
-    private val _lineDataFeedProfileAuxPump1 = MutableStateFlow<LineData?>(null)
-    val lineDataFeedProfileAuxPump1: StateFlow<LineData?> =
-        _lineDataFeedProfileAuxPump1.asStateFlow()
-
-    private val _lineDataFeedProfileAuxPump2 = MutableStateFlow<LineData?>(null)
-    val lineDataFeedProfileAuxPump2: StateFlow<LineData?> =
-        _lineDataFeedProfileAuxPump2.asStateFlow()
-
-    private val _totalDuration = MutableStateFlow(0f)
-    val totalDuration: StateFlow<Float> = _totalDuration.asStateFlow()
-
+        FeedProfileEditUiState(
+            feedProfile = feedProfile,
+            expandedItemIds = expandedIds,
+            lineDataFeeder = feeder,
+            lineDataSkimmer = skimmer,
+            lineDataMainPump1 = mainPump1,
+            lineDataMainPump2 = mainPump2,
+            lineDataAuxPump1 = auxPump1,
+            lineDataAuxPump2 = auxPump2,
+            totalDuration = totalDuration
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = FeedProfileEditUiState() // Start with a default, empty state
+    )
+    
     init {
         viewModelScope.launch {
-            feedProfileUiState.collect { currentProfile ->
-                transformFeedProfileToChartData(currentProfile)
-                _totalDuration.value = currentProfile.calcDuration()
+            _feedProfileState.collect { currentProfile ->
+                val chartBundle: FeedProfileChartDataBundle = FeedProfileChartDataFactory.create(currentProfile)
+                _lineDataFeeder.value = chartBundle.lineDataFeeder
+                _lineDataSkimmer.value = chartBundle.lineDataSkimmer
+                _lineDataMainPump1.value = chartBundle.lineDataMainPump1
+                _lineDataMainPump2.value = chartBundle.lineDataMainPump2
+                _lineDataAuxPump1.value = chartBundle.lineDataAuxPump1
+                _lineDataAuxPump2.value = chartBundle.lineDataAuxPump2
+                _totalDuration.value = chartBundle.totalDuration
             }
-        }
-    }
-
-    private fun transformFeedProfileToChartData(currentProfile: FeedProfile) {
-        // Configuration for all chart lines
-        val chartLines: List<FeedProfileChartLine> = listOf(
-            FeedProfileChartLine(name = "Feeder", signal = FeedProfileSignal.FEEDER,
-                lineDataStateFlow = _lineDataFeedProfileFeeder,
-                getValue = { phase -> !phase.isPause }, // Feeder is "ON" during feed phases
-                yAxisValueOn = FeedProfileDisplayYAxisValueDefinition.FEEDER_ON,
-                yAxisValueOff = FeedProfileDisplayYAxisValueDefinition.FEEDER_OFF),
-            FeedProfileChartLine(name = "Skimmer", signal = FeedProfileSignal.SKIMMER,
-                lineDataStateFlow = _lineDataFeedProfileSkimmer,
-                getValue = { phase -> phase.skimmer },
-                yAxisValueOn = FeedProfileDisplayYAxisValueDefinition.SKIMMER_ON,
-                yAxisValueOff = FeedProfileDisplayYAxisValueDefinition.SKIMMER_OFF),
-            FeedProfileChartLine(name = "Main Pump 1", signal = FeedProfileSignal.MAIN_PUMP1,
-                lineDataStateFlow = _lineDataFeedProfileMainPump1,
-                getValue = { phase -> phase.mainPump1 },
-                yAxisValueOn = FeedProfileDisplayYAxisValueDefinition.MAIN_PUMP1_ON,
-                yAxisValueOff = FeedProfileDisplayYAxisValueDefinition.MAIN_PUMP1_OFF),
-            FeedProfileChartLine(name = "Main Pump 2", signal = FeedProfileSignal.MAIN_PUMP2,
-                lineDataStateFlow = _lineDataFeedProfileMainPump2,
-                getValue = { phase -> phase.mainPump2 },
-                yAxisValueOn = FeedProfileDisplayYAxisValueDefinition.MAIN_PUMP2_ON,
-                yAxisValueOff = FeedProfileDisplayYAxisValueDefinition.MAIN_PUMP2_OFF),
-            FeedProfileChartLine(name = "Aux. Pump 1", signal = FeedProfileSignal.AUX_PUMP1,
-                lineDataStateFlow = _lineDataFeedProfileAuxPump1,
-                getValue = { phase -> phase.auxPump1 },
-                yAxisValueOn = FeedProfileDisplayYAxisValueDefinition.AUX_PUMP1_ON,
-                yAxisValueOff = FeedProfileDisplayYAxisValueDefinition.AUX_PUMP1_OFF),
-            FeedProfileChartLine("Aux. Pump 2", signal = FeedProfileSignal.AUX_PUMP2,
-                lineDataStateFlow = _lineDataFeedProfileAuxPump2,
-                getValue = { phase -> phase.auxPump2 },
-                yAxisValueOn = FeedProfileDisplayYAxisValueDefinition.AUX_PUMP2_ON,
-                yAxisValueOff = FeedProfileDisplayYAxisValueDefinition.AUX_PUMP2_OFF)
-        )
-
-        // A map to hold the list of data points (Entry) for each chart line.
-        val valuesMap: Map<FeedProfileChartLine, MutableList<Entry>> = chartLines.associateWith { mutableListOf() }
-        var cumulatedTime = 0.0f
-
-        // Add the initial state (time = 0.0) for every line.
-        val firstPhase: FeedProfilePhase = currentProfile.feedProfilePhases.first()
-        chartLines.forEach { line ->
-            val initialValue: Float = if (line.getValue(firstPhase)) line.yAxisValueOn else line.yAxisValueOff
-            valuesMap.getValue(key = line).add(Entry(0f, initialValue))
-        }
-
-        // Process each phase transition to create the staircase.
-        currentProfile.feedProfilePhases.forEach { phase ->
-            val phaseDuration: Float = phase.duration.toFloat()
-
-            // If the phase has no duration, it causes no change in time, so we skip it.
-            if (phaseDuration <= 0f) return@forEach
-
-            chartLines.forEach { line ->
-                val entries: MutableList<Entry> = valuesMap.getValue(line)
-                val lastValue: Float = entries.last().y
-                val newValue: Float = if (line.getValue(phase)) line.yAxisValueOn else line.yAxisValueOff
-
-                // If the state for this line has changed compared to the last data point...
-                if (abs(newValue - lastValue) > chartValAllowedDelta) {
-                    // ...add a point at the current time with the PREVIOUS value to create a vertical line.
-                    entries.add(Entry(cumulatedTime, lastValue))
-                    // And add another point at the SAME time with the NEW value.
-                    entries.add(Entry(cumulatedTime, newValue))
-                }
-            }
-            // Move time forward for the next phase.
-            cumulatedTime += phaseDuration
-
-            // Add a final point for each line at the end of the current phase's duration.
-            chartLines.forEach { line ->
-                val entries: MutableList<Entry> = valuesMap.getValue(key = line)
-                val newValue: Float = if (line.getValue(phase)) line.yAxisValueOn else line.yAxisValueOff
-                // Add a point to "hold" the state for the duration of this phase.
-                entries.add(Entry(cumulatedTime, newValue))
-            }
-        }
-
-        // Create the final LineDataSet for each line and update its StateFlow.
-        chartLines.forEach { line ->
-            val set: LineDataSet = LineDataSet(valuesMap.getValue(line), line.name).apply {
-                color = feedProfileLineColorDefinition(signal = line.signal)
-                lineWidth = 2.5f
-                axisDependency = YAxis.AxisDependency.LEFT
-                setDrawValues(false) // Hide values on the chart
-                setDrawCircles(false) // Hide data point circles
-            }
-            line.lineDataStateFlow.value = LineData(set)
         }
     }
 
     fun onDurationChange(id: Int, duration: Double) {
         val phaseId: Int = mapMenuItemIdToPhaseId(id)
-        val currentProfile: FeedProfile = _feedProfileUiState.value
+        val currentProfile: FeedProfile = _feedProfileState.value
         val newPhases: MutableList<FeedProfilePhase> = currentProfile.feedProfilePhases.toMutableList()
         if (phaseId >= newPhases.size) return // Safety check (defensive programming)
         val oldPhase: FeedProfilePhase = newPhases[phaseId]
         val newPhase: FeedProfilePhase = oldPhase.copy(duration = duration)
         newPhases[phaseId] = newPhase
-        _feedProfileUiState.value = currentProfile.copy(feedProfilePhases = newPhases)
+        _feedProfileState.value = currentProfile.copy(feedProfilePhases = newPhases)
     }
 
     fun onToggleStateChange(
@@ -169,7 +95,7 @@ class FeedProfileEditViewModel(
         isChecked: Boolean
     ) {
         val phaseId: Int = mapMenuItemIdToPhaseId(id)
-        val currentProfile: FeedProfile = _feedProfileUiState.value
+        val currentProfile: FeedProfile = _feedProfileState.value
         val newPhases: MutableList<FeedProfilePhase> = currentProfile.feedProfilePhases.toMutableList()
         if (phaseId >= newPhases.size) return // Safety check (defensive programming)
         val oldPhase: FeedProfilePhase = newPhases[phaseId]
@@ -181,18 +107,18 @@ class FeedProfileEditViewModel(
             FeedProfileEditToggleButtonType.AuxPump2 -> oldPhase.copy(auxPump2 = isChecked)
         }
         newPhases[phaseId] = newPhase
-        _feedProfileUiState.value = currentProfile.copy(feedProfilePhases = newPhases)
+        _feedProfileState.value = currentProfile.copy(feedProfilePhases = newPhases)
     }
 
     fun updateFeedProfile() {
         viewModelScope.launch {
-            val profileToUpdate: FeedProfile = _feedProfileUiState.value
+            val profileToUpdate: FeedProfile = _feedProfileState.value
             feedProfilesRepository.updateFeedProfile(modifiedFeedProfile = profileToUpdate)
         }
     }
 
     fun resetFeedProfile() {
-        _feedProfileUiState.value = originalFeedProfile
+        _feedProfileState.value = originalFeedProfile
     }
 
     fun onExpanded(itemId: Int) {
@@ -201,6 +127,30 @@ class FeedProfileEditViewModel(
                 currentIds - itemId // Item was expanded, so collapse it by removing its ID
             } else {
                 currentIds + itemId // Item was collapsed, so expand it by adding its ID
+            }
+        }
+    }
+
+    fun onFeedProfileEditUiEvent(event: FeedProfileEditUiEvent) {
+        when (event) {
+            is FeedProfileEditUiEvent.DurationChange -> {
+                onDurationChange(id = event.menuItemId, duration = event.newDuration)
+            }
+            is FeedProfileEditUiEvent.SwitchToggle -> {
+                onToggleStateChange(
+                    id = event.menuItemId,
+                    toggleButtonType = event.toggleButtonType,
+                    isChecked = event.isChecked
+                )
+            }
+            is FeedProfileEditUiEvent.ExpandChildren -> {
+                onExpanded(itemId = event.menuItemId)
+            }
+            is FeedProfileEditUiEvent.Update -> {
+                updateFeedProfile()
+            }
+            is FeedProfileEditUiEvent.Reset -> {
+                resetFeedProfile()
             }
         }
     }
