@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.refill
+package com.laimburggasse.aquariumcontrol.refill.entry
 
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest

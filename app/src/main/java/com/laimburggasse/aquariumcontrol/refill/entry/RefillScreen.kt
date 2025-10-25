@@ -1,7 +1,9 @@
-package com.laimburggasse.aquariumcontrol.refill
+package com.laimburggasse.aquariumcontrol.refill.entry
 
+import android.content.Context
 import android.content.res.Configuration
 import android.widget.Toast
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,20 +23,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.laimburggasse.aquariumcontrol.MainScaffold
-import com.laimburggasse.aquariumcontrol.MainViewModel
-import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.refill.common.RefillNavigationEvent
 
 @Composable
 fun RefillScreen(
-    mainViewModel: MainViewModel,
-    refillViewModelFactory: RefillViewModelFactory,
     onNavigateFromRefill: (RefillNavigationEvent) -> Unit,
+    onRefillEvent: (RefillEvent) -> Unit
 ) {
     // This screen displays
     // - a button for visualizing all refill events of the last 24h
@@ -43,15 +41,9 @@ fun RefillScreen(
     // - a button for stopping the refill controller
     // - a button for resetting errors of the refill controller
 
-    val isControllerLoaded = mainViewModel.isControllerLoaded()
-    val isControllerAddressValid: Boolean = !mainViewModel.getControllerAddress().isNullOrBlank()
-    val context = LocalContext.current // context for web API request and Toasts
+    val context: Context = LocalContext.current // context for Toasts
 
-    val refillViewModel: RefillViewModel = viewModel(factory = refillViewModelFactory)
-
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
         ScreenHeadlineComposable(text = stringResource(id = R.string.refill_control))
         Scaffold(
             topBar = { },
@@ -89,14 +81,12 @@ fun RefillScreen(
                         Button(
                             modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
                             onClick = {
-                                if (isControllerLoaded && isControllerAddressValid) {
-                                    refillViewModel.sendStartRequest()
-                                    Toast.makeText(
-                                        context,
-                                        context.getString(R.string.sent_request_to_controller_for_starting_refill_control),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
+                                onRefillEvent(RefillEvent.StartControl)
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.sent_request_to_controller_for_starting_refill_control),
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             },
                         ) {
                             Text(
@@ -107,14 +97,12 @@ fun RefillScreen(
                         Button(
                             modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
                             onClick = {
-                                if (isControllerLoaded && isControllerAddressValid) {
-                                    refillViewModel.sendStopRequest()
-                                    Toast.makeText(
-                                        context,
-                                        context.getString(R.string.sent_request_to_controller_for_stopping_refill_control),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
+                                onRefillEvent(RefillEvent.StopControl)
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.sent_request_to_controller_for_stopping_refill_control),
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             },
                         ) {
                             Text(
@@ -125,14 +113,12 @@ fun RefillScreen(
                         Button(
                             modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
                             onClick = {
-                                if (isControllerLoaded && isControllerAddressValid) {
-                                    refillViewModel.sendResetRequest()
-                                    Toast.makeText(
-                                        context,
-                                        context.getString(R.string.sent_request_to_controller_for_resetting_errors),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
+                                onRefillEvent(RefillEvent.ResetErrors)
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.sent_request_to_controller_for_resetting_errors),
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             },
                         ) {
                             Text(
@@ -146,12 +132,6 @@ fun RefillScreen(
         }
     }
 }
-
-
-val mockMainViewModel = MockMainViewModel()
-val mockRefillRepository = MockRefillRepository()
-
-val mockRefillViewModelFactory = RefillViewModelFactory(mockRefillRepository)
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -173,11 +153,11 @@ internal fun RefillScreenPreview() {
         navigationRouteSource = ViewNavigationRoutes.refill,
         screenContent = {
             RefillScreen(
-                mainViewModel = mockMainViewModel,
-                refillViewModelFactory = mockRefillViewModelFactory,
-                onNavigateFromRefill = { event -> }
+                onNavigateFromRefill = { event -> },
+                onRefillEvent = { event -> }
             )
         },
-        onNavigate = {}
+        onNavigate = {},
+        darkTheme = isSystemInDarkTheme()
     )
 }

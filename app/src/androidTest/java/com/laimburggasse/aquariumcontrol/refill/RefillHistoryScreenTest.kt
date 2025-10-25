@@ -4,12 +4,12 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
-import com.laimburggasse.aquariumcontrol.overview.mockMainViewModel
+import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryScreen
-import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryViewModelFactory
-import com.laimburggasse.aquariumcontrol.refill.history.mockRefillHistoryRepositoryEmpty
-import com.laimburggasse.aquariumcontrol.refill.history.mockRefillHistoryRepositorySuccess
+import com.laimburggasse.aquariumcontrol.refill.history.mockRefillHistoryUiStateEmpty
+import com.laimburggasse.aquariumcontrol.refill.history.mockRefillHistoryUiStateSuccess
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,12 +27,17 @@ class RefillHistoryScreenTest {
     @Test
     fun refillHistoryScreenDarkEmptyTest() {
         composeTestRule.setContent {
-            RefillHistoryScreen(
-                showFullWeek = true,
-                refillHistoryViewModelFactory = RefillHistoryViewModelFactory(
-                    refillHistoryRepository = mockRefillHistoryRepositoryEmpty
-                ),
-                mainViewModel = mockMainViewModel,
+            MainScaffold(
+                isControllerLoaded = true,
+                navigationRouteSource = ViewNavigationRoutes.refillHistory24h,
+                screenContent = {
+                    RefillHistoryScreen(
+                        showFullWeek = true,
+                        refillHistoryUiState = mockRefillHistoryUiStateEmpty,
+                        onRefillHistoryEvent = {}
+                    )
+                },
+                onNavigate = {},
                 darkTheme = true
             )
         }
@@ -48,12 +53,17 @@ class RefillHistoryScreenTest {
     @Test
     fun refillHistoryScreenLightEmptyTest() {
         composeTestRule.setContent {
-            RefillHistoryScreen(
-                showFullWeek = true,
-                refillHistoryViewModelFactory = RefillHistoryViewModelFactory(
-                    refillHistoryRepository = mockRefillHistoryRepositoryEmpty
-                ),
-                mainViewModel = mockMainViewModel,
+            MainScaffold(
+                isControllerLoaded = true,
+                navigationRouteSource = ViewNavigationRoutes.refillHistory24h,
+                screenContent = {
+                    RefillHistoryScreen(
+                        showFullWeek = true,
+                        refillHistoryUiState = mockRefillHistoryUiStateEmpty,
+                        onRefillHistoryEvent = {}
+                    )
+                },
+                onNavigate = {},
                 darkTheme = false
             )
         }
@@ -68,12 +78,17 @@ class RefillHistoryScreenTest {
     @Test
     fun refillHistoryScreenDarkDataTest() {
         composeTestRule.setContent {
-            RefillHistoryScreen(
-                showFullWeek = true,
-                refillHistoryViewModelFactory = RefillHistoryViewModelFactory(
-                    refillHistoryRepository = mockRefillHistoryRepositorySuccess
-                ),
-                mainViewModel = mockMainViewModel,
+            MainScaffold(
+                isControllerLoaded = true,
+                navigationRouteSource = ViewNavigationRoutes.refillHistory24h,
+                screenContent = {
+                    RefillHistoryScreen(
+                        showFullWeek = true,
+                        refillHistoryUiState = mockRefillHistoryUiStateSuccess,
+                        onRefillHistoryEvent = {}
+                    )
+                },
+                onNavigate = {},
                 darkTheme = true
             )
         }
@@ -89,12 +104,17 @@ class RefillHistoryScreenTest {
     @Test
     fun refillHistoryScreenLightDataTest() {
         composeTestRule.setContent {
-            RefillHistoryScreen(
-                showFullWeek = true,
-                refillHistoryViewModelFactory = RefillHistoryViewModelFactory(
-                    refillHistoryRepository = mockRefillHistoryRepositorySuccess
-                ),
-                mainViewModel = mockMainViewModel,
+            MainScaffold(
+                isControllerLoaded = true,
+                navigationRouteSource = ViewNavigationRoutes.refillHistory24h,
+                screenContent = {
+                    RefillHistoryScreen(
+                        showFullWeek = true,
+                        refillHistoryUiState = mockRefillHistoryUiStateSuccess,
+                        onRefillHistoryEvent = {}
+                    )
+                },
+                onNavigate = {},
                 darkTheme = false
             )
         }

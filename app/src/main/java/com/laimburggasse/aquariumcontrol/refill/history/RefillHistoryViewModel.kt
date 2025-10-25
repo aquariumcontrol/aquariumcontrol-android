@@ -31,6 +31,7 @@ class RefillHistoryViewModel(
             initialValue = RefillHistoryUiState.Loading
         )
 
+    // @todo: add functionality to limit the number of events displayed
     init {
         loadData(showFullWeek = false)
     }
@@ -38,6 +39,14 @@ class RefillHistoryViewModel(
     fun loadData(showFullWeek: Boolean) {
         viewModelScope.launch {
             refillHistoryRepository.fetchRefillHistoryEvents(showFullWeek)
+        }
+    }
+
+    fun onRefillHistoryEvent(event: RefillHistoryEvent) {
+        when (event) {
+            is RefillHistoryEvent.Refresh -> {
+                loadData(showFullWeek = event.showFullWeek)
+            }
         }
     }
 }

@@ -37,7 +37,7 @@ class FeedHistoryScreenTest {
                     FeedHistoryScreen(
                         showFullWeek = false,
                         feedHistoryUiState = mockFeedHistoryUiStateEmpty,
-                        onEvent = {}
+                        onFeedHistoryEvent = {}
                     )
                 },
                 onNavigate = {},
@@ -63,7 +63,7 @@ class FeedHistoryScreenTest {
                     FeedHistoryScreen(
                         showFullWeek = false,
                         feedHistoryUiState = mockFeedHistoryUiStateEmpty,
-                        onEvent = {}
+                        onFeedHistoryEvent = {}
                     )
                 },
                 onNavigate = {},
@@ -88,7 +88,7 @@ class FeedHistoryScreenTest {
                     FeedHistoryScreen(
                         showFullWeek = false,
                         feedHistoryUiState = mockFeedHistoryUiStateSuccess,
-                        onEvent = {}
+                        onFeedHistoryEvent = {}
                     )
                 },
                 onNavigate = {},
@@ -114,7 +114,7 @@ class FeedHistoryScreenTest {
                     FeedHistoryScreen(
                         showFullWeek = false,
                         feedHistoryUiState = mockFeedHistoryUiStateSuccess,
-                        onEvent = {}
+                        onFeedHistoryEvent = {}
                     )
                 },
                 onNavigate = {},

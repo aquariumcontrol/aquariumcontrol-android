@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.refill
+package com.laimburggasse.aquariumcontrol.refill.entry
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,4 +23,17 @@ class RefillViewModel(private val refillRepository: RefillRepository): ViewModel
         }
     }
 
+    fun onRefillEvent(event: RefillEvent) {
+        when (event) {
+            RefillEvent.ResetErrors -> {
+                sendResetRequest()
+            }
+            RefillEvent.StartControl -> {
+                sendStartRequest()
+            }
+            RefillEvent.StopControl -> {
+                sendStopRequest()
+            }
+        }
+    }
 }

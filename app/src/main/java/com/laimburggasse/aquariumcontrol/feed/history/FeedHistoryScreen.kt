@@ -39,7 +39,7 @@ import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposabl
 fun FeedHistoryScreen(
     showFullWeek: Boolean,
     feedHistoryUiState: FeedHistoryUiState,
-    onEvent: (FeedHistoryEvent) -> Unit
+    onFeedHistoryEvent: (FeedHistoryEvent) -> Unit
 ) {
     // This screen displays:
     // - headline
@@ -75,7 +75,7 @@ fun FeedHistoryScreen(
                     contentAlignment = Alignment.Center,
                     state = rememberPullToRefreshState(),
                     isRefreshing = feedHistoryUiState is FeedHistoryUiState.Loading,
-                    onRefresh = { onEvent(FeedHistoryEvent.Refresh(showFullWeek)) },
+                    onRefresh = { onFeedHistoryEvent(FeedHistoryEvent.Refresh(showFullWeek)) },
                     indicator = {
                         if (feedHistoryUiState is FeedHistoryUiState.Loading) {
                             CircularProgressIndicator(
@@ -194,7 +194,7 @@ internal fun FeedHistoryScreenPreviewSuccess() {
             FeedHistoryScreen(
                 showFullWeek = false,
                 feedHistoryUiState = mockFeedHistoryUiStateSuccess,
-                onEvent = {}
+                onFeedHistoryEvent = {}
             )
         },
         onNavigate = {}
@@ -212,7 +212,7 @@ internal fun FeedHistoryScreenPreviewError() {
             FeedHistoryScreen(
                 showFullWeek = false,
                 feedHistoryUiState = mockFeedHistoryUiStateError,
-                onEvent = {}
+                onFeedHistoryEvent = {}
             )
         },
         onNavigate = {}
@@ -230,7 +230,7 @@ internal fun FeedHistoryScreenPreviewEmpty() {
             FeedHistoryScreen(
                 showFullWeek = false,
                 feedHistoryUiState = mockFeedHistoryUiStateEmpty,
-                onEvent = {}
+                onFeedHistoryEvent = {}
             )
         },
         onNavigate = {}

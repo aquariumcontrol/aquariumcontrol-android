@@ -75,12 +75,15 @@ import com.laimburggasse.aquariumcontrol.overview.OverviewScreen
 import com.laimburggasse.aquariumcontrol.overview.OverviewUiState
 import com.laimburggasse.aquariumcontrol.overview.OverviewViewModel
 import com.laimburggasse.aquariumcontrol.overview.OverviewViewModelFactory
-import com.laimburggasse.aquariumcontrol.refill.RefillRepository
-import com.laimburggasse.aquariumcontrol.refill.RefillScreen
-import com.laimburggasse.aquariumcontrol.refill.RefillViewModelFactory
-import com.laimburggasse.aquariumcontrol.refill.handleRefillNavigation
+import com.laimburggasse.aquariumcontrol.refill.entry.RefillRepository
+import com.laimburggasse.aquariumcontrol.refill.entry.RefillScreen
+import com.laimburggasse.aquariumcontrol.refill.entry.RefillViewModel
+import com.laimburggasse.aquariumcontrol.refill.entry.RefillViewModelFactory
+import com.laimburggasse.aquariumcontrol.refill.common.handleRefillNavigation
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryRepository
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryScreen
+import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryUiState
+import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryViewModel
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryViewModelFactory
 import com.laimburggasse.aquariumcontrol.schedule.ScheduleRepository
 import com.laimburggasse.aquariumcontrol.schedule.ScheduleScreen
@@ -332,7 +335,7 @@ class MainActivity : ComponentActivity() {
                                 FeedHistoryScreen(
                                     showFullWeek = false,
                                     feedHistoryUiState,
-                                    onEvent = feedHistoryViewModel::onEvent
+                                    onFeedHistoryEvent = feedHistoryViewModel::onEvent
                                 )
                             },
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
@@ -351,7 +354,7 @@ class MainActivity : ComponentActivity() {
                                 FeedHistoryScreen(
                                     showFullWeek = true,
                                     feedHistoryUiState,
-                                    onEvent = feedHistoryViewModel::onEvent
+                                    onFeedHistoryEvent = feedHistoryViewModel::onEvent
                                 )
                             },
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
@@ -559,44 +562,52 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                     composable(route = ViewNavigationRoutes.refill) {
+                        val refillViewModel: RefillViewModel = viewModel(factory = refillViewModelFactory)
                         MainScaffold(
                             isControllerLoaded = mainViewModel.isControllerLoaded(),
                             navigationRouteSource = ViewNavigationRoutes.refill,
                             screenContent = {
                                 RefillScreen(
-                                    mainViewModel,
-                                    refillViewModelFactory,
                                     onNavigateFromRefill = {
                                         event -> navHostController.handleRefillNavigation(event)
-                                    }
+                                    },
+                                    onRefillEvent = refillViewModel::onRefillEvent,
                                 )
                             },
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
                         )
                     }
                     composable(route = ViewNavigationRoutes.refillHistory24h) {
+                        val refillHistoryViewModel: RefillHistoryViewModel = viewModel(
+                            factory = refillHistoryViewModelFactory
+                        )
+                        val refillHistoryUiState: RefillHistoryUiState by refillHistoryViewModel.refillHistoryUiState.collectAsState()
                         MainScaffold(
                             isControllerLoaded = mainViewModel.isControllerLoaded(),
                             navigationRouteSource = ViewNavigationRoutes.refillHistory24h,
                             screenContent = {
                                 RefillHistoryScreen(
                                     showFullWeek = false,
-                                    mainViewModel = mainViewModel,
-                                    refillHistoryViewModelFactory,
+                                    refillHistoryUiState,
+                                    onRefillHistoryEvent = refillHistoryViewModel::onRefillHistoryEvent
                                 )
                             },
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
                         )
                     }
                     composable(route = ViewNavigationRoutes.refillHistory7d) {
+                        val refillHistoryViewModel: RefillHistoryViewModel = viewModel(
+                            factory = refillHistoryViewModelFactory
+                        )
+                        val refillHistoryUiState: RefillHistoryUiState by refillHistoryViewModel.refillHistoryUiState.collectAsState()
                         MainScaffold(
                             isControllerLoaded = mainViewModel.isControllerLoaded(),
                             navigationRouteSource = ViewNavigationRoutes.refillHistory7d,
                             screenContent = {
                                 RefillHistoryScreen(
                                     showFullWeek = true,
-                                    mainViewModel,
-                                    refillHistoryViewModelFactory,
+                                    refillHistoryUiState,
+                                    onRefillHistoryEvent = refillHistoryViewModel::onRefillHistoryEvent,
                                 )
                             },
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }

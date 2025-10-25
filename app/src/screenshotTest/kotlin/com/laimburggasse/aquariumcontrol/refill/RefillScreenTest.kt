@@ -3,7 +3,7 @@ package com.laimburggasse.aquariumcontrol.refill
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.android.tools.screenshot.PreviewTest
+import com.laimburggasse.aquariumcontrol.refill.entry.RefillScreenPreview
 
 @Suppress("unused")
 class RefillScreenTest {

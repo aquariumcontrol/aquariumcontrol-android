@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.refill
+package com.laimburggasse.aquariumcontrol.refill.common
 
 sealed class RefillNavigationEvent {
     object ToRefillHistory24h: RefillNavigationEvent()

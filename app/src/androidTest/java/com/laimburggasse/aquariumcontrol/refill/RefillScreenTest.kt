@@ -4,7 +4,10 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
+import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.refill.entry.RefillScreen
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -22,9 +25,17 @@ class RefillScreenTest {
     @Test
     fun refillScreenDarkTest() {
         composeTestRule.setContent {
-            RefillScreen(
-                mainViewModel = mockMainViewModel,
-                refillViewModelFactory = mockRefillViewModelFactory
+            MainScaffold(
+                isControllerLoaded = true,
+                navigationRouteSource = ViewNavigationRoutes.refill,
+                screenContent = {
+                    RefillScreen(
+                        onNavigateFromRefill = { event -> },
+                        onRefillEvent = { event -> }
+                    )
+                },
+                onNavigate = {},
+                darkTheme = true
             )
         }
         composeTestRule.waitForIdle()
@@ -39,9 +50,17 @@ class RefillScreenTest {
     @Test
     fun refillScreenLightTest() {
         composeTestRule.setContent {
-            RefillScreen(
-                mainViewModel = mockMainViewModel,
-                refillViewModelFactory = mockRefillViewModelFactory
+            MainScaffold(
+                isControllerLoaded = true,
+                navigationRouteSource = ViewNavigationRoutes.refill,
+                screenContent = {
+                    RefillScreen(
+                        onNavigateFromRefill = { event -> },
+                        onRefillEvent = { event -> }
+                    )
+                },
+                onNavigate = {},
+                darkTheme = false
             )
         }
         composeTestRule.waitForIdle()
