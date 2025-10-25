@@ -1,6 +1,7 @@
 package com.laimburggasse.aquariumcontrol.schedule
 
 import android.content.res.Configuration
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,8 +16,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,50 +23,41 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.laimburggasse.aquariumcontrol.MainScaffold
-import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
-import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
-fun ScheduleScreen(scheduleViewModelFactory: ScheduleViewModelFactory) {
+fun ScheduleScreen(
+    scheduleUiState: ScheduleUiState,
+    onScheduleEvent: (ScheduleEvent) -> Unit
+) {
     // This screen displays for each of (Balling, Refill, schedule, Heating)
     // - a range slider for setting the start and stop time
-    val scheduleViewModel: ScheduleViewModel = viewModel(factory = scheduleViewModelFactory)
 
     val configuration: Configuration = LocalConfiguration.current
-
-    val scheduleUiState: ScheduleUiState by scheduleViewModel.scheduleUiState.collectAsState()
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         ScreenHeadlineComposable(text = stringResource(R.string.actuator_schedule))
         when (scheduleUiState) {
             is ScheduleUiState.Success -> {
-                val scheduleEntries: ScheduleEntries = (scheduleUiState as ScheduleUiState.Success).scheduleEntries
+                val scheduleEntries: ScheduleEntries = scheduleUiState.scheduleEntries
                 when (configuration.orientation) {
                     Configuration.ORIENTATION_LANDSCAPE -> {
                         Row {
-                            ScheduleUpdateResetButtonsComposable(
-                                scheduleEntries = scheduleEntries,
-                                scheduleViewModel = scheduleViewModel
-                            )
+                            ScheduleUpdateResetButtonsComposable(onScheduleEvent)
                         }
                     }
                     else -> {
-                        ScheduleUpdateResetButtonsComposable(
-                            scheduleViewModel = scheduleViewModel,
-                            scheduleEntries = scheduleEntries
-                        )
+                        ScheduleUpdateResetButtonsComposable(onScheduleEvent)
                     }
                 }
                 Scaffold (
                     topBar = { },
                     bottomBar = { },
                     floatingActionButton = {},
-                    snackbarHost = { SnackbarHost(remember { SnackbarHostState() }) }
+                    snackbarHost = { SnackbarHost(hostState = remember { SnackbarHostState() }) }
                 ) { innerPadding ->
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -83,13 +73,13 @@ fun ScheduleScreen(scheduleViewModelFactory: ScheduleViewModelFactory) {
                                 stopTime = scheduleEntries.ballingStopTime,
                                 isLimitationActive = scheduleEntries.ballingLimitationActive,
                                 onStartTimeChanged = { newTime ->
-                                    scheduleViewModel.onTimeChange(ScheduleType.BALLING, TimeType.START, newTime)
+                                    onScheduleEvent(ScheduleEvent.ChangeTime(ScheduleType.BALLING, TimeType.START, newTime))
                                 },
                                 onStopTimeChanged = { newTime ->
-                                    scheduleViewModel.onTimeChange(ScheduleType.BALLING, TimeType.STOP, newTime)
+                                    onScheduleEvent(ScheduleEvent.ChangeTime(ScheduleType.BALLING, TimeType.STOP, newTime))
                                 },
                                 onLimitationActiveChanged = { isActive ->
-                                    scheduleViewModel.onLimitationActiveChange(ScheduleType.BALLING, isActive)
+                                    onScheduleEvent(ScheduleEvent.ChangeLimitationActive(ScheduleType.BALLING, isActive))
                                 }
                             )
 
@@ -100,13 +90,13 @@ fun ScheduleScreen(scheduleViewModelFactory: ScheduleViewModelFactory) {
                                 stopTime = scheduleEntries.refillStopTime,
                                 isLimitationActive = scheduleEntries.refillLimitationActive,
                                 onStartTimeChanged = { newTime ->
-                                    scheduleViewModel.onTimeChange(ScheduleType.REFILL, TimeType.START, newTime)
+                                    onScheduleEvent(ScheduleEvent.ChangeTime(ScheduleType.REFILL, TimeType.START, newTime))
                                 },
                                 onStopTimeChanged = { newTime ->
-                                    scheduleViewModel.onTimeChange(ScheduleType.REFILL, TimeType.STOP, newTime)
+                                    onScheduleEvent(ScheduleEvent.ChangeTime(ScheduleType.REFILL, TimeType.STOP, newTime))
                                 },
                                 onLimitationActiveChanged = { isActive ->
-                                    scheduleViewModel.onLimitationActiveChange(ScheduleType.REFILL, isActive)
+                                    onScheduleEvent(ScheduleEvent.ChangeLimitationActive(ScheduleType.REFILL, isActive))
                                 }
                             )
 
@@ -117,13 +107,13 @@ fun ScheduleScreen(scheduleViewModelFactory: ScheduleViewModelFactory) {
                                 stopTime = scheduleEntries.ventilationStopTime,
                                 isLimitationActive = scheduleEntries.ventilationLimitationActive,
                                 onStartTimeChanged = { newTime ->
-                                    scheduleViewModel.onTimeChange(ScheduleType.VENTILATION, TimeType.START, newTime)
+                                    onScheduleEvent(ScheduleEvent.ChangeTime(ScheduleType.VENTILATION, TimeType.START, newTime))
                                 },
                                 onStopTimeChanged = { newTime ->
-                                    scheduleViewModel.onTimeChange(ScheduleType.VENTILATION, TimeType.STOP, newTime)
+                                    onScheduleEvent(ScheduleEvent.ChangeTime(ScheduleType.VENTILATION, TimeType.STOP, newTime))
                                 },
                                 onLimitationActiveChanged = { isActive ->
-                                    scheduleViewModel.onLimitationActiveChange(ScheduleType.VENTILATION, isActive)
+                                    onScheduleEvent(ScheduleEvent.ChangeLimitationActive(ScheduleType.VENTILATION, isActive))
                                 }
                             )
 
@@ -134,13 +124,13 @@ fun ScheduleScreen(scheduleViewModelFactory: ScheduleViewModelFactory) {
                                 stopTime = scheduleEntries.heatingStopTime,
                                 isLimitationActive = scheduleEntries.heatingLimitationActive,
                                 onStartTimeChanged = { newTime ->
-                                    scheduleViewModel.onTimeChange(ScheduleType.HEATING, TimeType.START, newTime)
+                                    onScheduleEvent(ScheduleEvent.ChangeTime(ScheduleType.HEATING, TimeType.START, newTime))
                                 },
                                 onStopTimeChanged = { newTime ->
-                                    scheduleViewModel.onTimeChange(ScheduleType.HEATING, TimeType.STOP, newTime)
+                                    onScheduleEvent(ScheduleEvent.ChangeTime(ScheduleType.HEATING, TimeType.STOP, newTime))
                                 },
                                 onLimitationActiveChanged = { isActive ->
-                                    scheduleViewModel.onLimitationActiveChange(ScheduleType.HEATING, isActive)
+                                    onScheduleEvent(ScheduleEvent.ChangeLimitationActive(ScheduleType.HEATING, isActive))
                                 }
                             )
                         }
@@ -149,16 +139,20 @@ fun ScheduleScreen(scheduleViewModelFactory: ScheduleViewModelFactory) {
             }
             is ScheduleUiState.Error -> {
                 Column(
-                    modifier = Modifier.fillMaxSize().padding(all = 16.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(all = 16.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = "Error loading data: ${(scheduleUiState as ScheduleUiState.Error).errorMessage}")
+                    Text(text = "Error loading data: ${scheduleUiState.errorMessage}")
                 }
             }
             ScheduleUiState.Loading -> {
                 Column(
-                    modifier = Modifier.fillMaxSize().padding(all = 16.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(all = 16.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -167,7 +161,9 @@ fun ScheduleScreen(scheduleViewModelFactory: ScheduleViewModelFactory) {
             }
             ScheduleUiState.Empty -> {
                 Column(
-                    modifier = Modifier.fillMaxSize().padding(all = 16.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(all = 16.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -197,26 +193,13 @@ val mockScheduleEntries = ScheduleEntries(
     heatingScheduleLoaded = true
 )
 
-val mockScheduleRepositorySuccess = MockScheduleRepository(
-    mockScheduleDataFetchResult = DataFetchResult.Success(data = mockScheduleEntries)
+val mockScheduleUiStateSuccess = ScheduleUiState.Success(
+    scheduleEntries = mockScheduleEntries
 )
 
-val mockScheduleViewModelFactorySuccess = ScheduleViewModelFactory(
-    scheduleRepository = mockScheduleRepositorySuccess
+val mockScheduleUiStateError = ScheduleUiState.Error(
+    errorMessage = "Error loading data"
 )
-
-val mockScheduleRepositoryError = MockScheduleRepository(
-    mockScheduleDataFetchResult = DataFetchResult.Error(
-        exception = null,
-        errorMessage = "Error loading data",
-    )
-)
-
-val mockScheduleViewModelFactoryError = ScheduleViewModelFactory(
-    scheduleRepository = mockScheduleRepositoryError
-)
-
-val mockMainViewModel = MockMainViewModel()
 
 @Preview(showBackground = true, heightDp = 1200, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, heightDp = 1200, uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -236,9 +219,13 @@ internal fun ScheduleScreenPreviewSuccess() {
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.schedule,
         screenContent = {
-            ScheduleScreen(scheduleViewModelFactory = mockScheduleViewModelFactorySuccess)
+            ScheduleScreen(
+                scheduleUiState = mockScheduleUiStateSuccess,
+                onScheduleEvent = {}
+            )
         },
         onNavigate = {},
+        darkTheme = isSystemInDarkTheme()
     )
 }
 
@@ -253,8 +240,12 @@ internal fun ScheduleScreenPreviewError() {
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.schedule,
         screenContent = {
-            ScheduleScreen(scheduleViewModelFactory = mockScheduleViewModelFactoryError)
+            ScheduleScreen(
+                scheduleUiState = mockScheduleUiStateError,
+                onScheduleEvent = {}
+            )
         },
         onNavigate = {},
+        darkTheme = isSystemInDarkTheme()
     )
 }

@@ -87,6 +87,8 @@ import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryViewModel
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryViewModelFactory
 import com.laimburggasse.aquariumcontrol.schedule.ScheduleRepository
 import com.laimburggasse.aquariumcontrol.schedule.ScheduleScreen
+import com.laimburggasse.aquariumcontrol.schedule.ScheduleUiState
+import com.laimburggasse.aquariumcontrol.schedule.ScheduleViewModel
 import com.laimburggasse.aquariumcontrol.schedule.ScheduleViewModelFactory
 import com.laimburggasse.aquariumcontrol.timedata.TimeDataRepository
 import com.laimburggasse.aquariumcontrol.timedata.TimeDataScreen
@@ -649,10 +651,16 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(route = ViewNavigationRoutes.schedule) {
+                        val scheduleViewModel: ScheduleViewModel = viewModel(factory = scheduleViewModelFactory)
+                        val scheduleUiState: ScheduleUiState by scheduleViewModel.scheduleUiState.collectAsState()
                         MainScaffold(
                             isControllerLoaded = mainViewModel.isControllerLoaded(),
                             navigationRouteSource = ViewNavigationRoutes.schedule,
-                            screenContent = { ScheduleScreen(scheduleViewModelFactory) },
+                            screenContent = {
+                                ScheduleScreen(
+                                    scheduleUiState,
+                                    onScheduleEvent = scheduleViewModel::onScheduleEvent)
+                            },
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) },
                         )
                     }

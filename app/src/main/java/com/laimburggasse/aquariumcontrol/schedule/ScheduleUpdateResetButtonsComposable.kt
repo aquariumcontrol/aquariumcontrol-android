@@ -21,17 +21,12 @@ import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
-fun ScheduleUpdateResetButtonsComposable(
-    scheduleEntries: ScheduleEntries,
-    scheduleViewModel: ScheduleViewModel
-) {
+fun ScheduleUpdateResetButtonsComposable(onScheduleEvent: (ScheduleEvent) -> Unit) {
     val context: Context = LocalContext.current // context for Toast
 
     Button(
         onClick = {
-            scheduleViewModel.updateSchedule(
-                scheduleEntries = scheduleEntries
-            )
+            onScheduleEvent(ScheduleEvent.Update)
             Toast.makeText(
                 context,
                 context.getString(R.string.sent_request_to_controller_for_updating_schedule_set_values),
@@ -44,16 +39,12 @@ fun ScheduleUpdateResetButtonsComposable(
     Spacer(modifier = Modifier.width(10.dp))
     Button(
         onClick = {
-            // @todo: implement and call reset functionality of view model
+            onScheduleEvent(ScheduleEvent.Reset)
         }
     ) {
         Text(text = "Reset actuator schedules")
     }
 }
-
-val mockScheduleViewModelSuccess = mockScheduleViewModelFactorySuccess.create(
-    modelClass = ScheduleViewModel::class.java
-)
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -62,10 +53,7 @@ internal fun ScheduleUpdateResetButtonsComposablePreview() {
     AquariumControllerTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                ScheduleUpdateResetButtonsComposable(
-                    scheduleViewModel = mockScheduleViewModelSuccess,
-                    scheduleEntries = mockScheduleEntries,
-                )
+                ScheduleUpdateResetButtonsComposable(onScheduleEvent = {})
             }
         }
     }

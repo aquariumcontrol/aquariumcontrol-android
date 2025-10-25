@@ -74,20 +74,44 @@ class ScheduleViewModel(
         }
     }
 
-    fun updateSchedule(
-        scheduleEntries: ScheduleEntries
-    ) {
-        val currentState: ScheduleUiState = scheduleUiState.value
-        if (currentState is ScheduleUiState.Success) {
-            viewModelScope.launch {
-                scheduleRepository.updateSchedule(scheduleEntries)
-            }
+    fun updateSchedule() {
+        viewModelScope.launch {
+            scheduleRepository.updateSchedule()
         }
     }
 
+    fun resetSchedule() {
+        viewModelScope.launch {
+            scheduleRepository.fetchScheduleSetVals()
+        }
+    }
     init {
         viewModelScope.launch {
             scheduleRepository.fetchScheduleSetVals()
+        }
+    }
+
+    fun onScheduleEvent(scheduleEvent: ScheduleEvent) {
+        when (scheduleEvent) {
+            is ScheduleEvent.ChangeLimitationActive -> {
+                onLimitationActiveChange(
+                    scheduleType = scheduleEvent.scheduleType,
+                    isActive = scheduleEvent.isActive
+                )
+            }
+            is ScheduleEvent.ChangeTime -> {
+                onTimeChange(
+                    scheduleType = scheduleEvent.scheduleType,
+                    timeType = scheduleEvent.timeType,
+                    newTime = scheduleEvent.newTime
+                )
+            }
+            ScheduleEvent.Update -> {
+                updateSchedule()
+            }
+            ScheduleEvent.Reset -> {
+                resetSchedule()
+            }
         }
     }
 }

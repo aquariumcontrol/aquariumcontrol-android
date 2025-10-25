@@ -30,15 +30,16 @@ open class ScheduleRepository(
         }
     }
 
-    open suspend fun updateSchedule(
-        scheduleEntries: ScheduleEntries
-    ) {
-        webApiPostRequestExecution(
-            mainViewModel = mainViewModel,
-            apiUrl = WebApiUrls.ACTUATOR_SCHEDULE_POST_UPDATE,
-            webApiPostRequest = WebApiPostRequest(),
-            optionalGetParams = scheduleEntries.getApiParams(),
-        )
+    open suspend fun updateSchedule() {
+        if (scheduleFlow.value is DataFetchResult.Success) {
+            val scheduleEntries: ScheduleEntries = (scheduleFlow.value as DataFetchResult.Success).data
+            webApiPostRequestExecution(
+                mainViewModel = mainViewModel,
+                apiUrl = WebApiUrls.ACTUATOR_SCHEDULE_POST_UPDATE,
+                webApiPostRequest = WebApiPostRequest(),
+                optionalGetParams = scheduleEntries.getApiParams(),
+            )
+        }
     }
 
     open suspend fun fetchScheduleSetVals() {
