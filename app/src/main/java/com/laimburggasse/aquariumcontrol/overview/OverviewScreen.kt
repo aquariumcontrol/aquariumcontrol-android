@@ -18,8 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -27,7 +25,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
@@ -39,16 +36,15 @@ import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 @Composable
 fun OverviewScreen(
     controllerProfile: ControllerProfile,
-    overviewViewModelFactory: OverviewViewModelFactory,
+    overviewUiState: OverviewUiState,
+    onOverviewEvent: (OverviewEvent) -> Unit,
 ) {
     // This screen displays
     // - headline
     // - the overview data of the aquarium: Text for signal description and current value
     // - a button to update the overview data
 
-    val overviewViewModel: OverviewViewModel = viewModel(factory = overviewViewModelFactory)
     val configuration: Configuration = LocalConfiguration.current
-    val overviewUiState: OverviewUiState by overviewViewModel.overviewUiState.collectAsState()
 
     Column(
         modifier = Modifier.padding(16.dp),
@@ -60,12 +56,11 @@ fun OverviewScreen(
             state = rememberPullToRefreshState(),
             isRefreshing = overviewUiState == OverviewUiState.Loading,
             contentAlignment = Alignment.Center,
-            onRefresh = { overviewViewModel.loadData() },
+            onRefresh = { onOverviewEvent(OverviewEvent.Refresh) },
             indicator = {
                 if (overviewUiState == OverviewUiState.Loading) {
                     CircularProgressIndicator(
-                        modifier = Modifier
-                            .size(150.dp),
+                        modifier = Modifier.size(size = 150.dp),
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -79,15 +74,15 @@ fun OverviewScreen(
                 when (overviewUiState) {
                     is OverviewUiState.Error -> {
                         Column(
-                            modifier = Modifier.fillMaxSize().padding(16.dp),
+                            modifier = Modifier.fillMaxSize().padding(all = 16.dp),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text(text = "Error loading data: ${(overviewUiState as OverviewUiState.Error).errorMessage}")
+                            Text(text = "Error loading data: ${overviewUiState.errorMessage}")
                         }                                }
                     OverviewUiState.Loading -> {
                         Column(
-                            modifier = Modifier.fillMaxSize().padding(16.dp),
+                            modifier = Modifier.fillMaxSize().padding(all = 16.dp),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
@@ -95,7 +90,7 @@ fun OverviewScreen(
                         }
                     }
                     is OverviewUiState.Success -> {
-                        val overviewData: OverviewData = (overviewUiState as OverviewUiState.Success).overviewData
+                        val overviewData: OverviewData = overviewUiState.overviewData
                         when (configuration.orientation) {
                             Configuration.ORIENTATION_LANDSCAPE -> {
                                 Row {
@@ -134,7 +129,7 @@ fun OverviewScreen(
                 Spacer(modifier = Modifier.padding(vertical = 8.dp))
                 Button(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
-                    onClick = {overviewViewModel.loadData() },
+                    onClick = { onOverviewEvent(OverviewEvent.Refresh) },
                 ) {
                     Text(
                         text = stringResource(id = R.string.update_overview_data),
@@ -176,18 +171,10 @@ val mockOverviewViewModelFactorySuccess = OverviewViewModelFactory(
     overviewRepository = mockOverviewRepositorySuccess
 )
 
-val mockOverviewRepositoryError = MockOverviewRepository(
-    mockOverviewDataFetchResult = DataFetchResult.Error(
-        exception = null,
-        errorMessage = "Error loading data"
-    )
-)
-
-val mockOverviewViewModelFactoryError = OverviewViewModelFactory(
-    overviewRepository = mockOverviewRepositoryError
-)
-
 val mockMainViewModel = MockMainViewModel(controller = mockControllerProfile)
+
+val mockOverviewUiStateSuccess = OverviewUiState.Success(mockOverviewData)
+val mockOverviewUiStateError = OverviewUiState.Error(errorMessage = "Error loading data")
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -209,7 +196,8 @@ fun OverviewScreenPreviewSuccess() {
         screenContent = {
             OverviewScreen(
                 controllerProfile = mockControllerProfile,
-                overviewViewModelFactory = mockOverviewViewModelFactorySuccess,
+                overviewUiState = mockOverviewUiStateSuccess,
+                onOverviewEvent = {},
             )
         },
         onNavigate = {}
@@ -226,7 +214,8 @@ fun OverviewScreenPreviewError() {
         screenContent = {
             OverviewScreen(
                 controllerProfile = mockControllerProfile,
-                overviewViewModelFactory = mockOverviewViewModelFactoryError,
+                overviewUiState = mockOverviewUiStateError,
+                onOverviewEvent = {},
             )
         },
         onNavigate = {}

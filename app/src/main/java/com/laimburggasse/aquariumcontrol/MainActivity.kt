@@ -1,7 +1,6 @@
 package com.laimburggasse.aquariumcontrol
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -40,28 +39,28 @@ import com.laimburggasse.aquariumcontrol.controller.common.ControllerViewModel
 import com.laimburggasse.aquariumcontrol.controller.common.handleControllerNavigation
 import com.laimburggasse.aquariumcontrol.controller.edit.ControllerEditScreen
 import com.laimburggasse.aquariumcontrol.controller.selection.ControllerSelectionScreen
-import com.laimburggasse.aquariumcontrol.feed.common.FeedProfile
-import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilesRepository
-import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilesViewModelFactory
-import com.laimburggasse.aquariumcontrol.feed.entry.FeedScreen
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddScreen
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddViewModelFactory
+import com.laimburggasse.aquariumcontrol.feed.common.FeedProfile
+import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilesRepository
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilesViewModel
+import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilesViewModelFactory
+import com.laimburggasse.aquariumcontrol.feed.common.FeedScheduleUiState
 import com.laimburggasse.aquariumcontrol.feed.common.FeedScheduleViewModel
-import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditScreen
-import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditViewModelFactory
+import com.laimburggasse.aquariumcontrol.feed.common.FeedScheduleViewModelFactory
 import com.laimburggasse.aquariumcontrol.feed.common.handleFeedNavigation
+import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditScreen
+import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditViewModel
+import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditViewModelFactory
+import com.laimburggasse.aquariumcontrol.feed.entry.FeedProfilesUiState
+import com.laimburggasse.aquariumcontrol.feed.entry.FeedScreen
 import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryRepository
 import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryScreen
+import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryUiState
+import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryViewModel
 import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryViewModelFactory
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedProfileScheduleScreen
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleRepository
-import com.laimburggasse.aquariumcontrol.feed.common.FeedScheduleViewModelFactory
-import com.laimburggasse.aquariumcontrol.feed.entry.FeedProfilesUiState
-import com.laimburggasse.aquariumcontrol.feed.common.FeedScheduleUiState
-import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditViewModel
-import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryUiState
-import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryViewModel
 import com.laimburggasse.aquariumcontrol.heating.HeatingScreen
 import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsRepository
 import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsViewModel
@@ -73,6 +72,8 @@ import com.laimburggasse.aquariumcontrol.info.InfoScreen
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.handleMainDropDownMenuNavigation
 import com.laimburggasse.aquariumcontrol.overview.OverviewRepository
 import com.laimburggasse.aquariumcontrol.overview.OverviewScreen
+import com.laimburggasse.aquariumcontrol.overview.OverviewUiState
+import com.laimburggasse.aquariumcontrol.overview.OverviewViewModel
 import com.laimburggasse.aquariumcontrol.overview.OverviewViewModelFactory
 import com.laimburggasse.aquariumcontrol.refill.RefillRepository
 import com.laimburggasse.aquariumcontrol.refill.RefillScreen
@@ -661,23 +662,24 @@ class MainActivity : ComponentActivity() {
                         )
                     ) { backStackEntry ->
                         val controllerProfileId: Long? = backStackEntry.arguments?.getLong("controllerProfileId")
-                        Log.d("MainActivity", "Navigating to overview screen")
                         if (controllerProfileId != null) {
                             val controllerProfile =
                                 controllerViewModel.getSelectedControllerProfileById(
                                     controllerProfileId
                                 )
                             if (controllerProfile != null) {
-                                Log.d("MainActivity", "Controller profile is not null")
                                 mainViewModel.setSelectedControllerProfile(controllerProfile)
                                 mainViewModel.setFirstLoad() // Controller selection may navigate here without user interaction
+                                val overviewViewModel: OverviewViewModel = viewModel(factory = overviewViewModelFactory)
+                                val overviewUiState: OverviewUiState by overviewViewModel.overviewUiState.collectAsState()
                                 MainScaffold(
                                     isControllerLoaded = mainViewModel.isControllerLoaded(),
                                     navigationRouteSource = ViewNavigationRoutes.overView,
                                     screenContent = {
                                         OverviewScreen(
-                                            controllerProfile = controllerProfile,
-                                            overviewViewModelFactory
+                                            controllerProfile,
+                                            overviewUiState,
+                                            onOverviewEvent = overviewViewModel::onOverviewEvent,
                                         )
                                     },
                                     onNavigate = { event ->

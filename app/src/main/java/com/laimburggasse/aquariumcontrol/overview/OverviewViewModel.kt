@@ -35,4 +35,12 @@ class OverviewViewModel(
     init {
         loadData()
     }
+
+    fun onOverviewEvent(event: OverviewEvent) {
+        when (event) {
+            is OverviewEvent.Refresh -> {
+                loadData()
+            }
+        }
+    }
 }
