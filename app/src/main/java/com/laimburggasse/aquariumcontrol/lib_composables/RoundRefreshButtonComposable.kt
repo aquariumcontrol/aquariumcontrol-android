@@ -11,26 +11,27 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun RoundRefreshButtonComposable(onClick: () -> Unit) {
-    val icon = Icons.Filled.Sync
+    val icon: ImageVector = Icons.Filled.Sync
     Surface(
         onClick = onClick,
-        modifier = Modifier.size(32.dp),
+        modifier = Modifier.size(size = 32.dp),
         shape = CircleShape, // this is a round button
         color = MaterialTheme.colorScheme.primary
     ) {
         IconButton(
             onClick = onClick,
-            modifier = Modifier.size(48.dp),
+            modifier = Modifier.size(size = 48.dp),
         ) {
             Icon(
                 imageVector = icon,
-                contentDescription = "Refresh" // Provide a content description
+                contentDescription = "Refresh"
             )
         }
     }
@@ -41,12 +42,8 @@ fun RoundRefreshButtonComposable(onClick: () -> Unit) {
 @Composable
 internal fun RoundRefreshButtonComposablePreview() {
     AquariumControllerTheme {
-        Surface(
-            color = MaterialTheme.colorScheme.background
-        ) {
-            RoundRefreshButtonComposable(
-                onClick = { /* Do nothing */ },
-            )
+        Surface(color = MaterialTheme.colorScheme.background) {
+            RoundRefreshButtonComposable(onClick = {})
         }
     }
 }

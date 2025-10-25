@@ -17,14 +17,14 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun ScreenHeadlineComposable(text: String, modifier: Modifier? = Modifier) {
-    Spacer(modifier = Modifier.size(10.dp))
+    Spacer(modifier = Modifier.size(size = 10.dp))
     Text(
         text = text,
         textAlign = TextAlign.Center,
         style = MaterialTheme.typography.headlineLarge,
-        modifier = modifier ?: Modifier.fillMaxWidth().padding(16.dp).padding(16.dp),
+        modifier = modifier ?: Modifier.fillMaxWidth().padding(all = 16.dp).padding(all = 16.dp),
     )
-    Spacer(modifier = Modifier.size(10.dp))
+    Spacer(modifier = Modifier.size(size = 10.dp))
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
@@ -32,12 +32,8 @@ fun ScreenHeadlineComposable(text: String, modifier: Modifier? = Modifier) {
 @Composable
 internal fun ScreenHeadlineComposablePreview() {
     AquariumControllerTheme {
-        Surface(
-            color = MaterialTheme.colorScheme.background
-        ) {
-            ScreenHeadlineComposable(
-                text = "PreviewTest Headline"
-            )
+        Surface(color = MaterialTheme.colorScheme.background) {
+            ScreenHeadlineComposable(text = "PreviewTest Headline")
         }
     }
 }

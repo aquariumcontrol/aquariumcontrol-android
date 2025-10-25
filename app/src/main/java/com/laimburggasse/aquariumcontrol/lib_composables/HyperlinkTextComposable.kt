@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
@@ -18,20 +19,15 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun HyperlinkTextComposable(text: String, url: String, textAlign: TextAlign? = null) {
-    val uriHandler = LocalUriHandler.current
+    val uriHandler: UriHandler = LocalUriHandler.current
     Text(
         text = buildAnnotatedString {
-            withStyle(
-                style = SpanStyle(
-                    color = Color.Blue,
-                    textDecoration = TextDecoration.Underline
-                )
-            ) {
+            withStyle(style = SpanStyle(color = Color.Blue, textDecoration = TextDecoration.Underline)) {
                 append(text)
             }
         },
         textAlign = textAlign,
-        modifier = Modifier.clickable { uriHandler.openUri(url) }
+        modifier = Modifier.clickable { uriHandler.openUri(uri = url) }
     )
 }
 

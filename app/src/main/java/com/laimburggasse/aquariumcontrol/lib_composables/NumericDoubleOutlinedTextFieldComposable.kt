@@ -43,14 +43,14 @@ fun NumericDoubleOutlinedTextFieldComposable(
     precision: Int = 2, // Add precision parameter with default value
     textAlign: TextAlign,
 ) {
-    var textFieldValueState by remember {
-        mutableStateOf(TextFieldValue(value.toString()))
+    var textFieldValueState: TextFieldValue by remember {
+        mutableStateOf(value = TextFieldValue(text = value.toString()))
     }
 
     LaunchedEffect(value) { // Trigger when 'value' changes
         snapshotFlow { value }
             .collect { newValue ->
-                val formattedValue =
+                val formattedValue: String =
                     String.format("%.${precision}f", newValue) // Format incoming value
                 textFieldValueState = textFieldValueState.copy(text = formattedValue)
             }
@@ -59,13 +59,13 @@ fun NumericDoubleOutlinedTextFieldComposable(
     OutlinedTextField(
         value = textFieldValueState,
         onValueChange = { newTextFieldValue ->
-            val newValue =
+            val newValue: String =
                 newTextFieldValue.text
                     .filter { it.isDigit() || it == '.' || it == ',' }
-                    .replace(",", ".")
-            if (isParsableToDouble(newValue)) {
-                val doubleValue = newValue.toDoubleOrNull() ?: 0.0
-                val formattedValue =
+                    .replace(oldValue = ",", newValue = ".")
+            if (isParsableToDouble(input = newValue)) {
+                val doubleValue: Double = newValue.toDoubleOrNull() ?: 0.0
+                val formattedValue: String =
                     String.format("%.${precision}f", doubleValue) // Format with precision
                 textFieldValueState = newTextFieldValue.copy(text = formattedValue)
                 onValueChange(newValue)
@@ -77,11 +77,9 @@ fun NumericDoubleOutlinedTextFieldComposable(
             }
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-        modifier = modifier.width(100.dp),
+        modifier = modifier.width(width = 100.dp),
         singleLine = true,
-        textStyle = MaterialTheme.typography.bodyLarge.copy(
-            textAlign = textAlign
-        )
+        textStyle = MaterialTheme.typography.bodyLarge.copy(textAlign = textAlign)
     )
 }
 
@@ -91,12 +89,10 @@ fun NumericDoubleOutlinedTextFieldComposable(
 internal fun NumericDoubleOutlinedTextFieldComposablePreview() {
     val testValue = 0.5
     AquariumControllerTheme {
-        Surface(
-            color = MaterialTheme.colorScheme.background
-        ) {
+        Surface(color = MaterialTheme.colorScheme.background) {
             NumericDoubleOutlinedTextFieldComposable(
                 value = testValue,
-                onValueChange = { /* do nothing */ },
+                onValueChange = {},
                 label = "testLabel",
                 modifier = Modifier,
                 textAlign = TextAlign.Center,

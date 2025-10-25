@@ -24,18 +24,18 @@ fun NumericIntOutlinedTextFieldComposable(
     label: String,
     modifier: Modifier = Modifier
 ) {
-    var textFieldValueState by remember {
-        mutableStateOf(TextFieldValue(value.toString()))
+    var textFieldValueState: TextFieldValue by remember {
+        mutableStateOf(value = TextFieldValue(text = value.toString()))
     }
 
     OutlinedTextField(
         value = textFieldValueState,
         onValueChange = { newTextFieldValue ->
-            val newValue = newTextFieldValue.text.filter { it.isDigit() }
+            val newValue: String = newTextFieldValue.text.filter { it.isDigit() }
             textFieldValueState = newTextFieldValue.copy(text = newValue)
             onValueChange(newValue)
         },
-        label = { Text(label) },
+        label = { Text(text = label) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         modifier = modifier
     )
@@ -47,12 +47,10 @@ fun NumericIntOutlinedTextFieldComposable(
 internal fun NumericIntOutlinedTextFieldComposablePreview() {
     val testValue = 5
     AquariumControllerTheme {
-        Surface(
-            color = MaterialTheme.colorScheme.background
-        ) {
+        Surface(color = MaterialTheme.colorScheme.background) {
             NumericIntOutlinedTextFieldComposable(
                 value = testValue,
-                onValueChange = { /* do nothing */ },
+                onValueChange = {},
                 label = "testLabel",
                 modifier = Modifier,
             )

@@ -4,7 +4,9 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
+import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -22,7 +24,13 @@ class InfoScreenTest {
     @Test
     fun infoScreenDarkTest() {
         composeTestRule.setContent {
-            InfoScreen(darkTheme = true)
+            MainScaffold(
+                mainViewModel = _root_ide_package_.com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
+                navigationRouteSource = ViewNavigationRoutes.heating,
+                screenContent = { InfoScreen() },
+                onNavigate = {},
+                darkTheme = true
+            )
         }
         composeTestRule.waitForIdle()
         ScreenshotTestHelper.performScreenshotTest(
@@ -36,7 +44,13 @@ class InfoScreenTest {
     @Test
     fun infoScreenLightTest() {
         composeTestRule.setContent {
-            InfoScreen(darkTheme = false)
+            MainScaffold(
+                mainViewModel = _root_ide_package_.com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
+                navigationRouteSource = ViewNavigationRoutes.heating,
+                screenContent = { InfoScreen() },
+                onNavigate = {},
+                darkTheme = false
+            )
         }
         composeTestRule.waitForIdle()
         ScreenshotTestHelper.performScreenshotTest(
