@@ -1,6 +1,7 @@
 package com.laimburggasse.aquariumcontrol.overview
 
 import android.content.res.Configuration
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,7 +32,6 @@ import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
-import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
 fun OverviewScreen(
@@ -163,14 +163,6 @@ val mockControllerProfile = ControllerProfile(
     user = "user",
 )
 
-val mockOverviewRepositorySuccess = MockOverviewRepository(
-    mockOverviewDataFetchResult = DataFetchResult.Success(mockOverviewData)
-)
-
-val mockOverviewViewModelFactorySuccess = OverviewViewModelFactory(
-    overviewRepository = mockOverviewRepositorySuccess
-)
-
 val mockMainViewModel = MockMainViewModel(controller = mockControllerProfile)
 
 val mockOverviewUiStateSuccess = OverviewUiState.Success(mockOverviewData)
@@ -200,7 +192,8 @@ fun OverviewScreenPreviewSuccess() {
                 onOverviewEvent = {},
             )
         },
-        onNavigate = {}
+        onNavigate = {},
+        darkTheme = isSystemInDarkTheme()
     )
 }
 
@@ -218,6 +211,7 @@ fun OverviewScreenPreviewError() {
                 onOverviewEvent = {},
             )
         },
-        onNavigate = {}
+        onNavigate = {},
+        darkTheme = isSystemInDarkTheme()
     )
 }

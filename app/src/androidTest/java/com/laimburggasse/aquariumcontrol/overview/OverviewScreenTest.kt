@@ -1,10 +1,13 @@
 package com.laimburggasse.aquariumcontrol.overview
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
+import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -22,9 +25,17 @@ class OverviewScreenTest {
     @Test
     fun overviewScreenDarkTest() {
         composeTestRule.setContent {
-            OverviewScreen(
-                mainViewModel = mockMainViewModel,
-                overviewViewModelFactory = mockOverviewViewModelFactorySuccess,
+            MainScaffold(
+                isControllerLoaded = true,
+                navigationRouteSource = ViewNavigationRoutes.overView,
+                screenContent = {
+                    OverviewScreen(
+                        controllerProfile = mockControllerProfile,
+                        overviewUiState = mockOverviewUiStateSuccess,
+                        onOverviewEvent = {},
+                    )
+                },
+                onNavigate = {},
                 darkTheme = true
             )
         }
@@ -40,9 +51,17 @@ class OverviewScreenTest {
     @Test
     fun overviewScreenLightTest() {
         composeTestRule.setContent {
-            OverviewScreen(
-                mainViewModel = mockMainViewModel,
-                overviewViewModelFactory = mockOverviewViewModelFactorySuccess,
+            MainScaffold(
+                isControllerLoaded = true,
+                navigationRouteSource = ViewNavigationRoutes.overView,
+                screenContent = {
+                    OverviewScreen(
+                        controllerProfile = mockControllerProfile,
+                        overviewUiState = mockOverviewUiStateSuccess,
+                        onOverviewEvent = {},
+                    )
+                },
+                onNavigate = {},
                 darkTheme = false
             )
         }
