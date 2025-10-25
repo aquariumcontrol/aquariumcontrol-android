@@ -14,8 +14,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,18 +21,19 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
-import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 
 @Composable
 fun HeatingScreen(
-    heatingSetValsViewModelFactory: HeatingSetValsViewModelFactory,
-    heatingStatsViewModelFactory: HeatingStatsViewModelFactory,
+    heatingSetValsUiState: HeatingSetValsUiState,
+    onHeatingSetValsEvent: (HeatingSetValsEvent) -> Unit,
+    heatingStatsUiState: HeatingStatsUiState,
+    onHeatingStatsEvent: (HeatingStatsEvent) -> Unit
 ) {
     // This screen displays
     // - a button to update the heating controller values
@@ -42,12 +41,6 @@ fun HeatingScreen(
     // - a range slider for setting the control target temperatures
     // - numeric input fields for entering the control target temperatures
     // - the heating statistics incl. refresh button
-
-    val heatingSetValsViewModel: HeatingSetValsViewModel = viewModel(factory = heatingSetValsViewModelFactory)
-    val heatingStatsViewModel: HeatingStatsViewModel = viewModel(factory = heatingStatsViewModelFactory)
-
-    val heatingSetValsUiState: HeatingSetValsUiState by heatingSetValsViewModel.heatingSetValsUiState.collectAsState()
-    val heatingStatsUiState: HeatingStatsUiState by heatingStatsViewModel.heatingStatsUiState.collectAsState()
 
     val configuration: Configuration = LocalConfiguration.current
 
@@ -65,37 +58,74 @@ fun HeatingScreen(
             ) {
                 when (heatingSetValsUiState) {
                     is HeatingSetValsUiState.Success -> {
-                        val heatingSetVals: HeatingSetVals = (heatingSetValsUiState as HeatingSetValsUiState.Success).heatingSetVals
+                        val heatingSetVals: HeatingSetVals = heatingSetValsUiState.heatingSetVals
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             when (configuration.orientation) {
                                 Configuration.ORIENTATION_LANDSCAPE -> {
                                     Row {
                                         HeatingButtonsComposable(
-                                            onUpdateClicked = { heatingSetValsViewModel.updateValues() },
-                                            onResetClicked = { heatingSetValsViewModel.resetValues() },                                                    )
+                                            onUpdateClicked = { onHeatingSetValsEvent(HeatingSetValsEvent.Update) },
+                                            onResetClicked = { onHeatingSetValsEvent(HeatingSetValsEvent.Reset) }
+                                        )
                                     }
                                     Row {
                                         HeatingRangeSliderTextFieldsLandscapeComposable(
                                             heatingSwitchOnTemp = heatingSetVals.heatingSwitchOnTemp,
                                             heatingSwitchOffTemp = heatingSetVals.heatingSwitchOffTemp,
-                                            onLowerValueChanged = { newValue -> heatingSetValsViewModel.onLowerValueChanged(value = newValue.toFloat()) },
-                                            onUpperValueChanged = { newValue -> heatingSetValsViewModel.onUpperValueChanged(value = newValue.toFloat()) },
-                                            onSliderValueChanged = { newLowerValue, newUpperValue -> heatingSetValsViewModel.onRangeChangedBySlider(newLowerValue, newUpperValue) }
+                                            onLowerValueChanged = { lowerValue ->
+                                                onHeatingSetValsEvent(
+                                                    HeatingSetValsEvent.ChangeLowerValue(
+                                                        lowerValue = lowerValue.toFloat()
+                                                    )
+                                                )
+                                            },
+                                            onUpperValueChanged = { upperValue ->
+                                                onHeatingSetValsEvent(
+                                                    HeatingSetValsEvent.ChangeUpperValue(
+                                                        upperValue = upperValue.toFloat()
+                                                    )
+                                                )
+                                            },
+                                            onSliderValueChanged = { newLowerValue, newUpperValue ->
+                                                onHeatingSetValsEvent(
+                                                    HeatingSetValsEvent.ChangeRange(
+                                                        newLowerValue, newUpperValue
+                                                    )
+                                                )
+                                            }
                                         )
                                     }
                                 }
                                 else -> {
                                     HeatingButtonsComposable(
-                                        onUpdateClicked = { heatingSetValsViewModel.updateValues() },
-                                        onResetClicked = { heatingSetValsViewModel.resetValues() },
+                                        onUpdateClicked = { onHeatingSetValsEvent(HeatingSetValsEvent.Update) },
+                                        onResetClicked = { onHeatingSetValsEvent(HeatingSetValsEvent.Reset) }
                                     )
                                     Spacer(modifier = Modifier.size(width = 10.dp,height = 10.dp))
                                     HeatingRangeSliderTextFieldsPortraitComposable(
                                         heatingSwitchOnTemp = heatingSetVals.heatingSwitchOnTemp,
                                         heatingSwitchOffTemp = heatingSetVals.heatingSwitchOffTemp,
-                                        onLowerValueChanged = { newValue -> heatingSetValsViewModel.onLowerValueChanged(value = newValue.toFloat()) },
-                                        onUpperValueChanged = { newValue -> heatingSetValsViewModel.onUpperValueChanged(value = newValue.toFloat()) },
-                                        onSliderValueChanged = { newLowerValue, newUpperValue -> heatingSetValsViewModel.onRangeChangedBySlider(newLowerValue, newUpperValue) },
+                                        onLowerValueChanged = { lowerValue ->
+                                            onHeatingSetValsEvent(
+                                                HeatingSetValsEvent.ChangeLowerValue(
+                                                    lowerValue = lowerValue.toFloat()
+                                                )
+                                            )
+                                        },
+                                        onUpperValueChanged = { upperValue ->
+                                            onHeatingSetValsEvent(
+                                                HeatingSetValsEvent.ChangeUpperValue(
+                                                    upperValue = upperValue.toFloat()
+                                                )
+                                            )
+                                        },
+                                        onSliderValueChanged = { newLowerValue, newUpperValue ->
+                                            onHeatingSetValsEvent(
+                                                HeatingSetValsEvent.ChangeRange(
+                                                    newLowerValue, newUpperValue
+                                                )
+                                            )
+                                        }
                                     )
                                 }
                             }
@@ -110,7 +140,7 @@ fun HeatingScreen(
                                 verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Text(text = "Error loading set value data: ${(heatingSetValsUiState as HeatingSetValsUiState.Error).errorMessage}")
+                                Text(text = "Error loading set value data: ${heatingSetValsUiState.errorMessage}")
                             }
                         }
                     }
@@ -133,7 +163,9 @@ fun HeatingScreen(
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Column(
-                                modifier = Modifier.fillMaxSize().padding(16.dp),
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(all = 16.dp),
                                 verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
@@ -150,11 +182,13 @@ fun HeatingScreen(
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Column(
-                                modifier = Modifier.fillMaxSize().padding(16.dp),
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(all = 16.dp),
                                 verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Text(text = "Error loading statistical data: ${(heatingStatsUiState as HeatingStatsUiState.Error).errorMessage}")
+                                Text(text = "Error loading statistical data: ${heatingStatsUiState.errorMessage}")
                             }
                         }
                     }
@@ -164,7 +198,9 @@ fun HeatingScreen(
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Column(
-                                modifier = Modifier.fillMaxSize().padding(16.dp),
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(all = 16.dp),
                                 verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
@@ -173,10 +209,10 @@ fun HeatingScreen(
                         }
                     }
                     is HeatingStatsUiState.Success -> {
-                        val heatingStats: List<HeatingStatsEntry> = (heatingStatsUiState as HeatingStatsUiState.Success).heatingStats
+                        val heatingStats: List<HeatingStatsEntry> = heatingStatsUiState.heatingStats
                         HeatingStatsComposable(
                             heatingStats = heatingStats,
-                            updateData = { heatingStatsViewModel.loadData() }
+                            updateData = { onHeatingStatsEvent(HeatingStatsEvent.Refresh) }
                         )
                     }
                     is HeatingStatsUiState.Empty -> {
@@ -185,7 +221,9 @@ fun HeatingScreen(
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Column(
-                                modifier = Modifier.fillMaxSize().padding(16.dp),
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(all = 16.dp),
                                 verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
@@ -198,7 +236,6 @@ fun HeatingScreen(
         }
     }
 }
-
 
 fun createMockStatsData(): List<HeatingStatsEntry> {
     val mockHeatingStatsStringEntries = listOf(
@@ -223,44 +260,17 @@ fun createMockStatsData(): List<HeatingStatsEntry> {
     }
 }
 
-val mockHeatingSetValsDataFetchResult = DataFetchResult.Success(
-    data = HeatingSetVals(
-        heatingSwitchOffTemp = 23.5,
-        heatingSwitchOnTemp = 27.5
-    )
+val mockHeatingStatsUiState = HeatingStatsUiState.Success(
+    heatingStats = createMockStatsData()
 )
 
-val mockHeatingSetValsRepositorySuccess = MockHeatingSetValsRepository(
-    mockHeatingSetValsDataFetchResult
+val mockHeatingSetVals = HeatingSetVals(
+    heatingSwitchOffTemp = 23.5,
+    heatingSwitchOnTemp = 27.5
 )
 
-val mockHeatingSetValsRepositoryError = MockHeatingSetValsRepository(
-    mockHeatingSetValsDataFetchResult = DataFetchResult.Error(
-        exception = null, errorMessage = "Error loading data"
-    )
-)
-
-val mockHeatingSetValsViewModelFactorySuccess = HeatingSetValsViewModelFactory(
-    heatingSetValsRepository = mockHeatingSetValsRepositorySuccess
-)
-
-val mockHeatingSetValsViewModelFactoryError = HeatingSetValsViewModelFactory(
-    heatingSetValsRepository = mockHeatingSetValsRepositoryError
-)
-
-val mockHeatingStatsDataFetchResultSuccess = DataFetchResult.Success(data = createMockStatsData())
-val mockHeatingStatsRepositorySuccess = MockHeatingStatsRepository(
-    mockHeatingStatsDataFetchResult = mockHeatingStatsDataFetchResultSuccess
-)
-val mockHeatingStatsViewModelFactorySuccess = HeatingStatsViewModelFactory(
-    heatingStatsRepository = mockHeatingStatsRepositorySuccess
-)
-val mockHeatingStatsDataFetchResultError = DataFetchResult.Error(exception = null, errorMessage = "Error message")
-val mockHeatingStatsRepositoryError = MockHeatingStatsRepository(
-    mockHeatingStatsDataFetchResult = mockHeatingStatsDataFetchResultError
-)
-val mockHeatingStatsViewModelFactoryError = HeatingStatsViewModelFactory(
-    heatingStatsRepository = mockHeatingStatsRepositoryError
+val mockHeatingSetValsUiState = HeatingSetValsUiState.Success(
+    heatingSetVals = mockHeatingSetVals
 )
 
 val mockMainViewModel = MockMainViewModel()
@@ -280,12 +290,14 @@ val mockMainViewModel = MockMainViewModel()
 @Composable
 fun HeatingScreenPreviewSuccess() {
     MainScaffold(
-        mainViewModel = _root_ide_package_.com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
+        mainViewModel = mockMainViewModel,
         navigationRouteSource = ViewNavigationRoutes.heating,
         screenContent = {
             HeatingScreen(
-                heatingSetValsViewModelFactory = mockHeatingSetValsViewModelFactorySuccess,
-                heatingStatsViewModelFactory = mockHeatingStatsViewModelFactorySuccess,
+                heatingSetValsUiState = mockHeatingSetValsUiState,
+                onHeatingSetValsEvent = {},
+                heatingStatsUiState = mockHeatingStatsUiState,
+                onHeatingStatsEvent = {}
             )
         },
         onNavigate = {}
@@ -297,12 +309,14 @@ fun HeatingScreenPreviewSuccess() {
 @Composable
 fun HeatingScreenPreviewError() {
     MainScaffold(
-        mainViewModel = _root_ide_package_.com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
+        mainViewModel = mockMainViewModel,
         navigationRouteSource = ViewNavigationRoutes.heating,
         screenContent = {
             HeatingScreen(
-                heatingSetValsViewModelFactory = mockHeatingSetValsViewModelFactoryError,
-                heatingStatsViewModelFactory = mockHeatingStatsViewModelFactoryError,
+                heatingSetValsUiState = mockHeatingSetValsUiState,
+                onHeatingSetValsEvent = {},
+                heatingStatsUiState = mockHeatingStatsUiState,
+                onHeatingStatsEvent = {}
             )
         },
         onNavigate = {}

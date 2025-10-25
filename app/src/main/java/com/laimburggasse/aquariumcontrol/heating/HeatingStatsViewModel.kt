@@ -31,4 +31,10 @@ class HeatingStatsViewModel(
             heatingStatsRepository.fetchHeatingStats()
         }
     }
+
+    fun onHeatingStatsEvent(event: HeatingStatsEvent) {
+        when(event) {
+            is HeatingStatsEvent.Refresh-> loadData()
+        }
+    }
 }

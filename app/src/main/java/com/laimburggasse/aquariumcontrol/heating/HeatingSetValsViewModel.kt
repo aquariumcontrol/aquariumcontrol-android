@@ -27,7 +27,7 @@ class HeatingSetValsViewModel(
             initialValue = HeatingSetValsUiState.Loading // The UI starts in a loading state
         )
 
-    val onRangeChangedBySlider: (Float, Float) -> Unit = { start, end ->
+    private val onRangeChanged: (Float, Float) -> Unit = { start, end ->
         heatingSetValsRepository.updateLocalValues(
             HeatingSetVals(
                 heatingSwitchOnTemp = start.toDouble(),
@@ -37,7 +37,7 @@ class HeatingSetValsViewModel(
 
     }
 
-    fun onLowerValueChanged(value: Float) {
+    private fun onLowerValueChanged(value: Float) {
         // @todo: implement range limitation
         val uiState: HeatingSetValsUiState = heatingSetValsUiState.value
         if (uiState is HeatingSetValsUiState.Success) {
@@ -46,7 +46,7 @@ class HeatingSetValsViewModel(
         }
     }
 
-    fun onUpperValueChanged(value: Float) {
+    private fun onUpperValueChanged(value: Float) {
         // @todo: implement range limitation
         val uiState: HeatingSetValsUiState = heatingSetValsUiState.value
         if (uiState is HeatingSetValsUiState.Success) {
@@ -55,7 +55,7 @@ class HeatingSetValsViewModel(
         }
     }
 
-    fun resetValues() {
+    private fun resetValues() {
         heatingSetValsRepository.reset()
     }
 
@@ -65,9 +65,29 @@ class HeatingSetValsViewModel(
         }
     }
 
-    fun updateValues() {
+    private fun updateValues() {
         viewModelScope.launch {
             heatingSetValsRepository.updateValues()
+        }
+    }
+
+    fun onHeatingSetValsEvent(event: HeatingSetValsEvent) {
+        when (event) {
+            is HeatingSetValsEvent.ChangeLowerValue -> {
+                onLowerValueChanged(event.lowerValue)
+            }
+            is HeatingSetValsEvent.ChangeRange -> {
+                onRangeChanged(event.lowerValue, event.upperValue)
+            }
+            is HeatingSetValsEvent.ChangeUpperValue -> {
+                onUpperValueChanged(event.upperValue)
+            }
+            HeatingSetValsEvent.Reset -> {
+                resetValues()
+            }
+            HeatingSetValsEvent.Update -> {
+                updateValues()
+            }
         }
     }
 }

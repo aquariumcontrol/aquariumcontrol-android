@@ -4,8 +4,10 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
+import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,9 +26,19 @@ class HeatingScreenTest {
     @Test
     fun heatingScreenDarkTest() {
         composeTestRule.setContent {
-            HeatingScreen(
-                heatingStatsViewModelFactory = mockHeatingStatsViewModelFactorySuccess,
-                heatingSetValsViewModelFactory = mockHeatingSetValsViewModelFactorySuccess
+            MainScaffold(
+                mainViewModel = com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
+                navigationRouteSource = ViewNavigationRoutes.heating,
+                screenContent = {
+                    HeatingScreen(
+                        heatingSetValsUiState = mockHeatingSetValsUiState,
+                        onHeatingSetValsEvent = {},
+                        heatingStatsUiState = mockHeatingStatsUiState,
+                        onHeatingStatsEvent = {}
+                    )
+                },
+                onNavigate = {},
+                darkTheme = true
             )
         }
         composeTestRule.waitForIdle()
@@ -41,9 +53,19 @@ class HeatingScreenTest {
     @Test
     fun heatingScreenLightTest() {
         composeTestRule.setContent {
-            HeatingScreen(
-                heatingStatsViewModelFactory = mockHeatingStatsViewModelFactorySuccess,
-                heatingSetValsViewModelFactory = mockHeatingSetValsViewModelFactorySuccess
+            MainScaffold(
+                mainViewModel = com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
+                navigationRouteSource = ViewNavigationRoutes.heating,
+                screenContent = {
+                    HeatingScreen(
+                        heatingSetValsUiState = mockHeatingSetValsUiState,
+                        onHeatingSetValsEvent = {},
+                        heatingStatsUiState = mockHeatingStatsUiState,
+                        onHeatingStatsEvent = {}
+                    )
+                },
+                onNavigate = {},
+                darkTheme = false
             )
         }
         composeTestRule.waitForIdle()

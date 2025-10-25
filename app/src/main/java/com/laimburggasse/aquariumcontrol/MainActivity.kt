@@ -64,8 +64,10 @@ import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryUiState
 import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryViewModel
 import com.laimburggasse.aquariumcontrol.heating.HeatingScreen
 import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsRepository
+import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsViewModel
 import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsViewModelFactory
 import com.laimburggasse.aquariumcontrol.heating.HeatingStatsRepository
+import com.laimburggasse.aquariumcontrol.heating.HeatingStatsViewModel
 import com.laimburggasse.aquariumcontrol.heating.HeatingStatsViewModelFactory
 import com.laimburggasse.aquariumcontrol.info.InfoScreen
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.handleMainDropDownMenuNavigation
@@ -600,13 +602,19 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(route = ViewNavigationRoutes.heating) {
+                        val heatingSetValsViewModel: HeatingSetValsViewModel = viewModel(factory = heatingSetValsViewModelFactory)
+                        val heatingStatsViewModel: HeatingStatsViewModel = viewModel(factory = heatingStatsViewModelFactory)
+                        val heatingSetValsUiState by heatingSetValsViewModel.heatingSetValsUiState.collectAsState()
+                        val heatingStatsUiState by heatingStatsViewModel.heatingStatsUiState.collectAsState()
                         MainScaffold(
                             mainViewModel,
                             navigationRouteSource = ViewNavigationRoutes.heating,
                             screenContent = {
                                 HeatingScreen(
-                                    heatingSetValsViewModelFactory,
-                                    heatingStatsViewModelFactory,
+                                    heatingSetValsUiState,
+                                    onHeatingSetValsEvent = heatingSetValsViewModel::onHeatingSetValsEvent,
+                                    heatingStatsUiState,
+                                    onHeatingStatsEvent = heatingStatsViewModel::onHeatingStatsEvent
                                 )
                             },
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) },
