@@ -149,7 +149,7 @@ val mockBallingProfilesUiStateEmpty = BallingProfilesUiState.Empty
 @Composable
 internal fun BallingScreenPreviewSuccess() {
     MainScaffold(
-        mainViewModel = mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.balling,
         screenContent = {
             BallingScreen(
@@ -167,7 +167,7 @@ internal fun BallingScreenPreviewSuccess() {
 @Composable
 internal fun BallingScreenPreviewError() {
     MainScaffold(
-        mainViewModel = mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.balling,
         screenContent = {
             BallingScreen(
@@ -185,7 +185,7 @@ internal fun BallingScreenPreviewError() {
 @Composable
 internal fun BallingScreenPreviewLoading() {
     MainScaffold(
-        mainViewModel = mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.balling,
         screenContent = {
             BallingScreen(
@@ -203,7 +203,7 @@ internal fun BallingScreenPreviewLoading() {
 @Composable
 internal fun BallingScreenPreviewEmpty() {
     MainScaffold(
-        mainViewModel = mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.balling,
         screenContent = {
             BallingScreen(

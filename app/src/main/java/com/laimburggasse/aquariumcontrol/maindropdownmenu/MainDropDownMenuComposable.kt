@@ -24,29 +24,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun MainDropdownMenuComposable(
     navigationRouteSource: String,
-    mainViewModel: MainViewModel? = null,
+    isControllerLoaded: Boolean,
     onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
-    val isControllerLoaded: Boolean = mainViewModel?.isControllerLoaded() == true
+    var expanded: Boolean by remember { mutableStateOf(value = false) }
 
-    var expanded by remember { mutableStateOf(false) }
-
-    Box(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth()
-            .wrapContentSize(Alignment.TopStart)
+    Box(modifier = Modifier.padding(all = 16.dp).fillMaxWidth().wrapContentSize(Alignment.TopStart)
     ) {
-        IconButton(
-            onClick = { expanded = !expanded },
-        ) {
+        IconButton(onClick = { expanded = !expanded },) {
             Icon(
                 imageVector = Icons.Default.MoreVert,
                 contentDescription = stringResource(R.string.more_options)
@@ -116,14 +107,9 @@ internal fun MainDropdownMenuComposablePreview() {
     // Preview consists of drop down menu items instead of complete menu,
     // because complete menu is not displayed correctly.
     AquariumControllerTheme {
-        Surface(
-            color = MaterialTheme.colorScheme.background,
-        ) {
+        Surface(color = MaterialTheme.colorScheme.background) {
             Column {
-                MainDropDownMenuItemOverviewComposable(
-                    isControllerLoaded = true,
-                    onNavigate = {}
-                )
+                MainDropDownMenuItemOverviewComposable(isControllerLoaded = true,onNavigate = {})
                 MainDropDownMenuItemDisplayDataComposable(isControllerLoaded = true, onNavigate = {})
                 MainDropDownMenuItemBallingComposable(isControllerLoaded = true, onNavigate = {})
                 MainDropDownMenuItemRefillComposable(isControllerLoaded = true, onNavigate = {})

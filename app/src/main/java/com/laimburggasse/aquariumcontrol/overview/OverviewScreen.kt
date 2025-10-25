@@ -32,7 +32,6 @@ import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
@@ -205,7 +204,7 @@ val mockMainViewModel = MockMainViewModel(controller = mockControllerProfile)
 @Composable
 fun OverviewScreenPreviewSuccess() {
     MainScaffold(
-        mainViewModel = mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.overView,
         screenContent = {
             OverviewScreen(
@@ -222,7 +221,7 @@ fun OverviewScreenPreviewSuccess() {
 @Composable
 fun OverviewScreenPreviewError() {
     MainScaffold(
-        mainViewModel = mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.overView,
         screenContent = {
             OverviewScreen(

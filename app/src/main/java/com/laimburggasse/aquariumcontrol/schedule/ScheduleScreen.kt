@@ -233,7 +233,7 @@ val mockMainViewModel = MockMainViewModel()
 @Composable
 internal fun ScheduleScreenPreviewSuccess() {
     MainScaffold(
-        mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.schedule,
         screenContent = {
             ScheduleScreen(scheduleViewModelFactory = mockScheduleViewModelFactorySuccess)
@@ -250,7 +250,7 @@ internal fun ScheduleScreenPreviewSuccess() {
 @Composable
 internal fun ScheduleScreenPreviewError() {
     MainScaffold(
-        mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.schedule,
         screenContent = {
             ScheduleScreen(scheduleViewModelFactory = mockScheduleViewModelFactoryError)

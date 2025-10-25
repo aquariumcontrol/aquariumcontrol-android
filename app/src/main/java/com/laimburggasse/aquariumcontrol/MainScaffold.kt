@@ -12,7 +12,7 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun MainScaffold(
-    mainViewModel: MainViewModel,
+    isControllerLoaded: Boolean,
     navigationRouteSource: String,
     screenContent: @Composable () -> Unit,
     onNavigate: (MainDropDownMenuNavigationEvent) -> Unit,
@@ -28,7 +28,7 @@ fun MainScaffold(
 
                 MainDropdownMenuComposable(
                     navigationRouteSource,
-                    mainViewModel,
+                    isControllerLoaded,
                     onNavigate
                 )
             }

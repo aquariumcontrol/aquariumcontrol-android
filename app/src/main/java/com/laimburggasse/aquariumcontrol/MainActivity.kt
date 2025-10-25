@@ -224,7 +224,7 @@ class MainActivity : ComponentActivity() {
                 builder = {
                     composable(route = ViewNavigationRoutes.controllerSelection) {
                         MainScaffold(
-                            mainViewModel,
+                            mainViewModel.isControllerLoaded(),
                             navigationRouteSource = ViewNavigationRoutes.controllerSelection,
                             screenContent = {
                                 ControllerSelectionScreen(
@@ -244,7 +244,7 @@ class MainActivity : ComponentActivity() {
                     {
                         mainViewModel.setFirstLoad()
                         MainScaffold(
-                            mainViewModel = mainViewModel,
+                            isControllerLoaded = mainViewModel.isControllerLoaded(),
                             navigationRouteSource = ViewNavigationRoutes.controllerAdd,
                             screenContent = {
                                 ControllerAddScreen(
@@ -274,7 +274,7 @@ class MainActivity : ComponentActivity() {
                         val controllerProfileId: Long = backStackEntry.arguments?.getLong("controllerProfileId") ?: -1L
                         if (controllerProfileId >= 0L) {
                             MainScaffold(
-                                mainViewModel = mainViewModel,
+                                isControllerLoaded = mainViewModel.isControllerLoaded(),
                                 navigationRouteSource = ViewNavigationRoutes.controllerEdit,
                                 screenContent = {
                                     ControllerEditScreen(
@@ -297,7 +297,7 @@ class MainActivity : ComponentActivity() {
                         val feedScheduleUiState: FeedScheduleUiState by feedScheduleViewModel.feedScheduleUiState.collectAsState()
 
                         MainScaffold(
-                            mainViewModel = mainViewModel,
+                            isControllerLoaded = mainViewModel.isControllerLoaded(),
                             navigationRouteSource = ViewNavigationRoutes.feed,
                             screenContent = {
                                 FeedScreen(
@@ -325,7 +325,7 @@ class MainActivity : ComponentActivity() {
                         val feedHistoryUiState: FeedHistoryUiState by
                             feedHistoryViewModel.feedHistoryUiState.collectAsState()
                         MainScaffold(
-                            mainViewModel,
+                            isControllerLoaded = mainViewModel.isControllerLoaded(),
                             navigationRouteSource = ViewNavigationRoutes.feedHistory24h,
                             screenContent = {
                                 FeedHistoryScreen(
@@ -344,7 +344,7 @@ class MainActivity : ComponentActivity() {
                         val feedHistoryUiState: FeedHistoryUiState by
                             feedHistoryViewModel.feedHistoryUiState.collectAsState()
                         MainScaffold(
-                            mainViewModel,
+                            isControllerLoaded = mainViewModel.isControllerLoaded(),
                             navigationRouteSource = ViewNavigationRoutes.feedHistory7d,
                             screenContent = {
                                 FeedHistoryScreen(
@@ -375,7 +375,7 @@ class MainActivity : ComponentActivity() {
                                 )
                                 val uiState by feedProfileEditViewModel.uiState.collectAsState()
                                 MainScaffold(
-                                    mainViewModel = mainViewModel,
+                                    isControllerLoaded = mainViewModel.isControllerLoaded(),
                                     navigationRouteSource = ViewNavigationRoutes.feedEdit,
                                     screenContent = { FeedProfileEditScreen(
                                         uiState,
@@ -394,7 +394,7 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(route = ViewNavigationRoutes.feedAddProfile) {
                         MainScaffold(
-                            mainViewModel,
+                            isControllerLoaded = mainViewModel.isControllerLoaded(),
                             navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
                             screenContent = {
                                 FeedProfileAddScreen(
@@ -436,7 +436,7 @@ class MainActivity : ComponentActivity() {
                             val feedProfile = feedProfilesViewModel.findProfileById(profileID = feedProfileId)
                             if (feedProfile != null) {
                                 MainScaffold(
-                                    mainViewModel,
+                                    isControllerLoaded = mainViewModel.isControllerLoaded(),
                                     navigationRouteSource = ViewNavigationRoutes.feedSchedule,
                                     screenContent = {
                                         FeedProfileScheduleScreen(
@@ -473,7 +473,7 @@ class MainActivity : ComponentActivity() {
                             ballingViewModel.ballingProfilesUiState.collectAsState()
 
                         MainScaffold(
-                            mainViewModel,
+                            isControllerLoaded = mainViewModel.isControllerLoaded(),
                             navigationRouteSource = ViewNavigationRoutes.balling,
                             screenContent = {
                                 BallingScreen(
@@ -493,7 +493,7 @@ class MainActivity : ComponentActivity() {
                         val ballingHistoryUiState: BallingHistoryUiState by
                             ballingHistoryViewModel.ballingHistoryUiState.collectAsState()
                         MainScaffold(
-                            mainViewModel,
+                            isControllerLoaded = mainViewModel.isControllerLoaded(),
                             navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
                             screenContent = {
                                 BallingHistoryScreen(
@@ -512,7 +512,7 @@ class MainActivity : ComponentActivity() {
                         val ballingHistoryUiState: BallingHistoryUiState by
                         ballingHistoryViewModel.ballingHistoryUiState.collectAsState()
                         MainScaffold(
-                            mainViewModel,
+                            isControllerLoaded = mainViewModel.isControllerLoaded(),
                             navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
                             screenContent = {
                                 BallingHistoryScreen(
@@ -542,7 +542,7 @@ class MainActivity : ComponentActivity() {
                             val ballingProfileEditUiState: BallingProfileEditUiState =
                                 ballingProfileEditViewModel.ballingProfileEditUiState
                             MainScaffold(
-                                mainViewModel,
+                                isControllerLoaded = mainViewModel.isControllerLoaded(),
                                 navigationRouteSource = ViewNavigationRoutes.ballingEdit,
                                 screenContent = {
                                     BallingProfileEditScreen(
@@ -559,7 +559,7 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(route = ViewNavigationRoutes.refill) {
                         MainScaffold(
-                            mainViewModel,
+                            isControllerLoaded = mainViewModel.isControllerLoaded(),
                             navigationRouteSource = ViewNavigationRoutes.refill,
                             screenContent = {
                                 RefillScreen(
@@ -575,7 +575,7 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(route = ViewNavigationRoutes.refillHistory24h) {
                         MainScaffold(
-                            mainViewModel,
+                            isControllerLoaded = mainViewModel.isControllerLoaded(),
                             navigationRouteSource = ViewNavigationRoutes.refillHistory24h,
                             screenContent = {
                                 RefillHistoryScreen(
@@ -589,7 +589,7 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(route = ViewNavigationRoutes.refillHistory7d) {
                         MainScaffold(
-                            mainViewModel,
+                            isControllerLoaded = mainViewModel.isControllerLoaded(),
                             navigationRouteSource = ViewNavigationRoutes.refillHistory7d,
                             screenContent = {
                                 RefillHistoryScreen(
@@ -607,7 +607,7 @@ class MainActivity : ComponentActivity() {
                         val heatingSetValsUiState by heatingSetValsViewModel.heatingSetValsUiState.collectAsState()
                         val heatingStatsUiState by heatingStatsViewModel.heatingStatsUiState.collectAsState()
                         MainScaffold(
-                            mainViewModel,
+                            isControllerLoaded = mainViewModel.isControllerLoaded(),
                             navigationRouteSource = ViewNavigationRoutes.heating,
                             screenContent = {
                                 HeatingScreen(
@@ -622,7 +622,7 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(route = ViewNavigationRoutes.ventilation) {
                         MainScaffold(
-                            mainViewModel,
+                            isControllerLoaded = mainViewModel.isControllerLoaded(),
                             navigationRouteSource = ViewNavigationRoutes.ventilation,
                             screenContent = { VentilationScreen(ventilationSetValsViewModelFactory) },
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
@@ -630,7 +630,7 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(route = ViewNavigationRoutes.timeData) {
                         MainScaffold(
-                            mainViewModel,
+                            isControllerLoaded = mainViewModel.isControllerLoaded(),
                             navigationRouteSource = ViewNavigationRoutes.timeData,
                             screenContent = { TimeDataScreen(mainViewModel, timeDataViewModelFactory) },
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) },
@@ -638,7 +638,7 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(route = ViewNavigationRoutes.schedule) {
                         MainScaffold(
-                            mainViewModel,
+                            isControllerLoaded = mainViewModel.isControllerLoaded(),
                             navigationRouteSource = ViewNavigationRoutes.schedule,
                             screenContent = { ScheduleScreen(scheduleViewModelFactory) },
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) },
@@ -646,7 +646,7 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(route = ViewNavigationRoutes.info) {
                         MainScaffold(
-                            mainViewModel,
+                            isControllerLoaded = mainViewModel.isControllerLoaded(),
                             navigationRouteSource = ViewNavigationRoutes.info,
                             screenContent = { InfoScreen() },
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) },
@@ -672,7 +672,7 @@ class MainActivity : ComponentActivity() {
                                 mainViewModel.setSelectedControllerProfile(controllerProfile)
                                 mainViewModel.setFirstLoad() // Controller selection may navigate here without user interaction
                                 MainScaffold(
-                                    mainViewModel,
+                                    isControllerLoaded = mainViewModel.isControllerLoaded(),
                                     navigationRouteSource = ViewNavigationRoutes.overView,
                                     screenContent = {
                                         OverviewScreen(

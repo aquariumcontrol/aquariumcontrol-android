@@ -34,7 +34,6 @@ import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
-import com.laimburggasse.aquariumcontrol.overview.mockMainViewModel
 
 @Composable
 fun BallingHistoryScreen(
@@ -188,7 +187,7 @@ val mockBallingHistoryUiStateLoading = BallingHistoryUiState.Loading
 @Composable
 internal fun BallingHistoryScreenPreviewSuccess() {
     MainScaffold(
-        mainViewModel = mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
         screenContent = {
             BallingHistoryScreen(
@@ -207,7 +206,7 @@ internal fun BallingHistoryScreenPreviewSuccess() {
 @Composable
 internal fun BallingHistoryScreenPreviewEmpty() {
     MainScaffold(
-        mainViewModel = mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
         screenContent = {
             BallingHistoryScreen(
@@ -225,7 +224,7 @@ internal fun BallingHistoryScreenPreviewEmpty() {
 @Composable
 internal fun BallingHistoryScreenPreviewError() {
     MainScaffold(
-        mainViewModel = mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
         screenContent = {
             BallingHistoryScreen(
@@ -243,7 +242,7 @@ internal fun BallingHistoryScreenPreviewError() {
 @Composable
 internal fun BallingHistoryScreenPreviewLoading() {
     MainScaffold(
-        mainViewModel = mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
         screenContent = {
             BallingHistoryScreen(

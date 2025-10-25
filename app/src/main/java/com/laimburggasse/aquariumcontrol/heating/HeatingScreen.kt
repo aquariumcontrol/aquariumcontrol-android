@@ -25,7 +25,6 @@ import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 
 @Composable
@@ -290,7 +289,7 @@ val mockMainViewModel = MockMainViewModel()
 @Composable
 fun HeatingScreenPreviewSuccess() {
     MainScaffold(
-        mainViewModel = mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.heating,
         screenContent = {
             HeatingScreen(
@@ -309,7 +308,7 @@ fun HeatingScreenPreviewSuccess() {
 @Composable
 fun HeatingScreenPreviewError() {
     MainScaffold(
-        mainViewModel = mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.heating,
         screenContent = {
             HeatingScreen(

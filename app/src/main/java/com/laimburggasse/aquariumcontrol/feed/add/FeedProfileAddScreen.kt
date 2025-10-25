@@ -116,7 +116,7 @@ val mockMainViewModel = MockMainViewModel()
 )@Composable
 internal fun FeedProfileAddScreenPreview() {
     MainScaffold(
-        mainViewModel = _root_ide_package_.com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
         screenContent = {
             FeedProfileAddScreen(

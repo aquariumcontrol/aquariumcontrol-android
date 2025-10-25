@@ -31,7 +31,6 @@ import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.balling.common.BallingProfile
 import com.laimburggasse.aquariumcontrol.balling.common.BallingProfileSummaryComposable
-import com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 
 @Composable
@@ -160,7 +159,7 @@ val mockBallingProfileEditUiState = BallingProfileEditUiState.Success(
 @Composable
 internal fun BallingProfileEditScreenPreview() {
     MainScaffold(
-        mainViewModel = mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.balling,
         screenContent = {
             BallingProfileEditScreen(

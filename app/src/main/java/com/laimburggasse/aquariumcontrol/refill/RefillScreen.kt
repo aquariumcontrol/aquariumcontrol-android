@@ -34,7 +34,6 @@ import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposabl
 fun RefillScreen(
     mainViewModel: MainViewModel,
     refillViewModelFactory: RefillViewModelFactory,
-    darkTheme: Boolean? = null,
     onNavigateFromRefill: (RefillNavigationEvent) -> Unit,
 ) {
     // This screen displays
@@ -170,7 +169,7 @@ val mockRefillViewModelFactory = RefillViewModelFactory(mockRefillRepository)
 @Composable
 internal fun RefillScreenPreview() {
     MainScaffold(
-        mainViewModel = mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.refill,
         screenContent = {
             RefillScreen(

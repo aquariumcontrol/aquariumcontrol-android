@@ -34,7 +34,6 @@ import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.feed.common.FeedNavigationEvent
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfileImport
@@ -223,7 +222,7 @@ fun FeedProfileScheduleScreenPreviewSuccess() {
     val mockFeedProfile: FeedProfile = FeedProfile.fromFeedProfileImport(mockFeedProfileImport)
     
     MainScaffold(
-        mainViewModel = mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
         screenContent = {
             FeedProfileScheduleScreen(

@@ -33,7 +33,6 @@ import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.feed.entry.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState.Error
 import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState.Loading
@@ -304,7 +303,7 @@ val mockTimeDataViewModelFactoryEmpty = TimeDataViewModelFactory(
 @Composable
 internal fun TimeDataScreenPreviewSuccess() {
     MainScaffold(
-        mainViewModel = mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.timeData,
         screenContent = { TimeDataScreen(timeDataViewModelFactory = mockTimeDataViewModelFactorySuccess) },
         onNavigate = {}
@@ -326,7 +325,7 @@ internal fun TimeDataScreenPreviewSuccess() {
 @Composable
 internal fun TimeDataScreenPreviewError() {
     MainScaffold(
-        mainViewModel = mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.timeData,
         screenContent = { TimeDataScreen(timeDataViewModelFactory = mockTimeDataViewModelFactoryError) },
         onNavigate = {}
@@ -348,7 +347,7 @@ internal fun TimeDataScreenPreviewError() {
 @Composable
 internal fun TimeDataScreenPreviewEmpty() {
     MainScaffold(
-        mainViewModel = mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.timeData,
         screenContent = { TimeDataScreen(timeDataViewModelFactory = mockTimeDataViewModelFactoryEmpty) },
         onNavigate = {}

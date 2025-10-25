@@ -210,7 +210,7 @@ val mockRefillHistoryRepositoryError = MockRefillHistoryRepository(
 @Composable
 internal fun RefillHistoryScreenPreviewSuccess() {
     MainScaffold(
-        mainViewModel = mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.refillHistory24h,
         screenContent = {
             RefillHistoryScreen(
@@ -230,7 +230,7 @@ internal fun RefillHistoryScreenPreviewSuccess() {
 @Composable
 internal fun RefillHistoryScreenPreviewError() {
     MainScaffold(
-        mainViewModel = mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.refillHistory24h,
         screenContent = {
             RefillHistoryScreen(
@@ -250,7 +250,7 @@ internal fun RefillHistoryScreenPreviewError() {
 @Composable
 internal fun RefillHistoryScreenPreviewEmpty() {
     MainScaffold(
-        mainViewModel = _root_ide_package_.com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.refillHistory24h,
         screenContent = {
             RefillHistoryScreen(

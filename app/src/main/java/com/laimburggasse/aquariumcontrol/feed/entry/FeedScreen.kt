@@ -21,7 +21,6 @@ import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.feed.common.FeedNavigationEvent
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfileImport
@@ -192,7 +191,7 @@ val mockFeedScheduleUiStateError = FeedScheduleUiState.Error(errorMessage = "Err
 @Composable
 fun FeedScreenPreviewSuccess() {
     MainScaffold(
-        mainViewModel = mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.feed,
         screenContent = {
             FeedScreen(
@@ -223,7 +222,7 @@ fun FeedScreenPreviewSuccess() {
 @Composable
 fun FeedScreenPreviewError() {
     MainScaffold(
-        mainViewModel = mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.feed,
         screenContent = {
             FeedScreen(

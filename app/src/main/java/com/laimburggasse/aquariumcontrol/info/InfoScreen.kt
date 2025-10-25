@@ -62,7 +62,7 @@ fun InfoScreen() {
 @Composable
 internal fun InfoScreenPreview() {
     MainScaffold(
-        mainViewModel = _root_ide_package_.com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.heating,
         screenContent = { InfoScreen() },
         onNavigate = {}

@@ -18,7 +18,6 @@ import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfileImport
-import com.laimburggasse.aquariumcontrol.feed.entry.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 
 @Composable
@@ -227,7 +226,7 @@ val mockFeedProfileEditUiState = FeedProfileEditUiState(
 @Composable
 internal fun FeedProfileEditScreenPreview() {
     MainScaffold(
-        mainViewModel = mockMainViewModel,
+        isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.feedEdit,
         screenContent = {
             FeedProfileEditScreen(
