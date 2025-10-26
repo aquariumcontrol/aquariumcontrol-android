@@ -1,6 +1,5 @@
 package com.laimburggasse.aquariumcontrol.timedata
 
-import android.util.Log
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
 import kotlinx.serialization.json.Json
@@ -43,7 +42,6 @@ class TimeDataReader(private val urlWithoutParameters: String) {
             for ((key: String, value: String) in optionalGetParams) {
                 url += "$key=$value&"
             }
-            Log.d("TimeDataReader", "URL: $url")
 
             val request: Request = Request.Builder().url(url).build()
 

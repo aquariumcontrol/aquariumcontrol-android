@@ -1,6 +1,5 @@
 package com.laimburggasse.aquariumcontrol.refill.history
 
-import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
@@ -13,33 +12,37 @@ class RefillHistoryLogEntryReader(private val url: String) {
     private val client = OkHttpClient()
     private val json = Json { ignoreUnknownKeys = true }
 
-    fun readRefillEvents(sessionManager: SessionManager? = null): DataFetchResult<List<RefillHistoryLogEntry>> {
+    fun readRefillEvents(): DataFetchResult<List<RefillHistoryLogEntry>> {
         val request: Request = Request.Builder().url(url).build()
-
-        val isControllerLoaded: Boolean = sessionManager?.isControllerLoaded() == true
-
-        if (!isControllerLoaded) {
-            return DataFetchResult.Error(null, "Controller not loaded.")
-        }
 
         try {
             val response: Response = client.newCall(request).execute()
             if (response.isSuccessful) {
-                val responseBody = response.body.string()
+                val responseBody: String = response.body.string()
                 if (responseBody.isEmpty()) {
                     return DataFetchResult.Success(data = emptyList())
                 }
                 try {
-                    val decodedData: List<RefillHistoryLogEntry> = json.decodeFromString<List<RefillHistoryLogEntry>>(string = responseBody)
+                    val decodedData: List<RefillHistoryLogEntry> =
+                        json.decodeFromString<List<RefillHistoryLogEntry>>(string = responseBody)
                     return DataFetchResult.Success(decodedData)
                 } catch (e: Exception) {
-                    return DataFetchResult.Error(exception = e, errorMessage = "Error decoding data sent from server: ${e.message}")
+                    return DataFetchResult.Error(
+                        exception = e,
+                        errorMessage = "Error decoding data sent from server: ${e.message}"
+                    )
                 }
             } else {
-                return DataFetchResult.Error(exception = null, errorMessage = "Server responded with error code: ${response.code}")
+                return DataFetchResult.Error(
+                    exception = null,
+                    errorMessage = "Server responded with error code: ${response.code}"
+                )
             }
         } catch (e: Exception) {
-            return DataFetchResult.Error(exception = e, errorMessage = "An unexpected error occurred during preparation of server communication.")
+            return DataFetchResult.Error(
+                exception = e,
+                errorMessage = "An unexpected error occurred during preparation of server communication."
+            )
         }
     }
 }

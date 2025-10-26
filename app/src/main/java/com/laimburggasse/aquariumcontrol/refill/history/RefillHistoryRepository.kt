@@ -18,13 +18,16 @@ open class RefillHistoryRepository(private val sessionManager: SessionManager) {
     open suspend fun fetchRefillHistoryEvents(
         showFullWeek: Boolean
     ) {
-        val url = when {
+        if (sessionManager.getControllerAddress().isNullOrBlank()) {
+            return
+        }
+        val url: String = when {
             showFullWeek -> "http://" + sessionManager.getControllerAddress() + WebApiUrls.REFILL_GET_EVENTS_7D
             else -> "http://" + sessionManager.getControllerAddress() + WebApiUrls.REFILL_GET_EVENTS_24H
         }
         val reader = RefillHistoryLogEntryReader(url)
         withContext(context = Dispatchers.IO) {
-            val result: DataFetchResult<List<RefillHistoryLogEntry>> = reader.readRefillEvents(sessionManager)
+            val result: DataFetchResult<List<RefillHistoryLogEntry>> = reader.readRefillEvents()
             _refillHistoryLogEntryFlow.value = result
         }
     }

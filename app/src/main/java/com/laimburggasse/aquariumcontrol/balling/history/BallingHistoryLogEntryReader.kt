@@ -1,6 +1,5 @@
 package com.laimburggasse.aquariumcontrol.balling.history
 
-import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
@@ -12,14 +11,8 @@ class BallingHistoryLogEntryReader(private val url: String) {
     private val client = OkHttpClient()
     private val json = Json { ignoreUnknownKeys = true }
 
-    fun readBallingEvents(sessionManager: SessionManager? = null): DataFetchResult<List<BallingHistoryLogEntry>> {
+    fun readBallingEvents(): DataFetchResult<List<BallingHistoryLogEntry>> {
         val request: Request = Request.Builder().url(url).build()
-
-        // @todo: check if this check is necessary
-        val isControllerLoaded: Boolean = sessionManager?.isControllerLoaded() == true
-        if (!isControllerLoaded) {
-            return DataFetchResult.Error(exception = null, errorMessage = "Controller not loaded.")
-        }
 
         try {
             val response: Response = client.newCall(request).execute()

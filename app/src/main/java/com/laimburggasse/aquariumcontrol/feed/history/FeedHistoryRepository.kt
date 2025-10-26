@@ -18,13 +18,16 @@ open class FeedHistoryRepository(private val sessionManager: SessionManager) {
     open suspend fun fetchFeedHistoryEvents(
         showFullWeek: Boolean
     ) {
-        val url = when {
+        if (sessionManager.getControllerAddress().isNullOrBlank()) {
+            return
+        }
+        val url: String = when {
             showFullWeek -> "http://" + sessionManager.getControllerAddress() + WebApiUrls.FEED_GET_EVENTS_7D
             else -> "http://" + sessionManager.getControllerAddress() + WebApiUrls.FEED_GET_EVENTS_24H
         }
         val reader = FeedHistoryLogEntryReader(url)
         withContext(context = Dispatchers.IO) {
-            val result: DataFetchResult<List<FeedHistoryLogEntry>> = reader.readFeedEvents(sessionManager)
+            val result: DataFetchResult<List<FeedHistoryLogEntry>> = reader.readFeedEvents()
             _feedHistoryLogEntryFlow.value = result
         }
     }

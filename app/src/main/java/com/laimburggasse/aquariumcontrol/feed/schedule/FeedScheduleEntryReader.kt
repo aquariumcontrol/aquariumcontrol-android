@@ -13,7 +13,7 @@ class FeedScheduleEntryReader(private val url: String) {
     private val json = Json { ignoreUnknownKeys = true }
 
     fun readFeedScheduleEntries(): DataFetchResult<List<FeedScheduleEntryImport>> {
-        val request = Request.Builder().url(url).build()
+        val request: Request = Request.Builder().url(url).build()
 
         try {
             val response: Response = client.newCall(request).execute()
@@ -28,10 +28,16 @@ class FeedScheduleEntryReader(private val url: String) {
                     return DataFetchResult.Success(data = decodedData)
                 }
             } else {
-                return DataFetchResult.Error(exception = null, errorMessage = "Server responded with error code: ${response.code}")
+                return DataFetchResult.Error(
+                    exception = null,
+                    errorMessage = "Server responded with error code: ${response.code}"
+                )
             }
         } catch (e: Exception) {
-            return DataFetchResult.Error(exception = e, errorMessage = "An unexpected error occurred during preparation of server communication.")
+            return DataFetchResult.Error(
+                exception = e,
+                errorMessage = "An unexpected error occurred during preparation of server communication."
+            )
         }
     }
 }
