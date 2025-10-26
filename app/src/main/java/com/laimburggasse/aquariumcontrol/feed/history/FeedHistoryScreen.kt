@@ -1,6 +1,7 @@
 package com.laimburggasse.aquariumcontrol.feed.history
 
 import android.content.res.Configuration
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -79,7 +80,7 @@ fun FeedHistoryScreen(
                     indicator = {
                         if (feedHistoryUiState is FeedHistoryUiState.Loading) {
                             CircularProgressIndicator(
-                                modifier = Modifier.size(150.dp),
+                                modifier = Modifier.size(size = 150.dp),
                                 color = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -197,7 +198,8 @@ internal fun FeedHistoryScreenPreviewSuccess() {
                 onFeedHistoryEvent = {}
             )
         },
-        onNavigate = {}
+        onNavigate = {},
+        darkTheme = isSystemInDarkTheme()
     )
 }
 
@@ -215,7 +217,8 @@ internal fun FeedHistoryScreenPreviewError() {
                 onFeedHistoryEvent = {}
             )
         },
-        onNavigate = {}
+        onNavigate = {},
+        darkTheme = isSystemInDarkTheme()
     )
 }
 
@@ -233,7 +236,8 @@ internal fun FeedHistoryScreenPreviewEmpty() {
                 onFeedHistoryEvent = {}
             )
         },
-        onNavigate = {}
+        onNavigate = {},
+        darkTheme = isSystemInDarkTheme()
     )
 }
 
@@ -246,7 +250,6 @@ internal fun FeedHistoryScreenPreviewLoading() {
     FeedHistoryScreen(
         showFullWeek = false,
         feedHistoryViewModel = mockFeedHistoryViewModelLoading,
-        mainViewModel = mockMainViewModel
     )
 }
 */

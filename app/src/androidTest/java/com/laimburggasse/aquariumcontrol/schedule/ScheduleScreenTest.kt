@@ -5,7 +5,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.laimburggasse.aquariumcontrol.MainScaffold
-import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import org.junit.Rule
@@ -21,8 +20,6 @@ class ScheduleScreenTest {
     private val recordMode = false
 
     private val subfolder = "schedule"
-
-    val mockMainViewModel = MockMainViewModel()
 
     @Test
     fun scheduleScreenDarkTest() {

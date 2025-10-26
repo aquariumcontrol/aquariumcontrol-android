@@ -24,17 +24,17 @@ fun FeedProfileAddNameEditableOutlinedFieldComposable(
     textAlign: TextAlign? = TextAlign.Center
 ) {
     val initialValue = ""
-    var feedProfileName by remember { mutableStateOf(initialValue)}
+    var feedProfileName: String by remember { mutableStateOf(initialValue)}
 
-    val myTextAlign = textAlign ?: TextAlign.Center
+    val myTextAlign: TextAlign = textAlign ?: TextAlign.Center
     OutlinedTextField(
         value = feedProfileName, // start with empty value
         onValueChange = { newValue ->
-            val filteredValue = newValue.filter { it.isLetterOrDigit() || it == '_' }
+            val filteredValue: String = newValue.filter { it.isLetterOrDigit() || it == '_' }
             feedProfileName = filteredValue // Update the state
             onFeedProfileNameChange(filteredValue)
         },
-        label = { Text("Feed Profile Name") },
+        label = { Text(text = "Feed Profile Name") },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
         modifier = modifier,
         textStyle = MaterialTheme.typography.bodyLarge.copy(

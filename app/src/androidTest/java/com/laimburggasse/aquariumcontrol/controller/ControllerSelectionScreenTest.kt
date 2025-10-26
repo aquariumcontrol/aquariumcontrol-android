@@ -11,10 +11,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerState
-import com.laimburggasse.aquariumcontrol.controller.edit.ControllerEditScreen
 import com.laimburggasse.aquariumcontrol.controller.selection.ControllerSelectionScreen
 import org.junit.Rule
 import org.junit.Test
@@ -58,7 +56,7 @@ class ControllerSelectionScreenTest {
         composeTestRule.setContent {
             mockControllerState.controllerProfileList = controllerProfileList
             MainScaffold(
-                mainViewModel = mockMainViewModel,
+                isControllerLoaded = true,
                 navigationRouteSource = ViewNavigationRoutes.controllerAdd,
                 screenContent = {
                     ControllerSelectionScreen(
@@ -88,7 +86,7 @@ class ControllerSelectionScreenTest {
         composeTestRule.setContent {
             mockControllerState.controllerProfileList = controllerProfileList
             MainScaffold(
-                mainViewModel = mockMainViewModel,
+                isControllerLoaded = true,
                 navigationRouteSource = ViewNavigationRoutes.controllerAdd,
                 screenContent = {
                     ControllerSelectionScreen(

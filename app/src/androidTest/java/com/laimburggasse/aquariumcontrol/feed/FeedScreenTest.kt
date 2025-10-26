@@ -28,7 +28,7 @@ class FeedScreenTest {
     fun feedScreenDarkTest() {
         composeTestRule.setContent {
             MainScaffold(
-                mainViewModel = com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
+                isControllerLoaded = true,
                 navigationRouteSource = ViewNavigationRoutes.feed,
                 screenContent = {
                     FeedScreen(
@@ -56,7 +56,7 @@ class FeedScreenTest {
     fun feedScreenLightTest() {
         composeTestRule.setContent {
             MainScaffold(
-                mainViewModel = com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
+                isControllerLoaded = true,
                 navigationRouteSource = ViewNavigationRoutes.feed,
                 screenContent = {
                     FeedScreen(

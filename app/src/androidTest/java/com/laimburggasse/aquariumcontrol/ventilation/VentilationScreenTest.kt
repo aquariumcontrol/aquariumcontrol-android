@@ -4,7 +4,9 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
+import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -22,10 +24,17 @@ class VentilationScreenTest {
     @Test
     fun ventilationScreenDarkTest() {
         composeTestRule.setContent {
-            VentilationScreen(
-                mainViewModel = mockMainViewModel,
-                darkTheme = true,
-                ventilationSetValsViewModelFactory = mockVentilationSetValsViewModelFactorySuccess
+            MainScaffold(
+                isControllerLoaded = true,
+                navigationRouteSource = ViewNavigationRoutes.ventilation,
+                screenContent = {
+                    VentilationScreen(
+                        ventilationSetValsUiState = mockVentilationSetValsUiStateSuccess,
+                        onVentilationSetValsEvent = {}
+                    )
+                },
+                onNavigate = {},
+                darkTheme = true
             )
         }
         composeTestRule.waitForIdle()
@@ -40,9 +49,16 @@ class VentilationScreenTest {
     @Test
     fun ventilationScreenLightTest() {
         composeTestRule.setContent {
-            VentilationScreen(
-                mainViewModel = mockMainViewModel,
-                ventilationSetValsViewModelFactory = mockVentilationSetValsViewModelFactorySuccess,
+            MainScaffold(
+                isControllerLoaded = true,
+                navigationRouteSource = ViewNavigationRoutes.ventilation,
+                screenContent = {
+                    VentilationScreen(
+                        ventilationSetValsUiState = mockVentilationSetValsUiStateSuccess,
+                        onVentilationSetValsEvent = {}
+                    )
+                },
+                onNavigate = {},
                 darkTheme = false
             )
         }

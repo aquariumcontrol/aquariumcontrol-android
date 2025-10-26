@@ -1,6 +1,5 @@
 package com.laimburggasse.aquariumcontrol.overview
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot

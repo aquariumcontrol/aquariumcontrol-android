@@ -64,19 +64,23 @@ open class FeedProfilesRepository(private val mainViewModel: MainViewModel) {
         }
     }
 
-    open suspend fun addFeedProfile(feedProfileName: String) {
+    open suspend fun addFeedProfile(feedProfileName: String): Boolean {
         val apiCallParameters: Map<String, String> = mapOf(WebApiParams.PROFILE_NAME to feedProfileName)
 
-        withContext(context = Dispatchers.IO) {
+        val success: Boolean = withContext(context = Dispatchers.IO) {
             webApiPostRequestExecution(
                 mainViewModel = mainViewModel,
                 apiUrl = WebApiUrls.FEED_POST_PROFILE_CREATE,
                 webApiPostRequest = WebApiPostRequest(),
                 optionalGetParams = apiCallParameters
             )
+        }
+
+        if (success) {
             fetchFeedProfiles()
         }
 
+        return success
     }
 
     open fun findProfileById(profileId: Int): FeedProfile? {

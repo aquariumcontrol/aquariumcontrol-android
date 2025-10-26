@@ -40,6 +40,8 @@ import com.laimburggasse.aquariumcontrol.controller.common.handleControllerNavig
 import com.laimburggasse.aquariumcontrol.controller.edit.ControllerEditScreen
 import com.laimburggasse.aquariumcontrol.controller.selection.ControllerSelectionScreen
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddScreen
+import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddUiState
+import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddViewModel
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddViewModelFactory
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilesRepository
@@ -97,6 +99,8 @@ import com.laimburggasse.aquariumcontrol.timedata.TimeDataViewModel
 import com.laimburggasse.aquariumcontrol.timedata.TimeDataViewModelFactory
 import com.laimburggasse.aquariumcontrol.ventilation.VentilationScreen
 import com.laimburggasse.aquariumcontrol.ventilation.VentilationSetValsRepository
+import com.laimburggasse.aquariumcontrol.ventilation.VentilationSetValsUiState
+import com.laimburggasse.aquariumcontrol.ventilation.VentilationSetValsViewModel
 import com.laimburggasse.aquariumcontrol.ventilation.VentilationSetValsViewModelFactory
 
 @Suppress("UNCHECKED_CAST")
@@ -401,12 +405,19 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                     composable(route = ViewNavigationRoutes.feedAddProfile) {
+                        val feedProfileAddViewModel: FeedProfileAddViewModel = viewModel(
+                            factory = feedProfileAddViewModelFactory
+                        )
+                        val feedProfileName: String by feedProfileAddViewModel.feedProfileName.collectAsState()
+                        val feedProfileAddUiState: FeedProfileAddUiState by feedProfileAddViewModel.feedProfileAddUiState.collectAsState()
+
                         MainScaffold(
                             isControllerLoaded = mainViewModel.isControllerLoaded(),
                             navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
                             screenContent = {
                                 FeedProfileAddScreen(
-                                    feedProfileAddViewModelFactory = feedProfileAddViewModelFactory,
+                                    feedProfileName,
+                                    feedProfileAddUiState,
                                     onNavigateFromFeed = { event, feedProfileId, isNewScheduleEntry, millisSinceEpoch ->
                                         navHostController.handleFeedNavigation(
                                             event,
@@ -414,7 +425,8 @@ class MainActivity : ComponentActivity() {
                                             isNewScheduleEntry,
                                             millisSinceEpoch
                                         )
-                                    }
+                                    },
+                                    onFeedProfileAddEvent = feedProfileAddViewModel::onFeedProfileAddEvent,
                                 )
                             },
                             onNavigate = { event ->
@@ -637,10 +649,20 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(route = ViewNavigationRoutes.ventilation) {
+                        val ventilationSetValsViewModel: VentilationSetValsViewModel =
+                            viewModel(factory = ventilationSetValsViewModelFactory)
+                        val ventilationSetValsUiState: VentilationSetValsUiState by
+                            ventilationSetValsViewModel.ventilationSetValsUiState.collectAsState()
+
                         MainScaffold(
                             isControllerLoaded = mainViewModel.isControllerLoaded(),
                             navigationRouteSource = ViewNavigationRoutes.ventilation,
-                            screenContent = { VentilationScreen(ventilationSetValsViewModelFactory) },
+                            screenContent = {
+                                VentilationScreen(
+                                    ventilationSetValsUiState,
+                                    onVentilationSetValsEvent = ventilationSetValsViewModel::onVentilationSetValsEvent
+                                )
+                            },
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
                         )
                     }

@@ -4,18 +4,14 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
+import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddScreen
-import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddViewModelFactory
-import com.laimburggasse.aquariumcontrol.feed.entry.mockFeedProfilesRepository
-import com.laimburggasse.aquariumcontrol.feed.entry.mockMainViewModel
+import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddUiState
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-
-val mockFeedProfileAddViewModelFactory = FeedProfileAddViewModelFactory(
-    feedProfilesRepository = mockFeedProfilesRepository
-)
 
 @RunWith(value = AndroidJUnit4::class)
 class FeedProfileAddScreenTest {
@@ -30,10 +26,19 @@ class FeedProfileAddScreenTest {
     @Test
     fun feedAddScreenDarkTest() {
         composeTestRule.setContent {
-            FeedProfileAddScreen(
-                darkTheme = true,
-                mainViewModel = mockMainViewModel,
-                feedProfileAddViewModelFactory = mockFeedProfileAddViewModelFactory
+            MainScaffold(
+                isControllerLoaded = true,
+                navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
+                screenContent = {
+                    FeedProfileAddScreen(
+                        feedProfileName = "test",
+                        feedProfileAddUiState = FeedProfileAddUiState.Idle,
+                        onNavigateFromFeed = {event, id, isNew, time ->},
+                        onFeedProfileAddEvent = {event ->}
+                    )
+                },
+                onNavigate = {},
+                darkTheme = true
             )
         }
         composeTestRule.waitForIdle()
@@ -48,10 +53,19 @@ class FeedProfileAddScreenTest {
     @Test
     fun feedAddScreenLightTest() {
         composeTestRule.setContent {
-            FeedProfileAddScreen(
-                darkTheme = false,
-                mainViewModel = mockMainViewModel,
-                feedProfileAddViewModelFactory = mockFeedProfileAddViewModelFactory
+            MainScaffold(
+                isControllerLoaded = true,
+                navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
+                screenContent = {
+                    FeedProfileAddScreen(
+                        feedProfileName = "test",
+                        feedProfileAddUiState = FeedProfileAddUiState.Idle,
+                        onNavigateFromFeed = {event, id, isNew, time ->},
+                        onFeedProfileAddEvent = {event ->}
+                    )
+                },
+                onNavigate = {},
+                darkTheme = false
             )
         }
         composeTestRule.waitForIdle()

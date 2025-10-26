@@ -251,7 +251,6 @@ internal fun RefillHistoryScreenPreviewLoading() {
         refillHistoryViewModelFactory = RefillHistoryViewModelFactory(
             refillHistoryRepository = mockRefillHistoryRepositorySuccess
         ),
-        mainViewModel = mockMainViewModel
     )
 }
 */

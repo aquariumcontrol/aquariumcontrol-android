@@ -336,6 +336,7 @@ internal fun TimeDataScreenPreviewEmpty() {
                 onTimeDataEvent = {}
             )
         },
-        onNavigate = {}
+        onNavigate = {},
+        darkTheme = isSystemInDarkTheme()
     )
 }

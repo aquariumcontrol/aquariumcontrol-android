@@ -7,7 +7,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel
 import com.laimburggasse.aquariumcontrol.controller.add.ControllerAddScreen
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerState
 import org.junit.Rule
@@ -28,7 +27,7 @@ class ControllerAddScreenTest {
     fun controllerAddScreenDarkTest() {
         composeTestRule.setContent {
             MainScaffold(
-                mainViewModel = mockMainViewModel,
+                isControllerLoaded = true,
                 navigationRouteSource = ViewNavigationRoutes.controllerAdd,
                 screenContent = {
                     ControllerAddScreen(
@@ -53,7 +52,7 @@ class ControllerAddScreenTest {
     fun controllerAddScreenLightTest() {
         composeTestRule.setContent {
             MainScaffold(
-                mainViewModel = mockMainViewModel,
+                isControllerLoaded = true,
                 navigationRouteSource = ViewNavigationRoutes.controllerAdd,
                 screenContent = {
                     ControllerAddScreen(

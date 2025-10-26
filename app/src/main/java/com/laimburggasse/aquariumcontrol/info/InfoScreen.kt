@@ -1,6 +1,7 @@
 package com.laimburggasse.aquariumcontrol.info
 
 import android.content.res.Configuration
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -65,6 +66,7 @@ internal fun InfoScreenPreview() {
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.heating,
         screenContent = { InfoScreen() },
-        onNavigate = {}
+        onNavigate = {},
+        darkTheme = isSystemInDarkTheme()
     )
 }

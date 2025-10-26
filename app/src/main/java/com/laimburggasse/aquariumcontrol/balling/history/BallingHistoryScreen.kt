@@ -1,6 +1,7 @@
 package com.laimburggasse.aquariumcontrol.balling.history
 
 import android.content.res.Configuration
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -233,7 +234,8 @@ internal fun BallingHistoryScreenPreviewError() {
                 onEvent = {}
             )
         },
-        onNavigate = {}
+        onNavigate = {},
+        darkTheme = isSystemInDarkTheme()
     )
 }
 
@@ -251,6 +253,7 @@ internal fun BallingHistoryScreenPreviewLoading() {
                 onEvent = {}
             )
         },
-        onNavigate = {}
+        onNavigate = {},
+        darkTheme = isSystemInDarkTheme()
     )
 }

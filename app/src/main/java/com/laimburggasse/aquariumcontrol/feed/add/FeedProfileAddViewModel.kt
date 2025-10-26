@@ -16,19 +16,50 @@ class FeedProfileAddViewModel(
     private val _feedProfileName = MutableStateFlow("")
     val feedProfileName: StateFlow<String> = _feedProfileName.asStateFlow()
 
-    private val _eventChannel = Channel<FeedProfileAddEvent>()
-    val eventFlow = _eventChannel.receiveAsFlow()
+    private val _feedProfileAddUiState = MutableStateFlow<FeedProfileAddUiState>(
+        value = FeedProfileAddUiState.Idle
+    )
+    val feedProfileAddUiState: StateFlow<FeedProfileAddUiState> = _feedProfileAddUiState.asStateFlow()
 
     fun setFeedProfileName(name: String) {
         _feedProfileName.value = name // Update the StateFlow
         // @todo: add here functionality to avoid existing names
     }
 
+    fun onStateHandled() {
+        _feedProfileAddUiState.value = FeedProfileAddUiState.Idle
+    }
 
     fun addFeedProfile() {
+        if (_feedProfileAddUiState.value is FeedProfileAddUiState.Loading) return
+
         viewModelScope.launch {
-            feedProfilesRepository.addFeedProfile(feedProfileName = feedProfileName.value)
-            _eventChannel.send(element = FeedProfileAddEvent.Success)
+            _feedProfileAddUiState.value = FeedProfileAddUiState.Loading
+
+            val success: Boolean = feedProfilesRepository.addFeedProfile(feedProfileName = feedProfileName.value)
+
+            if (success) {
+                _feedProfileAddUiState.value = FeedProfileAddUiState.Success
+            } else {
+                _feedProfileAddUiState.value = FeedProfileAddUiState.Error(message = "Failed to add feed profile")
+            }
+        }
+    }
+
+    fun onFeedProfileAddEvent(event: FeedProfileAddEvent) {
+        when (event) {
+            is FeedProfileAddEvent.Add -> {
+                addFeedProfile()
+            }
+            is FeedProfileAddEvent.HandleState -> {
+                onStateHandled()
+            }
+            is FeedProfileAddEvent.SetFeedProfileName -> {
+                setFeedProfileName(event.name)
+            }
+            is FeedProfileAddEvent.Success -> {
+
+            }
         }
     }
 }

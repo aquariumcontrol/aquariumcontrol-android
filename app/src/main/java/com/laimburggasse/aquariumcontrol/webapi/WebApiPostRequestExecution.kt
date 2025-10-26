@@ -30,13 +30,4 @@ suspend fun webApiPostRequestExecution(
         webApiPostRequest.postData(url, username = user, password).isSuccess
     }
     // @todo: handle the error case
-    // @todo: move the toast to a more appropriate place
-    //else {
-    //    Toast.makeText(
-    //        context,
-    //        "Currently selected controller does not have " +
-    //                "proper configuration of user and password",
-    //        Toast.LENGTH_SHORT
-    //    ).show()
-    //}
 }

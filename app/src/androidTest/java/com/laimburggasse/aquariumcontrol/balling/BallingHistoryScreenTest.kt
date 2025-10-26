@@ -5,7 +5,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.laimburggasse.aquariumcontrol.MainScaffold
-import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryScreen
@@ -25,13 +24,10 @@ class BallingHistoryScreenTest {
 
     private val subfolder = "balling"
 
-    val mockMainViewModel = MockMainViewModel()
-
     @Test
     fun ballingHistoryScreenDarkEmptyTest() {
         composeTestRule.setContent {
             MainScaffold(
-                mainViewModel = mockMainViewModel,
                 navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
                 screenContent = {
                     BallingHistoryScreen(
@@ -41,7 +37,8 @@ class BallingHistoryScreenTest {
                     )
                 },
                 onNavigate = {},
-                darkTheme = true
+                darkTheme = true,
+                isControllerLoaded = true
             )
         }
         composeTestRule.waitForIdle()
@@ -57,7 +54,7 @@ class BallingHistoryScreenTest {
     fun ballingHistoryScreenLightEmptyTest() {
         composeTestRule.setContent {
             MainScaffold(
-                mainViewModel = mockMainViewModel,
+                isControllerLoaded = true,
                 navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
                 screenContent = {
                     BallingHistoryScreen(
@@ -82,7 +79,7 @@ class BallingHistoryScreenTest {
     fun ballingHistoryScreenDarkDataTest() {
         composeTestRule.setContent {
             MainScaffold(
-                mainViewModel = mockMainViewModel,
+                isControllerLoaded = true,
                 navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
                 screenContent = {
                     BallingHistoryScreen(
@@ -108,7 +105,7 @@ class BallingHistoryScreenTest {
     fun ballingHistoryScreenLightDataTest() {
         composeTestRule.setContent {
             MainScaffold(
-                mainViewModel = mockMainViewModel,
+                isControllerLoaded = true,
                 navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
                 screenContent = {
                     BallingHistoryScreen(

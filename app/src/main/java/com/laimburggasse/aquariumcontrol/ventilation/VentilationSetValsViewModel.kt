@@ -28,7 +28,7 @@ class VentilationSetValsViewModel(
             initialValue = VentilationSetValsUiState.Loading // The UI starts in a loading state
         )
 
-    fun onRangeChangedBySlider(start: Float, end: Float) {
+    fun onRangeChanged(start: Float, end: Float) {
         ventilationSetValsRepository.updateLocalValues(
             VentilationSetVals(
                 ventilationSwitchOffTemp = start.toDouble(),
@@ -68,6 +68,26 @@ class VentilationSetValsViewModel(
     fun updateValues() {
         viewModelScope.launch {
             ventilationSetValsRepository.updateValues()
+        }
+    }
+
+    fun onVentilationSetValsEvent(event: VentilationSetValsEvent) {
+        when (event) {
+            is VentilationSetValsEvent.ChangeLowerValue -> {
+                onLowerValueChanged(event.lowerValue)
+            }
+            is VentilationSetValsEvent.ChangeRange -> {
+                onRangeChanged(event.lowerValue, event.upperValue)
+            }
+            is VentilationSetValsEvent.ChangeUpperValue -> {
+                onUpperValueChanged(event.upperValue)
+            }
+            VentilationSetValsEvent.Reset -> {
+                resetValues()
+            }
+            VentilationSetValsEvent.Update -> {
+                updateValues()
+            }
         }
     }
 }

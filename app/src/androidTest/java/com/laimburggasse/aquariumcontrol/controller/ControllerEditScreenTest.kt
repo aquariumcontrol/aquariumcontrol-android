@@ -1,8 +1,5 @@
 package com.laimburggasse.aquariumcontrol.controller
 
-import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
@@ -10,8 +7,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel
-import com.laimburggasse.aquariumcontrol.controller.add.ControllerAddScreen
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerState
 import com.laimburggasse.aquariumcontrol.controller.edit.ControllerEditScreen
 import org.junit.Rule
@@ -32,7 +27,7 @@ class ControllerEditScreenTest {
     fun controllerEditScreenDarkTest() {
         composeTestRule.setContent {
             MainScaffold(
-                mainViewModel = mockMainViewModel,
+                isControllerLoaded = true,
                 navigationRouteSource = ViewNavigationRoutes.controllerAdd,
                 screenContent = {
                     ControllerEditScreen(
@@ -43,7 +38,7 @@ class ControllerEditScreenTest {
                     )
                  },
                 onNavigate = {},
-                darkTheme = false
+                darkTheme = true
             )
         }
         composeTestRule.waitForIdle()
@@ -59,7 +54,7 @@ class ControllerEditScreenTest {
     fun controllerEditScreenLightTest() {
         composeTestRule.setContent {
             MainScaffold(
-                mainViewModel = mockMainViewModel,
+                isControllerLoaded = true,
                 navigationRouteSource = ViewNavigationRoutes.controllerAdd,
                 screenContent = {
                     ControllerEditScreen(
@@ -70,7 +65,7 @@ class ControllerEditScreenTest {
                     )
                 },
                 onNavigate = {},
-                darkTheme = true
+                darkTheme = false
             )
         }
         composeTestRule.waitForIdle()

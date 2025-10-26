@@ -5,7 +5,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.laimburggasse.aquariumcontrol.MainScaffold
-import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.balling.entry.BallingScreen
@@ -24,13 +23,11 @@ class BallingScreenTest {
 
     private val subfolder = "balling"
 
-    val mockMainViewModel = MockMainViewModel()
-
     @Test
     fun ballingScreenDarkTest() {
         composeTestRule.setContent {
             MainScaffold(
-                mainViewModel = com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
+                isControllerLoaded = true,
                 navigationRouteSource = ViewNavigationRoutes.balling,
                 screenContent = {
                     BallingScreen(
@@ -55,7 +52,7 @@ class BallingScreenTest {
     fun ballingScreenLightTest() {
         composeTestRule.setContent {
             MainScaffold(
-                mainViewModel = com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
+                isControllerLoaded = true,
                 navigationRouteSource = ViewNavigationRoutes.balling,
                 screenContent = {
                     BallingScreen(

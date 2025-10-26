@@ -32,7 +32,7 @@ class FeedProfileScheduleScreenTest {
 
         composeTestRule.setContent {
             MainScaffold(
-                mainViewModel = com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
+                isControllerLoaded = true,
                 navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
                 screenContent = {
                     FeedProfileScheduleScreen(
@@ -64,7 +64,7 @@ class FeedProfileScheduleScreenTest {
 
         composeTestRule.setContent {
             MainScaffold(
-                mainViewModel = com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
+                isControllerLoaded = true,
                 navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
                 screenContent = {
                     FeedProfileScheduleScreen(

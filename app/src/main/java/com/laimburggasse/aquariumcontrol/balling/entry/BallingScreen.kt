@@ -24,7 +24,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.laimburggasse.aquariumcontrol.MainScaffold
-import com.laimburggasse.aquariumcontrol.MockMainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.balling.common.BallingNavigationEvent
@@ -122,8 +121,6 @@ fun BallingScreen(
         }
     }
 }
-
-val mockMainViewModel = MockMainViewModel()
 
 val mockBallingProfile1 = BallingProfile(pumpId = 1, volume = 2.1, label = "mock1")
 val mockBallingProfile2 = BallingProfile(pumpId = 2, volume = 3.1, label = "mock2")

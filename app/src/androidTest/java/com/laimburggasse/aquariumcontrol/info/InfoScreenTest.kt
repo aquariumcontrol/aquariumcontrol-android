@@ -25,7 +25,7 @@ class InfoScreenTest {
     fun infoScreenDarkTest() {
         composeTestRule.setContent {
             MainScaffold(
-                mainViewModel = _root_ide_package_.com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
+                isControllerLoaded = true,
                 navigationRouteSource = ViewNavigationRoutes.heating,
                 screenContent = { InfoScreen() },
                 onNavigate = {},
@@ -45,7 +45,7 @@ class InfoScreenTest {
     fun infoScreenLightTest() {
         composeTestRule.setContent {
             MainScaffold(
-                mainViewModel = _root_ide_package_.com.laimburggasse.aquariumcontrol.balling.entry.mockMainViewModel,
+                isControllerLoaded = true,
                 navigationRouteSource = ViewNavigationRoutes.heating,
                 screenContent = { InfoScreen() },
                 onNavigate = {},
