@@ -1,7 +1,6 @@
 package com.laimburggasse.aquariumcontrol
 
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import com.laimburggasse.aquariumcontrol.MainActivity.Companion.KEY_DEFAULT_PROFILE_ID
@@ -11,7 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-open class MainViewModel(
+open class SessionManager(
     private val sharedPreferences: SharedPreferences? = null
 ): ViewModel() {
     private val _selectedControllerProfile = MutableStateFlow<ControllerProfile?>(value = null)
@@ -21,7 +20,6 @@ open class MainViewModel(
 
     private val _defaultControllerProfileId = MutableStateFlow(
         value = sharedPreferences?.getLong(KEY_DEFAULT_PROFILE_ID, NO_DEFAULT_ID).let {
-            Log.d("MainViewModel", "Default controller ID: $it")
             if (it == NO_DEFAULT_ID) null else it
         }
     )
@@ -35,7 +33,6 @@ open class MainViewModel(
     }
 
     fun saveDefaultControllerProfileId(id: Long) {
-        Log.d("MainViewModel", "Saving default controller ID: $id")
         sharedPreferences?.edit {
             putLong(KEY_DEFAULT_PROFILE_ID, id)
         } // .apply() writes asynchronously in the background.

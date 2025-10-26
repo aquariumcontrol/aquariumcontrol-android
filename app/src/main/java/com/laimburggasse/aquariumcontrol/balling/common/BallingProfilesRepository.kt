@@ -1,7 +1,7 @@
 package com.laimburggasse.aquariumcontrol.balling.common
 
 import android.util.Log
-import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
@@ -13,14 +13,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 
-open class BallingProfilesRepository(private val mainViewModel: MainViewModel) {
+open class BallingProfilesRepository(private val sessionManager: SessionManager) {
     private val _profilesFlow = MutableStateFlow<DataFetchResult<List<BallingProfile>>>(
         value = DataFetchResult.Success(data = emptyList())
     )
     open val profilesFlow = _profilesFlow.asStateFlow()
 
     open suspend fun fetchBallingProfiles() {
-        val url: String = "http://" + mainViewModel.getControllerAddress() + WebApiUrls.BALLING_GET_SET_VALS
+        val url: String = "http://" + sessionManager.getControllerAddress() + WebApiUrls.BALLING_GET_SET_VALS
         val reader = BallingProfileReader(url)
         withContext(context = Dispatchers.IO) {
             val result: DataFetchResult<List<BallingProfile>> = reader.readBallingProfiles()
@@ -41,7 +41,7 @@ open class BallingProfilesRepository(private val mainViewModel: MainViewModel) {
         // update the local cache is not required, because BallingProfileEditViewModel holds reference
         Log.d("BallingRepository", "Updating balling profile: $ballingProfile")
         val requestSuccess = webApiPostRequestExecution(
-            mainViewModel = mainViewModel,
+            sessionManager = sessionManager,
             apiUrl = WebApiUrls.BALLING_POST_SET_VALS,
             webApiPostRequest = WebApiPostRequest(),
             optionalGetParams = mapOf(

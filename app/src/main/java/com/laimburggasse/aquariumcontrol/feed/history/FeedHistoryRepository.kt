@@ -1,6 +1,6 @@
 package com.laimburggasse.aquariumcontrol.feed.history
 
-import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import kotlinx.coroutines.Dispatchers
@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 
-open class FeedHistoryRepository(private val mainViewModel: MainViewModel) {
+open class FeedHistoryRepository(private val sessionManager: SessionManager) {
     private val _feedHistoryLogEntryFlow = MutableStateFlow<DataFetchResult<List<FeedHistoryLogEntry>>>(
         value = DataFetchResult.Success(data = emptyList())
     )
@@ -19,12 +19,12 @@ open class FeedHistoryRepository(private val mainViewModel: MainViewModel) {
         showFullWeek: Boolean
     ) {
         val url = when {
-            showFullWeek -> "http://" + mainViewModel.getControllerAddress() + WebApiUrls.FEED_GET_EVENTS_7D
-            else -> "http://" + mainViewModel.getControllerAddress() + WebApiUrls.FEED_GET_EVENTS_24H
+            showFullWeek -> "http://" + sessionManager.getControllerAddress() + WebApiUrls.FEED_GET_EVENTS_7D
+            else -> "http://" + sessionManager.getControllerAddress() + WebApiUrls.FEED_GET_EVENTS_24H
         }
         val reader = FeedHistoryLogEntryReader(url)
         withContext(context = Dispatchers.IO) {
-            val result: DataFetchResult<List<FeedHistoryLogEntry>> = reader.readFeedEvents(mainViewModel)
+            val result: DataFetchResult<List<FeedHistoryLogEntry>> = reader.readFeedEvents(sessionManager)
             _feedHistoryLogEntryFlow.value = result
         }
     }

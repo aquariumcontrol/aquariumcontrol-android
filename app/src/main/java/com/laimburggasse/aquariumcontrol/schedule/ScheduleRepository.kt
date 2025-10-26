@@ -1,6 +1,6 @@
 package com.laimburggasse.aquariumcontrol.schedule
 
-import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 
 open class ScheduleRepository(
-    private val mainViewModel: MainViewModel
+    private val sessionManager: SessionManager
 ) {
     private val _scheduleFlow = MutableStateFlow<DataFetchResult<ScheduleEntries>>(
         value = DataFetchResult.Success(data = ScheduleEntries())
@@ -34,7 +34,7 @@ open class ScheduleRepository(
         if (scheduleFlow.value is DataFetchResult.Success) {
             val scheduleEntries: ScheduleEntries = (scheduleFlow.value as DataFetchResult.Success).data
             webApiPostRequestExecution(
-                mainViewModel = mainViewModel,
+                sessionManager = sessionManager,
                 apiUrl = WebApiUrls.ACTUATOR_SCHEDULE_POST_UPDATE,
                 webApiPostRequest = WebApiPostRequest(),
                 optionalGetParams = scheduleEntries.getApiParams(),
@@ -45,7 +45,7 @@ open class ScheduleRepository(
     open suspend fun fetchScheduleSetVals() {
         return withContext(context = Dispatchers.IO) {
             val url: String =
-                "http://" + mainViewModel.getControllerAddress() + WebApiUrls.ACTUATOR_SCHEDULE_GET_VALS
+                "http://" + sessionManager.getControllerAddress() + WebApiUrls.ACTUATOR_SCHEDULE_GET_VALS
 
             val scheduleEntryReader = ScheduleEntryReader(url)
             val result: DataFetchResult<List<ScheduleStringEntry>> = scheduleEntryReader.readScheduleEntryList()

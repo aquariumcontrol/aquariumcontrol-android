@@ -1,11 +1,11 @@
 package com.laimburggasse.aquariumcontrol.refill.entry
 
-import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
 
-open class RefillRepository(private val mainViewModel: MainViewModel) {
+open class RefillRepository(private val sessionManager: SessionManager) {
     open suspend fun sendStartRequest() {
         executeRequest(apiUrl = WebApiUrls.REFILL_POST_CONTROL_START)
     }
@@ -23,7 +23,7 @@ open class RefillRepository(private val mainViewModel: MainViewModel) {
 
         webApiPostRequestExecution(
             apiUrl,
-            mainViewModel,
+            sessionManager,
             webApiPostRequest,
         )
     }

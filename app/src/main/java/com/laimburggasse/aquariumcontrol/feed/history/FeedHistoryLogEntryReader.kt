@@ -1,6 +1,6 @@
 package com.laimburggasse.aquariumcontrol.feed.history
 
-import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
@@ -11,12 +11,12 @@ class FeedHistoryLogEntryReader(private val url: String) {
     private val client = OkHttpClient()
     private val json = Json { ignoreUnknownKeys = true }
 
-    fun readFeedEvents(mainViewModel: MainViewModel? = null): DataFetchResult<List<FeedHistoryLogEntry>> {
+    fun readFeedEvents(sessionManager: SessionManager? = null): DataFetchResult<List<FeedHistoryLogEntry>> {
         val request = Request.Builder()
             .url(url)
             .build()
 
-        val isControllerLoaded = mainViewModel?.isControllerLoaded() == true
+        val isControllerLoaded = sessionManager?.isControllerLoaded() == true
         if (!isControllerLoaded) {
             return DataFetchResult.Error(exception = null, errorMessage = "Controller not loaded.")
         }

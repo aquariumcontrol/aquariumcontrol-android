@@ -1,6 +1,6 @@
 package com.laimburggasse.aquariumcontrol.feed.schedule
 
-import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfile
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
@@ -13,7 +13,7 @@ import kotlinx.coroutines.withContext
 import java.sql.Timestamp
 import java.util.Calendar
 
-open class FeedScheduleRepository(private val mainViewModel: MainViewModel) {
+open class FeedScheduleRepository(private val sessionManager: SessionManager) {
     private val _scheduleFlow = MutableStateFlow<DataFetchResult<List<FeedScheduleEntry>>>(
         value = DataFetchResult.Success(data = emptyList())
     )
@@ -21,7 +21,7 @@ open class FeedScheduleRepository(private val mainViewModel: MainViewModel) {
 
     open suspend fun fetchFeedScheduleEntries() {
         val scheduleUrl: String =
-            "http://" + mainViewModel.getControllerAddress() + WebApiUrls.FEED_GET_SCHEDULE
+            "http://" + sessionManager.getControllerAddress() + WebApiUrls.FEED_GET_SCHEDULE
         val scheduleReader = FeedScheduleEntryReader(scheduleUrl)
         withContext(context = Dispatchers.IO) {
             val result: DataFetchResult<List<FeedScheduleEntryImport>> =
@@ -48,7 +48,7 @@ open class FeedScheduleRepository(private val mainViewModel: MainViewModel) {
             withContext(context = Dispatchers.IO) {
                 webApiPostRequestExecution(
                     apiUrl = WebApiUrls.FEED_POST_SCHEDULE_REMOVE_ENTRY,
-                    mainViewModel = mainViewModel,
+                    sessionManager = sessionManager,
                     webApiPostRequest = WebApiPostRequest(),
                     optionalGetParams = feedScheduleEntry.getApiParameters()
                 )
@@ -85,7 +85,7 @@ open class FeedScheduleRepository(private val mainViewModel: MainViewModel) {
             if (optionalGetParams != null) {
                 withContext(context = Dispatchers.IO) {
                     webApiPostRequestExecution(
-                        mainViewModel = mainViewModel,
+                        sessionManager = sessionManager,
                         webApiPostRequest = WebApiPostRequest(),
                         optionalGetParams = optionalGetParams,
                         apiUrl = WebApiUrls.FEED_POST_PROFILE_UPDATE_SCHEDULE

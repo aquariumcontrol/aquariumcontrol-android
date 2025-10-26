@@ -1,6 +1,6 @@
 package com.laimburggasse.aquariumcontrol.heating
 
-import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
@@ -17,7 +17,7 @@ const val heatingSetValsSwitchOnTempInitVal = 21.0
 const val heatingSetValsSwitchOffTempInitVal = 29.0
 
 open class HeatingSetValsRepository(
-    private val mainViewModel: MainViewModel,
+    private val sessionManager: SessionManager,
     externalScope: CoroutineScope? = null
 ) {
     private val _heatingSetValsFlow = MutableStateFlow<DataFetchResult<HeatingSetVals>>(
@@ -31,7 +31,7 @@ open class HeatingSetValsRepository(
     private var heatingSetValsBackup: HeatingSetVals? = null
 
     open suspend fun fetchHeatingSetVals() {
-        val url: String = "http://" + mainViewModel.getControllerAddress() + WebApiUrls.HEATING_GET_SET_VALS
+        val url: String = "http://" + sessionManager.getControllerAddress() + WebApiUrls.HEATING_GET_SET_VALS
         val heatingSetValsReader = HeatingSetValsReader(url)
         withContext(context = Dispatchers.IO) {
             val result: DataFetchResult<HeatingSetVals> =
@@ -61,7 +61,7 @@ open class HeatingSetValsRepository(
             val heatingSetVals: HeatingSetVals = (_heatingSetValsFlow.value as DataFetchResult.Success).data
             return withContext(context = Dispatchers.IO) {
                 webApiPostRequestExecution(
-                    mainViewModel = mainViewModel,
+                    sessionManager = sessionManager,
                     apiUrl = WebApiUrls.HEATING_POST_SET_VALS,
                     webApiPostRequest = WebApiPostRequest(),
                     optionalGetParams = mapOf(

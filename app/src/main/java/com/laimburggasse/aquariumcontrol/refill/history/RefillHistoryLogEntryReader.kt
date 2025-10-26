@@ -1,6 +1,6 @@
 package com.laimburggasse.aquariumcontrol.refill.history
 
-import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
@@ -13,10 +13,10 @@ class RefillHistoryLogEntryReader(private val url: String) {
     private val client = OkHttpClient()
     private val json = Json { ignoreUnknownKeys = true }
 
-    fun readRefillEvents(mainViewModel: MainViewModel? = null): DataFetchResult<List<RefillHistoryLogEntry>> {
+    fun readRefillEvents(sessionManager: SessionManager? = null): DataFetchResult<List<RefillHistoryLogEntry>> {
         val request: Request = Request.Builder().url(url).build()
 
-        val isControllerLoaded: Boolean = mainViewModel?.isControllerLoaded() == true
+        val isControllerLoaded: Boolean = sessionManager?.isControllerLoaded() == true
 
         if (!isControllerLoaded) {
             return DataFetchResult.Error(null, "Controller not loaded.")

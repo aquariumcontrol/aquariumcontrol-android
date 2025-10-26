@@ -1,6 +1,6 @@
 package com.laimburggasse.aquariumcontrol.ventilation
 
-import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
@@ -17,7 +17,7 @@ const val ventilationSetValsSwitchOnTempInitVal = 28.0
 const val ventilationSetValsSwitchOffTempInitVal = 22.0
 
 open class VentilationSetValsRepository(
-    private val mainViewModel: MainViewModel,
+    private val sessionManager: SessionManager,
     externalScope: CoroutineScope? = null
 ) {
     private val _ventilationSetValsFlow = MutableStateFlow<DataFetchResult<VentilationSetVals>>(
@@ -36,7 +36,7 @@ open class VentilationSetValsRepository(
 
     open suspend fun fetchVentilationSetVals() {
         return withContext(context = Dispatchers.IO) {
-            val url: String = "http://" + mainViewModel.getControllerAddress() + WebApiUrls.VENTILATION_GET_SET_VALS
+            val url: String = "http://" + sessionManager.getControllerAddress() + WebApiUrls.VENTILATION_GET_SET_VALS
             val ventilationSetValsReader = VentilationSetValsReader(url)
             withContext(context = Dispatchers.IO) {
                 val result: DataFetchResult<VentilationSetVals> =
@@ -63,7 +63,7 @@ open class VentilationSetValsRepository(
         if (_ventilationSetValsFlow.value is DataFetchResult.Success) {
             val ventilationSetVals: VentilationSetVals = (_ventilationSetValsFlow.value as DataFetchResult.Success).data
             webApiPostRequestExecution(
-                mainViewModel = mainViewModel,
+                sessionManager = sessionManager,
                 apiUrl = WebApiUrls.VENTILATION_POST_SET_VALS,
                 webApiPostRequest = WebApiPostRequest(),
                 optionalGetParams = mapOf(

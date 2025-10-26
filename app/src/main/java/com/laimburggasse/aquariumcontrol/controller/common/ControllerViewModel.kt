@@ -3,7 +3,7 @@ package com.laimburggasse.aquariumcontrol.controller.common
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.SessionManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 
 class ControllerViewModel(
     private val dao: ControllerProfileDao,
-    private val mainViewModel: MainViewModel
+    private val sessionManager: SessionManager
 ) : ViewModel() {
     // This class represents the view model for the controller screen.
     // Initialize with an empty list or a loading state if preferred
@@ -41,8 +41,8 @@ class ControllerViewModel(
      */
     val canStartWaitForDefaultNavigation: StateFlow<Boolean> = combine(
         flow = _controllerProfiles,
-        flow2 = mainViewModel.isFirstLoad,
-        flow3 = mainViewModel.defaultControllerProfileId
+        flow2 = sessionManager.isFirstLoad,
+        flow3 = sessionManager.defaultControllerProfileId
     ) { profiles, isFirstLoad, defaultId ->
         profiles.isNotEmpty() && (defaultId != null) && isFirstLoad
     }.stateIn(
@@ -126,7 +126,7 @@ class ControllerViewModel(
             is ControllerEvent.UpdateControllerProfile -> {
                 val controllerProfile = state.value.selectedProfile
                 controllerProfile.let {
-                    mainViewModel.updateSelectedControllerProfile(controllerProfile = controllerProfile!!)
+                    sessionManager.updateSelectedControllerProfile(controllerProfile = controllerProfile!!)
                 }
                 val controllerProfileId: Long = state.value.controllerProfileId
                 val controllerProfileName: String = state.value.controllerProfileName
@@ -228,7 +228,7 @@ class ControllerViewModel(
 
                 val selectedProfile = state.value.selectedProfile
                 selectedProfile.let {
-                    mainViewModel.updateSelectedControllerProfile(controllerProfile = selectedProfile!!)
+                    sessionManager.updateSelectedControllerProfile(controllerProfile = selectedProfile!!)
                 }
             }
 
@@ -247,11 +247,11 @@ class ControllerViewModel(
 
             is ControllerEvent.SetDefaultControllerId -> {
                 Log.d("ControllerViewModel", "Setting default controller profile ID: ${event.controllerProfileId}")
-                mainViewModel.saveDefaultControllerProfileId(event.controllerProfileId)
+                sessionManager.saveDefaultControllerProfileId(event.controllerProfileId)
             }
             ControllerEvent.UnsetDefaultControllerId -> {
                 Log.d("ControllerViewModel", "Unsetting default controller profile ID")
-                mainViewModel.unsetDefaultControllerId()
+                sessionManager.unsetDefaultControllerId()
             }
 
             ControllerEvent.AutoNavigationFinished -> {

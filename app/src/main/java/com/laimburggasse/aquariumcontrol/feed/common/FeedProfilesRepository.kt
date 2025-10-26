@@ -1,6 +1,6 @@
 package com.laimburggasse.aquariumcontrol.feed.common
 
-import com.laimburggasse.aquariumcontrol.MainViewModel
+import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 
-open class FeedProfilesRepository(private val mainViewModel: MainViewModel) {
+open class FeedProfilesRepository(private val sessionManager: SessionManager) {
     private val _profilesFlow = MutableStateFlow<DataFetchResult<List<FeedProfile>>>(
         value = DataFetchResult.Success(data = emptyList())
     )
@@ -19,7 +19,7 @@ open class FeedProfilesRepository(private val mainViewModel: MainViewModel) {
 
     open suspend fun fetchFeedProfiles() {
         val profileUrl: String =
-            "http://" + mainViewModel.getControllerAddress() + WebApiUrls.FEED_GET_PROFILES
+            "http://" + sessionManager.getControllerAddress() + WebApiUrls.FEED_GET_PROFILES
         val profileReader = FeedProfileReader(profileUrl)
         withContext(context = Dispatchers.IO) {
             val result: DataFetchResult<List<FeedProfileImport>> =
@@ -52,7 +52,7 @@ open class FeedProfilesRepository(private val mainViewModel: MainViewModel) {
                 withContext(context = Dispatchers.IO) {
                     webApiPostRequestExecution(
                         apiUrl = WebApiUrls.FEED_POST_REMOVE_PROFILE,
-                        mainViewModel = mainViewModel,
+                        sessionManager = sessionManager,
                         webApiPostRequest = WebApiPostRequest(),
                         optionalGetParams = feedProfile.getFeedProfileApiCallParameters()
                     )
@@ -69,7 +69,7 @@ open class FeedProfilesRepository(private val mainViewModel: MainViewModel) {
 
         val success: Boolean = withContext(context = Dispatchers.IO) {
             webApiPostRequestExecution(
-                mainViewModel = mainViewModel,
+                sessionManager = sessionManager,
                 apiUrl = WebApiUrls.FEED_POST_PROFILE_CREATE,
                 webApiPostRequest = WebApiPostRequest(),
                 optionalGetParams = apiCallParameters
@@ -105,7 +105,7 @@ open class FeedProfilesRepository(private val mainViewModel: MainViewModel) {
         val apiCallParameters: Map<String, String> = modifiedFeedProfile.getFeedProfileApiCallParameters()
         withContext(context = Dispatchers.IO) {
             webApiPostRequestExecution(
-                mainViewModel = mainViewModel,
+                sessionManager = sessionManager,
                 apiUrl = WebApiUrls.FEED_POST_PROFILE_UPDATE,
                 webApiPostRequest = WebApiPostRequest(),
                 optionalGetParams = apiCallParameters
