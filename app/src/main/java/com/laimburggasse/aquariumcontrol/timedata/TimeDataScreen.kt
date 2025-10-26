@@ -20,24 +20,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.laimburggasse.aquariumcontrol.MainScaffold
-import com.laimburggasse.aquariumcontrol.MainViewModel
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
-import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState.Error
-import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState.Loading
-import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState.Success
-import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import java.sql.Timestamp
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -49,21 +41,10 @@ const val axisGranularityOnOff = 1.0f
 const val axisGranularityTime = 14400f
 
 @Composable
-fun TimeDataScreen(
-    mainViewModel: MainViewModel? = null,
-    timeDataViewModelFactory: TimeDataViewModelFactory,
-) {
-    // This screen is only displaying time data charts without data flow back to server.
-    val timeDataViewModel: TimeDataViewModel = viewModel(factory = timeDataViewModelFactory)
-
-    val timeDataUiState: TimeDataUiState by timeDataViewModel.timeDataUiState.collectAsState()
-
-    val isDarkMode = isSystemInDarkTheme()
-
-    val textColor = if (isDarkMode) Color.WHITE else Color.BLACK
-
-    !mainViewModel?.getControllerAddress().isNullOrBlank()
-
+fun TimeDataScreen(timeDataUiState: TimeDataUiState, onTimeDataEvent: (TimeDataEvent) -> Unit) {
+    // This screen displays time data charts without data flow back to server.
+    val isDarkMode: Boolean = isSystemInDarkTheme()
+    val textColor: Int = if (isDarkMode) Color.WHITE else Color.BLACK
     val displayCircularProgressIndicatorInPreview: Boolean =
         LocalConfiguration.current.orientation != Configuration.ORIENTATION_LANDSCAPE
 
@@ -72,15 +53,15 @@ fun TimeDataScreen(
         PullToRefreshBox(
             modifier = Modifier.fillMaxWidth(),
             state = rememberPullToRefreshState(),
-            isRefreshing = timeDataUiState is Loading,
+            isRefreshing = timeDataUiState is TimeDataUiState.Loading,
             contentAlignment = Alignment.Center,
-            onRefresh = {
-                timeDataViewModel.loadData()
-            },
+            onRefresh = { onTimeDataEvent(TimeDataEvent.Refresh) },
             indicator = {
-                if (timeDataUiState is Loading && displayCircularProgressIndicatorInPreview) {
+                if (timeDataUiState is TimeDataUiState.Loading && displayCircularProgressIndicatorInPreview) {
                     CircularProgressIndicator(
-                        modifier = Modifier.size(size = 64.dp).fillMaxWidth(),
+                        modifier = Modifier
+                            .size(size = 64.dp)
+                            .fillMaxWidth(),
                         color = MaterialTheme.colorScheme.primary,
                         strokeWidth = 5.dp
                     )
@@ -89,12 +70,16 @@ fun TimeDataScreen(
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxSize().verticalScroll(state = rememberScrollState())
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(state = rememberScrollState())
             ) {
                 when (timeDataUiState) {
                     is TimeDataUiState.Empty -> {
                         Column(
-                            modifier = Modifier.fillMaxSize().padding(all = 16.dp),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(all = 16.dp),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
@@ -103,14 +88,16 @@ fun TimeDataScreen(
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Spacer(modifier = Modifier.height(height = 8.dp))
-                            Button(onClick = { timeDataViewModel.loadData() }) {
+                            Button(onClick = { onTimeDataEvent(TimeDataEvent.Refresh) }) {
                                 Text(text = "Retry")
                             }
                         }
                     }
-                    is Error -> {
+                    is TimeDataUiState.Error -> {
                         Column(
-                            modifier = Modifier.fillMaxSize().padding(16.dp),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(all = 16.dp),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
@@ -120,21 +107,21 @@ fun TimeDataScreen(
                             )
                             Spacer(modifier = Modifier.height(height = 8.dp))
                             Text(
-                                text = (timeDataUiState as Error).errorMessage,
+                                text = timeDataUiState.errorMessage,
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.error
                             )
                             Spacer(modifier = Modifier.height(height = 16.dp))
-                            Button(onClick = { timeDataViewModel.loadData() }) { // Retry button
+                            Button(onClick = { onTimeDataEvent(TimeDataEvent.Refresh) }) {
                                 Text("Retry")
                             }
                         }
                     }
-                    is Loading -> {
-                        Text("Loading...")
+                    is TimeDataUiState.Loading -> {
+                        Text(text = "Loading...")
                     }
-                    is Success -> {
-                        val timeDataSets: TimeDataSets = (timeDataUiState as Success).timeDataSets
+                    is TimeDataUiState.Success -> {
+                        val timeDataSets: TimeDataSets = timeDataUiState.timeDataSets
                         TimeDataTemperatureChartComposable(
                             temperatureDataSet = timeDataSets.dataTemperature,
                             textColor = textColor
@@ -264,29 +251,13 @@ fun generateMockTimeData(): List<TimeDataSample> {
     return samples
 }
 
-val mockTimeDataRepositorySuccess = MockTimeDataRepository(
-    mockTimeDataFetchResult = DataFetchResult.Success(data = generateMockTimeData())
-)
+val mockTimeDataSets = TimeDataSets(timeData = generateMockTimeData())
 
-val mockTimeDataRepositoryError = MockTimeDataRepository(
-    mockTimeDataFetchResult = DataFetchResult.Error(exception = null, errorMessage = "Error message")
-)
+val mockTimeDataUiStateSuccess = TimeDataUiState.Success(timeDataSets = mockTimeDataSets)
 
-val mockTimeDataRepositoryEmpty = MockTimeDataRepository(
-    mockTimeDataFetchResult = DataFetchResult.Success(data = emptyList())
-)
+val mockTimeDataUiStateError = TimeDataUiState.Error(errorMessage = "Error loading data")
 
-val mockTimeDataViewModelFactorySuccess = TimeDataViewModelFactory(
-    timeDataRepository = mockTimeDataRepositorySuccess
-)
-
-val mockTimeDataViewModelFactoryError = TimeDataViewModelFactory(
-    timeDataRepository = mockTimeDataRepositoryError
-)
-
-val mockTimeDataViewModelFactoryEmpty = TimeDataViewModelFactory(
-    timeDataRepository = mockTimeDataRepositoryEmpty
-)
+val mockTimeDataUiStateEmpty = TimeDataUiState.Empty
 
 @Preview(showBackground = true, heightDp = 1250, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, heightDp = 1250, uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -305,8 +276,14 @@ internal fun TimeDataScreenPreviewSuccess() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.timeData,
-        screenContent = { TimeDataScreen(timeDataViewModelFactory = mockTimeDataViewModelFactorySuccess) },
-        onNavigate = {}
+        screenContent = {
+            TimeDataScreen(
+                timeDataUiState = mockTimeDataUiStateSuccess,
+                onTimeDataEvent = {}
+            )
+        },
+        onNavigate = {},
+        darkTheme = isSystemInDarkTheme()
     )
 }
 
@@ -327,8 +304,12 @@ internal fun TimeDataScreenPreviewError() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.timeData,
-        screenContent = { TimeDataScreen(timeDataViewModelFactory = mockTimeDataViewModelFactoryError) },
-        onNavigate = {}
+        screenContent = { TimeDataScreen(
+            timeDataUiState = mockTimeDataUiStateError,
+            onTimeDataEvent = {}
+        ) },
+        onNavigate = {},
+        darkTheme = isSystemInDarkTheme()
     )
 }
 
@@ -349,7 +330,12 @@ internal fun TimeDataScreenPreviewEmpty() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.timeData,
-        screenContent = { TimeDataScreen(timeDataViewModelFactory = mockTimeDataViewModelFactoryEmpty) },
+        screenContent = {
+            TimeDataScreen(
+                timeDataUiState = mockTimeDataUiStateEmpty,
+                onTimeDataEvent = {}
+            )
+        },
         onNavigate = {}
     )
 }

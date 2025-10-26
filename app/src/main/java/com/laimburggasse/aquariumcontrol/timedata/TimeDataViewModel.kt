@@ -41,4 +41,10 @@ class TimeDataViewModel(
     init {
         loadData()
     }
+
+    fun onTimeDataEvent(event: TimeDataEvent) {
+        when (event) {
+            is TimeDataEvent.Refresh -> loadData()
+        }
+    }
 }

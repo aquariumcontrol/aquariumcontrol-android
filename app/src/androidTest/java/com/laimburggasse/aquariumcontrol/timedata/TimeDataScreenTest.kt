@@ -4,10 +4,9 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
-import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState.Loading
-import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState.Error
-import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState.Success
+import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -25,8 +24,14 @@ class TimeDataScreenTest {
     @Test
     fun timeDataScreenErrorDarkTest() {
         composeTestRule.setContent {
-            TimeDataScreen(
-                timeDataViewModelFactory = mockTimeDataViewModelFactoryError,
+            MainScaffold(
+                isControllerLoaded = true,
+                navigationRouteSource = ViewNavigationRoutes.timeData,
+                screenContent = { TimeDataScreen(
+                    timeDataUiState = mockTimeDataUiStateError,
+                    onTimeDataEvent = {}
+                ) },
+                onNavigate = {},
                 darkTheme = true
             )
         }
@@ -42,8 +47,14 @@ class TimeDataScreenTest {
     @Test
     fun timeDataScreenErrorLightTest() {
         composeTestRule.setContent {
-            TimeDataScreen(
-                timeDataViewModelFactory = mockTimeDataViewModelFactoryError,
+            MainScaffold(
+                isControllerLoaded = true,
+                navigationRouteSource = ViewNavigationRoutes.timeData,
+                screenContent = { TimeDataScreen(
+                    timeDataUiState = mockTimeDataUiStateError,
+                    onTimeDataEvent = {}
+                ) },
+                onNavigate = {},
                 darkTheme = false
             )
         }
@@ -59,8 +70,14 @@ class TimeDataScreenTest {
     @Test
     fun timeDataScreenSuccessDarkTest() {
         composeTestRule.setContent {
-            TimeDataScreen(
-                timeDataViewModelFactory = mockTimeDataViewModelFactorySuccess,
+            MainScaffold(
+                isControllerLoaded = true,
+                navigationRouteSource = ViewNavigationRoutes.timeData,
+                screenContent = { TimeDataScreen(
+                    timeDataUiState = mockTimeDataUiStateSuccess,
+                    onTimeDataEvent = {}
+                ) },
+                onNavigate = {},
                 darkTheme = true
             )
         }
@@ -76,8 +93,14 @@ class TimeDataScreenTest {
     @Test
     fun timeDataScreenSuccessLightTest() {
         composeTestRule.setContent {
-            TimeDataScreen(
-                timeDataViewModelFactory = mockTimeDataViewModelFactorySuccess,
+            MainScaffold(
+                isControllerLoaded = true,
+                navigationRouteSource = ViewNavigationRoutes.timeData,
+                screenContent = { TimeDataScreen(
+                    timeDataUiState = mockTimeDataUiStateSuccess,
+                    onTimeDataEvent = {}
+                ) },
+                onNavigate = {},
                 darkTheme = false
             )
         }
