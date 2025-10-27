@@ -1,11 +1,21 @@
 package com.laimburggasse.aquariumcontrol.maindropdownmenu
 
 import androidx.navigation.NavHostController
+import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
+import kotlinx.coroutines.flow.StateFlow
 
-fun NavHostController.handleMainDropDownMenuNavigation(event: MainDropDownMenuNavigationEvent) {
+fun NavHostController.handleMainDropDownMenuNavigation(
+    event: MainDropDownMenuNavigationEvent,
+    sessionManager: SessionManager
+) {
     when (event) {
-        MainDropDownMenuNavigationEvent.ToOverview -> this.navigate(route = ViewNavigationRoutes.overView)
+        MainDropDownMenuNavigationEvent.ToOverview -> {
+            val currentProfileId: StateFlow<Long?> = sessionManager.defaultControllerProfileId
+            if (currentProfileId.value != null) {
+                this.navigate(route = ViewNavigationRoutes.overView(controllerProfileId = currentProfileId.value!!))
+            }
+        }
         MainDropDownMenuNavigationEvent.ToSchedule -> this.navigate(route = ViewNavigationRoutes.schedule)
         MainDropDownMenuNavigationEvent.ToControllerSelection -> this.navigate(route = ViewNavigationRoutes.controllerSelection)
         MainDropDownMenuNavigationEvent.ToDisplayData -> this.navigate(route = ViewNavigationRoutes.timeData)

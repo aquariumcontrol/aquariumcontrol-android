@@ -255,7 +255,7 @@ class MainActivity : ComponentActivity() {
                                     canStartWaitForNavigation = controllerSelectionViewModel.canStartWaitForDefaultNavigation.collectAsState(),
                                     progressToDefaultNavigation = controllerSelectionViewModel.progressToDefaultNavigation.collectAsState()
                                ) },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
+                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }
                         )
                     }
                     composable(route = ViewNavigationRoutes.controllerAdd)
@@ -280,7 +280,7 @@ class MainActivity : ComponentActivity() {
                                     }
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
+                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }
                         )
                     }
                     composable(route = ViewNavigationRoutes.controllerEdit,
@@ -320,7 +320,7 @@ class MainActivity : ComponentActivity() {
                                         }
                                     )
                                 },
-                                onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
+                                onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }
                             )
                         }
                     }
@@ -349,7 +349,7 @@ class MainActivity : ComponentActivity() {
                                     onFeedSchedulesUiEvent = feedScheduleViewModel::onFeedSchedulesUiEvent,
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) },
+                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) },
                         )
                     }
                     composable(route = ViewNavigationRoutes.feedHistory24h) {
@@ -368,7 +368,7 @@ class MainActivity : ComponentActivity() {
                                     onFeedHistoryEvent = feedHistoryViewModel::onEvent
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
+                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }
                         )
                     }
                     composable(route = ViewNavigationRoutes.feedHistory7d) {
@@ -387,7 +387,7 @@ class MainActivity : ComponentActivity() {
                                     onFeedHistoryEvent = feedHistoryViewModel::onEvent
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
+                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }
                         )
                     }
                     composable(route = ViewNavigationRoutes.feedEdit,
@@ -415,7 +415,7 @@ class MainActivity : ComponentActivity() {
                                         uiState,
                                         onFeedProfileEditUiEvent = feedProfileEditViewModel::onFeedProfileEditUiEvent,
                                     ) },
-                                    onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
+                                    onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }
                                 )
                             }
                             else {
@@ -452,7 +452,7 @@ class MainActivity : ComponentActivity() {
                                 )
                             },
                             onNavigate = { event ->
-                                navHostController.handleMainDropDownMenuNavigation(event)
+                                navHostController.handleMainDropDownMenuNavigation(event, sessionManager)
                             },
                         )
                     }
@@ -498,7 +498,7 @@ class MainActivity : ComponentActivity() {
                                     },
                                     onNavigate = { event ->
                                         navHostController.handleMainDropDownMenuNavigation(
-                                            event
+                                            event, sessionManager
                                         )
                                     },
                                 )
@@ -525,7 +525,7 @@ class MainActivity : ComponentActivity() {
                                     }
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) },
+                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) },
                         )
                     }
                     composable(route = ViewNavigationRoutes.ballingHistory24h) {
@@ -544,7 +544,7 @@ class MainActivity : ComponentActivity() {
                                     onEvent = ballingHistoryViewModel::onEvent
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) },
+                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) },
                         )
                     }
                     composable(route = ViewNavigationRoutes.ballingHistory7d) {
@@ -563,7 +563,7 @@ class MainActivity : ComponentActivity() {
                                     onEvent = ballingHistoryViewModel::onEvent
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) },
+                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) },
                         )
                     }
                     composable(route = ViewNavigationRoutes.ballingEdit,
@@ -592,7 +592,7 @@ class MainActivity : ComponentActivity() {
                                         onEvent = ballingProfileEditViewModel::onEvent,
                                     )
                                 },
-                                onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) },
+                                onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) },
                             )
                         }
                         else {
@@ -612,7 +612,7 @@ class MainActivity : ComponentActivity() {
                                     onRefillEvent = refillViewModel::onRefillEvent,
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
+                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }
                         )
                     }
                     composable(route = ViewNavigationRoutes.refillHistory24h) {
@@ -630,7 +630,7 @@ class MainActivity : ComponentActivity() {
                                     onRefillHistoryEvent = refillHistoryViewModel::onRefillHistoryEvent
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
+                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }
                         )
                     }
                     composable(route = ViewNavigationRoutes.refillHistory7d) {
@@ -648,7 +648,7 @@ class MainActivity : ComponentActivity() {
                                     onRefillHistoryEvent = refillHistoryViewModel::onRefillHistoryEvent,
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
+                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }
                         )
                     }
                     composable(route = ViewNavigationRoutes.heating) {
@@ -667,7 +667,7 @@ class MainActivity : ComponentActivity() {
                                     onHeatingStatsEvent = heatingStatsViewModel::onHeatingStatsEvent
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) },
+                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) },
                         )
                     }
                     composable(route = ViewNavigationRoutes.ventilation) {
@@ -685,7 +685,7 @@ class MainActivity : ComponentActivity() {
                                     onVentilationSetValsEvent = ventilationSetValsViewModel::onVentilationSetValsEvent
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
+                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }
                         )
                     }
                     composable(route = ViewNavigationRoutes.timeData) {
@@ -701,7 +701,7 @@ class MainActivity : ComponentActivity() {
                                     onTimeDataEvent = timeDataViewModel::onTimeDataEvent
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) },
+                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) },
                         )
                     }
                     composable(route = ViewNavigationRoutes.schedule) {
@@ -715,7 +715,7 @@ class MainActivity : ComponentActivity() {
                                     scheduleUiState,
                                     onScheduleEvent = scheduleViewModel::onScheduleEvent)
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) },
+                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) },
                         )
                     }
                     composable(route = ViewNavigationRoutes.info) {
@@ -723,7 +723,7 @@ class MainActivity : ComponentActivity() {
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.info,
                             screenContent = { InfoScreen() },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) },
+                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) },
                         )
                     }
                     composable(route = ViewNavigationRoutes.overView,
@@ -755,7 +755,7 @@ class MainActivity : ComponentActivity() {
                                     )
                                 },
                                 onNavigate = { event ->
-                                    navHostController.handleMainDropDownMenuNavigation(event)
+                                    navHostController.handleMainDropDownMenuNavigation(event, sessionManager)
                                 }
                             )
                         }
