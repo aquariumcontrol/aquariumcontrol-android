@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ControllerProfileDao {
@@ -13,7 +13,10 @@ interface ControllerProfileDao {
     suspend fun upsertControllerProfile(controllerProfile: ControllerProfile): Long
 
     @Query("SELECT * FROM ${ControllerProfileDatabase.TABLE_NAME_CONTROLLER_LIST}")
-    suspend fun getAllControllerProfiles(): List<ControllerProfile>
+    fun getAllControllerProfiles(): Flow<List<ControllerProfile>>
+
+    @Query("SELECT * FROM ${ControllerProfileDatabase.TABLE_NAME_CONTROLLER_LIST} WHERE id = :id")
+    suspend fun getControllerProfileById(id: Long): ControllerProfile?
 
     @Delete
     suspend fun deleteControllerProfile(controllerProfile: ControllerProfile)

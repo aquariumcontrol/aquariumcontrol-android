@@ -28,8 +28,7 @@ open class BallingHistoryRepository(private val sessionManager: SessionManager) 
         }
         val reader = BallingHistoryLogEntryReader(url)
         withContext(context = Dispatchers.IO) {
-            val result: DataFetchResult<List<BallingHistoryLogEntry>> =
-                reader.readBallingEvents(sessionManager)
+            val result: DataFetchResult<List<BallingHistoryLogEntry>> = reader.readBallingEvents()
             _ballingHistoryLogEntryFlow.value = result
         }
     }

@@ -2,20 +2,38 @@ package com.laimburggasse.aquariumcontrol
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import androidx.lifecycle.ViewModel
 import com.laimburggasse.aquariumcontrol.MainActivity.Companion.KEY_DEFAULT_PROFILE_ID
 import com.laimburggasse.aquariumcontrol.MainActivity.Companion.NO_DEFAULT_ID
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfileDao
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.withContext
 
 open class SessionManager(
-    private val sharedPreferences: SharedPreferences? = null
-): ViewModel() {
+    private val sharedPreferences: SharedPreferences? = null,
+    private val dao: ControllerProfileDao
+) {
+    // Create a dedicated CoroutineScope for this singleton.
+    // SupervisorJob() ensures that if one coroutine in this scope fails, it doesn't cancel the whole scope.
+    // Dispatchers.Default is appropriate for CPU-bound work like the `.map` operator.
+    private val sessionScope = CoroutineScope(context = SupervisorJob() + Dispatchers.Default)
+
     private val _selectedControllerProfile = MutableStateFlow<ControllerProfile?>(value = null)
     val selectedControllerProfile: StateFlow<ControllerProfile?> = _selectedControllerProfile.asStateFlow()
-
+    val isControllerLoaded: StateFlow<Boolean> = selectedControllerProfile.map { it != null }
+        .stateIn(
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
+            initialValue = false,
+            scope = sessionScope
+        )
     private var previousControllerProfileId: Long? = null
 
     private val _defaultControllerProfileId = MutableStateFlow(
@@ -28,10 +46,17 @@ open class SessionManager(
     private val _isFirstLoad = MutableStateFlow(value = true)
     val isFirstLoad: StateFlow<Boolean> = _isFirstLoad.asStateFlow()
 
-    fun setSelectedControllerProfile(controllerProfile: ControllerProfile) {
-        _selectedControllerProfile.value = controllerProfile
+    suspend fun selectControllerById(id: Long): Boolean {
+        return withContext(context = Dispatchers.IO) {
+            val profile: ControllerProfile? = dao.getControllerProfileById(id)
+            if (profile != null) {
+                _selectedControllerProfile.value = profile
+                true
+            } else {
+                false
+            }
+        }
     }
-
     fun saveDefaultControllerProfileId(id: Long) {
         sharedPreferences?.edit {
             putLong(KEY_DEFAULT_PROFILE_ID, id)
@@ -59,10 +84,12 @@ open class SessionManager(
         return selectedControllerProfile.value?.password
     }
 
+    // @todo: implement controller port in all URL constructions
     open fun getControllerPort(): Int? {
         return selectedControllerProfile.value?.port
     }
 
+    // @todo: check if this function is still required
     open fun getControllerName(): String? {
         return selectedControllerProfile.value?.name
     }

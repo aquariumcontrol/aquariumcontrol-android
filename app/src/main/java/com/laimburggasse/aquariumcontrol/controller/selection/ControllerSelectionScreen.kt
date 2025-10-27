@@ -33,7 +33,6 @@ import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerEvent
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerNavigationEvent
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerState
@@ -44,7 +43,7 @@ import kotlinx.coroutines.withContext
 @Composable
 fun ControllerSelectionScreen(
     state: ControllerState,
-    onEvent: (ControllerEvent) -> Unit,
+    onEvent: (ControllerSelectionEvent) -> Unit,
     defaultProfileId: State<Long?>,
     onNavigateFromController: (ControllerNavigationEvent, Long?) -> Unit,
     canStartWaitForNavigation: State<Boolean>,

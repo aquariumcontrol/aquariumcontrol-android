@@ -33,7 +33,7 @@ class ControllerAddScreenTest {
                     ControllerAddScreen(
                         state = ControllerState(),
                         onEvent = {},
-                        onNavigateFromController = { event, id -> }
+                        onAddEvent = {}
                     ) },
                 onNavigate = {},
                 darkTheme = true
@@ -58,7 +58,7 @@ class ControllerAddScreenTest {
                     ControllerAddScreen(
                         state = ControllerState(),
                         onEvent = {},
-                        onNavigateFromController = { event, id -> }
+                        onAddEvent = {}
                     ) },
                 onNavigate = {},
                 darkTheme = false

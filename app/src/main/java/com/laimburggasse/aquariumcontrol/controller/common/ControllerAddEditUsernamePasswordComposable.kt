@@ -17,12 +17,11 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.R
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerState
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun ControllerAddEditUsernamePasswordComposable(
-    onEvent: (ControllerEvent) -> Unit,
+    onEvent: (ControllerAddEditEvent) -> Unit,
     modifier: Modifier? = Modifier,
     state: ControllerState? = null,
 ) {
@@ -32,16 +31,16 @@ fun ControllerAddEditUsernamePasswordComposable(
     OutlinedTextField(
         value = state?.controllerProfileUser ?: "mock_user",
         onValueChange = {
-            onEvent(ControllerEvent.SetControllerUser(it))
+            onEvent(ControllerAddEditEvent.SetControllerUser(controllerUser = it))
         },
         label = { Text(stringResource(id = R.string.user_name)) },
         modifier = modifier?.then(Modifier.padding(top = 16.dp)) ?: Modifier
     )
-    Spacer(modifier = Modifier.width(10.dp))
+    Spacer(modifier = Modifier.width(width = 10.dp))
     OutlinedTextField(
         value = state?.controllerProfilePassword ?: "mock password",
         onValueChange = {
-            onEvent(ControllerEvent.SetControllerPassword(it))
+            onEvent(ControllerAddEditEvent.SetControllerPassword(controllerPassword = it))
         },
         label = { Text(stringResource(id = R.string.password)) },
         visualTransformation = PasswordVisualTransformation(), // Hide password

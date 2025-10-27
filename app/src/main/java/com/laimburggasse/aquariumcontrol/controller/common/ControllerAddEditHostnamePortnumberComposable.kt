@@ -16,37 +16,41 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.R
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerState
 import com.laimburggasse.aquariumcontrol.lib_composables.NumericIntOutlinedTextFieldComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun ControllerAddEditHostnamePortnumberComposable(
-    onEvent: (ControllerEvent) -> Unit,
+    onEvent: (ControllerAddEditEvent) -> Unit,
     modifier: Modifier? = Modifier,
-    state: ControllerState? = null
+    state: ControllerState
 ) {
     // This composable displays text fields for host name and port number.
     // The arrangement of the fields follows the device orientation.
 
     OutlinedTextField(
-        value = state?.controllerProfileAddress ?: "mock.hostname.com",
+        value = state.controllerProfileAddress,
         onValueChange = {
-            onEvent(ControllerEvent.SetControllerAddress(it))
+            onEvent(ControllerAddEditEvent.SetControllerAddress(controllerAddress = it))
         },
-        label = { Text(stringResource(id = R.string.hostname)) },
+        label = { Text(text = stringResource(id = R.string.hostname)) },
         modifier = modifier?.then(Modifier.padding(top = 16.dp)) ?: Modifier
     )
-    Spacer(modifier = Modifier.width(10.dp))
+    Spacer(modifier = Modifier.width(width = 10.dp))
     NumericIntOutlinedTextFieldComposable(
-        value = state?.controllerProfilePort ?: 80,
+        value = state.controllerProfilePort,
         onValueChange = {
-            onEvent(ControllerEvent.SetControllerPort(it))
+            onEvent(ControllerAddEditEvent.SetControllerPort(controllerPort = it))
         },
         label = stringResource(id = R.string.port_number),
         modifier = modifier?.then(Modifier.padding(top = 16.dp)) ?: Modifier
     )
 }
+
+val mockControllerState = ControllerState(
+    controllerProfileAddress = "mock.hostname.com",
+    controllerProfilePort = 80,
+)
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -58,6 +62,7 @@ internal fun ControllerAddEditHostnamePortnumberComposablePortraitPreview() {
                 ControllerAddEditHostnamePortnumberComposable(
                     onEvent = {},
                     modifier = Modifier.fillMaxWidth(),
+                    state = mockControllerState
                 )
             }
         }
@@ -81,7 +86,8 @@ internal fun ControllerAddEditHostnamePortnumberComposableLandscapePreview() {
             Row {
                 ControllerAddEditHostnamePortnumberComposable(
                     onEvent = {},
-                    modifier = Modifier.weight(0.5f),
+                    modifier = Modifier.weight(weight = 0.5f),
+                    state = mockControllerState
                 )
             }
         }

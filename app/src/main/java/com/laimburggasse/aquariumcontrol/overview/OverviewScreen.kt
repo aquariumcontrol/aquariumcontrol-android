@@ -34,7 +34,7 @@ import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposabl
 
 @Composable
 fun OverviewScreen(
-    controllerProfile: ControllerProfile,
+    controllerProfile: ControllerProfile?,
     overviewUiState: OverviewUiState,
     onOverviewEvent: (OverviewEvent) -> Unit,
 ) {
@@ -95,10 +95,10 @@ fun OverviewScreen(
                                 Row {
                                     Column(modifier = Modifier.weight(weight = 0.5f)) {
                                         OverviewControllerComposable(
-                                            controllerProfileName = controllerProfile.name,
-                                            controllerAddress = controllerProfile.address,
-                                            controllerPort = controllerProfile.port,
-                                            controllerUsername = controllerProfile.user
+                                            controllerProfileName = controllerProfile?.name ?: "***",
+                                            controllerAddress = controllerProfile?.address ?: "***",
+                                            controllerPort = controllerProfile?.port ?: 0,
+                                            controllerUsername = controllerProfile?.user ?: "***"
                                         )
                                         OverviewAmbientComposable(overviewData = overviewData)
                                     }
@@ -112,10 +112,10 @@ fun OverviewScreen(
 
                             else -> {
                                 OverviewControllerComposable(
-                                    controllerProfileName = controllerProfile.name,
-                                    controllerAddress = controllerProfile.address,
-                                    controllerPort = controllerProfile.port,
-                                    controllerUsername = controllerProfile.user
+                                    controllerProfileName = controllerProfile?.name ?: "***",
+                                    controllerAddress = controllerProfile?.address ?: "***",
+                                    controllerPort = controllerProfile?.port ?: 0,
+                                    controllerUsername = controllerProfile?.user ?: "***"
                                 )
                                 OverviewTimestampComposable(overviewData = overviewData)
                                 OverviewWaterSignalsComposable(overviewData = overviewData)

@@ -24,16 +24,15 @@ import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditHostnamePortnumberComposable
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditUsernamePasswordComposable
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerEvent
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerNavigationEvent
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerState
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditEvent
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 
 @Composable
 fun ControllerAddScreen(
     state: ControllerState,
-    onEvent: (ControllerEvent) -> Unit,
-    onNavigateFromController: (ControllerNavigationEvent, Long?) -> Unit
+    onEvent: (ControllerAddEditEvent) -> Unit,
+    onAddEvent: (ControllerAddEditEvent) -> Unit
 ) {
     // This screen displays a form for adding a new controller profile:
     // - editable text field for the controller profile name
@@ -53,7 +52,7 @@ fun ControllerAddScreen(
 
         OutlinedTextField(
             value = state.controllerProfileName,
-            onValueChange = { onEvent(ControllerEvent.SetControllerProfileName(controllerProfileName = it)) },
+            onValueChange = { onEvent(ControllerAddEditEvent.SetControllerProfileName(controllerProfileName = it)) },
             label = { Text(text = stringResource(id = R.string.profile_name)) },
             modifier = Modifier.fillMaxWidth(),
         )
@@ -64,14 +63,14 @@ fun ControllerAddScreen(
                     ControllerAddEditHostnamePortnumberComposable(
                         state = state,
                         onEvent = onEvent,
-                        modifier = Modifier.weight(0.5f)
+                        modifier = Modifier.weight(weight = 0.5f)
                     )
                 }
                 Row(modifier = Modifier.padding(horizontal = 8.dp)) {
                     ControllerAddEditUsernamePasswordComposable(
                         state = state,
                         onEvent = onEvent,
-                        modifier = Modifier.weight(0.5f)
+                        modifier = Modifier.weight(weight = 0.5f)
                     )
                 }
             }
@@ -90,10 +89,7 @@ fun ControllerAddScreen(
         }
 
         Button(
-            onClick = {
-                onEvent(ControllerEvent.AddControllerProfile)
-                onNavigateFromController(ControllerNavigationEvent.ToControllerMain, null)
-            },
+            onClick = { onAddEvent(ControllerAddEditEvent.AddControllerProfile) },
             enabled = state.controllerProfileName.isNotBlank() && state.validControllerAddress,
             modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
         ) {
@@ -120,7 +116,12 @@ internal fun ControllerAddScreenPreview() {
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.controllerAdd,
         screenContent = {
-            ControllerAddScreen(state = ControllerState(), onEvent = {}, onNavigateFromController = { event, id -> }) },
+            ControllerAddScreen(
+                state = ControllerState(),
+                onEvent = {},
+                onAddEvent = {}
+            )
+        },
         onNavigate = {},
         darkTheme = isSystemInDarkTheme()
     )

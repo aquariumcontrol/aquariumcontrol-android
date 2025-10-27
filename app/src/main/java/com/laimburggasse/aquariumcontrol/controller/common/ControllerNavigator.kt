@@ -22,9 +22,7 @@ fun NavHostController.handleControllerNavigation(event: ControllerNavigationEven
             }
         }
         ControllerNavigationEvent.ToControllerMain -> {
-            if (profileId != null) {
-                this.navigate(route = ViewNavigationRoutes.controllerSelection(controllerProfileId = profileId))
-            }
+            this.navigate(route = ViewNavigationRoutes.controllerSelection(controllerProfileId = -1))
         }
     }
 }

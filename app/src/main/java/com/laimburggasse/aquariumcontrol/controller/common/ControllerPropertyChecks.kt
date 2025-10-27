@@ -1,0 +1,44 @@
+package com.laimburggasse.aquariumcontrol.controller.common
+
+/**
+ * Checks if the provided string is not empty and compatible to
+ * IPv4 address, IPv6 address or DNS hostname.
+ *
+ * @param address The string to check
+ * - IPv4 Address:
+ * Four decimal numbers (0-255) separated by dots (.).
+ * Example: 192.168.1.100
+ * - IPv6 Address:
+ * Eight groups of hexadecimal numbers (0-FFFF) separated by colons (:).
+ * Can contain leading zeros and double colons (::) to represent consecutive groups of zeros.
+ * Example: 2001:0db8:85a3:0000:0000:8a2e:0370:7334, 2001:db8::1
+ * - DNS Hostname:
+ * Example: www.example.com, my-server.example.org, localhost
+ */
+fun isHostName(address: String): Boolean {
+    if (address.isBlank()) {
+        return false
+    } else {
+        val ipv4Regex =
+            "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\$".toRegex()
+        val ipv6Regex = "^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\$".toRegex()
+        val ipv6CompressedRegex =
+            "^(([0-9a-fA-F]{1,4}:){0,1}(([0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4})?::([0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4})?\$".toRegex()
+        val dnsRegex =
+            "^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}\$".toRegex()
+
+        return address.matches(ipv4Regex) ||
+                address.matches(ipv6Regex) ||
+                address.matches(ipv6CompressedRegex) ||
+                address.matches(dnsRegex)
+    }
+}
+
+/**
+ * Checks if the provided port number is valid.
+ *
+ * @param port The port number to check
+ */
+fun isValidPortNumber(port: Int): Boolean {
+    return port in 0..65535
+}

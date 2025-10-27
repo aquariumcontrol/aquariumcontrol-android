@@ -3,11 +3,9 @@ package com.laimburggasse.aquariumcontrol
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -33,12 +31,18 @@ import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryUiState
 import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryViewModel
 import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryViewModelFactory
 import com.laimburggasse.aquariumcontrol.controller.add.ControllerAddScreen
+import com.laimburggasse.aquariumcontrol.controller.add.ControllerAddViewModel
+import com.laimburggasse.aquariumcontrol.controller.add.ControllerAddViewModelFactory
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfileDatabase
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerState
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerViewModel
 import com.laimburggasse.aquariumcontrol.controller.common.handleControllerNavigation
 import com.laimburggasse.aquariumcontrol.controller.edit.ControllerEditScreen
+import com.laimburggasse.aquariumcontrol.controller.edit.ControllerEditViewModel
+import com.laimburggasse.aquariumcontrol.controller.edit.ControllerEditViewModelFactory
 import com.laimburggasse.aquariumcontrol.controller.selection.ControllerSelectionScreen
+import com.laimburggasse.aquariumcontrol.controller.selection.ControllerSelectionViewModel
+import com.laimburggasse.aquariumcontrol.controller.selection.ControllerSelectionViewModelFactory
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddScreen
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddUiState
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddViewModel
@@ -77,11 +81,11 @@ import com.laimburggasse.aquariumcontrol.overview.OverviewScreen
 import com.laimburggasse.aquariumcontrol.overview.OverviewUiState
 import com.laimburggasse.aquariumcontrol.overview.OverviewViewModel
 import com.laimburggasse.aquariumcontrol.overview.OverviewViewModelFactory
+import com.laimburggasse.aquariumcontrol.refill.common.handleRefillNavigation
 import com.laimburggasse.aquariumcontrol.refill.entry.RefillRepository
 import com.laimburggasse.aquariumcontrol.refill.entry.RefillScreen
 import com.laimburggasse.aquariumcontrol.refill.entry.RefillViewModel
 import com.laimburggasse.aquariumcontrol.refill.entry.RefillViewModelFactory
-import com.laimburggasse.aquariumcontrol.refill.common.handleRefillNavigation
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryRepository
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryScreen
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryUiState
@@ -126,22 +130,24 @@ class MainActivity : ComponentActivity() {
     }
 
     private val sessionManager by lazy {
-        SessionManager(sharedPreferences)
+        SessionManager(
+            sharedPreferences,
+            dao = db.controllerProfileDao()
+        )
     }
 
-    private val controllerViewModel by viewModels<ControllerViewModel>(
-        factoryProducer = {
-            object : ViewModelProvider.Factory {
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return ControllerViewModel(
-                        dao = db.controllerProfileDao(),
-                        sessionManager
-                    ) as T
-                }
-            }
-        }
-    )
+    private val controllerSelectionViewModelFactory by lazy {
+        ControllerSelectionViewModelFactory(
+            dao = db.controllerProfileDao(),
+            sessionManager,
+        )
+    }
 
+    private val controllerAddViewModelFactory by lazy {
+        ControllerAddViewModelFactory(
+            dao = db.controllerProfileDao(),
+        )
+    }
     private val overviewRepository by lazy { OverviewRepository(sessionManager = sessionManager) }
 
     private val overviewViewModelFactory by lazy { OverviewViewModelFactory(overviewRepository) }
@@ -223,44 +229,53 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val navHostController: NavHostController = rememberNavController()
-            val state: ControllerState by controllerViewModel.state.collectAsState()
-
+            val selectedControllerProfile: ControllerProfile? by sessionManager.selectedControllerProfile.collectAsState()
+            val isControllerLoaded: Boolean by sessionManager.isControllerLoaded.collectAsState()
+            
             NavHost(
                 navController = navHostController,
                 startDestination = ViewNavigationRoutes.controllerSelection,
                 builder = {
                     composable(route = ViewNavigationRoutes.controllerSelection) {
+                        val controllerSelectionViewModel: ControllerSelectionViewModel = viewModel(
+                            factory = controllerSelectionViewModelFactory
+                        )
+                        val state: ControllerState by controllerSelectionViewModel.state.collectAsState()
                         MainScaffold(
-                            sessionManager.isControllerLoaded(),
+                            isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.controllerSelection,
                             screenContent = {
                                 ControllerSelectionScreen(
                                     state,
-                                    onEvent = controllerViewModel::onEvent,
+                                    onEvent = controllerSelectionViewModel::onEvent,
                                     onNavigateFromController = { event, controllerProfileId ->
                                         navHostController.handleControllerNavigation(event, controllerProfileId)
                                     },
                                     defaultProfileId = sessionManager.defaultControllerProfileId.collectAsState(),
-                                    canStartWaitForNavigation = controllerViewModel.canStartWaitForDefaultNavigation.collectAsState(),
-                                    progressToDefaultNavigation = controllerViewModel.progressToDefaultNavigation.collectAsState()
+                                    canStartWaitForNavigation = controllerSelectionViewModel.canStartWaitForDefaultNavigation.collectAsState(),
+                                    progressToDefaultNavigation = controllerSelectionViewModel.progressToDefaultNavigation.collectAsState()
                                ) },
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) }
                         )
                     }
                     composable(route = ViewNavigationRoutes.controllerAdd)
                     {
+                        val controllerAddViewModel: ControllerAddViewModel = viewModel(
+                            factory = controllerAddViewModelFactory
+                        )
+                        val state: ControllerState by controllerAddViewModel.state.collectAsState()
                         sessionManager.setFirstLoad()
                         MainScaffold(
-                            isControllerLoaded = sessionManager.isControllerLoaded(),
+                            isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.controllerAdd,
                             screenContent = {
                                 ControllerAddScreen(
                                     state,
-                                    onEvent = controllerViewModel::onEvent,
-                                    onNavigateFromController = { event, controllerProfileId ->
-                                        navHostController.handleControllerNavigation(
-                                            event,
-                                            controllerProfileId
+                                    onEvent = controllerAddViewModel::onEvent,
+                                    onAddEvent = {
+                                        controllerAddViewModel.addControllerProfile(
+                                            event = it,
+                                            onAddComplete = { navHostController.popBackStack() }
                                         )
                                     }
                                 )
@@ -279,14 +294,26 @@ class MainActivity : ComponentActivity() {
                     { backStackEntry ->
                         sessionManager.setFirstLoad()
                         val controllerProfileId: Long = backStackEntry.arguments?.getLong("controllerProfileId") ?: -1L
+                        val controllerEditViewModelFactory: ControllerEditViewModelFactory by lazy {
+                            ControllerEditViewModelFactory(
+                                dao = db.controllerProfileDao(),
+                                sessionManager,
+                                controllerProfileId
+                            )
+                        }
+                        val controllerEditViewModel: ControllerEditViewModel = viewModel(
+                            factory = controllerEditViewModelFactory
+                        )
+                        val editState: ControllerState by controllerEditViewModel.state.collectAsState()
+
                         if (controllerProfileId >= 0L) {
                             MainScaffold(
-                                isControllerLoaded = sessionManager.isControllerLoaded(),
+                                isControllerLoaded,
                                 navigationRouteSource = ViewNavigationRoutes.controllerEdit,
                                 screenContent = {
                                     ControllerEditScreen(
-                                        state,
-                                        onEvent = controllerViewModel::onEvent,
+                                        state = editState,
+                                        onEvent = controllerEditViewModel::onEvent,
                                         isDefaultProfileInitialValue = sessionManager.defaultControllerProfileId.collectAsState().value == controllerProfileId,
                                         onNavigateFromController = { event, controllerProfileId ->
                                             navHostController.handleControllerNavigation(event, controllerProfileId)
@@ -304,7 +331,7 @@ class MainActivity : ComponentActivity() {
                         val feedScheduleUiState: FeedScheduleUiState by feedScheduleViewModel.feedScheduleUiState.collectAsState()
 
                         MainScaffold(
-                            isControllerLoaded = sessionManager.isControllerLoaded(),
+                            isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.feed,
                             screenContent = {
                                 FeedScreen(
@@ -332,7 +359,7 @@ class MainActivity : ComponentActivity() {
                         val feedHistoryUiState: FeedHistoryUiState by
                             feedHistoryViewModel.feedHistoryUiState.collectAsState()
                         MainScaffold(
-                            isControllerLoaded = sessionManager.isControllerLoaded(),
+                            isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.feedHistory24h,
                             screenContent = {
                                 FeedHistoryScreen(
@@ -351,7 +378,7 @@ class MainActivity : ComponentActivity() {
                         val feedHistoryUiState: FeedHistoryUiState by
                             feedHistoryViewModel.feedHistoryUiState.collectAsState()
                         MainScaffold(
-                            isControllerLoaded = sessionManager.isControllerLoaded(),
+                            isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.feedHistory7d,
                             screenContent = {
                                 FeedHistoryScreen(
@@ -382,7 +409,7 @@ class MainActivity : ComponentActivity() {
                                 )
                                 val uiState by feedProfileEditViewModel.uiState.collectAsState()
                                 MainScaffold(
-                                    isControllerLoaded = sessionManager.isControllerLoaded(),
+                                    isControllerLoaded,
                                     navigationRouteSource = ViewNavigationRoutes.feedEdit,
                                     screenContent = { FeedProfileEditScreen(
                                         uiState,
@@ -407,7 +434,7 @@ class MainActivity : ComponentActivity() {
                         val feedProfileAddUiState: FeedProfileAddUiState by feedProfileAddViewModel.feedProfileAddUiState.collectAsState()
 
                         MainScaffold(
-                            isControllerLoaded = sessionManager.isControllerLoaded(),
+                            isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
                             screenContent = {
                                 FeedProfileAddScreen(
@@ -451,7 +478,7 @@ class MainActivity : ComponentActivity() {
                             val feedProfile = feedProfilesViewModel.findProfileById(profileID = feedProfileId)
                             if (feedProfile != null) {
                                 MainScaffold(
-                                    isControllerLoaded = sessionManager.isControllerLoaded(),
+                                    isControllerLoaded,
                                     navigationRouteSource = ViewNavigationRoutes.feedSchedule,
                                     screenContent = {
                                         FeedProfileScheduleScreen(
@@ -488,7 +515,7 @@ class MainActivity : ComponentActivity() {
                             ballingViewModel.ballingProfilesUiState.collectAsState()
 
                         MainScaffold(
-                            isControllerLoaded = sessionManager.isControllerLoaded(),
+                            isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.balling,
                             screenContent = {
                                 BallingScreen(
@@ -508,7 +535,7 @@ class MainActivity : ComponentActivity() {
                         val ballingHistoryUiState: BallingHistoryUiState by
                             ballingHistoryViewModel.ballingHistoryUiState.collectAsState()
                         MainScaffold(
-                            isControllerLoaded = sessionManager.isControllerLoaded(),
+                            isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
                             screenContent = {
                                 BallingHistoryScreen(
@@ -527,7 +554,7 @@ class MainActivity : ComponentActivity() {
                         val ballingHistoryUiState: BallingHistoryUiState by
                         ballingHistoryViewModel.ballingHistoryUiState.collectAsState()
                         MainScaffold(
-                            isControllerLoaded = sessionManager.isControllerLoaded(),
+                            isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
                             screenContent = {
                                 BallingHistoryScreen(
@@ -557,7 +584,7 @@ class MainActivity : ComponentActivity() {
                             val ballingProfileEditUiState: BallingProfileEditUiState =
                                 ballingProfileEditViewModel.ballingProfileEditUiState
                             MainScaffold(
-                                isControllerLoaded = sessionManager.isControllerLoaded(),
+                                isControllerLoaded,
                                 navigationRouteSource = ViewNavigationRoutes.ballingEdit,
                                 screenContent = {
                                     BallingProfileEditScreen(
@@ -575,7 +602,7 @@ class MainActivity : ComponentActivity() {
                     composable(route = ViewNavigationRoutes.refill) {
                         val refillViewModel: RefillViewModel = viewModel(factory = refillViewModelFactory)
                         MainScaffold(
-                            isControllerLoaded = sessionManager.isControllerLoaded(),
+                            isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.refill,
                             screenContent = {
                                 RefillScreen(
@@ -594,7 +621,7 @@ class MainActivity : ComponentActivity() {
                         )
                         val refillHistoryUiState: RefillHistoryUiState by refillHistoryViewModel.refillHistoryUiState.collectAsState()
                         MainScaffold(
-                            isControllerLoaded = sessionManager.isControllerLoaded(),
+                            isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.refillHistory24h,
                             screenContent = {
                                 RefillHistoryScreen(
@@ -612,7 +639,7 @@ class MainActivity : ComponentActivity() {
                         )
                         val refillHistoryUiState: RefillHistoryUiState by refillHistoryViewModel.refillHistoryUiState.collectAsState()
                         MainScaffold(
-                            isControllerLoaded = sessionManager.isControllerLoaded(),
+                            isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.refillHistory7d,
                             screenContent = {
                                 RefillHistoryScreen(
@@ -630,7 +657,7 @@ class MainActivity : ComponentActivity() {
                         val heatingSetValsUiState by heatingSetValsViewModel.heatingSetValsUiState.collectAsState()
                         val heatingStatsUiState by heatingStatsViewModel.heatingStatsUiState.collectAsState()
                         MainScaffold(
-                            isControllerLoaded = sessionManager.isControllerLoaded(),
+                            isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.heating,
                             screenContent = {
                                 HeatingScreen(
@@ -650,7 +677,7 @@ class MainActivity : ComponentActivity() {
                             ventilationSetValsViewModel.ventilationSetValsUiState.collectAsState()
 
                         MainScaffold(
-                            isControllerLoaded = sessionManager.isControllerLoaded(),
+                            isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.ventilation,
                             screenContent = {
                                 VentilationScreen(
@@ -666,7 +693,7 @@ class MainActivity : ComponentActivity() {
                         val timeDataUiState: TimeDataUiState by timeDataViewModel.timeDataUiState.collectAsState()
 
                         MainScaffold(
-                            isControllerLoaded = sessionManager.isControllerLoaded(),
+                            isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.timeData,
                             screenContent = {
                                 TimeDataScreen(
@@ -681,7 +708,7 @@ class MainActivity : ComponentActivity() {
                         val scheduleViewModel: ScheduleViewModel = viewModel(factory = scheduleViewModelFactory)
                         val scheduleUiState: ScheduleUiState by scheduleViewModel.scheduleUiState.collectAsState()
                         MainScaffold(
-                            isControllerLoaded = sessionManager.isControllerLoaded(),
+                            isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.schedule,
                             screenContent = {
                                 ScheduleScreen(
@@ -693,7 +720,7 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(route = ViewNavigationRoutes.info) {
                         MainScaffold(
-                            isControllerLoaded = sessionManager.isControllerLoaded(),
+                            isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.info,
                             screenContent = { InfoScreen() },
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event) },
@@ -709,30 +736,28 @@ class MainActivity : ComponentActivity() {
                     ) { backStackEntry ->
                         val controllerProfileId: Long? = backStackEntry.arguments?.getLong("controllerProfileId")
                         if (controllerProfileId != null) {
-                            val controllerProfile =
-                                controllerViewModel.getSelectedControllerProfileById(
-                                    controllerProfileId
-                                )
-                            if (controllerProfile != null) {
-                                sessionManager.setSelectedControllerProfile(controllerProfile)
-                                sessionManager.setFirstLoad() // Controller selection may navigate here without user interaction
-                                val overviewViewModel: OverviewViewModel = viewModel(factory = overviewViewModelFactory)
-                                val overviewUiState: OverviewUiState by overviewViewModel.overviewUiState.collectAsState()
-                                MainScaffold(
-                                    isControllerLoaded = sessionManager.isControllerLoaded(),
-                                    navigationRouteSource = ViewNavigationRoutes.overView,
-                                    screenContent = {
-                                        OverviewScreen(
-                                            controllerProfile,
-                                            overviewUiState,
-                                            onOverviewEvent = overviewViewModel::onOverviewEvent,
-                                        )
-                                    },
-                                    onNavigate = { event ->
-                                        navHostController.handleMainDropDownMenuNavigation(event)
-                                    }
-                                )
+                            LaunchedEffect(key1 = controllerProfileId) {
+                                if (controllerProfileId >= 0L) {
+                                    sessionManager.selectControllerById(controllerProfileId)
+                                    sessionManager.setFirstLoad() // Controller selection may navigate here without user interaction
+                                }
                             }
+                            val overviewViewModel: OverviewViewModel = viewModel(factory = overviewViewModelFactory)
+                            val overviewUiState: OverviewUiState by overviewViewModel.overviewUiState.collectAsState()
+                            MainScaffold(
+                                isControllerLoaded,
+                                navigationRouteSource = ViewNavigationRoutes.overView,
+                                screenContent = {
+                                    OverviewScreen(
+                                        selectedControllerProfile,
+                                        overviewUiState,
+                                        onOverviewEvent = overviewViewModel::onOverviewEvent,
+                                    )
+                                },
+                                onNavigate = { event ->
+                                    navHostController.handleMainDropDownMenuNavigation(event)
+                                }
+                            )
                         }
                     }
                 }

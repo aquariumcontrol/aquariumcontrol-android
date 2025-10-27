@@ -27,9 +27,9 @@ import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditEvent
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditHostnamePortnumberComposable
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditUsernamePasswordComposable
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerEvent
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerNavigationEvent
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerState
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
@@ -37,7 +37,7 @@ import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposabl
 @Composable
 fun ControllerEditScreen(
     state: ControllerState,
-    onEvent: (ControllerEvent) -> Unit,
+    onEvent: (ControllerAddEditEvent) -> Unit,
     isDefaultProfileInitialValue: Boolean,
     onNavigateFromController: (ControllerNavigationEvent, Long?) -> Unit
 ) {
@@ -67,7 +67,7 @@ fun ControllerEditScreen(
         OutlinedTextField(
             value = state.controllerProfileName,
             onValueChange = {
-                onEvent(ControllerEvent.SetControllerProfileName(controllerProfileName = it))
+                onEvent(ControllerAddEditEvent.SetControllerProfileName(controllerProfileName = it))
             },
             label = { Text(text = stringResource(id = R.string.profile_name)) },
             modifier = Modifier.fillMaxWidth(),
@@ -118,10 +118,10 @@ fun ControllerEditScreen(
                 checked = isDefaultProfile,
                 onCheckedChange = {
                     if (it) {
-                        onEvent(ControllerEvent.SetDefaultControllerId(controllerProfileId = state.controllerProfileId))
+                        onEvent(ControllerAddEditEvent.SetDefaultControllerId(controllerProfileId = state.controllerProfileId))
                         isDefaultProfile = true
                     } else {
-                        onEvent(ControllerEvent.UnsetDefaultControllerId)
+                        onEvent(ControllerAddEditEvent.UnsetDefaultControllerId)
                         isDefaultProfile = false
                     }
                 }
@@ -134,7 +134,7 @@ fun ControllerEditScreen(
 
         Button(
             onClick = {
-                onEvent(ControllerEvent.UpdateControllerProfile)
+                onEvent(ControllerAddEditEvent.UpdateControllerProfile)
                 onNavigateFromController(ControllerNavigationEvent.ToControllerMain, null)
             },
             enabled = state.controllerProfileName.isNotBlank() && state.validControllerAddress,
