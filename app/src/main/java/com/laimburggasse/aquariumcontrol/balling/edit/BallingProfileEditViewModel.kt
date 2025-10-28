@@ -1,6 +1,5 @@
 package com.laimburggasse.aquariumcontrol.balling.edit
 
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,14 +8,25 @@ import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.balling.common.BallingProfile
 import com.laimburggasse.aquariumcontrol.balling.common.BallingProfilesRepository
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class BallingProfileEditViewModel(
-    ballingProfileId: Int,
+@HiltViewModel(assistedFactory = BallingProfileEditViewModel.Factory::class)
+class BallingProfileEditViewModel @AssistedInject constructor(
     private val repository: BallingProfilesRepository,
+    @Assisted private val ballingProfileId: Int,
 ) : ViewModel() {
     // This class will allow the user to edit the Balling dosing profile.
+
+    @AssistedFactory
+    interface Factory {
+        fun create(profileId: Int): BallingProfileEditViewModel
+    }
+
     var ballingProfileEditUiState: BallingProfileEditUiState by mutableStateOf(
         value = BallingProfileEditUiState.Loading
     )

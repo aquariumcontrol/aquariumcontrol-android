@@ -5,13 +5,16 @@ import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.feed.entry.FeedProfilesUiState
 import com.laimburggasse.aquariumcontrol.feed.entry.FeedProfilesUiEvent
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class FeedProfilesViewModel(
+@HiltViewModel
+class FeedProfilesViewModel @Inject constructor(
     val feedProfilesRepository: FeedProfilesRepository
 ) : ViewModel() {
 

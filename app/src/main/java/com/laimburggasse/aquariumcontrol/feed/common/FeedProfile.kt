@@ -4,8 +4,9 @@ import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Locale
+import javax.inject.Inject
 
-data class FeedProfile(
+data class FeedProfile @Inject constructor(
     val profileID: Int,
     val profileName: String,
     val feedProfilePhases: List<FeedProfilePhase>,

@@ -3,13 +3,16 @@ package com.laimburggasse.aquariumcontrol.heating
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HeatingSetValsViewModel(
+@HiltViewModel
+class HeatingSetValsViewModel @Inject constructor(
     private var heatingSetValsRepository: HeatingSetValsRepository,
 ) : ViewModel() {
     val heatingSetValsUiState: StateFlow<HeatingSetValsUiState> = heatingSetValsRepository.heatingSetValsFlow

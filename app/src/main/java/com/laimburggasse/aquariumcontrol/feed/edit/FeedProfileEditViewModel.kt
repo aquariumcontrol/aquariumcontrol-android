@@ -6,6 +6,10 @@ import com.github.mikephil.charting.data.LineData
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilePhase
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilesRepository
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -13,11 +17,17 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class FeedProfileEditViewModel(
+@HiltViewModel(assistedFactory = FeedProfileEditViewModel.Factory::class)
+class FeedProfileEditViewModel @AssistedInject constructor(
     private val originalFeedProfile: FeedProfile,
     private val feedProfilesRepository: FeedProfilesRepository,
-    private val initialExpandedItemIds: Set<Int> = emptySet() // for testing purposes
+    @Assisted private val initialExpandedItemIds: Set<Int> = emptySet() // for testing purposes
 ) : ViewModel() {
+    @AssistedFactory
+    interface Factory {
+        fun create(initialExpandedItemIds: Set<Int> = emptySet()): FeedProfileEditViewModel
+    }
+
     private val _feedProfileState = MutableStateFlow(value = originalFeedProfile)
     private val _expandedItemIds = MutableStateFlow(value = initialExpandedItemIds)
     private val _lineDataFeeder = MutableStateFlow<LineData?>(value = null)

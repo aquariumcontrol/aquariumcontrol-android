@@ -10,8 +10,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-open class FeedProfilesRepository(private val sessionManager: SessionManager) {
+open class FeedProfilesRepository @Inject constructor(private val sessionManager: SessionManager) {
     private val _profilesFlow = MutableStateFlow<DataFetchResult<List<FeedProfile>>>(
         value = DataFetchResult.Success(data = emptyList())
     )

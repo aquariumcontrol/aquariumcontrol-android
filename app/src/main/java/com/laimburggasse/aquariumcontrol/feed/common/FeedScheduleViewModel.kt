@@ -7,14 +7,17 @@ import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntryUiEvent
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleRepository
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import javax.inject.Inject
 
-class FeedScheduleViewModel(
+@HiltViewModel
+class FeedScheduleViewModel @Inject constructor(
     val feedScheduleRepository: FeedScheduleRepository,
     val feedProfilesRepository: FeedProfilesRepository
 ) : ViewModel() {

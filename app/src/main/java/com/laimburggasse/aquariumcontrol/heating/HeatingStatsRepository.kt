@@ -1,6 +1,7 @@
 package com.laimburggasse.aquariumcontrol.heating
 
 import com.laimburggasse.aquariumcontrol.SessionManager
+import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import kotlinx.coroutines.CoroutineScope
@@ -9,10 +10,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-open class HeatingStatsRepository(
+open class HeatingStatsRepository @Inject constructor(
     private val sessionManager: SessionManager,
-    externalScope: CoroutineScope? = null
+    @ApplicationScope externalScope: CoroutineScope? = null
 ) {
     private val _heatingStatsFlow = MutableStateFlow<DataFetchResult<List<HeatingStatsEntry>>>(
         value = DataFetchResult.Success(data = emptyList())

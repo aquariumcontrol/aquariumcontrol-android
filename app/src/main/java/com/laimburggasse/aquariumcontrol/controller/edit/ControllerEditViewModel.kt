@@ -9,6 +9,10 @@ import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfileDao
 import com.laimburggasse.aquariumcontrol.controller.common.isHostName
 import com.laimburggasse.aquariumcontrol.controller.common.isValidPortNumber
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -16,12 +20,18 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class ControllerEditViewModel(
+@HiltViewModel(assistedFactory = ControllerEditViewModel.Factory::class)
+class ControllerEditViewModel @AssistedInject constructor(
     private val dao: ControllerProfileDao,
     private val sessionManager: SessionManager,
-    private val profileId: Long
+    @Assisted private val profileId: Long
 ) : ViewModel() {
     // This class represents the view model for the controller edit screen.
+    @AssistedFactory
+    interface Factory {
+        fun create(profileId: Long): ControllerEditViewModel
+    }
+
     private val _state = MutableStateFlow(value = ControllerAddEditState())
     val state: StateFlow<ControllerAddEditState> = _state
         .stateIn(

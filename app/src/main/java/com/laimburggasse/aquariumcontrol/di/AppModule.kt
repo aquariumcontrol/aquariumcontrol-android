@@ -12,6 +12,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import javax.inject.Singleton
 
 @Module
@@ -47,6 +49,16 @@ object AppModule {
     ): SessionManager {
         return SessionManager(sharedPreferences, dao)
     }
+
+    /*
+    @ApplicationScope
+    @Singleton
+    @Provides
+    fun provideApplicationScope(): CoroutineScope {
+        // SupervisorJob makes sure that if one coroutine in this scope fails,
+        // it doesn't cancel the entire scope.
+        return CoroutineScope(context = SupervisorJob())
+    }*/
 }
 
 

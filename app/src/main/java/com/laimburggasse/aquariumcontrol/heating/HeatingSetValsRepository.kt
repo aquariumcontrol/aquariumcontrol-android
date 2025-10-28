@@ -1,6 +1,7 @@
 package com.laimburggasse.aquariumcontrol.heating
 
 import com.laimburggasse.aquariumcontrol.SessionManager
+import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
@@ -12,13 +13,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 const val heatingSetValsSwitchOnTempInitVal = 21.0
 const val heatingSetValsSwitchOffTempInitVal = 29.0
 
-open class HeatingSetValsRepository(
+open class HeatingSetValsRepository @Inject constructor(
     private val sessionManager: SessionManager,
-    externalScope: CoroutineScope? = null
+    @ApplicationScope externalScope: CoroutineScope? = null
 ) {
     private val _heatingSetValsFlow = MutableStateFlow<DataFetchResult<HeatingSetVals>>(
         value = DataFetchResult.Success(data = HeatingSetVals(

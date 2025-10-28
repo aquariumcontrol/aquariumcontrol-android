@@ -7,8 +7,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-open class TimeDataRepository(private val sessionManager: SessionManager) {
+open class TimeDataRepository @Inject constructor(private val sessionManager: SessionManager) {
     private val _timeDataSamples = MutableStateFlow< DataFetchResult<List<TimeDataSample>>>(
         value = DataFetchResult.Success(data = emptyList())
     )

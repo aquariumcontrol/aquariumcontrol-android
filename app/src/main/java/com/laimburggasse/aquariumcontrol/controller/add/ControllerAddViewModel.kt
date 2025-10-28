@@ -8,13 +8,16 @@ import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfileDao
 import com.laimburggasse.aquariumcontrol.controller.common.isHostName
 import com.laimburggasse.aquariumcontrol.controller.common.isValidPortNumber
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ControllerAddViewModel(
+@HiltViewModel
+class ControllerAddViewModel @Inject constructor(
     private val dao: ControllerProfileDao,
 ): ViewModel() {
     private val _state = MutableStateFlow(value = ControllerAddEditState())

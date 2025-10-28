@@ -7,8 +7,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-open class FeedHistoryRepository(private val sessionManager: SessionManager) {
+open class FeedHistoryRepository @Inject constructor(private val sessionManager: SessionManager) {
     private val _feedHistoryLogEntryFlow = MutableStateFlow<DataFetchResult<List<FeedHistoryLogEntry>>>(
         value = DataFetchResult.Success(data = emptyList())
     )

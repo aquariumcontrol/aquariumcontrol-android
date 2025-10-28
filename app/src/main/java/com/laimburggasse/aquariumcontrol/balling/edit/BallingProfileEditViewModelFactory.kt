@@ -11,7 +11,7 @@ class BallingProfileEditViewModelFactory(
     ballingProfilesRepository: BallingProfilesRepository
 ) : ViewModelProvider.Factory {
     // This class creates the view model BallingProfileEditViewModel
-    private val viewModel = BallingProfileEditViewModel(ballingProfileId, ballingProfilesRepository)
+    private val viewModel = BallingProfileEditViewModel(ballingProfilesRepository, ballingProfileId)
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

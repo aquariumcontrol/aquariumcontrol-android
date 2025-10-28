@@ -8,7 +8,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -26,57 +25,42 @@ import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditViewMode
 import com.laimburggasse.aquariumcontrol.balling.entry.BallingProfilesUiState
 import com.laimburggasse.aquariumcontrol.balling.entry.BallingProfilesViewModel
 import com.laimburggasse.aquariumcontrol.balling.entry.BallingScreen
-import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryRepository
 import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryScreen
 import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryUiState
 import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryViewModel
-import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryViewModelFactory
 import com.laimburggasse.aquariumcontrol.controller.add.ControllerAddScreen
 import com.laimburggasse.aquariumcontrol.controller.add.ControllerAddViewModel
-import com.laimburggasse.aquariumcontrol.controller.add.ControllerAddViewModelFactory
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditState
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfileDatabase
 import com.laimburggasse.aquariumcontrol.controller.common.handleControllerNavigation
 import com.laimburggasse.aquariumcontrol.controller.edit.ControllerEditScreen
 import com.laimburggasse.aquariumcontrol.controller.edit.ControllerEditViewModel
-import com.laimburggasse.aquariumcontrol.controller.edit.ControllerEditViewModelFactory
 import com.laimburggasse.aquariumcontrol.controller.selection.ControllerSelectionScreen
 import com.laimburggasse.aquariumcontrol.controller.selection.ControllerSelectionViewModel
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddScreen
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddUiState
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddViewModel
-import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddViewModelFactory
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilesRepository
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilesViewModel
-import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilesViewModelFactory
 import com.laimburggasse.aquariumcontrol.feed.common.FeedScheduleUiState
 import com.laimburggasse.aquariumcontrol.feed.common.FeedScheduleViewModel
-import com.laimburggasse.aquariumcontrol.feed.common.FeedScheduleViewModelFactory
 import com.laimburggasse.aquariumcontrol.feed.common.handleFeedNavigation
 import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditScreen
 import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditUiState
 import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditViewModel
-import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditViewModelFactory
 import com.laimburggasse.aquariumcontrol.feed.entry.FeedProfilesUiState
 import com.laimburggasse.aquariumcontrol.feed.entry.FeedScreen
-import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryRepository
 import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryScreen
 import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryUiState
 import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryViewModel
-import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryViewModelFactory
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedProfileScheduleScreen
-import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleRepository
 import com.laimburggasse.aquariumcontrol.heating.HeatingScreen
-import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsRepository
 import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsUiState
 import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsViewModel
-import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsViewModelFactory
-import com.laimburggasse.aquariumcontrol.heating.HeatingStatsRepository
 import com.laimburggasse.aquariumcontrol.heating.HeatingStatsUiState
 import com.laimburggasse.aquariumcontrol.heating.HeatingStatsViewModel
-import com.laimburggasse.aquariumcontrol.heating.HeatingStatsViewModelFactory
 import com.laimburggasse.aquariumcontrol.info.InfoScreen
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.handleMainDropDownMenuNavigation
 import com.laimburggasse.aquariumcontrol.overview.OverviewRepository
@@ -85,30 +69,22 @@ import com.laimburggasse.aquariumcontrol.overview.OverviewUiState
 import com.laimburggasse.aquariumcontrol.overview.OverviewViewModel
 import com.laimburggasse.aquariumcontrol.overview.OverviewViewModelFactory
 import com.laimburggasse.aquariumcontrol.refill.common.handleRefillNavigation
-import com.laimburggasse.aquariumcontrol.refill.entry.RefillRepository
 import com.laimburggasse.aquariumcontrol.refill.entry.RefillScreen
 import com.laimburggasse.aquariumcontrol.refill.entry.RefillViewModel
-import com.laimburggasse.aquariumcontrol.refill.entry.RefillViewModelFactory
-import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryRepository
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryScreen
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryUiState
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryViewModel
-import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryViewModelFactory
 import com.laimburggasse.aquariumcontrol.schedule.ScheduleRepository
 import com.laimburggasse.aquariumcontrol.schedule.ScheduleScreen
 import com.laimburggasse.aquariumcontrol.schedule.ScheduleUiState
 import com.laimburggasse.aquariumcontrol.schedule.ScheduleViewModel
 import com.laimburggasse.aquariumcontrol.schedule.ScheduleViewModelFactory
-import com.laimburggasse.aquariumcontrol.timedata.TimeDataRepository
 import com.laimburggasse.aquariumcontrol.timedata.TimeDataScreen
 import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState
 import com.laimburggasse.aquariumcontrol.timedata.TimeDataViewModel
-import com.laimburggasse.aquariumcontrol.timedata.TimeDataViewModelFactory
 import com.laimburggasse.aquariumcontrol.ventilation.VentilationScreen
-import com.laimburggasse.aquariumcontrol.ventilation.VentilationSetValsRepository
 import com.laimburggasse.aquariumcontrol.ventilation.VentilationSetValsUiState
 import com.laimburggasse.aquariumcontrol.ventilation.VentilationSetValsViewModel
-import com.laimburggasse.aquariumcontrol.ventilation.VentilationSetValsViewModelFactory
 import dagger.hilt.android.AndroidEntryPoint
 
 @Suppress("UNCHECKED_CAST")
@@ -141,76 +117,20 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    private val controllerAddViewModelFactory by lazy {
-        ControllerAddViewModelFactory(
-            dao = db.controllerProfileDao(),
-        )
-    }
     private val overviewRepository by lazy { OverviewRepository(sessionManager = sessionManager) }
 
     private val overviewViewModelFactory by lazy { OverviewViewModelFactory(overviewRepository) }
 
     private val ballingProfilesRepository by lazy { BallingProfilesRepository(sessionManager = sessionManager) }
-    private val ballingHistoryRepository by lazy { BallingHistoryRepository(sessionManager = sessionManager) }
-    private val ballingHistoryViewModelFactory by lazy { BallingHistoryViewModelFactory(ballingHistoryRepository) }
 
     private val feedProfilesRepository by lazy { FeedProfilesRepository(sessionManager = sessionManager) }
-    private val feedScheduleRepository by lazy { FeedScheduleRepository(sessionManager = sessionManager) }
-    private val feedHistoryRepository by lazy { FeedHistoryRepository(sessionManager = sessionManager) }
-    private val feedHistoryViewModelFactory by lazy { FeedHistoryViewModelFactory(feedHistoryRepository) }
-    private val refillHistoryRepository by lazy { RefillHistoryRepository(sessionManager = sessionManager) }
-    private val refillRepository by lazy { RefillRepository(sessionManager = sessionManager) }
-    private val refillViewModelFactory by lazy { RefillViewModelFactory(refillRepository) }
-    private val refillHistoryViewModelFactory by lazy { RefillHistoryViewModelFactory(refillHistoryRepository) }
-    private val feedProfilesViewModelFactory by lazy { FeedProfilesViewModelFactory(feedProfilesRepository) }
-    private val feedScheduleViewModelFactory by lazy { FeedScheduleViewModelFactory(feedScheduleRepository, feedProfilesRepository) }
-    private val feedProfileAddViewModelFactory by lazy { FeedProfileAddViewModelFactory(feedProfilesRepository) }
-
     private val scheduleRepository by lazy { ScheduleRepository(sessionManager = sessionManager) }
-
     private val scheduleViewModelFactory by lazy { ScheduleViewModelFactory(scheduleRepository) }
-
-    private val ventilationSetValsRepository by lazy { VentilationSetValsRepository(
-        sessionManager = sessionManager,
-        externalScope = lifecycleScope
-    ) }
-
-    private val ventilationSetValsViewModelFactory by lazy {
-        VentilationSetValsViewModelFactory(
-            ventilationSetValsRepository,
-        )
-    }
-
-    private val timeDataRepository by lazy { TimeDataRepository(sessionManager = sessionManager) }
-
-    private val timeDataViewModelFactory by lazy { TimeDataViewModelFactory(timeDataRepository) }
-
-    private val heatingSetValsRepository by lazy { HeatingSetValsRepository(
-        sessionManager = sessionManager,
-        externalScope = lifecycleScope
-    ) }
-
-    private val heatingSetValsViewModelFactory by lazy {
-        HeatingSetValsViewModelFactory(
-            heatingSetValsRepository,
-        )
-    }
-
-    private val heatingStatsRepository by lazy { HeatingStatsRepository(
-        sessionManager = sessionManager,
-        externalScope = lifecycleScope
-    ) }
-
-    private val heatingStatsViewModelFactory by lazy {
-        HeatingStatsViewModelFactory(
-            heatingStatsRepository
-        )
-    }
 
     override fun onPause() {
         super.onPause()
         val sharedPrefs: SharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
-        with(sharedPrefs.edit()) {
+        with(receiver = sharedPrefs.edit()) {
             sessionManager.defaultControllerProfileId.value.let {
                 putLong(
                     KEY_DEFAULT_PROFILE_ID,
@@ -256,9 +176,7 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(route = ViewNavigationRoutes.controllerAdd)
                     {
-                        val controllerAddViewModel: ControllerAddViewModel = viewModel(
-                            factory = controllerAddViewModelFactory
-                        )
+                        val controllerAddViewModel: ControllerAddViewModel = hiltViewModel()
                         val state: ControllerAddEditState by controllerAddViewModel.state.collectAsState()
                         sessionManager.setFirstLoad()
                         MainScaffold(
@@ -290,16 +208,7 @@ class MainActivity : ComponentActivity() {
                     { backStackEntry ->
                         sessionManager.setFirstLoad()
                         val controllerProfileId: Long = backStackEntry.arguments?.getLong("controllerProfileId") ?: -1L
-                        val controllerEditViewModelFactory: ControllerEditViewModelFactory by lazy {
-                            ControllerEditViewModelFactory(
-                                dao = db.controllerProfileDao(),
-                                sessionManager,
-                                controllerProfileId
-                            )
-                        }
-                        val controllerEditViewModel: ControllerEditViewModel = viewModel(
-                            factory = controllerEditViewModelFactory
-                        )
+                        val controllerEditViewModel: ControllerEditViewModel = hiltViewModel()
                         val editState: ControllerAddEditState by controllerEditViewModel.state.collectAsState()
 
                         if (controllerProfileId >= 0L) {
@@ -321,8 +230,8 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                     composable(route = ViewNavigationRoutes.feed) {
-                        val feedProfilesViewModel: FeedProfilesViewModel = viewModel(factory = feedProfilesViewModelFactory)
-                        val feedScheduleViewModel: FeedScheduleViewModel = viewModel(factory = feedScheduleViewModelFactory)
+                        val feedProfilesViewModel: FeedProfilesViewModel = hiltViewModel()
+                        val feedScheduleViewModel: FeedScheduleViewModel = hiltViewModel()
                         val feedProfilesUiState: FeedProfilesUiState by feedProfilesViewModel.feedProfilesUiState.collectAsState()
                         val feedScheduleUiState: FeedScheduleUiState by feedScheduleViewModel.feedScheduleUiState.collectAsState()
 
@@ -349,9 +258,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(route = ViewNavigationRoutes.feedHistory24h) {
-                        val feedHistoryViewModel: FeedHistoryViewModel = viewModel(
-                            factory = feedHistoryViewModelFactory
-                        )
+                        val feedHistoryViewModel: FeedHistoryViewModel = hiltViewModel()
                         val feedHistoryUiState: FeedHistoryUiState by
                             feedHistoryViewModel.feedHistoryUiState.collectAsState()
                         MainScaffold(
@@ -368,9 +275,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(route = ViewNavigationRoutes.feedHistory7d) {
-                        val feedHistoryViewModel: FeedHistoryViewModel = viewModel(
-                            factory = feedHistoryViewModelFactory
-                        )
+                        val feedHistoryViewModel: FeedHistoryViewModel = hiltViewModel()
                         val feedHistoryUiState: FeedHistoryUiState by
                             feedHistoryViewModel.feedHistoryUiState.collectAsState()
                         MainScaffold(
@@ -396,13 +301,7 @@ class MainActivity : ComponentActivity() {
                             val feedProfile: FeedProfile? = feedProfilesRepository.findProfileById(feedProfileId)
                             if (feedProfile != null) {
                                 // view model factory needs to be created with dedicated feed profile
-                                val feedProfileEditViewModelFactory = FeedProfileEditViewModelFactory(
-                                        feedProfile = feedProfile,
-                                        feedProfilesRepository = feedProfilesRepository
-                                    )
-                                val feedProfileEditViewModel: FeedProfileEditViewModel = viewModel(
-                                    factory = feedProfileEditViewModelFactory
-                                )
+                                val feedProfileEditViewModel: FeedProfileEditViewModel = hiltViewModel()
                                 val uiState: FeedProfileEditUiState by feedProfileEditViewModel.uiState.collectAsState()
                                 MainScaffold(
                                     isControllerLoaded,
@@ -423,9 +322,7 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                     composable(route = ViewNavigationRoutes.feedAddProfile) {
-                        val feedProfileAddViewModel: FeedProfileAddViewModel = viewModel(
-                            factory = feedProfileAddViewModelFactory
-                        )
+                        val feedProfileAddViewModel: FeedProfileAddViewModel = hiltViewModel()
                         val feedProfileName: String by feedProfileAddViewModel.feedProfileName.collectAsState()
                         val feedProfileAddUiState: FeedProfileAddUiState by feedProfileAddViewModel.feedProfileAddUiState.collectAsState()
 
@@ -469,8 +366,8 @@ class MainActivity : ComponentActivity() {
                             ViewNavigationRoutes.FEED_ARG_MILLIS_SINCE_EPOCH
                         )
                         if (feedProfileId != null && isNewScheduleEntry != null && millisSinceEpoch != null) {
-                            val feedProfilesViewModel: FeedProfilesViewModel = viewModel(factory = feedProfilesViewModelFactory)
-                            val feedScheduleViewModel: FeedScheduleViewModel = viewModel(factory = feedScheduleViewModelFactory)
+                            val feedProfilesViewModel: FeedProfilesViewModel = hiltViewModel()
+                            val feedScheduleViewModel: FeedScheduleViewModel = hiltViewModel()
                             val feedProfile = feedProfilesViewModel.findProfileById(profileID = feedProfileId)
                             if (feedProfile != null) {
                                 MainScaffold(
@@ -506,7 +403,6 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(route = ViewNavigationRoutes.balling) {
                         val ballingViewModel: BallingProfilesViewModel = hiltViewModel()
-                            //viewModel(factory = ballingProfilesViewModelFactory)
                         val ballingProfilesUiState: BallingProfilesUiState by
                             ballingViewModel.ballingProfilesUiState.collectAsState()
 
@@ -525,9 +421,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(route = ViewNavigationRoutes.ballingHistory24h) {
-                        val ballingHistoryViewModel: BallingHistoryViewModel = viewModel(
-                            factory = ballingHistoryViewModelFactory
-                        )
+                        val ballingHistoryViewModel: BallingHistoryViewModel = hiltViewModel()
                         val ballingHistoryUiState: BallingHistoryUiState by
                             ballingHistoryViewModel.ballingHistoryUiState.collectAsState()
                         MainScaffold(
@@ -544,9 +438,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(route = ViewNavigationRoutes.ballingHistory7d) {
-                        val ballingHistoryViewModel: BallingHistoryViewModel = viewModel(
-                            factory = ballingHistoryViewModelFactory
-                        )
+                        val ballingHistoryViewModel: BallingHistoryViewModel = hiltViewModel()
                         val ballingHistoryUiState: BallingHistoryUiState by
                         ballingHistoryViewModel.ballingHistoryUiState.collectAsState()
                         MainScaffold(
@@ -570,13 +462,10 @@ class MainActivity : ComponentActivity() {
                         val ballingProfileId: Int? = backStackEntry.arguments?.getInt("ballingProfileId")
                         if (ballingProfileId != null) {
                             // view model factory needs to be created with dedicated balling profile
-
-                            val ballingProfileEditViewModelFactory = BallingProfileEditViewModelFactory(
-                                ballingProfileId,
-                                ballingProfilesRepository
-                            )
-                            val ballingProfileEditViewModel: BallingProfileEditViewModel = viewModel(
-                                factory = ballingProfileEditViewModelFactory
+                            val ballingProfileEditViewModel: BallingProfileEditViewModel = hiltViewModel(
+                                creationCallback = { factory: BallingProfileEditViewModel.Factory ->
+                                    factory.create(ballingProfileId)
+                                }
                             )
                             val ballingProfileEditUiState: BallingProfileEditUiState =
                                 ballingProfileEditViewModel.ballingProfileEditUiState
@@ -597,7 +486,7 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                     composable(route = ViewNavigationRoutes.refill) {
-                        val refillViewModel: RefillViewModel = viewModel(factory = refillViewModelFactory)
+                        val refillViewModel: RefillViewModel = hiltViewModel()
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.refill,
@@ -613,9 +502,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(route = ViewNavigationRoutes.refillHistory24h) {
-                        val refillHistoryViewModel: RefillHistoryViewModel = viewModel(
-                            factory = refillHistoryViewModelFactory
-                        )
+                        val refillHistoryViewModel: RefillHistoryViewModel = hiltViewModel()
                         val refillHistoryUiState: RefillHistoryUiState by refillHistoryViewModel.refillHistoryUiState.collectAsState()
                         MainScaffold(
                             isControllerLoaded,
@@ -631,9 +518,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(route = ViewNavigationRoutes.refillHistory7d) {
-                        val refillHistoryViewModel: RefillHistoryViewModel = viewModel(
-                            factory = refillHistoryViewModelFactory
-                        )
+                        val refillHistoryViewModel: RefillHistoryViewModel = hiltViewModel()
                         val refillHistoryUiState: RefillHistoryUiState by refillHistoryViewModel.refillHistoryUiState.collectAsState()
                         MainScaffold(
                             isControllerLoaded,
@@ -649,10 +534,12 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(route = ViewNavigationRoutes.heating) {
-                        val heatingSetValsViewModel: HeatingSetValsViewModel = viewModel(factory = heatingSetValsViewModelFactory)
-                        val heatingStatsViewModel: HeatingStatsViewModel = viewModel(factory = heatingStatsViewModelFactory)
-                        val heatingSetValsUiState: HeatingSetValsUiState by heatingSetValsViewModel.heatingSetValsUiState.collectAsState()
-                        val heatingStatsUiState: HeatingStatsUiState by heatingStatsViewModel.heatingStatsUiState.collectAsState()
+                        val heatingSetValsViewModel: HeatingSetValsViewModel = hiltViewModel()
+                        val heatingStatsViewModel: HeatingStatsViewModel = hiltViewModel()
+                        val heatingSetValsUiState: HeatingSetValsUiState by
+                            heatingSetValsViewModel.heatingSetValsUiState.collectAsState()
+                        val heatingStatsUiState: HeatingStatsUiState by
+                            heatingStatsViewModel.heatingStatsUiState.collectAsState()
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.heating,
@@ -668,8 +555,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(route = ViewNavigationRoutes.ventilation) {
-                        val ventilationSetValsViewModel: VentilationSetValsViewModel =
-                            viewModel(factory = ventilationSetValsViewModelFactory)
+                        val ventilationSetValsViewModel: VentilationSetValsViewModel = hiltViewModel()
                         val ventilationSetValsUiState: VentilationSetValsUiState by
                             ventilationSetValsViewModel.ventilationSetValsUiState.collectAsState()
 
@@ -686,7 +572,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(route = ViewNavigationRoutes.timeData) {
-                        val timeDataViewModel: TimeDataViewModel = viewModel(factory = timeDataViewModelFactory)
+                        val timeDataViewModel: TimeDataViewModel = hiltViewModel()
                         val timeDataUiState: TimeDataUiState by timeDataViewModel.timeDataUiState.collectAsState()
 
                         MainScaffold(
@@ -702,7 +588,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(route = ViewNavigationRoutes.schedule) {
-                        val scheduleViewModel: ScheduleViewModel = viewModel(factory = scheduleViewModelFactory)
+                        val scheduleViewModel: ScheduleViewModel = hiltViewModel()
                         val scheduleUiState: ScheduleUiState by scheduleViewModel.scheduleUiState.collectAsState()
                         MainScaffold(
                             isControllerLoaded,
@@ -739,7 +625,7 @@ class MainActivity : ComponentActivity() {
                                     sessionManager.setFirstLoad() // Controller selection may navigate here without user interaction
                                 }
                             }
-                            val overviewViewModel: OverviewViewModel = viewModel(factory = overviewViewModelFactory)
+                            val overviewViewModel: OverviewViewModel = hiltViewModel()
                             val overviewUiState: OverviewUiState by overviewViewModel.overviewUiState.collectAsState()
                             MainScaffold(
                                 isControllerLoaded,

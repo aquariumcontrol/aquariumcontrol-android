@@ -13,9 +13,10 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 @OptIn(DelicateCoroutinesApi::class)
-open class OverviewRepository(sessionManager: SessionManager) {
+open class OverviewRepository @Inject constructor(sessionManager: SessionManager) {
     // 1. Create a "trigger" flow.
     // This SharedFlow doesn't hold state; it just emits a signal when we call emit().
     // We use replay=1 so it emits the last signal to new subscribers if needed.

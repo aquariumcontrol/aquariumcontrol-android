@@ -12,8 +12,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 import java.sql.Timestamp
 import java.util.Calendar
+import javax.inject.Inject
 
-open class FeedScheduleRepository(private val sessionManager: SessionManager) {
+open class FeedScheduleRepository @Inject constructor(private val sessionManager: SessionManager) {
     private val _scheduleFlow = MutableStateFlow<DataFetchResult<List<FeedScheduleEntry>>>(
         value = DataFetchResult.Success(data = emptyList())
     )

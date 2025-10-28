@@ -4,8 +4,9 @@ import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
+import javax.inject.Inject
 
-open class RefillRepository(private val sessionManager: SessionManager) {
+open class RefillRepository @Inject constructor(private val sessionManager: SessionManager) {
     open suspend fun sendStartRequest() {
         executeRequest(apiUrl = WebApiUrls.REFILL_POST_CONTROL_START)
     }

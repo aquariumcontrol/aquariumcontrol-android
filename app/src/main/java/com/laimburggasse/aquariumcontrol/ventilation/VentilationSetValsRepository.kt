@@ -1,6 +1,7 @@
 package com.laimburggasse.aquariumcontrol.ventilation
 
 import com.laimburggasse.aquariumcontrol.SessionManager
+import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
@@ -12,13 +13,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 const val ventilationSetValsSwitchOnTempInitVal = 28.0
 const val ventilationSetValsSwitchOffTempInitVal = 22.0
 
-open class VentilationSetValsRepository(
+open class VentilationSetValsRepository @Inject constructor(
     private val sessionManager: SessionManager,
-    externalScope: CoroutineScope? = null
+    @ApplicationScope externalScope: CoroutineScope? = null
 ) {
     private val _ventilationSetValsFlow = MutableStateFlow<DataFetchResult<VentilationSetVals>>(
         value = DataFetchResult.Success(data = VentilationSetVals(
