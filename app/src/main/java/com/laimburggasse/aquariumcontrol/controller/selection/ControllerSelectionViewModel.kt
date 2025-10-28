@@ -7,18 +7,19 @@ import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfileDao
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transformLatest
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ControllerSelectionViewModel(
+@HiltViewModel
+class ControllerSelectionViewModel @Inject constructor(
     private val dao: ControllerProfileDao,
     private val sessionManager: SessionManager
 ) : ViewModel() {
@@ -31,11 +32,12 @@ class ControllerSelectionViewModel(
                 started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
                 initialValue = emptyList()
             )
-    private val _state = MutableStateFlow(value = ControllerState())
 
-    val state = combine(_state, _controllerProfiles) { state, controllerProfileList ->
-        state.copy(
-            controllerProfileList = controllerProfileList
+    val state = combine(_controllerProfiles, sessionManager.defaultControllerProfileId)
+    { profiles, defaultId ->
+        ControllerState(
+            controllerProfileList = profiles,
+            selectedControllerProfileId = defaultId,
         )
     }.stateIn(
         viewModelScope,
@@ -123,16 +125,7 @@ class ControllerSelectionViewModel(
             }
 
             is ControllerSelectionEvent.SelectControllerProfile -> {
-                _state.update {
-                    it.copy(
-                        controllerProfileId = event.controllerProfile.id,
-                        controllerProfileName = event.controllerProfile.name,
-                        controllerProfileAddress = event.controllerProfile.address,
-                        controllerProfilePort = event.controllerProfile.port,
-                        controllerProfileUser = event.controllerProfile.user,
-                        controllerProfilePassword = event.controllerProfile.password,
-                    )
-                }
+                sessionManager.updateSelectedControllerProfile(controllerProfile = event.controllerProfile)
 
                 val selectedProfile: ControllerProfile? = state.value.selectedProfile
                 selectedProfile.let {
@@ -157,9 +150,5 @@ class ControllerSelectionViewModel(
                 // do nothing
             }
         }
-    }
-
-    fun getSelectedControllerProfileById(id: Long): ControllerProfile? {
-        return state.value.controllerProfileList.find { it.id == id }
     }
 }

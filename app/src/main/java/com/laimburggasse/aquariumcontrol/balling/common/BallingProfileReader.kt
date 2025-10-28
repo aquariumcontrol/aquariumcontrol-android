@@ -12,12 +12,12 @@ class BallingProfileReader(private val url: String) {
     private val json = Json { ignoreUnknownKeys = true }
 
     fun readBallingProfiles(): DataFetchResult<List<BallingProfile>> {
-        val request = Request.Builder().url(url).build()
+        val request: Request = Request.Builder().url(url).build()
 
         try {
             val response: Response = client.newCall(request).execute()
             if (response.isSuccessful) {
-                val responseBody = response.body.string()
+                val responseBody: String = response.body.string()
                 if (responseBody.isEmpty()) {
                     return DataFetchResult.Success(data = emptyList())
                 }
@@ -35,7 +35,7 @@ class BallingProfileReader(private val url: String) {
         } catch (e: Exception) {
             return DataFetchResult.Error(
                 exception = e,
-                errorMessage = "An unexpected error occurred during preparation of server communication."
+                errorMessage = "An unexpected error occurred during preparation of server communication: ${e.message}"
             )
         }
     }

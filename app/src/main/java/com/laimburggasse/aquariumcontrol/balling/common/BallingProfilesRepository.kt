@@ -8,71 +8,97 @@ import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-open class BallingProfilesRepository(private val sessionManager: SessionManager) {
-    private val _profilesFlow = MutableStateFlow<DataFetchResult<List<BallingProfile>>>(
-        value = DataFetchResult.Success(data = emptyList())
-    )
-    open val profilesFlow = _profilesFlow.asStateFlow()
+open class BallingProfilesRepository @Inject constructor(private val sessionManager: SessionManager) {
 
-    open suspend fun fetchBallingProfiles() {
-        val url: String = "http://" + sessionManager.getControllerAddress() + WebApiUrls.BALLING_GET_SET_VALS
-        val reader = BallingProfileReader(url)
-        withContext(context = Dispatchers.IO) {
-            val result: DataFetchResult<List<BallingProfile>> = reader.readBallingProfiles()
-            _profilesFlow.value = result
-        }
-    }
+    // for triggering manual refreshes
+    private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
 
-    open fun getBallingProfileById(id: Int): BallingProfile? {
-        val currentResult: DataFetchResult<List<BallingProfile>> = profilesFlow.value
-
-        val successResult: DataFetchResult.Success<List<BallingProfile>>? =
-            currentResult as? DataFetchResult.Success
-
-        return successResult?.data?.find { it.pumpId == id }
-    }
-
-    suspend fun updateBallingProfile(ballingProfile: BallingProfile) {
-        // update the local cache is not required, because BallingProfileEditViewModel holds reference
-        Log.d("BallingRepository", "Updating balling profile: $ballingProfile")
-        val requestSuccess = webApiPostRequestExecution(
-            sessionManager = sessionManager,
-            apiUrl = WebApiUrls.BALLING_POST_SET_VALS,
-            webApiPostRequest = WebApiPostRequest(),
-            optionalGetParams = mapOf(
-                WebApiParams.PUMP_ID to ballingProfile.pumpId.toString(),
-                WebApiParams.DOSING_VOLUME to ballingProfile.volume.toString()
-            )
-        )
-
-
-        // Check if the web request was successful before updating the cache
-        if (requestSuccess) {
-            Log.d("BallingRepository", "Server update successful. Updating local cache.")
-            // Find the index of the old profile in the cache
-            _profilesFlow.update { currentDataResult ->
-                if (currentDataResult is DataFetchResult.Success) {
-                    // Create a new list with the updated item
-                    val updatedList = currentDataResult.data.map { profileInList ->
-                        if (profileInList.pumpId == ballingProfile.pumpId) {
-                            ballingProfile // Replace with the updated profile
-                        } else {
-                            profileInList // Keep the existing one
-                        }
+    /**
+     * A single, reactive Flow that provides the Balling Profiles.
+     * It combines two triggers: the selected controller and the manual refresh trigger.
+     * Whenever EITHER of them emits, it re-fetches the data.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    open val profilesFlow: Flow<DataFetchResult<List<BallingProfile>>> =
+        // 1. We still listen to the selected controller profile.
+        sessionManager.selectedControllerProfile
+            // 2. We use `filterNotNull()` to IGNORE the initial `null` emission at app startup.
+            //    This effectively pauses the flow until a controller is actually selected.
+            .filterNotNull()
+            // 3. `flatMapLatest` will now ONLY execute when it receives a non-null controller.
+            .flatMapLatest { controller ->
+                flow {
+                    if (controller == null) {
+                        // If no controller is selected, emit a success state with an empty list.
+                        // This is a valid, non-error state.
+                        emit(DataFetchResult.Error(exception = null, errorMessage = "still null"))
+                        return@flow
                     }
-                    DataFetchResult.Success(updatedList) // Emit a new Success state with the new list
-                } else {
-                    currentDataResult // If not in a success state, do not change anything
+
+                    // @todo: implement Loading state
+                    // Emit Loading state before the network call.
+                    // emit(DataFetchResult.Error(exception = null, errorMessage = "still null"))
+
+                    // Perform the network request on a background thread.
+                    val result: DataFetchResult<List<BallingProfile>> = withContext(context = Dispatchers.IO) {
+                        val url = "http://${controller.address}${WebApiUrls.BALLING_GET_SET_VALS}"
+                        val reader = BallingProfileReader(url)
+                        reader.readBallingProfiles()
+                    }
+
+                    // Emit the final result (Success or Error) from the network call.
+                    emit(value = result)
                 }
             }
-        } else {
-            // Log the error if the server update failed
-            Log.e("BallingRepository", "Server update failed: Local cache not updated.")
+
+    suspend fun updateBallingProfile(ballingProfile: BallingProfile) {
+        Log.d("BallingRepository", "Updating balling profile: $ballingProfile")
+        val controllerAddress = sessionManager.getControllerAddress()
+        if (controllerAddress.isNullOrBlank()) {
+            Log.e("BallingRepository", "Update failed: No controller address.")
+            return
         }
+
+        val requestSuccess: Boolean = withContext(Dispatchers.IO) {
+            webApiPostRequestExecution(
+                sessionManager = sessionManager,
+                apiUrl = WebApiUrls.BALLING_POST_SET_VALS,
+                webApiPostRequest = WebApiPostRequest(),
+                optionalGetParams = mapOf(
+                    WebApiParams.PUMP_ID to ballingProfile.pumpId.toString(),
+                    WebApiParams.DOSING_VOLUME to ballingProfile.volume.toString()
+                )
+            )
+        }
+
+        // 3. Instead of updating a dead flow, trigger a refresh of the live one.
+        if (requestSuccess) {
+            Log.d("BallingRepository", "Server update successful. Triggering refresh.")
+            refreshTrigger.emit(Unit) // This will cause the `profilesFlow` to re-fetch.
+        } else {
+            Log.e("BallingRepository", "Server update failed.")
+            // Optionally, you could emit an event to the UI to show a failure snackbar.
+        }
+    }
+
+    // @todo: implement pull-to-refresh
+    /**
+     * Public function to allow the ViewModel to trigger a manual refresh (e.g., for pull-to-refresh).
+     */
+    suspend fun triggerRefresh() {
+        refreshTrigger.emit(Unit)
     }
 }

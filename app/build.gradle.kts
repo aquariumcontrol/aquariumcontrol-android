@@ -1,12 +1,12 @@
-import org.gradle.kotlin.dsl.androidTestUtil
-
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.screenshot)
-    id("org.jetbrains.kotlin.plugin.compose") version "2.2.20"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.2.21"
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp") version "2.2.20-2.0.3"
+    id("com.google.dagger.hilt.android")
+    id("kotlin-kapt")
 }
 
 android {
@@ -109,4 +109,9 @@ dependencies {
     // for compose preview snapshot testing
     screenshotTestImplementation(libs.screenshot.validation.api)
     screenshotTestImplementation(libs.androidx.ui.tooling)
+
+    // for Dagger/Hilt
+    implementation("com.google.dagger:hilt-android:2.57.2")
+    kapt("com.google.dagger:hilt-compiler:2.57.2")
+    implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
 }

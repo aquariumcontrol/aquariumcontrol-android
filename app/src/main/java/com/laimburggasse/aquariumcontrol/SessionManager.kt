@@ -1,6 +1,7 @@
 package com.laimburggasse.aquariumcontrol
 
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.core.content.edit
 import com.laimburggasse.aquariumcontrol.MainActivity.Companion.KEY_DEFAULT_PROFILE_ID
 import com.laimburggasse.aquariumcontrol.MainActivity.Companion.NO_DEFAULT_ID
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 
@@ -24,13 +26,20 @@ open class SessionManager(
     // Create a dedicated CoroutineScope for this singleton.
     // SupervisorJob() ensures that if one coroutine in this scope fails, it doesn't cancel the whole scope.
     // Dispatchers.Default is appropriate for CPU-bound work like the `.map` operator.
+
+    init {
+        Log.d("SessionManager_LIFECYCLE", "A new SessionManager instance has been CREATED. HashCode: ${this.hashCode()}")
+    }
     private val sessionScope = CoroutineScope(context = SupervisorJob() + Dispatchers.Default)
 
     private val _selectedControllerProfile = MutableStateFlow<ControllerProfile?>(value = null)
     val selectedControllerProfile: StateFlow<ControllerProfile?> = _selectedControllerProfile.asStateFlow()
     val isControllerLoaded: StateFlow<Boolean> = selectedControllerProfile.map { it != null }
+        .onEach { // debug @todo: remove
+            isLoaded -> Log.d("SessionManager", "isControllerLoaded: $isLoaded")
+        }
         .stateIn(
-            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
+            started = SharingStarted.Eagerly,
             initialValue = false,
             scope = sessionScope
         )
@@ -47,9 +56,12 @@ open class SessionManager(
     val isFirstLoad: StateFlow<Boolean> = _isFirstLoad.asStateFlow()
 
     suspend fun selectControllerById(id: Long): Boolean {
+        Log.d("SessionManager", "selectControllerById: $id")
+        previousControllerProfileId = _defaultControllerProfileId.value
         return withContext(context = Dispatchers.IO) {
             val profile: ControllerProfile? = dao.getControllerProfileById(id)
             if (profile != null) {
+                Log.d("SessionManager", "selectControllerById found profile: $profile")
                 _selectedControllerProfile.value = profile
                 true
             } else {
@@ -65,11 +77,8 @@ open class SessionManager(
     }
 
     fun updateSelectedControllerProfile(controllerProfile: ControllerProfile) {
+        Log.d("SessionManager", "updateSelectedControllerProfile: $controllerProfile")
         _selectedControllerProfile.value = controllerProfile
-    }
-
-    fun isControllerLoaded(): Boolean {
-        return selectedControllerProfile.value != null
     }
 
     open fun getControllerAddress(): String? {
@@ -99,6 +108,7 @@ open class SessionManager(
     }
 
     fun unsetDefaultControllerId() {
+        Log.d("SessionManager", "unsetDefaultControllerId")
         if (previousControllerProfileId != null) {
             _defaultControllerProfileId.value = previousControllerProfileId!!
         }

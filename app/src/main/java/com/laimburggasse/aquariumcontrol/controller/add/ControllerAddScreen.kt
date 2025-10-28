@@ -51,7 +51,7 @@ fun ControllerAddScreen(
         ScreenHeadlineComposable(text =  stringResource(id = R.string.add_profile))
 
         OutlinedTextField(
-            value = state.controllerProfileName,
+            value = state.selectedProfile?.name ?: "***",
             onValueChange = { onEvent(ControllerAddEditEvent.SetControllerProfileName(controllerProfileName = it)) },
             label = { Text(text = stringResource(id = R.string.profile_name)) },
             modifier = Modifier.fillMaxWidth(),
@@ -90,7 +90,7 @@ fun ControllerAddScreen(
 
         Button(
             onClick = { onAddEvent(ControllerAddEditEvent.AddControllerProfile) },
-            enabled = state.controllerProfileName.isNotBlank() && state.validControllerAddress,
+            enabled = state.selectedProfile && state.validControllerAddress,
             modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
         ) {
             Text(text = stringResource(id = R.string.create_profile))

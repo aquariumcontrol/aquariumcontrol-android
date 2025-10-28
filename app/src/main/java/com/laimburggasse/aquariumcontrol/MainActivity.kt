@@ -1,11 +1,13 @@
 package com.laimburggasse.aquariumcontrol
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -23,7 +25,6 @@ import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditViewMode
 import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditViewModelFactory
 import com.laimburggasse.aquariumcontrol.balling.entry.BallingProfilesUiState
 import com.laimburggasse.aquariumcontrol.balling.entry.BallingProfilesViewModel
-import com.laimburggasse.aquariumcontrol.balling.entry.BallingProfilesViewModelFactory
 import com.laimburggasse.aquariumcontrol.balling.entry.BallingScreen
 import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryRepository
 import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryScreen
@@ -42,7 +43,6 @@ import com.laimburggasse.aquariumcontrol.controller.edit.ControllerEditViewModel
 import com.laimburggasse.aquariumcontrol.controller.edit.ControllerEditViewModelFactory
 import com.laimburggasse.aquariumcontrol.controller.selection.ControllerSelectionScreen
 import com.laimburggasse.aquariumcontrol.controller.selection.ControllerSelectionViewModel
-import com.laimburggasse.aquariumcontrol.controller.selection.ControllerSelectionViewModelFactory
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddScreen
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddUiState
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddViewModel
@@ -56,6 +56,7 @@ import com.laimburggasse.aquariumcontrol.feed.common.FeedScheduleViewModel
 import com.laimburggasse.aquariumcontrol.feed.common.FeedScheduleViewModelFactory
 import com.laimburggasse.aquariumcontrol.feed.common.handleFeedNavigation
 import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditScreen
+import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditUiState
 import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditViewModel
 import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditViewModelFactory
 import com.laimburggasse.aquariumcontrol.feed.entry.FeedProfilesUiState
@@ -69,9 +70,11 @@ import com.laimburggasse.aquariumcontrol.feed.schedule.FeedProfileScheduleScreen
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleRepository
 import com.laimburggasse.aquariumcontrol.heating.HeatingScreen
 import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsRepository
+import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsUiState
 import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsViewModel
 import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsViewModelFactory
 import com.laimburggasse.aquariumcontrol.heating.HeatingStatsRepository
+import com.laimburggasse.aquariumcontrol.heating.HeatingStatsUiState
 import com.laimburggasse.aquariumcontrol.heating.HeatingStatsViewModel
 import com.laimburggasse.aquariumcontrol.heating.HeatingStatsViewModelFactory
 import com.laimburggasse.aquariumcontrol.info.InfoScreen
@@ -106,8 +109,10 @@ import com.laimburggasse.aquariumcontrol.ventilation.VentilationSetValsRepositor
 import com.laimburggasse.aquariumcontrol.ventilation.VentilationSetValsUiState
 import com.laimburggasse.aquariumcontrol.ventilation.VentilationSetValsViewModel
 import com.laimburggasse.aquariumcontrol.ventilation.VentilationSetValsViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
 @Suppress("UNCHECKED_CAST")
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     companion object {
@@ -136,13 +141,6 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    private val controllerSelectionViewModelFactory by lazy {
-        ControllerSelectionViewModelFactory(
-            dao = db.controllerProfileDao(),
-            sessionManager,
-        )
-    }
-
     private val controllerAddViewModelFactory by lazy {
         ControllerAddViewModelFactory(
             dao = db.controllerProfileDao(),
@@ -154,7 +152,6 @@ class MainActivity : ComponentActivity() {
 
     private val ballingProfilesRepository by lazy { BallingProfilesRepository(sessionManager = sessionManager) }
     private val ballingHistoryRepository by lazy { BallingHistoryRepository(sessionManager = sessionManager) }
-    private val ballingProfilesViewModelFactory by lazy { BallingProfilesViewModelFactory(ballingProfilesRepository) }
     private val ballingHistoryViewModelFactory by lazy { BallingHistoryViewModelFactory(ballingHistoryRepository) }
 
     private val feedProfilesRepository by lazy { FeedProfilesRepository(sessionManager = sessionManager) }
@@ -212,7 +209,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onPause() {
         super.onPause()
-        val sharedPrefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+        val sharedPrefs: SharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
         with(sharedPrefs.edit()) {
             sessionManager.defaultControllerProfileId.value.let {
                 putLong(
@@ -237,9 +234,7 @@ class MainActivity : ComponentActivity() {
                 startDestination = ViewNavigationRoutes.controllerSelection,
                 builder = {
                     composable(route = ViewNavigationRoutes.controllerSelection) {
-                        val controllerSelectionViewModel: ControllerSelectionViewModel = viewModel(
-                            factory = controllerSelectionViewModelFactory
-                        )
+                        val controllerSelectionViewModel: ControllerSelectionViewModel = hiltViewModel()
                         val state: ControllerState by controllerSelectionViewModel.state.collectAsState()
                         MainScaffold(
                             isControllerLoaded,
@@ -407,7 +402,7 @@ class MainActivity : ComponentActivity() {
                                 val feedProfileEditViewModel: FeedProfileEditViewModel = viewModel(
                                     factory = feedProfileEditViewModelFactory
                                 )
-                                val uiState by feedProfileEditViewModel.uiState.collectAsState()
+                                val uiState: FeedProfileEditUiState by feedProfileEditViewModel.uiState.collectAsState()
                                 MainScaffold(
                                     isControllerLoaded,
                                     navigationRouteSource = ViewNavigationRoutes.feedEdit,
@@ -509,8 +504,8 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                     composable(route = ViewNavigationRoutes.balling) {
-                        val ballingViewModel: BallingProfilesViewModel =
-                            viewModel(factory = ballingProfilesViewModelFactory)
+                        val ballingViewModel: BallingProfilesViewModel = hiltViewModel()
+                            //viewModel(factory = ballingProfilesViewModelFactory)
                         val ballingProfilesUiState: BallingProfilesUiState by
                             ballingViewModel.ballingProfilesUiState.collectAsState()
 
@@ -574,6 +569,7 @@ class MainActivity : ComponentActivity() {
                         val ballingProfileId: Int? = backStackEntry.arguments?.getInt("ballingProfileId")
                         if (ballingProfileId != null) {
                             // view model factory needs to be created with dedicated balling profile
+
                             val ballingProfileEditViewModelFactory = BallingProfileEditViewModelFactory(
                                 ballingProfileId,
                                 ballingProfilesRepository
@@ -654,8 +650,8 @@ class MainActivity : ComponentActivity() {
                     composable(route = ViewNavigationRoutes.heating) {
                         val heatingSetValsViewModel: HeatingSetValsViewModel = viewModel(factory = heatingSetValsViewModelFactory)
                         val heatingStatsViewModel: HeatingStatsViewModel = viewModel(factory = heatingStatsViewModelFactory)
-                        val heatingSetValsUiState by heatingSetValsViewModel.heatingSetValsUiState.collectAsState()
-                        val heatingStatsUiState by heatingStatsViewModel.heatingStatsUiState.collectAsState()
+                        val heatingSetValsUiState: HeatingSetValsUiState by heatingSetValsViewModel.heatingSetValsUiState.collectAsState()
+                        val heatingStatsUiState: HeatingStatsUiState by heatingStatsViewModel.heatingStatsUiState.collectAsState()
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.heating,

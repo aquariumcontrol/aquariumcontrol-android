@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol.balling.edit
 
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.balling.common.BallingProfile
 import com.laimburggasse.aquariumcontrol.balling.common.BallingProfilesRepository
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class BallingProfileEditViewModel(
@@ -21,23 +23,24 @@ class BallingProfileEditViewModel(
         private set
 
     init {
-        val currentRepoState: DataFetchResult<List<BallingProfile>> = repository.profilesFlow.value
+        viewModelScope.launch {
+            val currentRepoState: DataFetchResult<List<BallingProfile>> = repository.profilesFlow.first()
 
-        if (currentRepoState is DataFetchResult.Success) {
-            val profile: BallingProfile? = currentRepoState.data.find {
-                it.pumpId == ballingProfileId
-            }
-            ballingProfileEditUiState = if (profile != null) {
-                BallingProfileEditUiState.Success(ballingProfile = profile)
+            if (currentRepoState is DataFetchResult.Success) {
+                val profile: BallingProfile? = currentRepoState.data.find {
+                    it.pumpId == ballingProfileId
+                }
+                ballingProfileEditUiState = if (profile != null) {
+                    BallingProfileEditUiState.Success(ballingProfile = profile)
+                } else {
+                    BallingProfileEditUiState.NotFound
+                }
             } else {
-                BallingProfileEditUiState.NotFound
+                ballingProfileEditUiState = BallingProfileEditUiState.Error(
+                    errorMessage = "Data not available. Go back and try again."
+                )
             }
-        } else {
-            ballingProfileEditUiState = BallingProfileEditUiState.Error(
-                errorMessage = "Data not available. Go back and try again."
-            )
-        }
-    }
+        }    }
 
     fun onConfirmDosing(newVolume: Double) {
         val currentState: BallingProfileEditUiState = ballingProfileEditUiState
