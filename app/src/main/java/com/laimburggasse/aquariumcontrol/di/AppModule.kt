@@ -23,7 +23,7 @@ object AppModule {
         return Room.databaseBuilder(
             context,
             ControllerProfileDatabase::class.java,
-            "aquarium_control.db"
+            "controller_profiles.db"
         ).build()
     }
 

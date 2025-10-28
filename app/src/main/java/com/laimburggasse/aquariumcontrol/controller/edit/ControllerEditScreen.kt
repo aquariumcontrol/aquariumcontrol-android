@@ -29,14 +29,14 @@ import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditEvent
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditHostnamePortnumberComposable
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditState
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditUsernamePasswordComposable
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerNavigationEvent
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerState
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 
 @Composable
 fun ControllerEditScreen(
-    state: ControllerState,
+    state: ControllerAddEditState,
     onEvent: (ControllerAddEditEvent) -> Unit,
     isDefaultProfileInitialValue: Boolean,
     onNavigateFromController: (ControllerNavigationEvent, Long?) -> Unit
@@ -159,7 +159,7 @@ fun ControllerEditScreen(
 )
 @Composable
 internal fun ControllerEditScreenPreview() {
-    val mockControllerState = ControllerState(
+    val mockControllerState = ControllerAddEditState(
         controllerProfileName = "Controller",
         controllerProfileAddress = "192.168.1.1",
         controllerProfilePort = 80,

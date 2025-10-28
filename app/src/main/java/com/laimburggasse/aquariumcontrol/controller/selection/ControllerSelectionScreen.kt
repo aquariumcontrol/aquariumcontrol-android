@@ -35,14 +35,13 @@ import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerNavigationEvent
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerState
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Composable
 fun ControllerSelectionScreen(
-    state: ControllerState,
+    controllerProfileList: List<ControllerProfile>,
     onEvent: (ControllerSelectionEvent) -> Unit,
     defaultProfileId: State<Long?>,
     onNavigateFromController: (ControllerNavigationEvent, Long?) -> Unit,
@@ -101,7 +100,7 @@ fun ControllerSelectionScreen(
 
                 if (LocalInspectionMode.current) {
                     Column(modifier) {
-                        val items: List<ControllerProfile> = state.controllerProfileList
+                        val items: List<ControllerProfile> = controllerProfileList
                         items.forEach { item ->
                             ControllerProfileComposable(
                                 onEvent = {},
@@ -113,7 +112,7 @@ fun ControllerSelectionScreen(
                 }
                 else {
                     LazyColumn(modifier) {
-                        items(items =state.controllerProfileList) { controllerProfile ->
+                        items(items =controllerProfileList) { controllerProfile ->
                             ControllerProfileComposable(
                                 onEvent = onEvent,
                                 controllerProfile = controllerProfile,
@@ -158,19 +157,16 @@ internal fun ControllerSelectionScreenPreview() {
         password = "passwordXYZ",
     )
 
-    val controllerProfileList: List<ControllerProfile> = listOf(
+    val mockControllerProfileList: List<ControllerProfile> = listOf(
         mockControllerProfile1, mockControllerProfile2
     )
-
-    val mockControllerState = ControllerState()
-    mockControllerState.controllerProfileList = controllerProfileList
 
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.controllerSelection,
         screenContent = {
             ControllerSelectionScreen(
-                state = mockControllerState,
+                controllerProfileList = mockControllerProfileList,
                 onEvent = {},
                 progressToDefaultNavigation = remember { mutableFloatStateOf(value = 0.3f) },
                 onNavigateFromController = { event, profileId -> },

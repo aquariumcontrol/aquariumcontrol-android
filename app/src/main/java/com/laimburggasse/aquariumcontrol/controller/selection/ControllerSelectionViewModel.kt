@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfileDao
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -25,7 +24,7 @@ class ControllerSelectionViewModel @Inject constructor(
 ) : ViewModel() {
     // This class represents the view model for the controller screen.
     // Initialize with an empty list or a loading state if preferred
-    private val _controllerProfiles: StateFlow<List<ControllerProfile>> =
+    val controllerProfiles: StateFlow<List<ControllerProfile>> =
         dao.getAllControllerProfiles()
             .stateIn(
                 viewModelScope,
@@ -33,25 +32,13 @@ class ControllerSelectionViewModel @Inject constructor(
                 initialValue = emptyList()
             )
 
-    val state = combine(_controllerProfiles, sessionManager.defaultControllerProfileId)
-    { profiles, defaultId ->
-        ControllerState(
-            controllerProfileList = profiles,
-            selectedControllerProfileId = defaultId,
-        )
-    }.stateIn(
-        viewModelScope,
-        started = SharingStarted.Companion.WhileSubscribed(stopTimeoutMillis = 5000),
-        initialValue = ControllerState()
-    )
-
     /**
      * A reactive state flow that is `true` only when the conditions for
      * automatically navigating to the default profile are met.
      * The UI can observe this state to trigger side effects.
      */
     val canStartWaitForDefaultNavigation: StateFlow<Boolean> = combine(
-        flow = _controllerProfiles,
+        flow = controllerProfiles,
         flow2 = sessionManager.isFirstLoad,
         flow3 = sessionManager.defaultControllerProfileId
     ) { profiles, isFirstLoad, defaultId ->
@@ -113,7 +100,6 @@ class ControllerSelectionViewModel @Inject constructor(
 
     fun onEvent(event: ControllerSelectionEvent) {
         when (event) {
-
             is ControllerSelectionEvent.DeleteControllerSelectionProfile -> {
                 Log.d("ControllerViewModel", "Delete Controller Profile: ${event.controllerProfile}")
                 viewModelScope.launch {
@@ -123,14 +109,8 @@ class ControllerSelectionViewModel @Inject constructor(
 //                    }
                 }
             }
-
             is ControllerSelectionEvent.SelectControllerProfile -> {
                 sessionManager.updateSelectedControllerProfile(controllerProfile = event.controllerProfile)
-
-                val selectedProfile: ControllerProfile? = state.value.selectedProfile
-                selectedProfile.let {
-                    sessionManager.updateSelectedControllerProfile(controllerProfile = selectedProfile!!)
-                }
             }
 /*
             is ControllerSelectionEvent.LoadControllerSelectionProfiles -> {

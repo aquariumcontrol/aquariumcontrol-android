@@ -23,7 +23,7 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 fun ControllerAddEditHostnamePortnumberComposable(
     onEvent: (ControllerAddEditEvent) -> Unit,
     modifier: Modifier? = Modifier,
-    state: ControllerState
+    state: ControllerAddEditState
 ) {
     // This composable displays text fields for host name and port number.
     // The arrangement of the fields follows the device orientation.
@@ -43,11 +43,11 @@ fun ControllerAddEditHostnamePortnumberComposable(
             onEvent(ControllerAddEditEvent.SetControllerPort(controllerPort = it))
         },
         label = stringResource(id = R.string.port_number),
-        modifier = modifier?.then(Modifier.padding(top = 16.dp)) ?: Modifier
+        modifier = modifier?.then(other = Modifier.padding(top = 16.dp)) ?: Modifier
     )
 }
 
-val mockControllerState = ControllerState(
+val mockControllerState = ControllerAddEditState(
     controllerProfileAddress = "mock.hostname.com",
     controllerProfilePort = 80,
 )

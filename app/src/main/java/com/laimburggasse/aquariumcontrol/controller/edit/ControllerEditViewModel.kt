@@ -1,13 +1,12 @@
 package com.laimburggasse.aquariumcontrol.controller.edit
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditEvent
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditState
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfileDao
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerState
 import com.laimburggasse.aquariumcontrol.controller.common.isHostName
 import com.laimburggasse.aquariumcontrol.controller.common.isValidPortNumber
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,12 +22,12 @@ class ControllerEditViewModel(
     private val profileId: Long
 ) : ViewModel() {
     // This class represents the view model for the controller edit screen.
-    private val _state = MutableStateFlow(value = ControllerState())
-    val state: StateFlow<ControllerState> = _state
+    private val _state = MutableStateFlow(value = ControllerAddEditState())
+    val state: StateFlow<ControllerAddEditState> = _state
         .stateIn(
             viewModelScope,
             started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
-            initialValue = ControllerState()
+            initialValue = ControllerAddEditState()
         )
 
     init {
@@ -73,54 +72,27 @@ class ControllerEditViewModel(
                 }
             }
             is ControllerAddEditEvent.SetControllerProfileName -> {
-                _state.update {
-                    it.copy(
-                        controllerProfileName = event.controllerProfileName
-                    )
-                }
+                _state.update { it.copy(controllerProfileName = event.controllerProfileName) }
             }
             is ControllerAddEditEvent.SetControllerAddress -> {
-                _state.update {
-                    it.copy(
-                        controllerProfileAddress = event.controllerAddress
-                    )
-                }
-                if (isHostName(event.controllerAddress)) {
-                    Log.d(
-                        this::class.simpleName,
-                        "Invalid controller address: ${event.controllerAddress}"
-                    )
-                }
-                _state.update {
-                    it.copy(
-                        validControllerAddress = isHostName(event.controllerAddress)
-                    )
+                _state.update { it.copy(
+                    controllerProfileAddress = event.controllerAddress,
+                    validControllerAddress = isHostName(event.controllerAddress)
+                )
                 }
             }
             is ControllerAddEditEvent.SetControllerPassword -> {
-                _state.update {
-                    it.copy(
-                        controllerProfilePassword = event.controllerPassword
-                    )
-                }
+                _state.update { it.copy( controllerProfilePassword = event.controllerPassword) }
             }
             is ControllerAddEditEvent.SetControllerPort -> {
                 if (event.controllerPort.isNotEmpty()) {
                     if (isValidPortNumber(port = event.controllerPort.toInt())) {
-                        _state.update {
-                            it.copy(
-                                controllerProfilePort = event.controllerPort.toInt()
-                            )
-                        }
+                        _state.update { it.copy(controllerProfilePort = event.controllerPort.toInt()) }
                     }
                 }
             }
             is ControllerAddEditEvent.SetControllerUser -> {
-                _state.update {
-                    it.copy(
-                        controllerProfileUser = event.controllerUser
-                    )
-                }
+                _state.update { it.copy(controllerProfileUser = event.controllerUser) }
             }
             is ControllerAddEditEvent.SetDefaultControllerId -> {
                 sessionManager.saveDefaultControllerProfileId(event.controllerProfileId)

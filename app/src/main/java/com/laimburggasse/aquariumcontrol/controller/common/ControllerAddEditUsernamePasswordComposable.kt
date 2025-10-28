@@ -23,7 +23,7 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 fun ControllerAddEditUsernamePasswordComposable(
     onEvent: (ControllerAddEditEvent) -> Unit,
     modifier: Modifier? = Modifier,
-    state: ControllerState? = null,
+    state: ControllerAddEditState? = null,
 ) {
     // This composable displays text fields for user name and password.
     // The arrangement of the fields follows the device orientation.
@@ -33,7 +33,7 @@ fun ControllerAddEditUsernamePasswordComposable(
         onValueChange = {
             onEvent(ControllerAddEditEvent.SetControllerUser(controllerUser = it))
         },
-        label = { Text(stringResource(id = R.string.user_name)) },
+        label = { Text(text = stringResource(id = R.string.user_name)) },
         modifier = modifier?.then(Modifier.padding(top = 16.dp)) ?: Modifier
     )
     Spacer(modifier = Modifier.width(width = 10.dp))
@@ -42,7 +42,7 @@ fun ControllerAddEditUsernamePasswordComposable(
         onValueChange = {
             onEvent(ControllerAddEditEvent.SetControllerPassword(controllerPassword = it))
         },
-        label = { Text(stringResource(id = R.string.password)) },
+        label = { Text(text = stringResource(id = R.string.password)) },
         visualTransformation = PasswordVisualTransformation(), // Hide password
         modifier = modifier?.then(Modifier.padding(top = 16.dp)) ?: Modifier
     )
@@ -73,7 +73,7 @@ internal fun ControllerAddEditUsernamePasswordComposableLandscapePreview() {
             Row {
                 ControllerAddEditUsernamePasswordComposable(
                     onEvent = {},
-                    modifier = Modifier.weight(0.5f)
+                    modifier = Modifier.weight(weight = 0.5f)
                 )
             }
         }

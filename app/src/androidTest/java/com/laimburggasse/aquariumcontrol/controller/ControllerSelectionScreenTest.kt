@@ -12,7 +12,7 @@ import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerState
+import com.laimburggasse.aquariumcontrol.controller.selection.ControllerSelectionState
 import com.laimburggasse.aquariumcontrol.controller.selection.ControllerSelectionScreen
 import org.junit.Rule
 import org.junit.Test
@@ -49,18 +49,18 @@ class ControllerSelectionScreenTest {
         mockControllerProfile1, mockControllerProfile2
     )
 
-    val mockControllerState = ControllerState()
+    val mockControllerSelectionState = ControllerSelectionState()
 
     @Test
     fun controllerSelectionScreenDarkTest() {
         composeTestRule.setContent {
-            mockControllerState.controllerProfileList = controllerProfileList
+            mockControllerSelectionState.controllerProfileList = controllerProfileList
             MainScaffold(
                 isControllerLoaded = true,
                 navigationRouteSource = ViewNavigationRoutes.controllerAdd,
                 screenContent = {
                     ControllerSelectionScreen(
-                        state = mockControllerState,
+                        state = mockControllerSelectionState,
                         onEvent = {},
                         defaultProfileId = remember {mutableLongStateOf(value = 1)},
                         onNavigateFromController = {event, id -> },
@@ -84,13 +84,13 @@ class ControllerSelectionScreenTest {
     @Test
     fun controllerSelectionScreenLightTest() {
         composeTestRule.setContent {
-            mockControllerState.controllerProfileList = controllerProfileList
+            mockControllerSelectionState.controllerProfileList = controllerProfileList
             MainScaffold(
                 isControllerLoaded = true,
                 navigationRouteSource = ViewNavigationRoutes.controllerAdd,
                 screenContent = {
                     ControllerSelectionScreen(
-                        state = mockControllerState,
+                        state = mockControllerSelectionState,
                         onEvent = {},
                         defaultProfileId = remember {mutableLongStateOf(value = 1)},
                         onNavigateFromController = {event, id -> },

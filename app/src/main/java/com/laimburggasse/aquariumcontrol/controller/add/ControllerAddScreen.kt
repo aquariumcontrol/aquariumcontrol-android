@@ -22,15 +22,15 @@ import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditHostnamePortnumberComposable
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditUsernamePasswordComposable
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerState
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditEvent
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditHostnamePortnumberComposable
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditState
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditUsernamePasswordComposable
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 
 @Composable
 fun ControllerAddScreen(
-    state: ControllerState,
+    state: ControllerAddEditState,
     onEvent: (ControllerAddEditEvent) -> Unit,
     onAddEvent: (ControllerAddEditEvent) -> Unit
 ) {
@@ -51,7 +51,7 @@ fun ControllerAddScreen(
         ScreenHeadlineComposable(text =  stringResource(id = R.string.add_profile))
 
         OutlinedTextField(
-            value = state.selectedProfile?.name ?: "***",
+            value = state.controllerProfileName,
             onValueChange = { onEvent(ControllerAddEditEvent.SetControllerProfileName(controllerProfileName = it)) },
             label = { Text(text = stringResource(id = R.string.profile_name)) },
             modifier = Modifier.fillMaxWidth(),
@@ -90,7 +90,7 @@ fun ControllerAddScreen(
 
         Button(
             onClick = { onAddEvent(ControllerAddEditEvent.AddControllerProfile) },
-            enabled = state.selectedProfile && state.validControllerAddress,
+            enabled = state.validControllerAddress,
             modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
         ) {
             Text(text = stringResource(id = R.string.create_profile))
@@ -117,7 +117,7 @@ internal fun ControllerAddScreenPreview() {
         navigationRouteSource = ViewNavigationRoutes.controllerAdd,
         screenContent = {
             ControllerAddScreen(
-                state = ControllerState(),
+                state = ControllerAddEditState(),
                 onEvent = {},
                 onAddEvent = {}
             )

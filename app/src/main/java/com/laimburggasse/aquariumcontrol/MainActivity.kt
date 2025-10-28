@@ -34,9 +34,9 @@ import com.laimburggasse.aquariumcontrol.balling.history.BallingHistoryViewModel
 import com.laimburggasse.aquariumcontrol.controller.add.ControllerAddScreen
 import com.laimburggasse.aquariumcontrol.controller.add.ControllerAddViewModel
 import com.laimburggasse.aquariumcontrol.controller.add.ControllerAddViewModelFactory
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditState
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfileDatabase
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerState
 import com.laimburggasse.aquariumcontrol.controller.common.handleControllerNavigation
 import com.laimburggasse.aquariumcontrol.controller.edit.ControllerEditScreen
 import com.laimburggasse.aquariumcontrol.controller.edit.ControllerEditViewModel
@@ -235,13 +235,14 @@ class MainActivity : ComponentActivity() {
                 builder = {
                     composable(route = ViewNavigationRoutes.controllerSelection) {
                         val controllerSelectionViewModel: ControllerSelectionViewModel = hiltViewModel()
-                        val state: ControllerState by controllerSelectionViewModel.state.collectAsState()
+                        val controllerProfileList: List<ControllerProfile> by
+                            controllerSelectionViewModel.controllerProfiles.collectAsState()
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.controllerSelection,
                             screenContent = {
                                 ControllerSelectionScreen(
-                                    state,
+                                    controllerProfileList,
                                     onEvent = controllerSelectionViewModel::onEvent,
                                     onNavigateFromController = { event, controllerProfileId ->
                                         navHostController.handleControllerNavigation(event, controllerProfileId)
@@ -258,7 +259,7 @@ class MainActivity : ComponentActivity() {
                         val controllerAddViewModel: ControllerAddViewModel = viewModel(
                             factory = controllerAddViewModelFactory
                         )
-                        val state: ControllerState by controllerAddViewModel.state.collectAsState()
+                        val state: ControllerAddEditState by controllerAddViewModel.state.collectAsState()
                         sessionManager.setFirstLoad()
                         MainScaffold(
                             isControllerLoaded,
@@ -299,7 +300,7 @@ class MainActivity : ComponentActivity() {
                         val controllerEditViewModel: ControllerEditViewModel = viewModel(
                             factory = controllerEditViewModelFactory
                         )
-                        val editState: ControllerState by controllerEditViewModel.state.collectAsState()
+                        val editState: ControllerAddEditState by controllerEditViewModel.state.collectAsState()
 
                         if (controllerProfileId >= 0L) {
                             MainScaffold(

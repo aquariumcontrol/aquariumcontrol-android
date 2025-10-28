@@ -7,7 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerState
+import com.laimburggasse.aquariumcontrol.controller.selection.ControllerSelectionState
 import com.laimburggasse.aquariumcontrol.controller.edit.ControllerEditScreen
 import org.junit.Rule
 import org.junit.Test
@@ -31,7 +31,7 @@ class ControllerEditScreenTest {
                 navigationRouteSource = ViewNavigationRoutes.controllerAdd,
                 screenContent = {
                     ControllerEditScreen(
-                        state = ControllerState(),
+                        state = ControllerSelectionState(),
                         onEvent = {},
                         isDefaultProfileInitialValue = true,
                         onNavigateFromController = {event, id -> }
@@ -58,7 +58,7 @@ class ControllerEditScreenTest {
                 navigationRouteSource = ViewNavigationRoutes.controllerAdd,
                 screenContent = {
                     ControllerEditScreen(
-                        state = ControllerState(),
+                        state = ControllerSelectionState(),
                         onEvent = {},
                         isDefaultProfileInitialValue = true,
                         onNavigateFromController = {event, id -> }
