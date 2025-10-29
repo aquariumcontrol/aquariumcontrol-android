@@ -126,6 +126,27 @@ fun ControllerSelectionScreen(
     }
 }
 
+val mockControllerProfile1 = ControllerProfile(
+    id = 1,
+    name = "Controller 1",
+    address = "192.168.1.1",
+    port = 80,
+    user = "user",
+    password = "password",
+)
+val mockControllerProfile2 = ControllerProfile(
+    id = 2,
+    name = "Controller 2",
+    address = "servername.external.com",
+    port = 80,
+    user = "userXYZ",
+    password = "passwordXYZ",
+)
+
+val mockControllerProfileList: List<ControllerProfile> = listOf(
+    mockControllerProfile1, mockControllerProfile2
+)
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
@@ -140,27 +161,6 @@ fun ControllerSelectionScreen(
 )
 @Composable
 internal fun ControllerSelectionScreenPreview() {
-    val mockControllerProfile1 = ControllerProfile(
-        id = 1,
-        name = "Controller 1",
-        address = "192.168.1.1",
-        port = 80,
-        user = "user",
-        password = "password",
-    )
-    val mockControllerProfile2 = ControllerProfile(
-        id = 2,
-        name = "Controller 2",
-        address = "servername.external.com",
-        port = 80,
-        user = "userXYZ",
-        password = "passwordXYZ",
-    )
-
-    val mockControllerProfileList: List<ControllerProfile> = listOf(
-        mockControllerProfile1, mockControllerProfile2
-    )
-
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.controllerSelection,

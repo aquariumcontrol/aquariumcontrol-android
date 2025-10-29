@@ -145,6 +145,14 @@ fun ControllerEditScreen(
     }
 }
 
+val mockControllerEditState = ControllerAddEditState(
+    controllerProfileName = "Controller",
+    controllerProfileAddress = "192.168.1.1",
+    controllerProfilePort = 80,
+    controllerProfileUser = "user",
+    controllerProfilePassword = "password",
+)
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
@@ -159,24 +167,17 @@ fun ControllerEditScreen(
 )
 @Composable
 internal fun ControllerEditScreenPreview() {
-    val mockControllerState = ControllerAddEditState(
-        controllerProfileName = "Controller",
-        controllerProfileAddress = "192.168.1.1",
-        controllerProfilePort = 80,
-        controllerProfileUser = "user",
-        controllerProfilePassword = "password",
-    )
-
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.controllerEdit,
         screenContent = {
             ControllerEditScreen(
-                state = mockControllerState,
+                state = mockControllerEditState,
                 onEvent = {},
                 isDefaultProfileInitialValue = true,
                 onNavigateFromController = {event, id -> }
-            ) },
+            )
+        },
         onNavigate = {},
         darkTheme = isSystemInDarkTheme()
     )

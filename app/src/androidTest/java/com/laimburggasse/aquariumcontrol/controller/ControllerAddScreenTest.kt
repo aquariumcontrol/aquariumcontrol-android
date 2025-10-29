@@ -8,7 +8,7 @@ import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.controller.add.ControllerAddScreen
-import com.laimburggasse.aquariumcontrol.controller.selection.ControllerSelectionState
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditState
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -31,10 +31,11 @@ class ControllerAddScreenTest {
                 navigationRouteSource = ViewNavigationRoutes.controllerAdd,
                 screenContent = {
                     ControllerAddScreen(
-                        state = ControllerSelectionState(),
+                        state = ControllerAddEditState(),
                         onEvent = {},
                         onAddEvent = {}
-                    ) },
+                    )
+                },
                 onNavigate = {},
                 darkTheme = true
             )
@@ -56,10 +57,11 @@ class ControllerAddScreenTest {
                 navigationRouteSource = ViewNavigationRoutes.controllerAdd,
                 screenContent = {
                     ControllerAddScreen(
-                        state = ControllerSelectionState(),
+                        state = ControllerAddEditState(),
                         onEvent = {},
                         onAddEvent = {}
-                    ) },
+                    )
+                },
                 onNavigate = {},
                 darkTheme = false
             )
