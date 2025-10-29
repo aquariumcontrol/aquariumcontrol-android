@@ -16,7 +16,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import androidx.room.Room
 import com.laimburggasse.aquariumcontrol.balling.common.handleBallingNavigation
 import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditScreen
 import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditUiState
@@ -31,7 +30,6 @@ import com.laimburggasse.aquariumcontrol.controller.add.ControllerAddScreen
 import com.laimburggasse.aquariumcontrol.controller.add.ControllerAddViewModel
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditState
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfileDatabase
 import com.laimburggasse.aquariumcontrol.controller.common.handleControllerNavigation
 import com.laimburggasse.aquariumcontrol.controller.edit.ControllerEditScreen
 import com.laimburggasse.aquariumcontrol.controller.edit.ControllerEditViewModel
@@ -79,6 +77,7 @@ import com.laimburggasse.aquariumcontrol.ventilation.VentilationScreen
 import com.laimburggasse.aquariumcontrol.ventilation.VentilationSetValsUiState
 import com.laimburggasse.aquariumcontrol.ventilation.VentilationSetValsViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @Suppress("UNCHECKED_CAST")
 @AndroidEntryPoint
@@ -91,24 +90,8 @@ class MainActivity : ComponentActivity() {
         const val NO_DEFAULT_ID = -1L
     }
 
-    private val db by lazy {
-        Room.databaseBuilder(
-            applicationContext,
-            ControllerProfileDatabase::class.java,
-            "controller_profiles.db"
-        ).build()
-    }
-
-    private val sharedPreferences by lazy {
-        getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
-    }
-
-    private val sessionManager by lazy {
-        SessionManager(
-            sharedPreferences,
-            dao = db.controllerProfileDao()
-        )
-    }
+    @Inject
+    lateinit var sessionManager: SessionManager
 
     override fun onPause() {
         super.onPause()
