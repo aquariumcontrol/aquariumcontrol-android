@@ -13,14 +13,15 @@ materialIconsExtended = "1.7.8"
 mpandroidchart = "v3.1.0"
 navigationCompose = "2.9.5"
 symbolProcessingApi = "2.2.20-2.0.3"
-okhttp = "5.1.0"
+okhttp = "5.2.1"
 tracingPerfettoHandshake = "1.0.0"
-runtimeLivedata = "1.9.2"
+runtimeLivedata = "1.9.4"
 junitKtx = "1.3.0"
 screenshot = "0.0.1-alpha11"
 androidxCoreKtx = "1.17.0"
 material3 = "1.4.0"
 hilt = "2.57.2"
+hiltNavigationCompose = "1.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -54,6 +55,9 @@ androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCoreKtx" }
 screenshot-validation-api = { group = "com.android.tools.screenshot", name = "screenshot-validation-api", version.ref = "screenshot"}
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

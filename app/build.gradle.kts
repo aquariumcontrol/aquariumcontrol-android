@@ -81,11 +81,9 @@ dependencies {
     implementation(libs.kotlin.stdlib.jdk8.v1922)
     implementation(libs.androidx.tracing.perfetto.handshake)
     implementation(libs.androidx.junit.ktx)
-    implementation(libs.core.ktx)
     implementation(libs.androidx.compose.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
@@ -97,21 +95,15 @@ dependencies {
     ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
     implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")
 
-    // for pull refresh
-    implementation(libs.androidx.material3)
-
     // for charts (time data. heating stats and feed profile)
     implementation (libs.mpandroidchart)
-
-    // for serialization of data class with timestamp
-    implementation(libs.kotlinx.serialization.json.v130)
 
     // for compose preview snapshot testing
     screenshotTestImplementation(libs.screenshot.validation.api)
     screenshotTestImplementation(libs.androidx.ui.tooling)
 
     // for Dagger/Hilt
-    implementation("com.google.dagger:hilt-android:2.57.2")
-    kapt("com.google.dagger:hilt-compiler:2.57.2")
-    implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 }

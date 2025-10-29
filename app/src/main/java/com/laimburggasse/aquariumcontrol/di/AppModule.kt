@@ -50,15 +50,14 @@ object AppModule {
         return SessionManager(sharedPreferences, dao)
     }
 
-    /*
-    @ApplicationScope
     @Singleton
+    @ApplicationScope
     @Provides
-    fun provideApplicationScope(): CoroutineScope {
+    fun provideCoroutineScope(): CoroutineScope {
         // SupervisorJob makes sure that if one coroutine in this scope fails,
         // it doesn't cancel the entire scope.
         return CoroutineScope(context = SupervisorJob())
-    }*/
+    }
 }
 
 

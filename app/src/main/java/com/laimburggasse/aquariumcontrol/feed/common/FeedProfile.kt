@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import javax.inject.Inject
 
-data class FeedProfile @Inject constructor(
+data class FeedProfile(
     val profileID: Int,
     val profileName: String,
     val feedProfilePhases: List<FeedProfilePhase>,

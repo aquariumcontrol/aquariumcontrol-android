@@ -7,8 +7,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+//import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -16,12 +16,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.room.Room
-import com.laimburggasse.aquariumcontrol.balling.common.BallingProfilesRepository
 import com.laimburggasse.aquariumcontrol.balling.common.handleBallingNavigation
 import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditScreen
 import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditUiState
 import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditViewModel
-import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditViewModelFactory
 import com.laimburggasse.aquariumcontrol.balling.entry.BallingProfilesUiState
 import com.laimburggasse.aquariumcontrol.balling.entry.BallingProfilesViewModel
 import com.laimburggasse.aquariumcontrol.balling.entry.BallingScreen
@@ -63,22 +61,18 @@ import com.laimburggasse.aquariumcontrol.heating.HeatingStatsUiState
 import com.laimburggasse.aquariumcontrol.heating.HeatingStatsViewModel
 import com.laimburggasse.aquariumcontrol.info.InfoScreen
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.handleMainDropDownMenuNavigation
-import com.laimburggasse.aquariumcontrol.overview.OverviewRepository
 import com.laimburggasse.aquariumcontrol.overview.OverviewScreen
 import com.laimburggasse.aquariumcontrol.overview.OverviewUiState
 import com.laimburggasse.aquariumcontrol.overview.OverviewViewModel
-import com.laimburggasse.aquariumcontrol.overview.OverviewViewModelFactory
 import com.laimburggasse.aquariumcontrol.refill.common.handleRefillNavigation
 import com.laimburggasse.aquariumcontrol.refill.entry.RefillScreen
 import com.laimburggasse.aquariumcontrol.refill.entry.RefillViewModel
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryScreen
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryUiState
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryViewModel
-import com.laimburggasse.aquariumcontrol.schedule.ScheduleRepository
 import com.laimburggasse.aquariumcontrol.schedule.ScheduleScreen
 import com.laimburggasse.aquariumcontrol.schedule.ScheduleUiState
 import com.laimburggasse.aquariumcontrol.schedule.ScheduleViewModel
-import com.laimburggasse.aquariumcontrol.schedule.ScheduleViewModelFactory
 import com.laimburggasse.aquariumcontrol.timedata.TimeDataScreen
 import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState
 import com.laimburggasse.aquariumcontrol.timedata.TimeDataViewModel
@@ -117,15 +111,7 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    private val overviewRepository by lazy { OverviewRepository(sessionManager = sessionManager) }
-
-    private val overviewViewModelFactory by lazy { OverviewViewModelFactory(overviewRepository) }
-
-    private val ballingProfilesRepository by lazy { BallingProfilesRepository(sessionManager = sessionManager) }
-
     private val feedProfilesRepository by lazy { FeedProfilesRepository(sessionManager = sessionManager) }
-    private val scheduleRepository by lazy { ScheduleRepository(sessionManager = sessionManager) }
-    private val scheduleViewModelFactory by lazy { ScheduleViewModelFactory(scheduleRepository) }
 
     override fun onPause() {
         super.onPause()
