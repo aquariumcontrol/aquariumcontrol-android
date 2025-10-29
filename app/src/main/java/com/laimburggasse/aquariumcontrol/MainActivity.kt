@@ -2,6 +2,7 @@ package com.laimburggasse.aquariumcontrol
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.LaunchedEffect
@@ -282,30 +283,19 @@ class MainActivity : ComponentActivity() {
                             navArgument(name = "feedProfileId") { type = NavType.IntType }
                         )
                     ) { backStackEntry ->
-                        val feedProfileId: Int? = backStackEntry.arguments?.getInt("feedProfileId")
-                        if (feedProfileId != null) {
-                            val feedProfile: FeedProfile? = feedProfilesRepository.findProfileById(feedProfileId)
-                            if (feedProfile != null) {
-                                // view model factory needs to be created with dedicated feed profile
-                                val feedProfileEditViewModel: FeedProfileEditViewModel = hiltViewModel()
-                                val uiState: FeedProfileEditUiState by feedProfileEditViewModel.uiState.collectAsState()
-                                MainScaffold(
-                                    isControllerLoaded,
-                                    navigationRouteSource = ViewNavigationRoutes.feedEdit,
-                                    screenContent = { FeedProfileEditScreen(
-                                        uiState,
-                                        onFeedProfileEditUiEvent = feedProfileEditViewModel::onFeedProfileEditUiEvent,
-                                    ) },
-                                    onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }
-                                )
-                            }
-                            else {
-                                // @todo: handle error case (e.g. navigate back)
-                            }
-                        }
-                        else {
-                            // @todo: handle error case (e.g. navigate back)
-                        }
+ //                       val feedProfileId: Int? = backStackEntry.arguments?.getInt("feedProfileId")
+                        val feedProfileEditViewModel: FeedProfileEditViewModel = hiltViewModel()
+                        Log.d("feedEdit", "Created FeedProfileEditViewModel")
+                        val uiState: FeedProfileEditUiState by feedProfileEditViewModel.uiState.collectAsState()
+                        MainScaffold(
+                            isControllerLoaded,
+                            navigationRouteSource = ViewNavigationRoutes.feedEdit,
+                            screenContent = { FeedProfileEditScreen(
+                                uiState,
+                                onFeedProfileEditUiEvent = feedProfileEditViewModel::onFeedProfileEditUiEvent,
+                            ) },
+                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }
+                        )
                     }
                     composable(route = ViewNavigationRoutes.feedAddProfile) {
                         val feedProfileAddViewModel: FeedProfileAddViewModel = hiltViewModel()

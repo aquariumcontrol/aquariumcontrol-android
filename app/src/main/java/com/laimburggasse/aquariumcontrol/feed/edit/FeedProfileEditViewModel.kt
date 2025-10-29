@@ -1,14 +1,13 @@
 package com.laimburggasse.aquariumcontrol.feed.edit
 
+import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.mikephil.charting.data.LineData
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilePhase
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilesRepository
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -16,20 +15,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-@HiltViewModel(assistedFactory = FeedProfileEditViewModel.Factory::class)
-class FeedProfileEditViewModel @AssistedInject constructor(
-    private val originalFeedProfile: FeedProfile,
+@HiltViewModel
+class FeedProfileEditViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
     private val feedProfilesRepository: FeedProfilesRepository,
-    @Assisted private val initialExpandedItemIds: Set<Int> = emptySet() // for testing purposes
 ) : ViewModel() {
-    @AssistedFactory
-    interface Factory {
-        fun create(initialExpandedItemIds: Set<Int> = emptySet()): FeedProfileEditViewModel
-    }
+    private var originalFeedProfile: FeedProfile = FeedProfile()
 
     private val _feedProfileState = MutableStateFlow(value = originalFeedProfile)
-    private val _expandedItemIds = MutableStateFlow(value = initialExpandedItemIds)
+    private val _expandedItemIds = MutableStateFlow<Set<Int>>(value = emptySet())
     private val _lineDataFeeder = MutableStateFlow<LineData?>(value = null)
     private val _lineDataSkimmer = MutableStateFlow<LineData?>(value = null)
     private val _lineDataMainPump1 = MutableStateFlow<LineData?>(value = null)
@@ -72,18 +68,41 @@ class FeedProfileEditViewModel @AssistedInject constructor(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = FeedProfileEditUiState() // Start with a default, empty state
     )
-    
+
     init {
         viewModelScope.launch {
-            _feedProfileState.collect { currentProfile ->
-                val chartBundle: FeedProfileChartDataBundle = FeedProfileChartDataFactory.create(currentProfile)
-                _lineDataFeeder.value = chartBundle.lineDataFeeder
-                _lineDataSkimmer.value = chartBundle.lineDataSkimmer
-                _lineDataMainPump1.value = chartBundle.lineDataMainPump1
-                _lineDataMainPump2.value = chartBundle.lineDataMainPump2
-                _lineDataAuxPump1.value = chartBundle.lineDataAuxPump1
-                _lineDataAuxPump2.value = chartBundle.lineDataAuxPump2
-                _totalDuration.value = chartBundle.totalDuration
+            // 1. Get the profileId from navigation arguments via SavedStateHandle.
+            val profileId: Int? = savedStateHandle.get("feedProfileId")
+
+            if (profileId != null) {
+                // 2. Fetch the initial FeedProfile from the repository.
+                val profile = feedProfilesRepository.findProfileById(profileId)
+
+                if (profile != null) {
+                    // 3. Store the fetched profile as the "original" for the reset functionality.
+                    originalFeedProfile = profile
+
+                    // 4. Update the state flow for the feed profile, which will trigger the 'combine' operator.
+                    _feedProfileState.value = profile
+
+                    // 5. Generate the chart data based on the fetched profile.
+                    val chartBundle: FeedProfileChartDataBundle = FeedProfileChartDataFactory.create(profile)
+
+                    // 6. Update all the chart-related state flows.
+                    _lineDataFeeder.value = chartBundle.lineDataFeeder
+                    _lineDataSkimmer.value = chartBundle.lineDataSkimmer
+                    _lineDataMainPump1.value = chartBundle.lineDataMainPump1
+                    _lineDataMainPump2.value = chartBundle.lineDataMainPump2
+                    _lineDataAuxPump1.value = chartBundle.lineDataAuxPump1
+                    _lineDataAuxPump2.value = chartBundle.lineDataAuxPump2
+                    _totalDuration.value = chartBundle.totalDuration
+                } else {
+                    Log.e("FeedProfileEditViewModel", "Profile with id $profileId not found.")
+                    // @todo: Error UI state
+                }
+            } else {
+                Log.d("FeedProfileEditViewModel", "profileId is null, likely creating a new profile.")
+                // @todo: Error Ui state
             }
         }
     }
