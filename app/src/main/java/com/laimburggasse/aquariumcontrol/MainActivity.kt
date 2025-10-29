@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol
 
+//import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
@@ -9,7 +10,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
-//import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -40,8 +40,6 @@ import com.laimburggasse.aquariumcontrol.controller.selection.ControllerSelectio
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddScreen
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddUiState
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddViewModel
-import com.laimburggasse.aquariumcontrol.feed.common.FeedProfile
-import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilesRepository
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilesViewModel
 import com.laimburggasse.aquariumcontrol.feed.common.FeedScheduleUiState
 import com.laimburggasse.aquariumcontrol.feed.common.FeedScheduleViewModel
@@ -111,8 +109,6 @@ class MainActivity : ComponentActivity() {
             dao = db.controllerProfileDao()
         )
     }
-
-    private val feedProfilesRepository by lazy { FeedProfilesRepository(sessionManager = sessionManager) }
 
     override fun onPause() {
         super.onPause()
@@ -332,50 +328,35 @@ class MainActivity : ComponentActivity() {
                             navArgument(name = ViewNavigationRoutes.FEED_ARG_MILLIS_SINCE_EPOCH) { type = NavType.LongType }
                         )
                     ) { backStackEntry ->
-                        val feedProfileId: Int? = backStackEntry.arguments?.getInt(
-                            ViewNavigationRoutes.FEED_ARG_PROFILE_ID
-                        )
-                        val isNewScheduleEntry: Boolean? = backStackEntry.arguments?.getBoolean(
-                            ViewNavigationRoutes.FEED_ARG_IS_NEW_SCHEDULE_ENTRY
-                        )
-                        val millisSinceEpoch: Long? = backStackEntry.arguments?.getLong(
-                            ViewNavigationRoutes.FEED_ARG_MILLIS_SINCE_EPOCH
-                        )
-                        if (feedProfileId != null && isNewScheduleEntry != null && millisSinceEpoch != null) {
-                            val feedProfilesViewModel: FeedProfilesViewModel = hiltViewModel()
-                            val feedScheduleViewModel: FeedScheduleViewModel = hiltViewModel()
-                            val feedProfile = feedProfilesViewModel.findProfileById(profileID = feedProfileId)
-                            if (feedProfile != null) {
-                                MainScaffold(
-                                    isControllerLoaded,
-                                    navigationRouteSource = ViewNavigationRoutes.feedSchedule,
-                                    screenContent = {
-                                        FeedProfileScheduleScreen(
-                                            feedProfile,
+                        val feedScheduleViewModel: FeedScheduleViewModel = hiltViewModel()
+                        val feedProfile by feedScheduleViewModel.feedProfile.collectAsState()
+                        val isNewScheduleEntry by feedScheduleViewModel.isNewScheduleEntry.collectAsState()
+                        val millisSinceEpoch by feedScheduleViewModel.millisSinceEpoch.collectAsState()
+                        MainScaffold(
+                            isControllerLoaded,
+                            navigationRouteSource = ViewNavigationRoutes.feedSchedule,
+                            screenContent = {
+                                FeedProfileScheduleScreen(
+                                    feedProfile,
+                                    isNewScheduleEntry,
+                                    millisSinceEpoch,
+                                    onNavigateFromFeed = { event, profileId, isNew, millis ->
+                                        navHostController.handleFeedNavigation(
+                                            event,
+                                            feedProfileId = feedProfile.profileID,
                                             isNewScheduleEntry,
-                                            millisSinceEpoch,
-                                            onNavigateFromFeed = { event, profileId, isNew, millis ->
-                                                navHostController.handleFeedNavigation(
-                                                    event,
-                                                    feedProfileId,
-                                                    isNewScheduleEntry,
-                                                    millisSinceEpoch
-                                                )
-                                            },
-                                            onFeedScheduleEntryUiEvent = feedScheduleViewModel::onFeedScheduleEntryUiEvent
+                                            millisSinceEpoch
                                         )
                                     },
-                                    onNavigate = { event ->
-                                        navHostController.handleMainDropDownMenuNavigation(
-                                            event, sessionManager
-                                        )
-                                    },
+                                    onFeedScheduleEntryUiEvent = feedScheduleViewModel::onFeedScheduleEntryUiEvent
                                 )
-                            }
-                        }
-                        else {
-                            // @todo: handle error case (e.g. navigate back)
-                        }
+                            },
+                            onNavigate = { event ->
+                                navHostController.handleMainDropDownMenuNavigation(
+                                    event, sessionManager
+                                )
+                            },
+                        )
                     }
                     composable(route = ViewNavigationRoutes.balling) {
                         val ballingViewModel: BallingProfilesViewModel = hiltViewModel()
