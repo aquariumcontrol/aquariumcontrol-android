@@ -42,6 +42,7 @@ class ControllerSelectionViewModel @Inject constructor(
         flow2 = sessionManager.isFirstLoad,
         flow3 = sessionManager.defaultControllerProfileId
     ) { profiles, isFirstLoad, defaultId ->
+        Log.d("ControllerViewModel", "canStartWaitForDefaultNavigation: $profiles, $isFirstLoad, $defaultId")
         profiles.isNotEmpty() && (defaultId != null) && isFirstLoad
     }.stateIn(
         scope = viewModelScope,

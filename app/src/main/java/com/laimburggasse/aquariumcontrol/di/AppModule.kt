@@ -13,6 +13,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import javax.inject.Singleton
 
@@ -43,20 +44,19 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideSessionManager(
-        sharedPreferences: SharedPreferences,
-        dao: ControllerProfileDao
-    ): SessionManager {
-        return SessionManager(sharedPreferences, dao)
+    @ApplicationScope
+    fun provideApplicationScope(): CoroutineScope {
+        return CoroutineScope(SupervisorJob() + Dispatchers.Default)
     }
 
-    @Singleton
-    @ApplicationScope
     @Provides
-    fun provideCoroutineScope(): CoroutineScope {
-        // SupervisorJob makes sure that if one coroutine in this scope fails,
-        // it doesn't cancel the entire scope.
-        return CoroutineScope(context = SupervisorJob())
+    @Singleton
+    fun provideSessionManager(
+        sharedPreferences: SharedPreferences,
+        dao: ControllerProfileDao,
+        @ApplicationScope externalScope: CoroutineScope // Hilt gets this from the provider above
+    ): SessionManager {
+        return SessionManager(sharedPreferences, dao, externalScope)
     }
 }
 

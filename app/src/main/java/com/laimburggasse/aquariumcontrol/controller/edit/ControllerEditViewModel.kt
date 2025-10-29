@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol.controller.edit
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.SessionManager
@@ -9,9 +10,6 @@ import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfileDao
 import com.laimburggasse.aquariumcontrol.controller.common.isHostName
 import com.laimburggasse.aquariumcontrol.controller.common.isValidPortNumber
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,19 +17,20 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-@HiltViewModel(assistedFactory = ControllerEditViewModel.Factory::class)
-class ControllerEditViewModel @AssistedInject constructor(
+@HiltViewModel
+class ControllerEditViewModel @Inject constructor(
     private val dao: ControllerProfileDao,
     private val sessionManager: SessionManager,
-    @Assisted private val profileId: Long
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     // This class represents the view model for the controller edit screen.
-    @AssistedFactory
-    interface Factory {
-        fun create(profileId: Long): ControllerEditViewModel
-    }
 
+    // Get the ID directly from the navigation arguments
+    private val controllerProfileId: Long? = savedStateHandle.get<Long>("controllerProfileId")?.let {
+        if (it == -1L) null else it
+    }
     private val _state = MutableStateFlow(value = ControllerAddEditState())
     val state: StateFlow<ControllerAddEditState> = _state
         .stateIn(
@@ -43,9 +42,9 @@ class ControllerEditViewModel @AssistedInject constructor(
     init {
         // In the init block, load the profile from the database using the provided ID.
         // This populates the ViewModel's state as soon as it's created.
-        if (profileId != -1L) {
+        if (controllerProfileId != -1L) {
             viewModelScope.launch {
-                dao.getControllerProfileById(profileId)?.let { profile ->
+                dao.getControllerProfileById(id = controllerProfileId!!)?.let { profile ->
                     _state.update {
                         it.copy(
                             controllerProfileId = profile.id,

@@ -144,7 +144,6 @@ class MainActivity : ComponentActivity() {
                     {
                         val controllerAddViewModel: ControllerAddViewModel = hiltViewModel()
                         val state: ControllerAddEditState by controllerAddViewModel.state.collectAsState()
-                        sessionManager.setFirstLoad()
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.controllerAdd,
@@ -172,28 +171,25 @@ class MainActivity : ComponentActivity() {
                         )
                     )
                     { backStackEntry ->
-                        sessionManager.setFirstLoad()
                         val controllerProfileId: Long = backStackEntry.arguments?.getLong("controllerProfileId") ?: -1L
                         val controllerEditViewModel: ControllerEditViewModel = hiltViewModel()
                         val editState: ControllerAddEditState by controllerEditViewModel.state.collectAsState()
 
-                        if (controllerProfileId >= 0L) {
-                            MainScaffold(
-                                isControllerLoaded,
-                                navigationRouteSource = ViewNavigationRoutes.controllerEdit,
-                                screenContent = {
-                                    ControllerEditScreen(
-                                        state = editState,
-                                        onEvent = controllerEditViewModel::onEvent,
-                                        isDefaultProfileInitialValue = sessionManager.defaultControllerProfileId.collectAsState().value == controllerProfileId,
-                                        onNavigateFromController = { event, controllerProfileId ->
-                                            navHostController.handleControllerNavigation(event, controllerProfileId)
-                                        }
-                                    )
-                                },
-                                onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }
-                            )
-                        }
+                        MainScaffold(
+                            isControllerLoaded,
+                            navigationRouteSource = ViewNavigationRoutes.controllerEdit,
+                            screenContent = {
+                                ControllerEditScreen(
+                                    state = editState,
+                                    onEvent = controllerEditViewModel::onEvent,
+                                    isDefaultProfileInitialValue = sessionManager.defaultControllerProfileId.collectAsState().value == controllerProfileId,
+                                    onNavigateFromController = { event, controllerProfileId ->
+                                        navHostController.handleControllerNavigation(event, controllerProfileId)
+                                    }
+                                )
+                            },
+                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }
+                        )
                     }
                     composable(route = ViewNavigationRoutes.feed) {
                         val feedProfilesViewModel: FeedProfilesViewModel = hiltViewModel()
@@ -562,7 +558,7 @@ class MainActivity : ComponentActivity() {
                             LaunchedEffect(key1 = controllerProfileId) {
                                 if (controllerProfileId >= 0L) {
                                     sessionManager.selectControllerById(controllerProfileId)
-                                    sessionManager.setFirstLoad() // Controller selection may navigate here without user interaction
+                                    sessionManager.suppressAutoNavigation() // Controller selection may navigate here without user interaction
                                 }
                             }
                             val overviewViewModel: OverviewViewModel = hiltViewModel()

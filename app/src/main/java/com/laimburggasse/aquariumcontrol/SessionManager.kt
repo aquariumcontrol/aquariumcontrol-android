@@ -7,9 +7,9 @@ import com.laimburggasse.aquariumcontrol.MainActivity.Companion.KEY_DEFAULT_PROF
 import com.laimburggasse.aquariumcontrol.MainActivity.Companion.NO_DEFAULT_ID
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfileDao
+import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -17,21 +17,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 open class SessionManager(
     private val sharedPreferences: SharedPreferences? = null,
-    private val dao: ControllerProfileDao
+    private val dao: ControllerProfileDao,
+    @ApplicationScope private val externalScope: CoroutineScope
 ) {
-    // Create a dedicated CoroutineScope for this singleton.
-    // SupervisorJob() ensures that if one coroutine in this scope fails, it doesn't cancel the whole scope.
-    // Dispatchers.Default is appropriate for CPU-bound work like the `.map` operator.
-
-    init {
-        Log.d("SessionManager_LIFECYCLE", "A new SessionManager instance has been CREATED. HashCode: ${this.hashCode()}")
-    }
-    private val sessionScope = CoroutineScope(context = SupervisorJob() + Dispatchers.Default)
-
     private val _selectedControllerProfile = MutableStateFlow<ControllerProfile?>(value = null)
     val selectedControllerProfile: StateFlow<ControllerProfile?> = _selectedControllerProfile.asStateFlow()
     val isControllerLoaded: StateFlow<Boolean> = selectedControllerProfile.map { it != null }
@@ -41,19 +34,33 @@ open class SessionManager(
         .stateIn(
             started = SharingStarted.Eagerly,
             initialValue = false,
-            scope = sessionScope
+            scope = externalScope
         )
     private var previousControllerProfileId: Long? = null
 
-    private val _defaultControllerProfileId = MutableStateFlow(
-        value = sharedPreferences?.getLong(KEY_DEFAULT_PROFILE_ID, NO_DEFAULT_ID).let {
-            if (it == NO_DEFAULT_ID) null else it
-        }
-    )
+    // Initialize with null. The value will be loaded asynchronously.
+    private val _defaultControllerProfileId = MutableStateFlow<Long?>(value = null)
     val defaultControllerProfileId: StateFlow<Long?> = _defaultControllerProfileId.asStateFlow()
 
     private val _isFirstLoad = MutableStateFlow(value = true)
     val isFirstLoad: StateFlow<Boolean> = _isFirstLoad.asStateFlow()
+
+    init {
+        Log.d("SessionManager_LIFECYCLE", "A new SessionManager instance has been CREATED. HashCode: ${this.hashCode()}")
+        externalScope.launch {
+            val defaultId = withContext(context = Dispatchers.IO) { // Use Dispatchers.IO for file access
+                sharedPreferences?.getLong(KEY_DEFAULT_PROFILE_ID, NO_DEFAULT_ID)
+            }
+            if (defaultId != NO_DEFAULT_ID) {
+                // Emit the loaded value. This will trigger the 'combine' in the ViewModel.
+                Log.d("SessionManager", "Loaded defaultId: $defaultId")
+                _defaultControllerProfileId.value = defaultId
+            }
+            else {
+                Log.d("SessionManager", "No defaultId found")
+            }
+        }
+    }
 
     suspend fun selectControllerById(id: Long): Boolean {
         Log.d("SessionManager", "selectControllerById: $id")
@@ -103,7 +110,8 @@ open class SessionManager(
         return selectedControllerProfile.value?.name
     }
 
-    fun setFirstLoad() {
+    fun suppressAutoNavigation() {
+        Log.d("SessionManager", "suppressAutoNavigation")
         _isFirstLoad.value = false
     }
 
