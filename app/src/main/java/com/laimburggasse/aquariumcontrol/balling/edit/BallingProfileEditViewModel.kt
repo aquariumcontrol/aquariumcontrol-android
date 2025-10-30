@@ -1,9 +1,6 @@
 package com.laimburggasse.aquariumcontrol.balling.edit
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,7 +8,11 @@ import com.laimburggasse.aquariumcontrol.balling.common.BallingProfile
 import com.laimburggasse.aquariumcontrol.balling.common.BallingProfilesRepository
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,61 +23,74 @@ class BallingProfileEditViewModel @Inject constructor(
 ): ViewModel() {
     // This class will allow the user to edit the Balling dosing profile.
 
-    var ballingProfileEditUiState: BallingProfileEditUiState by mutableStateOf(
-        value = BallingProfileEditUiState.Loading
-    )
-        private set
+    val unconfirmedProfile = MutableStateFlow<BallingProfile?>(value = null)
 
-    init {
-        viewModelScope.launch {
-            // 1. Get the profileId from navigation arguments via SavedStateHandle.
-            val ballingProfileId: Int? = savedStateHandle.get("ballingProfileId")
+    var ballingProfileEditUiState: StateFlow<BallingProfileEditUiState> =
+        combine(
+            flow = ballingProfilesRepository.ballingProfiles,
+            flow2 = unconfirmedProfile
+        ) { result, unconfirmedProfile ->
+            // Get the ID from navigation arguments.
+            val ballingProfileId: Int? = savedStateHandle["ballingProfileId"]
+            if (ballingProfileId == null) {
+                Log.d("BallingProfileEditViewModel", "ballingProfileId is null")
+                return@combine BallingProfileEditUiState.Error(errorMessage = "Profile ID not provided.")
+            }
 
-            if (ballingProfileId != null) {
-                val currentRepoState: DataFetchResult<List<BallingProfile>> =
-                    ballingProfilesRepository.ballingProfiles.first()
-
-                if (currentRepoState is DataFetchResult.Success) {
-                    val profile: BallingProfile? = currentRepoState.data.find {
-                        it.pumpId == ballingProfileId
-                    }
-                    ballingProfileEditUiState = if (profile != null) {
-                        BallingProfileEditUiState.Success(ballingProfile = profile)
+            when (result) {
+                is DataFetchResult.Success -> {
+                    // Find the specific profile from the list.
+                    val profileFromServer = result.data.find { it.pumpId == ballingProfileId }
+                    if (profileFromServer != null) {
+                        // 2. Prioritize the unconfirmed profile if it exists.
+                        //    If the user has started editing, show their edits.
+                        //    Otherwise, show the profile from the server.
+                        val profileToShow = unconfirmedProfile ?: profileFromServer
+                        BallingProfileEditUiState.Success(ballingProfile = profileToShow)
                     } else {
+                        // The list was loaded, but the specific profile wasn't found.
                         BallingProfileEditUiState.NotFound
                     }
-                } else {
-                    ballingProfileEditUiState = BallingProfileEditUiState.Error(
-                        errorMessage = "Data not available. Go back and try again."
-                    )
                 }
+                // @todo: implement loading state
+                // An error occurred in the repository.
+                is DataFetchResult.Error -> BallingProfileEditUiState.Error(errorMessage = result.errorMessage)
             }
-            else {
-                // @ todo: emit error state
-                Log.d("BallingProfileEditViewModel", "ballingProfileId is null")
-            }
-        }
-    }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = BallingProfileEditUiState.Loading // Start in a loading state.
+        )
+
+
 
     fun onConfirmDosing(newVolume: Double) {
-        val currentState: BallingProfileEditUiState = ballingProfileEditUiState
+        val currentState: BallingProfileEditUiState = ballingProfileEditUiState.value
         if (currentState is BallingProfileEditUiState.Success) {
             val updatedProfile: BallingProfile = currentState.ballingProfile.copy(volume = newVolume)
-
-            ballingProfileEditUiState = BallingProfileEditUiState.Success(ballingProfile = updatedProfile)
-
             viewModelScope.launch {
                 ballingProfilesRepository.updateBallingProfile(ballingProfile = updatedProfile)
             }
         }
     }
 
+    /**
+     * Updates the `unconfirmedProfile` StateFlow with the user's edits.
+     * This will trigger the `combine` operator and update the UI state reactively.
+     */
     fun onVolumeChange(newVolume: Double) {
-        val currentState = ballingProfileEditUiState
+        // Read the current state of the UI
+        val currentState = ballingProfileEditUiState.value
+
+        // Only proceed if we have a successful state to work with
         if (currentState is BallingProfileEditUiState.Success) {
-            ballingProfileEditUiState = currentState.copy(
-                ballingProfile = currentState.ballingProfile.copy(volume = newVolume)
-            )
+            // If the user hasn't edited before, `unconfirmedProfile` is null.
+            // In that case, we start with a copy of the profile from the UI state.
+            // Otherwise, we continue editing the existing `unconfirmedProfile`.
+            val baseProfile = unconfirmedProfile.value ?: currentState.ballingProfile
+
+            // Create a new copy with the updated volume and set it.
+            unconfirmedProfile.value = baseProfile.copy(volume = newVolume)
         }
     }
 

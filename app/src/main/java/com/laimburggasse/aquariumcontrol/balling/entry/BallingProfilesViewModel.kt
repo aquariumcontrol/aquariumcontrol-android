@@ -30,7 +30,7 @@ class BallingProfilesViewModel @Inject constructor(
             }
         }.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.Companion.Eagerly,
+            started = SharingStarted.Eagerly,
             initialValue = BallingProfilesUiState.Loading // The UI starts in a loading state
         )
 }

@@ -1,9 +1,7 @@
 package com.laimburggasse.aquariumcontrol
 
-//import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.LaunchedEffect
@@ -395,8 +393,8 @@ class MainActivity : ComponentActivity() {
                     ) { backStackEntry ->
                         // view model needs to be created with dedicated balling profile
                         val ballingProfileEditViewModel: BallingProfileEditViewModel = hiltViewModel()
-                        val ballingProfileEditUiState: BallingProfileEditUiState =
-                            ballingProfileEditViewModel.ballingProfileEditUiState
+                        val ballingProfileEditUiState: BallingProfileEditUiState by
+                            ballingProfileEditViewModel.ballingProfileEditUiState.collectAsState()
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.ballingEdit,
