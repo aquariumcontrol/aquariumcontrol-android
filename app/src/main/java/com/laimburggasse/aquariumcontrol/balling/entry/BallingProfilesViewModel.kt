@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -17,7 +16,7 @@ class BallingProfilesViewModel @Inject constructor(
     ballingProfilesRepository: BallingProfilesRepository
 ): ViewModel() {
 
-    val ballingProfilesUiState: StateFlow<BallingProfilesUiState> = ballingProfilesRepository.profilesFlow
+    val ballingProfilesUiState: StateFlow<BallingProfilesUiState> = ballingProfilesRepository.ballingProfiles
         .map { result ->
             when (result) {
                 is DataFetchResult.Error -> BallingProfilesUiState.Error(errorMessage = result.errorMessage)

@@ -42,7 +42,6 @@ class TimeDataReader(private val urlWithoutParameters: String) {
             for ((key: String, value: String) in optionalGetParams) {
                 url += "$key=$value&"
             }
-
             val request: Request = Request.Builder().url(url).build()
 
             val response: Response = client.newCall(request).execute()

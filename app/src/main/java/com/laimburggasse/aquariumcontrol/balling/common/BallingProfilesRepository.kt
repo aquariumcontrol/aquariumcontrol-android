@@ -11,13 +11,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -32,32 +30,30 @@ open class BallingProfilesRepository @Inject constructor(private val sessionMana
      * Whenever EITHER of them emits, it re-fetches the data.
      */
     @OptIn(ExperimentalCoroutinesApi::class)
-    open val profilesFlow: Flow<DataFetchResult<List<BallingProfile>>> =
-        // 1. We still listen to the selected controller profile.
-        sessionManager.selectedControllerProfile
+    open val ballingProfiles: Flow<DataFetchResult<List<BallingProfile>>> =
+        combine(
+            // 1. We still listen to the selected controller profile.
+            flow = sessionManager.selectedControllerProfile,
+            flow2 = refreshTrigger.onStart { emit(value = Unit) }
+        ) { controller, _ -> controller }
             // 2. We use `filterNotNull()` to IGNORE the initial `null` emission at app startup.
             //    This effectively pauses the flow until a controller is actually selected.
             .filterNotNull()
             // 3. `flatMapLatest` will now ONLY execute when it receives a non-null controller.
             .flatMapLatest { controller ->
                 flow {
-                    if (controller == null) {
-                        // If no controller is selected, emit a success state with an empty list.
-                        // This is a valid, non-error state.
-                        emit(DataFetchResult.Error(exception = null, errorMessage = "still null"))
-                        return@flow
-                    }
-
                     // @todo: implement Loading state
                     // Emit Loading state before the network call.
                     // emit(DataFetchResult.Error(exception = null, errorMessage = "still null"))
 
                     // Perform the network request on a background thread.
-                    val result: DataFetchResult<List<BallingProfile>> = withContext(context = Dispatchers.IO) {
-                        val url = "http://${controller.address}${WebApiUrls.BALLING_GET_SET_VALS}"
-                        val reader = BallingProfileReader(url)
-                        reader.readBallingProfiles()
-                    }
+                    val result: DataFetchResult<List<BallingProfile>> =
+                        withContext(context = Dispatchers.IO) {
+                            val url =
+                                "http://${controller.address}${WebApiUrls.BALLING_GET_SET_VALS}"
+                            val reader = BallingProfileReader(url)
+                            reader.readBallingProfiles()
+                        }
 
                     // Emit the final result (Success or Error) from the network call.
                     emit(value = result)
@@ -66,7 +62,7 @@ open class BallingProfilesRepository @Inject constructor(private val sessionMana
 
     suspend fun updateBallingProfile(ballingProfile: BallingProfile) {
         Log.d("BallingRepository", "Updating balling profile: $ballingProfile")
-        val controllerAddress = sessionManager.getControllerAddress()
+        val controllerAddress: String? = sessionManager.getControllerAddress()
         if (controllerAddress.isNullOrBlank()) {
             Log.e("BallingRepository", "Update failed: No controller address.")
             return
@@ -87,10 +83,10 @@ open class BallingProfilesRepository @Inject constructor(private val sessionMana
         // 3. Instead of updating a dead flow, trigger a refresh of the live one.
         if (requestSuccess) {
             Log.d("BallingRepository", "Server update successful. Triggering refresh.")
-            refreshTrigger.emit(Unit) // This will cause the `profilesFlow` to re-fetch.
+            refreshTrigger.emit(value = Unit) // This will cause the `profilesFlow` to re-fetch.
         } else {
             Log.e("BallingRepository", "Server update failed.")
-            // Optionally, you could emit an event to the UI to show a failure snackbar.
+            // @todo: emit an event to the UI to show a failure.
         }
     }
 

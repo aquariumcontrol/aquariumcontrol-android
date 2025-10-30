@@ -23,9 +23,7 @@ class TimeDataViewModel @Inject constructor(
                     if (result.data.isEmpty()) {
                         TimeDataUiState.Empty
                     } else {
-                        TimeDataUiState.Success(
-                            timeDataSets = TimeDataSets(timeData = result.data)
-                        )
+                        TimeDataUiState.Success(timeDataSets = TimeDataSets(timeData = result.data))
                     }
                 }
             }
@@ -35,19 +33,14 @@ class TimeDataViewModel @Inject constructor(
             initialValue = TimeDataUiState.Loading
         )
 
-    fun loadData() {
-        viewModelScope.launch {
-            timeDataRepository.fetchTimeData()
-        }
-    }
-
-    init {
-        loadData()
-    }
 
     fun onTimeDataEvent(event: TimeDataEvent) {
         when (event) {
-            is TimeDataEvent.Refresh -> loadData()
+            is TimeDataEvent.Refresh -> {
+                viewModelScope.launch {
+                    timeDataRepository.triggerRefresh()
+                }
+            }
         }
     }
 }

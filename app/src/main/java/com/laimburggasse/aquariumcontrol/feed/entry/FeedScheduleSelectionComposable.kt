@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.feed.common.FeedNavigationEvent
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedScheduleEntry
@@ -86,13 +87,13 @@ fun FeedScheduleSelectionComposable(
             }
         }
         is FeedScheduleUiState.Loading -> {
-            Text(text = "Loading...")
+            Text(text = "Loading...", fontSize = 12.sp)
         }
         is FeedScheduleUiState.Error -> {
-            Text(text = feedScheduleUiState.errorMessage)
+            Text(text = feedScheduleUiState.errorMessage, fontSize = 12.sp)
         }
         is FeedScheduleUiState.Empty -> {
-            Text(text = "No feed schedule entries found.")
+            Text(text = "No feed schedule entries found.", fontSize = 12.sp)
         }
     }
 }
@@ -110,12 +111,31 @@ fun FeedScheduleSelectionComposable(
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
 @Composable
-internal fun FeedScheduleSelectionComposablePreview() {
+internal fun FeedScheduleSelectionComposableSuccessPreview() {
     AquariumControllerTheme {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 FeedScheduleSelectionComposable(
                     feedScheduleUiState = mockFeedScheduleUiStateSuccess,
+                    onFeedSchedulesUiEvent = {event: FeedScheduleUiEvent -> return@FeedScheduleSelectionComposable null },
+                    onNavigateFromFeed = { event, id, isNew, millis -> },
+                )
+            }
+        }
+    }
+}
+
+val mockFeedScheduleUiStateEmpty = FeedScheduleUiState.Empty
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+internal fun FeedScheduleSelectionComposableEmptyPreview() {
+    AquariumControllerTheme {
+        Surface {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                FeedScheduleSelectionComposable(
+                    feedScheduleUiState = mockFeedScheduleUiStateEmpty,
                     onFeedSchedulesUiEvent = {event: FeedScheduleUiEvent -> return@FeedScheduleSelectionComposable null },
                     onNavigateFromFeed = { event, id, isNew, millis -> },
                 )

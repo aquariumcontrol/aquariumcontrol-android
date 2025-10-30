@@ -59,9 +59,7 @@ fun TimeDataScreen(timeDataUiState: TimeDataUiState, onTimeDataEvent: (TimeDataE
             indicator = {
                 if (timeDataUiState is TimeDataUiState.Loading && displayCircularProgressIndicatorInPreview) {
                     CircularProgressIndicator(
-                        modifier = Modifier
-                            .size(size = 64.dp)
-                            .fillMaxWidth(),
+                        modifier = Modifier.size(size = 64.dp).fillMaxWidth(),
                         color = MaterialTheme.colorScheme.primary,
                         strokeWidth = 5.dp
                     )
@@ -70,16 +68,12 @@ fun TimeDataScreen(timeDataUiState: TimeDataUiState, onTimeDataEvent: (TimeDataE
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(state = rememberScrollState())
+                modifier = Modifier.fillMaxSize().verticalScroll(state = rememberScrollState())
             ) {
                 when (timeDataUiState) {
                     is TimeDataUiState.Empty -> {
                         Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(all = 16.dp),
+                            modifier = Modifier.fillMaxSize().padding(all = 16.dp),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {

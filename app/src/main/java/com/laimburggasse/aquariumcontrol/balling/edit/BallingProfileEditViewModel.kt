@@ -34,7 +34,7 @@ class BallingProfileEditViewModel @AssistedInject constructor(
 
     init {
         viewModelScope.launch {
-            val currentRepoState: DataFetchResult<List<BallingProfile>> = repository.profilesFlow.first()
+            val currentRepoState: DataFetchResult<List<BallingProfile>> = repository.ballingProfiles.first()
 
             if (currentRepoState is DataFetchResult.Success) {
                 val profile: BallingProfile? = currentRepoState.data.find {
