@@ -40,12 +40,12 @@ class BallingProfileEditViewModel @Inject constructor(
             when (result) {
                 is DataFetchResult.Success -> {
                     // Find the specific profile from the list.
-                    val profileFromServer = result.data.find { it.pumpId == ballingProfileId }
+                    val profileFromServer: BallingProfile? = result.data.find { it.pumpId == ballingProfileId }
                     if (profileFromServer != null) {
                         // 2. Prioritize the unconfirmed profile if it exists.
                         //    If the user has started editing, show their edits.
                         //    Otherwise, show the profile from the server.
-                        val profileToShow = unconfirmedProfile ?: profileFromServer
+                        val profileToShow: BallingProfile = unconfirmedProfile ?: profileFromServer
                         BallingProfileEditUiState.Success(ballingProfile = profileToShow)
                     } else {
                         // The list was loaded, but the specific profile wasn't found.

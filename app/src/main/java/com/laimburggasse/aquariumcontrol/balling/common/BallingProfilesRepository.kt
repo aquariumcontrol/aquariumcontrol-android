@@ -2,6 +2,7 @@ package com.laimburggasse.aquariumcontrol.balling.common
 
 import android.util.Log
 import com.laimburggasse.aquariumcontrol.SessionManager
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
@@ -49,7 +50,7 @@ open class BallingProfilesRepository @Inject constructor(private val sessionMana
         .filter{ it.first != null }
         // 3. `flatMapLatest` will now ONLY execute when it receives a non-null controller.
         .flatMapLatest { triple ->
-            val (controller, _, pending) = triple
+            val (controller: ControllerProfile?, _, pending: BallingProfile?) = triple
             flow {
                 // @todo: implement Loading state
                 // Emit Loading state before the network call.
@@ -64,21 +65,23 @@ open class BallingProfilesRepository @Inject constructor(private val sessionMana
                         val reader = BallingProfileReader(url)
                         reader.readBallingProfiles()
                     }
-                val finalResult = if (networkResult is DataFetchResult.Success) {
+                val finalResult: DataFetchResult<List<BallingProfile>> = if (
+                        networkResult is DataFetchResult.Success
+                ) {
                     // If there is a pending update, merge it now.
                     if (pending != null) {
                         Log.d(
                             "BallingRepository",
                             "Merging pending update into network result."
                         )
-                        val mergedList = networkResult.data.map { networkProfile ->
-                                // If this profile's pumpId matches the pending update, use the updated version.
-                                // Otherwise, use the one from the network.
-                                if (networkProfile.pumpId == pending.pumpId)
-                                    pending
-                                else
-                                    networkProfile
-                            }
+                        val mergedList: List<BallingProfile> = networkResult.data.map { networkProfile ->
+                            // If this profile's pumpId matches the pending update, use the updated version.
+                            // Otherwise, use the one from the network.
+                            if (networkProfile.pumpId == pending.pumpId)
+                                pending
+                            else
+                                networkProfile
+                        }
                         DataFetchResult.Success(data = mergedList)
                     } else {
                         // No pending update, just use the network result.
@@ -89,6 +92,7 @@ open class BallingProfilesRepository @Inject constructor(private val sessionMana
                     networkResult
                 }
                 // Emit the final result: local update merged into network result.
+                Log.d("BallingRepository", "Emitting final result: $finalResult")
                 emit(value = finalResult)
             }
         }
@@ -134,6 +138,7 @@ open class BallingProfilesRepository @Inject constructor(private val sessionMana
      * Public function to allow the ViewModel to trigger a manual refresh (e.g., for pull-to-refresh).
      */
     suspend fun triggerRefresh() {
-        refreshTrigger.emit(Unit)
+        Log.d("BallingRepository", "Triggering refresh.")
+        refreshTrigger.emit(value = Unit)
     }
 }

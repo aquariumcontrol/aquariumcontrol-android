@@ -346,7 +346,8 @@ class MainActivity : ComponentActivity() {
                                     ballingProfilesUiState,
                                     onNavigateFromBalling = {
                                         event, pumpId -> navHostController.handleBallingNavigation(event, pumpId)
-                                    }
+                                    },
+                                    onLaunchedEffect = ballingViewModel::onLaunchedEffect,
                                 )
                             },
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) },

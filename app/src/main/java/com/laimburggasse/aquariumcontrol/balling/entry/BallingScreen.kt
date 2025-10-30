@@ -1,6 +1,7 @@
 package com.laimburggasse.aquariumcontrol.balling.entry
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -34,7 +36,8 @@ import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposabl
 @Composable
 fun BallingScreen(
     ballingProfilesUiState: BallingProfilesUiState,
-    onNavigateFromBalling: (BallingNavigationEvent, Int?) -> Unit
+    onNavigateFromBalling: (BallingNavigationEvent, Int?) -> Unit,
+    onLaunchedEffect: () -> Unit
 ) {
     // This screen displays
     // - a button for visualizing all Balling dosing events of the last 24h
@@ -42,6 +45,11 @@ fun BallingScreen(
     // - all Balling profiles downloaded from the controller
 
     val configuration: Configuration = LocalConfiguration.current
+
+    LaunchedEffect(key1 = true) {
+        Log.d("BallingScreen", "LaunchedEffect")
+        onLaunchedEffect()
+    }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         ScreenHeadlineComposable(text = stringResource(id = R.string.balling_dosing))
@@ -151,7 +159,8 @@ internal fun BallingScreenPreviewSuccess() {
         screenContent = {
             BallingScreen(
                 ballingProfilesUiState = mockBallingProfilesUiStateSuccess,
-                onNavigateFromBalling = { event, pumpId -> }
+                onNavigateFromBalling = { event, pumpId -> },
+                onLaunchedEffect = {}
             )
         },
         onNavigate = {},
@@ -169,7 +178,8 @@ internal fun BallingScreenPreviewError() {
         screenContent = {
             BallingScreen(
                 ballingProfilesUiState = mockBallingProfilesUiStateError,
-                onNavigateFromBalling = { event, pumpId -> }
+                onNavigateFromBalling = { event, pumpId -> },
+                onLaunchedEffect = {}
             )
         },
         onNavigate = {},
@@ -187,7 +197,8 @@ internal fun BallingScreenPreviewLoading() {
         screenContent = {
             BallingScreen(
                 ballingProfilesUiState = mockBallingProfilesUiStateLoading,
-                onNavigateFromBalling = { event, pumpId -> }
+                onNavigateFromBalling = { event, pumpId -> },
+                onLaunchedEffect = {}
             )
         },
         onNavigate = {},
@@ -205,7 +216,8 @@ internal fun BallingScreenPreviewEmpty() {
         screenContent = {
             BallingScreen(
                 ballingProfilesUiState = mockBallingProfilesUiStateEmpty,
-                onNavigateFromBalling = { event, pumpId -> }
+                onNavigateFromBalling = { event, pumpId -> },
+                onLaunchedEffect = {}
             )
         },
         onNavigate = {},
