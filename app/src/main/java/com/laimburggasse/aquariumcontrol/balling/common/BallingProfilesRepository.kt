@@ -57,12 +57,11 @@ open class BallingProfilesRepository @Inject constructor(private val sessionMana
                 //emit(value = DataFetchResult.Error(exception = null, errorMessage = "Loading"))
 
                 Log.d("BallingRepository", "Fetching balling profiles from server.")
+                val url = "http://${controller?.address}${WebApiUrls.BALLING_GET_SET_VALS}"
+                val reader = BallingProfileReader(url)
                 // Perform the network request on a background thread.
                 val networkResult: DataFetchResult<List<BallingProfile>> =
                     withContext(context = Dispatchers.IO) {
-                        val url =
-                            "http://${controller?.address}${WebApiUrls.BALLING_GET_SET_VALS}"
-                        val reader = BallingProfileReader(url)
                         reader.readBallingProfiles()
                     }
                 val finalResult: DataFetchResult<List<BallingProfile>> = if (
@@ -83,14 +82,8 @@ open class BallingProfilesRepository @Inject constructor(private val sessionMana
                                 networkProfile
                         }
                         DataFetchResult.Success(data = mergedList)
-                    } else {
-                        // No pending update, just use the network result.
-                        networkResult
-                    }
-                } else {
-                    // If the network call failed, just pass on the error.
-                    networkResult
-                }
+                    } else { networkResult} // No pending update, just use the network result.
+                } else { networkResult} // If the network call failed, just pass on the error.
                 // Emit the final result: local update merged into network result.
                 Log.d("BallingRepository", "Emitting final result: $finalResult")
                 emit(value = finalResult)
