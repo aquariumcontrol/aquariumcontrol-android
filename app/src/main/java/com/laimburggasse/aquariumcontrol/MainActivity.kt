@@ -258,9 +258,7 @@ class MainActivity : ComponentActivity() {
                             navArgument(name = "feedProfileId") { type = NavType.IntType }
                         )
                     ) { backStackEntry ->
- //                       val feedProfileId: Int? = backStackEntry.arguments?.getInt("feedProfileId")
                         val feedProfileEditViewModel: FeedProfileEditViewModel = hiltViewModel()
-                        Log.d("feedEdit", "Created FeedProfileEditViewModel")
                         val uiState: FeedProfileEditUiState by feedProfileEditViewModel.uiState.collectAsState()
                         MainScaffold(
                             isControllerLoaded,
@@ -395,31 +393,21 @@ class MainActivity : ComponentActivity() {
                             navArgument(name = "ballingProfileId") { type = NavType.IntType }
                         )
                     ) { backStackEntry ->
-                        val ballingProfileId: Int? = backStackEntry.arguments?.getInt("ballingProfileId")
-                        if (ballingProfileId != null) {
-                            // view model factory needs to be created with dedicated balling profile
-                            val ballingProfileEditViewModel: BallingProfileEditViewModel = hiltViewModel(
-                                creationCallback = { factory: BallingProfileEditViewModel.Factory ->
-                                    factory.create(ballingProfileId)
-                                }
-                            )
-                            val ballingProfileEditUiState: BallingProfileEditUiState =
-                                ballingProfileEditViewModel.ballingProfileEditUiState
-                            MainScaffold(
-                                isControllerLoaded,
-                                navigationRouteSource = ViewNavigationRoutes.ballingEdit,
-                                screenContent = {
-                                    BallingProfileEditScreen(
-                                        ballingProfileEditUiState,
-                                        onEvent = ballingProfileEditViewModel::onEvent,
-                                    )
-                                },
-                                onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) },
-                            )
-                        }
-                        else {
-                            // @todo: handle error case (e.g. navigate back)
-                        }
+                        // view model needs to be created with dedicated balling profile
+                        val ballingProfileEditViewModel: BallingProfileEditViewModel = hiltViewModel()
+                        val ballingProfileEditUiState: BallingProfileEditUiState =
+                            ballingProfileEditViewModel.ballingProfileEditUiState
+                        MainScaffold(
+                            isControllerLoaded,
+                            navigationRouteSource = ViewNavigationRoutes.ballingEdit,
+                            screenContent = {
+                                BallingProfileEditScreen(
+                                    ballingProfileEditUiState,
+                                    onEvent = ballingProfileEditViewModel::onEvent,
+                                )
+                            },
+                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) },
+                        )
                     }
                     composable(route = ViewNavigationRoutes.refill) {
                         val refillViewModel: RefillViewModel = hiltViewModel()

@@ -1,31 +1,26 @@
 package com.laimburggasse.aquariumcontrol.balling.edit
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.balling.common.BallingProfile
 import com.laimburggasse.aquariumcontrol.balling.common.BallingProfilesRepository
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-@HiltViewModel(assistedFactory = BallingProfileEditViewModel.Factory::class)
-class BallingProfileEditViewModel @AssistedInject constructor(
-    private val repository: BallingProfilesRepository,
-    @Assisted private val ballingProfileId: Int,
-) : ViewModel() {
+@HiltViewModel
+class BallingProfileEditViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
+    private val ballingProfilesRepository: BallingProfilesRepository,
+): ViewModel() {
     // This class will allow the user to edit the Balling dosing profile.
-
-    @AssistedFactory
-    interface Factory {
-        fun create(profileId: Int): BallingProfileEditViewModel
-    }
 
     var ballingProfileEditUiState: BallingProfileEditUiState by mutableStateOf(
         value = BallingProfileEditUiState.Loading
@@ -34,33 +29,44 @@ class BallingProfileEditViewModel @AssistedInject constructor(
 
     init {
         viewModelScope.launch {
-            val currentRepoState: DataFetchResult<List<BallingProfile>> = repository.ballingProfiles.first()
+            // 1. Get the profileId from navigation arguments via SavedStateHandle.
+            val ballingProfileId: Int? = savedStateHandle.get("ballingProfileId")
 
-            if (currentRepoState is DataFetchResult.Success) {
-                val profile: BallingProfile? = currentRepoState.data.find {
-                    it.pumpId == ballingProfileId
-                }
-                ballingProfileEditUiState = if (profile != null) {
-                    BallingProfileEditUiState.Success(ballingProfile = profile)
+            if (ballingProfileId != null) {
+                val currentRepoState: DataFetchResult<List<BallingProfile>> =
+                    ballingProfilesRepository.ballingProfiles.first()
+
+                if (currentRepoState is DataFetchResult.Success) {
+                    val profile: BallingProfile? = currentRepoState.data.find {
+                        it.pumpId == ballingProfileId
+                    }
+                    ballingProfileEditUiState = if (profile != null) {
+                        BallingProfileEditUiState.Success(ballingProfile = profile)
+                    } else {
+                        BallingProfileEditUiState.NotFound
+                    }
                 } else {
-                    BallingProfileEditUiState.NotFound
+                    ballingProfileEditUiState = BallingProfileEditUiState.Error(
+                        errorMessage = "Data not available. Go back and try again."
+                    )
                 }
-            } else {
-                ballingProfileEditUiState = BallingProfileEditUiState.Error(
-                    errorMessage = "Data not available. Go back and try again."
-                )
             }
-        }    }
+            else {
+                // @ todo: emit error state
+                Log.d("BallingProfileEditViewModel", "ballingProfileId is null")
+            }
+        }
+    }
 
     fun onConfirmDosing(newVolume: Double) {
         val currentState: BallingProfileEditUiState = ballingProfileEditUiState
         if (currentState is BallingProfileEditUiState.Success) {
             val updatedProfile: BallingProfile = currentState.ballingProfile.copy(volume = newVolume)
 
-            ballingProfileEditUiState = BallingProfileEditUiState.Success(updatedProfile)
+            ballingProfileEditUiState = BallingProfileEditUiState.Success(ballingProfile = updatedProfile)
 
             viewModelScope.launch {
-                repository.updateBallingProfile(ballingProfile = updatedProfile)
+                ballingProfilesRepository.updateBallingProfile(ballingProfile = updatedProfile)
             }
         }
     }
