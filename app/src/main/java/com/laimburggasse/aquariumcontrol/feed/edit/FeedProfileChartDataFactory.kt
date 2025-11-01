@@ -48,27 +48,36 @@ object FeedProfileChartDataFactory {
 
         val valuesMap: Map<FeedProfileChartLineDefinition, MutableList<Entry>> = chartLines.associateWith { mutableListOf() }
         var cumulatedTime = 0.0f
-        val firstPhase = feedProfile.feedProfilePhases.firstOrNull() ?: return FeedProfileChartDataBundle(null,null,null,null,null,null,0f)
+        val firstPhase: FeedProfilePhase = feedProfile.feedProfilePhases.firstOrNull() ?:
+            return FeedProfileChartDataBundle(
+                lineDataFeeder = null,
+                lineDataSkimmer = null,
+                lineDataMainPump1 = null,
+                lineDataMainPump2 = null,
+                lineDataAuxPump1 = null,
+                lineDataAuxPump2 = null,
+                totalDuration = 0f
+            )
 
         // Initial state
         chartLines.forEach { line ->
-            val initialValue = if (line.getValue(firstPhase)) line.yAxisValueOn else line.yAxisValueOff
+            val initialValue: Float = if (line.getValue(firstPhase)) line.yAxisValueOn else line.yAxisValueOff
             valuesMap.getValue(line).add(Entry(0f, initialValue))
         }
 
         // Process transitions
         feedProfile.feedProfilePhases.forEach { phase ->
-            val phaseDuration = phase.duration.toFloat()
+            val phaseDuration: Float = phase.duration.toFloat()
             if (phaseDuration <= 0f) return@forEach
 
             chartLines.forEach { line ->
-                val entries = valuesMap.getValue(line)
-                val lastValue = entries.last().y
-                val newValue = if (line.getValue(phase)) line.yAxisValueOn else line.yAxisValueOff
+                val entries: MutableList<Entry> = valuesMap.getValue(key = line)
+                val lastValue: Float = entries.last().y
+                val newValue: Float = if (line.getValue(phase)) line.yAxisValueOn else line.yAxisValueOff
 
-                if (abs(newValue - lastValue) > 0.1f) { // chartValAllowedDelta
-                    entries.add(Entry(cumulatedTime, lastValue))
-                    entries.add(Entry(cumulatedTime, newValue))
+                if (abs(x = newValue - lastValue) > 0.1f) { // chartValAllowedDelta
+                    entries.add(Entry( cumulatedTime, lastValue))
+                    entries.add(Entry( cumulatedTime, newValue))
                 }
             }
 
@@ -81,11 +90,9 @@ object FeedProfileChartDataFactory {
             }
         }
 
-        // Final state logic can be added here if needed...
-
-        val lineDataMap = chartLines.associate { line ->
-            val set = LineDataSet(valuesMap.getValue(line), line.name).apply {
-                color = feedProfileLineColorDefinition(line.signal)
+        val lineDataMap: Map<FeedProfileSignal, LineData> = chartLines.associate { line ->
+            val set: LineDataSet = LineDataSet(valuesMap.getValue(line), line.name).apply {
+                color = feedProfileLineColorDefinition(signal = line.signal)
                 lineWidth = 2.5f
                 axisDependency = YAxis.AxisDependency.LEFT
                 setDrawValues(false)

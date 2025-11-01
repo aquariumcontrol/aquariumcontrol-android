@@ -14,7 +14,7 @@ data class FeedProfilePhase(
     var idx: Int = 0
 ) {
     private fun getPostParameterNameBase(idx: Int): String {
-        @SuppressLint("DefaultLocale") val formattedIdx = String.format("%02d", idx + 1)
+        @SuppressLint("DefaultLocale") val formattedIdx: String = String.format("%02d", idx + 1)
         return if (isPause) {
             "pause$formattedIdx"
         } else {
@@ -24,8 +24,7 @@ data class FeedProfilePhase(
 
     fun getFeedProfilePhaseApiCallParameters(idx: Int): Map<String, String> {
         return mapOf(
-            // convert duration to milliseconds
-            getPostParameterNameBase(idx)+ WebApiParams.DURATION to (duration * 1000.0).toInt().toString(),
+            getPostParameterNameBase(idx)+ WebApiParams.DURATION to (duration).toInt().toString(),
             getPostParameterNameBase(idx)+ WebApiParams.SKIMMER to (if (skimmer) 1 else 0).toString(),
             getPostParameterNameBase(idx)+ WebApiParams.MAINPUMP1 to (if (mainPump1) 1 else 0).toString(),
             getPostParameterNameBase(idx)+ WebApiParams.MAINPUMP2 to (if (mainPump2) 1 else 0).toString(),

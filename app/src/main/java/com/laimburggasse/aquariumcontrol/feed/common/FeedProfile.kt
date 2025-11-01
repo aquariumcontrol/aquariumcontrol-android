@@ -62,7 +62,7 @@ data class FeedProfile(
                 }
 
                 FeedProfilePhase(
-                    duration = getImportProperty("${importPrefix}duration", 0.0),
+                    duration = getImportProperty("${importPrefix}duration", 0.0) / 1000.0f,
                     skimmer = getImportBoolProperty("${importPrefix}skimmer"),
                     mainPump1 = getImportBoolProperty("${importPrefix}mainPump1"),
                     mainPump2 = getImportBoolProperty("${importPrefix}mainPump2"),
