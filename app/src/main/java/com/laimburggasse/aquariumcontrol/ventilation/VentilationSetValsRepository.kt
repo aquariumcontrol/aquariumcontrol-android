@@ -1,7 +1,7 @@
 package com.laimburggasse.aquariumcontrol.ventilation
 
 import com.laimburggasse.aquariumcontrol.SessionManager
-import com.laimburggasse.aquariumcontrol.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
@@ -9,84 +9,137 @@ import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
-const val ventilationSetValsSwitchOnTempInitVal = 28.0
-const val ventilationSetValsSwitchOffTempInitVal = 22.0
+const val ventilationSetValsSwitchOnTempInitVal = 21.0
+const val ventilationSetValsSwitchOffTempInitVal = 29.0
 
+@Singleton
 open class VentilationSetValsRepository @Inject constructor(
-    private val sessionManager: SessionManager,
-    @ApplicationScope externalScope: CoroutineScope? = null
+    private val sessionManager: SessionManager
 ) {
-    private val _ventilationSetValsFlow = MutableStateFlow<DataFetchResult<VentilationSetVals>>(
-        value = DataFetchResult.Success(data = VentilationSetVals(
-            ventilationSwitchOffTemp = ventilationSetValsSwitchOffTempInitVal,
-            ventilationSwitchOnTemp = ventilationSetValsSwitchOnTempInitVal
-        ))
-    )
-    open val ventilationSetValsFlow = _ventilationSetValsFlow.asStateFlow()
+    // @todo: unify scope for all repositories
+    // Dedicated scope for the repository ensures the StateFlow lives as long as the app.
+    private val repositoryScope = CoroutineScope(context = SupervisorJob() + Dispatchers.Default)
 
-    open fun updateLocalValues(ventilationSetVals: VentilationSetVals) {
-        _ventilationSetValsFlow.value = DataFetchResult.Success(data = ventilationSetVals)
-    }
+    // Triggers for manual refreshes and optimistic updates.
+    private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
+    private val pendingUpdate = MutableStateFlow<VentilationSetVals?>(value = null)
 
+    // Holds the last successfully fetched data from the server, used for the 'reset' function.
     private var ventilationSetValsBackup: VentilationSetVals? = null
 
-    open suspend fun fetchVentilationSetVals() {
-        return withContext(context = Dispatchers.IO) {
-            val url: String = "http://" + sessionManager.getControllerAddress() + WebApiUrls.VENTILATION_GET_SET_VALS
-            val ventilationSetValsReader = VentilationSetValsReader(url)
-            withContext(context = Dispatchers.IO) {
-                val result: DataFetchResult<VentilationSetVals> =
-                    when (val setValsList: DataFetchResult<List<VentilationSetVals>> =
-                        ventilationSetValsReader.readVentilationSetVals()) {
-                        is DataFetchResult.Success -> {
-                            ventilationSetValsBackup = setValsList.data.first()
-                            DataFetchResult.Success(data = setValsList.data.first())
-                        }
-
-                        is DataFetchResult.Error -> {
-                            DataFetchResult.Error(
-                                exception = setValsList.exception,
-                                errorMessage = setValsList.errorMessage
-                            )
+    // The private flow only fetches data from the network.
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val networkDataFlow: StateFlow<DataFetchResult<VentilationSetVals>> = combine(
+        flow = sessionManager.selectedControllerProfile,
+        flow2 = refreshTrigger.onStart { emit(value = Unit) } // Initial trigger
+    ) { controller, _ ->
+        controller
+    }.flatMapLatest { controller: ControllerProfile? ->
+        flow {
+            if (controller == null) {
+                // If no controller, emit a success state with initial values
+                emit(value = DataFetchResult.Success(data = VentilationSetVals(
+                    ventilationSwitchOnTemp = ventilationSetValsSwitchOnTempInitVal,
+                    ventilationSwitchOffTemp = ventilationSetValsSwitchOffTempInitVal,
+                )))
+                return@flow
+            }
+            // A controller is present, start the fetching process
+            emit(value = DataFetchResult.Error(exception = null, errorMessage = "Loading"))
+            val networkResult: DataFetchResult<VentilationSetVals> = withContext(context = Dispatchers.IO) {
+                val url = "http://${controller.address}${WebApiUrls.VENTILATION_GET_SET_VALS}"
+                val ventilationSetValsReader = VentilationSetValsReader(url)
+                when (val setValsList: DataFetchResult<List<VentilationSetVals>> =
+                    ventilationSetValsReader.readVentilationSetVals()) {
+                    is DataFetchResult.Success -> {
+                        if (setValsList.data.isNotEmpty()) {
+                            val firstItem = setValsList.data.first()
+                            ventilationSetValsBackup = firstItem // Update the backup
+                            DataFetchResult.Success(data = firstItem)
+                        } else {
+                            DataFetchResult.Error(exception = null, errorMessage = "Server returned an empty list.")
                         }
                     }
-                _ventilationSetValsFlow.value = result
+                    is DataFetchResult.Error -> setValsList
+                }
             }
+            emit(value = networkResult)
         }
+    }.stateIn(
+        scope = repositoryScope,
+        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
+        initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial loading")
+    )
+
+    // The public flow now combines the stable network data with the fast-changing local edits.
+    open val ventilationSetValsFlow: StateFlow<DataFetchResult<VentilationSetVals>> = combine(
+        flow = networkDataFlow,
+        flow2 = pendingUpdate
+    ) { networkResult, pending ->
+        if (pending != null) {
+            // Use local data when the user has modified something.
+            DataFetchResult.Success(data = pending)
+        } else {
+            // Otherwise, show the latest result from the network.
+            networkResult
+        }
+    }.stateIn(
+        scope = repositoryScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial loading")
+    )
+
+    /**
+     * Applies an optimistic update to the local state without committing to the server.
+     * The UI will show this change instantly.
+     */
+    open fun updateLocalValues(ventilationSetVals: VentilationSetVals) {
+        pendingUpdate.value = ventilationSetVals
     }
 
+    /**
+     * Commits the current (potentially local) values to the server.
+     */
     open suspend fun updateValues() {
-        if (_ventilationSetValsFlow.value is DataFetchResult.Success) {
-            val ventilationSetVals: VentilationSetVals = (_ventilationSetValsFlow.value as DataFetchResult.Success).data
-            webApiPostRequestExecution(
-                sessionManager = sessionManager,
-                apiUrl = WebApiUrls.VENTILATION_POST_SET_VALS,
-                webApiPostRequest = WebApiPostRequest(),
-                optionalGetParams = mapOf(
-                    WebApiParams.VENTILATION_SWITCH_ON_TEMPERATURE to ventilationSetVals.ventilationSwitchOnTemp.toString(),
-                    WebApiParams.VENTILATION_SWITCH_OFF_TEMPERATURE to ventilationSetVals.ventilationSwitchOffTemp.toString()
-                ),
-            )
-        }
-    }
+        // Get the most recent values, either from the pending update or the last fetched state
+        val currentValues: VentilationSetVals? = pendingUpdate.value ?:
+        (ventilationSetValsFlow.value as? DataFetchResult.Success)?.data
 
-    fun reset() {
-        ventilationSetValsBackup?.let {
-            _ventilationSetValsFlow.value = DataFetchResult.Success(data = ventilationSetValsBackup!!)
-        }
-    }
-
-    init {
-        externalScope?.let {
-            externalScope.launch {
-                fetchVentilationSetVals()
+        if (currentValues != null) {
+            withContext(context = Dispatchers.IO) {
+                webApiPostRequestExecution(
+                    sessionManager = sessionManager,
+                    apiUrl = WebApiUrls.VENTILATION_POST_SET_VALS,
+                    webApiPostRequest = WebApiPostRequest(),
+                    optionalGetParams = mapOf(
+                        WebApiParams.VENTILATION_SWITCH_ON_TEMPERATURE to currentValues.ventilationSwitchOnTemp.toString(),
+                        WebApiParams.VENTILATION_SWITCH_OFF_TEMPERATURE to currentValues.ventilationSwitchOffTemp.toString()
+                    ),
+                )
             }
         }
+    }
+
+    /**
+     * Reverts any uncommitted local changes by clearing the pending update.
+     * The flow will automatically revert to the last successfully fetched state.
+     */
+    fun reset() {
+        pendingUpdate.value = null
     }
 }

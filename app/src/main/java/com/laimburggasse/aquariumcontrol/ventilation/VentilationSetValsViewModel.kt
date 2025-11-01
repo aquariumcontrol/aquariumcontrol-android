@@ -62,12 +62,6 @@ class VentilationSetValsViewModel @Inject constructor(
         ventilationSetValsRepository.reset()
     }
 
-    fun loadData() {
-        viewModelScope.launch {
-            ventilationSetValsRepository.fetchVentilationSetVals()
-        }
-    }
-
     fun updateValues() {
         viewModelScope.launch {
             ventilationSetValsRepository.updateValues()
