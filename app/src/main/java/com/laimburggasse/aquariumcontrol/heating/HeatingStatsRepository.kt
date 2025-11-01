@@ -1,56 +1,90 @@
 package com.laimburggasse.aquariumcontrol.heating
 
 import com.laimburggasse.aquariumcontrol.SessionManager
-import com.laimburggasse.aquariumcontrol.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 open class HeatingStatsRepository @Inject constructor(
-    private val sessionManager: SessionManager,
-    @ApplicationScope externalScope: CoroutineScope? = null
+    sessionManager: SessionManager,
 ) {
-    private val _heatingStatsFlow = MutableStateFlow<DataFetchResult<List<HeatingStatsEntry>>>(
-        value = DataFetchResult.Success(data = emptyList())
-    )
-    open val heatingStatsFlow = _heatingStatsFlow.asStateFlow()
+    // @todo: Unify repository scopes
+    // Dedicated scope for the repository ensures the StateFlow can live as long as the app.
+    private val repositoryScope = CoroutineScope(context = SupervisorJob() + Dispatchers.Default)
 
-    open suspend fun fetchHeatingStats(){
-        return withContext(context = Dispatchers.IO) {
-            val url: String =
-                "http://" + sessionManager.getControllerAddress() + WebApiUrls.HEATING_GET_STATS
-            val heatingStatsReader = HeatingStatsReader(url)
-            withContext(context = Dispatchers.IO) {
-                val result: DataFetchResult<List<HeatingStatsStringEntry>> =
-                    heatingStatsReader.readStatsEntry()
-                val transformedResult: DataFetchResult<List<HeatingStatsEntry>> = when (result) {
-                    is DataFetchResult.Success -> {
-                        val heatingStringsStats: List<HeatingStatsStringEntry> = result.data
-                        val heatingStats: List<HeatingStatsEntry> = heatingStringsStats.map {
-                            it.transformToHeatingStatsEntry()
+    // for triggering manual refreshes
+    private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    open val heatingStatsFlow: StateFlow<DataFetchResult<List<HeatingStatsEntry>>> = combine(
+        flow = sessionManager.selectedControllerProfile,
+        flow2 = refreshTrigger.onStart { emit(value = Unit) } // Triggers the first fetch
+    ) { controller, _ ->
+        controller
+    }.flatMapLatest { controller: ControllerProfile? ->
+        flow {
+            if (controller == null) {
+                // If no controller is selected, emit a valid empty state
+                emit(value = DataFetchResult.Success(data = emptyList()))
+                return@flow
+            }
+
+            // @todo: emit loading state
+            // A controller is present, so start fetching
+            emit(value = DataFetchResult.Error(exception = null, errorMessage = "Loading"))
+
+            val result: DataFetchResult<List<HeatingStatsEntry>> =
+                withContext(context = Dispatchers.IO) {
+                    val url = "http://${controller.address}${WebApiUrls.HEATING_GET_STATS}"
+                    val heatingStatsReader = HeatingStatsReader(url)
+                    val stringResult: DataFetchResult<List<HeatingStatsStringEntry>> =
+                        heatingStatsReader.readStatsEntry()
+
+                    // Transform the result before returning it from the background thread
+                    when (stringResult) {
+                        is DataFetchResult.Success -> {
+                            val heatingStats: List<HeatingStatsEntry> = stringResult.data.map {
+                                it.transformToHeatingStatsEntry()
+                            }
+                            DataFetchResult.Success(data = heatingStats)
                         }
-                        DataFetchResult.Success(data = heatingStats)
-                    }
-                    is DataFetchResult.Error -> {
-                        result
+                        is DataFetchResult.Error -> {
+                            // Propagate the error result
+                            DataFetchResult.Error(
+                                exception = stringResult.exception,
+                                errorMessage = stringResult.errorMessage
+                            )
+                        }
                     }
                 }
-                _heatingStatsFlow.value = transformedResult
-            }
+            emit(value = result)
         }
-    }
+    }.stateIn(
+        scope = repositoryScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial load")
+    )
 
-    init {
-        externalScope?.let {
-            externalScope.launch {
-                fetchHeatingStats()
-            }
-        }
+    /**
+     * Triggers a manual refresh of the heating stats.
+     */
+    open suspend fun triggerRefresh() {
+        refreshTrigger.emit(Unit)
     }
 }
