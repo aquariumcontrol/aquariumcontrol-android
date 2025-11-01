@@ -23,8 +23,9 @@ data class FeedProfilePhase(
     }
 
     fun getFeedProfilePhaseApiCallParameters(idx: Int): Map<String, String> {
+        val durationMillis: Int = (duration * 1000.0).toInt()
         return mapOf(
-            getPostParameterNameBase(idx)+ WebApiParams.DURATION to (duration).toInt().toString(),
+            getPostParameterNameBase(idx)+ WebApiParams.DURATION to (durationMillis).toString(),
             getPostParameterNameBase(idx)+ WebApiParams.SKIMMER to (if (skimmer) 1 else 0).toString(),
             getPostParameterNameBase(idx)+ WebApiParams.MAINPUMP1 to (if (mainPump1) 1 else 0).toString(),
             getPostParameterNameBase(idx)+ WebApiParams.MAINPUMP2 to (if (mainPump2) 1 else 0).toString(),

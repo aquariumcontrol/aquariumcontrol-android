@@ -41,13 +41,13 @@ fun FeedProfileEditScreen(
         ScreenHeadlineComposable(text = stringResource(id = R.string.feed_profile_editing))
 
         FeedProfileDisplayComposable(
-            uiState.lineDataFeeder,
-            uiState.lineDataSkimmer,
-            uiState.lineDataMainPump1,
-            uiState.lineDataMainPump2,
-            uiState.lineDataAuxPump1,
-            uiState.lineDataAuxPump2,
-            uiState.totalDuration
+            lineDataFeeder = uiState.lineDataFeeder,
+            lineDataSkimmer = uiState.lineDataSkimmer,
+            lineDataMainPump1 = uiState.lineDataMainPump1,
+            lineDataMainPump2 = uiState.lineDataMainPump2,
+            lineDataAuxPump1 = uiState.lineDataAuxPump1,
+            lineDataAuxPump2 = uiState.lineDataAuxPump2,
+            totalDuration = uiState.totalDuration
         )
 
         FeedProfileDisplayLegendComposable()

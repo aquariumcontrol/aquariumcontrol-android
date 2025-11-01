@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.mikephil.charting.data.LineData
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilePhase
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilesRepository
@@ -14,6 +13,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,57 +26,38 @@ class FeedProfileEditViewModel @Inject constructor(
 
     private val _feedProfileState = MutableStateFlow(value = originalFeedProfile)
     private val _expandedItemIds = MutableStateFlow<Set<Int>>(value = emptySet())
-    private val _lineDataFeeder = MutableStateFlow<LineData?>(value = null)
-    private val _lineDataSkimmer = MutableStateFlow<LineData?>(value = null)
-    private val _lineDataMainPump1 = MutableStateFlow<LineData?>(value = null)
-    private val _lineDataMainPump2 = MutableStateFlow<LineData?>(value = null)
-    private val _lineDataAuxPump1 = MutableStateFlow<LineData?>(value = null)
-    private val _lineDataAuxPump2 = MutableStateFlow<LineData?>(value = null)
-    private val _totalDuration = MutableStateFlow(value = 0f)
 
     val uiState: StateFlow<FeedProfileEditUiState> = combine(
-        _feedProfileState, _expandedItemIds, _lineDataFeeder, _lineDataSkimmer,
-        _lineDataMainPump1, _lineDataMainPump2, _lineDataAuxPump1, _lineDataAuxPump2,
-        _totalDuration
-    ) {
-        // due to high number of flows, no named parameters are available
-        latestValues: Array<Any?> ->
+        flow = _feedProfileState, flow2 = _expandedItemIds
+    ) { feedProfile, expandedItemIds ->
 
-        val feedProfile = latestValues[0] as FeedProfile
-        val expandedIds: Set<Int> = latestValues[1] as Set<Int>
-        val feeder = latestValues[2] as? LineData
-        val skimmer = latestValues[3] as? LineData
-        val mainPump1 = latestValues[4] as? LineData
-        val mainPump2 = latestValues[5] as? LineData
-        val auxPump1 = latestValues[6] as? LineData
-        val auxPump2 = latestValues[7] as? LineData
-        val totalDuration = latestValues[8] as Float
+        val chartBundle: FeedProfileChartDataBundle = FeedProfileChartDataFactory.create(feedProfile)
 
         FeedProfileEditUiState(
             feedProfile = feedProfile,
-            expandedItemIds = expandedIds,
-            lineDataFeeder = feeder,
-            lineDataSkimmer = skimmer,
-            lineDataMainPump1 = mainPump1,
-            lineDataMainPump2 = mainPump2,
-            lineDataAuxPump1 = auxPump1,
-            lineDataAuxPump2 = auxPump2,
-            totalDuration = totalDuration
+            expandedItemIds = expandedItemIds,
+            lineDataFeeder = chartBundle.lineDataFeeder,
+            lineDataSkimmer = chartBundle.lineDataSkimmer,
+            lineDataMainPump1 = chartBundle.lineDataMainPump1,
+            lineDataMainPump2 = chartBundle.lineDataMainPump2,
+            lineDataAuxPump1 = chartBundle.lineDataAuxPump1,
+            lineDataAuxPump2 = chartBundle.lineDataAuxPump2,
+            totalDuration = chartBundle.totalDuration
         )
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
+        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
         initialValue = FeedProfileEditUiState() // Start with a default, empty state
     )
 
     init {
         viewModelScope.launch {
             // 1. Get the profileId from navigation arguments via SavedStateHandle.
-            val profileId: Int? = savedStateHandle.get("feedProfileId")
+            val profileId: Int? = savedStateHandle["feedProfileId"]
 
             if (profileId != null) {
                 // 2. Fetch the initial FeedProfile from the repository.
-                val profile = feedProfilesRepository.findProfileById(profileId)
+                val profile: FeedProfile? = feedProfilesRepository.findProfileById(profileId)
 
                 if (profile != null) {
                     // 3. Store the fetched profile as the "original" for the reset functionality.
@@ -84,18 +65,6 @@ class FeedProfileEditViewModel @Inject constructor(
 
                     // 4. Update the state flow for the feed profile, which will trigger the 'combine' operator.
                     _feedProfileState.value = profile
-
-                    // 5. Generate the chart data based on the fetched profile.
-                    val chartBundle: FeedProfileChartDataBundle = FeedProfileChartDataFactory.create(profile)
-
-                    // 6. Update all the chart-related state flows.
-                    _lineDataFeeder.value = chartBundle.lineDataFeeder
-                    _lineDataSkimmer.value = chartBundle.lineDataSkimmer
-                    _lineDataMainPump1.value = chartBundle.lineDataMainPump1
-                    _lineDataMainPump2.value = chartBundle.lineDataMainPump2
-                    _lineDataAuxPump1.value = chartBundle.lineDataAuxPump1
-                    _lineDataAuxPump2.value = chartBundle.lineDataAuxPump2
-                    _totalDuration.value = chartBundle.totalDuration
                 } else {
                     Log.e("FeedProfileEditViewModel", "Profile with id $profileId not found.")
                     // @todo: Error UI state
@@ -109,13 +78,22 @@ class FeedProfileEditViewModel @Inject constructor(
 
     fun onDurationChange(id: Int, duration: Double) {
         val phaseId: Int = mapMenuItemIdToPhaseId(id)
-        val currentProfile: FeedProfile = _feedProfileState.value
-        val newPhases: MutableList<FeedProfilePhase> = currentProfile.feedProfilePhases.toMutableList()
-        if (phaseId >= newPhases.size) return // Safety check (defensive programming)
-        val oldPhase: FeedProfilePhase = newPhases[phaseId]
-        val newPhase: FeedProfilePhase = oldPhase.copy(duration = duration)
-        newPhases[phaseId] = newPhase
-        _feedProfileState.value = currentProfile.copy(feedProfilePhases = newPhases)
+
+        _feedProfileState.update { currentProfile ->
+            // Create a new list using mapIndexed.
+            val newPhases: List<FeedProfilePhase> =
+                currentProfile.feedProfilePhases.mapIndexed{ index, currentPhase ->
+                if (index == phaseId) {
+                    // If this is the phase we want to change, return a new, copied phase.
+                    currentPhase.copy(duration = duration)
+                } else {
+                    // Otherwise, return the existing, unchanged phase.
+                    currentPhase
+                }
+            }
+            // Return a new profile object containing the new list.
+            currentProfile.copy(feedProfilePhases = newPhases)
+        }
     }
 
     fun onToggleStateChange(
@@ -124,19 +102,23 @@ class FeedProfileEditViewModel @Inject constructor(
         isChecked: Boolean
     ) {
         val phaseId: Int = mapMenuItemIdToPhaseId(id)
-        val currentProfile: FeedProfile = _feedProfileState.value
-        val newPhases: MutableList<FeedProfilePhase> = currentProfile.feedProfilePhases.toMutableList()
-        if (phaseId >= newPhases.size) return // Safety check (defensive programming)
-        val oldPhase: FeedProfilePhase = newPhases[phaseId]
-        val newPhase: FeedProfilePhase = when (toggleButtonType) {
-            FeedProfileEditToggleButtonType.Skimmer -> oldPhase.copy(skimmer = isChecked)
-            FeedProfileEditToggleButtonType.MainPump1 -> oldPhase.copy(mainPump1 = isChecked)
-            FeedProfileEditToggleButtonType.MainPump2 -> oldPhase.copy(mainPump2 = isChecked)
-            FeedProfileEditToggleButtonType.AuxPump1 -> oldPhase.copy(auxPump1 = isChecked)
-            FeedProfileEditToggleButtonType.AuxPump2 -> oldPhase.copy(auxPump2 = isChecked)
+        _feedProfileState.update { currentProfile ->
+            val newPhases: List<FeedProfilePhase> =
+                currentProfile.feedProfilePhases.mapIndexed { index, currentPhase ->
+                if (index == phaseId) {
+                    when (toggleButtonType) {
+                        FeedProfileEditToggleButtonType.Skimmer -> currentPhase.copy(skimmer = isChecked)
+                        FeedProfileEditToggleButtonType.MainPump1 -> currentPhase.copy(mainPump1 = isChecked)
+                        FeedProfileEditToggleButtonType.MainPump2 -> currentPhase.copy(mainPump2 = isChecked)
+                        FeedProfileEditToggleButtonType.AuxPump1 -> currentPhase.copy(auxPump1 = isChecked)
+                        FeedProfileEditToggleButtonType.AuxPump2 -> currentPhase.copy(auxPump2 = isChecked)
+                    }
+                } else {
+                    currentPhase
+                }
+            }
+            currentProfile.copy(feedProfilePhases = newPhases)
         }
-        newPhases[phaseId] = newPhase
-        _feedProfileState.value = currentProfile.copy(feedProfilePhases = newPhases)
     }
 
     fun updateFeedProfile() {

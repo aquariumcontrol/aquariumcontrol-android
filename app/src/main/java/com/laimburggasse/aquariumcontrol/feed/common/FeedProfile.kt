@@ -83,10 +83,10 @@ data class FeedProfile(
     fun getFeedProfileApiCallParameters(): Map<String, String> {
         // This function iterates over the feed profile phases and adds all the parameters to the
         // map which is then used to form the GET part of the API call
-        val myMap = mutableMapOf<String, String>()
-        for ((idx, feedProfilePhase) in feedProfilePhases.withIndex()) {
+        val myMap: MutableMap<String, String> = mutableMapOf()
+        for ((idx: Int, feedProfilePhase: FeedProfilePhase) in feedProfilePhases.withIndex()) {
             myMap += feedProfilePhase.getFeedProfilePhaseApiCallParameters(
-                (idx.toFloat() / 2.0).toInt()
+                idx = (idx.toFloat() / 2.0).toInt()
             )
         }
         myMap += mapOf(
