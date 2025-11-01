@@ -58,7 +58,7 @@ class FeedScheduleViewModel @Inject constructor(
 
     private fun loadDataForProfile(profileId: Int) {
         viewModelScope.launch {
-            val profile = feedProfilesRepository.findProfileById(profileId)
+            val profile: FeedProfile? = feedProfilesRepository.findProfileById(profileId)
             if (profile != null) {
                 _feedProfile.value = profile
             }
@@ -74,14 +74,7 @@ class FeedScheduleViewModel @Inject constructor(
         if (profileId != null) {
             loadDataForProfile(profileId)
         } else {
-            // Handle error case
-        }
-        loadData()
-    }
-
-    fun loadData() {
-        viewModelScope.launch {
-            feedScheduleRepository.fetchFeedScheduleEntries()
+            // @todo: Handle error case
         }
     }
 
@@ -98,7 +91,7 @@ class FeedScheduleViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             feedScheduleRepository.addFeedScheduleEntry(
-                feedProfile,
+                feedProfileName = feedProfile.profileName,
                 repeatDaily,
                 selectedCalendar
             )
