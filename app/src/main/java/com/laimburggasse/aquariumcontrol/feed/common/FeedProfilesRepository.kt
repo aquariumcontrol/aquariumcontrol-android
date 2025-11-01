@@ -90,7 +90,7 @@ open class FeedProfilesRepository @Inject constructor(private val sessionManager
                     }
                     is DataFetchResult.Error -> networkResult // Pass through errors
                 }
-                emit(finalResult)
+                emit(value = finalResult)
                 // --------------------------------------------------
             }
         }.stateIn(
@@ -160,7 +160,7 @@ open class FeedProfilesRepository @Inject constructor(private val sessionManager
 
     suspend fun updateFeedProfile(modifiedFeedProfile: FeedProfile) {
         val apiCallParameters: Map<String, String> = modifiedFeedProfile.getFeedProfileApiCallParameters()
-        val success: Boolean = withContext(context = Dispatchers.IO) {
+        withContext(context = Dispatchers.IO) {
             webApiPostRequestExecution(
                 sessionManager = sessionManager,
                 apiUrl = WebApiUrls.FEED_POST_PROFILE_UPDATE,
@@ -168,8 +168,6 @@ open class FeedProfilesRepository @Inject constructor(private val sessionManager
                 optionalGetParams = apiCallParameters
             )
         }
-        if (success) {
-            triggerRefresh()
-        }
+        // Refresh ist not required since this call emanates from FeedProfileEditViewModel.
     }
 }

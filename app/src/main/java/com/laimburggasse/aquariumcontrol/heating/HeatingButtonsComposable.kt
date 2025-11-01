@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol.heating
 
+import android.content.Context
 import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
@@ -25,7 +26,7 @@ fun HeatingButtonsComposable(
     // This composable displays two buttons for the heating control.
     // Arrangement of the buttons follows the device's orientation.
     
-    val context = LocalContext.current // context for web API request and Toasts
+    val context: Context = LocalContext.current // context for web API request and Toasts
 
     Button(
         onClick = {
@@ -40,9 +41,9 @@ fun HeatingButtonsComposable(
     ) {
         Text(text = "Update Heating Controller Values")
     }
-    Spacer(modifier = Modifier.width(10.dp))
+    Spacer(modifier = Modifier.width(width = 10.dp))
     Button(
-        onClick = { onResetClicked }
+        onClick = { onResetClicked() }
     ) {
         Text(text = "Reset Heating Controller Values")
     }

@@ -62,12 +62,6 @@ class HeatingSetValsViewModel @Inject constructor(
         heatingSetValsRepository.reset()
     }
 
-    fun loadData() {
-        viewModelScope.launch {
-            heatingSetValsRepository.fetchHeatingSetVals()
-        }
-    }
-
     private fun updateValues() {
         viewModelScope.launch {
             heatingSetValsRepository.updateValues()
