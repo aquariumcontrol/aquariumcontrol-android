@@ -434,7 +434,7 @@ class MainActivity : ComponentActivity() {
                                 RefillHistoryScreen(
                                     showFullWeek = false,
                                     refillHistoryUiState,
-                                    onRefillHistoryEvent = refillHistoryViewModel::onRefillHistoryEvent
+                                    onRefillHistoryEvent = refillHistoryViewModel::onEvent
                                 )
                             },
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }
@@ -450,7 +450,7 @@ class MainActivity : ComponentActivity() {
                                 RefillHistoryScreen(
                                     showFullWeek = true,
                                     refillHistoryUiState,
-                                    onRefillHistoryEvent = refillHistoryViewModel::onRefillHistoryEvent,
+                                    onRefillHistoryEvent = refillHistoryViewModel::onEvent,
                                 )
                             },
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }

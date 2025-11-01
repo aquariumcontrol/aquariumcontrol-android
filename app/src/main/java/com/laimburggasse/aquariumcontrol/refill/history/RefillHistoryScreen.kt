@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +49,9 @@ fun RefillHistoryScreen(
     // - subhead line
     // - a list of refill events downloaded from the server using a GET request.
 
+    LaunchedEffect(key1 = Unit) {
+        onRefillHistoryEvent(RefillHistoryEvent.SetRange(showFullWeek))
+    }
     Column(
         modifier = Modifier.fillMaxSize().padding(all = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -76,7 +80,7 @@ fun RefillHistoryScreen(
                     contentAlignment = Alignment.Center,
                     state = rememberPullToRefreshState(),
                     isRefreshing = refillHistoryUiState is RefillHistoryUiState.Loading,
-                    onRefresh = { onRefillHistoryEvent(RefillHistoryEvent.Refresh(showFullWeek)) },
+                    onRefresh = { onRefillHistoryEvent(RefillHistoryEvent.Refresh) },
                     indicator = {
                         if (refillHistoryUiState is RefillHistoryUiState.Loading) {
                             CircularProgressIndicator(

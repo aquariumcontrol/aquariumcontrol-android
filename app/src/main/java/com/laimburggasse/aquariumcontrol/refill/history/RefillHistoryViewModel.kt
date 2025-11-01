@@ -2,6 +2,7 @@ package com.laimburggasse.aquariumcontrol.refill.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryEvent
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -35,21 +36,19 @@ class RefillHistoryViewModel @Inject constructor(
         )
 
     // @todo: add functionality to limit the number of events displayed
-    init {
-        loadData(showFullWeek = false)
-    }
-
-    fun loadData(showFullWeek: Boolean) {
-        viewModelScope.launch {
-            refillHistoryRepository.fetchRefillHistoryEvents(showFullWeek)
-        }
-    }
-
-    fun onRefillHistoryEvent(event: RefillHistoryEvent) {
+    fun onEvent(event: RefillHistoryEvent) {
         when (event) {
             is RefillHistoryEvent.Refresh -> {
-                loadData(showFullWeek = event.showFullWeek)
+                viewModelScope.launch {
+                    refillHistoryRepository.triggerRefresh()
+                }
+            }
+            is RefillHistoryEvent.SetRange -> {
+                viewModelScope.launch {
+                    refillHistoryRepository.setHistoryTimeRange(fetchFullWeek = event.showFullWeek)
+                }
             }
         }
     }
+
 }

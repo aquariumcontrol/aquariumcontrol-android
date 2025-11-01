@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol.refill.history
 
 sealed interface RefillHistoryEvent {
-    data class Refresh(val showFullWeek: Boolean): RefillHistoryEvent
+    object Refresh: RefillHistoryEvent
+    data class SetRange(val showFullWeek: Boolean): RefillHistoryEvent
 }

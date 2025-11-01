@@ -4,32 +4,80 @@ import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-open class RefillHistoryRepository @Inject constructor(private val sessionManager: SessionManager) {
-    private val _refillHistoryLogEntryFlow = MutableStateFlow<DataFetchResult<List<RefillHistoryLogEntry>>>(
-        value = DataFetchResult.Success(data = emptyList())
-    )
+open class RefillHistoryRepository @Inject constructor(sessionManager: SessionManager) {
 
-    open val refillHistoryEventFlow = _refillHistoryLogEntryFlow.asStateFlow()
+    // Trigger for manual refreshes (e.g., pull-to-refresh)
+    private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
 
-    open suspend fun fetchRefillHistoryEvents(
-        showFullWeek: Boolean
-    ) {
-        if (sessionManager.getControllerAddress().isNullOrBlank()) {
-            return
+    // State flow to hold the current time range choice (24h vs 7d)
+    private val showFullWeek = MutableStateFlow(value = false)
+
+    /**
+     * A reactive Flow that provides the Refill History events.
+     * It combines three sources:
+     *  - The selected controller from SessionManager.
+     *  - The manual refresh trigger.
+     *  - The selected time range (24h or 7d).
+     *
+     * It automatically re-fetches data when any of these inputs change.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    open val refillHistoryEventFlow: Flow<DataFetchResult<List<RefillHistoryLogEntry>>> =
+        combine(
+            flow = sessionManager.selectedControllerProfile,
+            flow2 = refreshTrigger.onStart { emit(value = Unit) }, // Trigger on first collection
+            flow3 = showFullWeek
+        ) { controller, _, isFullWeek ->
+            Triple(first = controller, second = Unit, third = isFullWeek)
         }
-        val url: String = when {
-            showFullWeek -> "http://" + sessionManager.getControllerAddress() + WebApiUrls.REFILL_GET_EVENTS_7D
-            else -> "http://" + sessionManager.getControllerAddress() + WebApiUrls.REFILL_GET_EVENTS_24H
+            .filter { it.first != null } // Only proceed if a controller is selected
+            .flatMapLatest { (controller, _, isFullWeek) ->
+                flow {
+                    // @todo: emit loading state
+                    emit(value = DataFetchResult.Error(exception = null, errorMessage = "Loading"))
+
+                    val url = if (isFullWeek) {
+                        "http://${controller!!.address}${WebApiUrls.REFILL_GET_EVENTS_7D}"
+                    } else {
+                        "http://${controller!!.address}${WebApiUrls.REFILL_GET_EVENTS_24H}"
+                    }
+
+                    val result = withContext(context = Dispatchers.IO) {
+                        val reader = RefillHistoryLogEntryReader(url)
+                        reader.readRefillEvents()
+                    }
+
+                    emit(value = result)
+                }
+            }
+
+    /**
+     * Public function to tell the repository to fetch a different time range.
+     * Setting the value will automatically trigger the flow to re-fetch the data.
+     */
+    suspend fun setHistoryTimeRange(fetchFullWeek: Boolean) {
+        // Only emit if the value has changed to avoid unnecessary fetches.
+        if (showFullWeek.value != fetchFullWeek) {
+            showFullWeek.emit(value = fetchFullWeek)
         }
-        val reader = RefillHistoryLogEntryReader(url)
-        withContext(context = Dispatchers.IO) {
-            val result: DataFetchResult<List<RefillHistoryLogEntry>> = reader.readRefillEvents()
-            _refillHistoryLogEntryFlow.value = result
-        }
+    }
+
+    /**
+     * Public function for the ViewModel to trigger a manual refresh.
+     */
+    suspend fun triggerRefresh() {
+        refreshTrigger.emit(value = Unit)
     }
 }
