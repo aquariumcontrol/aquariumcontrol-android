@@ -33,20 +33,17 @@ class FeedHistoryViewModel @Inject constructor(
             initialValue = FeedHistoryUiState.Loading
         )
 
-    init {
-        loadData(showFullWeek = false)
-    }
-
-    fun loadData(showFullWeek: Boolean) {
-        viewModelScope.launch {
-            feedHistoryRepository.fetchFeedHistoryEvents(showFullWeek)
-        }
-    }
-
     fun onEvent(event: FeedHistoryEvent) {
         when (event) {
             is FeedHistoryEvent.Refresh -> {
-                loadData(showFullWeek =  event.showFullWeek)
+                viewModelScope.launch {
+                    feedHistoryRepository.triggerRefresh()
+                }
+            }
+            is FeedHistoryEvent.SetRange -> {
+                viewModelScope.launch {
+                    feedHistoryRepository.setHistoryTimeRange(fetchFullWeek = event.showFullWeek)
+                }
             }
         }
     }

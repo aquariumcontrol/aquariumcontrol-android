@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,6 +48,9 @@ fun FeedHistoryScreen(
     // - sub headline (last 7 days or last 24 hours)
     // - list of feed events
 
+    LaunchedEffect(key1 = Unit) {
+        onFeedHistoryEvent(FeedHistoryEvent.SetRange(showFullWeek))
+    }
     Column(
         modifier = Modifier.fillMaxSize().padding(all = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -76,7 +80,7 @@ fun FeedHistoryScreen(
                     contentAlignment = Alignment.Center,
                     state = rememberPullToRefreshState(),
                     isRefreshing = feedHistoryUiState is FeedHistoryUiState.Loading,
-                    onRefresh = { onFeedHistoryEvent(FeedHistoryEvent.Refresh(showFullWeek)) },
+                    onRefresh = { onFeedHistoryEvent(FeedHistoryEvent.Refresh)},
                     indicator = {
                         if (feedHistoryUiState is FeedHistoryUiState.Loading) {
                             CircularProgressIndicator(
