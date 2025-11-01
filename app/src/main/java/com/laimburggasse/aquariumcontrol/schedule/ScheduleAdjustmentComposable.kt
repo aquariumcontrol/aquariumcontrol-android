@@ -1,5 +1,7 @@
 package com.laimburggasse.aquariumcontrol.schedule
 
+import android.app.TimePickerDialog
+import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
@@ -34,18 +36,16 @@ fun ScheduleAdjustmentComposable(
     onStopTimeChanged: (Float) -> Unit,
     onLimitationActiveChanged: (Boolean) -> Unit
 ) {
-    val configuration = LocalConfiguration.current
+    val configuration: Configuration = LocalConfiguration.current
 
     // State for controlling the visibility of the Time Picker Dialogs
-    var showStartTimeDialog by remember { mutableStateOf(false) }
-    var showStopTimeDialog by remember { mutableStateOf(false) }
+    var showStartTimeDialog: Boolean by remember { mutableStateOf(false) }
+    var showStopTimeDialog: Boolean by remember { mutableStateOf(false) }
 
-    // --- DIALOG COMPOSABLES ---
-    // When showStartTimeDialog is true, this dialog will be displayed.
     if (showStartTimeDialog) {
         TimePickerDialog(
-            initialHour = getHour(startTime),
-            initialMinute = getMinute(startTime),
+            initialHour = getHour(value = startTime),
+            initialMinute = getMinute(value = startTime),
             onTimeSelected = { hour, minute ->
                 onStartTimeChanged(hour + minute / 60f)
                 showStartTimeDialog = false // Hide the dialog
@@ -56,11 +56,10 @@ fun ScheduleAdjustmentComposable(
         )
     }
 
-    // When showStopTimeDialog is true, this dialog will be displayed.
     if (showStopTimeDialog) {
         TimePickerDialog(
-            initialHour = getHour(stopTime),
-            initialMinute = getMinute(stopTime),
+            initialHour = getHour(value = stopTime),
+            initialMinute = getMinute(value = stopTime),
             onTimeSelected = { hour, minute ->
                 onStopTimeChanged(hour + minute / 60f)
                 showStopTimeDialog = false // Hide the dialog
@@ -75,44 +74,41 @@ fun ScheduleAdjustmentComposable(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .fillMaxWidth()
-            .border(
-                border = BorderStroke(
-                    1.dp,
-                    MaterialTheme.colorScheme.onSurface
-                )
-            )
-            .padding(8.dp)
+            .border(border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.onSurface))
+            .padding(all = 8.dp)
     ) {
         Text(
             text = title,
             style = MaterialTheme.typography.headlineSmall,
         )
 
-        val sliderRange = startTime..stopTime
-
         when (configuration.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     // Start Time Button
                     Column(
-                        modifier = Modifier.weight(0.25f),
+                        modifier = Modifier.weight(weight = 0.25f),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = stringResource(R.string.start_time) + formatTime(startTime),
+                            text = stringResource(R.string.start_time) + formatTime(value = startTime),
                             modifier = Modifier.padding(top = 16.dp)
                         )
                         Button(onClick = { showStartTimeDialog = true }) {
-                            Text(stringResource(R.string.select_time))
+                            Text(text = stringResource(R.string.select_time))
                         }
                     }
                     // Range Slider
-                    Column(modifier = Modifier.weight(0.5f)) {
+                    Column(modifier = Modifier.weight(weight = 0.5f)) {
                         RangeSlider(
-                            value = sliderRange,
+                            value = startTime..stopTime,
                             onValueChange = { newRange ->
-                                onStartTimeChanged(newRange.start)
-                                onStopTimeChanged(newRange.endInclusive)
+                                if (newRange.start != startTime) {
+                                    onStartTimeChanged(newRange.start)
+                                }
+                                if (newRange.endInclusive != stopTime) {
+                                    onStopTimeChanged(newRange.endInclusive)
+                                }
                             },
                             valueRange = 0f..24f,
                             modifier = Modifier.fillMaxWidth()
@@ -120,7 +116,7 @@ fun ScheduleAdjustmentComposable(
                     }
                     // Stop Time Button
                     Column(
-                        modifier = Modifier.weight(0.25f),
+                        modifier = Modifier.weight(weight = 0.25f),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
@@ -128,7 +124,7 @@ fun ScheduleAdjustmentComposable(
                             modifier = Modifier.padding(top = 16.dp)
                         )
                         Button(onClick = { showStopTimeDialog = true }) {
-                            Text(stringResource(R.string.select_time))
+                            Text(text = stringResource(R.string.select_time))
                         }
                     }
                 }
@@ -136,10 +132,14 @@ fun ScheduleAdjustmentComposable(
             else -> { // Portrait orientation
                 Column {
                     RangeSlider(
-                        value = sliderRange,
+                        value = startTime..stopTime,
                         onValueChange = { newRange ->
-                            onStartTimeChanged(newRange.start)
-                            onStopTimeChanged(newRange.endInclusive)
+                            if (newRange.start != startTime) {
+                                onStartTimeChanged(newRange.start)
+                            }
+                            if (newRange.endInclusive != stopTime) {
+                                onStopTimeChanged(newRange.endInclusive)
+                            }
                         },
                         valueRange = 0f..24f,
                         modifier = Modifier.fillMaxWidth()
@@ -148,7 +148,7 @@ fun ScheduleAdjustmentComposable(
                 Row {
                     Column {
                         Text(
-                            text = stringResource(R.string.start_time) + formatTime(startTime),
+                            text = stringResource(R.string.start_time) + formatTime(value = startTime),
                             modifier = Modifier.padding(top = 16.dp)
                         )
                         Button(onClick = { showStartTimeDialog = true }) {
@@ -158,7 +158,7 @@ fun ScheduleAdjustmentComposable(
                     Spacer(modifier = Modifier.size(width = 72.dp, height = 10.dp))
                     Column {
                         Text(
-                            text = stringResource(R.string.stop_time) + formatTime(stopTime),
+                            text = stringResource(R.string.stop_time) + formatTime(value = stopTime),
                             modifier = Modifier.padding(top = 16.dp)
                         )
                         Button(onClick = { showStopTimeDialog = true }) {
@@ -194,9 +194,9 @@ private fun TimePickerDialog(
     onTimeSelected: (Int, Int) -> Unit,
     onDismiss: () -> Unit
 ) {
-    val context = androidx.compose.ui.platform.LocalContext.current
-    val dialog = remember {
-        android.app.TimePickerDialog(
+    val context: Context = androidx.compose.ui.platform.LocalContext.current
+    val dialog: TimePickerDialog = remember {
+        TimePickerDialog(
             context,
             { _, hour, minute -> onTimeSelected(hour, minute) },
             initialHour,
@@ -208,7 +208,7 @@ private fun TimePickerDialog(
     dialog.setOnDismissListener { onDismiss() }
 
     // Use LaunchedEffect to show the dialog safely within the composition
-    LaunchedEffect(Unit) {
+    LaunchedEffect(key1 = Unit) {
         dialog.show()
     }
 }
@@ -216,8 +216,8 @@ private fun TimePickerDialog(
 // --- Helper functions for time conversion ---
 
 private fun formatTime(value: Float): String {
-    val hours = getHour(value)
-    val minutes = getMinute(value)
+    val hours: Int = getHour(value)
+    val minutes: Int = getMinute(value)
     return String.format(Locale.US, "%02d:%02d", hours, minutes)
 }
 

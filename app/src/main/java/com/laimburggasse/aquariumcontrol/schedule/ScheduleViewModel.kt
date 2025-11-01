@@ -56,7 +56,7 @@ class ScheduleViewModel @Inject constructor(
                     TimeType.STOP -> currentEntries.copy(heatingStopTime = newTime)
                 }
             }
-            scheduleRepository.updateLocalSchedule(updatedEntries)
+            scheduleRepository.updateLocalSchedule(newScheduleEntries = updatedEntries)
         }
     }
 
@@ -85,12 +85,7 @@ class ScheduleViewModel @Inject constructor(
 
     fun resetSchedule() {
         viewModelScope.launch {
-            scheduleRepository.fetchScheduleSetVals()
-        }
-    }
-    init {
-        viewModelScope.launch {
-            scheduleRepository.fetchScheduleSetVals()
+            scheduleRepository.reset()
         }
     }
 
