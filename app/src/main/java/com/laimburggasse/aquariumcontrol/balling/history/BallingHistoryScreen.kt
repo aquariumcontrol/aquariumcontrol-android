@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,6 +48,9 @@ fun BallingHistoryScreen(
     // - sub headline (last 7 days or last 24 hours)
     // - list of balling events
 
+    LaunchedEffect(key1 = Unit) {
+        onEvent(BallingHistoryEvent.SetRange(showFullWeek))
+    }
     Column(
         modifier = Modifier.fillMaxSize().padding(all = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -76,7 +80,7 @@ fun BallingHistoryScreen(
                     contentAlignment = Alignment.Center,
                     state = rememberPullToRefreshState(),
                     isRefreshing = ballingHistoryUiState is BallingHistoryUiState.Loading,
-                    onRefresh = { onEvent(BallingHistoryEvent.Refresh(showFullWeek)) },
+                    onRefresh = { onEvent(BallingHistoryEvent.Refresh) },
                     indicator = {
                         if (ballingHistoryUiState is BallingHistoryUiState.Loading) {
                             CircularProgressIndicator(

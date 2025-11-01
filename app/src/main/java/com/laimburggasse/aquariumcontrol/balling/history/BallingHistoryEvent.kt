@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol.balling.history
 
 sealed interface BallingHistoryEvent {
-    data class Refresh(val showFullWeek: Boolean) : BallingHistoryEvent
+    object Refresh : BallingHistoryEvent
+    data class SetRange(val showFullWeek: Boolean) : BallingHistoryEvent
 }

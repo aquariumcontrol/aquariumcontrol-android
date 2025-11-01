@@ -376,7 +376,7 @@ class MainActivity : ComponentActivity() {
                         ballingHistoryViewModel.ballingHistoryUiState.collectAsState()
                         MainScaffold(
                             isControllerLoaded,
-                            navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
+                            navigationRouteSource = ViewNavigationRoutes.ballingHistory7d,
                             screenContent = {
                                 BallingHistoryScreen(
                                     showFullWeek = true,

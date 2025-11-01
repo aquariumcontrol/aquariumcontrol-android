@@ -15,10 +15,13 @@ import javax.inject.Inject
 class BallingHistoryViewModel @Inject constructor(
     private val ballingHistoryRepository: BallingHistoryRepository
 ): ViewModel() {
-    val ballingHistoryUiState: StateFlow<BallingHistoryUiState> = ballingHistoryRepository.ballingHistoryDosingEventFlow
+    val ballingHistoryUiState: StateFlow<BallingHistoryUiState> =
+        ballingHistoryRepository.ballingHistoryDosingEventFlow
         .map { result ->
             when (result) {
-                is DataFetchResult.Error -> BallingHistoryUiState.Error(errorMessage = result.errorMessage)
+                is DataFetchResult.Error -> BallingHistoryUiState.Error(
+                    errorMessage = result.errorMessage
+                )
                 is DataFetchResult.Success -> {
                     if (result.data.isEmpty()) {
                         BallingHistoryUiState.Empty
@@ -29,24 +32,21 @@ class BallingHistoryViewModel @Inject constructor(
             }
         }.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.Eagerly,
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
             initialValue = BallingHistoryUiState.Loading
         )
-
-    init {
-        loadData(showFullWeek = false)
-    }
-
-    fun loadData(showFullWeek: Boolean) {
-        viewModelScope.launch {
-            ballingHistoryRepository.fetchBallingHistoryDosingEvents(showFullWeek)
-        }
-    }
 
     fun onEvent(event: BallingHistoryEvent) {
         when (event) {
             is BallingHistoryEvent.Refresh -> {
-                loadData(showFullWeek = event.showFullWeek)
+                viewModelScope.launch {
+                    ballingHistoryRepository.triggerRefresh()
+                }
+            }
+            is BallingHistoryEvent.SetRange -> {
+                viewModelScope.launch {
+                    ballingHistoryRepository.setHistoryTimeRange(fetchFullWeek = event.showFullWeek)
+                }
             }
         }
     }
