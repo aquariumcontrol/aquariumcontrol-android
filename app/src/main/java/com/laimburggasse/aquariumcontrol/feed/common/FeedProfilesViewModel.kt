@@ -42,7 +42,7 @@ class FeedProfilesViewModel @Inject constructor(
 
     fun loadData() {
         viewModelScope.launch {
-            feedProfilesRepository.fetchFeedProfiles()
+            feedProfilesRepository.triggerRefresh()
         }
     }
 
@@ -64,6 +64,9 @@ class FeedProfilesViewModel @Inject constructor(
         when (event) {
             is FeedProfilesUiEvent.DeleteFeedProfile -> {
                 deleteFeedProfile(feedProfile = event.feedProfile)
+            }
+            is FeedProfilesUiEvent.Refresh -> {
+                loadData()
             }
         }
     }

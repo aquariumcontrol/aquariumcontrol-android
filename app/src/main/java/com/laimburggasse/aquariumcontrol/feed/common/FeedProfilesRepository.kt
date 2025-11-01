@@ -1,102 +1,158 @@
 package com.laimburggasse.aquariumcontrol.feed.common
 
+import android.util.Log
 import com.laimburggasse.aquariumcontrol.SessionManager
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 open class FeedProfilesRepository @Inject constructor(private val sessionManager: SessionManager) {
-    private val _profilesFlow = MutableStateFlow<DataFetchResult<List<FeedProfile>>>(
-        value = DataFetchResult.Success(data = emptyList())
-    )
-    open val profilesFlow = _profilesFlow.asStateFlow()
 
-    open suspend fun fetchFeedProfiles() {
-        val profileUrl: String =
-            "http://" + sessionManager.getControllerAddress() + WebApiUrls.FEED_GET_PROFILES
-        val profileReader = FeedProfileReader(profileUrl)
-        withContext(context = Dispatchers.IO) {
-            val result: DataFetchResult<List<FeedProfileImport>> =
-                profileReader.readFeedProfiles()
-            when (result) {
-                is DataFetchResult.Error -> {
-                    _profilesFlow.value = DataFetchResult.Error(
-                        exception = result.exception, errorMessage = result.errorMessage
-                    )
+    private val repositoryScope = CoroutineScope(context = SupervisorJob() + Dispatchers.Default)
+    private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
+
+    // Holds a list of profile IDs that are pending deletions (POST request triggered, local update required).
+    private val pendingDeletions = MutableStateFlow<Set<Int>>(value = emptySet())
+
+    // Holds a new profile name that is pending addition (POST request triggered, local update required).
+    private val pendingAddition = MutableStateFlow<String?>(value = null)
+    // -----------------------------
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    open val profilesFlow: StateFlow<DataFetchResult<List<FeedProfile>>> =
+        combine(
+            flow = sessionManager.selectedControllerProfile,
+            flow2 = refreshTrigger.onStart { emit(value = Unit) },
+            flow3 = pendingDeletions,
+            flow4 = pendingAddition
+        ) { controller, _, deletions, addition ->
+            Triple(first = controller, second = deletions, third = addition)
+        }.flatMapLatest { (controller: ControllerProfile?, deletions: Set<Int>, addition: String?) ->
+            flow {
+                if (controller == null) {
+                    emit(value = DataFetchResult.Error(exception = null, errorMessage = "No controller selected"))
+                    return@flow
                 }
 
-                is DataFetchResult.Success -> {
-                    val feedProfileImports: List<FeedProfileImport> = result.data
-                    _profilesFlow.value = DataFetchResult.Success(
-                        data = feedProfileImports.map { importItem ->
-                            FeedProfile.fromFeedProfileImport(feedProfileImport = importItem)
+                emit(value = DataFetchResult.Error(exception = null, errorMessage = "Loading"))
+                Log.d("FeedProfilesRepository", "Fetching feed profiles from server.")
+                val networkResult: DataFetchResult<List<FeedProfileImport>> =
+                    withContext(context = Dispatchers.IO) {
+                    val profileUrl = "http://${controller.address}${WebApiUrls.FEED_GET_PROFILES}"
+                    val profileReader = FeedProfileReader(profileUrl)
+                    profileReader.readFeedProfiles()
+                }
+
+                // Merge optimistic updates with network result
+                val finalResult: DataFetchResult<List<FeedProfile>> = when (networkResult) {
+                    is DataFetchResult.Success -> {
+                        var profiles: List<FeedProfile> = networkResult.data.map {
+                            FeedProfile.fromFeedProfileImport(feedProfileImport = it)
                         }
-                    )
+
+                        // Apply pending deletions to the fetched list
+                        if (deletions.isNotEmpty()) {
+                            profiles = profiles.filterNot { deletions.contains(it.profileID)}
+                        }
+
+                        // Apply pending addition to the fetched list
+                        if (addition != null) {
+                            // Create a temporary profile for UI display. ID can be a placeholder.
+                            val tempProfile = FeedProfile(
+                                profileID = -1,
+                                profileName = "$addition (Saving...)",
+                                feedProfilePhases = emptyList()
+                            )
+                            profiles = profiles + tempProfile
+                        }
+                        DataFetchResult.Success(profiles)
+                    }
+                    is DataFetchResult.Error -> networkResult // Pass through errors
                 }
+                emit(finalResult)
+                // --------------------------------------------------
             }
-        }
+        }.stateIn(
+            scope = repositoryScope,
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
+            initialValue = DataFetchResult.Error(exception = null, errorMessage = "Loading")
+        )
+
+    open suspend fun triggerRefresh() {
+        refreshTrigger.emit(Unit)
     }
 
     open suspend fun deleteFeedProfile(feedProfile: FeedProfile) {
-        when (val result: DataFetchResult<List<FeedProfile>> = _profilesFlow.value) {
-            is DataFetchResult.Error -> {
-                // do nothing
-            }
-            is DataFetchResult.Success -> {
-                withContext(context = Dispatchers.IO) {
-                    webApiPostRequestExecution(
-                        apiUrl = WebApiUrls.FEED_POST_REMOVE_PROFILE,
-                        sessionManager = sessionManager,
-                        webApiPostRequest = WebApiPostRequest(),
-                        optionalGetParams = feedProfile.getFeedProfileApiCallParameters()
-                    )
-                }
-                val currentList: MutableList<FeedProfile> = result.data.toMutableList()
-                currentList.remove(element = feedProfile)
-                _profilesFlow.value = DataFetchResult.Success(data = currentList)
-            }
+        // Optimistic Update: Immediately add the ID to the pending deletions list.
+        // The UI will react to this instantly.
+        pendingDeletions.value += feedProfile.profileID
+
+        // Perform the actual network request in the background.
+        repositoryScope.launch(context = Dispatchers.IO) {
+            webApiPostRequestExecution(
+                apiUrl = WebApiUrls.FEED_POST_REMOVE_PROFILE,
+                sessionManager = sessionManager,
+                webApiPostRequest = WebApiPostRequest(),
+                optionalGetParams = feedProfile.getFeedProfileApiCallParameters()
+            )
         }
     }
 
     open suspend fun addFeedProfile(feedProfileName: String): Boolean {
-        val apiCallParameters: Map<String, String> = mapOf(WebApiParams.PROFILE_NAME to feedProfileName)
+        // Optimistic Update: Immediately set the pending addition name.
+        // The UI will react instantly and show the temporary item.
+        pendingAddition.value = feedProfileName
 
-        val success: Boolean = withContext(context = Dispatchers.IO) {
-            webApiPostRequestExecution(
+        return withContext(context = Dispatchers.IO) {
+            val success: Boolean = webApiPostRequestExecution(
                 sessionManager = sessionManager,
                 apiUrl = WebApiUrls.FEED_POST_PROFILE_CREATE,
                 webApiPostRequest = WebApiPostRequest(),
-                optionalGetParams = apiCallParameters
+                optionalGetParams = mapOf(WebApiParams.PROFILE_NAME to feedProfileName)
             )
-        }
 
-        if (success) {
-            fetchFeedProfiles()
-        }
+            // Reconciliation: Trigger a full refresh and clear the pending state.
+            triggerRefresh()
+            pendingAddition.value = null
 
-        return success
+            success
+        }
     }
 
     open fun findProfileById(profileId: Int): FeedProfile? {
-        return if (_profilesFlow.value is DataFetchResult.Success) {
-            val data = (_profilesFlow.value as DataFetchResult.Success).data
-            data.find { it.profileID == profileId }
+        val currentData: DataFetchResult<List<FeedProfile>> = profilesFlow.value
+        return if (currentData is DataFetchResult.Success) {
+            currentData.data.find { it.profileID == profileId }
         } else {
             null
         }
     }
 
     open fun findProfileByName(profileName: String): FeedProfile? {
-        return if (_profilesFlow.value is DataFetchResult.Success) {
-            val data = (_profilesFlow.value as DataFetchResult.Success).data
-            data.find { it.profileName == profileName }
+        val currentData: DataFetchResult<List<FeedProfile>> = profilesFlow.value
+        return if (currentData is DataFetchResult.Success) {
+            currentData.data.find { it.profileName == profileName }
         } else {
             null
         }
@@ -104,7 +160,7 @@ open class FeedProfilesRepository @Inject constructor(private val sessionManager
 
     suspend fun updateFeedProfile(modifiedFeedProfile: FeedProfile) {
         val apiCallParameters: Map<String, String> = modifiedFeedProfile.getFeedProfileApiCallParameters()
-        withContext(context = Dispatchers.IO) {
+        val success: Boolean = withContext(context = Dispatchers.IO) {
             webApiPostRequestExecution(
                 sessionManager = sessionManager,
                 apiUrl = WebApiUrls.FEED_POST_PROFILE_UPDATE,
@@ -112,18 +168,8 @@ open class FeedProfilesRepository @Inject constructor(private val sessionManager
                 optionalGetParams = apiCallParameters
             )
         }
-
-        // Update the local list of profiles
-        val currentResult: DataFetchResult<List<FeedProfile>> = _profilesFlow.value
-        if (currentResult is DataFetchResult.Success) {
-            val updatedList: List<FeedProfile> = currentResult.data.map { existingProfile ->
-                if (existingProfile.profileID == modifiedFeedProfile.profileID) {
-                    modifiedFeedProfile
-                } else {
-                    existingProfile
-                }
-            }
-            _profilesFlow.value = DataFetchResult.Success(data = updatedList)
+        if (success) {
+            triggerRefresh()
         }
     }
 }
