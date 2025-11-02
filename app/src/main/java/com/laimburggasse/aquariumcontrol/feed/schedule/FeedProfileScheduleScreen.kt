@@ -61,7 +61,7 @@ fun FeedProfileScheduleScreen(
 
     var repeatDaily: Boolean by remember { mutableStateOf(value = false) }
 
-    val timestamp = if (isNewScheduleEntry) {
+    val timestamp: Timestamp = if (isNewScheduleEntry) {
         // use current time if no millisSinceEpoch is provided
         Timestamp(System.currentTimeMillis())
     }
@@ -71,6 +71,7 @@ fun FeedProfileScheduleScreen(
     }
     val feedScheduleEntry = FeedScheduleEntry(
         timestamp,
+        profileId = feedProfile.profileID,
         profileName = feedProfile.profileName,
         repeatDaily = repeatDaily
     )
@@ -121,7 +122,7 @@ fun FeedProfileScheduleScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row {
-                Text(text = stringResource(id = R.string.profile_name_label) + feedScheduleEntry.profileName)
+                Text(text = stringResource(id = R.string.profile_name_label) + feedProfile.profileName)
             }
             Spacer(modifier = Modifier.height(height = 16.dp))
             Row {
@@ -161,7 +162,7 @@ fun FeedProfileScheduleScreen(
                     text = stringResource(R.string.repeat_daily)
                 )
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(height = 16.dp))
 
             // Button to confirm and pass the selected date and time
             Button(
@@ -178,10 +179,12 @@ fun FeedProfileScheduleScreen(
                     feedScheduleEntry.timestamp =
                         Timestamp(selectedCalendar.timeInMillis)
                     onFeedScheduleEntryUiEvent(
-                        FeedScheduleEntryUiEvent.UpsertFeedScheduleEntry(
+                        FeedScheduleEntryUiEvent.UpdateFeedScheduleEntry(
                             feedProfile,
                             feedScheduleEntry,
-                            selectedCalendar
+                            selectedCalendar,
+                            millisSinceEpoch,
+                            isNewScheduleEntry
                         )
                     )
                     // Show the Toast after the API call

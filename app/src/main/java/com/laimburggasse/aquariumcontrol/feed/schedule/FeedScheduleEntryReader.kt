@@ -36,7 +36,7 @@ class FeedScheduleEntryReader(private val url: String) {
         } catch (e: Exception) {
             return DataFetchResult.Error(
                 exception = e,
-                errorMessage = "An unexpected error occurred during preparation of server communication."
+                errorMessage = "An unexpected error occurred during preparation of server communication: ${e.message}"
             )
         }
     }

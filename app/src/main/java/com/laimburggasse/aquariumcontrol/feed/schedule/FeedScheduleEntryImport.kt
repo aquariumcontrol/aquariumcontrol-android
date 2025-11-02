@@ -4,17 +4,21 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 @Serializable
 data class FeedScheduleEntryImport (
-    @SerialName("TimeStamp")
+    @SerialName(value = "Timestamp")
     val timestampString: String,
 
-    @SerialName("ProfileName")
+    @SerialName(value = "ProfileId")
+    val profileId: Int,
+
+    @SerialName(value = "ProfileName")
     val profileName: String,
 
-    @SerialName("IsDaily")
+    @SerialName(value = "IsDaily")
     val isDaily: Int = 0,
 ) {
     fun transformToFeedScheduleEntry(): FeedScheduleEntry {
@@ -22,6 +26,6 @@ data class FeedScheduleEntryImport (
         val parsedTimestamp = dateFormat.parse(timestampString)
         val timestamp = Timestamp(parsedTimestamp!!.time)
 
-        return (FeedScheduleEntry(timestamp, profileName, isDaily == 1))
+        return (FeedScheduleEntry(timestamp, profileId, profileName, repeatDaily = isDaily == 1))
     }
 }

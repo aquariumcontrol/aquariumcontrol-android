@@ -23,6 +23,8 @@ object WebApiParams {
     const val VENTILATION_SWITCH_ON_TEMPERATURE = "ventilationSwitchOnTemp"
     const val REPEAT_DAILY = "RepeatDaily"
     const val TIMESTAMP = "TimeStamp"
+    const val TIMESTAMP_NEW = "TimeStampNew"
+    const val TIMESTAMP_OLD = "TimeStampOld"
     const val SCHEDULE_BALLING_START_TIME = "BallingRangeStartTime"
     const val SCHEDULE_BALLING_STOP_TIME = "BallingRangeFinishTime"
     const val SCHEDULE_BALLING_IS_ACTIVE = "BallingRangeIsActive"

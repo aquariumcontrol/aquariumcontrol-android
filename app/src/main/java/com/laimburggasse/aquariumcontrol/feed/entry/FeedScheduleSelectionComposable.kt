@@ -52,36 +52,24 @@ fun FeedScheduleSelectionComposable(
                 }
             } else {
                 // In App Runtime: Use the performant LazyColumn and provide lambdas
-                LazyColumn(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(all = 16.dp)) {
+                LazyColumn(modifier = Modifier.fillMaxWidth().padding(all = 16.dp)) {
                     items(items = feedScheduleEntries) { feedScheduleEntry ->
-                        val feedProfileId: Int? = onFeedSchedulesUiEvent(
-                            FeedScheduleUiEvent.GetFeedProfileIdByName(
-                                feedProfileName = feedScheduleEntry.profileName
-                            )
+                        FeedScheduleEntryComposable(
+                            feedScheduleEntry = feedScheduleEntry,
+                            onEditClick = {
+                                onNavigateFromFeed(
+                                    FeedNavigationEvent.ToFeedScheduling,
+                                    feedScheduleEntry.profileId,
+                                    false,
+                                    feedScheduleEntry.timestamp.time
+                                )
+                            },
+                            onDeleteClick = {
+                                onFeedSchedulesUiEvent(
+                                    FeedScheduleUiEvent.DeleteFeedScheduleEntry(feedScheduleEntry)
+                                )
+                            }
                         )
-                        if (feedProfileId != null) {
-                            FeedScheduleEntryComposable(
-                                feedScheduleEntry = feedScheduleEntry,
-                                onEditClick = {
-                                    onNavigateFromFeed(
-                                        FeedNavigationEvent.ToFeedScheduling,
-                                        feedProfileId,
-                                        false,
-                                        feedScheduleEntry.timestamp.time
-                                    )
-                                },
-                                onDeleteClick = {
-                                    onFeedSchedulesUiEvent(
-                                        FeedScheduleUiEvent.DeleteFeedScheduleEntry(feedScheduleEntry)
-                                    )
-                                }
-                            )
-                        }
-                        else {
-                            // @todo: handle error case (e.g. Toast)
-                        }
                     }
                 }
             }

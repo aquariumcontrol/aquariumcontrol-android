@@ -146,12 +146,14 @@ fun createMockFeedSchedule(): List<FeedScheduleEntry> {
     // create mock feed schedule entries
     val mockFeedScheduleEntry1 = FeedScheduleEntryImport(
         timestampString = "2023-09-01 12:00:00",
+        profileId = 1,
         profileName = "Test Profile 1",
         isDaily = 1
     ).transformToFeedScheduleEntry()
 
     val mockFeedScheduleEntry2 = FeedScheduleEntryImport(
         timestampString = "2023-09-01 13:00:00",
+        profileId = 1,
         profileName = "Test Profile 2",
         isDaily = 0
     ).transformToFeedScheduleEntry()

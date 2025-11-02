@@ -36,6 +36,7 @@ import com.laimburggasse.aquariumcontrol.controller.selection.ControllerSelectio
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddScreen
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddUiState
 import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddViewModel
+import com.laimburggasse.aquariumcontrol.feed.common.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilesViewModel
 import com.laimburggasse.aquariumcontrol.feed.common.FeedScheduleUiState
 import com.laimburggasse.aquariumcontrol.feed.common.FeedScheduleViewModel
@@ -304,9 +305,9 @@ class MainActivity : ComponentActivity() {
                         )
                     ) { backStackEntry ->
                         val feedScheduleViewModel: FeedScheduleViewModel = hiltViewModel()
-                        val feedProfile by feedScheduleViewModel.feedProfile.collectAsState()
-                        val isNewScheduleEntry by feedScheduleViewModel.isNewScheduleEntry.collectAsState()
-                        val millisSinceEpoch by feedScheduleViewModel.millisSinceEpoch.collectAsState()
+                        val feedProfile: FeedProfile by feedScheduleViewModel.feedProfile.collectAsState()
+                        val isNewScheduleEntry: Boolean by feedScheduleViewModel.isNewScheduleEntry.collectAsState()
+                        val millisSinceEpoch: Long by feedScheduleViewModel.millisSinceEpoch.collectAsState()
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.feedSchedule,

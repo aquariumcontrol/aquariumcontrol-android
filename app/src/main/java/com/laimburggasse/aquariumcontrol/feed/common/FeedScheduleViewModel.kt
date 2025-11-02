@@ -91,9 +91,27 @@ class FeedScheduleViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             feedScheduleRepository.addFeedScheduleEntry(
+                feedProfileId = feedProfile.profileID,
                 feedProfileName = feedProfile.profileName,
                 repeatDaily,
                 selectedCalendar
+            )
+        }
+    }
+
+    fun updateFeedScheduleEntry(
+        feedProfile: FeedProfile,
+        repeatDaily: Boolean,
+        selectedCalendar: Calendar,
+        millisSinceEpoch: Long // data from old entry
+    ) {
+        viewModelScope.launch {
+            feedScheduleRepository.updateFeedScheduleEntry(
+                feedProfileId = feedProfile.profileID,
+                feedProfileName = feedProfile.profileName,
+                repeatDaily,
+                selectedCalendar,
+                millisSinceEpoch
             )
         }
     }
@@ -109,6 +127,7 @@ class FeedScheduleViewModel @Inject constructor(
                 return getFeedProfileIdByName(event.feedProfileName)
             }
             is FeedScheduleUiEvent.DeleteFeedScheduleEntry -> {
+                Log.d("FeedScheduleViewModel", "Delete feed schedule entry")
                 deleteFeedScheduleEntry(feedScheduleEntry = event.feedScheduleEntry)
             }
         }
@@ -117,12 +136,22 @@ class FeedScheduleViewModel @Inject constructor(
 
     fun onFeedScheduleEntryUiEvent(event: FeedScheduleEntryUiEvent) {
         when (event) {
-            is FeedScheduleEntryUiEvent.UpsertFeedScheduleEntry -> {
-                addFeedScheduleEntry(
-                    feedProfile = event.feedProfile,
-                    repeatDaily = event.feedScheduleEntry.repeatDaily,
-                    selectedCalendar = event.selectedCalendar
-                )
+            is FeedScheduleEntryUiEvent.UpdateFeedScheduleEntry -> {
+                if (event.isNewEntry) {
+                    addFeedScheduleEntry(
+                        feedProfile = event.feedProfile,
+                        repeatDaily = event.feedScheduleEntry.repeatDaily,
+                        selectedCalendar = event.selectedCalendar
+                    )
+                }
+                else {
+                    updateFeedScheduleEntry(
+                        feedProfile = event.feedProfile,
+                        repeatDaily = event.feedScheduleEntry.repeatDaily,
+                        selectedCalendar = event.selectedCalendar,
+                        millisSinceEpoch = event.millisSinceEpoch
+                    )
+                }
             }
         }
     }

@@ -1,6 +1,5 @@
 package com.laimburggasse.aquariumcontrol.feed.schedule
 
-// import com.example.aquariumcontroller.ViewNavigationRoutes will be used in future implementation
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
@@ -40,27 +39,19 @@ fun FeedScheduleEntryComposable(
     // - timestamp of schedule
     // - information if the feed profile execution should be repeated daily
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .border(
-                border = BorderStroke(
-                    1.dp,
-                    MaterialTheme.colorScheme.onSurface
-                )
-            )
-            .padding(8.dp)
+    Row(modifier = Modifier.fillMaxWidth()
+            .border(border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.onSurface))
+            .padding(all = 8.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .weight(5f)
-        ) {
+        Column(modifier = Modifier.weight(weight = 5f)) {
             Text(
-                text = stringResource(R.string.profile_name_label) + feedScheduleEntry.profileName,
+                text = stringResource(id = R.string.profile_name_label) + feedScheduleEntry.profileName,
                 fontSize = 12.sp
             )
             Text(
-                text = stringResource(R.string.scheduled_for) + feedScheduleEntry.getTimestampString(),
+                text = stringResource(id = R.string.scheduled_for) + feedScheduleEntry.getTimestampString(
+                    timestampToBeFormatted = feedScheduleEntry.timestamp
+                ),
                 fontSize = 12.sp
             )
             Text(
@@ -71,31 +62,19 @@ fun FeedScheduleEntryComposable(
                 fontSize = 12.sp
             )
         }
-        Column(
-            Modifier
-                .align(Alignment.CenterVertically)
-        ) {
+        Column(Modifier.align(Alignment.CenterVertically)) {
             Row {
                 //* deactivated because API is currently (Feb, 2025) not available
                 Icon(
                     imageVector = Icons.Filled.Edit,
                     contentDescription = "Edit",
-                    Modifier
-                        .size(48.dp)
-                        .clickable {
-                            onEditClick()
-                        }
+                    Modifier.size(size = 48.dp).clickable { onEditClick() }
                 )
-                Spacer(modifier = Modifier.width(16.dp))
-
+                Spacer(modifier = Modifier.width(width = 16.dp))
                 Icon(
                     imageVector = Icons.Filled.Delete,
                     contentDescription = stringResource(R.string.delete),
-                    Modifier
-                        .size(48.dp)
-                        .clickable {
-                            onDeleteClick()
-                        }
+                    Modifier.size(size = 48.dp).clickable { onDeleteClick() }
                 )
             }
         }
@@ -108,6 +87,7 @@ fun FeedScheduleEntryComposable(
 internal fun FeedScheduleEntryComposablePreview() {
     val mockFeedScheduleEntryImport = FeedScheduleEntryImport(
         timestampString = "2023-09-01 12:00:00",
+        profileId = 1,
         profileName = "MockProfile",
         isDaily = 1
     )

@@ -10,6 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -34,9 +35,9 @@ open class FeedScheduleRepository @Inject constructor(private val sessionManager
 
     // Triggers and holders for optimistic updates
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
-    private val pendingDeletions = MutableStateFlow<Set<Int>>(emptySet())
-    private val pendingAdditions = MutableStateFlow<Set<FeedScheduleEntry>>(emptySet())
-    private val pendingUpdates = MutableStateFlow<Map<Int, FeedScheduleEntry>>(emptyMap())
+    private val pendingDeletions = MutableStateFlow<Set<FeedScheduleEntryKey>>(value = emptySet())
+    private val pendingAdditions = MutableStateFlow<Set<FeedScheduleEntry>>(value = emptySet())
+    private val pendingUpdates = MutableStateFlow<Map<FeedScheduleEntryKey, FeedScheduleEntry>>(value = emptyMap())
 
     // Private flow that ONLY handles fetching data from the network.
     // It is only triggered by controller changes or manual refreshes.
@@ -68,6 +69,14 @@ open class FeedScheduleRepository @Inject constructor(private val sessionManager
                     is DataFetchResult.Error -> importResult
                 }
             }
+            // After a successful network fetch, we know the ground truth has been updated.
+            // This is the ONLY place where we should clear the pending states.
+            if (networkResult is DataFetchResult.Success) {
+                Log.d("FeedScheduleRepository", "Network fetch successful. Clearing pending states.")
+                pendingDeletions.value = emptySet()
+                pendingAdditions.value = emptySet()
+                pendingUpdates.value = emptyMap()
+            }
             emit(value = networkResult)
         }
     }.stateIn(
@@ -81,23 +90,36 @@ open class FeedScheduleRepository @Inject constructor(private val sessionManager
     @OptIn(ExperimentalCoroutinesApi::class)
     open val scheduleFlow: StateFlow<DataFetchResult<List<FeedScheduleEntry>>> = combine(
         flow = networkFlow, // The "slow but truthful" source
-        flow2 =pendingDeletions,
+        flow2 = pendingDeletions,
         flow3 = pendingAdditions,
         flow4 = pendingUpdates
     ) { networkResult, deletions, additions, updates ->
         // This transformation logic runs whenever the network data OR any pending update changes.
+        Log.d("FeedScheduleRepository", "Combining flows...")
         when (networkResult) {
             is DataFetchResult.Success -> {
                 var profiles: List<FeedScheduleEntry> = networkResult.data
                 // Apply optimistic updates on top of the latest network data
                 if (deletions.isNotEmpty()) {
-                    profiles = profiles.filterIndexed { index, _ -> !deletions.contains(index) }
+                    profiles = profiles.filterNot { entry -> deletions.contains(
+                        FeedScheduleEntryKey(
+                            profileId = entry.profileId,
+                            timestamp = entry.timestamp.time
+                        )
+                    ) }
                 }
                 if (additions.isNotEmpty()) {
                     profiles = profiles + additions
                 }
                 if (updates.isNotEmpty()) {
-                    profiles = profiles.mapIndexed { index, entry -> updates[index] ?: entry }
+                    profiles = profiles.map { entry ->
+                        val key = FeedScheduleEntryKey(
+                            profileId = entry.profileId,
+                            timestamp = entry.timestamp.time
+                        )
+                        // If a pending update exists for this key, use it, otherwise use the original.
+                        updates[key] ?: entry
+                    }
                 }
                 DataFetchResult.Success(data = profiles) // Emit the final, merged list
             }
@@ -106,65 +128,150 @@ open class FeedScheduleRepository @Inject constructor(private val sessionManager
         }
     }.stateIn(
         scope = repositoryScope,
-        started = SharingStarted.WhileSubscribed(5000L),
+        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
         initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial")
     )
 
     open suspend fun triggerRefresh() {
-        refreshTrigger.emit(Unit)
+        refreshTrigger.emit(value = Unit)
     }
 
     open suspend fun deleteFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry) {
-        val originalIndex: Int = (networkFlow.value as? DataFetchResult.Success)?.data?.indexOf(feedScheduleEntry) ?: -1
-        if (originalIndex == -1) return
+        Log.d("FeedScheduleRepository", "Request to delete feed schedule entry: $feedScheduleEntry")
 
-        pendingDeletions.value += originalIndex
+        // 1. Check if the entry to be deleted is a pending addition.
+        //    We can check if it exists in the `pendingAdditions` set.
+        val isPendingAddition: Boolean = pendingAdditions.value.any {
+            it.profileId == feedScheduleEntry.profileId && it.timestamp.time == feedScheduleEntry.timestamp.time
+        }
 
+        if (isPendingAddition) {
+            // If it's a locally created entry, remove it from the pending additions.
+            pendingAdditions.value -= feedScheduleEntry
+        }
+        val keyToDelete = FeedScheduleEntryKey(
+            profileId = feedScheduleEntry.profileId,
+            timestamp = feedScheduleEntry.timestamp.time
+        )
+
+        // Avoid creating duplicates in the pending deletions
+        if (pendingDeletions.value.contains(keyToDelete)) return
+
+        pendingDeletions.value += keyToDelete
+        Log.d(
+            "FeedScheduleRepository",
+            "Deleting a server entry. Pending deletions: $pendingDeletions"
+        )
+
+        // In both cases, trigger the network request, because the add operation
+        // may have committed to the server meanwhile.
         repositoryScope.launch(context = Dispatchers.IO) {
-            webApiPostRequestExecution(
+            Log.d("FeedScheduleRepository", "Coroutine launched. Sending POST request for deletion.")
+            val result: Boolean = webApiPostRequestExecution(
                 apiUrl = WebApiUrls.FEED_POST_SCHEDULE_REMOVE_ENTRY,
                 sessionManager = sessionManager,
                 webApiPostRequest = WebApiPostRequest(),
                 optionalGetParams = feedScheduleEntry.getApiParameters()
             )
+            if (result) {
+                delay(timeMillis = 3000L)
+                triggerRefresh()
+            }
+            else {
+                // On failure, remove the pending deletion to revert the UI change.
+                pendingDeletions.value -= keyToDelete
+            }
+            // @todo: issue UiState Error
         }
     }
 
-    suspend fun addFeedScheduleEntry(feedProfileName: String, repeatDaily: Boolean, selectedCalendar: Calendar) {
-        // @todo: check api call
+    fun addFeedScheduleEntry(
+        feedProfileId: Int,
+        feedProfileName: String,
+        repeatDaily: Boolean,
+        selectedCalendar: Calendar
+    ) {
         val timestamp = Timestamp(selectedCalendar.timeInMillis)
+        val keyToFind = FeedScheduleEntryKey(feedProfileId, timestamp.time)
+
+        // Entry has been added before and not yet gone through network update
+        // Undelete it, but still run the network request
+        if (pendingDeletions.value.contains(keyToFind)) {
+            pendingDeletions.value -= keyToFind
+        }
+
         val tempEntry = FeedScheduleEntry(
-            profileName = "$feedProfileName (Saving...)",
-            repeatDaily = repeatDaily,
-            timestamp = timestamp
+            timestamp = timestamp,
+            profileId = feedProfileId,
+            profileName = feedProfileName,
+            repeatDaily = repeatDaily
         )
+
+        // Avoid creating duplicates in the list of pending additions
+        if (pendingAdditions.value.contains(tempEntry)) return
+
         pendingAdditions.value += tempEntry
 
         val apiParams: Map<String, String> = tempEntry.getApiParameters()
         repositoryScope.launch(context = Dispatchers.IO) {
-            webApiPostRequestExecution(
+            val result: Boolean = webApiPostRequestExecution(
                 sessionManager = sessionManager,
                 webApiPostRequest = WebApiPostRequest(),
                 optionalGetParams = apiParams,
-                apiUrl = WebApiUrls.FEED_POST_PROFILE_SCHEDULE
+                apiUrl = WebApiUrls.FEED_POST_PROFILE_SCHEDULE_NEW
             )
+            if (result) {
+                delay(timeMillis = 3000L)
+                triggerRefresh()
+            }
+            else {
+                // On failure, remove the pending update to revert the UI change.
+                pendingAdditions.value -= tempEntry
+                // @todo: issue UiState Error
+            }
         }
     }
 
-    suspend fun modifyFeedScheduleEntry(originalEntry: FeedScheduleEntry, modifiedEntry: FeedScheduleEntry) {
-        // @todo: check API call
-        val originalIndex: Int = (networkFlow.value as? DataFetchResult.Success)?.data?.indexOf(originalEntry) ?: -1
-        if (originalIndex == -1) return
+    fun updateFeedScheduleEntry(
+        feedProfileId: Int,
+        feedProfileName: String,
+        repeatDaily: Boolean,
+        selectedCalendar: Calendar,
+        millisSinceEpoch: Long // data from old entry
+    ) {
+        // Create the key for the ORIGINAL entry that is being modified.
+        val originalKey = FeedScheduleEntryKey(feedProfileId, timestamp = millisSinceEpoch)
 
-        pendingUpdates.value += (originalIndex to modifiedEntry.copy(profileName = "${modifiedEntry.profileName} (Saving...)"))
+        // Create the NEW entry object with the modified data.
+        val modifiedEntry = FeedScheduleEntry(
+            timestamp = Timestamp(selectedCalendar.timeInMillis),
+            profileId = feedProfileId,
+            profileName = feedProfileName,
+            repeatDaily = repeatDaily
+        )
 
+        // Optimistic Update: Add the change to the pendingUpdates map.
+        // The key is the original entry, the value is the new optimistic entry.
+        pendingUpdates.value += (originalKey to modifiedEntry.copy(profileName = "$feedProfileName (Saving...)"))
+
+        // Launch the background network request.
         repositoryScope.launch(context = Dispatchers.IO) {
-            webApiPostRequestExecution(
+            val timestampOld = Timestamp(millisSinceEpoch)
+            val result: Boolean = webApiPostRequestExecution(
                 sessionManager = sessionManager,
                 webApiPostRequest = WebApiPostRequest(),
-                optionalGetParams = modifiedEntry.getApiParameters(),
+                optionalGetParams = modifiedEntry.getApiParametersForUpdating(timestampOld),
                 apiUrl = WebApiUrls.FEED_POST_PROFILE_UPDATE_SCHEDULE
             )
+            if (result) {
+                delay(timeMillis = 3000L)
+                triggerRefresh()
+            }
+            else {
+                // On failure, remove the pending update to revert the UI change.
+                pendingUpdates.value -= originalKey
+                // @todo: issue UiState Error
+            }
         }
     }
 }
