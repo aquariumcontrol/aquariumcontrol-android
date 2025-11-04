@@ -1,23 +1,28 @@
 package com.laimburggasse.aquariumcontrol.overview
 
 import com.laimburggasse.aquariumcontrol.SessionManager
+import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @OptIn(DelicateCoroutinesApi::class)
-open class OverviewRepository @Inject constructor(sessionManager: SessionManager) {
-    // 1. Create a "trigger" flow.
+open class OverviewRepository @Inject constructor(
+    sessionManager: SessionManager,
+    @ApplicationScope private val repositoryScope: CoroutineScope
+) {
     // This SharedFlow doesn't hold state; it just emits a signal when we call emit().
     // We use replay=1 so it emits the last signal to new subscribers if needed.
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
@@ -34,8 +39,8 @@ open class OverviewRepository @Inject constructor(sessionManager: SessionManager
     @OptIn(ExperimentalCoroutinesApi::class)
     open val overviewData: Flow<DataFetchResult<OverviewData>> =
         combine(
-            sessionManager.selectedControllerProfile,
-            refreshTrigger
+            flow = sessionManager.selectedControllerProfile,
+            flow2 = refreshTrigger
         ) { controller, _ ->
             controller
         }.flatMapLatest { controller ->
@@ -57,6 +62,11 @@ open class OverviewRepository @Inject constructor(sessionManager: SessionManager
                 emit(value = result)
             }
         }
+        .stateIn(
+            scope = repositoryScope,
+            started = SharingStarted.Eagerly,
+            initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial loading")
+        )
 
     /**
      * This function acts as a manual trigger for the reactive `overviewData` flow.
@@ -65,16 +75,5 @@ open class OverviewRepository @Inject constructor(sessionManager: SessionManager
      */
     open suspend fun fetchOverviewData() {
         refreshTrigger.emit(value = Unit)
-    }
-
-    /**
-     * We need to emit an initial trigger so that data loads the first time
-     * the repository is created and a controller is available.
-     */
-    init {
-        // @todo: trigger initial load by view model
-        kotlinx.coroutines.GlobalScope.launch {
-            refreshTrigger.emit(value = Unit)
-        }
     }
 }

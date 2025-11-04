@@ -1,22 +1,30 @@
 package com.laimburggasse.aquariumcontrol.refill.history
 
 import com.laimburggasse.aquariumcontrol.SessionManager
+import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
+import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-open class RefillHistoryRepository @Inject constructor(sessionManager: SessionManager) {
+open class RefillHistoryRepository @Inject constructor(
+    sessionManager: SessionManager,
+    @ApplicationScope private val repositoryScope: CoroutineScope
+) {
 
     // Trigger for manual refreshes (e.g., pull-to-refresh)
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
@@ -43,18 +51,18 @@ open class RefillHistoryRepository @Inject constructor(sessionManager: SessionMa
             Triple(first = controller, second = Unit, third = isFullWeek)
         }
             .filter { it.first != null } // Only proceed if a controller is selected
-            .flatMapLatest { (controller, _, isFullWeek) ->
+            .flatMapLatest { (controller: ControllerProfile?, _, isFullWeek: Boolean) ->
                 flow {
                     // @todo: emit loading state
                     emit(value = DataFetchResult.Error(exception = null, errorMessage = "Loading"))
 
-                    val url = if (isFullWeek) {
+                    val url: String = if (isFullWeek) {
                         "http://${controller!!.address}${WebApiUrls.REFILL_GET_EVENTS_7D}"
                     } else {
                         "http://${controller!!.address}${WebApiUrls.REFILL_GET_EVENTS_24H}"
                     }
 
-                    val result = withContext(context = Dispatchers.IO) {
+                    val result: DataFetchResult<List<RefillHistoryLogEntry>> = withContext(context = Dispatchers.IO) {
                         val reader = RefillHistoryLogEntryReader(url)
                         reader.readRefillEvents()
                     }
@@ -62,6 +70,11 @@ open class RefillHistoryRepository @Inject constructor(sessionManager: SessionMa
                     emit(value = result)
                 }
             }
+            .stateIn(
+                scope = repositoryScope,
+                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
+                initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial loading")
+            )
 
     /**
      * Public function to tell the repository to fetch a different time range.

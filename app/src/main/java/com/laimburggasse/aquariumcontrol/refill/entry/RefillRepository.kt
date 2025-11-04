@@ -1,12 +1,18 @@
 package com.laimburggasse.aquariumcontrol.refill.entry
 
 import com.laimburggasse.aquariumcontrol.SessionManager
+import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-open class RefillRepository @Inject constructor(private val sessionManager: SessionManager) {
+open class RefillRepository @Inject constructor(
+    private val sessionManager: SessionManager,
+    @ApplicationScope private val repositoryScope: CoroutineScope,
+) {
     open suspend fun sendStartRequest() {
         executeRequest(apiUrl = WebApiUrls.REFILL_POST_CONTROL_START)
     }
@@ -19,13 +25,15 @@ open class RefillRepository @Inject constructor(private val sessionManager: Sess
         executeRequest(apiUrl = WebApiUrls.REFILL_POST_CONTROL_RESET)
     }
 
-    private suspend fun executeRequest(apiUrl: String) {
+    private fun executeRequest(apiUrl: String) {
         val webApiPostRequest = WebApiPostRequest()
 
-        webApiPostRequestExecution(
-            apiUrl,
-            sessionManager,
-            webApiPostRequest,
-        )
+        repositoryScope.launch {
+            webApiPostRequestExecution(
+                apiUrl,
+                sessionManager,
+                webApiPostRequest,
+            )
+        }
     }
 }

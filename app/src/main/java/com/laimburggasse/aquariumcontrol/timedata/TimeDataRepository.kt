@@ -2,21 +2,28 @@ package com.laimburggasse.aquariumcontrol.timedata
 
 import android.util.Log
 import com.laimburggasse.aquariumcontrol.SessionManager
+import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-open class TimeDataRepository @Inject constructor(private val sessionManager: SessionManager) {
+open class TimeDataRepository @Inject constructor(
+    private val sessionManager: SessionManager,
+    @ApplicationScope private val repositoryScope: CoroutineScope,
+) {
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -33,7 +40,7 @@ open class TimeDataRepository @Inject constructor(private val sessionManager: Se
 
                 // Perform the network request on a background thread.
                 val readResult: DataFetchResult<List<TimeDataStringSample>> = withContext(context = Dispatchers.IO) {
-                    val url = "http://" + sessionManager.getControllerAddress() + WebApiUrls.DATA_GET_START_STOP
+                    val url: String = "http://" + sessionManager.getControllerAddress() + WebApiUrls.DATA_GET_START_STOP
                     val reader = TimeDataReader(urlWithoutParameters = url)
                     reader.readTimeDataSeries()
                 }
@@ -62,6 +69,11 @@ open class TimeDataRepository @Inject constructor(private val sessionManager: Se
                 emit(value = processedResult)
                 }
             }
+            .stateIn(
+                scope = repositoryScope,
+                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
+                initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial Loading")
+            )
 
     // @todo: implement pull-to-refresh
     /**

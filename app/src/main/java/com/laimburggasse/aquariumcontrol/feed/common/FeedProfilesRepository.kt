@@ -3,6 +3,7 @@ package com.laimburggasse.aquariumcontrol.feed.common
 import android.util.Log
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
+import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
@@ -11,7 +12,7 @@ import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -27,17 +28,15 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-open class FeedProfilesRepository @Inject constructor(private val sessionManager: SessionManager) {
+open class FeedProfilesRepository @Inject constructor(
+    private val sessionManager: SessionManager,
+    @ApplicationScope private val repositoryScope: CoroutineScope
+) {
 
-    private val repositoryScope = CoroutineScope(context = SupervisorJob() + Dispatchers.Default)
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
 
     // Holds a list of profile IDs that are pending deletions (POST request triggered, local update required).
     private val pendingDeletions = MutableStateFlow<Set<Int>>(value = emptySet())
-
-    // Holds a new profile name that is pending addition (POST request triggered, local update required).
-    private val pendingAddition = MutableStateFlow<String?>(value = null)
-    // -----------------------------
 
     @OptIn(ExperimentalCoroutinesApi::class)
     open val profilesFlow: StateFlow<DataFetchResult<List<FeedProfile>>> =
@@ -45,10 +44,9 @@ open class FeedProfilesRepository @Inject constructor(private val sessionManager
             flow = sessionManager.selectedControllerProfile,
             flow2 = refreshTrigger.onStart { emit(value = Unit) },
             flow3 = pendingDeletions,
-            flow4 = pendingAddition
-        ) { controller, _, deletions, addition ->
-            Triple(first = controller, second = deletions, third = addition)
-        }.flatMapLatest { (controller: ControllerProfile?, deletions: Set<Int>, addition: String?) ->
+        ) { controller, _, deletions ->
+            Pair(first = controller, second = deletions)
+        }.flatMapLatest { (controller: ControllerProfile?, deletions: Set<Int>) ->
             flow {
                 if (controller == null) {
                     emit(value = DataFetchResult.Error(exception = null, errorMessage = "No controller selected"))
@@ -76,22 +74,11 @@ open class FeedProfilesRepository @Inject constructor(private val sessionManager
                             profiles = profiles.filterNot { deletions.contains(it.profileID)}
                         }
 
-                        // Apply pending addition to the fetched list
-                        if (addition != null) {
-                            // Create a temporary profile for UI display. ID can be a placeholder.
-                            val tempProfile = FeedProfile(
-                                profileID = -1,
-                                profileName = "$addition (Saving...)",
-                                feedProfilePhases = emptyList()
-                            )
-                            profiles = profiles + tempProfile
-                        }
-                        DataFetchResult.Success(profiles)
+                        DataFetchResult.Success(data = profiles)
                     }
                     is DataFetchResult.Error -> networkResult // Pass through errors
                 }
                 emit(value = finalResult)
-                // --------------------------------------------------
             }
         }.stateIn(
             scope = repositoryScope,
@@ -100,7 +87,7 @@ open class FeedProfilesRepository @Inject constructor(private val sessionManager
         )
 
     open suspend fun triggerRefresh() {
-        refreshTrigger.emit(Unit)
+        refreshTrigger.emit(value = Unit)
     }
 
     open suspend fun deleteFeedProfile(feedProfile: FeedProfile) {
@@ -119,24 +106,20 @@ open class FeedProfilesRepository @Inject constructor(private val sessionManager
         }
     }
 
-    open suspend fun addFeedProfile(feedProfileName: String): Boolean {
-        // Optimistic Update: Immediately set the pending addition name.
-        // The UI will react instantly and show the temporary item.
-        pendingAddition.value = feedProfileName
-
-        return withContext(context = Dispatchers.IO) {
+    open suspend fun addFeedProfile(feedProfileName: String) {
+        repositoryScope.launch(context = Dispatchers.IO) {
             val success: Boolean = webApiPostRequestExecution(
                 sessionManager = sessionManager,
                 apiUrl = WebApiUrls.FEED_POST_PROFILE_CREATE,
                 webApiPostRequest = WebApiPostRequest(),
                 optionalGetParams = mapOf(WebApiParams.PROFILE_NAME to feedProfileName)
             )
-
-            // Reconciliation: Trigger a full refresh and clear the pending state.
-            triggerRefresh()
-            pendingAddition.value = null
-
-            success
+            if (success) {
+                delay(timeMillis = 3000L)
+                triggerRefresh()
+            } else {
+                // @todo: emit error state
+            }
         }
     }
 
@@ -158,9 +141,9 @@ open class FeedProfilesRepository @Inject constructor(private val sessionManager
         }
     }
 
-    suspend fun updateFeedProfile(modifiedFeedProfile: FeedProfile) {
+    fun updateFeedProfile(modifiedFeedProfile: FeedProfile) {
         val apiCallParameters: Map<String, String> = modifiedFeedProfile.getFeedProfileApiCallParameters()
-        withContext(context = Dispatchers.IO) {
+        repositoryScope.launch(context = Dispatchers.IO) {
             webApiPostRequestExecution(
                 sessionManager = sessionManager,
                 apiUrl = WebApiUrls.FEED_POST_PROFILE_UPDATE,

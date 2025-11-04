@@ -1,6 +1,7 @@
 package com.laimburggasse.aquariumcontrol.schedule
 
 import com.laimburggasse.aquariumcontrol.SessionManager
+import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
@@ -8,7 +9,6 @@ import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -25,16 +26,12 @@ import javax.inject.Singleton
 @Singleton
 open class ScheduleRepository @Inject constructor(
     private val sessionManager: SessionManager,
+    @ApplicationScope private val repositoryScope: CoroutineScope
 ) {
-    // @todo: unify repository scopes
-    // A dedicated scope for the repository ensures the StateFlow lives as long as the app.
-    private val repositoryScope = CoroutineScope(context = SupervisorJob() + Dispatchers.Default)
-
     // Triggers for manual refreshes and a holder for optimistic local updates.
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
     private val pendingUpdate = MutableStateFlow<ScheduleEntries?>(value = null)
 
-    // The manual fetchScheduleSetVals() function is no longer needed for automatic loading.
 
     @OptIn(ExperimentalCoroutinesApi::class)
     open val networkFlow: StateFlow<DataFetchResult<ScheduleEntries>> = combine(
@@ -100,12 +97,14 @@ open class ScheduleRepository @Inject constructor(
     open suspend fun updateSchedule() {
         if (scheduleFlow.value is DataFetchResult.Success) {
             val scheduleEntries: ScheduleEntries = (scheduleFlow.value as DataFetchResult.Success).data
-            webApiPostRequestExecution(
-                sessionManager = sessionManager,
-                apiUrl = WebApiUrls.ACTUATOR_SCHEDULE_POST_UPDATE,
-                webApiPostRequest = WebApiPostRequest(),
-                optionalGetParams = scheduleEntries.getApiParams(),
-            )
+            repositoryScope.launch(context = Dispatchers.IO) {
+                webApiPostRequestExecution(
+                    sessionManager = sessionManager,
+                    apiUrl = WebApiUrls.ACTUATOR_SCHEDULE_POST_UPDATE,
+                    webApiPostRequest = WebApiPostRequest(),
+                    optionalGetParams = scheduleEntries.getApiParams(),
+                )
+            }
         }
     }
 

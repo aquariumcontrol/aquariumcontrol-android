@@ -4,11 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,14 +36,8 @@ class FeedProfileAddViewModel @Inject constructor(
 
         viewModelScope.launch {
             _feedProfileAddUiState.value = FeedProfileAddUiState.Loading
-
-            val success: Boolean = feedProfilesRepository.addFeedProfile(feedProfileName = feedProfileName.value)
-
-            if (success) {
-                _feedProfileAddUiState.value = FeedProfileAddUiState.Success
-            } else {
-                _feedProfileAddUiState.value = FeedProfileAddUiState.Error(message = "Failed to add feed profile")
-            }
+            feedProfilesRepository.addFeedProfile(feedProfileName = feedProfileName.value)
+            _feedProfileAddUiState.value = FeedProfileAddUiState.Success
         }
     }
 

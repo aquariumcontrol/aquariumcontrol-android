@@ -3,6 +3,7 @@ package com.laimburggasse.aquariumcontrol.heating
 import android.util.Log
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
+import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
@@ -11,7 +12,6 @@ import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -30,12 +31,9 @@ const val heatingSetValsSwitchOffTempInitVal = 29.0
 
 @Singleton
 open class HeatingSetValsRepository @Inject constructor(
-    private val sessionManager: SessionManager
+    private val sessionManager: SessionManager,
+    @ApplicationScope private val repositoryScope: CoroutineScope
 ) {
-    // @todo: unify scope for all repositories
-    // Dedicated scope for the repository ensures the StateFlow lives as long as the app.
-    private val repositoryScope = CoroutineScope(context = SupervisorJob() + Dispatchers.Default)
-
     // Triggers for manual refreshes and optimistic updates.
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
     private val pendingUpdate = MutableStateFlow<HeatingSetVals?>(value = null)
@@ -129,7 +127,7 @@ open class HeatingSetValsRepository @Inject constructor(
             (heatingSetValsFlow.value as? DataFetchResult.Success)?.data
 
         if (currentValues != null) {
-            withContext(context = Dispatchers.IO) {
+            repositoryScope.launch(context = Dispatchers.IO) {
                 webApiPostRequestExecution(
                     sessionManager = sessionManager,
                     apiUrl = WebApiUrls.HEATING_POST_SET_VALS,

@@ -2,12 +2,12 @@ package com.laimburggasse.aquariumcontrol.heating
 
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
+import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -23,11 +23,8 @@ import javax.inject.Singleton
 @Singleton
 open class HeatingStatsRepository @Inject constructor(
     sessionManager: SessionManager,
+    @ApplicationScope private val repositoryScope: CoroutineScope
 ) {
-    // @todo: Unify repository scopes
-    // Dedicated scope for the repository ensures the StateFlow can live as long as the app.
-    private val repositoryScope = CoroutineScope(context = SupervisorJob() + Dispatchers.Default)
-
     // for triggering manual refreshes
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
 

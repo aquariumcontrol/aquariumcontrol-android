@@ -3,25 +3,33 @@ package com.laimburggasse.aquariumcontrol.balling.common
 import android.util.Log
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
+import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import com.laimburggasse.aquariumcontrol.webapi.webApiPostRequestExecution
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-open class BallingProfilesRepository @Inject constructor(private val sessionManager: SessionManager) {
+open class BallingProfilesRepository @Inject constructor(
+    private val sessionManager: SessionManager,
+    @ApplicationScope private val repositoryScope: CoroutineScope
+) {
 
     // For triggering manual refreshes
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
@@ -89,8 +97,16 @@ open class BallingProfilesRepository @Inject constructor(private val sessionMana
                 emit(value = finalResult)
             }
         }
+        .stateIn(
+            scope = repositoryScope,
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
+            initialValue = DataFetchResult.Error(
+                exception = null,
+                errorMessage = "Initializing"
+            )
+        )
 
-    suspend fun updateBallingProfile(ballingProfile: BallingProfile) {
+    fun updateBallingProfile(ballingProfile: BallingProfile) {
         // set the updated profile as the pending update
         // this will trigger instant UI update
         pendingUpdate.value = ballingProfile
@@ -102,27 +118,29 @@ open class BallingProfilesRepository @Inject constructor(private val sessionMana
             return
         }
 
-        val requestSuccess: Boolean = withContext(context = Dispatchers.IO) {
-            webApiPostRequestExecution(
-                sessionManager = sessionManager,
-                apiUrl = WebApiUrls.BALLING_POST_SET_VALS,
-                webApiPostRequest = WebApiPostRequest(),
-                optionalGetParams = mapOf(
-                    WebApiParams.PUMP_ID to ballingProfile.pumpId.toString(),
-                    WebApiParams.DOSING_VOLUME to ballingProfile.volume.toString()
+        repositoryScope.launch(context = Dispatchers.IO) {
+            val requestSuccess: Boolean = withContext(context = Dispatchers.IO) {
+                webApiPostRequestExecution(
+                    sessionManager = sessionManager,
+                    apiUrl = WebApiUrls.BALLING_POST_SET_VALS,
+                    webApiPostRequest = WebApiPostRequest(),
+                    optionalGetParams = mapOf(
+                        WebApiParams.PUMP_ID to ballingProfile.pumpId.toString(),
+                        WebApiParams.DOSING_VOLUME to ballingProfile.volume.toString()
+                    )
                 )
-            )
-        }
+            }
 
-        // 3. Instead of updating a dead flow, trigger a refresh of the live one.
-        if (requestSuccess) {
-            Log.d("BallingRepository", "Server update successful. Triggering refresh.")
-            pendingUpdate.value = null
-            refreshTrigger.emit(value = Unit) // This will cause the `profilesFlow` to re-fetch.
-        } else {
-            Log.e("BallingRepository", "Server update failed.")
-            pendingUpdate.value = null
-            // @todo: emit an event to the UI to show a failure.
+            // Instead of updating a dead flow, trigger a refresh of the live one.
+            if (requestSuccess) {
+                Log.d("BallingRepository", "Server update successful. Triggering refresh.")
+                pendingUpdate.value = null
+                refreshTrigger.emit(value = Unit) // This will cause the `profilesFlow` to re-fetch.
+            } else {
+                Log.e("BallingRepository", "Server update failed.")
+                pendingUpdate.value = null
+                // @todo: emit an event to the UI to show a failure.
+            }
         }
     }
 
