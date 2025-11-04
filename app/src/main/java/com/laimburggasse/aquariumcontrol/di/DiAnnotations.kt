@@ -2,6 +2,6 @@ package com.laimburggasse.aquariumcontrol.di
 
 import javax.inject.Qualifier
 
-@Retention(AnnotationRetention.BINARY)
+@Retention(value = AnnotationRetention.BINARY)
 @Qualifier
 annotation class ApplicationScope

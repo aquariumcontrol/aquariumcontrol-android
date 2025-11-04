@@ -2,6 +2,7 @@ package com.laimburggasse.aquariumcontrol.feed.schedule
 
 import android.util.Log
 import com.laimburggasse.aquariumcontrol.SessionManager
+import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
@@ -28,15 +29,13 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-open class FeedScheduleRepository @Inject constructor(private val sessionManager: SessionManager) {
-
-    // @todo: unify repository scopes
-    private val repositoryScope = CoroutineScope(context = SupervisorJob() + Dispatchers.Default)
-
+open class FeedScheduleRepository @Inject constructor(
+    private val sessionManager: SessionManager,
+    @ApplicationScope private val repositoryScope: CoroutineScope
+) {
     // Triggers and holders for optimistic updates
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
     private val pendingDeletions = MutableStateFlow<Set<FeedScheduleEntryKey>>(value = emptySet())
-    private val pendingAdditions = MutableStateFlow<Set<FeedScheduleEntry>>(value = emptySet())
     private val pendingUpdates = MutableStateFlow<Map<FeedScheduleEntryKey, FeedScheduleEntry>>(value = emptyMap())
 
     // Private flow that ONLY handles fetching data from the network.
@@ -74,7 +73,6 @@ open class FeedScheduleRepository @Inject constructor(private val sessionManager
             if (networkResult is DataFetchResult.Success) {
                 Log.d("FeedScheduleRepository", "Network fetch successful. Clearing pending states.")
                 pendingDeletions.value = emptySet()
-                pendingAdditions.value = emptySet()
                 pendingUpdates.value = emptyMap()
             }
             emit(value = networkResult)
@@ -91,9 +89,8 @@ open class FeedScheduleRepository @Inject constructor(private val sessionManager
     open val scheduleFlow: StateFlow<DataFetchResult<List<FeedScheduleEntry>>> = combine(
         flow = networkFlow, // The "slow but truthful" source
         flow2 = pendingDeletions,
-        flow3 = pendingAdditions,
-        flow4 = pendingUpdates
-    ) { networkResult, deletions, additions, updates ->
+        flow3 = pendingUpdates
+    ) { networkResult, deletions, updates ->
         // This transformation logic runs whenever the network data OR any pending update changes.
         Log.d("FeedScheduleRepository", "Combining flows...")
         when (networkResult) {
@@ -107,9 +104,6 @@ open class FeedScheduleRepository @Inject constructor(private val sessionManager
                             timestamp = entry.timestamp.time
                         )
                     ) }
-                }
-                if (additions.isNotEmpty()) {
-                    profiles = profiles + additions
                 }
                 if (updates.isNotEmpty()) {
                     profiles = profiles.map { entry ->
@@ -139,16 +133,6 @@ open class FeedScheduleRepository @Inject constructor(private val sessionManager
     open suspend fun deleteFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry) {
         Log.d("FeedScheduleRepository", "Request to delete feed schedule entry: $feedScheduleEntry")
 
-        // 1. Check if the entry to be deleted is a pending addition.
-        //    We can check if it exists in the `pendingAdditions` set.
-        val isPendingAddition: Boolean = pendingAdditions.value.any {
-            it.profileId == feedScheduleEntry.profileId && it.timestamp.time == feedScheduleEntry.timestamp.time
-        }
-
-        if (isPendingAddition) {
-            // If it's a locally created entry, remove it from the pending additions.
-            pendingAdditions.value -= feedScheduleEntry
-        }
         val keyToDelete = FeedScheduleEntryKey(
             profileId = feedScheduleEntry.profileId,
             timestamp = feedScheduleEntry.timestamp.time
@@ -207,11 +191,6 @@ open class FeedScheduleRepository @Inject constructor(private val sessionManager
             repeatDaily = repeatDaily
         )
 
-        // Avoid creating duplicates in the list of pending additions
-        if (pendingAdditions.value.contains(tempEntry)) return
-
-        pendingAdditions.value += tempEntry
-
         val apiParams: Map<String, String> = tempEntry.getApiParameters()
         repositoryScope.launch(context = Dispatchers.IO) {
             val result: Boolean = webApiPostRequestExecution(
@@ -225,8 +204,6 @@ open class FeedScheduleRepository @Inject constructor(private val sessionManager
                 triggerRefresh()
             }
             else {
-                // On failure, remove the pending update to revert the UI change.
-                pendingAdditions.value -= tempEntry
                 // @todo: issue UiState Error
             }
         }

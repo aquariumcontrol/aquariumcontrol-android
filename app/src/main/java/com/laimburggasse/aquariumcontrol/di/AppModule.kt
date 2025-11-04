@@ -25,8 +25,8 @@ object AppModule {
     fun provideAppDatabase(@ApplicationContext context: Context): ControllerProfileDatabase {
         return Room.databaseBuilder(
             context,
-            ControllerProfileDatabase::class.java,
-            "controller_profiles.db"
+            klass = ControllerProfileDatabase::class.java,
+            name = "controller_profiles.db"
         ).build()
     }
 
