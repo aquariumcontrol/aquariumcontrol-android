@@ -26,8 +26,6 @@ import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
-import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingSetValsEvent
-import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingSetValsUiState
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
 import com.laimburggasse.aquariumcontrol.heating.data.remote.dto.HeatingStatsStringEntry
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
@@ -35,9 +33,9 @@ import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposabl
 @Composable
 fun HeatingScreen(
     heatingSetValsUiState: HeatingSetValsUiState,
-    onHeatingSetValsEvent: (HeatingSetValsEvent) -> Unit,
+    onHeatingSetValsEvent: (HeatingSetValsUiEvent) -> Unit,
     heatingStatsUiState: HeatingStatsUiState,
-    onHeatingStatsEvent: (HeatingStatsEvent) -> Unit
+    onHeatingStatsEvent: (HeatingStatsUiEvent) -> Unit
 ) {
     // This screen displays
     // - a button to update the heating controller values
@@ -70,12 +68,12 @@ fun HeatingScreen(
                                         HeatingButtonsComposable(
                                             onUpdateClicked = {
                                                 onHeatingSetValsEvent(
-                                                    HeatingSetValsEvent.Update
+                                                    HeatingSetValsUiEvent.Update
                                                 )
                                             },
                                             onResetClicked = {
                                                 onHeatingSetValsEvent(
-                                                    HeatingSetValsEvent.Reset
+                                                    HeatingSetValsUiEvent.Reset
                                                 )
                                             }
                                         )
@@ -86,21 +84,21 @@ fun HeatingScreen(
                                             heatingSwitchOffTemp = heatingSetVals.heatingSwitchOffTemp,
                                             onLowerValueChanged = { lowerValue ->
                                                 onHeatingSetValsEvent(
-                                                    HeatingSetValsEvent.ChangeLowerValue(
+                                                    HeatingSetValsUiEvent.ChangeLowerValue(
                                                         lowerValue = lowerValue.toFloat()
                                                     )
                                                 )
                                             },
                                             onUpperValueChanged = { upperValue ->
                                                 onHeatingSetValsEvent(
-                                                    HeatingSetValsEvent.ChangeUpperValue(
+                                                    HeatingSetValsUiEvent.ChangeUpperValue(
                                                         upperValue = upperValue.toFloat()
                                                     )
                                                 )
                                             },
                                             onSliderValueChanged = { newLowerValue, newUpperValue ->
                                                 onHeatingSetValsEvent(
-                                                    HeatingSetValsEvent.ChangeRange(
+                                                    HeatingSetValsUiEvent.ChangeRange(
                                                         newLowerValue, newUpperValue
                                                     )
                                                 )
@@ -112,10 +110,10 @@ fun HeatingScreen(
                                     HeatingButtonsComposable(
                                         onUpdateClicked = {
                                             onHeatingSetValsEvent(
-                                                HeatingSetValsEvent.Update
+                                                HeatingSetValsUiEvent.Update
                                             )
                                         },
-                                        onResetClicked = { onHeatingSetValsEvent(HeatingSetValsEvent.Reset) }
+                                        onResetClicked = { onHeatingSetValsEvent(HeatingSetValsUiEvent.Reset) }
                                     )
                                     Spacer(modifier = Modifier.size(width = 10.dp,height = 10.dp))
                                     HeatingRangeSliderTextFieldsPortraitComposable(
@@ -123,21 +121,21 @@ fun HeatingScreen(
                                         heatingSwitchOffTemp = heatingSetVals.heatingSwitchOffTemp,
                                         onLowerValueChanged = { lowerValue ->
                                             onHeatingSetValsEvent(
-                                                HeatingSetValsEvent.ChangeLowerValue(
+                                                HeatingSetValsUiEvent.ChangeLowerValue(
                                                     lowerValue = lowerValue.toFloat()
                                                 )
                                             )
                                         },
                                         onUpperValueChanged = { upperValue ->
                                             onHeatingSetValsEvent(
-                                                HeatingSetValsEvent.ChangeUpperValue(
+                                                HeatingSetValsUiEvent.ChangeUpperValue(
                                                     upperValue = upperValue.toFloat()
                                                 )
                                             )
                                         },
                                         onSliderValueChanged = { newLowerValue, newUpperValue ->
                                             onHeatingSetValsEvent(
-                                                HeatingSetValsEvent.ChangeRange(
+                                                HeatingSetValsUiEvent.ChangeRange(
                                                     newLowerValue, newUpperValue
                                                 )
                                             )
@@ -228,7 +226,7 @@ fun HeatingScreen(
                         val heatingStats: List<HeatingStatsEntry> = heatingStatsUiState.heatingStats
                         HeatingStatsComposable(
                             heatingStats = heatingStats,
-                            updateData = { onHeatingStatsEvent(HeatingStatsEvent.Refresh) }
+                            updateData = { onHeatingStatsEvent(HeatingStatsUiEvent.Refresh) }
                         )
                     }
                     is HeatingStatsUiState.Empty -> {

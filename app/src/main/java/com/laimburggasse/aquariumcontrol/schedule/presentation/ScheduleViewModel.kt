@@ -91,25 +91,25 @@ class ScheduleViewModel @Inject constructor(
         }
     }
 
-    fun onScheduleEvent(scheduleEvent: ScheduleEvent) {
-        when (scheduleEvent) {
-            is ScheduleEvent.ChangeLimitationActive -> {
+    fun onScheduleEvent(scheduleUiEvent: ScheduleUiEvent) {
+        when (scheduleUiEvent) {
+            is ScheduleUiEvent.ChangeLimitationActive -> {
                 onLimitationActiveChange(
-                    scheduleType = scheduleEvent.scheduleType,
-                    isActive = scheduleEvent.isActive
+                    scheduleType = scheduleUiEvent.scheduleType,
+                    isActive = scheduleUiEvent.isActive
                 )
             }
-            is ScheduleEvent.ChangeTime -> {
+            is ScheduleUiEvent.ChangeTime -> {
                 onTimeChange(
-                    scheduleType = scheduleEvent.scheduleType,
-                    timeType = scheduleEvent.timeType,
-                    newTime = scheduleEvent.newTime
+                    scheduleType = scheduleUiEvent.scheduleType,
+                    timeType = scheduleUiEvent.timeType,
+                    newTime = scheduleUiEvent.newTime
                 )
             }
-            ScheduleEvent.Update -> {
+            ScheduleUiEvent.Update -> {
                 updateSchedule()
             }
-            ScheduleEvent.Reset -> {
+            ScheduleUiEvent.Reset -> {
                 resetSchedule()
             }
         }

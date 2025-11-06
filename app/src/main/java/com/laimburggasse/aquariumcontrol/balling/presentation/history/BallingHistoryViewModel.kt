@@ -37,14 +37,14 @@ class BallingHistoryViewModel @Inject constructor(
             initialValue = BallingHistoryUiState.Loading
         )
 
-    fun onEvent(event: BallingHistoryEvent) {
+    fun onEvent(event: BallingHistoryUiEvent) {
         when (event) {
-            is BallingHistoryEvent.Refresh -> {
+            is BallingHistoryUiEvent.Refresh -> {
                 viewModelScope.launch {
                     ballingHistoryRepository.triggerRefresh()
                 }
             }
-            is BallingHistoryEvent.SetRange -> {
+            is BallingHistoryUiEvent.SetRange -> {
                 viewModelScope.launch {
                     ballingHistoryRepository.setHistoryTimeRange(fetchFullWeek = event.showFullWeek)
                 }

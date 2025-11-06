@@ -21,12 +21,12 @@ import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
-fun ScheduleUpdateResetButtonsComposable(onScheduleEvent: (ScheduleEvent) -> Unit) {
+fun ScheduleUpdateResetButtonsComposable(onScheduleEvent: (ScheduleUiEvent) -> Unit) {
     val context: Context = LocalContext.current // context for Toast
 
     Button(
         onClick = {
-            onScheduleEvent(ScheduleEvent.Update)
+            onScheduleEvent(ScheduleUiEvent.Update)
             Toast.makeText(
                 context,
                 context.getString(R.string.sent_request_to_controller_for_updating_schedule_set_values),
@@ -39,7 +39,7 @@ fun ScheduleUpdateResetButtonsComposable(onScheduleEvent: (ScheduleEvent) -> Uni
     Spacer(modifier = Modifier.width(10.dp))
     Button(
         onClick = {
-            onScheduleEvent(ScheduleEvent.Reset)
+            onScheduleEvent(ScheduleUiEvent.Reset)
         }
     ) {
         Text(text = "Reset actuator schedules")

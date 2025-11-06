@@ -35,7 +35,7 @@ fun FeedProfileAddScreen(
     feedProfileName: String,
     feedProfileAddUiState: FeedProfileAddUiState,
     onNavigateFromFeed: (FeedNavigationEvent, Int?, Boolean?, Long?) -> Unit,
-    onFeedProfileAddEvent: (FeedProfileAddEvent) -> Unit,
+    onFeedProfileAddEvent: (FeedProfileAddUiEvent) -> Unit,
 ) {
     // This screen displays
     // - a graphic visualizing the feed profile
@@ -53,11 +53,11 @@ fun FeedProfileAddScreen(
                     Toast.LENGTH_SHORT
                 ).show()
                 onNavigateFromFeed(FeedNavigationEvent.ToFeedMain, null, null, null)
-                onFeedProfileAddEvent(FeedProfileAddEvent.HandleState)
+                onFeedProfileAddEvent(FeedProfileAddUiEvent.HandleState)
             }
             is FeedProfileAddUiState.Error -> {
                 Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
-                onFeedProfileAddEvent(FeedProfileAddEvent.HandleState)
+                onFeedProfileAddEvent(FeedProfileAddUiEvent.HandleState)
             }
             else -> {}
         }
@@ -73,7 +73,7 @@ fun FeedProfileAddScreen(
             is FeedProfileAddUiState.Idle -> {
                 FeedProfileAddNameEditableOutlinedFieldComposable(
                     onFeedProfileNameChange = {
-                        onFeedProfileAddEvent(FeedProfileAddEvent.SetFeedProfileName(name = it))
+                        onFeedProfileAddEvent(FeedProfileAddUiEvent.SetFeedProfileName(name = it))
                     },
                     modifier = Modifier.padding(all = 16.dp)
                 )
@@ -81,7 +81,7 @@ fun FeedProfileAddScreen(
                 Button(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
                     enabled = feedProfileName.isNotEmpty(),
-                    onClick = { onFeedProfileAddEvent(FeedProfileAddEvent.Add) },
+                    onClick = { onFeedProfileAddEvent(FeedProfileAddUiEvent.Add) },
                 ) {
                     Text(
                         text = stringResource(R.string.add_feed_profile),

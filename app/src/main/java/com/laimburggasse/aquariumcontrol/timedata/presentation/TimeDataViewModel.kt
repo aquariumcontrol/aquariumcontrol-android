@@ -35,9 +35,9 @@ class TimeDataViewModel @Inject constructor(
         )
 
 
-    fun onTimeDataEvent(event: TimeDataEvent) {
+    fun onTimeDataEvent(event: TimeDataUiEvent) {
         when (event) {
-            is TimeDataEvent.Refresh -> {
+            is TimeDataUiEvent.Refresh -> {
                 viewModelScope.launch {
                     timeDataRepository.triggerRefresh()
                 }

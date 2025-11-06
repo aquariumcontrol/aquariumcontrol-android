@@ -94,12 +94,12 @@ class BallingProfileEditViewModel @Inject constructor(
         }
     }
 
-    fun onEvent(event: BallingProfileEditEvent) {
+    fun onEvent(event: BallingProfileEditUiEvent) {
         when (event) {
-            is BallingProfileEditEvent.ConfirmDosingVolume -> {
+            is BallingProfileEditUiEvent.ConfirmDosingVolume -> {
                 onConfirmDosing(newVolume = event.newDosingValue)
             }
-            is BallingProfileEditEvent.ChangeDosingVolume -> {
+            is BallingProfileEditUiEvent.ChangeDosingVolume -> {
                 onVolumeChange(newVolume = event.newDosingValue)
             }
         }

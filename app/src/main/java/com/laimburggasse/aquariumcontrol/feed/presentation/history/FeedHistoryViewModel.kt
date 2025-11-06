@@ -34,14 +34,14 @@ class FeedHistoryViewModel @Inject constructor(
             initialValue = FeedHistoryUiState.Loading
         )
 
-    fun onEvent(event: FeedHistoryEvent) {
+    fun onEvent(event: FeedHistoryUiEvent) {
         when (event) {
-            is FeedHistoryEvent.Refresh -> {
+            is FeedHistoryUiEvent.Refresh -> {
                 viewModelScope.launch {
                     feedHistoryRepository.triggerRefresh()
                 }
             }
-            is FeedHistoryEvent.SetRange -> {
+            is FeedHistoryUiEvent.SetRange -> {
                 viewModelScope.launch {
                     feedHistoryRepository.setHistoryTimeRange(fetchFullWeek = event.showFullWeek)
                 }

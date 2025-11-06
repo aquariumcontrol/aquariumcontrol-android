@@ -42,7 +42,7 @@ const val axisGranularityOnOff = 1.0f
 const val axisGranularityTime = 14400f
 
 @Composable
-fun TimeDataScreen(timeDataUiState: TimeDataUiState, onTimeDataEvent: (TimeDataEvent) -> Unit) {
+fun TimeDataScreen(timeDataUiState: TimeDataUiState, onTimeDataEvent: (TimeDataUiEvent) -> Unit) {
     // This screen displays time data charts without data flow back to server.
     val isDarkMode: Boolean = isSystemInDarkTheme()
     val textColor: Int = if (isDarkMode) Color.WHITE else Color.BLACK
@@ -56,7 +56,7 @@ fun TimeDataScreen(timeDataUiState: TimeDataUiState, onTimeDataEvent: (TimeDataE
             state = rememberPullToRefreshState(),
             isRefreshing = timeDataUiState is TimeDataUiState.Loading,
             contentAlignment = Alignment.Center,
-            onRefresh = { onTimeDataEvent(TimeDataEvent.Refresh) },
+            onRefresh = { onTimeDataEvent(TimeDataUiEvent.Refresh) },
             indicator = {
                 if (timeDataUiState is TimeDataUiState.Loading && displayCircularProgressIndicatorInPreview) {
                     CircularProgressIndicator(
@@ -83,7 +83,7 @@ fun TimeDataScreen(timeDataUiState: TimeDataUiState, onTimeDataEvent: (TimeDataE
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Spacer(modifier = Modifier.height(height = 8.dp))
-                            Button(onClick = { onTimeDataEvent(TimeDataEvent.Refresh) }) {
+                            Button(onClick = { onTimeDataEvent(TimeDataUiEvent.Refresh) }) {
                                 Text(text = "Retry")
                             }
                         }
@@ -107,7 +107,7 @@ fun TimeDataScreen(timeDataUiState: TimeDataUiState, onTimeDataEvent: (TimeDataE
                                 color = MaterialTheme.colorScheme.error
                             )
                             Spacer(modifier = Modifier.height(height = 16.dp))
-                            Button(onClick = { onTimeDataEvent(TimeDataEvent.Refresh) }) {
+                            Button(onClick = { onTimeDataEvent(TimeDataUiEvent.Refresh) }) {
                                 Text("Retry")
                             }
                         }

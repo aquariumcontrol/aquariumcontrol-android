@@ -26,15 +26,15 @@ class RefillViewModel @Inject constructor(private val refillRepository: RefillRe
         }
     }
 
-    fun onRefillEvent(event: RefillEvent) {
+    fun onRefillEvent(event: RefillUiEvent) {
         when (event) {
-            RefillEvent.ResetErrors -> {
+            RefillUiEvent.ResetErrors -> {
                 sendResetRequest()
             }
-            RefillEvent.StartControl -> {
+            RefillUiEvent.StartControl -> {
                 sendStartRequest()
             }
-            RefillEvent.StopControl -> {
+            RefillUiEvent.StopControl -> {
                 sendStopRequest()
             }
         }

@@ -32,7 +32,7 @@ import com.laimburggasse.aquariumcontrol.refill.presentation.components.RefillNa
 @Composable
 fun RefillScreen(
     onNavigateFromRefill: (RefillNavigationEvent) -> Unit,
-    onRefillEvent: (RefillEvent) -> Unit
+    onRefillEvent: (RefillUiEvent) -> Unit
 ) {
     // This screen displays
     // - a button for visualizing all refill events of the last 24h
@@ -81,7 +81,7 @@ fun RefillScreen(
                         Button(
                             modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
                             onClick = {
-                                onRefillEvent(RefillEvent.StartControl)
+                                onRefillEvent(RefillUiEvent.StartControl)
                                 Toast.makeText(
                                     context,
                                     context.getString(R.string.sent_request_to_controller_for_starting_refill_control),
@@ -97,7 +97,7 @@ fun RefillScreen(
                         Button(
                             modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
                             onClick = {
-                                onRefillEvent(RefillEvent.StopControl)
+                                onRefillEvent(RefillUiEvent.StopControl)
                                 Toast.makeText(
                                     context,
                                     context.getString(R.string.sent_request_to_controller_for_stopping_refill_control),
@@ -113,7 +113,7 @@ fun RefillScreen(
                         Button(
                             modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
                             onClick = {
-                                onRefillEvent(RefillEvent.ResetErrors)
+                                onRefillEvent(RefillUiEvent.ResetErrors)
                                 Toast.makeText(
                                     context,
                                     context.getString(R.string.sent_request_to_controller_for_resetting_errors),

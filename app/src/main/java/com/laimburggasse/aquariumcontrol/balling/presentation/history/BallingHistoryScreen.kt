@@ -42,7 +42,7 @@ import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposabl
 fun BallingHistoryScreen(
     showFullWeek: Boolean,
     ballingHistoryUiState: BallingHistoryUiState,
-    onEvent: (BallingHistoryEvent) -> Unit,
+    onEvent: (BallingHistoryUiEvent) -> Unit,
 ) {
     // This screen displays:
     // - headline
@@ -50,7 +50,7 @@ fun BallingHistoryScreen(
     // - list of balling events
 
     LaunchedEffect(key1 = Unit) {
-        onEvent(BallingHistoryEvent.SetRange(showFullWeek))
+        onEvent(BallingHistoryUiEvent.SetRange(showFullWeek))
     }
     Column(
         modifier = Modifier.fillMaxSize().padding(all = 16.dp),
@@ -81,7 +81,7 @@ fun BallingHistoryScreen(
                     contentAlignment = Alignment.Center,
                     state = rememberPullToRefreshState(),
                     isRefreshing = ballingHistoryUiState is BallingHistoryUiState.Loading,
-                    onRefresh = { onEvent(BallingHistoryEvent.Refresh) },
+                    onRefresh = { onEvent(BallingHistoryUiEvent.Refresh) },
                     indicator = {
                         if (ballingHistoryUiState is BallingHistoryUiState.Loading) {
                             CircularProgressIndicator(

@@ -3,8 +3,6 @@ package com.laimburggasse.aquariumcontrol.heating.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
-import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingSetValsEvent
-import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingSetValsUiState
 import com.laimburggasse.aquariumcontrol.heating.data.HeatingSetValsRepository
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -72,21 +70,21 @@ class HeatingSetValsViewModel @Inject constructor(
         }
     }
 
-    fun onHeatingSetValsEvent(event: HeatingSetValsEvent) {
+    fun onHeatingSetValsEvent(event: HeatingSetValsUiEvent) {
         when (event) {
-            is HeatingSetValsEvent.ChangeLowerValue -> {
+            is HeatingSetValsUiEvent.ChangeLowerValue -> {
                 onLowerValueChanged(event.lowerValue)
             }
-            is HeatingSetValsEvent.ChangeRange -> {
+            is HeatingSetValsUiEvent.ChangeRange -> {
                 onRangeChanged(event.lowerValue, event.upperValue)
             }
-            is HeatingSetValsEvent.ChangeUpperValue -> {
+            is HeatingSetValsUiEvent.ChangeUpperValue -> {
                 onUpperValueChanged(event.upperValue)
             }
-            HeatingSetValsEvent.Reset -> {
+            HeatingSetValsUiEvent.Reset -> {
                 resetValues()
             }
-            HeatingSetValsEvent.Update -> {
+            HeatingSetValsUiEvent.Update -> {
                 updateValues()
             }
         }

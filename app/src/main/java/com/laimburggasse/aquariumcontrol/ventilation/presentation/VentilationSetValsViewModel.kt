@@ -70,21 +70,21 @@ class VentilationSetValsViewModel @Inject constructor(
         }
     }
 
-    fun onVentilationSetValsEvent(event: VentilationSetValsEvent) {
+    fun onVentilationSetValsEvent(event: VentilationSetValsUiEvent) {
         when (event) {
-            is VentilationSetValsEvent.ChangeLowerValue -> {
+            is VentilationSetValsUiEvent.ChangeLowerValue -> {
                 onLowerValueChanged(event.lowerValue)
             }
-            is VentilationSetValsEvent.ChangeRange -> {
+            is VentilationSetValsUiEvent.ChangeRange -> {
                 onRangeChanged(event.lowerValue, event.upperValue)
             }
-            is VentilationSetValsEvent.ChangeUpperValue -> {
+            is VentilationSetValsUiEvent.ChangeUpperValue -> {
                 onUpperValueChanged(event.upperValue)
             }
-            VentilationSetValsEvent.Reset -> {
+            VentilationSetValsUiEvent.Reset -> {
                 resetValues()
             }
-            VentilationSetValsEvent.Update -> {
+            VentilationSetValsUiEvent.Update -> {
                 updateValues()
             }
         }

@@ -36,7 +36,7 @@ import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposabl
 @Composable
 fun BallingProfileEditScreen(
     ballingProfileEditUiState: BallingProfileEditUiState,
-    onEvent: (BallingProfileEditEvent) -> Unit
+    onEvent: (BallingProfileEditUiEvent) -> Unit
 ) {
     // This screen displays:
     // - Headline
@@ -113,7 +113,7 @@ fun BallingProfileEditScreen(
                     Button(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
                         onClick = {
-                            onEvent(BallingProfileEditEvent.ConfirmDosingVolume(
+                            onEvent(BallingProfileEditUiEvent.ConfirmDosingVolume(
                                 newDosingValue = sliderPositionNewDosingVolume)
                             )
                             Toast.makeText(

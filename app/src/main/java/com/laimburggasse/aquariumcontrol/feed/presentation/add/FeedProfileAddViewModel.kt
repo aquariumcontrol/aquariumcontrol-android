@@ -41,18 +41,18 @@ class FeedProfileAddViewModel @Inject constructor(
         }
     }
 
-    fun onFeedProfileAddEvent(event: FeedProfileAddEvent) {
+    fun onFeedProfileAddEvent(event: FeedProfileAddUiEvent) {
         when (event) {
-            is FeedProfileAddEvent.Add -> {
+            is FeedProfileAddUiEvent.Add -> {
                 addFeedProfile()
             }
-            is FeedProfileAddEvent.HandleState -> {
+            is FeedProfileAddUiEvent.HandleState -> {
                 onStateHandled()
             }
-            is FeedProfileAddEvent.SetFeedProfileName -> {
+            is FeedProfileAddUiEvent.SetFeedProfileName -> {
                 setFeedProfileName(event.name)
             }
-            is FeedProfileAddEvent.Success -> {
+            is FeedProfileAddUiEvent.Success -> {
 
             }
         }

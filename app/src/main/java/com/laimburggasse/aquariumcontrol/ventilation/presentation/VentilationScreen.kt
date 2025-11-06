@@ -28,7 +28,7 @@ import com.laimburggasse.aquariumcontrol.ventilation.domain.model.VentilationSet
 @Composable
 fun VentilationScreen(
     ventilationSetValsUiState: VentilationSetValsUiState,
-    onVentilationSetValsEvent: (VentilationSetValsEvent) -> Unit
+    onVentilationSetValsEvent: (VentilationSetValsUiEvent) -> Unit
 ) {
     // This screen displays
     // - headline
@@ -59,9 +59,9 @@ fun VentilationScreen(
                                 Row {
                                     VentilationButtonsComposable(
                                         onUpdateClicked = { onVentilationSetValsEvent(
-                                            VentilationSetValsEvent.Update) },
+                                            VentilationSetValsUiEvent.Update) },
                                         onResetClicked = { onVentilationSetValsEvent(
-                                            VentilationSetValsEvent.Reset) },
+                                            VentilationSetValsUiEvent.Reset) },
                                     )
                                 }
                                 VentilationRangeSliderTextFieldsLandscapeComposable(
@@ -69,21 +69,21 @@ fun VentilationScreen(
                                     ventilationSwitchOnTemp = ventilationSetVals.ventilationSwitchOnTemp,
                                     onLowerValueChanged = { newValue ->
                                         onVentilationSetValsEvent(
-                                            VentilationSetValsEvent.ChangeLowerValue(
+                                            VentilationSetValsUiEvent.ChangeLowerValue(
                                                 lowerValue = newValue.toFloat()
                                             )
                                         )
                                     },
                                     onUpperValueChanged = { newValue ->
                                         onVentilationSetValsEvent(
-                                            VentilationSetValsEvent.ChangeUpperValue(
+                                            VentilationSetValsUiEvent.ChangeUpperValue(
                                                 upperValue = newValue.toFloat()
                                             )
                                         )
                                     },
                                     onSliderValueChanged = { newLowerValue, newUpperValue ->
                                         onVentilationSetValsEvent(
-                                            VentilationSetValsEvent.ChangeRange(
+                                            VentilationSetValsUiEvent.ChangeRange(
                                                 lowerValue = newLowerValue,
                                                 upperValue = newUpperValue
                                             )
@@ -94,30 +94,30 @@ fun VentilationScreen(
                             else -> {
                                 VentilationButtonsComposable(
                                     onUpdateClicked = { onVentilationSetValsEvent(
-                                        VentilationSetValsEvent.Update) },
+                                        VentilationSetValsUiEvent.Update) },
                                     onResetClicked = { onVentilationSetValsEvent(
-                                        VentilationSetValsEvent.Reset) },
+                                        VentilationSetValsUiEvent.Reset) },
                                 )
                                 VentilationRangeSliderTextFieldsPortraitComposable(
                                     ventilationSwitchOffTemp = ventilationSetVals.ventilationSwitchOffTemp,
                                     ventilationSwitchOnTemp = ventilationSetVals.ventilationSwitchOnTemp,
                                     onLowerValueChanged = { newValue ->
                                         onVentilationSetValsEvent(
-                                            VentilationSetValsEvent.ChangeLowerValue(
+                                            VentilationSetValsUiEvent.ChangeLowerValue(
                                                 lowerValue = newValue.toFloat()
                                             )
                                         )
                                     },
                                     onUpperValueChanged = { newValue ->
                                         onVentilationSetValsEvent(
-                                            VentilationSetValsEvent.ChangeUpperValue(
+                                            VentilationSetValsUiEvent.ChangeUpperValue(
                                                 upperValue = newValue.toFloat()
                                             )
                                         )
                                     },
                                     onSliderValueChanged = { newLowerValue, newUpperValue ->
                                         onVentilationSetValsEvent(
-                                            VentilationSetValsEvent.ChangeRange(
+                                            VentilationSetValsUiEvent.ChangeRange(
                                                 lowerValue = newLowerValue,
                                                 upperValue = newUpperValue
                                             )

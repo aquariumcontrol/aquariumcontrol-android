@@ -30,9 +30,9 @@ class HeatingStatsViewModel @Inject constructor(
             initialValue = HeatingStatsUiState.Loading
         )
 
-    fun onHeatingStatsEvent(event: HeatingStatsEvent) {
+    fun onHeatingStatsEvent(event: HeatingStatsUiEvent) {
         when(event) {
-            is HeatingStatsEvent.Refresh-> {
+            is HeatingStatsUiEvent.Refresh-> {
                 viewModelScope.launch {
                     heatingStatsRepository.triggerRefresh()
                 }

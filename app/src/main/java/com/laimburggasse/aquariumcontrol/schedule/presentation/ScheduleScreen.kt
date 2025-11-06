@@ -32,7 +32,7 @@ import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntries
 @Composable
 fun ScheduleScreen(
     scheduleUiState: ScheduleUiState,
-    onScheduleEvent: (ScheduleEvent) -> Unit
+    onScheduleEvent: (ScheduleUiEvent) -> Unit
 ) {
     // This screen displays for each of (Balling, Refill, schedule, Heating)
     // - a range slider for setting the start and stop time
@@ -74,14 +74,14 @@ fun ScheduleScreen(
                                 stopTime = scheduleEntries.ballingStopTime,
                                 isLimitationActive = scheduleEntries.ballingLimitationActive,
                                 onStartTimeChanged = { newTime ->
-                                    onScheduleEvent(ScheduleEvent.ChangeTime(ScheduleType.BALLING, TimeType.START, newTime))
+                                    onScheduleEvent(ScheduleUiEvent.ChangeTime(ScheduleType.BALLING, TimeType.START, newTime))
                                 },
                                 onStopTimeChanged = { newTime ->
-                                    onScheduleEvent(ScheduleEvent.ChangeTime(ScheduleType.BALLING, TimeType.STOP, newTime))
+                                    onScheduleEvent(ScheduleUiEvent.ChangeTime(ScheduleType.BALLING, TimeType.STOP, newTime))
                                 },
                                 onLimitationActiveChanged = { isActive ->
                                     onScheduleEvent(
-                                        ScheduleEvent.ChangeLimitationActive(
+                                        ScheduleUiEvent.ChangeLimitationActive(
                                             ScheduleType.BALLING, isActive))
                                 }
                             )
@@ -93,14 +93,14 @@ fun ScheduleScreen(
                                 stopTime = scheduleEntries.refillStopTime,
                                 isLimitationActive = scheduleEntries.refillLimitationActive,
                                 onStartTimeChanged = { newTime ->
-                                    onScheduleEvent(ScheduleEvent.ChangeTime(ScheduleType.REFILL, TimeType.START, newTime))
+                                    onScheduleEvent(ScheduleUiEvent.ChangeTime(ScheduleType.REFILL, TimeType.START, newTime))
                                 },
                                 onStopTimeChanged = { newTime ->
-                                    onScheduleEvent(ScheduleEvent.ChangeTime(ScheduleType.REFILL, TimeType.STOP, newTime))
+                                    onScheduleEvent(ScheduleUiEvent.ChangeTime(ScheduleType.REFILL, TimeType.STOP, newTime))
                                 },
                                 onLimitationActiveChanged = { isActive ->
                                     onScheduleEvent(
-                                        ScheduleEvent.ChangeLimitationActive(
+                                        ScheduleUiEvent.ChangeLimitationActive(
                                             ScheduleType.REFILL, isActive))
                                 }
                             )
@@ -112,14 +112,14 @@ fun ScheduleScreen(
                                 stopTime = scheduleEntries.ventilationStopTime,
                                 isLimitationActive = scheduleEntries.ventilationLimitationActive,
                                 onStartTimeChanged = { newTime ->
-                                    onScheduleEvent(ScheduleEvent.ChangeTime(ScheduleType.VENTILATION, TimeType.START, newTime))
+                                    onScheduleEvent(ScheduleUiEvent.ChangeTime(ScheduleType.VENTILATION, TimeType.START, newTime))
                                 },
                                 onStopTimeChanged = { newTime ->
-                                    onScheduleEvent(ScheduleEvent.ChangeTime(ScheduleType.VENTILATION, TimeType.STOP, newTime))
+                                    onScheduleEvent(ScheduleUiEvent.ChangeTime(ScheduleType.VENTILATION, TimeType.STOP, newTime))
                                 },
                                 onLimitationActiveChanged = { isActive ->
                                     onScheduleEvent(
-                                        ScheduleEvent.ChangeLimitationActive(
+                                        ScheduleUiEvent.ChangeLimitationActive(
                                             ScheduleType.VENTILATION, isActive))
                                 }
                             )
@@ -131,14 +131,14 @@ fun ScheduleScreen(
                                 stopTime = scheduleEntries.heatingStopTime,
                                 isLimitationActive = scheduleEntries.heatingLimitationActive,
                                 onStartTimeChanged = { newTime ->
-                                    onScheduleEvent(ScheduleEvent.ChangeTime(ScheduleType.HEATING, TimeType.START, newTime))
+                                    onScheduleEvent(ScheduleUiEvent.ChangeTime(ScheduleType.HEATING, TimeType.START, newTime))
                                 },
                                 onStopTimeChanged = { newTime ->
-                                    onScheduleEvent(ScheduleEvent.ChangeTime(ScheduleType.HEATING, TimeType.STOP, newTime))
+                                    onScheduleEvent(ScheduleUiEvent.ChangeTime(ScheduleType.HEATING, TimeType.STOP, newTime))
                                 },
                                 onLimitationActiveChanged = { isActive ->
                                     onScheduleEvent(
-                                        ScheduleEvent.ChangeLimitationActive(
+                                        ScheduleUiEvent.ChangeLimitationActive(
                                             ScheduleType.HEATING, isActive))
                                 }
                             )

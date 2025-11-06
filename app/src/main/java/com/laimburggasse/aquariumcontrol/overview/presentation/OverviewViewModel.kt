@@ -40,9 +40,9 @@ class OverviewViewModel @Inject constructor(
         loadData()
     }
 
-    fun onOverviewEvent(event: OverviewEvent) {
+    fun onOverviewEvent(event: OverviewUiEvent) {
         when (event) {
-            is OverviewEvent.Refresh -> {
+            is OverviewUiEvent.Refresh -> {
                 loadData()
             }
         }

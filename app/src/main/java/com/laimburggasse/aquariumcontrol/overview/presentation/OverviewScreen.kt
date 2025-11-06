@@ -37,7 +37,7 @@ import com.laimburggasse.aquariumcontrol.overview.domain.model.OverviewData
 fun OverviewScreen(
     controllerProfile: ControllerProfile?,
     overviewUiState: OverviewUiState,
-    onOverviewEvent: (OverviewEvent) -> Unit,
+    onOverviewEvent: (OverviewUiEvent) -> Unit,
 ) {
     // This screen displays
     // - headline
@@ -56,7 +56,7 @@ fun OverviewScreen(
             state = rememberPullToRefreshState(),
             isRefreshing = overviewUiState == OverviewUiState.Loading,
             contentAlignment = Alignment.Center,
-            onRefresh = { onOverviewEvent(OverviewEvent.Refresh) },
+            onRefresh = { onOverviewEvent(OverviewUiEvent.Refresh) },
             indicator = {
                 if (overviewUiState == OverviewUiState.Loading) {
                     CircularProgressIndicator(
@@ -129,7 +129,7 @@ fun OverviewScreen(
                 Spacer(modifier = Modifier.padding(vertical = 8.dp))
                 Button(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
-                    onClick = { onOverviewEvent(OverviewEvent.Refresh) },
+                    onClick = { onOverviewEvent(OverviewUiEvent.Refresh) },
                 ) {
                     Text(
                         text = stringResource(id = R.string.update_overview_data),

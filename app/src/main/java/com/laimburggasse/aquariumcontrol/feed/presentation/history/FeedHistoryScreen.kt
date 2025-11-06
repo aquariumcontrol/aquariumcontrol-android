@@ -42,7 +42,7 @@ import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposabl
 fun FeedHistoryScreen(
     showFullWeek: Boolean,
     feedHistoryUiState: FeedHistoryUiState,
-    onFeedHistoryEvent: (FeedHistoryEvent) -> Unit
+    onFeedHistoryEvent: (FeedHistoryUiEvent) -> Unit
 ) {
     // This screen displays:
     // - headline
@@ -50,7 +50,7 @@ fun FeedHistoryScreen(
     // - list of feed events
 
     LaunchedEffect(key1 = Unit) {
-        onFeedHistoryEvent(FeedHistoryEvent.SetRange(showFullWeek))
+        onFeedHistoryEvent(FeedHistoryUiEvent.SetRange(showFullWeek))
     }
     Column(
         modifier = Modifier.fillMaxSize().padding(all = 16.dp),
@@ -81,7 +81,7 @@ fun FeedHistoryScreen(
                     contentAlignment = Alignment.Center,
                     state = rememberPullToRefreshState(),
                     isRefreshing = feedHistoryUiState is FeedHistoryUiState.Loading,
-                    onRefresh = { onFeedHistoryEvent(FeedHistoryEvent.Refresh)},
+                    onRefresh = { onFeedHistoryEvent(FeedHistoryUiEvent.Refresh)},
                     indicator = {
                         if (feedHistoryUiState is FeedHistoryUiState.Loading) {
                             CircularProgressIndicator(

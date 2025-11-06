@@ -43,7 +43,7 @@ import java.sql.Timestamp
 fun RefillHistoryScreen(
     showFullWeek: Boolean,
     refillHistoryUiState: RefillHistoryUiState,
-    onRefillHistoryEvent: (RefillHistoryEvent) -> Unit
+    onRefillHistoryEvent: (RefillHistoryUiEvent) -> Unit
 ) {
     // This screen displays
     // - headline
@@ -51,7 +51,7 @@ fun RefillHistoryScreen(
     // - a list of refill events downloaded from the server using a GET request.
 
     LaunchedEffect(key1 = Unit) {
-        onRefillHistoryEvent(RefillHistoryEvent.SetRange(showFullWeek))
+        onRefillHistoryEvent(RefillHistoryUiEvent.SetRange(showFullWeek))
     }
     Column(
         modifier = Modifier.fillMaxSize().padding(all = 16.dp),
@@ -81,7 +81,7 @@ fun RefillHistoryScreen(
                     contentAlignment = Alignment.Center,
                     state = rememberPullToRefreshState(),
                     isRefreshing = refillHistoryUiState is RefillHistoryUiState.Loading,
-                    onRefresh = { onRefillHistoryEvent(RefillHistoryEvent.Refresh) },
+                    onRefresh = { onRefillHistoryEvent(RefillHistoryUiEvent.Refresh) },
                     indicator = {
                         if (refillHistoryUiState is RefillHistoryUiState.Loading) {
                             CircularProgressIndicator(

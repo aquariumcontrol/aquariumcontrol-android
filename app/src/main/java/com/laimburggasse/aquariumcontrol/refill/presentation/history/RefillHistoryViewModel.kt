@@ -36,14 +36,14 @@ class RefillHistoryViewModel @Inject constructor(
         )
 
     // @todo: add functionality to limit the number of events displayed
-    fun onEvent(event: RefillHistoryEvent) {
+    fun onEvent(event: RefillHistoryUiEvent) {
         when (event) {
-            is RefillHistoryEvent.Refresh -> {
+            is RefillHistoryUiEvent.Refresh -> {
                 viewModelScope.launch {
                     refillHistoryRepository.triggerRefresh()
                 }
             }
-            is RefillHistoryEvent.SetRange -> {
+            is RefillHistoryUiEvent.SetRange -> {
                 viewModelScope.launch {
                     refillHistoryRepository.setHistoryTimeRange(fetchFullWeek = event.showFullWeek)
                 }
