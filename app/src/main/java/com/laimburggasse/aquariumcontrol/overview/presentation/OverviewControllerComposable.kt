@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.overview
+package com.laimburggasse.aquariumcontrol.overview.presentation
 
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke

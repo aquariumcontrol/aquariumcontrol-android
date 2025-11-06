@@ -1,7 +1,9 @@
-package com.laimburggasse.aquariumcontrol.overview
+package com.laimburggasse.aquariumcontrol.overview.data
 
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.overview.data.remote.OverviewDataReader
+import com.laimburggasse.aquariumcontrol.overview.domain.model.OverviewData
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import kotlinx.coroutines.CoroutineScope
@@ -46,7 +48,12 @@ open class OverviewRepository @Inject constructor(
         }.flatMapLatest { controller ->
             flow {
                 if (controller == null) {
-                    emit(value = DataFetchResult.Error(exception = null, errorMessage = "No controller selected."))
+                    emit(
+                        value = DataFetchResult.Error(
+                            exception = null,
+                            errorMessage = "No controller selected."
+                        )
+                    )
                     return@flow
                 }
 
@@ -64,7 +71,7 @@ open class OverviewRepository @Inject constructor(
         }
         .stateIn(
             scope = repositoryScope,
-            started = SharingStarted.Eagerly,
+            started = SharingStarted.Companion.Eagerly,
             initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial loading")
         )
 

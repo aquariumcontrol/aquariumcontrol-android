@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.overview
+package com.laimburggasse.aquariumcontrol.overview.presentation
 
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
@@ -17,10 +17,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.R
+import com.laimburggasse.aquariumcontrol.overview.domain.model.OverviewData
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
-fun OverviewTimestampComposable(overviewData: OverviewData) {
+fun OverviewAmbientComposable(overviewData: OverviewData) {
     Column(
         modifier = Modifier
             .border(
@@ -34,12 +35,24 @@ fun OverviewTimestampComposable(overviewData: OverviewData) {
         Row(Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.weight(1f)) {
                 Row(modifier = Modifier.align(Alignment.Start)) {
-                    Text(text = stringResource(R.string.timestamp))
+                    Text(text = stringResource(R.string.ambient_temperature))
                 }
             }
             Column(modifier = Modifier.weight(1f)) {
                 Row(modifier = Modifier.align(Alignment.End)) {
-                    Text(text = overviewData.timestamp)
+                    Text(text = overviewData.temperatureAmbient.toString() + stringResource(R.string.degree_celsius))
+                }
+            }
+        }
+        Row(Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.weight(1f)) {
+                Row(modifier = Modifier.align(Alignment.Start)) {
+                    Text(text = stringResource(R.string.ambient_humidity))
+                }
+            }
+            Column(modifier = Modifier.weight(1f)) {
+                Row(modifier = Modifier.align(Alignment.End)) {
+                    Text(text = overviewData.humidityAmbient.toString() + stringResource(R.string.percentage))
                 }
             }
         }
@@ -49,10 +62,10 @@ fun OverviewTimestampComposable(overviewData: OverviewData) {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun OverviewTimestampComposablePreview() {
+internal fun OverviewAmbientComposablePreview() {
     AquariumControllerTheme {
         Surface {
-            OverviewTimestampComposable(mockOverviewData)
+            OverviewAmbientComposable(mockOverviewData)
         }
     }
 }

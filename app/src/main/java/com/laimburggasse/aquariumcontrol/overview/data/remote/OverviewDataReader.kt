@@ -1,5 +1,6 @@
-package com.laimburggasse.aquariumcontrol.overview
+package com.laimburggasse.aquariumcontrol.overview.data.remote
 
+import com.laimburggasse.aquariumcontrol.overview.domain.model.OverviewData
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
@@ -59,7 +60,8 @@ class OverviewDataReader(private val url: String) {
                 temperatureAmbient = ambientTemperature,
                 humidityAmbient = ambientHumidity,
                 heater = heater
-            ))
+            )
+            )
         } else {
             return DataFetchResult.Error(
                 exception = null,

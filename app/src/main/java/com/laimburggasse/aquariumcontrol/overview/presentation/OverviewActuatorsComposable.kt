@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.overview
+package com.laimburggasse.aquariumcontrol.overview.presentation
 
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
@@ -17,53 +17,52 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.R
+import com.laimburggasse.aquariumcontrol.overview.domain.model.OverviewData
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
-fun OverviewWaterSignalsComposable(overviewData: OverviewData) {
+fun OverviewActuatorsComposable(overviewData: OverviewData) {
     Column(
-        modifier = Modifier
-            .border(
-                border = BorderStroke(
-                    1.dp,
-                    MaterialTheme.colorScheme.onSurface
-                )
+        modifier = Modifier.border(
+            border = BorderStroke(
+                1.dp,
+                MaterialTheme.colorScheme.onSurface
             )
-            .padding(8.dp)
+        ).padding(8.dp)
     ) {
         Row(Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.weight(1f)) {
                 Row(modifier = Modifier.align(Alignment.Start)) {
-                    Text(text = stringResource(R.string.water_temperature))
+                    Text(text = stringResource(R.string.tank_level_switch_position))
                 }
             }
-            Column(modifier = Modifier.weight(1f)) {
+            Column(modifier = Modifier.weight(0.5f)) {
                 Row(modifier = Modifier.align(Alignment.End)) {
-                    Text(text = overviewData.temperatureWater.toString() + stringResource(R.string.degree_celsius))
+                    Text(text = overviewData.tankLevelSwitchPosition)
                 }
             }
         }
         Row(Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.weight(1f)) {
                 Row(modifier = Modifier.align(Alignment.Start)) {
-                    Text(text = "pH")
+                    Text(text = stringResource(R.string.ventilation))
                 }
             }
             Column(modifier = Modifier.weight(1f)) {
                 Row(modifier = Modifier.align(Alignment.End)) {
-                    Text(text = "${overviewData.pH}")
+                    Text(text = overviewData.surfaceVentilation)
                 }
             }
         }
         Row(Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.weight(1f)) {
                 Row(modifier = Modifier.align(Alignment.Start)) {
-                    Text(text = "Conductivity")
+                    Text(text = stringResource(R.string.heating))
                 }
             }
             Column(modifier = Modifier.weight(1f)) {
                 Row(modifier = Modifier.align(Alignment.End)) {
-                    Text(text = overviewData.conductivity.toString() + stringResource(R.string.milliSievert_per_centimeter))
+                    Text(text = overviewData.heater)
                 }
             }
         }
@@ -73,10 +72,10 @@ fun OverviewWaterSignalsComposable(overviewData: OverviewData) {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun OverviewWaterSignalsComposablePreview() {
+internal fun OverviewActuatorsComposablePreview() {
     AquariumControllerTheme {
         Surface {
-            OverviewWaterSignalsComposable(mockOverviewData)
+            OverviewActuatorsComposable(mockOverviewData)
         }
     }
 }

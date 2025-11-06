@@ -1,7 +1,8 @@
-package com.laimburggasse.aquariumcontrol.overview
+package com.laimburggasse.aquariumcontrol.overview.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.laimburggasse.aquariumcontrol.overview.data.OverviewRepository
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted

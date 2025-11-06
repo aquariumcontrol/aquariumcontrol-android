@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.overview
+package com.laimburggasse.aquariumcontrol.overview.presentation
 
 import android.content.res.Configuration
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -31,6 +31,7 @@ import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.overview.domain.model.OverviewData
 
 @Composable
 fun OverviewScreen(
@@ -46,7 +47,7 @@ fun OverviewScreen(
     val configuration: Configuration = LocalConfiguration.current
 
     Column(
-        modifier = Modifier.padding(16.dp),
+        modifier = Modifier.padding(all = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ScreenHeadlineComposable(text = stringResource(id = R.string.overview))
@@ -64,8 +65,7 @@ fun OverviewScreen(
                     )
                 }
             }
-        )
-        {
+        ) {
             Column(
                 modifier = Modifier.fillMaxWidth().verticalScroll(state = rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -95,7 +95,8 @@ fun OverviewScreen(
                                 Row {
                                     Column(modifier = Modifier.weight(weight = 0.5f)) {
                                         OverviewControllerComposable(
-                                            controllerProfileName = controllerProfile?.name ?: "***",
+                                            controllerProfileName = controllerProfile?.name
+                                                ?: "***",
                                             controllerAddress = controllerProfile?.address ?: "***",
                                             controllerPort = controllerProfile?.port ?: 0,
                                             controllerUsername = controllerProfile?.user ?: "***"
@@ -141,19 +142,19 @@ fun OverviewScreen(
 }
 
 val mockOverviewData = OverviewData(
-        timestamp = "2023-05-01 12:00:00",
-        temperatureWater = 25.0,
-        temperatureWaterFiltered = 25.5,
-        pH = 7.0,
-        pHFiltered = 7.5,
-        conductivity = 1000.0,
-        conductivityFiltered = 1005.0,
-        tankLevelSwitchPosition = "HIGH",
-        surfaceVentilation = "ON",
-        temperatureAmbient = 22.0,
-        humidityAmbient = 60.0,
-        heater = "OFF"
-    )
+    timestamp = "2023-05-01 12:00:00",
+    temperatureWater = 25.0,
+    temperatureWaterFiltered = 25.5,
+    pH = 7.0,
+    pHFiltered = 7.5,
+    conductivity = 1000.0,
+    conductivityFiltered = 1005.0,
+    tankLevelSwitchPosition = "HIGH",
+    surfaceVentilation = "ON",
+    temperatureAmbient = 22.0,
+    humidityAmbient = 60.0,
+    heater = "OFF"
+)
 
 val mockControllerProfile = ControllerProfile(
     name = "Controller 1",

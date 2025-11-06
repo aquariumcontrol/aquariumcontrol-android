@@ -1,4 +1,6 @@
-package com.laimburggasse.aquariumcontrol.overview
+package com.laimburggasse.aquariumcontrol.overview.presentation
+
+import com.laimburggasse.aquariumcontrol.overview.domain.model.OverviewData
 
 sealed class OverviewUiState {
     object Loading : OverviewUiState()
