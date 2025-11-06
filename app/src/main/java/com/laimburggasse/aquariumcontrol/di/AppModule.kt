@@ -3,8 +3,8 @@ package com.laimburggasse.aquariumcontrol.di
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfileDao
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfileDatabase
+import com.laimburggasse.aquariumcontrol.controller.data.ControllerProfileDao
+import com.laimburggasse.aquariumcontrol.controller.data.ControllerProfileDatabase
 import com.laimburggasse.aquariumcontrol.SessionManager
 import dagger.Module
 import dagger.Provides

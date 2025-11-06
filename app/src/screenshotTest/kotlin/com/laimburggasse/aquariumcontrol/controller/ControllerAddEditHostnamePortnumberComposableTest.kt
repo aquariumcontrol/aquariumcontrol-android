@@ -4,8 +4,8 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditHostnamePortnumberComposableLandscapePreview
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditHostnamePortnumberComposablePortraitPreview
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditHostnamePortnumberComposableLandscapePreview
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditHostnamePortnumberComposablePortraitPreview
 
 @Suppress("unused")
 class ControllerAddEditHostnamePortnumberComposableTest {

@@ -1,7 +1,7 @@
 package com.laimburggasse.aquariumcontrol.heating.data
 
 import com.laimburggasse.aquariumcontrol.SessionManager
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
+import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
 import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingStatsReader

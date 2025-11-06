@@ -1,11 +1,12 @@
-package com.laimburggasse.aquariumcontrol.controller.common
+package com.laimburggasse.aquariumcontrol.controller.domain
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.laimburggasse.aquariumcontrol.controller.data.ControllerProfileDatabase
 import java.io.Serializable
 
-@Entity(tableName = ControllerProfileDatabase.TABLE_NAME_CONTROLLER_LIST)
+@Entity(tableName = ControllerProfileDatabase.Companion.TABLE_NAME_CONTROLLER_LIST)
 data class ControllerProfile(
     // This class represents a controller profile.
     @PrimaryKey(autoGenerate = true)

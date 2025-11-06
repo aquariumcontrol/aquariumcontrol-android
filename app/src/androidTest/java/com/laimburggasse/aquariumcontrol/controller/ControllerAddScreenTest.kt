@@ -7,8 +7,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.controller.add.ControllerAddScreen
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditState
+import com.laimburggasse.aquariumcontrol.controller.presentation.add.ControllerAddScreen
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiState
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -31,7 +31,7 @@ class ControllerAddScreenTest {
                 navigationRouteSource = ViewNavigationRoutes.controllerAdd,
                 screenContent = {
                     ControllerAddScreen(
-                        state = ControllerAddEditState(),
+                        state = ControllerAddEditUiState(),
                         onEvent = {},
                         onAddEvent = {}
                     )
@@ -57,7 +57,7 @@ class ControllerAddScreenTest {
                 navigationRouteSource = ViewNavigationRoutes.controllerAdd,
                 screenContent = {
                     ControllerAddScreen(
-                        state = ControllerAddEditState(),
+                        state = ControllerAddEditUiState(),
                         onEvent = {},
                         onAddEvent = {}
                     )

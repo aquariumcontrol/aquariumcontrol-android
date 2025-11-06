@@ -1,8 +1,8 @@
-package com.laimburggasse.aquariumcontrol.controller.common
+package com.laimburggasse.aquariumcontrol.controller.data
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
+import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
 
 @Database(entities = [ControllerProfile::class], version = 4, exportSchema = false)
 abstract class ControllerProfileDatabase : RoomDatabase() {
@@ -12,6 +12,5 @@ abstract class ControllerProfileDatabase : RoomDatabase() {
 
     companion object {
         const val TABLE_NAME_CONTROLLER_LIST = "CONTROLLER_LIST"
-
     }
 }

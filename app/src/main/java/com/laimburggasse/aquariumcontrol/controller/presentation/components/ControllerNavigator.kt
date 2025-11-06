@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.controller.common
+package com.laimburggasse.aquariumcontrol.controller.presentation.components
 
 import android.util.Log
 import androidx.navigation.NavHostController

@@ -1,7 +1,7 @@
 package com.laimburggasse.aquariumcontrol.ventilation.data
 
 import com.laimburggasse.aquariumcontrol.SessionManager
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
+import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.ventilation.data.remote.VentilationSetValsReader
 import com.laimburggasse.aquariumcontrol.ventilation.domain.model.VentilationSetVals

@@ -1,15 +1,15 @@
-package com.laimburggasse.aquariumcontrol.controller.edit
+package com.laimburggasse.aquariumcontrol.controller.presentation.edit
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.SessionManager
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditEvent
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditState
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfileDao
-import com.laimburggasse.aquariumcontrol.controller.common.isHostName
-import com.laimburggasse.aquariumcontrol.controller.common.isValidPortNumber
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiEvent
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiState
+import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
+import com.laimburggasse.aquariumcontrol.controller.data.ControllerProfileDao
+import com.laimburggasse.aquariumcontrol.controller.domain.isHostName
+import com.laimburggasse.aquariumcontrol.controller.domain.isValidPortNumber
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -31,12 +31,12 @@ class ControllerEditViewModel @Inject constructor(
     private val controllerProfileId: Long? = savedStateHandle.get<Long>("controllerProfileId")?.let {
         if (it == -1L) null else it
     }
-    private val _state = MutableStateFlow(value = ControllerAddEditState())
-    val state: StateFlow<ControllerAddEditState> = _state
+    private val _state = MutableStateFlow(value = ControllerAddEditUiState())
+    val state: StateFlow<ControllerAddEditUiState> = _state
         .stateIn(
             viewModelScope,
             started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
-            initialValue = ControllerAddEditState()
+            initialValue = ControllerAddEditUiState()
         )
 
     init {
@@ -60,9 +60,9 @@ class ControllerEditViewModel @Inject constructor(
         }
     }
 
-    fun onEvent(event: ControllerAddEditEvent) {
+    fun onEvent(event: ControllerAddEditUiEvent) {
         when (event) {
-            is ControllerAddEditEvent.UpdateControllerProfile -> {
+            is ControllerAddEditUiEvent.UpdateControllerProfile -> {
                 viewModelScope.launch {
                     val profileToUpdate = ControllerProfile(
                         id = _state.value.controllerProfileId,
@@ -80,33 +80,33 @@ class ControllerEditViewModel @Inject constructor(
                     }
                 }
             }
-            is ControllerAddEditEvent.SetControllerProfileName -> {
+            is ControllerAddEditUiEvent.SetControllerProfileName -> {
                 _state.update { it.copy(controllerProfileName = event.controllerProfileName) }
             }
-            is ControllerAddEditEvent.SetControllerAddress -> {
+            is ControllerAddEditUiEvent.SetControllerAddress -> {
                 _state.update { it.copy(
                     controllerProfileAddress = event.controllerAddress,
                     validControllerAddress = isHostName(event.controllerAddress)
                 )
                 }
             }
-            is ControllerAddEditEvent.SetControllerPassword -> {
+            is ControllerAddEditUiEvent.SetControllerPassword -> {
                 _state.update { it.copy( controllerProfilePassword = event.controllerPassword) }
             }
-            is ControllerAddEditEvent.SetControllerPort -> {
+            is ControllerAddEditUiEvent.SetControllerPort -> {
                 if (event.controllerPort.isNotEmpty()) {
                     if (isValidPortNumber(port = event.controllerPort.toInt())) {
                         _state.update { it.copy(controllerProfilePort = event.controllerPort.toInt()) }
                     }
                 }
             }
-            is ControllerAddEditEvent.SetControllerUser -> {
+            is ControllerAddEditUiEvent.SetControllerUser -> {
                 _state.update { it.copy(controllerProfileUser = event.controllerUser) }
             }
-            is ControllerAddEditEvent.SetDefaultControllerId -> {
+            is ControllerAddEditUiEvent.SetDefaultControllerId -> {
                 sessionManager.saveDefaultControllerProfileId(event.controllerProfileId)
             }
-            is ControllerAddEditEvent.UnsetDefaultControllerId -> {
+            is ControllerAddEditUiEvent.UnsetDefaultControllerId -> {
                 sessionManager.unsetDefaultControllerId()
             }
             else -> {

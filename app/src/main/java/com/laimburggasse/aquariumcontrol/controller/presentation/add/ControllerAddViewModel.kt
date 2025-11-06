@@ -1,13 +1,13 @@
-package com.laimburggasse.aquariumcontrol.controller.add
+package com.laimburggasse.aquariumcontrol.controller.presentation.add
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditEvent
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditState
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfileDao
-import com.laimburggasse.aquariumcontrol.controller.common.isHostName
-import com.laimburggasse.aquariumcontrol.controller.common.isValidPortNumber
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiEvent
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiState
+import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
+import com.laimburggasse.aquariumcontrol.controller.data.ControllerProfileDao
+import com.laimburggasse.aquariumcontrol.controller.domain.isHostName
+import com.laimburggasse.aquariumcontrol.controller.domain.isValidPortNumber
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,13 +20,13 @@ import javax.inject.Inject
 class ControllerAddViewModel @Inject constructor(
     private val dao: ControllerProfileDao,
 ): ViewModel() {
-    private val _state = MutableStateFlow(value = ControllerAddEditState())
+    private val _state = MutableStateFlow(value = ControllerAddEditUiState())
 
-    val state: StateFlow<ControllerAddEditState> = _state.asStateFlow()
+    val state: StateFlow<ControllerAddEditUiState> = _state.asStateFlow()
 
-    fun addControllerProfile(event: ControllerAddEditEvent, onAddComplete: () -> Unit) {
+    fun addControllerProfile(event: ControllerAddEditUiEvent, onAddComplete: () -> Unit) {
         when (event) {
-            is ControllerAddEditEvent.AddControllerProfile -> {
+            is ControllerAddEditUiEvent.AddControllerProfile -> {
                 viewModelScope.launch {
                     val controllerProfile = ControllerProfile(
                         name = state.value.controllerProfileName,
@@ -46,13 +46,13 @@ class ControllerAddViewModel @Inject constructor(
         }
     }
 
-    fun onEvent(event: ControllerAddEditEvent) {
+    fun onEvent(event: ControllerAddEditUiEvent) {
         when (event) {
-            is ControllerAddEditEvent.SetControllerProfileName -> {
+            is ControllerAddEditUiEvent.SetControllerProfileName -> {
                 _state.update { it.copy( controllerProfileName = event.controllerProfileName) }
             }
 
-            is ControllerAddEditEvent.SetControllerAddress -> {
+            is ControllerAddEditUiEvent.SetControllerAddress -> {
                 _state.update { it.copy(
                         controllerProfileAddress = event.controllerAddress,
                         validControllerAddress = isHostName(event.controllerAddress)
@@ -60,11 +60,11 @@ class ControllerAddViewModel @Inject constructor(
                 }
             }
 
-            is ControllerAddEditEvent.SetControllerPassword -> {
+            is ControllerAddEditUiEvent.SetControllerPassword -> {
                 _state.update { it.copy( controllerProfilePassword = event.controllerPassword) }
             }
 
-            is ControllerAddEditEvent.SetControllerPort -> {
+            is ControllerAddEditUiEvent.SetControllerPort -> {
                 if (event.controllerPort.isNotEmpty()) {
                     if (isValidPortNumber(port = event.controllerPort.toInt())) {
                         _state.update { it.copy(controllerProfilePort = event.controllerPort.toInt()) }
@@ -72,7 +72,7 @@ class ControllerAddViewModel @Inject constructor(
                 }
             }
 
-            is ControllerAddEditEvent.SetControllerUser -> {
+            is ControllerAddEditUiEvent.SetControllerUser -> {
                 _state.update { it.copy(controllerProfileUser = event.controllerUser) }
             }
 

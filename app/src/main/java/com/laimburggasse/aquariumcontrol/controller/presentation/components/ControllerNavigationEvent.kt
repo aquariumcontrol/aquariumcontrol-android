@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.controller.common
+package com.laimburggasse.aquariumcontrol.controller.presentation.components
 
 sealed class ControllerNavigationEvent {
     object ToControllerAdd : ControllerNavigationEvent()

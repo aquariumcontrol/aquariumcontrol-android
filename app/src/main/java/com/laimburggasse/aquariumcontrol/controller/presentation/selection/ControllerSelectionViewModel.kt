@@ -1,11 +1,11 @@
-package com.laimburggasse.aquariumcontrol.controller.selection
+package com.laimburggasse.aquariumcontrol.controller.presentation.selection
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.SessionManager
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfileDao
+import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
+import com.laimburggasse.aquariumcontrol.controller.data.ControllerProfileDao
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -99,9 +99,9 @@ class ControllerSelectionViewModel @Inject constructor(
         }
     }*/
 
-    fun onEvent(event: ControllerSelectionEvent) {
+    fun onEvent(event: ControllerSelectionUiEvent) {
         when (event) {
-            is ControllerSelectionEvent.DeleteControllerSelectionProfile -> {
+            is ControllerSelectionUiEvent.DeleteControllerSelectionProfile -> {
                 Log.d("ControllerViewModel", "Delete Controller Profile: ${event.controllerProfile}")
                 viewModelScope.launch {
                     dao.deleteControllerProfile(controllerProfile = event.controllerProfile)
@@ -110,7 +110,7 @@ class ControllerSelectionViewModel @Inject constructor(
 //                    }
                 }
             }
-            is ControllerSelectionEvent.SelectControllerProfile -> {
+            is ControllerSelectionUiEvent.SelectControllerProfile -> {
                 sessionManager.updateSelectedControllerProfile(controllerProfile = event.controllerProfile)
             }
 /*
@@ -127,7 +127,7 @@ class ControllerSelectionViewModel @Inject constructor(
                 }
             }
 */
-            ControllerSelectionEvent.AutoNavigationFinished -> {
+            ControllerSelectionUiEvent.AutoNavigationFinished -> {
                 // do nothing
             }
         }

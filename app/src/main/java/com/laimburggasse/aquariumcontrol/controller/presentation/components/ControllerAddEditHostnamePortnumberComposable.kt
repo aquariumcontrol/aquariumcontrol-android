@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.controller.common
+package com.laimburggasse.aquariumcontrol.controller.presentation.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
@@ -21,9 +21,9 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun ControllerAddEditHostnamePortnumberComposable(
-    onEvent: (ControllerAddEditEvent) -> Unit,
+    onEvent: (ControllerAddEditUiEvent) -> Unit,
     modifier: Modifier? = Modifier,
-    state: ControllerAddEditState
+    state: ControllerAddEditUiState
 ) {
     // This composable displays text fields for host name and port number.
     // The arrangement of the fields follows the device orientation.
@@ -31,7 +31,7 @@ fun ControllerAddEditHostnamePortnumberComposable(
     OutlinedTextField(
         value = state.controllerProfileAddress,
         onValueChange = {
-            onEvent(ControllerAddEditEvent.SetControllerAddress(controllerAddress = it))
+            onEvent(ControllerAddEditUiEvent.SetControllerAddress(controllerAddress = it))
         },
         label = { Text(text = stringResource(id = R.string.hostname)) },
         modifier = modifier?.then(Modifier.padding(top = 16.dp)) ?: Modifier
@@ -40,14 +40,14 @@ fun ControllerAddEditHostnamePortnumberComposable(
     NumericIntOutlinedTextFieldComposable(
         value = state.controllerProfilePort,
         onValueChange = {
-            onEvent(ControllerAddEditEvent.SetControllerPort(controllerPort = it))
+            onEvent(ControllerAddEditUiEvent.SetControllerPort(controllerPort = it))
         },
         label = stringResource(id = R.string.port_number),
         modifier = modifier?.then(other = Modifier.padding(top = 16.dp)) ?: Modifier
     )
 }
 
-val mockControllerState = ControllerAddEditState(
+val mockControllerState = ControllerAddEditUiState(
     controllerProfileAddress = "mock.hostname.com",
     controllerProfilePort = 80,
 )

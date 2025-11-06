@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.controller.selection
+package com.laimburggasse.aquariumcontrol.controller.presentation.selection
 
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
@@ -28,13 +28,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.laimburggasse.aquariumcontrol.R
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerNavigationEvent
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerNavigationEvent
+import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun ControllerProfileComposable(
-    onEvent: (ControllerSelectionEvent) -> Unit,
+    onEvent: (ControllerSelectionUiEvent) -> Unit,
     controllerProfile: ControllerProfile,
     isDefaultProfile: Boolean = false,
     onNavigateFromController: (ControllerNavigationEvent, Long) -> Unit
@@ -58,7 +58,7 @@ fun ControllerProfileComposable(
     ) {
         Column(
             modifier = Modifier.weight(weight = 1f).clickable {
-                onEvent(ControllerSelectionEvent.SelectControllerProfile(controllerProfile))
+                onEvent(ControllerSelectionUiEvent.SelectControllerProfile(controllerProfile))
                 onNavigateFromController(ControllerNavigationEvent.ToOverview, controllerProfile.id)
             }
         ) {
@@ -131,7 +131,7 @@ fun ControllerProfileComposable(
                 Button(
                     modifier = Modifier.padding(end = 4.dp),
                     onClick = {
-                        onEvent(ControllerSelectionEvent.SelectControllerProfile(controllerProfile))
+                        onEvent(ControllerSelectionUiEvent.SelectControllerProfile(controllerProfile))
                         onNavigateFromController(
                             ControllerNavigationEvent.ToControllerEdit,
                             controllerProfile.id
@@ -145,7 +145,7 @@ fun ControllerProfileComposable(
                 }
                 Button(
                     onClick = {
-                        onEvent(ControllerSelectionEvent.DeleteControllerSelectionProfile(controllerProfile))
+                        onEvent(ControllerSelectionUiEvent.DeleteControllerSelectionProfile(controllerProfile))
                     }) {
                     Icon(
                         imageVector = Icons.Outlined.Delete,

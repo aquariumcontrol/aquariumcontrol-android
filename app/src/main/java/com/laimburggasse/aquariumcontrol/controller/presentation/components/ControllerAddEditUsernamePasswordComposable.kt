@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.controller.common
+package com.laimburggasse.aquariumcontrol.controller.presentation.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
@@ -21,9 +21,9 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
 fun ControllerAddEditUsernamePasswordComposable(
-    onEvent: (ControllerAddEditEvent) -> Unit,
+    onEvent: (ControllerAddEditUiEvent) -> Unit,
     modifier: Modifier? = Modifier,
-    state: ControllerAddEditState? = null,
+    state: ControllerAddEditUiState? = null,
 ) {
     // This composable displays text fields for user name and password.
     // The arrangement of the fields follows the device orientation.
@@ -31,7 +31,7 @@ fun ControllerAddEditUsernamePasswordComposable(
     OutlinedTextField(
         value = state?.controllerProfileUser ?: "mock_user",
         onValueChange = {
-            onEvent(ControllerAddEditEvent.SetControllerUser(controllerUser = it))
+            onEvent(ControllerAddEditUiEvent.SetControllerUser(controllerUser = it))
         },
         label = { Text(text = stringResource(id = R.string.user_name)) },
         modifier = modifier?.then(Modifier.padding(top = 16.dp)) ?: Modifier
@@ -40,7 +40,7 @@ fun ControllerAddEditUsernamePasswordComposable(
     OutlinedTextField(
         value = state?.controllerProfilePassword ?: "mock password",
         onValueChange = {
-            onEvent(ControllerAddEditEvent.SetControllerPassword(controllerPassword = it))
+            onEvent(ControllerAddEditUiEvent.SetControllerPassword(controllerPassword = it))
         },
         label = { Text(text = stringResource(id = R.string.password)) },
         visualTransformation = PasswordVisualTransformation(), // Hide password

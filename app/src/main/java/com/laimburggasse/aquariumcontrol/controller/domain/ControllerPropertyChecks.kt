@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.controller.common
+package com.laimburggasse.aquariumcontrol.controller.domain
 
 /**
  * Checks if the provided string is not empty and compatible to
@@ -19,12 +19,12 @@ fun isHostName(address: String): Boolean {
     if (address.isBlank()) {
         return false
     } else {
-        val ipv4Regex =
+        val ipv4Regex: Regex =
             "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\$".toRegex()
         val ipv6Regex = "^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\$".toRegex()
-        val ipv6CompressedRegex =
+        val ipv6CompressedRegex: Regex =
             "^(([0-9a-fA-F]{1,4}:){0,1}(([0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4})?::([0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4})?\$".toRegex()
-        val dnsRegex =
+        val dnsRegex: Regex =
             "^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}\$".toRegex()
 
         return address.matches(ipv4Regex) ||

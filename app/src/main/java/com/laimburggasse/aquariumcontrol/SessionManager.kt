@@ -5,8 +5,8 @@ import android.util.Log
 import androidx.core.content.edit
 import com.laimburggasse.aquariumcontrol.MainActivity.Companion.KEY_DEFAULT_PROFILE_ID
 import com.laimburggasse.aquariumcontrol.MainActivity.Companion.NO_DEFAULT_ID
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfileDao
+import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
+import com.laimburggasse.aquariumcontrol.controller.data.ControllerProfileDao
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

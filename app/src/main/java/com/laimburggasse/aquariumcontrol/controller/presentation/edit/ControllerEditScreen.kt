@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.controller.edit
+package com.laimburggasse.aquariumcontrol.controller.presentation.edit
 
 import android.content.res.Configuration
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -27,17 +27,17 @@ import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditEvent
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditHostnamePortnumberComposable
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditState
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditUsernamePasswordComposable
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerNavigationEvent
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiEvent
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditHostnamePortnumberComposable
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiState
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUsernamePasswordComposable
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerNavigationEvent
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 
 @Composable
 fun ControllerEditScreen(
-    state: ControllerAddEditState,
-    onEvent: (ControllerAddEditEvent) -> Unit,
+    state: ControllerAddEditUiState,
+    onEvent: (ControllerAddEditUiEvent) -> Unit,
     isDefaultProfileInitialValue: Boolean,
     onNavigateFromController: (ControllerNavigationEvent, Long?) -> Unit
 ) {
@@ -67,7 +67,7 @@ fun ControllerEditScreen(
         OutlinedTextField(
             value = state.controllerProfileName,
             onValueChange = {
-                onEvent(ControllerAddEditEvent.SetControllerProfileName(controllerProfileName = it))
+                onEvent(ControllerAddEditUiEvent.SetControllerProfileName(controllerProfileName = it))
             },
             label = { Text(text = stringResource(id = R.string.profile_name)) },
             modifier = Modifier.fillMaxWidth(),
@@ -118,10 +118,10 @@ fun ControllerEditScreen(
                 checked = isDefaultProfile,
                 onCheckedChange = {
                     if (it) {
-                        onEvent(ControllerAddEditEvent.SetDefaultControllerId(controllerProfileId = state.controllerProfileId))
+                        onEvent(ControllerAddEditUiEvent.SetDefaultControllerId(controllerProfileId = state.controllerProfileId))
                         isDefaultProfile = true
                     } else {
-                        onEvent(ControllerAddEditEvent.UnsetDefaultControllerId)
+                        onEvent(ControllerAddEditUiEvent.UnsetDefaultControllerId)
                         isDefaultProfile = false
                     }
                 }
@@ -134,7 +134,7 @@ fun ControllerEditScreen(
 
         Button(
             onClick = {
-                onEvent(ControllerAddEditEvent.UpdateControllerProfile)
+                onEvent(ControllerAddEditUiEvent.UpdateControllerProfile)
                 onNavigateFromController(ControllerNavigationEvent.ToControllerMain, null)
             },
             enabled = state.controllerProfileName.isNotBlank() && state.validControllerAddress,
@@ -145,7 +145,7 @@ fun ControllerEditScreen(
     }
 }
 
-val mockControllerEditState = ControllerAddEditState(
+val mockControllerEditState = ControllerAddEditUiState(
     controllerProfileName = "Controller",
     controllerProfileAddress = "192.168.1.1",
     controllerProfilePort = 80,

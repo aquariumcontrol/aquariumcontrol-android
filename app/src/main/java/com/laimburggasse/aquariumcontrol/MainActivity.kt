@@ -24,15 +24,15 @@ import com.laimburggasse.aquariumcontrol.balling.presentation.entry.BallingScree
 import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryScreen
 import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryUiState
 import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryViewModel
-import com.laimburggasse.aquariumcontrol.controller.add.ControllerAddScreen
-import com.laimburggasse.aquariumcontrol.controller.add.ControllerAddViewModel
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditState
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
-import com.laimburggasse.aquariumcontrol.controller.common.handleControllerNavigation
-import com.laimburggasse.aquariumcontrol.controller.edit.ControllerEditScreen
-import com.laimburggasse.aquariumcontrol.controller.edit.ControllerEditViewModel
-import com.laimburggasse.aquariumcontrol.controller.selection.ControllerSelectionScreen
-import com.laimburggasse.aquariumcontrol.controller.selection.ControllerSelectionViewModel
+import com.laimburggasse.aquariumcontrol.controller.presentation.add.ControllerAddScreen
+import com.laimburggasse.aquariumcontrol.controller.presentation.add.ControllerAddViewModel
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiState
+import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.handleControllerNavigation
+import com.laimburggasse.aquariumcontrol.controller.presentation.edit.ControllerEditScreen
+import com.laimburggasse.aquariumcontrol.controller.presentation.edit.ControllerEditViewModel
+import com.laimburggasse.aquariumcontrol.controller.presentation.selection.ControllerSelectionScreen
+import com.laimburggasse.aquariumcontrol.controller.presentation.selection.ControllerSelectionViewModel
 import com.laimburggasse.aquariumcontrol.feed.presentation.add.FeedProfileAddScreen
 import com.laimburggasse.aquariumcontrol.feed.presentation.add.FeedProfileAddUiState
 import com.laimburggasse.aquariumcontrol.feed.presentation.add.FeedProfileAddViewModel
@@ -142,7 +142,7 @@ class MainActivity : ComponentActivity() {
                     composable(route = ViewNavigationRoutes.controllerAdd)
                     {
                         val controllerAddViewModel: ControllerAddViewModel = hiltViewModel()
-                        val state: ControllerAddEditState by controllerAddViewModel.state.collectAsState()
+                        val state: ControllerAddEditUiState by controllerAddViewModel.state.collectAsState()
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.controllerAdd,
@@ -172,7 +172,7 @@ class MainActivity : ComponentActivity() {
                     { backStackEntry ->
                         val controllerProfileId: Long = backStackEntry.arguments?.getLong("controllerProfileId") ?: -1L
                         val controllerEditViewModel: ControllerEditViewModel = hiltViewModel()
-                        val editState: ControllerAddEditState by controllerEditViewModel.state.collectAsState()
+                        val editState: ControllerAddEditUiState by controllerEditViewModel.state.collectAsState()
 
                         MainScaffold(
                             isControllerLoaded,

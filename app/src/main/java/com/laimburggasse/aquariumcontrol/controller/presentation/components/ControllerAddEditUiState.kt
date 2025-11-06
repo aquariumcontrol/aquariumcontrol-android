@@ -1,6 +1,6 @@
-package com.laimburggasse.aquariumcontrol.controller.common
+package com.laimburggasse.aquariumcontrol.controller.presentation.components
 
-data class ControllerAddEditState (
+data class ControllerAddEditUiState (
     // This class represents the state of the controller add or edit screen.
     val controllerProfileId: Long = 0,
     val controllerProfileName: String = "",

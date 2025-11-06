@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.controller.add
+package com.laimburggasse.aquariumcontrol.controller.presentation.add
 
 import android.content.res.Configuration
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -22,17 +22,17 @@ import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditEvent
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditHostnamePortnumberComposable
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditState
-import com.laimburggasse.aquariumcontrol.controller.common.ControllerAddEditUsernamePasswordComposable
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiEvent
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditHostnamePortnumberComposable
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiState
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUsernamePasswordComposable
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 
 @Composable
 fun ControllerAddScreen(
-    state: ControllerAddEditState,
-    onEvent: (ControllerAddEditEvent) -> Unit,
-    onAddEvent: (ControllerAddEditEvent) -> Unit
+    state: ControllerAddEditUiState,
+    onEvent: (ControllerAddEditUiEvent) -> Unit,
+    onAddEvent: (ControllerAddEditUiEvent) -> Unit
 ) {
     // This screen displays a form for adding a new controller profile:
     // - editable text field for the controller profile name
@@ -52,7 +52,7 @@ fun ControllerAddScreen(
 
         OutlinedTextField(
             value = state.controllerProfileName,
-            onValueChange = { onEvent(ControllerAddEditEvent.SetControllerProfileName(controllerProfileName = it)) },
+            onValueChange = { onEvent(ControllerAddEditUiEvent.SetControllerProfileName(controllerProfileName = it)) },
             label = { Text(text = stringResource(id = R.string.profile_name)) },
             modifier = Modifier.fillMaxWidth(),
         )
@@ -89,7 +89,7 @@ fun ControllerAddScreen(
         }
 
         Button(
-            onClick = { onAddEvent(ControllerAddEditEvent.AddControllerProfile) },
+            onClick = { onAddEvent(ControllerAddEditUiEvent.AddControllerProfile) },
             enabled = state.validControllerAddress,
             modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
         ) {
@@ -117,7 +117,7 @@ internal fun ControllerAddScreenPreview() {
         navigationRouteSource = ViewNavigationRoutes.controllerAdd,
         screenContent = {
             ControllerAddScreen(
-                state = ControllerAddEditState(),
+                state = ControllerAddEditUiState(),
                 onEvent = {},
                 onAddEvent = {}
             )
