@@ -1,9 +1,11 @@
-package com.laimburggasse.aquariumcontrol.heating
+package com.laimburggasse.aquariumcontrol.heating.data
 
 import android.util.Log
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
+import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingSetValsReader
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
@@ -55,7 +57,8 @@ open class HeatingSetValsRepository @Inject constructor(
                 emit(value = DataFetchResult.Success(data = HeatingSetVals(
                     heatingSwitchOnTemp = heatingSetValsSwitchOnTempInitVal,
                     heatingSwitchOffTemp = heatingSetValsSwitchOffTempInitVal,
-                )))
+                )
+                ))
                 return@flow
             }
             // A controller is present, start the fetching process

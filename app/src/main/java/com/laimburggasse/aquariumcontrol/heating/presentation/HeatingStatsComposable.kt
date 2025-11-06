@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.heating
+package com.laimburggasse.aquariumcontrol.heating.presentation
 
 import android.content.res.Configuration
 import android.graphics.Color
@@ -31,6 +31,9 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
+import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
+import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingStatsSignal
+import com.laimburggasse.aquariumcontrol.heating.data.remote.dto.HeatingStatsStringEntry
 import java.text.SimpleDateFormat
 import java.util.Locale
 

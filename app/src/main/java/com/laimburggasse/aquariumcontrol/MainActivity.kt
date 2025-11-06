@@ -50,11 +50,11 @@ import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryScreen
 import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryUiState
 import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryViewModel
 import com.laimburggasse.aquariumcontrol.feed.schedule.FeedProfileScheduleScreen
-import com.laimburggasse.aquariumcontrol.heating.HeatingScreen
-import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsUiState
-import com.laimburggasse.aquariumcontrol.heating.HeatingSetValsViewModel
-import com.laimburggasse.aquariumcontrol.heating.HeatingStatsUiState
-import com.laimburggasse.aquariumcontrol.heating.HeatingStatsViewModel
+import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingScreen
+import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingSetValsUiState
+import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingSetValsViewModel
+import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingStatsUiState
+import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingStatsViewModel
 import com.laimburggasse.aquariumcontrol.info.InfoScreen
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.handleMainDropDownMenuNavigation
 import com.laimburggasse.aquariumcontrol.overview.OverviewScreen

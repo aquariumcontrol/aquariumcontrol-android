@@ -1,8 +1,11 @@
-package com.laimburggasse.aquariumcontrol.heating
+package com.laimburggasse.aquariumcontrol.heating.data
 
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
+import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingStatsReader
+import com.laimburggasse.aquariumcontrol.heating.data.remote.dto.HeatingStatsStringEntry
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import kotlinx.coroutines.CoroutineScope
@@ -61,6 +64,7 @@ open class HeatingStatsRepository @Inject constructor(
                             }
                             DataFetchResult.Success(data = heatingStats)
                         }
+
                         is DataFetchResult.Error -> {
                             // Propagate the error result
                             DataFetchResult.Error(
@@ -74,7 +78,7 @@ open class HeatingStatsRepository @Inject constructor(
         }
     }.stateIn(
         scope = repositoryScope,
-        started = SharingStarted.WhileSubscribed(5000L),
+        started = SharingStarted.Companion.WhileSubscribed(5000L),
         initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial load")
     )
 

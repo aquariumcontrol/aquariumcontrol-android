@@ -1,5 +1,6 @@
-package com.laimburggasse.aquariumcontrol.heating
+package com.laimburggasse.aquariumcontrol.heating.data.remote
 
+import com.laimburggasse.aquariumcontrol.heating.data.remote.dto.HeatingStatsStringEntry
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient

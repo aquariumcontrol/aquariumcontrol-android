@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.heating
+package com.laimburggasse.aquariumcontrol.heating.presentation
 
 import android.content.res.Configuration
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -25,6 +25,11 @@ import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
+import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingSetValsEvent
+import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingSetValsUiState
+import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
+import com.laimburggasse.aquariumcontrol.heating.data.remote.dto.HeatingStatsStringEntry
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 
 @Composable
@@ -63,8 +68,16 @@ fun HeatingScreen(
                                 Configuration.ORIENTATION_LANDSCAPE -> {
                                     Row {
                                         HeatingButtonsComposable(
-                                            onUpdateClicked = { onHeatingSetValsEvent(HeatingSetValsEvent.Update) },
-                                            onResetClicked = { onHeatingSetValsEvent(HeatingSetValsEvent.Reset) }
+                                            onUpdateClicked = {
+                                                onHeatingSetValsEvent(
+                                                    HeatingSetValsEvent.Update
+                                                )
+                                            },
+                                            onResetClicked = {
+                                                onHeatingSetValsEvent(
+                                                    HeatingSetValsEvent.Reset
+                                                )
+                                            }
                                         )
                                     }
                                     Row {
@@ -97,7 +110,11 @@ fun HeatingScreen(
                                 }
                                 else -> {
                                     HeatingButtonsComposable(
-                                        onUpdateClicked = { onHeatingSetValsEvent(HeatingSetValsEvent.Update) },
+                                        onUpdateClicked = {
+                                            onHeatingSetValsEvent(
+                                                HeatingSetValsEvent.Update
+                                            )
+                                        },
                                         onResetClicked = { onHeatingSetValsEvent(HeatingSetValsEvent.Reset) }
                                     )
                                     Spacer(modifier = Modifier.size(width = 10.dp,height = 10.dp))

@@ -1,13 +1,13 @@
-package com.laimburggasse.aquariumcontrol.heating
+package com.laimburggasse.aquariumcontrol.heating.domain.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class HeatingSetVals(
-    @SerialName("heatingSwitchOnTemp")
+    @SerialName(value = "heatingSwitchOnTemp")
     var heatingSwitchOnTemp: Double,
 
-    @SerialName("heatingSwitchOffTemp")
+    @SerialName(value = "heatingSwitchOffTemp")
     var heatingSwitchOffTemp: Double
 )

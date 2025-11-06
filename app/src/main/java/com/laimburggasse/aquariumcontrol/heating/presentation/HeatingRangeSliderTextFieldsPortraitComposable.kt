@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.heating
+package com.laimburggasse.aquariumcontrol.heating.presentation
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column

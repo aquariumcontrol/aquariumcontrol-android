@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.heating
+package com.laimburggasse.aquariumcontrol.heating.domain.model
 
 import java.sql.Date
 

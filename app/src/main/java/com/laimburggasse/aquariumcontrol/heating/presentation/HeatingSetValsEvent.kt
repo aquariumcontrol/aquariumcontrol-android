@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.heating
+package com.laimburggasse.aquariumcontrol.heating.presentation
 
 sealed interface HeatingSetValsEvent {
     data class ChangeRange(val lowerValue: Float, val upperValue: Float): HeatingSetValsEvent

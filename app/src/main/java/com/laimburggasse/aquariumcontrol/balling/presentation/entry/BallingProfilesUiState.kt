@@ -1,6 +1,6 @@
 package com.laimburggasse.aquariumcontrol.balling.presentation.entry
 
-import com.laimburggasse.aquariumcontrol.balling.domain.BallingProfile
+import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 
 sealed class BallingProfilesUiState {
     object Empty : BallingProfilesUiState()

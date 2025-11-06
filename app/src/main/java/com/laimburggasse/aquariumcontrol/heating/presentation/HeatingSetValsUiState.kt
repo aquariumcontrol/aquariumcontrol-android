@@ -1,4 +1,6 @@
-package com.laimburggasse.aquariumcontrol.heating
+package com.laimburggasse.aquariumcontrol.heating.presentation
+
+import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
 
 sealed class HeatingSetValsUiState {
     object Loading : HeatingSetValsUiState()

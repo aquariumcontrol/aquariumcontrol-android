@@ -1,7 +1,11 @@
-package com.laimburggasse.aquariumcontrol.heating
+package com.laimburggasse.aquariumcontrol.heating.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
+import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingSetValsEvent
+import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingSetValsUiState
+import com.laimburggasse.aquariumcontrol.heating.data.HeatingSetValsRepository
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -26,7 +30,7 @@ class HeatingSetValsViewModel @Inject constructor(
             }
         }.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.Eagerly,
+            started = SharingStarted.Companion.Eagerly,
             initialValue = HeatingSetValsUiState.Loading // The UI starts in a loading state
         )
 

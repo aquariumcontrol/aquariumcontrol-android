@@ -1,6 +1,6 @@
 package com.laimburggasse.aquariumcontrol.balling.data.remote
 
-import com.laimburggasse.aquariumcontrol.balling.domain.BallingHistoryLogEntry
+import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient

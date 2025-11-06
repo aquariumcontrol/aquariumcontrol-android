@@ -1,5 +1,6 @@
-package com.laimburggasse.aquariumcontrol.heating
+package com.laimburggasse.aquariumcontrol.heating.data.remote.dto
 
+import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.sql.Date
@@ -8,19 +9,19 @@ import java.util.Locale
 
 @Serializable
 data class HeatingStatsStringEntry(
-    @SerialName("Date")
+    @SerialName(value = "Date")
     val dateString: String,
 
-    @SerialName("Energy")
+    @SerialName(value = "Energy")
     val energy: Double,
 
-    @SerialName("AmbientTempAverage")
+    @SerialName(value = "AmbientTempAverage")
     val ambientTemperatureAverage: Double,
 
-    @SerialName("WaterTempAverage")
+    @SerialName(value = "WaterTempAverage")
     val waterTemperatureAverage: Double,
 
-    @SerialName("HeatingControlRuntime")
+    @SerialName(value = "HeatingControlRuntime")
     val heatingControlRuntime: Int
 ) {
     fun transformToHeatingStatsEntry(): HeatingStatsEntry {
