@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.schedule
+package com.laimburggasse.aquariumcontrol.schedule.presentation
 
 sealed interface ScheduleEvent {
     object Update: ScheduleEvent

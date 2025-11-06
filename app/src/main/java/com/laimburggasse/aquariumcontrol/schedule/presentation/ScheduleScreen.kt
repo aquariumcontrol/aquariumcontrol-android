@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.schedule
+package com.laimburggasse.aquariumcontrol.schedule.presentation
 
 import android.content.res.Configuration
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -27,6 +27,7 @@ import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntries
 
 @Composable
 fun ScheduleScreen(
@@ -79,7 +80,9 @@ fun ScheduleScreen(
                                     onScheduleEvent(ScheduleEvent.ChangeTime(ScheduleType.BALLING, TimeType.STOP, newTime))
                                 },
                                 onLimitationActiveChanged = { isActive ->
-                                    onScheduleEvent(ScheduleEvent.ChangeLimitationActive(ScheduleType.BALLING, isActive))
+                                    onScheduleEvent(
+                                        ScheduleEvent.ChangeLimitationActive(
+                                            ScheduleType.BALLING, isActive))
                                 }
                             )
 
@@ -96,7 +99,9 @@ fun ScheduleScreen(
                                     onScheduleEvent(ScheduleEvent.ChangeTime(ScheduleType.REFILL, TimeType.STOP, newTime))
                                 },
                                 onLimitationActiveChanged = { isActive ->
-                                    onScheduleEvent(ScheduleEvent.ChangeLimitationActive(ScheduleType.REFILL, isActive))
+                                    onScheduleEvent(
+                                        ScheduleEvent.ChangeLimitationActive(
+                                            ScheduleType.REFILL, isActive))
                                 }
                             )
 
@@ -113,7 +118,9 @@ fun ScheduleScreen(
                                     onScheduleEvent(ScheduleEvent.ChangeTime(ScheduleType.VENTILATION, TimeType.STOP, newTime))
                                 },
                                 onLimitationActiveChanged = { isActive ->
-                                    onScheduleEvent(ScheduleEvent.ChangeLimitationActive(ScheduleType.VENTILATION, isActive))
+                                    onScheduleEvent(
+                                        ScheduleEvent.ChangeLimitationActive(
+                                            ScheduleType.VENTILATION, isActive))
                                 }
                             )
 
@@ -130,7 +137,9 @@ fun ScheduleScreen(
                                     onScheduleEvent(ScheduleEvent.ChangeTime(ScheduleType.HEATING, TimeType.STOP, newTime))
                                 },
                                 onLimitationActiveChanged = { isActive ->
-                                    onScheduleEvent(ScheduleEvent.ChangeLimitationActive(ScheduleType.HEATING, isActive))
+                                    onScheduleEvent(
+                                        ScheduleEvent.ChangeLimitationActive(
+                                            ScheduleType.HEATING, isActive))
                                 }
                             )
                         }

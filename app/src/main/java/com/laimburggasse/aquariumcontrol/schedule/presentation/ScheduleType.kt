@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.schedule
+package com.laimburggasse.aquariumcontrol.schedule.presentation
 
 enum class ScheduleType(val key: String) {
     BALLING(key = "Balling"),

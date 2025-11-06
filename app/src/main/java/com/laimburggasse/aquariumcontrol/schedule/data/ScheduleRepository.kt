@@ -1,7 +1,12 @@
-package com.laimburggasse.aquariumcontrol.schedule
+package com.laimburggasse.aquariumcontrol.schedule.data
 
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleStringEntry
+import com.laimburggasse.aquariumcontrol.schedule.data.remote.ScheduleEntryReader
+import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleEntry
+import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntries
+import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntriesFactory
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
@@ -44,7 +49,12 @@ open class ScheduleRepository @Inject constructor(
             // @todo: implement loading state
             if (controller == null) {
                 // If no controller is selected, emit a valid empty state
-                emit(value = DataFetchResult.Error(exception = null, errorMessage = "No Controller Selected"))
+                emit(
+                    value = DataFetchResult.Error(
+                        exception = null,
+                        errorMessage = "No Controller Selected"
+                    )
+                )
                 return@flow
             }
 
@@ -55,7 +65,7 @@ open class ScheduleRepository @Inject constructor(
         }
     }.stateIn(
         scope = repositoryScope,
-        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
+        started = SharingStarted.Companion.WhileSubscribed(stopTimeoutMillis = 5000L),
         initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial Load")
     )
 
@@ -73,7 +83,7 @@ open class ScheduleRepository @Inject constructor(
         }
     }.stateIn(
         scope = repositoryScope,
-        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
+        started = SharingStarted.Companion.WhileSubscribed(stopTimeoutMillis = 5000L),
         initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial Load")
     )
 
@@ -144,6 +154,7 @@ open class ScheduleRepository @Inject constructor(
                         DataFetchResult.Success(data = scheduleEntriesEmpty)
                     }
                 }
+
                 is DataFetchResult.Error -> {
                     DataFetchResult.Error(
                         exception = result.exception,

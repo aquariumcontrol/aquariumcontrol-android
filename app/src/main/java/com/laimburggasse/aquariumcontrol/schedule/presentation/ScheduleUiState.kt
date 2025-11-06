@@ -1,4 +1,6 @@
-package com.laimburggasse.aquariumcontrol.schedule
+package com.laimburggasse.aquariumcontrol.schedule.presentation
+
+import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntries
 
 sealed class ScheduleUiState {
     object Loading : ScheduleUiState()

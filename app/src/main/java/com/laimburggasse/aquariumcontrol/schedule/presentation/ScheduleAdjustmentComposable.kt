@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.schedule
+package com.laimburggasse.aquariumcontrol.schedule.presentation
 
 import android.app.TimePickerDialog
 import android.content.Context
@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -194,7 +195,7 @@ private fun TimePickerDialog(
     onTimeSelected: (Int, Int) -> Unit,
     onDismiss: () -> Unit
 ) {
-    val context: Context = androidx.compose.ui.platform.LocalContext.current
+    val context: Context = LocalContext.current
     val dialog: TimePickerDialog = remember {
         TimePickerDialog(
             context,

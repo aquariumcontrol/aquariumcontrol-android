@@ -66,9 +66,9 @@ import com.laimburggasse.aquariumcontrol.refill.entry.RefillViewModel
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryScreen
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryUiState
 import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryViewModel
-import com.laimburggasse.aquariumcontrol.schedule.ScheduleScreen
-import com.laimburggasse.aquariumcontrol.schedule.ScheduleUiState
-import com.laimburggasse.aquariumcontrol.schedule.ScheduleViewModel
+import com.laimburggasse.aquariumcontrol.schedule.presentation.ScheduleScreen
+import com.laimburggasse.aquariumcontrol.schedule.presentation.ScheduleUiState
+import com.laimburggasse.aquariumcontrol.schedule.presentation.ScheduleViewModel
 import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreen
 import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataUiState
 import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataViewModel

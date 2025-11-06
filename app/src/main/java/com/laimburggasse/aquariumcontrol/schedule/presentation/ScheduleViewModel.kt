@@ -1,7 +1,9 @@
-package com.laimburggasse.aquariumcontrol.schedule
+package com.laimburggasse.aquariumcontrol.schedule.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntries
+import com.laimburggasse.aquariumcontrol.schedule.data.ScheduleRepository
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted

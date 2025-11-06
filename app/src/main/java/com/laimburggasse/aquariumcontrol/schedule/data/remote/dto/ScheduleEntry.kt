@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.schedule
+package com.laimburggasse.aquariumcontrol.schedule.data.remote.dto
 
 class ScheduleEntry(
     var scheduleType: String,

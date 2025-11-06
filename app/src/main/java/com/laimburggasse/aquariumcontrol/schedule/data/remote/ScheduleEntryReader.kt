@@ -1,5 +1,6 @@
-package com.laimburggasse.aquariumcontrol.schedule
+package com.laimburggasse.aquariumcontrol.schedule.data.remote
 
+import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleStringEntry
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient

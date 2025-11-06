@@ -1,4 +1,7 @@
-package com.laimburggasse.aquariumcontrol.schedule
+package com.laimburggasse.aquariumcontrol.schedule.domain.model
+
+import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleEntry
+import com.laimburggasse.aquariumcontrol.schedule.presentation.ScheduleType
 
 class ScheduleEntriesFactory (
     private val scheduleEntryList: List<ScheduleEntry>
@@ -26,7 +29,7 @@ class ScheduleEntriesFactory (
         var heatingScheduleLoaded = false
         
         if (scheduleEntryList.isNotEmpty()) {
-            for (scheduleSetVal in scheduleEntryList) {
+            for (scheduleSetVal: ScheduleEntry in scheduleEntryList) {
                 when (scheduleSetVal.scheduleType) {
                     ScheduleType.BALLING.key -> {
                         ballingStartTime = scheduleSetVal.startTime
