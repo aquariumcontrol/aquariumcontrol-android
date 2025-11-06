@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.refill.history
+package com.laimburggasse.aquariumcontrol.refill.domain.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -6,11 +6,11 @@ import java.sql.Timestamp
 
 @Serializable
 data class RefillHistoryLogEntry(
-    @SerialName("Timestamp")
+    @SerialName(value = "Timestamp")
     val timestamp: String,
-    @SerialName("Duration")
+    @SerialName(value = "Duration")
     val duration: Double,
-    @SerialName("Volume")
+    @SerialName(value = "Volume")
     val volume: Double
 ) {
     // This class is used to represent a refill event.

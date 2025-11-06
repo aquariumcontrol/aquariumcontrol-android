@@ -1,8 +1,7 @@
-package com.laimburggasse.aquariumcontrol.refill.common
+package com.laimburggasse.aquariumcontrol.refill.presentation.components
 
 import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.refill.common.RefillNavigationEvent
 
 fun NavHostController.handleRefillNavigation(event: RefillNavigationEvent) {
     when (event) {

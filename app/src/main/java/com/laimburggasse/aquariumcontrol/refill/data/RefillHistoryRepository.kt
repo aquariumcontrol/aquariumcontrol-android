@@ -1,8 +1,10 @@
-package com.laimburggasse.aquariumcontrol.refill.history
+package com.laimburggasse.aquariumcontrol.refill.data
 
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
+import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillHistoryLogEntryReader
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import kotlinx.coroutines.CoroutineScope
@@ -62,17 +64,18 @@ open class RefillHistoryRepository @Inject constructor(
                         "http://${controller!!.address}${WebApiUrls.REFILL_GET_EVENTS_24H}"
                     }
 
-                    val result: DataFetchResult<List<RefillHistoryLogEntry>> = withContext(context = Dispatchers.IO) {
-                        val reader = RefillHistoryLogEntryReader(url)
-                        reader.readRefillEvents()
-                    }
+                    val result: DataFetchResult<List<RefillHistoryLogEntry>> =
+                        withContext(context = Dispatchers.IO) {
+                            val reader = RefillHistoryLogEntryReader(url)
+                            reader.readRefillEvents()
+                        }
 
                     emit(value = result)
                 }
             }
             .stateIn(
                 scope = repositoryScope,
-                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
+                started = SharingStarted.Companion.WhileSubscribed(stopTimeoutMillis = 5000),
                 initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial loading")
             )
 

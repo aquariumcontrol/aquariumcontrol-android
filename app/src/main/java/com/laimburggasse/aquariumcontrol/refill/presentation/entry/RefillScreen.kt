@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.refill.entry
+package com.laimburggasse.aquariumcontrol.refill.presentation.entry
 
 import android.content.Context
 import android.content.res.Configuration
@@ -27,7 +27,7 @@ import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
-import com.laimburggasse.aquariumcontrol.refill.common.RefillNavigationEvent
+import com.laimburggasse.aquariumcontrol.refill.presentation.components.RefillNavigationEvent
 
 @Composable
 fun RefillScreen(

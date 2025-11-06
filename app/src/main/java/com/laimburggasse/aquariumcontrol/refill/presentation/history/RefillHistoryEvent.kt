@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.refill.history
+package com.laimburggasse.aquariumcontrol.refill.presentation.history
 
 sealed interface RefillHistoryEvent {
     object Refresh: RefillHistoryEvent

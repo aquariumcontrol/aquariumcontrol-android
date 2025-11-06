@@ -1,11 +1,11 @@
-package com.laimburggasse.aquariumcontrol.refill.history
+package com.laimburggasse.aquariumcontrol.refill.data.remote
 
+import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
-
 
 class RefillHistoryLogEntryReader(private val url: String) {
     // This class reads the refill events from the server using a GET request.

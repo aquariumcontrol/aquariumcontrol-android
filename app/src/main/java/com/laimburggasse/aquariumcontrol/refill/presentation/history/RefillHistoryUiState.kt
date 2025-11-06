@@ -1,4 +1,6 @@
-package com.laimburggasse.aquariumcontrol.refill.history
+package com.laimburggasse.aquariumcontrol.refill.presentation.history
+
+import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
 
 sealed class RefillHistoryUiState {
     object Loading : RefillHistoryUiState()

@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.refill.entry
+package com.laimburggasse.aquariumcontrol.refill.presentation.entry
 
 sealed interface RefillEvent {
     object StartControl: RefillEvent

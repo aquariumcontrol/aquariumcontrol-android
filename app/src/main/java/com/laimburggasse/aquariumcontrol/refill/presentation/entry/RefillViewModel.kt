@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.refill.entry
+package com.laimburggasse.aquariumcontrol.refill.presentation.entry
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
