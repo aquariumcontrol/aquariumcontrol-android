@@ -3,10 +3,12 @@ package com.laimburggasse.aquariumcontrol.timedata
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState.Error
-import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState.Loading
-import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState.Success
+import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreen
+import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataUiState.Error
+import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataUiState.Loading
+import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataUiState.Success
+import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataSets
+import com.laimburggasse.aquariumcontrol.timedata.presentation.generateMockTimeData
 
 @Suppress("unused")
 class TimeDataScreenTest {
@@ -25,7 +27,9 @@ class TimeDataScreenTest {
     )
     @Composable
     fun TimeDataScreenPreviewSuccess() {
-        TimeDataScreen(mockTimeDataUiState = Success(TimeDataSets(generateMockTimeData())))
+        TimeDataScreen(
+            mockTimeDataUiState = Success(TimeDataSets(generateMockTimeData()))
+        )
     }
 
     //@PreviewTest
@@ -43,7 +47,9 @@ class TimeDataScreenTest {
     )
     @Composable
     fun TimeDataScreenPreviewError() {
-        TimeDataScreen(mockTimeDataUiState = Error("Error message"))
+        _root_ide_package_.com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreen(
+            mockTimeDataUiState = Error("Error message")
+        )
     }
 
     //@PreviewTest
@@ -61,6 +67,8 @@ class TimeDataScreenTest {
     )
     @Composable
     fun TimeDataScreenPreviewLoading() {
-        TimeDataScreen(mockTimeDataUiState = Loading)
+        _root_ide_package_.com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreen(
+            mockTimeDataUiState = Loading
+        )
     }
 }

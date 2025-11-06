@@ -28,8 +28,6 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
-const val heatingSetValsSwitchOnTempInitVal = 21.0
-const val heatingSetValsSwitchOffTempInitVal = 29.0
 
 @Singleton
 open class HeatingSetValsRepository @Inject constructor(
@@ -39,6 +37,8 @@ open class HeatingSetValsRepository @Inject constructor(
     // Triggers for manual refreshes and optimistic updates.
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
     private val pendingUpdate = MutableStateFlow<HeatingSetVals?>(value = null)
+    private val heatingSetValsSwitchOnTempInitVal = 21.0
+    private val heatingSetValsSwitchOffTempInitVal = 29.0
 
     // Holds the last successfully fetched data from the server, used for the 'reset' function.
     private var heatingSetValsBackup: HeatingSetVals? = null

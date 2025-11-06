@@ -7,6 +7,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreen
+import com.laimburggasse.aquariumcontrol.timedata.presentation.mockTimeDataUiStateError
+import com.laimburggasse.aquariumcontrol.timedata.presentation.mockTimeDataUiStateSuccess
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,10 +30,12 @@ class TimeDataScreenTest {
             MainScaffold(
                 isControllerLoaded = true,
                 navigationRouteSource = ViewNavigationRoutes.timeData,
-                screenContent = { TimeDataScreen(
-                    timeDataUiState = mockTimeDataUiStateError,
-                    onTimeDataEvent = {}
-                ) },
+                screenContent = {
+                    TimeDataScreen(
+                        timeDataUiState = mockTimeDataUiStateError,
+                        onTimeDataEvent = {}
+                    )
+                },
                 onNavigate = {},
                 darkTheme = true
             )
@@ -50,10 +55,12 @@ class TimeDataScreenTest {
             MainScaffold(
                 isControllerLoaded = true,
                 navigationRouteSource = ViewNavigationRoutes.timeData,
-                screenContent = { TimeDataScreen(
-                    timeDataUiState = mockTimeDataUiStateError,
-                    onTimeDataEvent = {}
-                ) },
+                screenContent = {
+                    TimeDataScreen(
+                        timeDataUiState = mockTimeDataUiStateError,
+                        onTimeDataEvent = {}
+                    )
+                },
                 onNavigate = {},
                 darkTheme = false
             )
@@ -73,10 +80,12 @@ class TimeDataScreenTest {
             MainScaffold(
                 isControllerLoaded = true,
                 navigationRouteSource = ViewNavigationRoutes.timeData,
-                screenContent = { TimeDataScreen(
-                    timeDataUiState = mockTimeDataUiStateSuccess,
-                    onTimeDataEvent = {}
-                ) },
+                screenContent = {
+                    TimeDataScreen(
+                        timeDataUiState = mockTimeDataUiStateSuccess,
+                        onTimeDataEvent = {}
+                    )
+                },
                 onNavigate = {},
                 darkTheme = true
             )
@@ -96,10 +105,12 @@ class TimeDataScreenTest {
             MainScaffold(
                 isControllerLoaded = true,
                 navigationRouteSource = ViewNavigationRoutes.timeData,
-                screenContent = { TimeDataScreen(
-                    timeDataUiState = mockTimeDataUiStateSuccess,
-                    onTimeDataEvent = {}
-                ) },
+                screenContent = {
+                    TimeDataScreen(
+                        timeDataUiState = mockTimeDataUiStateSuccess,
+                        onTimeDataEvent = {}
+                    )
+                },
                 onNavigate = {},
                 darkTheme = false
             )

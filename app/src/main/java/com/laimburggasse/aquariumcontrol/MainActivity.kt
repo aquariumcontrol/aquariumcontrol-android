@@ -69,12 +69,12 @@ import com.laimburggasse.aquariumcontrol.refill.history.RefillHistoryViewModel
 import com.laimburggasse.aquariumcontrol.schedule.ScheduleScreen
 import com.laimburggasse.aquariumcontrol.schedule.ScheduleUiState
 import com.laimburggasse.aquariumcontrol.schedule.ScheduleViewModel
-import com.laimburggasse.aquariumcontrol.timedata.TimeDataScreen
-import com.laimburggasse.aquariumcontrol.timedata.TimeDataUiState
-import com.laimburggasse.aquariumcontrol.timedata.TimeDataViewModel
-import com.laimburggasse.aquariumcontrol.ventilation.VentilationScreen
-import com.laimburggasse.aquariumcontrol.ventilation.VentilationSetValsUiState
-import com.laimburggasse.aquariumcontrol.ventilation.VentilationSetValsViewModel
+import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreen
+import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataUiState
+import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataViewModel
+import com.laimburggasse.aquariumcontrol.ventilation.presentation.VentilationScreen
+import com.laimburggasse.aquariumcontrol.ventilation.presentation.VentilationSetValsUiState
+import com.laimburggasse.aquariumcontrol.ventilation.presentation.VentilationSetValsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
