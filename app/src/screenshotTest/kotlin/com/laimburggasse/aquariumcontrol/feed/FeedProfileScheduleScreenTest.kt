@@ -3,8 +3,7 @@ package com.laimburggasse.aquariumcontrol.feed
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.feed.schedule.FeedProfileScheduleScreenPreview
+import com.laimburggasse.aquariumcontrol.feed.presentation.schedule.FeedProfileScheduleScreenPreviewSuccess
 
 @Suppress("unused")
 class FeedProfileScheduleScreenTest {
@@ -23,6 +22,6 @@ class FeedProfileScheduleScreenTest {
     )
     @Composable
     fun FeedProfileScheduleScreenSnapshotTest() {
-        FeedProfileScheduleScreenPreview()
+        FeedProfileScheduleScreenPreviewSuccess()
     }
 }

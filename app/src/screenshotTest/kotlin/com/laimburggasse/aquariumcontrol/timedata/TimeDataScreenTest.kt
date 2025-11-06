@@ -3,12 +3,9 @@ package com.laimburggasse.aquariumcontrol.timedata
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreen
-import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataUiState.Error
-import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataUiState.Loading
-import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataUiState.Success
-import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataSets
-import com.laimburggasse.aquariumcontrol.timedata.presentation.generateMockTimeData
+import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreenPreviewEmpty
+import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreenPreviewError
+import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreenPreviewSuccess
 
 @Suppress("unused")
 class TimeDataScreenTest {
@@ -26,10 +23,8 @@ class TimeDataScreenTest {
         device = "spec:width=1600dp,height=1200dp,orientation=landscape"
     )
     @Composable
-    fun TimeDataScreenPreviewSuccess() {
-        TimeDataScreen(
-            mockTimeDataUiState = Success(TimeDataSets(generateMockTimeData()))
-        )
+    fun TimeDataScreenSuccessSnapshotTest() {
+        TimeDataScreenPreviewSuccess()
     }
 
     //@PreviewTest
@@ -46,10 +41,8 @@ class TimeDataScreenTest {
         device = "spec:width=250dp,height=350dp,orientation=landscape"
     )
     @Composable
-    fun TimeDataScreenPreviewError() {
-        _root_ide_package_.com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreen(
-            mockTimeDataUiState = Error("Error message")
-        )
+    fun TimeDataScreenErrorSnapshotTest() {
+       TimeDataScreenPreviewError()
     }
 
     //@PreviewTest
@@ -66,9 +59,7 @@ class TimeDataScreenTest {
         device = "spec:width=250dp,height=350dp,orientation=landscape"
     )
     @Composable
-    fun TimeDataScreenPreviewLoading() {
-        _root_ide_package_.com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreen(
-            mockTimeDataUiState = Loading
-        )
+    fun TimeDataScreenEmptySnapshotTest() {
+        TimeDataScreenPreviewEmpty()
     }
 }
