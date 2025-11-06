@@ -7,9 +7,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.feed.entry.FeedScreen
-import com.laimburggasse.aquariumcontrol.feed.entry.mockFeedProfilesUiStateSuccess
-import com.laimburggasse.aquariumcontrol.feed.entry.mockFeedScheduleUiStateSuccess
+import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScreen
+import com.laimburggasse.aquariumcontrol.feed.presentation.entry.mockFeedProfilesUiStateSuccess
+import com.laimburggasse.aquariumcontrol.feed.presentation.entry.mockFeedScheduleSelectionUiStateSuccess
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -33,7 +33,7 @@ class FeedScreenTest {
                 screenContent = {
                     FeedScreen(
                         feedProfilesUiState = mockFeedProfilesUiStateSuccess,
-                        feedScheduleUiState = mockFeedScheduleUiStateSuccess,
+                        feedScheduleSelectionUiState = mockFeedScheduleSelectionUiStateSuccess,
                         onNavigateFromFeed = { event, id, isNew, millis -> },
                         onFeedProfilesUiEvent = {},
                         onFeedSchedulesUiEvent = { event -> return@FeedScreen null }
@@ -61,7 +61,7 @@ class FeedScreenTest {
                 screenContent = {
                     FeedScreen(
                         feedProfilesUiState = mockFeedProfilesUiStateSuccess,
-                        feedScheduleUiState = mockFeedScheduleUiStateSuccess,
+                        feedScheduleSelectionUiState = mockFeedScheduleSelectionUiStateSuccess,
                         onNavigateFromFeed = { event, id, isNew, millis -> },
                         onFeedProfilesUiEvent = {},
                         onFeedSchedulesUiEvent = { event -> return@FeedScreen null }

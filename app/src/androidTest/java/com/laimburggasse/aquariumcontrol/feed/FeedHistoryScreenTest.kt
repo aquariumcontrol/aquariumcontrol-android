@@ -7,9 +7,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryScreen
-import com.laimburggasse.aquariumcontrol.feed.history.mockFeedHistoryUiStateEmpty
-import com.laimburggasse.aquariumcontrol.feed.history.mockFeedHistoryUiStateSuccess
+import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryScreen
+import com.laimburggasse.aquariumcontrol.feed.presentation.history.mockFeedHistoryUiStateEmpty
+import com.laimburggasse.aquariumcontrol.feed.presentation.history.mockFeedHistoryUiStateSuccess
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

@@ -4,8 +4,8 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.feed.entry.FeedHistorySelectionButtonsComposableLandscapePreview
-import com.laimburggasse.aquariumcontrol.feed.entry.FeedHistorySelectionButtonsComposablePortraitPreview
+import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedHistorySelectionButtonsComposableLandscapePreview
+import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedHistorySelectionButtonsComposablePortraitPreview
 
 @Suppress("unused")
 class FeedHistorySelectionButtonsComposableTest {

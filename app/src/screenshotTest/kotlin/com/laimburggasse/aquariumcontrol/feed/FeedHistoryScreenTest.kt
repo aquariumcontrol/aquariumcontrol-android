@@ -3,8 +3,8 @@ package com.laimburggasse.aquariumcontrol.feed
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryScreenPreviewEmpty
-import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryScreenPreviewSuccess
+import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryScreenPreviewEmpty
+import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryScreenPreviewSuccess
 
 @Suppress("unused")
 class FeedHistoryScreenTest {

@@ -4,7 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditMenuComposablePreview
+import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileEditMenuComposablePreview
 
 @Suppress("unused")
 class FeedProfileEditMenuComposableTest {

@@ -3,8 +3,7 @@ package com.laimburggasse.aquariumcontrol.feed
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditScreenPreview
+import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileEditScreenPreview
 
 @Suppress("unused")
 class FeedProfileEditScreenTest {

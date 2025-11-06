@@ -33,23 +33,23 @@ import com.laimburggasse.aquariumcontrol.controller.edit.ControllerEditScreen
 import com.laimburggasse.aquariumcontrol.controller.edit.ControllerEditViewModel
 import com.laimburggasse.aquariumcontrol.controller.selection.ControllerSelectionScreen
 import com.laimburggasse.aquariumcontrol.controller.selection.ControllerSelectionViewModel
-import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddScreen
-import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddUiState
-import com.laimburggasse.aquariumcontrol.feed.add.FeedProfileAddViewModel
-import com.laimburggasse.aquariumcontrol.feed.common.FeedProfile
-import com.laimburggasse.aquariumcontrol.feed.common.FeedProfilesViewModel
-import com.laimburggasse.aquariumcontrol.feed.common.FeedScheduleUiState
-import com.laimburggasse.aquariumcontrol.feed.common.FeedScheduleViewModel
-import com.laimburggasse.aquariumcontrol.feed.common.handleFeedNavigation
-import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditScreen
-import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditUiState
-import com.laimburggasse.aquariumcontrol.feed.edit.FeedProfileEditViewModel
-import com.laimburggasse.aquariumcontrol.feed.entry.FeedProfilesUiState
-import com.laimburggasse.aquariumcontrol.feed.entry.FeedScreen
-import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryScreen
-import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryUiState
-import com.laimburggasse.aquariumcontrol.feed.history.FeedHistoryViewModel
-import com.laimburggasse.aquariumcontrol.feed.schedule.FeedProfileScheduleScreen
+import com.laimburggasse.aquariumcontrol.feed.presentation.add.FeedProfileAddScreen
+import com.laimburggasse.aquariumcontrol.feed.presentation.add.FeedProfileAddUiState
+import com.laimburggasse.aquariumcontrol.feed.presentation.add.FeedProfileAddViewModel
+import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
+import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedProfilesViewModel
+import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScheduleSelectionUiState
+import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScheduleViewModel
+import com.laimburggasse.aquariumcontrol.feed.presentation.components.handleFeedNavigation
+import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileEditScreen
+import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileEditUiState
+import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileEditViewModel
+import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedProfilesUiState
+import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScreen
+import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryScreen
+import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryUiState
+import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryViewModel
+import com.laimburggasse.aquariumcontrol.feed.presentation.schedule.FeedProfileScheduleScreen
 import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingScreen
 import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingSetValsUiState
 import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingSetValsViewModel
@@ -194,7 +194,7 @@ class MainActivity : ComponentActivity() {
                         val feedProfilesViewModel: FeedProfilesViewModel = hiltViewModel()
                         val feedScheduleViewModel: FeedScheduleViewModel = hiltViewModel()
                         val feedProfilesUiState: FeedProfilesUiState by feedProfilesViewModel.feedProfilesUiState.collectAsState()
-                        val feedScheduleUiState: FeedScheduleUiState by feedScheduleViewModel.feedScheduleUiState.collectAsState()
+                        val feedScheduleSelectionUiState: FeedScheduleSelectionUiState by feedScheduleViewModel.feedScheduleSelectionUiState.collectAsState()
 
                         MainScaffold(
                             isControllerLoaded,
@@ -202,7 +202,7 @@ class MainActivity : ComponentActivity() {
                             screenContent = {
                                 FeedScreen(
                                     feedProfilesUiState,
-                                    feedScheduleUiState,
+                                    feedScheduleSelectionUiState,
                                     onNavigateFromFeed = { event, feedProfileId, isNewScheduleEntry, millisSinceEpoch ->
                                         navHostController.handleFeedNavigation(
                                             event,

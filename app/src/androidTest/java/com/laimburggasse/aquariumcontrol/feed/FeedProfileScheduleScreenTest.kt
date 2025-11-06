@@ -7,9 +7,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.feed.common.FeedProfileImport
-import com.laimburggasse.aquariumcontrol.feed.edit.mockFeedProfile
-import com.laimburggasse.aquariumcontrol.feed.schedule.FeedProfileScheduleScreen
+import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedProfileImport
+import com.laimburggasse.aquariumcontrol.feed.presentation.edit.mockFeedProfile
+import com.laimburggasse.aquariumcontrol.feed.presentation.schedule.FeedProfileScheduleScreen
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
