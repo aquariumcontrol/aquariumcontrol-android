@@ -1,6 +1,8 @@
-package com.laimburggasse.aquariumcontrol.balling.history
+package com.laimburggasse.aquariumcontrol.balling.data
 
 import com.laimburggasse.aquariumcontrol.SessionManager
+import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingHistoryLogEntryReader
+import com.laimburggasse.aquariumcontrol.balling.domain.BallingHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.controller.common.ControllerProfile
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
@@ -11,6 +13,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
@@ -61,17 +64,18 @@ open class BallingHistoryRepository @Inject constructor(
                         "http://${controller!!.address}${WebApiUrls.BALLING_GET_EVENTS_24H}"
                     }
 
-                    val result:  DataFetchResult<List<BallingHistoryLogEntry>> = withContext(context = Dispatchers.IO) {
-                        val reader = BallingHistoryLogEntryReader(url)
-                        reader.readBallingEvents()
-                    }
+                    val result: DataFetchResult<List<BallingHistoryLogEntry>> =
+                        withContext(context = Dispatchers.IO) {
+                            val reader = BallingHistoryLogEntryReader(url)
+                            reader.readBallingEvents()
+                        }
 
                     emit(value = result)
                 }
             }
             .stateIn(
                 scope = repositoryScope,
-                started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
+                started = SharingStarted.Companion.WhileSubscribed(stopTimeoutMillis = 5000),
                 initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial")
             )
 

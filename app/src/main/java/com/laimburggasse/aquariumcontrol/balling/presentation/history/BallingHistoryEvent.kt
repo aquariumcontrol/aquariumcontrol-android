@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.balling.history
+package com.laimburggasse.aquariumcontrol.balling.presentation.history
 
 sealed interface BallingHistoryEvent {
     object Refresh : BallingHistoryEvent

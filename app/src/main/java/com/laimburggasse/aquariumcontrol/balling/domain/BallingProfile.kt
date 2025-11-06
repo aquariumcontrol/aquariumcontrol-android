@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.balling.common
+package com.laimburggasse.aquariumcontrol.balling.domain
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -6,10 +6,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class BallingProfile(
     // This class represents a Balling dosing profile.
-    @SerialName("pumpid")
+    @SerialName(value = "pumpid")
     val pumpId: Int,
-    @SerialName("dosingvolume")
+    @SerialName(value = "dosingvolume")
     var volume: Double,
-    @SerialName("label")
+    @SerialName(value = "label")
     val label: String
 )

@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.balling.history
+package com.laimburggasse.aquariumcontrol.balling.domain
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -6,12 +6,12 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class BallingHistoryLogEntry(
     // This data class represents a Balling dosing event.
-    @SerialName("Timestamp")
+    @SerialName(value = "Timestamp")
     val timestamp: String,
-    @SerialName("pumpid")
+    @SerialName(value = "pumpid")
     val pumpId: Int,
-    @SerialName("dosingvolume")
+    @SerialName(value = "dosingvolume")
     val volume: Double,
-    @SerialName("label")
+    @SerialName(value = "label")
     val label: String
 )

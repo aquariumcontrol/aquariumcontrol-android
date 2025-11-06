@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.balling.edit
+package com.laimburggasse.aquariumcontrol.balling.presentation.edit
 
 sealed interface BallingProfileEditEvent {
     data class ConfirmDosingVolume(val newDosingValue: Double): BallingProfileEditEvent

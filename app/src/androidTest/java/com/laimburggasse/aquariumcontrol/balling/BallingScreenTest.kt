@@ -7,8 +7,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.balling.entry.BallingScreen
-import com.laimburggasse.aquariumcontrol.balling.entry.mockBallingProfilesUiStateSuccess
+import com.laimburggasse.aquariumcontrol.balling.presentation.entry.BallingScreen
+import com.laimburggasse.aquariumcontrol.balling.presentation.entry.mockBallingProfilesUiStateSuccess
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

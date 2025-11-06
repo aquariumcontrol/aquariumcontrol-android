@@ -1,7 +1,8 @@
-package com.laimburggasse.aquariumcontrol.balling.history
+package com.laimburggasse.aquariumcontrol.balling.presentation.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.laimburggasse.aquariumcontrol.balling.data.BallingHistoryRepository
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted

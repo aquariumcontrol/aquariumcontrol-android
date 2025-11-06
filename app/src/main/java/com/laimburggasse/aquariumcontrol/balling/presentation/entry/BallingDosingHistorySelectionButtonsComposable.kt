@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.balling.entry
+package com.laimburggasse.aquariumcontrol.balling.presentation.entry
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
@@ -19,7 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.laimburggasse.aquariumcontrol.R
-import com.laimburggasse.aquariumcontrol.balling.common.BallingNavigationEvent
+import com.laimburggasse.aquariumcontrol.balling.presentation.navigation.BallingNavigationEvent
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable

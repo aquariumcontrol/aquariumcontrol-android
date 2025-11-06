@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.balling.edit
+package com.laimburggasse.aquariumcontrol.balling.presentation.edit
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column

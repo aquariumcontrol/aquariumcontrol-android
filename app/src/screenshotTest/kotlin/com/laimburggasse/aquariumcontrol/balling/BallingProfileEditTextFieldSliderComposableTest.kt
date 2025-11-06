@@ -4,8 +4,8 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditTextFieldSliderComposableLandscapePreview
-import com.laimburggasse.aquariumcontrol.balling.edit.BallingProfileEditTextFieldSliderComposablePortraitPreview
+import com.laimburggasse.aquariumcontrol.balling.presentation.edit.BallingProfileEditTextFieldSliderComposableLandscapePreview
+import com.laimburggasse.aquariumcontrol.balling.presentation.edit.BallingProfileEditTextFieldSliderComposablePortraitPreview
 
 @Suppress("unused")
 class BallingProfileEditTextFieldSliderComposableTest {

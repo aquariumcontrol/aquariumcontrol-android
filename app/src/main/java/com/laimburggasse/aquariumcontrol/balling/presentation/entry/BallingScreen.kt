@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.balling.entry
+package com.laimburggasse.aquariumcontrol.balling.presentation.entry
 
 import android.content.res.Configuration
 import android.util.Log
@@ -28,9 +28,9 @@ import androidx.compose.ui.unit.sp
 import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.balling.common.BallingNavigationEvent
-import com.laimburggasse.aquariumcontrol.balling.common.BallingProfile
-import com.laimburggasse.aquariumcontrol.balling.common.BallingProfileSummaryComposable
+import com.laimburggasse.aquariumcontrol.balling.presentation.navigation.BallingNavigationEvent
+import com.laimburggasse.aquariumcontrol.balling.domain.BallingProfile
+import com.laimburggasse.aquariumcontrol.balling.presentation.components.BallingProfileSummaryComposable
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 
 @Composable

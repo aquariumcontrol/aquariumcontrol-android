@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.balling.history
+package com.laimburggasse.aquariumcontrol.balling.presentation.history
 
 import android.content.res.Configuration
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.balling.domain.BallingHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 
 @Composable

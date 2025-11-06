@@ -1,6 +1,6 @@
-package com.laimburggasse.aquariumcontrol.balling.edit
+package com.laimburggasse.aquariumcontrol.balling.presentation.edit
 
-import com.laimburggasse.aquariumcontrol.balling.common.BallingProfile
+import com.laimburggasse.aquariumcontrol.balling.domain.BallingProfile
 
 sealed class BallingProfileEditUiState {
     object Loading : BallingProfileEditUiState()

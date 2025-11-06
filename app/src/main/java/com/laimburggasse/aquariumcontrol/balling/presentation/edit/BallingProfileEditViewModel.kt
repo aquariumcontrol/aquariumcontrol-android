@@ -1,11 +1,11 @@
-package com.laimburggasse.aquariumcontrol.balling.edit
+package com.laimburggasse.aquariumcontrol.balling.presentation.edit
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.balling.common.BallingProfile
-import com.laimburggasse.aquariumcontrol.balling.common.BallingProfilesRepository
+import com.laimburggasse.aquariumcontrol.balling.domain.BallingProfile
+import com.laimburggasse.aquariumcontrol.balling.data.BallingProfilesRepository
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

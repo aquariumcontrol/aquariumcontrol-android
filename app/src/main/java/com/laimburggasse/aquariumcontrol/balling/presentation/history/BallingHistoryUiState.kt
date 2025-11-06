@@ -1,4 +1,6 @@
-package com.laimburggasse.aquariumcontrol.balling.history
+package com.laimburggasse.aquariumcontrol.balling.presentation.history
+
+import com.laimburggasse.aquariumcontrol.balling.domain.BallingHistoryLogEntry
 
 sealed class BallingHistoryUiState {
     object Loading : BallingHistoryUiState()
