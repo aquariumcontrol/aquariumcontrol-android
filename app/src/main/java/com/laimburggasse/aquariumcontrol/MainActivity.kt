@@ -55,7 +55,7 @@ import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingSetValsUiSt
 import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingSetValsViewModel
 import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingStatsUiState
 import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingStatsViewModel
-import com.laimburggasse.aquariumcontrol.info.InfoScreen
+import com.laimburggasse.aquariumcontrol.info.presentation.InfoScreen
 import com.laimburggasse.aquariumcontrol.maindropdownmenu.presentation.handleMainDropDownMenuNavigation
 import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewScreen
 import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewUiState

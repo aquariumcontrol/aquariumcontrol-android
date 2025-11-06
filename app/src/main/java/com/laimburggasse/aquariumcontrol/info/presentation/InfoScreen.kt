@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.info
+package com.laimburggasse.aquariumcontrol.info.presentation
 
 import android.content.res.Configuration
 import androidx.compose.foundation.isSystemInDarkTheme
