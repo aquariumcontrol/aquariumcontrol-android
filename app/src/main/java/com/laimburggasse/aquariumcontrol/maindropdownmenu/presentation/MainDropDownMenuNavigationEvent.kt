@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.maindropdownmenu
+package com.laimburggasse.aquariumcontrol.maindropdownmenu.presentation
 
 sealed class MainDropDownMenuNavigationEvent {
     object ToOverview : MainDropDownMenuNavigationEvent()

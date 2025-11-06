@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.maindropdownmenu
+package com.laimburggasse.aquariumcontrol.maindropdownmenu.presentation
 
 import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.SessionManager

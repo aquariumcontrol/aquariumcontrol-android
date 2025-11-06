@@ -1,8 +1,8 @@
-package com.laimburggasse.aquariumcontrol.maindropdownmenu
+package com.laimburggasse.aquariumcontrol.maindropdownmenu.presentation
 
 import android.content.res.Configuration
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Schedule
+import androidx.compose.material.icons.outlined.DeviceThermostat
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -16,33 +16,33 @@ import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
-fun MainDropDownMenuItemScheduleComposable(
+fun MainDropDownMenuItemHeatingComposable(
     isControllerLoaded: Boolean = false,
     navigationRouteSource: String? = null,
     onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     DropdownMenuItem(
-        text = { Text(text = stringResource(R.string.schedule)) },
-        onClick = { onNavigate(MainDropDownMenuNavigationEvent.ToSchedule) },
+        text = { Text(text = stringResource(R.string.heating)) },
+        onClick = { onNavigate(MainDropDownMenuNavigationEvent.ToHeating) },
         leadingIcon = {
             Icon(
-                imageVector = Icons.Outlined.Schedule,
-                contentDescription = stringResource(R.string.schedule)
+                imageVector = Icons.Outlined.DeviceThermostat,
+                contentDescription = stringResource(R.string.heating)
             )
         },
-        enabled = isControllerLoaded && navigationRouteSource != ViewNavigationRoutes.schedule
+        enabled = isControllerLoaded && navigationRouteSource != ViewNavigationRoutes.heating
     )
 }
 
 @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun MainDropdownMenuItemScheduleEnabledPreview() {
+internal fun MainDropdownMenuItemHeatingEnabledPreview() {
     AquariumControllerTheme {
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {
-            MainDropDownMenuItemScheduleComposable(
+            MainDropDownMenuItemHeatingComposable(
                 isControllerLoaded = true,
                 onNavigate = {}
             )
@@ -53,12 +53,12 @@ internal fun MainDropdownMenuItemScheduleEnabledPreview() {
 @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun MainDropdownMenuItemScheduleDisabledPreview() {
+internal fun MainDropdownMenuItemHeatingDisabledPreview() {
     AquariumControllerTheme {
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {
-            MainDropDownMenuItemScheduleComposable(
+            MainDropDownMenuItemHeatingComposable(
                 isControllerLoaded = false,
                 onNavigate = {}
             )

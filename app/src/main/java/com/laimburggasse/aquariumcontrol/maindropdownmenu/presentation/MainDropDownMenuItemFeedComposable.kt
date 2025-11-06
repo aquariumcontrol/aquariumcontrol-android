@@ -1,8 +1,8 @@
-package com.laimburggasse.aquariumcontrol.maindropdownmenu
+package com.laimburggasse.aquariumcontrol.maindropdownmenu.presentation
 
 import android.content.res.Configuration
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.DeviceThermostat
+import androidx.compose.material.icons.automirrored.outlined.RotateRight
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -16,33 +16,39 @@ import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
-fun MainDropDownMenuItemHeatingComposable(
+fun MainDropDownMenuItemFeedComposable(
     isControllerLoaded: Boolean = false,
     navigationRouteSource: String? = null,
     onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     DropdownMenuItem(
-        text = { Text(text = stringResource(R.string.heating)) },
-        onClick = { onNavigate(MainDropDownMenuNavigationEvent.ToHeating) },
+        text = { Text(stringResource(R.string.feed)) },
+        onClick = { onNavigate(MainDropDownMenuNavigationEvent.ToFeed) },
         leadingIcon = {
             Icon(
-                imageVector = Icons.Outlined.DeviceThermostat,
-                contentDescription = stringResource(R.string.heating)
+                imageVector = Icons.AutoMirrored.Outlined.RotateRight,
+                contentDescription = stringResource(R.string.feed)
             )
         },
-        enabled = isControllerLoaded && navigationRouteSource != ViewNavigationRoutes.heating
+        enabled = isControllerLoaded &&
+                    navigationRouteSource != ViewNavigationRoutes.feedHistory &&
+                    navigationRouteSource != ViewNavigationRoutes.feedHistory24h &&
+                    navigationRouteSource != ViewNavigationRoutes.feedHistory7d &&
+                    navigationRouteSource != ViewNavigationRoutes.feedEdit &&
+                    navigationRouteSource != ViewNavigationRoutes.feedAddProfile &&
+                    navigationRouteSource != ViewNavigationRoutes.feedSchedule
     )
 }
 
 @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun MainDropdownMenuItemHeatingEnabledPreview() {
+internal fun MainDropdownMenuItemFeedEnabledPreview() {
     AquariumControllerTheme {
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {
-            MainDropDownMenuItemHeatingComposable(
+            MainDropDownMenuItemFeedComposable(
                 isControllerLoaded = true,
                 onNavigate = {}
             )
@@ -53,12 +59,12 @@ internal fun MainDropdownMenuItemHeatingEnabledPreview() {
 @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun MainDropdownMenuItemHeatingDisabledPreview() {
+internal fun MainDropdownMenuItemFeedDisabledPreview() {
     AquariumControllerTheme {
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {
-            MainDropDownMenuItemHeatingComposable(
+            MainDropDownMenuItemFeedComposable(
                 isControllerLoaded = false,
                 onNavigate = {}
             )

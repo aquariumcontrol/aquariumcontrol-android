@@ -1,8 +1,8 @@
-package com.laimburggasse.aquariumcontrol.maindropdownmenu
+package com.laimburggasse.aquariumcontrol.maindropdownmenu.presentation
 
 import android.content.res.Configuration
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -16,32 +16,36 @@ import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
-fun MainDropDownMenuItemInfoComposable(
+fun MainDropDownMenuItemControllerSelectionComposable(
     navigationRouteSource: String? = null,
     onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     DropdownMenuItem(
-        text = { Text(text = stringResource(R.string.info)) },
-        onClick = { onNavigate(MainDropDownMenuNavigationEvent.ToInfo) },
+        text = { Text(text = stringResource(R.string.select_controller)) },
+        onClick = { onNavigate(MainDropDownMenuNavigationEvent.ToControllerSelection) },
         leadingIcon = {
             Icon(
-                imageVector = Icons.Outlined.Info,
-                contentDescription = stringResource(R.string.info)
+                imageVector = Icons.Outlined.Settings,
+                contentDescription = stringResource(R.string.select_controller)
             )
         },
-        enabled = navigationRouteSource != ViewNavigationRoutes.info
+        enabled = navigationRouteSource != ViewNavigationRoutes.controllerSelection &&
+                    navigationRouteSource != ViewNavigationRoutes.controllerAdd &&
+                    navigationRouteSource != ViewNavigationRoutes.controllerEdit
     )
 }
 
 @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun MainDropdownMenuItemInfoPreview() {
+internal fun MainDropdownMenuItemControllerSelectionPreview() {
     AquariumControllerTheme {
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {
-            MainDropDownMenuItemInfoComposable(onNavigate = {})
+            MainDropDownMenuItemControllerSelectionComposable(
+                onNavigate = {}
+            )
         }
     }
 }

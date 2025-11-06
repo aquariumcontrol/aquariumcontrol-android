@@ -1,8 +1,8 @@
-package com.laimburggasse.aquariumcontrol.maindropdownmenu
+package com.laimburggasse.aquariumcontrol.maindropdownmenu.presentation
 
 import android.content.res.Configuration
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.LineAxis
+import androidx.compose.material.icons.outlined.Science
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -16,33 +16,36 @@ import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
-fun MainDropDownMenuItemDisplayDataComposable(
+fun MainDropDownMenuItemBallingComposable(
     isControllerLoaded: Boolean = false,
     navigationRouteSource: String? = null,
     onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     DropdownMenuItem(
-        text = { Text(text = stringResource(R.string.display_data)) },
-        onClick = { onNavigate(MainDropDownMenuNavigationEvent.ToDisplayData) },
+        text = { Text(text = stringResource(R.string.balling_mineral_dosing)) },
+        onClick = { onNavigate(MainDropDownMenuNavigationEvent.ToBalling) },
         leadingIcon = {
             Icon(
-                imageVector = Icons.Outlined.LineAxis,
-                contentDescription = stringResource(R.string.display_data)
+                imageVector = Icons.Outlined.Science,
+                contentDescription = stringResource(R.string.balling_mineral_dosing)
             )
         },
-        enabled = isControllerLoaded && navigationRouteSource != ViewNavigationRoutes.timeData
+        enabled = isControllerLoaded &&
+                    navigationRouteSource != ViewNavigationRoutes.balling &&
+                    navigationRouteSource != ViewNavigationRoutes.ballingHistory24h &&
+                    navigationRouteSource != ViewNavigationRoutes.ballingHistory7d
     )
 }
 
 @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun MainDropdownMenuItemDisplayDataEnabledPreview() {
+internal fun MainDropdownMenuItemBallingEnabledPreview() {
     AquariumControllerTheme {
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {
-            MainDropDownMenuItemDisplayDataComposable(
+            MainDropDownMenuItemBallingComposable(
                 isControllerLoaded = true,
                 onNavigate = {}
             )
@@ -53,12 +56,12 @@ internal fun MainDropdownMenuItemDisplayDataEnabledPreview() {
 @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun MainDropdownMenuItemDisplayDataDisabledPreview() {
+internal fun MainDropdownMenuItemBallingDataDisabledPreview() {
     AquariumControllerTheme {
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {
-            MainDropDownMenuItemDisplayDataComposable(
+            MainDropDownMenuItemBallingComposable(
                 isControllerLoaded = false,
                 onNavigate = {}
             )

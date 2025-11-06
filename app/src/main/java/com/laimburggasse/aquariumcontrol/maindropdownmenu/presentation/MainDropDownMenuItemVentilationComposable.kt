@@ -1,8 +1,8 @@
-package com.laimburggasse.aquariumcontrol.maindropdownmenu
+package com.laimburggasse.aquariumcontrol.maindropdownmenu.presentation
 
 import android.content.res.Configuration
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.RotateRight
+import androidx.compose.material.icons.outlined.AcUnit
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -16,39 +16,33 @@ import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
-fun MainDropDownMenuItemFeedComposable(
+fun MainDropDownMenuItemVentilationComposable(
     isControllerLoaded: Boolean = false,
     navigationRouteSource: String? = null,
     onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     DropdownMenuItem(
-        text = { Text(stringResource(R.string.feed)) },
-        onClick = { onNavigate(MainDropDownMenuNavigationEvent.ToFeed) },
+        text = { Text(text = stringResource(R.string.ventilation)) },
+        onClick = { onNavigate(MainDropDownMenuNavigationEvent.ToVentilation) },
         leadingIcon = {
             Icon(
-                imageVector = Icons.AutoMirrored.Outlined.RotateRight,
-                contentDescription = stringResource(R.string.feed)
+                imageVector = Icons.Outlined.AcUnit,
+                contentDescription = stringResource(R.string.ventilation)
             )
         },
-        enabled = isControllerLoaded &&
-                    navigationRouteSource != ViewNavigationRoutes.feedHistory &&
-                    navigationRouteSource != ViewNavigationRoutes.feedHistory24h &&
-                    navigationRouteSource != ViewNavigationRoutes.feedHistory7d &&
-                    navigationRouteSource != ViewNavigationRoutes.feedEdit &&
-                    navigationRouteSource != ViewNavigationRoutes.feedAddProfile &&
-                    navigationRouteSource != ViewNavigationRoutes.feedSchedule
+        enabled = isControllerLoaded && navigationRouteSource != ViewNavigationRoutes.ventilation
     )
 }
 
 @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun MainDropdownMenuItemFeedEnabledPreview() {
+internal fun MainDropdownMenuItemVentilationEnabledPreview() {
     AquariumControllerTheme {
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {
-            MainDropDownMenuItemFeedComposable(
+            MainDropDownMenuItemVentilationComposable(
                 isControllerLoaded = true,
                 onNavigate = {}
             )
@@ -59,12 +53,12 @@ internal fun MainDropdownMenuItemFeedEnabledPreview() {
 @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun MainDropdownMenuItemFeedDisabledPreview() {
+internal fun MainDropdownMenuItemVentilationDisabledPreview() {
     AquariumControllerTheme {
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {
-            MainDropDownMenuItemFeedComposable(
+            MainDropDownMenuItemVentilationComposable(
                 isControllerLoaded = false,
                 onNavigate = {}
             )

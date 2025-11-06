@@ -1,8 +1,8 @@
-package com.laimburggasse.aquariumcontrol.maindropdownmenu
+package com.laimburggasse.aquariumcontrol.maindropdownmenu.presentation
 
 import android.content.res.Configuration
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AcUnit
+import androidx.compose.material.icons.outlined.Stars
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -16,33 +16,35 @@ import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
-fun MainDropDownMenuItemVentilationComposable(
+fun MainDropDownMenuItemOverviewComposable(
     isControllerLoaded: Boolean = false,
     navigationRouteSource: String? = null,
     onNavigate: (MainDropDownMenuNavigationEvent) -> Unit
 ) {
     DropdownMenuItem(
-        text = { Text(text = stringResource(R.string.ventilation)) },
-        onClick = { onNavigate(MainDropDownMenuNavigationEvent.ToVentilation) },
+        text = { Text(text = stringResource(id = R.string.overview)) },
+        onClick = { onNavigate(MainDropDownMenuNavigationEvent.ToOverview) },
         leadingIcon = {
             Icon(
-                imageVector = Icons.Outlined.AcUnit,
-                contentDescription = stringResource(R.string.ventilation)
+                imageVector = Icons.Outlined.Stars,
+                contentDescription = stringResource(
+                    id = R.string.overview
+                )
             )
         },
-        enabled = isControllerLoaded && navigationRouteSource != ViewNavigationRoutes.ventilation
+        enabled = isControllerLoaded && navigationRouteSource != ViewNavigationRoutes.overView
     )
 }
 
 @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun MainDropdownMenuItemVentilationEnabledPreview() {
+internal fun MainDropdownMenuItemOverviewEnabledPreview() {
     AquariumControllerTheme {
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {
-            MainDropDownMenuItemVentilationComposable(
+            MainDropDownMenuItemOverviewComposable(
                 isControllerLoaded = true,
                 onNavigate = {}
             )
@@ -53,12 +55,12 @@ internal fun MainDropdownMenuItemVentilationEnabledPreview() {
 @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun MainDropdownMenuItemVentilationDisabledPreview() {
+internal fun MainDropdownMenuItemOverviewDisabledPreview() {
     AquariumControllerTheme {
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {
-            MainDropDownMenuItemVentilationComposable(
+            MainDropDownMenuItemOverviewComposable(
                 isControllerLoaded = false,
                 onNavigate = {}
             )
