@@ -14,7 +14,7 @@ import javax.inject.Inject
 class FeedProfileAddViewModel @Inject constructor(
     private val feedProfilesRepository: FeedProfilesRepository
 ) : ViewModel() {
-    private val _feedProfileName = MutableStateFlow("")
+    private val _feedProfileName = MutableStateFlow(value = "")
     val feedProfileName: StateFlow<String> = _feedProfileName.asStateFlow()
 
     private val _feedProfileAddUiState = MutableStateFlow<FeedProfileAddUiState>(

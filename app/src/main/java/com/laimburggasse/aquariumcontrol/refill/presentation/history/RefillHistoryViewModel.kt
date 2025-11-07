@@ -28,6 +28,7 @@ class RefillHistoryViewModel @Inject constructor(
                         RefillHistoryUiState.Success(refillHistoryLogEntries = result.data)
                     }
                 }
+                DataFetchResult.Loading -> RefillHistoryUiState.Loading
             }
         }.stateIn(
             scope = viewModelScope,

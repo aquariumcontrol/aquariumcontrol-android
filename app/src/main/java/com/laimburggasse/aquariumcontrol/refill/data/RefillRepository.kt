@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.refill.presentation.entry
+package com.laimburggasse.aquariumcontrol.refill.data
 
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope

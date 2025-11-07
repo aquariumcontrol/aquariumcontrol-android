@@ -6,7 +6,6 @@ import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.feed.data.FeedScheduleEntryKey
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedScheduleEntryImport
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
-import com.laimburggasse.aquariumcontrol.feed.presentation.schedule.FeedScheduleEntryReader
 import com.laimburggasse.aquariumcontrol.feed.presentation.schedule.toFeedScheduleEntryList
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
@@ -21,6 +20,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
@@ -51,19 +51,13 @@ open class FeedScheduleRepository @Inject constructor(
         flow2 = refreshTrigger.onStart { emit(value = Unit) }
     ) { controller, _ ->
         controller
-    }.flatMapLatest { controller ->
+    }
+    .filterNotNull()
+    .flatMapLatest { controller ->
         flow {
-            if (controller == null) {
-                emit(
-                    value = DataFetchResult.Error(
-                        exception = null,
-                        errorMessage = "No controller selected."
-                    )
-                )
-                return@flow
-            }
-            // @todo: emit loading state
-            emit(value = DataFetchResult.Error(exception = null, errorMessage = "Loading..."))
+            // UI shall temporarily show loading state, while fetching data
+            emit(value = DataFetchResult.Loading)
+
             Log.d("FeedScheduleRepository", "Fetching feed schedule from server.")
             val networkResult: DataFetchResult<List<FeedScheduleEntry>> =
                 withContext(context = Dispatchers.IO) {
@@ -75,8 +69,11 @@ open class FeedScheduleRepository @Inject constructor(
                         is DataFetchResult.Success -> DataFetchResult.Success(
                             data = importResult.data.toFeedScheduleEntryList()
                         )
-
                         is DataFetchResult.Error -> importResult
+                        is DataFetchResult.Loading -> DataFetchResult.Error(
+                            exception = null,
+                            errorMessage = "Loading feed schedule entries failed."
+                        )
                     }
                 }
             // After a successful network fetch, we know the ground truth has been updated.

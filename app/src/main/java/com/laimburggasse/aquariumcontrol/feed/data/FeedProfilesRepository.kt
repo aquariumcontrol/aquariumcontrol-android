@@ -1,6 +1,5 @@
 package com.laimburggasse.aquariumcontrol.feed.data
 
-import android.util.Log
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
@@ -21,6 +20,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
@@ -49,24 +49,17 @@ open class FeedProfilesRepository @Inject constructor(
             flow3 = pendingDeletions,
         ) { controller, _, deletions ->
             Pair(first = controller, second = deletions)
-        }.flatMapLatest { (controller: ControllerProfile?, deletions: Set<Int>) ->
+        }
+        .filter{ it.first != null }
+        .flatMapLatest { (controller: ControllerProfile?, deletions: Set<Int>) ->
             flow {
-                if (controller == null) {
-                    emit(
-                        value = DataFetchResult.Error(
-                            exception = null,
-                            errorMessage = "No controller selected"
-                        )
-                    )
-                    return@flow
-                }
+                // UI shall temporarily show loading state, while fetching data
+                emit(value = DataFetchResult.Loading)
 
-                emit(value = DataFetchResult.Error(exception = null, errorMessage = "Loading"))
-                Log.d("FeedProfilesRepository", "Fetching feed profiles from server.")
                 val networkResult: DataFetchResult<List<FeedProfileImport>> =
                     withContext(context = Dispatchers.IO) {
                         val profileUrl =
-                            "http://${controller.address}${WebApiUrls.FEED_GET_PROFILES}"
+                            "http://${controller?.address}${WebApiUrls.FEED_GET_PROFILES}"
                         val profileReader = FeedProfileReader(profileUrl)
                         profileReader.readFeedProfiles()
                     }
@@ -85,15 +78,18 @@ open class FeedProfilesRepository @Inject constructor(
 
                         DataFetchResult.Success(data = profiles)
                     }
-
                     is DataFetchResult.Error -> networkResult // Pass through errors
+                    is DataFetchResult.Loading -> DataFetchResult.Error(
+                        exception = null,
+                        errorMessage = "Could not load feed profiles."
+                    )
                 }
                 emit(value = finalResult)
             }
         }.stateIn(
             scope = repositoryScope,
             started = SharingStarted.Companion.WhileSubscribed(stopTimeoutMillis = 5000L),
-            initialValue = DataFetchResult.Error(exception = null, errorMessage = "Loading")
+            initialValue = DataFetchResult.Loading
         )
 
     open suspend fun triggerRefresh() {

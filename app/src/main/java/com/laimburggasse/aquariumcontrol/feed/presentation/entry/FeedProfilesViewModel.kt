@@ -29,6 +29,7 @@ class FeedProfilesViewModel @Inject constructor(
                         FeedProfilesUiState.Success(feedProfiles = result.data)
                     }
                 }
+                is DataFetchResult.Loading -> FeedProfilesUiState.Loading
             }
         }.stateIn(
             scope = viewModelScope,

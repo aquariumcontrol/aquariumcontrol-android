@@ -1,11 +1,10 @@
 package com.laimburggasse.aquariumcontrol.heating.data
 
-import android.util.Log
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
-import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
 import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingSetValsReader
+import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
@@ -19,6 +18,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
@@ -37,8 +37,6 @@ open class HeatingSetValsRepository @Inject constructor(
     // Triggers for manual refreshes and optimistic updates.
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
     private val pendingUpdate = MutableStateFlow<HeatingSetVals?>(value = null)
-    private val heatingSetValsSwitchOnTempInitVal = 21.0
-    private val heatingSetValsSwitchOffTempInitVal = 29.0
 
     // Holds the last successfully fetched data from the server, used for the 'reset' function.
     private var heatingSetValsBackup: HeatingSetVals? = null
@@ -50,22 +48,15 @@ open class HeatingSetValsRepository @Inject constructor(
         flow2 = refreshTrigger.onStart { emit(value = Unit) } // Initial trigger
     ) { controller, _ ->
         controller
-    }.flatMapLatest { controller: ControllerProfile? ->
+    }
+    .filterNotNull()
+    .flatMapLatest { controller: ControllerProfile? ->
         flow {
-            if (controller == null) {
-                // If no controller, emit a success state with initial values
-                emit(value = DataFetchResult.Success(data = HeatingSetVals(
-                    heatingSwitchOnTemp = heatingSetValsSwitchOnTempInitVal,
-                    heatingSwitchOffTemp = heatingSetValsSwitchOffTempInitVal,
-                )
-                ))
-                return@flow
-            }
-            // A controller is present, start the fetching process
-            emit(value = DataFetchResult.Error(exception = null, errorMessage = "Loading"))
-            Log.d("HeatingRepository", "Fetching heating setpoints from server.")
+            // UI shall temporarily show loading state, while fetching data
+            emit(value = DataFetchResult.Loading)
+
             val networkResult: DataFetchResult<HeatingSetVals> = withContext(context = Dispatchers.IO) {
-                val url = "http://${controller.address}${WebApiUrls.HEATING_GET_SET_VALS}"
+                val url = "http://${controller?.address}${WebApiUrls.HEATING_GET_SET_VALS}"
                 val heatingSetValsReader = HeatingSetValsReader(url)
                 when (val setValsList: DataFetchResult<List<HeatingSetVals>> =
                     heatingSetValsReader.readHeatingSetVals()) {
@@ -79,6 +70,10 @@ open class HeatingSetValsRepository @Inject constructor(
                         }
                     }
                     is DataFetchResult.Error -> setValsList
+                    is DataFetchResult.Loading -> DataFetchResult.Error(
+                        exception = null,
+                        errorMessage = "Could not load heating set values."
+                    )
                 }
             }
             emit(value = networkResult)
@@ -86,7 +81,7 @@ open class HeatingSetValsRepository @Inject constructor(
     }.stateIn(
         scope = repositoryScope,
         started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
-        initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial loading")
+        initialValue = DataFetchResult.Loading
     )
 
     // The public flow now combines the stable network data with the fast-changing local edits.

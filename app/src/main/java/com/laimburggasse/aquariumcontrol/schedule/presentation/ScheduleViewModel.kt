@@ -25,6 +25,7 @@ class ScheduleViewModel @Inject constructor(
                 is DataFetchResult.Success -> {
                     ScheduleUiState.Success(scheduleEntries = result.data)
                 }
+                DataFetchResult.Loading -> ScheduleUiState.Loading
             }
         }.stateIn(
             scope = viewModelScope,

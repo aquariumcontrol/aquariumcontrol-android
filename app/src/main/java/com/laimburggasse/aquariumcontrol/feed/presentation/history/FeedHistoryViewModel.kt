@@ -27,6 +27,7 @@ class FeedHistoryViewModel @Inject constructor(
                         FeedHistoryUiState.Success(feedHistoryLogEntries = result.data)
                     }
                 }
+                DataFetchResult.Loading -> FeedHistoryUiState.Loading
             }
         }.stateIn(
             scope = viewModelScope,

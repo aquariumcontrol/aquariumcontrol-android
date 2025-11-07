@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
@@ -37,21 +38,16 @@ open class HeatingStatsRepository @Inject constructor(
         flow2 = refreshTrigger.onStart { emit(value = Unit) } // Triggers the first fetch
     ) { controller, _ ->
         controller
-    }.flatMapLatest { controller: ControllerProfile? ->
+    }
+    .filterNotNull()
+    .flatMapLatest { controller: ControllerProfile? ->
         flow {
-            if (controller == null) {
-                // If no controller is selected, emit a valid empty state
-                emit(value = DataFetchResult.Success(data = emptyList()))
-                return@flow
-            }
-
-            // @todo: emit loading state
-            // A controller is present, so start fetching
-            emit(value = DataFetchResult.Error(exception = null, errorMessage = "Loading"))
+            // UI shall temporarily show loading state, while fetching data
+            emit(value = DataFetchResult.Loading)
 
             val result: DataFetchResult<List<HeatingStatsEntry>> =
                 withContext(context = Dispatchers.IO) {
-                    val url = "http://${controller.address}${WebApiUrls.HEATING_GET_STATS}"
+                    val url = "http://${controller?.address}${WebApiUrls.HEATING_GET_STATS}"
                     val heatingStatsReader = HeatingStatsReader(url)
                     val stringResult: DataFetchResult<List<HeatingStatsStringEntry>> =
                         heatingStatsReader.readStatsEntry()
@@ -64,7 +60,6 @@ open class HeatingStatsRepository @Inject constructor(
                             }
                             DataFetchResult.Success(data = heatingStats)
                         }
-
                         is DataFetchResult.Error -> {
                             // Propagate the error result
                             DataFetchResult.Error(
@@ -72,6 +67,10 @@ open class HeatingStatsRepository @Inject constructor(
                                 errorMessage = stringResult.errorMessage
                             )
                         }
+                        is DataFetchResult.Loading -> DataFetchResult.Error(
+                            exception = null,
+                            errorMessage = "Loading heating stats data failed."
+                        )
                     }
                 }
             emit(value = result)
@@ -79,7 +78,7 @@ open class HeatingStatsRepository @Inject constructor(
     }.stateIn(
         scope = repositoryScope,
         started = SharingStarted.Companion.WhileSubscribed(5000L),
-        initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial load")
+        initialValue = DataFetchResult.Loading
     )
 
     /**

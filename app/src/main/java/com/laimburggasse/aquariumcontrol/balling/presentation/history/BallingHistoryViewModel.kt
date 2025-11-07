@@ -30,6 +30,7 @@ class BallingHistoryViewModel @Inject constructor(
                         BallingHistoryUiState.Success(ballingHistoryLogEntries = result.data)
                     }
                 }
+                is DataFetchResult.Loading -> BallingHistoryUiState.Loading
             }
         }.stateIn(
             scope = viewModelScope,

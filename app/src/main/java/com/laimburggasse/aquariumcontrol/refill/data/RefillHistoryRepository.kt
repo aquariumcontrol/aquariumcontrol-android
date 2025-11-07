@@ -52,26 +52,26 @@ open class RefillHistoryRepository @Inject constructor(
         ) { controller, _, isFullWeek ->
             Triple(first = controller, second = Unit, third = isFullWeek)
         }
-            .filter { it.first != null } // Only proceed if a controller is selected
-            .flatMapLatest { (controller: ControllerProfile?, _, isFullWeek: Boolean) ->
-                flow {
-                    // @todo: emit loading state
-                    emit(value = DataFetchResult.Error(exception = null, errorMessage = "Loading"))
+        .filter { it.first != null } // Only proceed if a controller is selected
+        .flatMapLatest { (controller: ControllerProfile?, _, isFullWeek: Boolean) ->
+            flow {
+                // UI shall temporarily show loading state, while fetching data
+                emit(value = DataFetchResult.Loading)
 
-                    val url: String = if (isFullWeek) {
-                        "http://${controller!!.address}${WebApiUrls.REFILL_GET_EVENTS_7D}"
-                    } else {
-                        "http://${controller!!.address}${WebApiUrls.REFILL_GET_EVENTS_24H}"
+                val url: String = if (isFullWeek) {
+                    "http://${controller!!.address}${WebApiUrls.REFILL_GET_EVENTS_7D}"
+                } else {
+                    "http://${controller!!.address}${WebApiUrls.REFILL_GET_EVENTS_24H}"
+                }
+
+                val result: DataFetchResult<List<RefillHistoryLogEntry>> =
+                    withContext(context = Dispatchers.IO) {
+                        val reader = RefillHistoryLogEntryReader(url)
+                        reader.readRefillEvents()
                     }
 
-                    val result: DataFetchResult<List<RefillHistoryLogEntry>> =
-                        withContext(context = Dispatchers.IO) {
-                            val reader = RefillHistoryLogEntryReader(url)
-                            reader.readRefillEvents()
-                        }
-
-                    emit(value = result)
-                }
+                emit(value = result)
+            }
             }
             .stateIn(
                 scope = repositoryScope,

@@ -23,6 +23,7 @@ class HeatingStatsViewModel @Inject constructor(
                 is DataFetchResult.Success -> {
                     HeatingStatsUiState.Success(heatingStats = result.data)
                 }
+                DataFetchResult.Loading -> HeatingStatsUiState.Loading
             }
         }.stateIn(
             scope = viewModelScope,

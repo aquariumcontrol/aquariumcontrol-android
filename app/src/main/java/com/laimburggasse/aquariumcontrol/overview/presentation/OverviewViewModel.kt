@@ -23,6 +23,7 @@ class OverviewViewModel @Inject constructor(
                 is DataFetchResult.Success -> {
                     OverviewUiState.Success(overviewData = result.data)
                 }
+                DataFetchResult.Loading -> OverviewUiState.Loading
             }
         }.stateIn(
             scope = viewModelScope,

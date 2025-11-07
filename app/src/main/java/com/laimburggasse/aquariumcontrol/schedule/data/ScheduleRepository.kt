@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
@@ -44,29 +45,21 @@ open class ScheduleRepository @Inject constructor(
         flow2 = refreshTrigger.onStart { emit(value = Unit) } // Triggers the first fetch
     ) { controller, _ ->
         controller
-    }.flatMapLatest { controller ->
+    }
+    .filterNotNull()
+    .flatMapLatest { controller ->
         flow {
-            // @todo: implement loading state
-            if (controller == null) {
-                // If no controller is selected, emit a valid empty state
-                emit(
-                    value = DataFetchResult.Error(
-                        exception = null,
-                        errorMessage = "No Controller Selected"
-                    )
-                )
-                return@flow
-            }
+            // UI shall temporarily show loading state, while fetching data
+            emit(value = DataFetchResult.Loading)
 
             // A controller is present, so start fetching
-            emit(value = DataFetchResult.Error(exception = null, errorMessage = "Loading"))
             val networkResult: DataFetchResult<ScheduleEntries> = fetchScheduleSetVals()
             emit(value = networkResult)
         }
     }.stateIn(
         scope = repositoryScope,
         started = SharingStarted.Companion.WhileSubscribed(stopTimeoutMillis = 5000L),
-        initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial Load")
+        initialValue = DataFetchResult.Loading
     )
 
     // The final UI state combines the network data with any local (optimistic) updates.
@@ -91,7 +84,7 @@ open class ScheduleRepository @Inject constructor(
      * Triggers a manual refresh of the schedule data.
      */
     suspend fun triggerRefresh() {
-        refreshTrigger.emit(Unit)
+        refreshTrigger.emit(value = Unit)
     }
 
     /**
@@ -154,11 +147,16 @@ open class ScheduleRepository @Inject constructor(
                         DataFetchResult.Success(data = scheduleEntriesEmpty)
                     }
                 }
-
                 is DataFetchResult.Error -> {
                     DataFetchResult.Error(
                         exception = result.exception,
                         errorMessage = result.errorMessage
+                    )
+                }
+                is DataFetchResult.Loading -> {
+                    DataFetchResult.Error(
+                        exception = null,
+                        errorMessage = "Failed to load schedule information."
                     )
                 }
             }

@@ -27,6 +27,7 @@ class TimeDataViewModel @Inject constructor(
                         TimeDataUiState.Success(timeDataSets = TimeDataSets(timeData = result.data))
                     }
                 }
+                DataFetchResult.Loading -> TimeDataUiState.Loading
             }
         }.stateIn(
             scope = viewModelScope,

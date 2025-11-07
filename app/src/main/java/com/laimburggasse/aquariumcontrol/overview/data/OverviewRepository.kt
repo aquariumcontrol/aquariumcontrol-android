@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
@@ -45,20 +46,12 @@ open class OverviewRepository @Inject constructor(
             flow2 = refreshTrigger
         ) { controller, _ ->
             controller
-        }.flatMapLatest { controller ->
+        }
+        .filterNotNull()
+        .flatMapLatest { controller ->
             flow {
-                if (controller == null) {
-                    emit(
-                        value = DataFetchResult.Error(
-                            exception = null,
-                            errorMessage = "No controller selected."
-                        )
-                    )
-                    return@flow
-                }
-
-                // @todo: update after introducing loading state
-                // emit(DataFetchResult.Loading)
+                // UI shall temporarily show loading state, while fetching data
+                emit(value = DataFetchResult.Loading)
 
                 val result: DataFetchResult<OverviewData> = withContext(context = Dispatchers.IO) {
                     val url = "http://${controller.address}${WebApiUrls.OVERVIEW_GET_DATA}"
@@ -72,7 +65,7 @@ open class OverviewRepository @Inject constructor(
         .stateIn(
             scope = repositoryScope,
             started = SharingStarted.Companion.Eagerly,
-            initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial loading")
+            initialValue = DataFetchResult.Loading
         )
 
     /**

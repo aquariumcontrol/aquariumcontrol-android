@@ -4,7 +4,7 @@ import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
-import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryLogEntryReader
+import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedHistoryLogEntryReader
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import kotlinx.coroutines.CoroutineScope
@@ -52,31 +52,31 @@ open class FeedHistoryRepository @Inject constructor(
         ) { controller, _, isFullWeek ->
             Triple(first = controller, second = Unit, third = isFullWeek)
         }
-            .filter { it.first != null } // Only proceed if a controller is selected
-            .flatMapLatest { (controller: ControllerProfile?, _, isFullWeek: Boolean) ->
-                flow {
-                    // @todo: emit loading state
-                    emit(value = DataFetchResult.Error(exception = null, errorMessage = "Loading"))
+        .filter { it.first != null } // Only proceed if a controller is selected
+        .flatMapLatest { (controller: ControllerProfile?, _, isFullWeek: Boolean) ->
+            flow {
+                // UI shall temporarily show loading state, while fetching data
+                emit(value = DataFetchResult.Loading)
 
-                    val url: String = if (isFullWeek) {
-                        "http://${controller!!.address}${WebApiUrls.FEED_GET_EVENTS_7D}"
-                    } else {
-                        "http://${controller!!.address}${WebApiUrls.FEED_GET_EVENTS_24H}"
-                    }
-                    val result: DataFetchResult<List<FeedHistoryLogEntry>> =
-                        withContext(context = Dispatchers.IO) {
-                            val reader = FeedHistoryLogEntryReader(url)
-                            reader.readFeedEvents()
-                        }
-
-                    emit(value = result)
+                val url: String = if (isFullWeek) {
+                    "http://${controller!!.address}${WebApiUrls.FEED_GET_EVENTS_7D}"
+                } else {
+                    "http://${controller!!.address}${WebApiUrls.FEED_GET_EVENTS_24H}"
                 }
+                val result: DataFetchResult<List<FeedHistoryLogEntry>> =
+                    withContext(context = Dispatchers.IO) {
+                        val reader = FeedHistoryLogEntryReader(url)
+                        reader.readFeedEvents()
+                    }
+
+                emit(value = result)
             }
-            .stateIn(
-                scope = repositoryScope,
-                started = SharingStarted.Companion.WhileSubscribed(stopTimeoutMillis = 5000),
-                initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial loading")
-            )
+        }
+        .stateIn(
+            scope = repositoryScope,
+            started = SharingStarted.Companion.WhileSubscribed(stopTimeoutMillis = 5000),
+            initialValue = DataFetchResult.Loading
+        )
 
     /**
      * Public function to tell the repository to fetch a different time range.

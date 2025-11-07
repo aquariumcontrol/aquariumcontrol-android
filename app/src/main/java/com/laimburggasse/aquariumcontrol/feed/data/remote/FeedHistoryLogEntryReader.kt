@@ -1,5 +1,6 @@
-package com.laimburggasse.aquariumcontrol.feed.presentation.history
+package com.laimburggasse.aquariumcontrol.feed.data.remote
 
+import android.util.Log
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
@@ -27,6 +28,8 @@ class FeedHistoryLogEntryReader(private val url: String) {
                         json.decodeFromString<List<FeedHistoryLogEntry>>(string = responseBody)
                     return DataFetchResult.Success(decodedData)
                 } catch (e: Exception) {
+                    Log.d("FeedHistoryLogEntryReader", "responseBody = $responseBody")
+                    Log.d("FeedHistoryLogEntryReader", "url=$url")
                     return DataFetchResult.Error(
                         exception = e,
                         errorMessage = "Error decoding data sent from server: ${e.message}"

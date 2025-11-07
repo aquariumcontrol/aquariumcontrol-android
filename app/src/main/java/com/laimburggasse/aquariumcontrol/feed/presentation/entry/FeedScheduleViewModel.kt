@@ -41,6 +41,7 @@ class FeedScheduleViewModel @Inject constructor(
                         FeedScheduleSelectionUiState.Success(feedScheduleEntries = result.data)
                     }
                 }
+                is DataFetchResult.Loading -> FeedScheduleSelectionUiState.Loading
             }
         }.stateIn(
             scope = viewModelScope,

@@ -29,6 +29,7 @@ class BallingProfilesViewModel @Inject constructor(
                         BallingProfilesUiState.Success(ballingProfiles = result.data)
                     }
                 }
+                is DataFetchResult.Loading -> BallingProfilesUiState.Loading
             }
         }.stateIn(
             scope = viewModelScope,

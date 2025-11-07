@@ -38,8 +38,8 @@ open class TimeDataRepository @Inject constructor(
         .filterNotNull()
         .flatMapLatest { controller ->
             flow {
-                // @todo: implement Loading state
-                // emit(DataFetchResult.Error(exception = null, errorMessage = "still null"))
+                // UI shall temporarily show loading state, while fetching data
+                emit(value = DataFetchResult.Loading)
 
                 // Perform the network request on a background thread.
                 val readResult: DataFetchResult<List<TimeDataStringSample>> =
@@ -63,24 +63,27 @@ open class TimeDataRepository @Inject constructor(
                             }
                         DataFetchResult.Success(data = timeDataSamples)
                     }
-
                     is DataFetchResult.Error -> {
                         DataFetchResult.Error(
                             errorMessage = readResult.errorMessage,
                             exception = null
                         )
                     }
+                    is DataFetchResult.Loading -> DataFetchResult.Error(
+                        exception = null,
+                        errorMessage = "Loading time data failed."
+                    )
                 }
 
                 // Emit the final result (Success or Error) from the network call.
                 emit(value = processedResult)
             }
-            }
-            .stateIn(
-                scope = repositoryScope,
-                started = SharingStarted.Companion.WhileSubscribed(stopTimeoutMillis = 5000),
-                initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial Loading")
-            )
+        }
+        .stateIn(
+            scope = repositoryScope,
+            started = SharingStarted.Companion.WhileSubscribed(stopTimeoutMillis = 5000),
+            initialValue = DataFetchResult.Loading
+        )
 
     // @todo: implement pull-to-refresh
     /**

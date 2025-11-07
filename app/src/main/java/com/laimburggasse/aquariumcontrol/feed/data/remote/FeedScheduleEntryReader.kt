@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.feed.presentation.schedule
+package com.laimburggasse.aquariumcontrol.feed.data.remote
 
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedScheduleEntryImport
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult

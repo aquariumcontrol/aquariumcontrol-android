@@ -179,6 +179,8 @@ val mockFeedHistoryUiStateError = FeedHistoryUiState.Error(
 
 val mockFeedHistoryUiStateEmpty = FeedHistoryUiState.Empty
 
+val mockFeedHistoryUiStateLoading = FeedHistoryUiState.Loading
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
@@ -246,15 +248,21 @@ internal fun FeedHistoryScreenPreviewEmpty() {
     )
 }
 
-// @todo: Reactivate
-/* deactivated until after update of DataFetchResult
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun FeedHistoryScreenPreviewLoading() {
-    FeedHistoryScreen(
-        showFullWeek = false,
-        feedHistoryViewModel = mockFeedHistoryViewModelLoading,
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
+        screenContent = {
+            FeedHistoryScreen(
+                showFullWeek = false,
+                feedHistoryUiState = mockFeedHistoryUiStateLoading,
+                onFeedHistoryEvent = {}
+            )
+        },
+        onNavigate = {},
+        darkTheme = isSystemInDarkTheme()
     )
 }
-*/

@@ -52,9 +52,8 @@ class BallingProfileEditViewModel @Inject constructor(
                         BallingProfileEditUiState.NotFound
                     }
                 }
-                // @todo: implement loading state
-                // An error occurred in the repository.
                 is DataFetchResult.Error -> BallingProfileEditUiState.Error(errorMessage = result.errorMessage)
+                is DataFetchResult.Loading -> BallingProfileEditUiState.Loading
             }
         }.stateIn(
             scope = viewModelScope,

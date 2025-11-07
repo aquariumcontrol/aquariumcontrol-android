@@ -55,18 +55,13 @@ open class BallingProfilesRepository @Inject constructor(
         ) { controller, _, pending ->
             Triple(first = controller, second = Unit, third = pending)
         }
-        // 2. We use `filterNotNull()` to IGNORE the initial `null` emission at app startup.
-        //    This effectively pauses the flow until a controller is actually selected.
         .filter{ it.first != null }
-        // 3. `flatMapLatest` will now ONLY execute when it receives a non-null controller.
         .flatMapLatest { triple ->
             val (controller: ControllerProfile?, _, pending: BallingProfile?) = triple
             flow {
-                // @todo: implement Loading state
-                // Emit Loading state before the network call.
-                //emit(value = DataFetchResult.Error(exception = null, errorMessage = "Loading"))
+                // UI shall temporarily show loading state, while fetching data
+                emit(value = DataFetchResult.Loading)
 
-                Log.d("BallingRepository", "Fetching balling profiles from server.")
                 val url = "http://${controller?.address}${WebApiUrls.BALLING_GET_SET_VALS}"
                 val reader = BallingProfileReader(url)
                 // Perform the network request on a background thread.
@@ -79,10 +74,6 @@ open class BallingProfilesRepository @Inject constructor(
                 ) {
                     // If there is a pending update, merge it now.
                     if (pending != null) {
-                        Log.d(
-                            "BallingRepository",
-                            "Merging pending update into network result."
-                        )
                         val mergedList: List<BallingProfile> = networkResult.data.map { networkProfile ->
                             // If this profile's pumpId matches the pending update, use the updated version.
                             // Otherwise, use the one from the network.
@@ -95,17 +86,13 @@ open class BallingProfilesRepository @Inject constructor(
                     } else { networkResult} // No pending update, just use the network result.
                 } else { networkResult} // If the network call failed, just pass on the error.
                 // Emit the final result: local update merged into network result.
-                Log.d("BallingRepository", "Emitting final result: $finalResult")
                 emit(value = finalResult)
             }
         }
         .stateIn(
             scope = repositoryScope,
             started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
-            initialValue = DataFetchResult.Error(
-                exception = null,
-                errorMessage = "Initializing"
-            )
+            initialValue = DataFetchResult.Loading
         )
 
     fun updateBallingProfile(ballingProfile: BallingProfile) {

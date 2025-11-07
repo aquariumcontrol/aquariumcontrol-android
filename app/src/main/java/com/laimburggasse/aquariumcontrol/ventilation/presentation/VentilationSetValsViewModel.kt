@@ -26,6 +26,7 @@ class VentilationSetValsViewModel @Inject constructor(
                 is DataFetchResult.Success -> {
                     VentilationSetValsUiState.Success(ventilationSetVals = result.data)
                 }
+                DataFetchResult.Loading -> VentilationSetValsUiState.Loading
             }
         }.stateIn(
             scope = viewModelScope,

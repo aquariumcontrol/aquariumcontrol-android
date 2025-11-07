@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
@@ -39,8 +40,6 @@ open class VentilationSetValsRepository @Inject constructor(
 
     // Holds the last successfully fetched data from the server, used for the 'reset' function.
     private var ventilationSetValsBackup: VentilationSetVals? = null
-    private val ventilationSetValsSwitchOnTempInitVal = 21.0
-    private val ventilationSetValsSwitchOffTempInitVal = 29.0
 
     // The private flow only fetches data from the network.
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -49,21 +48,15 @@ open class VentilationSetValsRepository @Inject constructor(
         flow2 = refreshTrigger.onStart { emit(value = Unit) } // Initial trigger
     ) { controller, _ ->
         controller
-    }.flatMapLatest { controller: ControllerProfile? ->
+    }
+    .filterNotNull()
+    .flatMapLatest { controller: ControllerProfile? ->
         flow {
-            if (controller == null) {
-                // If no controller, emit a success state with initial values
-                emit(value = DataFetchResult.Success(data = VentilationSetVals(
-                    ventilationSwitchOnTemp = ventilationSetValsSwitchOnTempInitVal,
-                    ventilationSwitchOffTemp = ventilationSetValsSwitchOffTempInitVal,
-                )
-                ))
-                return@flow
-            }
-            // A controller is present, start the fetching process
-            emit(value = DataFetchResult.Error(exception = null, errorMessage = "Loading"))
+            // UI shall temporarily show loading state, while fetching data
+            emit(value = DataFetchResult.Loading)
+
             val networkResult: DataFetchResult<VentilationSetVals> = withContext(context = Dispatchers.IO) {
-                val url = "http://${controller.address}${WebApiUrls.VENTILATION_GET_SET_VALS}"
+                val url = "http://${controller?.address}${WebApiUrls.VENTILATION_GET_SET_VALS}"
                 val ventilationSetValsReader = VentilationSetValsReader(url)
                 when (val setValsList: DataFetchResult<List<VentilationSetVals>> =
                     ventilationSetValsReader.readVentilationSetVals()) {
@@ -77,6 +70,10 @@ open class VentilationSetValsRepository @Inject constructor(
                         }
                     }
                     is DataFetchResult.Error -> setValsList
+                    is DataFetchResult.Loading -> DataFetchResult.Error(
+                        exception = null,
+                        errorMessage = "Loading ventilation set values failed."
+                    )
                 }
             }
             emit(value = networkResult)
@@ -101,8 +98,8 @@ open class VentilationSetValsRepository @Inject constructor(
         }
     }.stateIn(
         scope = repositoryScope,
-        started = SharingStarted.WhileSubscribed(5000L),
-        initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial loading")
+        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
+        initialValue = DataFetchResult.Loading
     )
 
     /**
