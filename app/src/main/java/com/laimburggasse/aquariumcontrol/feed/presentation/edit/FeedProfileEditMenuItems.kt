@@ -6,7 +6,7 @@ fun mapIndexToMenuItemId(
     index: Int,
     toggleButtonType: FeedProfileEditToggleButtonType? = null,
 ): Int {
-    val isFeedPhase = phaseType == FeedProfileEditPhaseType.FEED
+    val isFeedPhase: Boolean = phaseType == FeedProfileEditPhaseType.FEED
     return when (level) {
         1 -> index
         2 -> (index + 1) * 10 + if (isFeedPhase) 1 else 0
@@ -29,8 +29,8 @@ fun createFeedProfileEditMenuItem(
     toggleButtonType: FeedProfileEditToggleButtonType? = null,
     children: List<FeedProfileEditMenuItem>? = null,
 ): FeedProfileEditMenuItem {
-    val feedProfileNumber = index + 1
-    val text = when (level) {
+    val feedProfileNumber: Int = index + 1
+    val text: String = when (level) {
         1 -> "Phase $feedProfileNumber"
         2 -> if (phaseType == FeedProfileEditPhaseType.FEED) "Feed" else "Pause"
         3 -> when (toggleButtonType) {

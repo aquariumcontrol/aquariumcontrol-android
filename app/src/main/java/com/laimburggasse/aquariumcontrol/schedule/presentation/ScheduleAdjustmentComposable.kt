@@ -40,8 +40,8 @@ fun ScheduleAdjustmentComposable(
     val configuration: Configuration = LocalConfiguration.current
 
     // State for controlling the visibility of the Time Picker Dialogs
-    var showStartTimeDialog: Boolean by remember { mutableStateOf(false) }
-    var showStopTimeDialog: Boolean by remember { mutableStateOf(false) }
+    var showStartTimeDialog: Boolean by remember { mutableStateOf(value = false) }
+    var showStopTimeDialog: Boolean by remember { mutableStateOf(value = false) }
 
     if (showStartTimeDialog) {
         TimePickerDialog(

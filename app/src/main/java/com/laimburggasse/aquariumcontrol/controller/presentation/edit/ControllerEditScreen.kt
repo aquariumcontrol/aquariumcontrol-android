@@ -31,7 +31,7 @@ import com.laimburggasse.aquariumcontrol.controller.presentation.components.Cont
 import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditHostnamePortnumberComposable
 import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiState
 import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUsernamePasswordComposable
-import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerNavigationEvent
+import com.laimburggasse.aquariumcontrol.controller.presentation.navigation.ControllerNavigationEvent
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 
 @Composable

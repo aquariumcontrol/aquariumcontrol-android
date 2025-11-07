@@ -35,7 +35,7 @@ fun FeedProfileDisplayComposable(
 
     AndroidView(modifier = Modifier
         .fillMaxWidth()
-        .height(50.dp), factory = { context ->
+        .height(height = 50.dp), factory = { context ->
         LineChart(context).apply {
             data = lineDataFeeder
             description.isEnabled = false
@@ -49,7 +49,7 @@ fun FeedProfileDisplayComposable(
             xAxis.isEnabled = false
             val valueFormatter = FeedProfileAxisValueFormatter(totalDuration)
             axisLeft.valueFormatter = valueFormatter
-            val axisLabelColor = if (isDarkMode) Color.WHITE else Color.BLACK
+            val axisLabelColor: Int = if (isDarkMode) Color.WHITE else Color.BLACK
             axisLeft.textColor = axisLabelColor
         }
     }, update = { lineChart ->
@@ -61,7 +61,7 @@ fun FeedProfileDisplayComposable(
 
     AndroidView(modifier = Modifier
         .fillMaxWidth()
-        .height(50.dp), factory = { context ->
+        .height(height = 50.dp), factory = { context ->
         LineChart(context).apply {
             data = lineDataSkimmer
             description.isEnabled = false
@@ -76,7 +76,7 @@ fun FeedProfileDisplayComposable(
             val valueFormatter = FeedProfileAxisValueFormatter(totalDuration)
             axisLeft.valueFormatter = valueFormatter
             // Set axis label colors based on dark mode
-            val axisLabelColor = if (isDarkMode) Color.WHITE else Color.BLACK
+            val axisLabelColor: Int = if (isDarkMode) Color.WHITE else Color.BLACK
             axisLeft.textColor = axisLabelColor
         }
     }, update = { lineChart ->
@@ -87,7 +87,7 @@ fun FeedProfileDisplayComposable(
 
     AndroidView(modifier = Modifier
         .fillMaxWidth()
-        .height(50.dp), factory = { context ->
+        .height(height = 50.dp), factory = { context ->
         LineChart(context).apply {
             data = lineDataMainPump1
             description.isEnabled = false
@@ -101,7 +101,7 @@ fun FeedProfileDisplayComposable(
             xAxis.isEnabled = false
             val valueFormatter = FeedProfileAxisValueFormatter(totalDuration)
             axisLeft.valueFormatter = valueFormatter
-            val axisLabelColor = if (isDarkMode) Color.WHITE else Color.BLACK
+            val axisLabelColor: Int = if (isDarkMode) Color.WHITE else Color.BLACK
             axisLeft.textColor = axisLabelColor
         }
     }, update = { lineChart ->
@@ -112,7 +112,7 @@ fun FeedProfileDisplayComposable(
 
     AndroidView(modifier = Modifier
         .fillMaxWidth()
-        .height(50.dp), factory = { context ->
+        .height(height = 50.dp), factory = { context ->
         LineChart(context).apply {
             data = lineDataMainPump2
             description.isEnabled = false
@@ -126,7 +126,7 @@ fun FeedProfileDisplayComposable(
             xAxis.isEnabled = false
             val valueFormatter = FeedProfileAxisValueFormatter(totalDuration)
             axisLeft.valueFormatter = valueFormatter
-            val axisLabelColor = if (isDarkMode) Color.WHITE else Color.BLACK
+            val axisLabelColor: Int = if (isDarkMode) Color.WHITE else Color.BLACK
             axisLeft.textColor = axisLabelColor
         }
     }, update = { lineChart ->
@@ -137,7 +137,7 @@ fun FeedProfileDisplayComposable(
 
     AndroidView(modifier = Modifier
         .fillMaxWidth()
-        .height(50.dp), factory = { context ->
+        .height(height = 50.dp), factory = { context ->
         LineChart(context).apply {
             data = lineDataAuxPump1
             description.isEnabled = false
@@ -162,7 +162,7 @@ fun FeedProfileDisplayComposable(
 
     AndroidView(modifier = Modifier
         .fillMaxWidth()
-        .height(50.dp), factory = { context ->
+        .height(height = 50.dp), factory = { context ->
         LineChart(context).apply {
             data = lineDataAuxPump2
             description.isEnabled = false
@@ -202,9 +202,7 @@ internal fun FeedProfileDisplayComposablePreview() {
     val chartData: FeedProfileChartDataBundle = FeedProfileChartDataFactory.create(mockFeedProfile)
 
     AquariumControllerTheme {
-        Surface(
-            color = MaterialTheme.colorScheme.background
-        ) {
+        Surface(color = MaterialTheme.colorScheme.background) {
             Column {
                 FeedProfileDisplayComposable(
                     lineDataFeeder = chartData.lineDataFeeder,

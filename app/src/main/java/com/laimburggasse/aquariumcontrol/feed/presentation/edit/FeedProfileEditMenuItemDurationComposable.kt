@@ -72,8 +72,8 @@ fun FeedProfileEditMenuItemDurationComposable(
 }
 
 val mockFeedProfileEditMenuItem = FeedProfileEditMenuItem(
-    id = 1,
-    level = 1,
+    id = 100,
+    level = 3,
     text = "Preview",
     isToggleButton = false,
     children = emptyList(),

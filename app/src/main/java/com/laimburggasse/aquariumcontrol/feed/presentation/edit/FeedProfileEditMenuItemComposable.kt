@@ -26,12 +26,9 @@ fun FeedProfileEditMenuItemComposable(
     feedProfile: FeedProfile,
     onFeedProfileEditUiEvent: (FeedProfileEditUiEvent) -> Unit
 ) {
-    //val isExpanded: Set<Int> by feedProfileEditViewModel.expandedItemIds.collectAsState()
-    //val profileState: FeedProfile by feedProfileEditViewModel.feedProfileUiState.collectAsState()
-
     // conversion of unique ID of menu item to feed profile phase ID
     val phaseId: Int = mapMenuItemIdToPhaseId(id = feedProfileEditMenuItem.id)
-    val isThisItemExpanded = feedProfileEditMenuItem.id in isExpanded
+    val isThisItemExpanded: Boolean = feedProfileEditMenuItem.id in isExpanded
 
     val isChecked: Boolean = if (phaseId < feedProfile.feedProfilePhases.size) {
         when (feedProfileEditMenuItem.toggleButtonType) {
@@ -104,8 +101,8 @@ fun FeedProfileEditMenuItemComposable(
 @Composable
 internal fun FeedProfileEditMenuItemComposablePreview() {
     val mockFeedProfileEditMenuItem = FeedProfileEditMenuItem(
-        id = 1,
-        level = 1,
+        id = 100,
+        level = 3,
         text = "Preview",
         isToggleButton = true,
         children = emptyList(),

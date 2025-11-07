@@ -24,6 +24,9 @@ android {
         testInstrumentationRunnerArguments["clearPackageData"] = "false"
         testOptions {
             //execution = "ANDROIDX_TEST_ORCHESTRATOR"
+            screenshotTests {
+                imageDifferenceThreshold = 0.0001f // 0.01%
+            }
         }
 
         vectorDrawables {

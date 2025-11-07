@@ -28,7 +28,7 @@ import com.laimburggasse.aquariumcontrol.controller.presentation.add.ControllerA
 import com.laimburggasse.aquariumcontrol.controller.presentation.add.ControllerAddViewModel
 import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiState
 import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
-import com.laimburggasse.aquariumcontrol.controller.presentation.components.handleControllerNavigation
+import com.laimburggasse.aquariumcontrol.controller.presentation.navigation.handleControllerNavigation
 import com.laimburggasse.aquariumcontrol.controller.presentation.edit.ControllerEditScreen
 import com.laimburggasse.aquariumcontrol.controller.presentation.edit.ControllerEditViewModel
 import com.laimburggasse.aquariumcontrol.controller.presentation.selection.ControllerSelectionScreen
@@ -40,7 +40,7 @@ import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedProfilesViewModel
 import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScheduleSelectionUiState
 import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScheduleViewModel
-import com.laimburggasse.aquariumcontrol.feed.presentation.components.handleFeedNavigation
+import com.laimburggasse.aquariumcontrol.feed.presentation.navigation.handleFeedNavigation
 import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileEditScreen
 import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileEditUiState
 import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileEditViewModel
@@ -60,7 +60,7 @@ import com.laimburggasse.aquariumcontrol.maindropdownmenu.presentation.handleMai
 import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewScreen
 import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewUiState
 import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewViewModel
-import com.laimburggasse.aquariumcontrol.refill.presentation.components.handleRefillNavigation
+import com.laimburggasse.aquariumcontrol.refill.presentation.navigation.handleRefillNavigation
 import com.laimburggasse.aquariumcontrol.refill.presentation.entry.RefillScreen
 import com.laimburggasse.aquariumcontrol.refill.presentation.entry.RefillViewModel
 import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryScreen
