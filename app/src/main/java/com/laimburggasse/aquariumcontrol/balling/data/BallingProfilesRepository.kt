@@ -39,6 +39,9 @@ open class BallingProfilesRepository @Inject constructor(
     // A flow to hold the single pending optimistic update
     private val pendingUpdate = MutableStateFlow<BallingProfile?>(value = null)
 
+    // A flow to hold the failure value
+    private val failureResult = MutableStateFlow<DataFetchResult.Error?>(value = null)
+
     /**
      * A single, reactive Flow that provides the Balling Profiles.
      * It combines two triggers: the selected controller and the manual refresh trigger.
@@ -51,18 +54,30 @@ open class BallingProfilesRepository @Inject constructor(
             // 1. We still listen to the selected controller profile.
             flow = sessionManager.selectedControllerProfile,
             flow2 = refreshTrigger.onStart { emit(value = Unit) },
-            flow3 = pendingUpdate
-        ) { controller, _, pending ->
-            Triple(first = controller, second = Unit, third = pending)
+            flow3 = pendingUpdate,
+            flow4 = failureResult
+        ) { controller, _, pending, failure ->
+            Triple(first = controller, second = pending, third = failure)
         }
         .filter{ it.first != null }
-        .flatMapLatest { triple ->
-            val (controller: ControllerProfile?, _, pending: BallingProfile?) = triple
+        .flatMapLatest { (controller: ControllerProfile?, pending: BallingProfile?, failure: DataFetchResult.Error?) ->
             flow {
-                // UI shall temporarily show loading state, while fetching data
+                if (failure != null) {
+                    emit(value = failure)
+                    return@flow
+                }
+                if (controller == null) {
+                    emit(value = DataFetchResult.Error(
+                        exception = null,
+                        errorMessage = "No controller selected."
+                    ))
+                    return@flow
+                }
+
+                // If there is no failure and we have a controller, proceed with loading.
                 emit(value = DataFetchResult.Loading)
 
-                val url = "http://${controller?.address}${WebApiUrls.BALLING_GET_SET_VALS}"
+                val url = "http://${controller.address}${WebApiUrls.BALLING_GET_SET_VALS}"
                 val reader = BallingProfileReader(url)
                 // Perform the network request on a background thread.
                 val networkResult: DataFetchResult<List<BallingProfile>> =
@@ -104,6 +119,10 @@ open class BallingProfilesRepository @Inject constructor(
         if (controllerAddress.isNullOrBlank()) {
             Log.e("BallingRepository", "Update failed: No controller address.")
             pendingUpdate.value = null
+            failureResult.value = DataFetchResult.Error(
+                exception = null,
+                errorMessage = "No controller address."
+            )
             return
         }
 
@@ -120,25 +139,32 @@ open class BallingProfilesRepository @Inject constructor(
                 )
             }
 
-            // Instead of updating a dead flow, trigger a refresh of the live one.
             if (requestSuccess) {
-                Log.d("BallingRepository", "Server update successful. Triggering refresh.")
                 pendingUpdate.value = null
+                failureResult.value = null
                 refreshTrigger.emit(value = Unit) // This will cause the `profilesFlow` to re-fetch.
             } else {
-                Log.e("BallingRepository", "Server update failed.")
                 pendingUpdate.value = null
-                // @todo: emit an event to the UI to show a failure.
+                failureResult.value = DataFetchResult.Error(
+                    exception = null,
+                    errorMessage = "Update of feed profile on server failed."
+                )
             }
         }
     }
 
-    // @todo: implement pull-to-refresh
     /**
      * Public function to allow the ViewModel to trigger a manual refresh (e.g., for pull-to-refresh).
      */
     suspend fun triggerRefresh() {
-        Log.d("BallingRepository", "Triggering refresh.")
-        refreshTrigger.emit(value = Unit)
+        // Check if the current state is a failure.
+        if (failureResult.value != null) {
+            // If it is, setting it to null is sufficient to trigger the combine/flatMapLatest chain again.
+            failureResult.value = null
+        } else {
+            // If the system is NOT in a failure state, then we must emit the refreshTrigger
+            // to force a new fetch, as nothing else has changed.
+            refreshTrigger.emit(value = Unit)
+        }
     }
 }

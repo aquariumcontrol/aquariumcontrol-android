@@ -14,13 +14,12 @@ class WebApiPostRequest {
         username: String,
         password: String,
     ): Result<String> {
-
-        val formBody = FormBody.Builder()
-            .add(WebApiParams.POST_PARAM_USERNAME, username)
-            .add(WebApiParams.POST_PARAM_PASSWORD, password)
+        val formBody: FormBody = FormBody.Builder()
+            .add(name = WebApiParams.POST_PARAM_USERNAME, value = username)
+            .add(name = WebApiParams.POST_PARAM_PASSWORD, value = password)
             .build()
 
-        val request = Request.Builder()
+        val request: Request = Request.Builder()
             .url(url)
             .post(formBody)
             .build()
@@ -28,13 +27,13 @@ class WebApiPostRequest {
         return try {
             val response: Response = client.newCall(request).execute()
             if (response.isSuccessful) {
-                val responseBody = response.body.string()
-                Result.success(responseBody)
+                val responseBody: String = response.body.string()
+                Result.success(value = responseBody)
             } else {
-                Result.failure(IOException("Request failed with code: ${response.code}"))
+                Result.failure(exception = IOException("Request failed with code: ${response.code}"))
             }
         } catch (e: IOException) {
-            Result.failure(e)
+            Result.failure(exception = e)
         }
     }
 }

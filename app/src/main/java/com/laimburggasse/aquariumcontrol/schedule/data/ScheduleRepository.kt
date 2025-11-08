@@ -1,10 +1,11 @@
 package com.laimburggasse.aquariumcontrol.schedule.data
 
 import com.laimburggasse.aquariumcontrol.SessionManager
+import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
-import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleStringEntry
 import com.laimburggasse.aquariumcontrol.schedule.data.remote.ScheduleEntryReader
 import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleEntry
+import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleStringEntry
 import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntries
 import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntriesFactory
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
@@ -19,7 +20,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
@@ -38,18 +39,33 @@ open class ScheduleRepository @Inject constructor(
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
     private val pendingUpdate = MutableStateFlow<ScheduleEntries?>(value = null)
 
+    // A flow to hold the failure value
+    private val failureResult = MutableStateFlow<DataFetchResult.Error?>(value = null)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     open val networkFlow: StateFlow<DataFetchResult<ScheduleEntries>> = combine(
         flow = sessionManager.selectedControllerProfile,
-        flow2 = refreshTrigger.onStart { emit(value = Unit) } // Triggers the first fetch
-    ) { controller, _ ->
-        controller
+        flow2 = refreshTrigger.onStart { emit(value = Unit) }, // Triggers the first fetch
+        flow3 = failureResult
+    ) { controller, _, failure ->
+        Pair(first = controller, second = failure)
     }
-    .filterNotNull()
-    .flatMapLatest { controller ->
+    .filter { it.first != null }
+    .flatMapLatest { (controller: ControllerProfile?, failure: DataFetchResult.Error?) ->
         flow {
-            // UI shall temporarily show loading state, while fetching data
+            if (failure != null) {
+                emit(value = failure)
+                return@flow
+            }
+            if (controller == null) {
+                emit(value = DataFetchResult.Error(
+                    exception = null,
+                    errorMessage = "No controller selected."
+                ))
+                return@flow
+            }
+
+            // If there is no failure and we have a controller, proceed with loading.
             emit(value = DataFetchResult.Loading)
 
             // A controller is present, so start fetching
@@ -79,13 +95,6 @@ open class ScheduleRepository @Inject constructor(
         started = SharingStarted.Companion.WhileSubscribed(stopTimeoutMillis = 5000L),
         initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial Load")
     )
-
-    /**
-     * Triggers a manual refresh of the schedule data.
-     */
-    suspend fun triggerRefresh() {
-        refreshTrigger.emit(value = Unit)
-    }
 
     /**
      * Applies an optimistic update to the local state without committing to the server.
@@ -161,6 +170,21 @@ open class ScheduleRepository @Inject constructor(
                 }
             }
             return@withContext processedResult
+        }
+    }
+
+    /**
+     * Triggers a manual refresh of the schedule data.
+     */
+    suspend fun triggerRefresh() {
+        // Check if the current state is a failure.
+        if (failureResult.value != null) {
+            // If it is, setting it to null is sufficient to trigger the combine/flatMapLatest chain again.
+            failureResult.value = null
+        } else {
+            // If the system is NOT in a failure state, then we must emit the refreshTrigger
+            // to force a new fetch, as nothing else has changed.
+            refreshTrigger.emit(value = Unit)
         }
     }
 }

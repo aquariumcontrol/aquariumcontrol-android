@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
@@ -41,22 +41,38 @@ open class HeatingSetValsRepository @Inject constructor(
     // Holds the last successfully fetched data from the server, used for the 'reset' function.
     private var heatingSetValsBackup: HeatingSetVals? = null
 
+    // A flow to hold the failure value
+    private val failureResult = MutableStateFlow<DataFetchResult.Error?>(value = null)
+
     // The private flow only fetches data from the network.
     @OptIn(ExperimentalCoroutinesApi::class)
     private val networkDataFlow: StateFlow<DataFetchResult<HeatingSetVals>> = combine(
         flow = sessionManager.selectedControllerProfile,
-        flow2 = refreshTrigger.onStart { emit(value = Unit) } // Initial trigger
-    ) { controller, _ ->
-        controller
+        flow2 = refreshTrigger.onStart { emit(value = Unit) }, // Initial trigger
+        flow3 = failureResult
+    ) { controller, _, failure ->
+        Pair(first = controller, second = failure)
     }
-    .filterNotNull()
-    .flatMapLatest { controller: ControllerProfile? ->
+    .filter { it.first != null }
+    .flatMapLatest { (controller: ControllerProfile?, failure: DataFetchResult.Error?) ->
         flow {
-            // UI shall temporarily show loading state, while fetching data
+            if (failure != null) {
+                emit(value = failure)
+                return@flow
+            }
+            if (controller == null) {
+                emit(value = DataFetchResult.Error(
+                    exception = null,
+                    errorMessage = "No controller selected."
+                ))
+                return@flow
+            }
+
+            // If there is no failure and we have a controller, proceed with loading.
             emit(value = DataFetchResult.Loading)
 
             val networkResult: DataFetchResult<HeatingSetVals> = withContext(context = Dispatchers.IO) {
-                val url = "http://${controller?.address}${WebApiUrls.HEATING_GET_SET_VALS}"
+                val url = "http://${controller.address}${WebApiUrls.HEATING_GET_SET_VALS}"
                 val heatingSetValsReader = HeatingSetValsReader(url)
                 when (val setValsList: DataFetchResult<List<HeatingSetVals>> =
                     heatingSetValsReader.readHeatingSetVals()) {
@@ -101,12 +117,6 @@ open class HeatingSetValsRepository @Inject constructor(
         started = SharingStarted.WhileSubscribed(5000L),
         initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial loading")
     )
-    /**
-     * Triggers a manual refresh of the heating setpoints.
-     */
-    open suspend fun triggerRefresh() {
-        refreshTrigger.emit(value = Unit)
-    }
 
     /**
      * Applies an optimistic update to the local state without committing to the server.
@@ -126,7 +136,7 @@ open class HeatingSetValsRepository @Inject constructor(
 
         if (currentValues != null) {
             repositoryScope.launch(context = Dispatchers.IO) {
-                webApiPostRequestExecution(
+                val success: Boolean = webApiPostRequestExecution(
                     sessionManager = sessionManager,
                     apiUrl = WebApiUrls.HEATING_POST_SET_VALS,
                     webApiPostRequest = WebApiPostRequest(),
@@ -135,6 +145,13 @@ open class HeatingSetValsRepository @Inject constructor(
                         WebApiParams.HEATING_SWITCH_OFF_TEMPERATURE to currentValues.heatingSwitchOffTemp.toString()
                     ),
                 )
+
+                if (!success) {
+                    failureResult.value = DataFetchResult.Error(
+                        exception = null,
+                        errorMessage = "Could not update heating set values."
+                    )
+                }
             }
         }
     }
@@ -145,5 +162,20 @@ open class HeatingSetValsRepository @Inject constructor(
      */
     fun reset() {
         pendingUpdate.value = null
+    }
+
+    /**
+     * Triggers a manual refresh of the heating setpoints.
+     */
+    suspend fun triggerRefresh() {
+        // Check if the current state is a failure.
+        if (failureResult.value != null) {
+            // If it is, setting it to null is sufficient to trigger the combine/flatMapLatest chain again.
+            failureResult.value = null
+        } else {
+            // If the system is NOT in a failure state, then we must emit the refreshTrigger
+            // to force a new fetch, as nothing else has changed.
+            refreshTrigger.emit(value = Unit)
+        }
     }
 }

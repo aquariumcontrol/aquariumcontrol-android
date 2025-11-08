@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.data.FeedProfilesRepository
-import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedScheduleRepository
+import com.laimburggasse.aquariumcontrol.feed.data.FeedScheduleRepository
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.presentation.schedule.FeedScheduleEntryUiEvent

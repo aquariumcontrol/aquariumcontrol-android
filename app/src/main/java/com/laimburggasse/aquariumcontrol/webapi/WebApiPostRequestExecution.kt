@@ -29,5 +29,4 @@ suspend fun webApiPostRequestExecution(
     return withContext(context = Dispatchers.IO) {
         webApiPostRequest.postData(url, username = user, password).isSuccess
     }
-    // @todo: handle the error case
 }

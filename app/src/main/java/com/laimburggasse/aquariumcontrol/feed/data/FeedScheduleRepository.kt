@@ -1,9 +1,10 @@
-package com.laimburggasse.aquariumcontrol.feed.data.remote
+package com.laimburggasse.aquariumcontrol.feed.data
 
 import android.util.Log
 import com.laimburggasse.aquariumcontrol.SessionManager
+import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
-import com.laimburggasse.aquariumcontrol.feed.data.FeedScheduleEntryKey
+import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedScheduleEntryReader
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedScheduleEntryImport
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.presentation.schedule.toFeedScheduleEntryList
@@ -20,7 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
@@ -43,22 +44,39 @@ open class FeedScheduleRepository @Inject constructor(
     private val pendingUpdates =
         MutableStateFlow<Map<FeedScheduleEntryKey, FeedScheduleEntry>>(value = emptyMap())
 
+    // A flow to hold the failure value
+    private val failureResult = MutableStateFlow<DataFetchResult.Error?>(value = null)
+
     // Private flow that ONLY handles fetching data from the network.
     // It is only triggered by controller changes or manual refreshes.
     @OptIn(ExperimentalCoroutinesApi::class)
     private val networkFlow: StateFlow<DataFetchResult<List<FeedScheduleEntry>>> = combine(
         flow = sessionManager.selectedControllerProfile,
-        flow2 = refreshTrigger.onStart { emit(value = Unit) }
-    ) { controller, _ ->
-        controller
+        flow2 = refreshTrigger.onStart { emit(value = Unit) },
+        flow3 = failureResult
+    ) { controller, _, failure ->
+        Pair(first = controller, second = failure)
     }
-    .filterNotNull()
-    .flatMapLatest { controller ->
+    .filter { it.first != null }
+    .flatMapLatest { (controller: ControllerProfile?, failure: DataFetchResult.Error?) ->
         flow {
-            // UI shall temporarily show loading state, while fetching data
+            if (failure != null) {
+                emit(value = failure)
+                return@flow
+            }
+            if (controller == null) {
+                emit(
+                    value = DataFetchResult.Error(
+                        exception = null,
+                        errorMessage = "No controller selected."
+                    )
+                )
+                return@flow
+            }
+
+            // If there is no failure and we have a controller, proceed with loading.
             emit(value = DataFetchResult.Loading)
 
-            Log.d("FeedScheduleRepository", "Fetching feed schedule from server.")
             val networkResult: DataFetchResult<List<FeedScheduleEntry>> =
                 withContext(context = Dispatchers.IO) {
                     val url = "http://${controller.address}${WebApiUrls.FEED_GET_SCHEDULE}"
@@ -69,6 +87,7 @@ open class FeedScheduleRepository @Inject constructor(
                         is DataFetchResult.Success -> DataFetchResult.Success(
                             data = importResult.data.toFeedScheduleEntryList()
                         )
+
                         is DataFetchResult.Error -> importResult
                         is DataFetchResult.Loading -> DataFetchResult.Error(
                             exception = null,
@@ -79,10 +98,6 @@ open class FeedScheduleRepository @Inject constructor(
             // After a successful network fetch, we know the ground truth has been updated.
             // This is the ONLY place where we should clear the pending states.
             if (networkResult is DataFetchResult.Success) {
-                Log.d(
-                    "FeedScheduleRepository",
-                    "Network fetch successful. Clearing pending states."
-                )
                 pendingDeletions.value = emptySet()
                 pendingUpdates.value = emptyMap()
             }
@@ -139,10 +154,6 @@ open class FeedScheduleRepository @Inject constructor(
         initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial")
     )
 
-    open suspend fun triggerRefresh() {
-        refreshTrigger.emit(value = Unit)
-    }
-
     open suspend fun deleteFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry) {
         Log.d("FeedScheduleRepository", "Request to delete feed schedule entry: $feedScheduleEntry")
 
@@ -163,7 +174,6 @@ open class FeedScheduleRepository @Inject constructor(
         // In both cases, trigger the network request, because the add operation
         // may have committed to the server meanwhile.
         repositoryScope.launch(context = Dispatchers.IO) {
-            Log.d("FeedScheduleRepository", "Coroutine launched. Sending POST request for deletion.")
             val result: Boolean = webApiPostRequestExecution(
                 apiUrl = WebApiUrls.FEED_POST_SCHEDULE_REMOVE_ENTRY,
                 sessionManager = sessionManager,
@@ -177,8 +187,11 @@ open class FeedScheduleRepository @Inject constructor(
             else {
                 // On failure, remove the pending deletion to revert the UI change.
                 pendingDeletions.value -= keyToDelete
+                failureResult.value = DataFetchResult.Error(
+                    exception = null,
+                    errorMessage = "Deleting feed schedule entry failed."
+                )
             }
-            // @todo: issue UiState Error
         }
     }
 
@@ -217,7 +230,10 @@ open class FeedScheduleRepository @Inject constructor(
                 triggerRefresh()
             }
             else {
-                // @todo: issue UiState Error
+                failureResult.value = DataFetchResult.Error(
+                    exception = null,
+                    errorMessage = "Adding feed schedule entry failed."
+                )
             }
         }
     }
@@ -260,8 +276,23 @@ open class FeedScheduleRepository @Inject constructor(
             else {
                 // On failure, remove the pending update to revert the UI change.
                 pendingUpdates.value -= originalKey
-                // @todo: issue UiState Error
+                failureResult.value = DataFetchResult.Error(
+                    exception = null,
+                    errorMessage = "Updating feed schedule entry failed."
+                )
             }
+        }
+    }
+
+    suspend fun triggerRefresh() {
+        // Check if the current state is a failure.
+        if (failureResult.value != null) {
+            // If it is, setting it to null is sufficient to trigger the combine/flatMapLatest chain again.
+            failureResult.value = null
+        } else {
+            // If the system is NOT in a failure state, then we must emit the refreshTrigger
+            // to force a new fetch, as nothing else has changed.
+            refreshTrigger.emit(value = Unit)
         }
     }
 }

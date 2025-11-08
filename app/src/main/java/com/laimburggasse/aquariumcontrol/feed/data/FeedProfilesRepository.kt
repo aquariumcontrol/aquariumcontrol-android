@@ -35,11 +35,13 @@ open class FeedProfilesRepository @Inject constructor(
     private val sessionManager: SessionManager,
     @ApplicationScope private val repositoryScope: CoroutineScope
 ) {
-
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
 
     // Holds a list of profile IDs that are pending deletions (POST request triggered, local update required).
     private val pendingDeletions = MutableStateFlow<Set<Int>>(value = emptySet())
+
+    // A flow to hold the failure value
+    private val failureResult = MutableStateFlow<DataFetchResult.Error?>(value = null)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     open val profilesFlow: StateFlow<DataFetchResult<List<FeedProfile>>> =
@@ -47,19 +49,31 @@ open class FeedProfilesRepository @Inject constructor(
             flow = sessionManager.selectedControllerProfile,
             flow2 = refreshTrigger.onStart { emit(value = Unit) },
             flow3 = pendingDeletions,
-        ) { controller, _, deletions ->
-            Pair(first = controller, second = deletions)
+            flow4 = failureResult
+        ) { controller, _, deletions, failure ->
+            Triple(first = controller, second = deletions, third = failure)
         }
         .filter{ it.first != null }
-        .flatMapLatest { (controller: ControllerProfile?, deletions: Set<Int>) ->
+        .flatMapLatest { (controller: ControllerProfile?, deletions: Set<Int>, failure: DataFetchResult.Error?) ->
             flow {
-                // UI shall temporarily show loading state, while fetching data
+                if (failure != null) {
+                    emit(value = failure)
+                    return@flow
+                }
+                if (controller == null) {
+                    emit(value = DataFetchResult.Error(
+                        exception = null,
+                        errorMessage = "No controller selected."
+                    ))
+                    return@flow
+                }
+
+                // If there is no failure and we have a controller, proceed with loading.
                 emit(value = DataFetchResult.Loading)
 
                 val networkResult: DataFetchResult<List<FeedProfileImport>> =
                     withContext(context = Dispatchers.IO) {
-                        val profileUrl =
-                            "http://${controller?.address}${WebApiUrls.FEED_GET_PROFILES}"
+                        val profileUrl = "http://${controller.address}${WebApiUrls.FEED_GET_PROFILES}"
                         val profileReader = FeedProfileReader(profileUrl)
                         profileReader.readFeedProfiles()
                     }
@@ -92,10 +106,6 @@ open class FeedProfilesRepository @Inject constructor(
             initialValue = DataFetchResult.Loading
         )
 
-    open suspend fun triggerRefresh() {
-        refreshTrigger.emit(value = Unit)
-    }
-
     open suspend fun deleteFeedProfile(feedProfile: FeedProfile) {
         // Optimistic Update: Immediately add the ID to the pending deletions list.
         // The UI will react to this instantly.
@@ -103,12 +113,18 @@ open class FeedProfilesRepository @Inject constructor(
 
         // Perform the actual network request in the background.
         repositoryScope.launch(context = Dispatchers.IO) {
-            webApiPostRequestExecution(
+            val success: Boolean = webApiPostRequestExecution(
                 apiUrl = WebApiUrls.FEED_POST_REMOVE_PROFILE,
                 sessionManager = sessionManager,
                 webApiPostRequest = WebApiPostRequest(),
                 optionalGetParams = feedProfile.getFeedProfileApiCallParameters()
             )
+            if (!success) {
+                failureResult.value = DataFetchResult.Error(
+                    exception = null,
+                    errorMessage = "Could not delete the feed profile."
+                )
+            }
         }
     }
 
@@ -124,7 +140,10 @@ open class FeedProfilesRepository @Inject constructor(
                 delay(timeMillis = 3000L)
                 triggerRefresh()
             } else {
-                // @todo: emit error state
+                failureResult.value = DataFetchResult.Error(
+                    exception = null,
+                    errorMessage = "Could not delete the feed profile."
+                )
             }
         }
     }
@@ -150,13 +169,34 @@ open class FeedProfilesRepository @Inject constructor(
     fun updateFeedProfile(modifiedFeedProfile: FeedProfile) {
         val apiCallParameters: Map<String, String> = modifiedFeedProfile.getFeedProfileApiCallParameters()
         repositoryScope.launch(context = Dispatchers.IO) {
-            webApiPostRequestExecution(
+            val success: Boolean = webApiPostRequestExecution(
                 sessionManager = sessionManager,
                 apiUrl = WebApiUrls.FEED_POST_PROFILE_UPDATE,
                 webApiPostRequest = WebApiPostRequest(),
                 optionalGetParams = apiCallParameters
             )
+            if (!success) {
+                failureResult.value = DataFetchResult.Error(
+                    exception = null,
+                    errorMessage = "Could not update the feed profile."
+                )
+            }
         }
-        // Refresh ist not required since this call emanates from FeedProfileEditViewModel.
+        // Refresh is not required since this call emanates from FeedProfileEditViewModel.
+    }
+
+    /**
+     * Public function to allow the ViewModel to trigger a manual refresh (e.g., for pull-to-refresh).
+     */
+    suspend fun triggerRefresh() {
+        // Check if the current state is a failure.
+        if (failureResult.value != null) {
+            // If it is, setting it to null is sufficient to trigger the combine/flatMapLatest chain again.
+            failureResult.value = null
+        } else {
+            // If the system is NOT in a failure state, then we must emit the refreshTrigger
+            // to force a new fetch, as nothing else has changed.
+            refreshTrigger.emit(value = Unit)
+        }
     }
 }
