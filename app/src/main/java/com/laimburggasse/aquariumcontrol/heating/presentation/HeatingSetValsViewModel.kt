@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
 import com.laimburggasse.aquariumcontrol.heating.data.HeatingSetValsRepository
+import com.laimburggasse.aquariumcontrol.heating.domain.heatingSetValsSanityCheck
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,11 +20,10 @@ class HeatingSetValsViewModel @Inject constructor(
 ) : ViewModel() {
     val heatingSetValsUiState: StateFlow<HeatingSetValsUiState> = heatingSetValsRepository.heatingSetValsFlow
         .map { result ->
-            // @todo: add functionality for sanity check on values
             when (result) {
                 is DataFetchResult.Error -> HeatingSetValsUiState.Error(errorMessage = result.errorMessage)
                 is DataFetchResult.Success -> {
-                    HeatingSetValsUiState.Success(heatingSetVals = result.data)
+                    heatingSetValsSanityCheck(heatingSetVals = result.data)
                 }
                 DataFetchResult.Loading -> HeatingSetValsUiState.Loading
             }

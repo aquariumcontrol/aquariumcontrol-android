@@ -1,11 +1,10 @@
 package com.laimburggasse.aquariumcontrol.controller.presentation.selection
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.SessionManager
-import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.controller.data.ControllerProfileDao
+import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -42,7 +41,6 @@ class ControllerSelectionViewModel @Inject constructor(
         flow2 = sessionManager.isFirstLoad,
         flow3 = sessionManager.defaultControllerProfileId
     ) { profiles, isFirstLoad, defaultId ->
-        Log.d("ControllerViewModel", "canStartWaitForDefaultNavigation: $profiles, $isFirstLoad, $defaultId")
         profiles.isNotEmpty() && (defaultId != null) && isFirstLoad
     }.stateIn(
         scope = viewModelScope,
@@ -82,51 +80,17 @@ class ControllerSelectionViewModel @Inject constructor(
         started = SharingStarted.Companion.WhileSubscribed(stopTimeoutMillis = 5000),
         initialValue = 0.0f // The countdown starts at 0% progress
     )
-/*
-    init {
-        loadInitialControllerProfiles()
-    }
-
-    private fun loadInitialControllerProfiles() {
-        viewModelScope.launch {
-            try {
-                // Fetch the initial list - suspend function call
-                val profiles: List<ControllerProfile> = dao.getAllControllerProfiles()
-                _controllerProfiles.value = profiles
-            } catch (_: Exception) {
-                // @todo: Handle any errors during fetching, e.g., log them or update UI state
-            }
-        }
-    }*/
 
     fun onEvent(event: ControllerSelectionUiEvent) {
         when (event) {
             is ControllerSelectionUiEvent.DeleteControllerSelectionProfile -> {
-                Log.d("ControllerViewModel", "Delete Controller Profile: ${event.controllerProfile}")
                 viewModelScope.launch {
                     dao.deleteControllerProfile(controllerProfile = event.controllerProfile)
-//                    _controllerProfiles.update { currentList ->
-//                        currentList.filterNot { it.id == event.controllerProfile.id }
-//                    }
                 }
             }
             is ControllerSelectionUiEvent.SelectControllerProfile -> {
                 sessionManager.updateSelectedControllerProfile(controllerProfile = event.controllerProfile)
             }
-/*
-            is ControllerSelectionEvent.LoadControllerSelectionProfiles -> {
-                viewModelScope.launch {
-                    try {
-                        // Fetch the controller profiles from the database
-                        val profiles: List<ControllerProfile> = dao.getAllControllerProfiles()
-                        _controllerProfiles.value = profiles // Update the value of the StateFlow
-                    } catch (e: Exception) {
-                        Log.e("ControllerViewModel", "Error loading controller profiles on event", e)
-                        // Optionally, update the UI or _controllerProfiles with an error state or empty list
-                    }
-                }
-            }
-*/
             ControllerSelectionUiEvent.AutoNavigationFinished -> {
                 // do nothing
             }
