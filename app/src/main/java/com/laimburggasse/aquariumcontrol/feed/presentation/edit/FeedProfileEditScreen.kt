@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,38 +41,43 @@ fun FeedProfileEditScreen(
     ) {
         ScreenHeadlineComposable(text = stringResource(id = R.string.feed_profile_editing))
 
-        FeedProfileDisplayComposable(
-            lineDataFeeder = uiState.lineDataFeeder,
-            lineDataSkimmer = uiState.lineDataSkimmer,
-            lineDataMainPump1 = uiState.lineDataMainPump1,
-            lineDataMainPump2 = uiState.lineDataMainPump2,
-            lineDataAuxPump1 = uiState.lineDataAuxPump1,
-            lineDataAuxPump2 = uiState.lineDataAuxPump2,
-            totalDuration = uiState.totalDuration
-        )
+        if (uiState.feedProfile == null) {
+            Text(text = "Feed profile not found")
+        }
+        else {
+            FeedProfileDisplayComposable(
+                lineDataFeeder = uiState.lineDataFeeder,
+                lineDataSkimmer = uiState.lineDataSkimmer,
+                lineDataMainPump1 = uiState.lineDataMainPump1,
+                lineDataMainPump2 = uiState.lineDataMainPump2,
+                lineDataAuxPump1 = uiState.lineDataAuxPump1,
+                lineDataAuxPump2 = uiState.lineDataAuxPump2,
+                totalDuration = uiState.totalDuration
+            )
 
-        FeedProfileDisplayLegendComposable()
+            FeedProfileDisplayLegendComposable()
 
-        when (configuration.orientation) {
-            Configuration.ORIENTATION_LANDSCAPE -> {
-                Row {
-                    FeedProfileEditButtonsComposable(onFeedProfileEditUiEvent = onFeedProfileEditUiEvent)
+            when (configuration.orientation) {
+                Configuration.ORIENTATION_LANDSCAPE -> {
+                    Row {
+                        FeedProfileEditButtonsComposable(onFeedProfileEditUiEvent = onFeedProfileEditUiEvent)
+                    }
+                }
+                else -> {
+                    FeedProfileEditButtonsComposable(
+                        modifier = Modifier.fillMaxWidth(),
+                        onFeedProfileEditUiEvent = onFeedProfileEditUiEvent
+                    )
                 }
             }
-            else -> {
-                FeedProfileEditButtonsComposable(
-                    modifier = Modifier.fillMaxWidth(),
-                    onFeedProfileEditUiEvent = onFeedProfileEditUiEvent
-                )
-            }
-        }
 
-        FeedProfileEditMenuComposable(
-            itemsToRender = FeedProfileEditMenuItems.phases, // all items shall be rendered
-            feedProfile = uiState.feedProfile,
-            isExpanded = uiState.expandedItemIds,
-            onFeedProfileEditUiEvent = onFeedProfileEditUiEvent
-        )
+            FeedProfileEditMenuComposable(
+                itemsToRender = FeedProfileEditMenuItems.phases, // all items shall be rendered
+                feedProfile = uiState.feedProfile,
+                isExpanded = uiState.expandedItemIds,
+                onFeedProfileEditUiEvent = onFeedProfileEditUiEvent
+            )
+        }
     }
 }
 
@@ -207,8 +213,12 @@ fun createMockFeedProfile(): FeedProfile {
 
 val mockFeedProfile = createMockFeedProfile()
 
-val mockFeedProfileEditUiState = FeedProfileEditUiState(
+val mockFeedProfileEditUiStateSuccess = FeedProfileEditUiState(
     feedProfile = mockFeedProfile,
+)
+
+val mockFeedProfileEditUiStateFailure = FeedProfileEditUiState(
+    feedProfile = null,
 )
 
 @Preview(showBackground = true, heightDp = 1100, uiMode = Configuration.UI_MODE_NIGHT_YES)
@@ -224,13 +234,31 @@ val mockFeedProfileEditUiState = FeedProfileEditUiState(
     device = "spec:width=600dp,height=1100dp,orientation=landscape"
 )
 @Composable
-internal fun FeedProfileEditScreenPreview() {
+internal fun FeedProfileEditScreenSuccessPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.feedEdit,
         screenContent = {
             FeedProfileEditScreen(
-                uiState = mockFeedProfileEditUiState,
+                uiState = mockFeedProfileEditUiStateSuccess,
+                onFeedProfileEditUiEvent = {}
+            )
+        },
+        onNavigate = {},
+        darkTheme = isSystemInDarkTheme()
+    )
+}
+
+@Preview(showBackground = true, heightDp = 1100, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, heightDp = 1100, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+internal fun FeedProfileEditScreenFailurePreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.feedEdit,
+        screenContent = {
+            FeedProfileEditScreen(
+                uiState = mockFeedProfileEditUiStateFailure,
                 onFeedProfileEditUiEvent = {}
             )
         },

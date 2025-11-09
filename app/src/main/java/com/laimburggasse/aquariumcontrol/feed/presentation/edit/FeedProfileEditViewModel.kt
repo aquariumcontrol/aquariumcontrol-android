@@ -1,12 +1,11 @@
 package com.laimburggasse.aquariumcontrol.feed.presentation.edit
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.laimburggasse.aquariumcontrol.feed.data.FeedProfilesRepository
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfilePhase
-import com.laimburggasse.aquariumcontrol.feed.data.FeedProfilesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,26 +23,30 @@ class FeedProfileEditViewModel @Inject constructor(
 ) : ViewModel() {
     private var originalFeedProfile: FeedProfile = FeedProfile()
 
-    private val _feedProfileState = MutableStateFlow(value = originalFeedProfile)
+    private val _feedProfileState = MutableStateFlow<FeedProfile?>(value = originalFeedProfile)
     private val _expandedItemIds = MutableStateFlow<Set<Int>>(value = emptySet())
 
     val uiState: StateFlow<FeedProfileEditUiState> = combine(
         flow = _feedProfileState, flow2 = _expandedItemIds
     ) { feedProfile, expandedItemIds ->
+        if (feedProfile != null) {
+            val chartBundle: FeedProfileChartDataBundle = FeedProfileChartDataFactory.create(feedProfile)
 
-        val chartBundle: FeedProfileChartDataBundle = FeedProfileChartDataFactory.create(feedProfile)
-
-        FeedProfileEditUiState(
-            feedProfile = feedProfile,
-            expandedItemIds = expandedItemIds,
-            lineDataFeeder = chartBundle.lineDataFeeder,
-            lineDataSkimmer = chartBundle.lineDataSkimmer,
-            lineDataMainPump1 = chartBundle.lineDataMainPump1,
-            lineDataMainPump2 = chartBundle.lineDataMainPump2,
-            lineDataAuxPump1 = chartBundle.lineDataAuxPump1,
-            lineDataAuxPump2 = chartBundle.lineDataAuxPump2,
-            totalDuration = chartBundle.totalDuration
-        )
+            FeedProfileEditUiState(
+                feedProfile = feedProfile,
+                expandedItemIds = expandedItemIds,
+                lineDataFeeder = chartBundle.lineDataFeeder,
+                lineDataSkimmer = chartBundle.lineDataSkimmer,
+                lineDataMainPump1 = chartBundle.lineDataMainPump1,
+                lineDataMainPump2 = chartBundle.lineDataMainPump2,
+                lineDataAuxPump1 = chartBundle.lineDataAuxPump1,
+                lineDataAuxPump2 = chartBundle.lineDataAuxPump2,
+                totalDuration = chartBundle.totalDuration
+            )
+        }
+        else {
+            FeedProfileEditUiState()
+        }
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
@@ -52,26 +55,24 @@ class FeedProfileEditViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            // 1. Get the profileId from navigation arguments via SavedStateHandle.
+            // Get the profileId from navigation arguments via SavedStateHandle.
             val profileId: Int? = savedStateHandle["feedProfileId"]
 
             if (profileId != null) {
-                // 2. Fetch the initial FeedProfile from the repository.
+                // Fetch the initial FeedProfile from the repository.
                 val profile: FeedProfile? = feedProfilesRepository.findProfileById(profileId)
 
                 if (profile != null) {
-                    // 3. Store the fetched profile as the "original" for the reset functionality.
+                    // Store the fetched profile as the "original" for the reset functionality.
                     originalFeedProfile = profile
 
-                    // 4. Update the state flow for the feed profile, which will trigger the 'combine' operator.
+                    // Update the state flow for the feed profile, which will trigger the 'combine' operator.
                     _feedProfileState.value = profile
                 } else {
-                    Log.e("FeedProfileEditViewModel", "Profile with id $profileId not found.")
-                    // @todo: Error UI state
+                    _feedProfileState.value = null // triggers UiState error
                 }
             } else {
-                Log.d("FeedProfileEditViewModel", "profileId is null, likely creating a new profile.")
-                // @todo: Error Ui state
+                _feedProfileState.value = null // triggers UiState error
             }
         }
     }
@@ -80,19 +81,24 @@ class FeedProfileEditViewModel @Inject constructor(
         val phaseId: Int = mapMenuItemIdToPhaseId(id)
 
         _feedProfileState.update { currentProfile ->
-            // Create a new list using mapIndexed.
-            val newPhases: List<FeedProfilePhase> =
-                currentProfile.feedProfilePhases.mapIndexed{ index, currentPhase ->
-                if (index == phaseId) {
-                    // If this is the phase we want to change, return a new, copied phase.
-                    currentPhase.copy(duration = duration)
-                } else {
-                    // Otherwise, return the existing, unchanged phase.
-                    currentPhase
-                }
+            if (currentProfile != null) {
+                // Create a new list using mapIndexed.
+                val newPhases: List<FeedProfilePhase> =
+                    currentProfile.feedProfilePhases.mapIndexed { index, currentPhase ->
+                        if (index == phaseId) {
+                            // If this is the phase we want to change, return a new, copied phase.
+                            currentPhase.copy(duration = duration)
+                        } else {
+                            // Otherwise, return the existing, unchanged phase.
+                            currentPhase
+                        }
+                    }
+                // Return a new profile object containing the new list.
+                currentProfile.copy(feedProfilePhases = newPhases)
             }
-            // Return a new profile object containing the new list.
-            currentProfile.copy(feedProfilePhases = newPhases)
+            else {
+                currentProfile
+            }
         }
     }
 
@@ -103,28 +109,45 @@ class FeedProfileEditViewModel @Inject constructor(
     ) {
         val phaseId: Int = mapMenuItemIdToPhaseId(id)
         _feedProfileState.update { currentProfile ->
-            val newPhases: List<FeedProfilePhase> =
-                currentProfile.feedProfilePhases.mapIndexed { index, currentPhase ->
-                if (index == phaseId) {
-                    when (toggleButtonType) {
-                        FeedProfileEditToggleButtonType.Skimmer -> currentPhase.copy(skimmer = isChecked)
-                        FeedProfileEditToggleButtonType.MainPump1 -> currentPhase.copy(mainPump1 = isChecked)
-                        FeedProfileEditToggleButtonType.MainPump2 -> currentPhase.copy(mainPump2 = isChecked)
-                        FeedProfileEditToggleButtonType.AuxPump1 -> currentPhase.copy(auxPump1 = isChecked)
-                        FeedProfileEditToggleButtonType.AuxPump2 -> currentPhase.copy(auxPump2 = isChecked)
+            if (currentProfile != null) {
+                val newPhases: List<FeedProfilePhase> =
+                    currentProfile.feedProfilePhases.mapIndexed { index, currentPhase ->
+                        if (index == phaseId) {
+                            when (toggleButtonType) {
+                                FeedProfileEditToggleButtonType.Skimmer -> currentPhase.copy(
+                                    skimmer = isChecked
+                                )
+                                FeedProfileEditToggleButtonType.MainPump1 -> currentPhase.copy(
+                                    mainPump1 = isChecked
+                                )
+                                FeedProfileEditToggleButtonType.MainPump2 -> currentPhase.copy(
+                                    mainPump2 = isChecked
+                                )
+                                FeedProfileEditToggleButtonType.AuxPump1 -> currentPhase.copy(
+                                    auxPump1 = isChecked
+                                )
+                                FeedProfileEditToggleButtonType.AuxPump2 -> currentPhase.copy(
+                                    auxPump2 = isChecked
+                                )
+                            }
+                        } else {
+                            currentPhase
+                        }
                     }
-                } else {
-                    currentPhase
-                }
+                currentProfile.copy(feedProfilePhases = newPhases)
             }
-            currentProfile.copy(feedProfilePhases = newPhases)
+            else {
+                currentProfile
+            }
         }
     }
 
     fun updateFeedProfile() {
         viewModelScope.launch {
-            val profileToUpdate: FeedProfile = _feedProfileState.value
-            feedProfilesRepository.updateFeedProfile(modifiedFeedProfile = profileToUpdate)
+            val profileToUpdate: FeedProfile? = _feedProfileState.value
+            if (profileToUpdate != null) {
+                feedProfilesRepository.updateFeedProfile(modifiedFeedProfile = profileToUpdate)
+            }
         }
     }
 

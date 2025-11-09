@@ -16,13 +16,13 @@ import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
-fun ScreenHeadlineComposable(text: String, modifier: Modifier? = Modifier) {
+fun ScreenHeadlineComposable(text: String) {
     Spacer(modifier = Modifier.size(size = 10.dp))
     Text(
         text = text,
         textAlign = TextAlign.Center,
         style = MaterialTheme.typography.headlineLarge,
-        modifier = modifier ?: Modifier.fillMaxWidth().padding(all = 16.dp).padding(all = 16.dp),
+        modifier = Modifier.fillMaxWidth().padding(all = 16.dp),
     )
     Spacer(modifier = Modifier.size(size = 10.dp))
 }

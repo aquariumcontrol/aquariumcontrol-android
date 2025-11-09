@@ -4,7 +4,7 @@ import com.github.mikephil.charting.data.LineData
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 
 data class FeedProfileEditUiState(
-    val feedProfile: FeedProfile = FeedProfile(),
+    val feedProfile: FeedProfile? = FeedProfile(),
     val expandedItemIds: Set<Int> = emptySet(),
     val lineDataFeeder: LineData? = null,
     val lineDataSkimmer: LineData? = null,
