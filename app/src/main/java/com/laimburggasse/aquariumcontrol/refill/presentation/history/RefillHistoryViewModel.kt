@@ -36,7 +36,6 @@ class RefillHistoryViewModel @Inject constructor(
             initialValue = RefillHistoryUiState.Loading
         )
 
-    // @todo: add functionality to limit the number of events displayed
     fun onEvent(event: RefillHistoryUiEvent) {
         when (event) {
             is RefillHistoryUiEvent.Refresh -> {

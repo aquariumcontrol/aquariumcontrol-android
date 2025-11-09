@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -28,9 +27,6 @@ open class SessionManager(
     private val _selectedControllerProfile = MutableStateFlow<ControllerProfile?>(value = null)
     val selectedControllerProfile: StateFlow<ControllerProfile?> = _selectedControllerProfile.asStateFlow()
     val isControllerLoaded: StateFlow<Boolean> = selectedControllerProfile.map { it != null }
-        .onEach { // debug @todo: remove
-            isLoaded -> Log.d("SessionManager", "isControllerLoaded: $isLoaded")
-        }
         .stateIn(
             started = SharingStarted.Eagerly,
             initialValue = false,
@@ -103,11 +99,6 @@ open class SessionManager(
     // @todo: implement controller port in all URL constructions
     open fun getControllerPort(): Int? {
         return selectedControllerProfile.value?.port
-    }
-
-    // @todo: check if this function is still required
-    open fun getControllerName(): String? {
-        return selectedControllerProfile.value?.name
     }
 
     fun suppressAutoNavigation() {

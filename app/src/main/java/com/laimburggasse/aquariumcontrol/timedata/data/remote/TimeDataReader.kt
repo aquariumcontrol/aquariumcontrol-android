@@ -32,7 +32,6 @@ class TimeDataReader(private val urlWithoutParameters: String) {
             val dateNow = Date(dateTimeInMillisNow)
             val timeNow = Time(dateTimeInMillisNow)
 
-            // @todo: change the api to give last 24h data based on server time
             val optionalGetParams: Map<String, String> = mapOf(
                 WebApiParams.START_DATE to date24hAgo.toString().replace(oldChar = ':', newChar =  '-'),
                 WebApiParams.STOP_DATE to dateNow.toString().replace(oldChar = ':', newChar = '-'),
