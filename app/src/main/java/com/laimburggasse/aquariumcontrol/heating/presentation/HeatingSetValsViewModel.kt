@@ -53,7 +53,6 @@ class HeatingSetValsViewModel @Inject constructor(
     }
 
     private fun onLowerValueChanged(value: Float) {
-        // @todo: implement range limitation
         val uiState: HeatingSetValsUiState = heatingSetValsUiState.value
         if (uiState is HeatingSetValsUiState.Success) {
             val updatedSetVals: HeatingSetVals = uiState.heatingSetVals.copy(heatingSwitchOnTemp = value.toDouble())
@@ -62,7 +61,6 @@ class HeatingSetValsViewModel @Inject constructor(
     }
 
     private fun onUpperValueChanged(value: Float) {
-        // @todo: implement range limitation
         val uiState: HeatingSetValsUiState = heatingSetValsUiState.value
         if (uiState is HeatingSetValsUiState.Success) {
             val updatedSetVals: HeatingSetVals = uiState.heatingSetVals.copy(heatingSwitchOffTemp = value.toDouble())

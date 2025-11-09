@@ -85,11 +85,10 @@ open class TimeDataRepository @Inject constructor(
             initialValue = DataFetchResult.Loading
         )
 
-    // @todo: implement pull-to-refresh
     /**
      * Public function to allow the ViewModel to trigger a manual refresh (e.g., for pull-to-refresh).
      */
     suspend fun triggerRefresh() {
-        refreshTrigger.emit(Unit)
+        refreshTrigger.emit(value = Unit)
     }
 }
