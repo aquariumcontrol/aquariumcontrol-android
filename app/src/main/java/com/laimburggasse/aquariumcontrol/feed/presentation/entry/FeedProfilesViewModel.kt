@@ -53,14 +53,6 @@ class FeedProfilesViewModel @Inject constructor(
         }
     }
 
-    fun findProfileById(profileID: Int): FeedProfile? {
-        val result: DataFetchResult<List<FeedProfile>> = feedProfilesRepository.profilesFlow.value
-        if (result is DataFetchResult.Success) {
-            return result.data.find { it.profileID == profileID }
-        }
-        return null
-    }
-
     fun onFeedProfilesUiEvent(event: FeedProfilesUiEvent) {
         when (event) {
             is FeedProfilesUiEvent.DeleteFeedProfile -> {
@@ -71,5 +63,4 @@ class FeedProfilesViewModel @Inject constructor(
             }
         }
     }
-    // @todo: add functionality to avoid creating feed profiles with already existing names
 }

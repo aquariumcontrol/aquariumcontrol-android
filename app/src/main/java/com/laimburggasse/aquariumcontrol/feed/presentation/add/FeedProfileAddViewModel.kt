@@ -3,6 +3,7 @@ package com.laimburggasse.aquariumcontrol.feed.presentation.add
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.feed.data.FeedProfilesRepository
+import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +16,9 @@ class FeedProfileAddViewModel @Inject constructor(
     private val feedProfilesRepository: FeedProfilesRepository
 ) : ViewModel() {
     private val _feedProfileName = MutableStateFlow(value = "")
+    private val _feedProfileNameExists = MutableStateFlow(value = false)
     val feedProfileName: StateFlow<String> = _feedProfileName.asStateFlow()
+    val feedProfileNameExists: StateFlow<Boolean> = _feedProfileNameExists.asStateFlow()
 
     private val _feedProfileAddUiState = MutableStateFlow<FeedProfileAddUiState>(
         value = FeedProfileAddUiState.Idle
@@ -24,6 +27,8 @@ class FeedProfileAddViewModel @Inject constructor(
 
     fun setFeedProfileName(name: String) {
         _feedProfileName.value = name // Update the StateFlow
+        val existingFeedProfile: FeedProfile? = feedProfilesRepository.findProfileByName(profileName = name)
+        _feedProfileNameExists.value = existingFeedProfile != null
         // @todo: add here functionality to avoid existing names
     }
 

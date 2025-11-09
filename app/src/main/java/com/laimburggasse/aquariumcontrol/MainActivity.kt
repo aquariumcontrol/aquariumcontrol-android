@@ -272,6 +272,7 @@ class MainActivity : ComponentActivity() {
                     composable(route = ViewNavigationRoutes.feedAddProfile) {
                         val feedProfileAddViewModel: FeedProfileAddViewModel = hiltViewModel()
                         val feedProfileName: String by feedProfileAddViewModel.feedProfileName.collectAsState()
+                        val feedProfileNameExists: Boolean by feedProfileAddViewModel.feedProfileNameExists.collectAsState()
                         val feedProfileAddUiState: FeedProfileAddUiState by feedProfileAddViewModel.feedProfileAddUiState.collectAsState()
 
                         MainScaffold(
@@ -280,6 +281,7 @@ class MainActivity : ComponentActivity() {
                             screenContent = {
                                 FeedProfileAddScreen(
                                     feedProfileName,
+                                    feedProfileNameExists,
                                     feedProfileAddUiState,
                                     onNavigateFromFeed = { event, feedProfileId, isNewScheduleEntry, millisSinceEpoch ->
                                         navHostController.handleFeedNavigation(

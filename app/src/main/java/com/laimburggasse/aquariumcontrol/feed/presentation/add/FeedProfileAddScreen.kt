@@ -33,6 +33,7 @@ import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposabl
 @Composable
 fun FeedProfileAddScreen(
     feedProfileName: String,
+    feedProfileNameExists: Boolean? = false,
     feedProfileAddUiState: FeedProfileAddUiState,
     onNavigateFromFeed: (FeedNavigationEvent, Int?, Boolean?, Long?) -> Unit,
     onFeedProfileAddEvent: (FeedProfileAddUiEvent) -> Unit,
@@ -80,13 +81,17 @@ fun FeedProfileAddScreen(
 
                 Button(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
-                    enabled = feedProfileName.isNotEmpty(),
+                    enabled = feedProfileName.isNotEmpty() && !feedProfileNameExists!!,
                     onClick = { onFeedProfileAddEvent(FeedProfileAddUiEvent.Add) },
                 ) {
                     Text(
                         text = stringResource(R.string.add_feed_profile),
                         fontSize = 16.sp
                     )
+                }
+
+                if (feedProfileNameExists == true) {
+                    Text(text = "Feed profile name already exists!")
                 }
             }
             else -> {
@@ -119,6 +124,7 @@ internal fun FeedProfileAddScreenIdlePreview() {
         screenContent = {
             FeedProfileAddScreen(
                 feedProfileName = "test",
+                feedProfileNameExists = true,
                 feedProfileAddUiState = FeedProfileAddUiState.Idle,
                 onNavigateFromFeed = {event, id, isNew, time ->},
                 onFeedProfileAddEvent = {event ->}
