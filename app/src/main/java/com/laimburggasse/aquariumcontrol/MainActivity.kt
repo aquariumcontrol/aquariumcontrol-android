@@ -489,7 +489,8 @@ class MainActivity : ComponentActivity() {
                             screenContent = {
                                 VentilationScreen(
                                     ventilationSetValsUiState,
-                                    onVentilationSetValsEvent = ventilationSetValsViewModel::onVentilationSetValsEvent
+                                    onVentilationSetValsEvent = ventilationSetValsViewModel::onVentilationSetValsEvent,
+                                    ventilationSetValsValid = ventilationSetValsViewModel.ventilationSetValsValid.collectAsState()
                                 )
                             },
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }

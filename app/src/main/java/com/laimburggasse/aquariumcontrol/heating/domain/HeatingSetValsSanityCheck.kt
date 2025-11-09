@@ -9,12 +9,12 @@ fun heatingSetValsSanityCheck(heatingSetVals: HeatingSetVals): HeatingSetValsUiS
     if (heatingSetVals.heatingSwitchOffTemp !in heatingSetValInterval ||
         heatingSetVals.heatingSwitchOnTemp !in heatingSetValInterval
     ) {
-        HeatingSetValsUiState.Error(
+        return HeatingSetValsUiState.Error(
             errorMessage = "Incorrect data received from server: values are out of range"
         )
     }
     if (heatingSetVals.heatingSwitchOffTemp <= heatingSetVals.heatingSwitchOnTemp) {
-        HeatingSetValsUiState.Error(
+        return HeatingSetValsUiState.Error(
             errorMessage = "Incorrect data received from server: switch off value must be greater than switch on value"
         )
     }

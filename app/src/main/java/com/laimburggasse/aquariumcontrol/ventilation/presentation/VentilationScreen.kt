@@ -12,6 +12,8 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,6 +30,7 @@ import com.laimburggasse.aquariumcontrol.ventilation.domain.model.VentilationSet
 @Composable
 fun VentilationScreen(
     ventilationSetValsUiState: VentilationSetValsUiState,
+    ventilationSetValsValid: State<Boolean?>,
     onVentilationSetValsEvent: (VentilationSetValsUiEvent) -> Unit
 ) {
     // This screen displays
@@ -62,6 +65,7 @@ fun VentilationScreen(
                                             VentilationSetValsUiEvent.Update) },
                                         onResetClicked = { onVentilationSetValsEvent(
                                             VentilationSetValsUiEvent.Reset) },
+                                        ventilationSetValsValid
                                     )
                                 }
                                 VentilationRangeSliderTextFieldsLandscapeComposable(
@@ -97,6 +101,7 @@ fun VentilationScreen(
                                         VentilationSetValsUiEvent.Update) },
                                     onResetClicked = { onVentilationSetValsEvent(
                                         VentilationSetValsUiEvent.Reset) },
+                                    ventilationSetValsValid
                                 )
                                 VentilationRangeSliderTextFieldsPortraitComposable(
                                     ventilationSwitchOffTemp = ventilationSetVals.ventilationSwitchOffTemp,
@@ -192,7 +197,8 @@ internal fun VentilationScreenPreviewSuccess() {
         screenContent = {
             VentilationScreen(
                 ventilationSetValsUiState = mockVentilationSetValsUiStateSuccess,
-                onVentilationSetValsEvent = {}
+                onVentilationSetValsEvent = {},
+                ventilationSetValsValid = remember {mutableStateOf(value = true)}
             )
         },
         onNavigate = {},
@@ -210,7 +216,8 @@ internal fun VentilationScreenPreviewError() {
         screenContent = {
             VentilationScreen(
                 ventilationSetValsUiState = mockVentilationSetValsUiStateError,
-                onVentilationSetValsEvent = {}
+                ventilationSetValsValid = remember {mutableStateOf(value = true)},
+                onVentilationSetValsEvent = {},
             )
         },
         onNavigate = {},

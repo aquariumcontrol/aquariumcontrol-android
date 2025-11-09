@@ -3,8 +3,10 @@ package com.laimburggasse.aquariumcontrol.ventilation.data
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.lib_model.SetValsSanityCheckResult
 import com.laimburggasse.aquariumcontrol.ventilation.data.remote.VentilationSetValsReader
 import com.laimburggasse.aquariumcontrol.ventilation.domain.model.VentilationSetVals
+import com.laimburggasse.aquariumcontrol.ventilation.domain.ventilationSetValsSanityCheck
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
@@ -78,9 +80,20 @@ open class VentilationSetValsRepository @Inject constructor(
                     ventilationSetValsReader.readVentilationSetVals()) {
                     is DataFetchResult.Success -> {
                         if (setValsList.data.isNotEmpty()) {
-                            val firstItem = setValsList.data.first()
-                            ventilationSetValsBackup = firstItem // Update the backup
-                            DataFetchResult.Success(data = firstItem)
+                            val firstItem: VentilationSetVals = setValsList.data.first()
+                            val checkResult: SetValsSanityCheckResult<Unit> = ventilationSetValsSanityCheck(ventilationSetVals = firstItem)
+                            when (checkResult) {
+                                is SetValsSanityCheckResult.Error -> {
+                                    DataFetchResult.Error(
+                                        exception = null,
+                                        errorMessage = checkResult.errorMessage
+                                    )
+                                }
+                                is SetValsSanityCheckResult.Success<*> -> {
+                                    ventilationSetValsBackup = firstItem // Update the backup
+                                    DataFetchResult.Success(data = firstItem)
+                                }
+                            }
                         } else {
                             DataFetchResult.Error(exception = null, errorMessage = "Server returned an empty list.")
                         }

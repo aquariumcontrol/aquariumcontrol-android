@@ -11,6 +11,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -24,6 +27,7 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 fun VentilationButtonsComposable(
     onUpdateClicked: () -> Unit,
     onResetClicked: () -> Unit,
+    ventilationSetValsValid: State<Boolean?>
 ) {
     // This composable displays two buttons for the Ventilation control.
     // Arrangement of the buttons follows the device's orientation.
@@ -38,7 +42,8 @@ fun VentilationButtonsComposable(
                 context.getString(R.string.sent_request_to_controller_for_updating_ventilation_set_values),
                 Toast.LENGTH_SHORT
             ).show()
-        }
+        },
+        enabled = ventilationSetValsValid.value == true
     ) {
         Text(text = stringResource(R.string.update_ventilation_controller_values))
     }
@@ -59,7 +64,8 @@ internal fun VentilationButtonsComposablePortraitPreview() {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 VentilationButtonsComposable(
                     onUpdateClicked = { },
-                    onResetClicked = { }
+                    onResetClicked = { },
+                    ventilationSetValsValid = remember {mutableStateOf(value = true)}
                 )
             }
         }
@@ -83,7 +89,8 @@ internal fun VentilationButtonsComposableLandscapePreview() {
             Row {
                 VentilationButtonsComposable(
                     onUpdateClicked = { },
-                    onResetClicked = { }
+                    onResetClicked = { },
+                    ventilationSetValsValid = remember {mutableStateOf(value = true)}
                 )
             }
         }

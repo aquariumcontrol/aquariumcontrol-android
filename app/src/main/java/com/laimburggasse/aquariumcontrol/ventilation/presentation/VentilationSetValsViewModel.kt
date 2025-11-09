@@ -2,11 +2,13 @@ package com.laimburggasse.aquariumcontrol.ventilation.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.laimburggasse.aquariumcontrol.lib_model.SetValsSanityCheckResult
 import com.laimburggasse.aquariumcontrol.ventilation.data.VentilationSetValsRepository
 import com.laimburggasse.aquariumcontrol.ventilation.domain.model.VentilationSetVals
 import com.laimburggasse.aquariumcontrol.ventilation.domain.ventilationSetValsSanityCheck
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -18,13 +20,21 @@ import javax.inject.Inject
 class VentilationSetValsViewModel @Inject constructor(
     private val ventilationSetValsRepository: VentilationSetValsRepository
 ) : ViewModel() {
+    val ventilationSetValsValid = MutableStateFlow<Boolean?>(value = true)
+
     val ventilationSetValsUiState: StateFlow<VentilationSetValsUiState> =
         ventilationSetValsRepository.ventilationSetValsFlow
         .map { result ->
             when (result) {
                 is DataFetchResult.Error -> VentilationSetValsUiState.Error(errorMessage = result.errorMessage)
                 is DataFetchResult.Success -> {
-                    ventilationSetValsSanityCheck(ventilationSetVals = result.data)
+                    val ventilationSetVals: VentilationSetVals = result.data
+                    val checkResult: SetValsSanityCheckResult<Unit> = ventilationSetValsSanityCheck(ventilationSetVals)
+                    when (checkResult) {
+                        is SetValsSanityCheckResult.Error -> ventilationSetValsValid.value = false
+                        is SetValsSanityCheckResult.Success<*> -> ventilationSetValsValid.value = true
+                    }
+                    VentilationSetValsUiState.Success(ventilationSetVals = ventilationSetVals)
                 }
                 DataFetchResult.Loading -> VentilationSetValsUiState.Loading
             }
@@ -35,29 +45,26 @@ class VentilationSetValsViewModel @Inject constructor(
         )
 
     fun onRangeChanged(start: Float, end: Float) {
-        ventilationSetValsRepository.updateLocalValues(
-            VentilationSetVals(
-                ventilationSwitchOffTemp = start.toDouble(),
-                ventilationSwitchOnTemp = end.toDouble()
-            )
+        val ventilationSetVals = VentilationSetVals(
+            ventilationSwitchOffTemp = start.toDouble(),
+            ventilationSwitchOnTemp = end.toDouble()
         )
+        ventilationSetValsRepository.updateLocalValues(ventilationSetVals)
     }
 
     fun onLowerValueChanged(value: Float) {
-        // @todo: implement range limitation
         val uiState: VentilationSetValsUiState = ventilationSetValsUiState.value
         if (uiState is VentilationSetValsUiState.Success) {
-            val updatedSetVals: VentilationSetVals = uiState.ventilationSetVals.copy(ventilationSwitchOffTemp = value.toDouble())
-            ventilationSetValsRepository.updateLocalValues(ventilationSetVals = updatedSetVals)
+            val ventilationSetVals: VentilationSetVals = uiState.ventilationSetVals.copy(ventilationSwitchOffTemp = value.toDouble())
+            ventilationSetValsRepository.updateLocalValues(ventilationSetVals)
         }
     }
 
     fun onUpperValueChanged(value: Float) {
-        // @todo: implement range limitation
         val uiState: VentilationSetValsUiState = ventilationSetValsUiState.value
         if (uiState is VentilationSetValsUiState.Success) {
-            val updatedSetVals: VentilationSetVals = uiState.ventilationSetVals.copy(ventilationSwitchOnTemp = value.toDouble())
-            ventilationSetValsRepository.updateLocalValues(ventilationSetVals = updatedSetVals)
+            val ventilationSetVals: VentilationSetVals = uiState.ventilationSetVals.copy(ventilationSwitchOnTemp = value.toDouble())
+            ventilationSetValsRepository.updateLocalValues(ventilationSetVals)
         }
     }
 
