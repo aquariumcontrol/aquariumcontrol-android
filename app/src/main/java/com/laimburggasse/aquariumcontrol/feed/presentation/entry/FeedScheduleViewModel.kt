@@ -49,8 +49,8 @@ class FeedScheduleViewModel @Inject constructor(
             initialValue = FeedScheduleSelectionUiState.Loading // The UI starts in a loading state
         )
 
-    val _feedProfile = MutableStateFlow(value = FeedProfile())
-    val feedProfile: StateFlow<FeedProfile> = _feedProfile
+    val _feedProfile = MutableStateFlow<FeedProfile?>(value = FeedProfile())
+    val feedProfile: StateFlow<FeedProfile?> = _feedProfile
 
     val _isNewScheduleEntry = MutableStateFlow(value = false)
     val isNewScheduleEntry: StateFlow<Boolean> = _isNewScheduleEntry
@@ -60,10 +60,7 @@ class FeedScheduleViewModel @Inject constructor(
 
     private fun loadDataForProfile(profileId: Int) {
         viewModelScope.launch {
-            val profile: FeedProfile? = feedProfilesRepository.findProfileById(profileId)
-            if (profile != null) {
-                _feedProfile.value = profile
-            }
+            _feedProfile.value = feedProfilesRepository.findProfileById(profileId)
         }
     }
 
@@ -76,7 +73,7 @@ class FeedScheduleViewModel @Inject constructor(
         if (profileId != null) {
             loadDataForProfile(profileId)
         } else {
-            // @todo: Handle error case
+            _feedProfile.value = null
         }
     }
 

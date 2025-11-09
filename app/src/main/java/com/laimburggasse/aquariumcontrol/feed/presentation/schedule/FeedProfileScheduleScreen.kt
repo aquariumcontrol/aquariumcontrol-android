@@ -44,7 +44,7 @@ import java.util.Locale
 
 @Composable
 fun FeedProfileScheduleScreen(
-    feedProfile: FeedProfile,
+    feedProfile: FeedProfile?,
     isNewScheduleEntry: Boolean,
     millisSinceEpoch: Long,
     onNavigateFromFeed: (FeedNavigationEvent, Int?, Boolean?, Long?) -> Unit,
@@ -72,8 +72,8 @@ fun FeedProfileScheduleScreen(
     }
     val feedScheduleEntry = FeedScheduleEntry(
         timestamp,
-        profileId = feedProfile.profileID,
-        profileName = feedProfile.profileName,
+        profileId = feedProfile?.profileID ?: -1,
+        profileName = feedProfile?.profileName ?: "Non existing profile",
         repeatDaily = repeatDaily
     )
     // Get the initial date and time from the timestamp
@@ -122,82 +122,87 @@ fun FeedProfileScheduleScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row {
-                Text(text = stringResource(id = R.string.profile_name_label) + feedProfile.profileName)
-            }
-            Spacer(modifier = Modifier.height(height = 16.dp))
-            Row {
-                Button(onClick = { datePickerDialog.show() }) {
-                    Text(text = "Select Date")
+            if (feedProfile != null) {
+                Row {
+                    Text(text = stringResource(id = R.string.profile_name_label) + feedProfile.profileName)
                 }
                 Spacer(modifier = Modifier.height(height = 16.dp))
-                Text(
-                    text = "$selectedDay.${selectedMonth + 1}.$selectedYear",
-                    modifier = Modifier.padding(all = 8.dp)
-                )
-            }
-            Spacer(modifier = Modifier.height(height = 16.dp))
-            Row {
-                Button(onClick = { timePickerDialog.show() }) {
-                    Text(text = stringResource(R.string.select_time))
+                Row {
+                    Button(onClick = { datePickerDialog.show() }) {
+                        Text(text = "Select Date")
+                    }
+                    Spacer(modifier = Modifier.height(height = 16.dp))
+                    Text(
+                        text = "$selectedDay.${selectedMonth + 1}.$selectedYear",
+                        modifier = Modifier.padding(all = 8.dp)
+                    )
                 }
                 Spacer(modifier = Modifier.height(height = 16.dp))
-                Text(
-                    text = String.format(
-                        Locale.getDefault(),
-                        "%02d:%02d",
-                        selectedHour,
-                        selectedMinute
-                    ),
-                    modifier = Modifier.padding(all = 8.dp)
-                )
-            }
-            Spacer(modifier = Modifier.height(height = 16.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Checkbox(
-                    checked = repeatDaily,
-                    onCheckedChange = { repeatDaily = it }
-                )
-                Spacer(Modifier.width(width = 8.dp))
-                Text(
-                    text = stringResource(R.string.repeat_daily)
-                )
-            }
-            Spacer(modifier = Modifier.height(height = 16.dp))
+                Row {
+                    Button(onClick = { timePickerDialog.show() }) {
+                        Text(text = stringResource(R.string.select_time))
+                    }
+                    Spacer(modifier = Modifier.height(height = 16.dp))
+                    Text(
+                        text = String.format(
+                            Locale.getDefault(),
+                            "%02d:%02d",
+                            selectedHour,
+                            selectedMinute
+                        ),
+                        modifier = Modifier.padding(all = 8.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(height = 16.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(
+                        checked = repeatDaily,
+                        onCheckedChange = { repeatDaily = it }
+                    )
+                    Spacer(Modifier.width(width = 8.dp))
+                    Text(
+                        text = stringResource(R.string.repeat_daily)
+                    )
+                }
+                Spacer(modifier = Modifier.height(height = 16.dp))
 
-            // Button to confirm and pass the selected date and time
-            Button(
-                onClick = {
-                    val selectedCalendar =
-                        Calendar.getInstance(Locale.getDefault())
-                    selectedCalendar.set(
-                        selectedYear,
-                        selectedMonth,
-                        selectedDay,
-                        selectedHour,
-                        selectedMinute
-                    )
-                    feedScheduleEntry.timestamp =
-                        Timestamp(selectedCalendar.timeInMillis)
-                    onFeedScheduleEntryUiEvent(
-                        FeedScheduleEntryUiEvent.UpdateFeedScheduleEntry(
-                            feedProfile,
-                            feedScheduleEntry,
-                            selectedCalendar,
-                            millisSinceEpoch,
-                            isNewScheduleEntry
+                // Button to confirm and pass the selected date and time
+                Button(
+                    onClick = {
+                        val selectedCalendar =
+                            Calendar.getInstance(Locale.getDefault())
+                        selectedCalendar.set(
+                            selectedYear,
+                            selectedMonth,
+                            selectedDay,
+                            selectedHour,
+                            selectedMinute
                         )
-                    )
-                    // Show the Toast after the API call
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.sent_request_to_controller_for_updating_feed_schedule),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    onNavigateFromFeed(FeedNavigationEvent.ToFeedMain, null, null, null)
-                },
-            ) {
-                Text(text = stringResource(R.string.confirm_scheduling))
+                        feedScheduleEntry.timestamp =
+                            Timestamp(selectedCalendar.timeInMillis)
+                        onFeedScheduleEntryUiEvent(
+                            FeedScheduleEntryUiEvent.UpdateFeedScheduleEntry(
+                                feedProfile,
+                                feedScheduleEntry,
+                                selectedCalendar,
+                                millisSinceEpoch,
+                                isNewScheduleEntry
+                            )
+                        )
+                        // Show the Toast after the API call
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.sent_request_to_controller_for_updating_feed_schedule),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        onNavigateFromFeed(FeedNavigationEvent.ToFeedMain, null, null, null)
+                    },
+                ) {
+                    Text(text = stringResource(R.string.confirm_scheduling))
+                }
+            }
+            else {
+                Text(text = "Internal error: Could not identify feed profile.")
             }
         }
     }
@@ -228,6 +233,27 @@ fun FeedProfileScheduleScreenPreviewSuccess() {
         screenContent = {
             FeedProfileScheduleScreen(
                 feedProfile = mockFeedProfile,
+                isNewScheduleEntry = false,
+                millisSinceEpoch = 0,
+                onNavigateFromFeed = { event, id, isNew, millis -> },
+                onFeedScheduleEntryUiEvent = {}
+            )
+        },
+        onNavigate = {},
+        darkTheme = isSystemInDarkTheme()
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+fun FeedProfileScheduleScreenPreviewError() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
+        screenContent = {
+            FeedProfileScheduleScreen(
+                feedProfile = null,
                 isNewScheduleEntry = false,
                 millisSinceEpoch = 0,
                 onNavigateFromFeed = { event, id, isNew, millis -> },

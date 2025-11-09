@@ -307,7 +307,7 @@ class MainActivity : ComponentActivity() {
                         )
                     ) { backStackEntry ->
                         val feedScheduleViewModel: FeedScheduleViewModel = hiltViewModel()
-                        val feedProfile: FeedProfile by feedScheduleViewModel.feedProfile.collectAsState()
+                        val feedProfile: FeedProfile? by feedScheduleViewModel.feedProfile.collectAsState()
                         val isNewScheduleEntry: Boolean by feedScheduleViewModel.isNewScheduleEntry.collectAsState()
                         val millisSinceEpoch: Long by feedScheduleViewModel.millisSinceEpoch.collectAsState()
                         MainScaffold(
@@ -321,7 +321,7 @@ class MainActivity : ComponentActivity() {
                                     onNavigateFromFeed = { event, profileId, isNew, millis ->
                                         navHostController.handleFeedNavigation(
                                             event,
-                                            feedProfileId = feedProfile.profileID,
+                                            feedProfileId = feedProfile?.profileID,
                                             isNewScheduleEntry,
                                             millisSinceEpoch
                                         )
