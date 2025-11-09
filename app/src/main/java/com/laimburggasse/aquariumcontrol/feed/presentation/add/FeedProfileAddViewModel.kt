@@ -29,7 +29,6 @@ class FeedProfileAddViewModel @Inject constructor(
         _feedProfileName.value = name // Update the StateFlow
         val existingFeedProfile: FeedProfile? = feedProfilesRepository.findProfileByName(profileName = name)
         _feedProfileNameExists.value = existingFeedProfile != null
-        // @todo: add here functionality to avoid existing names
     }
 
     fun onStateHandled() {
