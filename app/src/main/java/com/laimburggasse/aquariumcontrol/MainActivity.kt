@@ -470,6 +470,7 @@ class MainActivity : ComponentActivity() {
                             screenContent = {
                                 HeatingScreen(
                                     heatingSetValsUiState,
+                                    heatingSetValsValid = heatingSetValsViewModel.heatingSetValsValid.collectAsState(),
                                     onHeatingSetValsEvent = heatingSetValsViewModel::onHeatingSetValsEvent,
                                     heatingStatsUiState,
                                     onHeatingStatsEvent = heatingStatsViewModel::onHeatingStatsEvent
@@ -489,8 +490,8 @@ class MainActivity : ComponentActivity() {
                             screenContent = {
                                 VentilationScreen(
                                     ventilationSetValsUiState,
+                                    ventilationSetValsValid = ventilationSetValsViewModel.ventilationSetValsValid.collectAsState(),
                                     onVentilationSetValsEvent = ventilationSetValsViewModel::onVentilationSetValsEvent,
-                                    ventilationSetValsValid = ventilationSetValsViewModel.ventilationSetValsValid.collectAsState()
                                 )
                             },
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }

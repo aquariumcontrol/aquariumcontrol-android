@@ -4,7 +4,9 @@ import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingSetValsReader
+import com.laimburggasse.aquariumcontrol.heating.domain.heatingSetValsSanityCheck
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
+import com.laimburggasse.aquariumcontrol.lib_model.SetValsSanityCheckResult
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest
@@ -78,9 +80,21 @@ open class HeatingSetValsRepository @Inject constructor(
                     heatingSetValsReader.readHeatingSetVals()) {
                     is DataFetchResult.Success -> {
                         if (setValsList.data.isNotEmpty()) {
-                            val firstItem = setValsList.data.first()
-                            heatingSetValsBackup = firstItem // Update the backup
-                            DataFetchResult.Success(data = firstItem)
+                            val firstItem: HeatingSetVals = setValsList.data.first()
+                            val checkResult: SetValsSanityCheckResult<Unit> =
+                                heatingSetValsSanityCheck(heatingSetVals = firstItem)
+                            when (checkResult) {
+                                is SetValsSanityCheckResult.Error -> {
+                                    DataFetchResult.Error(
+                                        exception = null,
+                                        errorMessage = checkResult.errorMessage
+                                    )
+                                }
+                                is SetValsSanityCheckResult.Success<*> -> {
+                                    heatingSetValsBackup = firstItem // Update the backup
+                                    DataFetchResult.Success(data = firstItem)
+                                }
+                            }
                         } else {
                             DataFetchResult.Error(exception = null, errorMessage = "Server returned an empty list.")
                         }

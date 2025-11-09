@@ -2,11 +2,13 @@ package com.laimburggasse.aquariumcontrol.heating.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
 import com.laimburggasse.aquariumcontrol.heating.data.HeatingSetValsRepository
 import com.laimburggasse.aquariumcontrol.heating.domain.heatingSetValsSanityCheck
+import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
+import com.laimburggasse.aquariumcontrol.lib_model.SetValsSanityCheckResult
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -18,12 +20,19 @@ import javax.inject.Inject
 class HeatingSetValsViewModel @Inject constructor(
     private var heatingSetValsRepository: HeatingSetValsRepository,
 ) : ViewModel() {
+    val heatingSetValsValid = MutableStateFlow<Boolean?>(value = true)
     val heatingSetValsUiState: StateFlow<HeatingSetValsUiState> = heatingSetValsRepository.heatingSetValsFlow
         .map { result ->
             when (result) {
                 is DataFetchResult.Error -> HeatingSetValsUiState.Error(errorMessage = result.errorMessage)
                 is DataFetchResult.Success -> {
-                    heatingSetValsSanityCheck(heatingSetVals = result.data)
+                    val heatingSetVals: HeatingSetVals = result.data
+                    val checkResult: SetValsSanityCheckResult<Unit> = heatingSetValsSanityCheck(heatingSetVals)
+                    when (checkResult) {
+                        is SetValsSanityCheckResult.Error -> heatingSetValsValid.value = false
+                        is SetValsSanityCheckResult.Success<*>-> heatingSetValsValid.value = true
+                    }
+                    HeatingSetValsUiState.Success(heatingSetVals)
                 }
                 DataFetchResult.Loading -> HeatingSetValsUiState.Loading
             }

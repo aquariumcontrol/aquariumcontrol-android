@@ -15,6 +15,8 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +35,7 @@ import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposabl
 @Composable
 fun HeatingScreen(
     heatingSetValsUiState: HeatingSetValsUiState,
+    heatingSetValsValid: State<Boolean?>,
     onHeatingSetValsEvent: (HeatingSetValsUiEvent) -> Unit,
     heatingStatsUiState: HeatingStatsUiState,
     onHeatingStatsEvent: (HeatingStatsUiEvent) -> Unit
@@ -75,7 +78,8 @@ fun HeatingScreen(
                                                 onHeatingSetValsEvent(
                                                     HeatingSetValsUiEvent.Reset
                                                 )
-                                            }
+                                            },
+                                            heatingSetValsValid
                                         )
                                     }
                                     Row {
@@ -113,7 +117,8 @@ fun HeatingScreen(
                                                 HeatingSetValsUiEvent.Update
                                             )
                                         },
-                                        onResetClicked = { onHeatingSetValsEvent(HeatingSetValsUiEvent.Reset) }
+                                        onResetClicked = { onHeatingSetValsEvent(HeatingSetValsUiEvent.Reset) },
+                                        heatingSetValsValid
                                     )
                                     Spacer(modifier = Modifier.size(width = 10.dp,height = 10.dp))
                                     HeatingRangeSliderTextFieldsPortraitComposable(
@@ -309,7 +314,8 @@ fun HeatingScreenPreviewSuccess() {
                 heatingSetValsUiState = mockHeatingSetValsUiState,
                 onHeatingSetValsEvent = {},
                 heatingStatsUiState = mockHeatingStatsUiState,
-                onHeatingStatsEvent = {}
+                onHeatingStatsEvent = {},
+                heatingSetValsValid = remember { mutableStateOf(value = true) }
             )
         },
         onNavigate = {},
@@ -329,7 +335,8 @@ fun HeatingScreenPreviewError() {
                 heatingSetValsUiState = mockHeatingSetValsUiState,
                 onHeatingSetValsEvent = {},
                 heatingStatsUiState = mockHeatingStatsUiState,
-                onHeatingStatsEvent = {}
+                onHeatingStatsEvent = {},
+                heatingSetValsValid = remember { mutableStateOf(value = true) }
             )
         },
         onNavigate = {},

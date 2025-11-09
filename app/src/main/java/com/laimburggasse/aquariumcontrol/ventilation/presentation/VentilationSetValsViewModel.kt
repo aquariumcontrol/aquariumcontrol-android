@@ -34,7 +34,7 @@ class VentilationSetValsViewModel @Inject constructor(
                         is SetValsSanityCheckResult.Error -> ventilationSetValsValid.value = false
                         is SetValsSanityCheckResult.Success<*> -> ventilationSetValsValid.value = true
                     }
-                    VentilationSetValsUiState.Success(ventilationSetVals = ventilationSetVals)
+                    VentilationSetValsUiState.Success(ventilationSetVals)
                 }
                 DataFetchResult.Loading -> VentilationSetValsUiState.Loading
             }

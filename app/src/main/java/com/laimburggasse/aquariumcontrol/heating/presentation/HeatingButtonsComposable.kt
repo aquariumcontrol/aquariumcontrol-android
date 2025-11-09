@@ -11,6 +11,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -22,6 +25,7 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 fun HeatingButtonsComposable(
     onUpdateClicked: () -> Unit,
     onResetClicked: () -> Unit,
+    heatingSetValsValid: State<Boolean?>,
 ) {
     // This composable displays two buttons for the heating control.
     // Arrangement of the buttons follows the device's orientation.
@@ -37,7 +41,8 @@ fun HeatingButtonsComposable(
                 "Sent request to controller for updating heating set values",
                 Toast.LENGTH_SHORT
             ).show()
-        }
+        },
+        enabled = heatingSetValsValid.value == true
     ) {
         Text(text = "Update Heating Controller Values")
     }
@@ -59,7 +64,8 @@ internal fun HeatingButtonsComposablePortraitPreview() {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 HeatingButtonsComposable(
                     onUpdateClicked = { },
-                    onResetClicked = { }
+                    onResetClicked = { },
+                    heatingSetValsValid = remember { mutableStateOf(value = true) }
                 )
             }
         }
@@ -83,7 +89,8 @@ internal fun HeatingButtonsComposableLandscapePreview() {
             Row {
                 HeatingButtonsComposable(
                     onUpdateClicked = { },
-                    onResetClicked = { }
+                    onResetClicked = { },
+                    heatingSetValsValid = remember { mutableStateOf(value = true) }
                 )
             }
         }
