@@ -132,7 +132,8 @@ open class ScheduleRepository @Inject constructor(
     open suspend fun fetchScheduleSetVals(): DataFetchResult<ScheduleEntries> {
         return withContext(context = Dispatchers.IO) {
             val url: String =
-                "http://" + sessionManager.getControllerAddress() + WebApiUrls.ACTUATOR_SCHEDULE_GET_VALS
+                "http://" + sessionManager.getControllerAddress() + ":" +
+                sessionManager.getControllerPort() + WebApiUrls.ACTUATOR_SCHEDULE_GET_VALS
 
             val scheduleEntryReader = ScheduleEntryReader(url)
             val result: DataFetchResult<List<ScheduleStringEntry>> =

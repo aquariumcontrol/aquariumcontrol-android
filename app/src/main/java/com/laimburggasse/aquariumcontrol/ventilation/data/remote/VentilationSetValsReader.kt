@@ -22,6 +22,12 @@ class VentilationSetValsReader(private val url: String) {
                 if (responseBody.isEmpty()) {
                     return DataFetchResult.Success(data = emptyList())
                 }
+                if (!responseBody.startsWith(prefix = "[")) {
+                    return DataFetchResult.Error(
+                        exception = null,
+                        errorMessage = "Server responded with invalid JSON: $responseBody"
+                    )
+                }
                 try {
                     val decodedData: List<VentilationSetVals> =
                         json.decodeFromString<List<VentilationSetVals>>(string = responseBody)

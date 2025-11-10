@@ -22,10 +22,22 @@ class BallingProfileReader(private val url: String) {
                 if (responseBody.isEmpty()) {
                     return DataFetchResult.Success(data = emptyList())
                 }
-                else {
+                if (!responseBody.startsWith(prefix = "[")) {
+                    return DataFetchResult.Error(
+                        exception = null,
+                        errorMessage = "Server responded with malformed JSON: $responseBody"
+                    )
+                }
+                try {
                     val decodedData: List<BallingProfile> =
                         json.decodeFromString<List<BallingProfile>>(string = responseBody)
                     return DataFetchResult.Success(decodedData)
+                }
+                catch (exception: Exception) {
+                    return DataFetchResult.Error(
+                        exception,
+                        errorMessage = "Error decoding data sent from server: ${exception.message}"
+                    )
                 }
             } else {
                 return DataFetchResult.Error(

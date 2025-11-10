@@ -74,7 +74,7 @@ open class HeatingSetValsRepository @Inject constructor(
             emit(value = DataFetchResult.Loading)
 
             val networkResult: DataFetchResult<HeatingSetVals> = withContext(context = Dispatchers.IO) {
-                val url = "http://${controller.address}${WebApiUrls.HEATING_GET_SET_VALS}"
+                val url = "http://${controller.address}:${controller.port}${WebApiUrls.HEATING_GET_SET_VALS}"
                 val heatingSetValsReader = HeatingSetValsReader(url)
                 when (val setValsList: DataFetchResult<List<HeatingSetVals>> =
                     heatingSetValsReader.readHeatingSetVals()) {

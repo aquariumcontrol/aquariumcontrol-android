@@ -51,6 +51,12 @@ class TimeDataReader(private val urlWithoutParameters: String) {
                 if (responseBody.isEmpty()) {
                     return DataFetchResult.Success(data = emptyList())
                 }
+                if (!responseBody.startsWith(prefix = "[")) {
+                    return DataFetchResult.Error(
+                        exception = null,
+                        errorMessage = "Server responded with invalid JSON: $responseBody"
+                    )
+                }
                 try {
                     val decodedData:List<TimeDataStringSample> = json.
                         decodeFromString<List<TimeDataStringSample>>(string = responseBody)

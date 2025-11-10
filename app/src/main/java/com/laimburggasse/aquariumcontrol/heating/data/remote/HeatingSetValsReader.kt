@@ -22,14 +22,20 @@ class HeatingSetValsReader(private val url: String) {
                 if (responseBody.isEmpty()) {
                     return DataFetchResult.Success(data = emptyList())
                 }
+                if (!responseBody.startsWith(prefix = "[")) {
+                    return DataFetchResult.Error(
+                        exception = null,
+                        errorMessage = "Server responded with non-JSON data: $responseBody"
+                    )
+                }
                 try {
                     val decodedData: List<HeatingSetVals> =
                         json.decodeFromString<List<HeatingSetVals>>(string = responseBody)
                     return DataFetchResult.Success(decodedData)
-                } catch (e: Exception) {
+                } catch (exception: Exception) {
                     return DataFetchResult.Error(
-                        exception = e,
-                        errorMessage = "Error decoding data sent from server: ${e.message}"
+                        exception,
+                        errorMessage = "Error decoding data sent from server: ${exception.message}"
                     )
                 }
             } else {

@@ -1,12 +1,11 @@
 package com.laimburggasse.aquariumcontrol
 
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.core.content.edit
 import com.laimburggasse.aquariumcontrol.MainActivity.Companion.KEY_DEFAULT_PROFILE_ID
 import com.laimburggasse.aquariumcontrol.MainActivity.Companion.NO_DEFAULT_ID
-import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.controller.data.ControllerProfileDao
+import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -42,29 +41,22 @@ open class SessionManager(
     val isFirstLoad: StateFlow<Boolean> = _isFirstLoad.asStateFlow()
 
     init {
-        Log.d("SessionManager_LIFECYCLE", "A new SessionManager instance has been CREATED. HashCode: ${this.hashCode()}")
         externalScope.launch {
             val defaultId = withContext(context = Dispatchers.IO) { // Use Dispatchers.IO for file access
                 sharedPreferences?.getLong(KEY_DEFAULT_PROFILE_ID, NO_DEFAULT_ID)
             }
             if (defaultId != NO_DEFAULT_ID) {
                 // Emit the loaded value. This will trigger the 'combine' in the ViewModel.
-                Log.d("SessionManager", "Loaded defaultId: $defaultId")
                 _defaultControllerProfileId.value = defaultId
-            }
-            else {
-                Log.d("SessionManager", "No defaultId found")
             }
         }
     }
 
     suspend fun selectControllerById(id: Long): Boolean {
-        Log.d("SessionManager", "selectControllerById: $id")
         previousControllerProfileId = _defaultControllerProfileId.value
         return withContext(context = Dispatchers.IO) {
             val profile: ControllerProfile? = dao.getControllerProfileById(id)
             if (profile != null) {
-                Log.d("SessionManager", "selectControllerById found profile: $profile")
                 _selectedControllerProfile.value = profile
                 true
             } else {
@@ -80,7 +72,6 @@ open class SessionManager(
     }
 
     fun updateSelectedControllerProfile(controllerProfile: ControllerProfile) {
-        Log.d("SessionManager", "updateSelectedControllerProfile: $controllerProfile")
         _selectedControllerProfile.value = controllerProfile
     }
 
@@ -96,18 +87,15 @@ open class SessionManager(
         return selectedControllerProfile.value?.password
     }
 
-    // @todo: implement controller port in all URL constructions
     open fun getControllerPort(): Int? {
         return selectedControllerProfile.value?.port
     }
 
     fun suppressAutoNavigation() {
-        Log.d("SessionManager", "suppressAutoNavigation")
         _isFirstLoad.value = false
     }
 
     fun unsetDefaultControllerId() {
-        Log.d("SessionManager", "unsetDefaultControllerId")
         if (previousControllerProfileId != null) {
             _defaultControllerProfileId.value = previousControllerProfileId!!
         }

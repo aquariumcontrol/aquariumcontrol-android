@@ -45,7 +45,8 @@ open class TimeDataRepository @Inject constructor(
                 val readResult: DataFetchResult<List<TimeDataStringSample>> =
                     withContext(context = Dispatchers.IO) {
                         val url: String =
-                            "http://" + sessionManager.getControllerAddress() + WebApiUrls.DATA_GET_START_STOP
+                            "http://" + sessionManager.getControllerAddress() + ":" +
+                            sessionManager.getControllerPort() + WebApiUrls.DATA_GET_START_STOP
                         val reader = TimeDataReader(urlWithoutParameters = url)
                         reader.readTimeDataSeries()
                     }

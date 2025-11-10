@@ -40,14 +40,14 @@ open class HeatingStatsRepository @Inject constructor(
         controller
     }
     .filterNotNull()
-    .flatMapLatest { controller: ControllerProfile? ->
+    .flatMapLatest { controller: ControllerProfile ->
         flow {
             // UI shall temporarily show loading state, while fetching data
             emit(value = DataFetchResult.Loading)
 
             val result: DataFetchResult<List<HeatingStatsEntry>> =
                 withContext(context = Dispatchers.IO) {
-                    val url = "http://${controller?.address}${WebApiUrls.HEATING_GET_STATS}"
+                    val url = "http://${controller.address}:${controller.port}${WebApiUrls.HEATING_GET_STATS}"
                     val heatingStatsReader = HeatingStatsReader(url)
                     val stringResult: DataFetchResult<List<HeatingStatsStringEntry>> =
                         heatingStatsReader.readStatsEntry()

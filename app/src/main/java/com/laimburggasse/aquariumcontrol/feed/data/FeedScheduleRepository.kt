@@ -79,7 +79,7 @@ open class FeedScheduleRepository @Inject constructor(
 
             val networkResult: DataFetchResult<List<FeedScheduleEntry>> =
                 withContext(context = Dispatchers.IO) {
-                    val url = "http://${controller.address}${WebApiUrls.FEED_GET_SCHEDULE}"
+                    val url = "http://${controller.address}:${controller.port}${WebApiUrls.FEED_GET_SCHEDULE}"
                     val scheduleReader = FeedScheduleEntryReader(url)
                     val importResult: DataFetchResult<List<FeedScheduleEntryImport>> =
                         scheduleReader.readFeedScheduleEntries()

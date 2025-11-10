@@ -59,9 +59,9 @@ open class BallingHistoryRepository @Inject constructor(
                 emit(value = DataFetchResult.Loading)
 
                 val url: String = if (isFullWeek) {
-                    "http://${controller!!.address}${WebApiUrls.BALLING_GET_EVENTS_7D}"
+                    "http://${controller!!.address}:${controller.port}${WebApiUrls.BALLING_GET_EVENTS_7D}"
                 } else {
-                    "http://${controller!!.address}${WebApiUrls.BALLING_GET_EVENTS_24H}"
+                    "http://${controller!!.address}:${controller.port}${WebApiUrls.BALLING_GET_EVENTS_24H}"
                 }
 
                 val result: DataFetchResult<List<BallingHistoryLogEntry>> =

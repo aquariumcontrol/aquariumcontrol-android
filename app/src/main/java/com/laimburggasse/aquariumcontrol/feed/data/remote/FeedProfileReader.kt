@@ -21,11 +21,23 @@ class FeedProfileReader(private val url: String) {
             if (response.isSuccessful) {
                 val responseBody: String = response.body.string()
                 if (responseBody.isEmpty()) {
-                    DataFetchResult.Success(data = emptyList())
-                } else {
+                    return DataFetchResult.Success(data = emptyList())
+                }
+                if (!responseBody.startsWith(prefix = "[")) {
+                    return DataFetchResult.Error(
+                        exception = null,
+                        errorMessage = "Server responded with non-JSON data: $responseBody"
+                    )
+                }
+                try {
                     val decodedData: List<FeedProfileImport> =
                         json.decodeFromString<List<FeedProfileImport>>(string = responseBody)
                     DataFetchResult.Success(data = decodedData)
+                } catch (exception: Exception) {
+                    return DataFetchResult.Error(
+                        exception,
+                        errorMessage = "Error decoding data sent from server: ${exception.message}"
+                    )
                 }
             } else {
                 DataFetchResult.Error(

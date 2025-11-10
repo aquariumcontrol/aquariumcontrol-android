@@ -22,6 +22,12 @@ class ScheduleEntryReader(private val url: String) {
                 if (responseBody.isEmpty()) {
                     return DataFetchResult.Success(data = emptyList())
                 }
+                if (!responseBody.startsWith(prefix = "[")) {
+                    return DataFetchResult.Error(
+                        exception = null,
+                        errorMessage = "Server responded with invalid JSON: $responseBody"
+                    )
+                }
                 try {
                     val decodedData: List<ScheduleStringEntry> =
                         json.decodeFromString<List<ScheduleStringEntry>>(string = responseBody)

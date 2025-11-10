@@ -20,7 +20,27 @@ class OverviewDataReader(private val url: String) {
             val response: Response = client.newCall(request).execute()
             if (response.isSuccessful) {
                 val responseBody: String = response.body.string()
-                json.decodeFromString<List<String>>(string = responseBody)
+                if (responseBody.isEmpty()) {
+                    return DataFetchResult.Error(
+                        exception = null,
+                        errorMessage = "Server responded with empty body"
+                    )
+                }
+                if (!responseBody.startsWith(prefix = "[")) {
+                    return DataFetchResult.Error(
+                        exception = null,
+                        errorMessage = "Server responded with invalid JSON: $responseBody"
+                    )
+                }
+                try {
+                    json.decodeFromString<List<String>>(string = responseBody)
+                }
+                catch (exception: Exception) {
+                    return DataFetchResult.Error(
+                        exception,
+                        errorMessage = "Error decoding data sent from server: ${exception.message}"
+                    )
+                }
             } else {
                 return DataFetchResult.Error(
                     exception = null,

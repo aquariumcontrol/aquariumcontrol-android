@@ -16,7 +16,8 @@ suspend fun webApiPostRequestExecution(
     if (user == null || password == null) {
         return false
     }
-    var url: String = "http://" + sessionManager.getControllerAddress() + apiUrl + "?"
+    var url: String = "http://" + sessionManager.getControllerAddress() + ":" +
+                        sessionManager.getControllerPort() + apiUrl + "?"
 
     for ((index: Int, entry: Map.Entry<String, String>) in optionalGetParams.entries.withIndex()) {
         val (key: String, value: String) = entry
