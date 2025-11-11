@@ -350,7 +350,7 @@ class MainActivity : ComponentActivity() {
                                     onNavigateFromBalling = {
                                         event, pumpId -> navHostController.handleBallingNavigation(event, pumpId)
                                     },
-                                    onLaunchedEffect = ballingViewModel::onLaunchedEffect,
+                                    onRefresh = ballingViewModel::onRefresh,
                                 )
                             },
                             onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) },

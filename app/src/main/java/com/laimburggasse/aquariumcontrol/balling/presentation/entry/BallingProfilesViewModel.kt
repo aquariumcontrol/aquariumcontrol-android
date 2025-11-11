@@ -1,6 +1,5 @@
 package com.laimburggasse.aquariumcontrol.balling.presentation.entry
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.balling.data.BallingProfilesRepository
@@ -37,9 +36,8 @@ class BallingProfilesViewModel @Inject constructor(
             initialValue = BallingProfilesUiState.Loading // The UI starts in a loading state
         )
 
-   fun onLaunchedEffect() {
+   fun onRefresh() {
         viewModelScope.launch {
-            Log.d("BallingProfilesViewModel", "onLaunchedEffect")
             ballingProfilesRepository.triggerRefresh()
         }
     }

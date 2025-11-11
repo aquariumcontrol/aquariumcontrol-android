@@ -33,7 +33,7 @@ class BallingScreenTest {
                     BallingScreen(
                         ballingProfilesUiState = mockBallingProfilesUiStateSuccess,
                         onNavigateFromBalling = { event, pumpId -> },
-                        onLaunchedEffect = {}
+                        onRefresh = {}
                     )
                 },
                 onNavigate = {},
@@ -59,7 +59,7 @@ class BallingScreenTest {
                     BallingScreen(
                         onNavigateFromBalling = { event, pumpId -> },
                         ballingProfilesUiState = mockBallingProfilesUiStateSuccess,
-                        onLaunchedEffect = {}
+                        onRefresh = {}
                     )
                 },
                 onNavigate = {},
