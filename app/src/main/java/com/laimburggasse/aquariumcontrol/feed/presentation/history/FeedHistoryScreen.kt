@@ -129,7 +129,7 @@ fun FeedHistoryScreen(
                             }
 
                             is FeedHistoryUiState.Success -> {
-                                val feedEvents = feedHistoryUiState.feedHistoryLogEntries
+                                val feedEvents: List<FeedHistoryLogEntry> = feedHistoryUiState.feedHistoryLogEntries
                                 if (LocalInspectionMode.current) {
                                     // In Preview: Render a simple, static Column instead of LazyColumn
                                     Column(modifier = Modifier.fillMaxSize()) {

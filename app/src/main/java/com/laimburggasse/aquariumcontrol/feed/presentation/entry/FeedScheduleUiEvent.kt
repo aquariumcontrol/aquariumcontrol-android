@@ -5,4 +5,5 @@ import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 sealed interface FeedScheduleUiEvent {
     data class GetFeedProfileIdByName(val feedProfileName: String) : FeedScheduleUiEvent
     data class DeleteFeedScheduleEntry(val feedScheduleEntry: FeedScheduleEntry) : FeedScheduleUiEvent
+    object Refresh: FeedScheduleUiEvent
 }

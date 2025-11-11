@@ -120,14 +120,22 @@ class FeedScheduleViewModel @Inject constructor(
         return feedProfile?.profileID
     }
 
+    fun loadData() {
+        viewModelScope.launch {
+            feedScheduleRepository.triggerRefresh()
+        }
+    }
+
     fun onFeedSchedulesUiEvent(event: FeedScheduleUiEvent): Int? {
         when (event) {
             is FeedScheduleUiEvent.GetFeedProfileIdByName -> {
                 return getFeedProfileIdByName(event.feedProfileName)
             }
             is FeedScheduleUiEvent.DeleteFeedScheduleEntry -> {
-                Log.d("FeedScheduleViewModel", "Delete feed schedule entry")
                 deleteFeedScheduleEntry(feedScheduleEntry = event.feedScheduleEntry)
+            }
+            is FeedScheduleUiEvent.Refresh -> {
+                loadData()
             }
         }
         return null
