@@ -95,6 +95,11 @@ class HeatingSetValsViewModel @Inject constructor(
             HeatingSetValsUiEvent.Update -> {
                 updateValues()
             }
+            HeatingSetValsUiEvent.Refresh -> {
+                viewModelScope.launch {
+                    heatingSetValsRepository.triggerRefresh()
+                }
+            }
         }
     }
 }

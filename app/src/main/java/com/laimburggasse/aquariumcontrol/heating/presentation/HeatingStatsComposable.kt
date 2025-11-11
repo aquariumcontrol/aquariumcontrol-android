@@ -18,8 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.laimburggasse.aquariumcontrol.lib_composables.RoundRefreshButtonComposable
-import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import com.github.mikephil.charting.charts.CombinedChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
@@ -31,10 +29,12 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
-import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
-import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingStatsSignal
 import com.laimburggasse.aquariumcontrol.heating.data.remote.dto.HeatingStatsStringEntry
+import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
+import com.laimburggasse.aquariumcontrol.lib_composables.RoundRefreshButtonComposable
+import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 @Composable
@@ -47,9 +47,9 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: ()
     Column(horizontalAlignment = CenterHorizontally) {
         AndroidView(
             modifier = Modifier
-                .weight(1f)
+                .weight(weight = 1f)
                 .fillMaxSize()
-                .padding(16.dp), // Add some padding around the chart
+                .padding(all = 16.dp), // Add some padding around the chart
             factory = { context ->
                 CombinedChart(context).apply {
                     // Chart configuration
@@ -70,7 +70,7 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: ()
 
                         override fun getFormattedValue(value: Float): String {
                             // Convert the float value (which represents days) back to a Date object.
-                            val date = heatingStats.getOrNull(value.toInt())?.date
+                            val date: Date? = heatingStats.getOrNull(value.toInt())?.date
                             return date?.let { dateFormat.format(it) }
                                 ?: "" // Return formatted date or empty
                         }
@@ -94,9 +94,9 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: ()
             update = { chart ->
                 if (heatingStats.isNotEmpty()) {
                     // Create data entries
-                    val energyEntries = mutableListOf<BarEntry>()
-                    val ambientTempEntries = mutableListOf<Entry>()
-                    val waterTempEntries = mutableListOf<Entry>()
+                    val energyEntries: MutableList<BarEntry> = mutableListOf()
+                    val ambientTempEntries: MutableList<Entry> = mutableListOf()
+                    val waterTempEntries: MutableList<Entry> = mutableListOf()
 
                     heatingStats.forEachIndexed { index, entry ->
                         energyEntries.add(BarEntry(index.toFloat(), entry.energy.toFloat()))
@@ -115,7 +115,7 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: ()
                     }
 
                     // Energy Bar Data Set
-                    val energyDataSet = BarDataSet(energyEntries, "Energy [Wh]").apply {
+                    val energyDataSet: BarDataSet = BarDataSet(energyEntries, "Energy [Wh]").apply {
                         color = Color.RED
                         valueTextColor = Color.RED
                         valueTextSize = 10f
@@ -123,10 +123,10 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: ()
                     }
 
                     // Ambient Temperature Line Data Set
-                    val ambientTempDataSet =
+                    val ambientTempDataSet: LineDataSet =
                         LineDataSet(ambientTempEntries, "Ambient Temperature [°C]").apply {
                             color =
-                                heatingStatsLineColorDefinition(HeatingStatsSignal.AMBIENT_TEMPERATURE)
+                                heatingStatsLineColorDefinition(signal = HeatingStatsSignal.AMBIENT_TEMPERATURE)
                             lineWidth = 2f
                             setDrawCircles(false)
                             setDrawValues(false)
@@ -134,10 +134,10 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: ()
                         }
 
                     // Water Temperature Line Data Set
-                    val waterTempDataSet =
+                    val waterTempDataSet: LineDataSet =
                         LineDataSet(waterTempEntries, "Water Temperature [°C]").apply {
                             color =
-                                heatingStatsLineColorDefinition(HeatingStatsSignal.WATER_TEMPERATURE)
+                                heatingStatsLineColorDefinition(signal = HeatingStatsSignal.WATER_TEMPERATURE)
                             lineWidth = 2f
                             setDrawCircles(false)
                             setDrawValues(false)
@@ -145,7 +145,7 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: ()
                         }
 
                     // Create CombinedData object
-                    val combinedData = CombinedData().apply {
+                    val combinedData: CombinedData = CombinedData().apply {
                         setData(BarData(energyDataSet))
                         setData(LineData(listOf(ambientTempDataSet, waterTempDataSet)))
                     }
@@ -166,14 +166,14 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: ()
 
         ) {
             HeatingStatsLegendComposable()
-            Spacer(modifier = Modifier.width(32.dp))
+            Spacer(modifier = Modifier.width(width = 32.dp))
             RoundRefreshButtonComposable(onClick = updateData)
         }
     }
 }
 
 fun createMockHeatingStatsData(): List<HeatingStatsEntry> {
-    val mockHeatingStatsStringEntries = listOf(
+    val mockHeatingStatsStringEntries: List<HeatingStatsStringEntry> = listOf(
         HeatingStatsStringEntry(
             dateString = "2025-1-12",
             energy = 1988.17,
@@ -209,7 +209,7 @@ fun createMockHeatingStatsData(): List<HeatingStatsEntry> {
 )
 @Composable
 internal fun HeatingStatsComposablePreview() {
-    val mockData = createMockHeatingStatsData()
+    val mockData: List<HeatingStatsEntry> = createMockHeatingStatsData()
 
     AquariumControllerTheme {
         Surface(color = MaterialTheme.colorScheme.background) {

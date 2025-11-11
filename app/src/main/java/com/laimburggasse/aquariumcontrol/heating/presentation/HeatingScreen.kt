@@ -106,7 +106,8 @@ fun HeatingScreen(
                                                         newLowerValue, newUpperValue
                                                     )
                                                 )
-                                            }
+                                            },
+                                            onRefresh = { onHeatingSetValsEvent(HeatingSetValsUiEvent.Refresh) }
                                         )
                                     }
                                 }
@@ -144,7 +145,8 @@ fun HeatingScreen(
                                                     newLowerValue, newUpperValue
                                                 )
                                             )
-                                        }
+                                        },
+                                        onRefresh = { onHeatingSetValsEvent(HeatingSetValsUiEvent.Refresh) }
                                     )
                                 }
                             }

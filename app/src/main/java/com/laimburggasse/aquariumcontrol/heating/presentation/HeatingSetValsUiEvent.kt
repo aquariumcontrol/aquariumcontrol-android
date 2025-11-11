@@ -6,4 +6,5 @@ sealed interface HeatingSetValsUiEvent {
     data class ChangeUpperValue(val upperValue: Float): HeatingSetValsUiEvent
     object Update: HeatingSetValsUiEvent
     object Reset: HeatingSetValsUiEvent
+    object Refresh: HeatingSetValsUiEvent
 }
