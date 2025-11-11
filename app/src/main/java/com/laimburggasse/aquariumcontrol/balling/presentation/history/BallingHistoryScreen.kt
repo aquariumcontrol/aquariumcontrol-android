@@ -36,7 +36,6 @@ import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
-import com.laimburggasse.aquariumcontrol.balling.presentation.entry.BallingProfilesUiState
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 
 @Composable
@@ -70,11 +69,11 @@ fun BallingHistoryScreen(
         PullToRefreshBox(
             modifier = Modifier.fillMaxWidth(),
             state = rememberPullToRefreshState(),
-            isRefreshing = ballingHistoryUiState == BallingProfilesUiState.Loading,
+            isRefreshing = ballingHistoryUiState == BallingHistoryUiState.Loading,
             contentAlignment = Alignment.Center,
             onRefresh = { onEvent(BallingHistoryUiEvent.Refresh) },
             indicator = {
-                if (ballingHistoryUiState == BallingProfilesUiState.Loading) {
+                if (ballingHistoryUiState == BallingHistoryUiState.Loading) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(size = 150.dp),
                         color = MaterialTheme.colorScheme.primary

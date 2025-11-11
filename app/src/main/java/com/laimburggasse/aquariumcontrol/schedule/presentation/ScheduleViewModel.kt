@@ -113,6 +113,11 @@ class ScheduleViewModel @Inject constructor(
             ScheduleUiEvent.Reset -> {
                 resetSchedule()
             }
+            ScheduleUiEvent.Refresh -> {
+                viewModelScope.launch {
+                    scheduleRepository.triggerRefresh()
+                }
+            }
         }
     }
 }

@@ -12,4 +12,5 @@ sealed interface ScheduleUiEvent {
         val scheduleType: ScheduleType,
         val isActive: Boolean
     ): ScheduleUiEvent
+    object Refresh: ScheduleUiEvent
 }

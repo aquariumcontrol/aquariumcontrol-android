@@ -7,14 +7,19 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -41,142 +46,219 @@ fun ScheduleScreen(
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         ScreenHeadlineComposable(text = stringResource(R.string.actuator_schedule))
-        when (scheduleUiState) {
-            is ScheduleUiState.Success -> {
-                val scheduleEntries: ScheduleEntries = scheduleUiState.scheduleEntries
-                when (configuration.orientation) {
-                    Configuration.ORIENTATION_LANDSCAPE -> {
-                        Row {
+        PullToRefreshBox(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center,
+            state = rememberPullToRefreshState(),
+            isRefreshing = scheduleUiState is ScheduleUiState.Loading,
+            onRefresh = { onScheduleEvent(ScheduleUiEvent.Refresh) },
+            indicator = {
+                if (scheduleUiState is ScheduleUiState.Loading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(size = 150.dp),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+        ) {
+            when (scheduleUiState) {
+                is ScheduleUiState.Success -> {
+                    val scheduleEntries: ScheduleEntries = scheduleUiState.scheduleEntries
+                    when (configuration.orientation) {
+                        Configuration.ORIENTATION_LANDSCAPE -> {
+                            Row {
+                                ScheduleUpdateResetButtonsComposable(onScheduleEvent)
+                            }
+                        }
+
+                        else -> {
                             ScheduleUpdateResetButtonsComposable(onScheduleEvent)
                         }
                     }
-                    else -> {
-                        ScheduleUpdateResetButtonsComposable(onScheduleEvent)
-                    }
-                }
-                Scaffold (
-                    topBar = { },
-                    bottomBar = { },
-                    floatingActionButton = {},
-                    snackbarHost = { SnackbarHost(hostState = remember { SnackbarHostState() }) }
-                ) { innerPadding ->
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.padding(paddingValues = innerPadding)
-                    ) {
-                        Spacer(modifier = Modifier.size(width = 10.dp, height = 10.dp))
-                        Column(modifier = Modifier.verticalScroll(state = rememberScrollState())
+                    Scaffold(
+                        topBar = { },
+                        bottomBar = { },
+                        floatingActionButton = {},
+                        snackbarHost = { SnackbarHost(hostState = remember { SnackbarHostState() }) }
+                    ) { innerPadding ->
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.padding(paddingValues = innerPadding)
                         ) {
-                            // --- Balling Adjustment ---
-                            ScheduleAdjustmentComposable(
-                                title = "Balling",
-                                startTime = scheduleEntries.ballingStartTime,
-                                stopTime = scheduleEntries.ballingStopTime,
-                                isLimitationActive = scheduleEntries.ballingLimitationActive,
-                                onStartTimeChanged = { newTime ->
-                                    onScheduleEvent(ScheduleUiEvent.ChangeTime(ScheduleType.BALLING, TimeType.START, newTime))
-                                },
-                                onStopTimeChanged = { newTime ->
-                                    onScheduleEvent(ScheduleUiEvent.ChangeTime(ScheduleType.BALLING, TimeType.STOP, newTime))
-                                },
-                                onLimitationActiveChanged = { isActive ->
-                                    onScheduleEvent(
-                                        ScheduleUiEvent.ChangeLimitationActive(
-                                            ScheduleType.BALLING, isActive))
-                                }
-                            )
+                            Spacer(modifier = Modifier.size(width = 10.dp, height = 10.dp))
+                            Column(
+                                modifier = Modifier.verticalScroll(state = rememberScrollState())
+                            ) {
+                                // --- Balling Adjustment ---
+                                ScheduleAdjustmentComposable(
+                                    title = "Balling",
+                                    startTime = scheduleEntries.ballingStartTime,
+                                    stopTime = scheduleEntries.ballingStopTime,
+                                    isLimitationActive = scheduleEntries.ballingLimitationActive,
+                                    onStartTimeChanged = { newTime ->
+                                        onScheduleEvent(
+                                            ScheduleUiEvent.ChangeTime(
+                                                ScheduleType.BALLING,
+                                                TimeType.START,
+                                                newTime
+                                            )
+                                        )
+                                    },
+                                    onStopTimeChanged = { newTime ->
+                                        onScheduleEvent(
+                                            ScheduleUiEvent.ChangeTime(
+                                                ScheduleType.BALLING,
+                                                TimeType.STOP,
+                                                newTime
+                                            )
+                                        )
+                                    },
+                                    onLimitationActiveChanged = { isActive ->
+                                        onScheduleEvent(
+                                            ScheduleUiEvent.ChangeLimitationActive(
+                                                ScheduleType.BALLING, isActive
+                                            )
+                                        )
+                                    }
+                                )
 
-                            // --- Refill Adjustment ---
-                            ScheduleAdjustmentComposable(
-                                title = "Refill",
-                                startTime = scheduleEntries.refillStartTime,
-                                stopTime = scheduleEntries.refillStopTime,
-                                isLimitationActive = scheduleEntries.refillLimitationActive,
-                                onStartTimeChanged = { newTime ->
-                                    onScheduleEvent(ScheduleUiEvent.ChangeTime(ScheduleType.REFILL, TimeType.START, newTime))
-                                },
-                                onStopTimeChanged = { newTime ->
-                                    onScheduleEvent(ScheduleUiEvent.ChangeTime(ScheduleType.REFILL, TimeType.STOP, newTime))
-                                },
-                                onLimitationActiveChanged = { isActive ->
-                                    onScheduleEvent(
-                                        ScheduleUiEvent.ChangeLimitationActive(
-                                            ScheduleType.REFILL, isActive))
-                                }
-                            )
+                                // --- Refill Adjustment ---
+                                ScheduleAdjustmentComposable(
+                                    title = "Refill",
+                                    startTime = scheduleEntries.refillStartTime,
+                                    stopTime = scheduleEntries.refillStopTime,
+                                    isLimitationActive = scheduleEntries.refillLimitationActive,
+                                    onStartTimeChanged = { newTime ->
+                                        onScheduleEvent(
+                                            ScheduleUiEvent.ChangeTime(
+                                                ScheduleType.REFILL,
+                                                TimeType.START,
+                                                newTime
+                                            )
+                                        )
+                                    },
+                                    onStopTimeChanged = { newTime ->
+                                        onScheduleEvent(
+                                            ScheduleUiEvent.ChangeTime(
+                                                ScheduleType.REFILL,
+                                                TimeType.STOP,
+                                                newTime
+                                            )
+                                        )
+                                    },
+                                    onLimitationActiveChanged = { isActive ->
+                                        onScheduleEvent(
+                                            ScheduleUiEvent.ChangeLimitationActive(
+                                                ScheduleType.REFILL, isActive
+                                            )
+                                        )
+                                    }
+                                )
 
-                            // --- Ventilation Adjustment ---
-                            ScheduleAdjustmentComposable(
-                                title = "Ventilation",
-                                startTime = scheduleEntries.ventilationStartTime,
-                                stopTime = scheduleEntries.ventilationStopTime,
-                                isLimitationActive = scheduleEntries.ventilationLimitationActive,
-                                onStartTimeChanged = { newTime ->
-                                    onScheduleEvent(ScheduleUiEvent.ChangeTime(ScheduleType.VENTILATION, TimeType.START, newTime))
-                                },
-                                onStopTimeChanged = { newTime ->
-                                    onScheduleEvent(ScheduleUiEvent.ChangeTime(ScheduleType.VENTILATION, TimeType.STOP, newTime))
-                                },
-                                onLimitationActiveChanged = { isActive ->
-                                    onScheduleEvent(
-                                        ScheduleUiEvent.ChangeLimitationActive(
-                                            ScheduleType.VENTILATION, isActive))
-                                }
-                            )
+                                // --- Ventilation Adjustment ---
+                                ScheduleAdjustmentComposable(
+                                    title = "Ventilation",
+                                    startTime = scheduleEntries.ventilationStartTime,
+                                    stopTime = scheduleEntries.ventilationStopTime,
+                                    isLimitationActive = scheduleEntries.ventilationLimitationActive,
+                                    onStartTimeChanged = { newTime ->
+                                        onScheduleEvent(
+                                            ScheduleUiEvent.ChangeTime(
+                                                ScheduleType.VENTILATION,
+                                                TimeType.START,
+                                                newTime
+                                            )
+                                        )
+                                    },
+                                    onStopTimeChanged = { newTime ->
+                                        onScheduleEvent(
+                                            ScheduleUiEvent.ChangeTime(
+                                                ScheduleType.VENTILATION,
+                                                TimeType.STOP,
+                                                newTime
+                                            )
+                                        )
+                                    },
+                                    onLimitationActiveChanged = { isActive ->
+                                        onScheduleEvent(
+                                            ScheduleUiEvent.ChangeLimitationActive(
+                                                ScheduleType.VENTILATION, isActive
+                                            )
+                                        )
+                                    }
+                                )
 
-                            // --- Ventilation Adjustment ---
-                            ScheduleAdjustmentComposable(
-                                title = "Heating",
-                                startTime = scheduleEntries.heatingStartTime,
-                                stopTime = scheduleEntries.heatingStopTime,
-                                isLimitationActive = scheduleEntries.heatingLimitationActive,
-                                onStartTimeChanged = { newTime ->
-                                    onScheduleEvent(ScheduleUiEvent.ChangeTime(ScheduleType.HEATING, TimeType.START, newTime))
-                                },
-                                onStopTimeChanged = { newTime ->
-                                    onScheduleEvent(ScheduleUiEvent.ChangeTime(ScheduleType.HEATING, TimeType.STOP, newTime))
-                                },
-                                onLimitationActiveChanged = { isActive ->
-                                    onScheduleEvent(
-                                        ScheduleUiEvent.ChangeLimitationActive(
-                                            ScheduleType.HEATING, isActive))
-                                }
-                            )
+                                // --- Ventilation Adjustment ---
+                                ScheduleAdjustmentComposable(
+                                    title = "Heating",
+                                    startTime = scheduleEntries.heatingStartTime,
+                                    stopTime = scheduleEntries.heatingStopTime,
+                                    isLimitationActive = scheduleEntries.heatingLimitationActive,
+                                    onStartTimeChanged = { newTime ->
+                                        onScheduleEvent(
+                                            ScheduleUiEvent.ChangeTime(
+                                                ScheduleType.HEATING,
+                                                TimeType.START,
+                                                newTime
+                                            )
+                                        )
+                                    },
+                                    onStopTimeChanged = { newTime ->
+                                        onScheduleEvent(
+                                            ScheduleUiEvent.ChangeTime(
+                                                ScheduleType.HEATING,
+                                                TimeType.STOP,
+                                                newTime
+                                            )
+                                        )
+                                    },
+                                    onLimitationActiveChanged = { isActive ->
+                                        onScheduleEvent(
+                                            ScheduleUiEvent.ChangeLimitationActive(
+                                                ScheduleType.HEATING, isActive
+                                            )
+                                        )
+                                    }
+                                )
+                            }
                         }
                     }
                 }
-            }
-            is ScheduleUiState.Error -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(all = 16.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(text = "Error loading data: ${scheduleUiState.errorMessage}")
+
+                is ScheduleUiState.Error -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(all = 16.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(text = "Error loading data: ${scheduleUiState.errorMessage}")
+                    }
                 }
-            }
-            ScheduleUiState.Loading -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(all = 16.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(text = "Loading...")
+
+                ScheduleUiState.Loading -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(all = 16.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(text = "Loading...")
+                    }
                 }
-            }
-            ScheduleUiState.Empty -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(all = 16.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(text = "No schedule configured - check server configuration.")
+
+                ScheduleUiState.Empty -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(all = 16.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(text = "No schedule configured - check server configuration.")
+                    }
                 }
             }
         }
