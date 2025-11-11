@@ -34,7 +34,7 @@ fun ControllerAddEditUsernamePasswordComposable(
             onEvent(ControllerAddEditUiEvent.SetControllerUser(controllerUser = it))
         },
         label = { Text(text = stringResource(id = R.string.user_name)) },
-        modifier = modifier?.then(Modifier.padding(top = 16.dp)) ?: Modifier
+        modifier = modifier?.then(other = Modifier.padding(top = 16.dp)) ?: Modifier
     )
     Spacer(modifier = Modifier.width(width = 10.dp))
     OutlinedTextField(
@@ -44,7 +44,7 @@ fun ControllerAddEditUsernamePasswordComposable(
         },
         label = { Text(text = stringResource(id = R.string.password)) },
         visualTransformation = PasswordVisualTransformation(), // Hide password
-        modifier = modifier?.then(Modifier.padding(top = 16.dp)) ?: Modifier
+        modifier = modifier?.then(other = Modifier.padding(top = 16.dp)) ?: Modifier
     )
 }
 

@@ -1,7 +1,5 @@
 package com.laimburggasse.aquariumcontrol
 
-import android.util.Log
-
 object ViewNavigationRoutes {
     var feed = "feed"
     var feedHistory = "feedHistory"
@@ -61,5 +59,4 @@ object ViewNavigationRoutes {
     fun overView(controllerProfileId: Long): String {
         return "overView/$controllerProfileId"
     }
-
 }

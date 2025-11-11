@@ -25,9 +25,9 @@ fun FeedProfileDisplayLegendComposable() {
     // - a rectangle bullet with the corresponding color
     // - the name of the signal
 
-    val configuration = LocalConfiguration.current
+    val configuration: Configuration = LocalConfiguration.current
 
-    val rectBullet = stringResource(id = R.string.rect_bullet)
+    val rectBullet: String = stringResource(id = R.string.rect_bullet)
 
     when (configuration.orientation) {
         Configuration.ORIENTATION_LANDSCAPE -> {
@@ -41,12 +41,12 @@ fun FeedProfileDisplayLegendComposable() {
                         Text(
                             text = rectBullet,
                             fontSize = 12.sp,
-                            color = feedProfileTextColorDefinition(FeedProfileSignal.FEEDER),
+                            color = feedProfileTextColorDefinition(signal = FeedProfileSignal.FEEDER),
                             modifier = Modifier.padding(
                                 horizontal = 4.dp
                             )
                         )
-                        Text(text = "Feeder", fontSize = 12.sp)
+                        Text(text = stringResource(id = R.string.feeder), fontSize = 12.sp)
                     }
                 }
                 Column(
@@ -58,7 +58,7 @@ fun FeedProfileDisplayLegendComposable() {
                     Row {
                         Text(
                             text = rectBullet, fontSize = 12.sp,
-                            color = feedProfileTextColorDefinition(FeedProfileSignal.MAIN_PUMP1),
+                            color = feedProfileTextColorDefinition(signal = FeedProfileSignal.MAIN_PUMP1),
                             modifier = Modifier.padding(
                                 horizontal = 4.dp
                             )
@@ -75,7 +75,7 @@ fun FeedProfileDisplayLegendComposable() {
                     Row {
                         Text(
                             text = rectBullet, fontSize = 12.sp,
-                            color = feedProfileTextColorDefinition(FeedProfileSignal.MAIN_PUMP2),
+                            color = feedProfileTextColorDefinition(signal = FeedProfileSignal.MAIN_PUMP2),
                             modifier = Modifier.padding(
                                 horizontal = 4.dp
                             )
@@ -92,12 +92,12 @@ fun FeedProfileDisplayLegendComposable() {
                     Row {
                         Text(
                             text = rectBullet, fontSize = 12.sp,
-                            color = feedProfileTextColorDefinition(FeedProfileSignal.SKIMMER),
+                            color = feedProfileTextColorDefinition(signal = FeedProfileSignal.SKIMMER),
                             modifier = Modifier.padding(
                                 horizontal = 4.dp
                             )
                         )
-                        Text(text = "Skimmer", fontSize = 12.sp)
+                        Text(text = stringResource(id = R.string.skimmer), fontSize = 12.sp)
                     }
                 }
                 Column(
@@ -109,12 +109,12 @@ fun FeedProfileDisplayLegendComposable() {
                     Row {
                         Text(
                             text = rectBullet, fontSize = 12.sp,
-                            color = feedProfileTextColorDefinition(FeedProfileSignal.AUX_PUMP1),
+                            color = feedProfileTextColorDefinition(signal = FeedProfileSignal.AUX_PUMP1),
                             modifier = Modifier.padding(
                                 horizontal = 4.dp
                             )
                         )
-                        Text(text = "Aux. Pump 1", fontSize = 12.sp)
+                        Text(text = stringResource(id = R.string.aux_pump_1), fontSize = 12.sp)
                     }
                 }
                 Column(
@@ -126,12 +126,12 @@ fun FeedProfileDisplayLegendComposable() {
                     Row {
                         Text(
                             text = rectBullet, fontSize = 12.sp,
-                            color = feedProfileTextColorDefinition(FeedProfileSignal.AUX_PUMP2),
+                            color = feedProfileTextColorDefinition(signal = FeedProfileSignal.AUX_PUMP2),
                             modifier = Modifier.padding(
                                 horizontal = 4.dp
                             )
                         )
-                        Text(text = "Aux. Pump 2", fontSize = 12.sp)
+                        Text(text = stringResource(id = R.string.aux_pump_2), fontSize = 12.sp)
                     }
                 }
             }
@@ -147,32 +147,32 @@ fun FeedProfileDisplayLegendComposable() {
                         Text(
                             text = rectBullet,
                             fontSize = 12.sp,
-                            color = feedProfileTextColorDefinition(FeedProfileSignal.FEEDER),
+                            color = feedProfileTextColorDefinition(signal = FeedProfileSignal.FEEDER),
                             modifier = Modifier.padding(
                                 horizontal = 4.dp
                             )
                         )
-                        Text(text = "Feeder", fontSize = 12.sp)
+                        Text(text = stringResource(id = R.string.feeder), fontSize = 12.sp)
                     }
                     Row {
                         Text(
                             text = rectBullet, fontSize = 12.sp,
-                            color = feedProfileTextColorDefinition(FeedProfileSignal.MAIN_PUMP1),
+                            color = feedProfileTextColorDefinition(signal = FeedProfileSignal.MAIN_PUMP1),
                             modifier = Modifier.padding(
                                 horizontal = 4.dp
                             )
                         )
-                        Text(text = "Main Pump 1", fontSize = 12.sp)
+                        Text(text = stringResource(id = R.string.main_pump_1), fontSize = 12.sp)
                     }
                     Row {
                         Text(
                             text = rectBullet, fontSize = 12.sp,
-                            color = feedProfileTextColorDefinition(FeedProfileSignal.AUX_PUMP1),
+                            color = feedProfileTextColorDefinition(signal = FeedProfileSignal.AUX_PUMP1),
                             modifier = Modifier.padding(
                                 horizontal = 4.dp
                             )
                         )
-                        Text(text = "Aux. Pump 1", fontSize = 12.sp)
+                        Text(text = stringResource(id = R.string.aux_pump_1), fontSize = 12.sp)
                     }
                 }
                 Column(
@@ -183,34 +183,34 @@ fun FeedProfileDisplayLegendComposable() {
                     Row {
                         Text(
                             text = rectBullet, fontSize = 12.sp,
-                            color = feedProfileTextColorDefinition(FeedProfileSignal.SKIMMER),
+                            color = feedProfileTextColorDefinition(signal = FeedProfileSignal.SKIMMER),
                             modifier = Modifier.padding(
                                 horizontal = 4.dp
                             )
                         )
-                        Text(text = "Skimmer", fontSize = 12.sp)
+                        Text(text = stringResource(id = R.string.skimmer), fontSize = 12.sp)
                     }
                     Row {
                         Text(
                             text = rectBullet, fontSize = 12.sp,
-                            color = feedProfileTextColorDefinition(FeedProfileSignal.MAIN_PUMP2),
+                            color = feedProfileTextColorDefinition(signal = FeedProfileSignal.MAIN_PUMP2),
                             modifier = Modifier.padding(
                                 horizontal = 4.dp
                             )
                         )
-                        Text(text = "Main Pump 2", fontSize = 12.sp)
+                        Text(text = stringResource(id = R.string.main_pump_2), fontSize = 12.sp)
                     }
                     Row {
                         Text(
                             text = rectBullet, fontSize = 12.sp,
-                            color = feedProfileTextColorDefinition(FeedProfileSignal.AUX_PUMP2),
+                            color = feedProfileTextColorDefinition(signal = FeedProfileSignal.AUX_PUMP2),
                             modifier = Modifier.padding(
                                 horizontal = 4.dp
                             )
                         )
-                        Text(text = "Aux. Pump 2", fontSize = 12.sp)
+                        Text(text = stringResource(id = R.string.aux_pump_2), fontSize = 12.sp)
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(height = 16.dp))
                 }
             }
         }

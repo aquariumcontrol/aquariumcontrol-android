@@ -118,19 +118,20 @@ fun BallingHistoryScreen(
                                             fontSize = 16.sp,
                                             fontWeight = FontWeight.Bold
                                         ),
-                                        modifier = Modifier.weight(1f),
+                                        modifier = Modifier.weight(weight = 1f),
                                         textAlign = TextAlign.Center
                                     )
                                 }
 
                                 is BallingHistoryUiState.Error -> {
                                     Text(
-                                        text = "Error loading data: ${ballingHistoryUiState.errorMessage}",
+                                        text = stringResource(R.string.error_loading_data) +
+                                                ballingHistoryUiState.errorMessage,
                                         style = TextStyle(
                                             fontSize = 16.sp,
                                             fontWeight = FontWeight.Bold
                                         ),
-                                        modifier = Modifier.weight(1f),
+                                        modifier = Modifier.weight(weight = 1f),
                                         textAlign = TextAlign.Center
                                     )
                                 }
@@ -142,13 +143,13 @@ fun BallingHistoryScreen(
                                             fontSize = 16.sp,
                                             fontWeight = FontWeight.Bold
                                         ),
-                                        modifier = Modifier.weight(1f),
+                                        modifier = Modifier.weight(weight = 1f),
                                         textAlign = TextAlign.Center
                                     )
                                 }
 
                                 is BallingHistoryUiState.Success -> {
-                                    val ballingHistoryDosingEvents =
+                                    val ballingHistoryDosingEvents: List<BallingHistoryLogEntry> =
                                         ballingHistoryUiState.ballingHistoryLogEntries
                                     if (LocalInspectionMode.current) {
                                         // In Preview: Render a simple, static Column instead of LazyColumn

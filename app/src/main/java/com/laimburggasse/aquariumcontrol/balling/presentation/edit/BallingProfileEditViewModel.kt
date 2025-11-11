@@ -1,11 +1,10 @@
 package com.laimburggasse.aquariumcontrol.balling.presentation.edit
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.balling.data.BallingProfilesRepository
+import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,7 +32,6 @@ class BallingProfileEditViewModel @Inject constructor(
             // Get the ID from navigation arguments.
             val ballingProfileId: Int? = savedStateHandle["ballingProfileId"]
             if (ballingProfileId == null) {
-                Log.d("BallingProfileEditViewModel", "ballingProfileId is null")
                 return@combine BallingProfileEditUiState.Error(errorMessage = "Profile ID not provided.")
             }
 

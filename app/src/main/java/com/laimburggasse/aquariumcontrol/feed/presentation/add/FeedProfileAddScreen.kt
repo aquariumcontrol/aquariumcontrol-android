@@ -50,7 +50,7 @@ fun FeedProfileAddScreen(
             is FeedProfileAddUiState.Success -> {
                 Toast.makeText(
                     context,
-                    "Successfully added profile!",
+                    "Successfully added profile.",
                     Toast.LENGTH_SHORT
                 ).show()
                 onNavigateFromFeed(FeedNavigationEvent.ToFeedMain, null, null, null)

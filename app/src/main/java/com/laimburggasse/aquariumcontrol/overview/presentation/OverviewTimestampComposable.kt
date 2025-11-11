@@ -26,19 +26,19 @@ fun OverviewTimestampComposable(overviewData: OverviewData) {
         modifier = Modifier
             .border(
                 border = BorderStroke(
-                    1.dp,
-                    MaterialTheme.colorScheme.onSurface
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             )
-            .padding(8.dp)
+            .padding(all = 8.dp)
     ) {
         Row(Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.weight(1f)) {
+            Column(modifier = Modifier.weight(weight = 1f)) {
                 Row(modifier = Modifier.align(Alignment.Start)) {
                     Text(text = stringResource(R.string.timestamp))
                 }
             }
-            Column(modifier = Modifier.weight(1f)) {
+            Column(modifier = Modifier.weight(weight = 1f)) {
                 Row(modifier = Modifier.align(Alignment.End)) {
                     Text(text = overviewData.timestamp)
                 }

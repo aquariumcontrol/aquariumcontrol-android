@@ -26,31 +26,31 @@ fun OverviewAmbientComposable(overviewData: OverviewData) {
         modifier = Modifier
             .border(
                 border = BorderStroke(
-                    1.dp,
-                    MaterialTheme.colorScheme.onSurface
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             )
             .padding(8.dp)
     ) {
         Row(Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.weight(1f)) {
+            Column(modifier = Modifier.weight(weight = 1f)) {
                 Row(modifier = Modifier.align(Alignment.Start)) {
                     Text(text = stringResource(R.string.ambient_temperature))
                 }
             }
-            Column(modifier = Modifier.weight(1f)) {
+            Column(modifier = Modifier.weight(weight = 1f)) {
                 Row(modifier = Modifier.align(Alignment.End)) {
                     Text(text = overviewData.temperatureAmbient.toString() + stringResource(R.string.degree_celsius))
                 }
             }
         }
         Row(Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.weight(1f)) {
+            Column(modifier = Modifier.weight(weight = 1f)) {
                 Row(modifier = Modifier.align(Alignment.Start)) {
                     Text(text = stringResource(R.string.ambient_humidity))
                 }
             }
-            Column(modifier = Modifier.weight(1f)) {
+            Column(modifier = Modifier.weight(weight = 1f)) {
                 Row(modifier = Modifier.align(Alignment.End)) {
                     Text(text = overviewData.humidityAmbient.toString() + stringResource(R.string.percentage))
                 }

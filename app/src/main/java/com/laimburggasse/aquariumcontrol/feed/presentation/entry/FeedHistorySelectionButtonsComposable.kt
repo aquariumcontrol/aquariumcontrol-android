@@ -28,7 +28,7 @@ fun FeedHistorySelectionButtonsComposable(
     // The arrangement of the buttons follows the device orientation.
 
     Button(
-        modifier = modifier?.then(Modifier.padding(horizontal = 8.dp)) ?: Modifier,
+        modifier = modifier?.then(other = Modifier.padding(horizontal = 8.dp)) ?: Modifier,
         onClick = { onNavigateFromFeed(FeedNavigationEvent.ToFeedHistory24h, null, null, null) },
     ) {
         Text(
@@ -36,7 +36,7 @@ fun FeedHistorySelectionButtonsComposable(
             fontSize = 16.sp
         )
     }
-    Spacer(modifier = Modifier.width(10.dp))
+    Spacer(modifier = Modifier.width(width = 10.dp))
     Button(
         modifier = modifier?.then(Modifier.padding(horizontal = 8.dp)) ?: Modifier,
         onClick = { onNavigateFromFeed(FeedNavigationEvent.ToFeedHistory7d, null, null, null) },

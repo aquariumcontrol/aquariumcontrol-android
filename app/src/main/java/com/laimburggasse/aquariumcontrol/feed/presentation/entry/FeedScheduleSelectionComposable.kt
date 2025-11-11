@@ -100,7 +100,7 @@ fun FeedScheduleSelectionComposable(
             }
 
             is FeedScheduleSelectionUiState.Loading -> {
-                Text(text = "Loading...", fontSize = 12.sp)
+                Text(text = stringResource(id = R.string.loading_feed_schedule), fontSize = 12.sp)
             }
 
             is FeedScheduleSelectionUiState.Error -> {
@@ -108,7 +108,7 @@ fun FeedScheduleSelectionComposable(
             }
 
             is FeedScheduleSelectionUiState.Empty -> {
-                Text(text = "No feed schedule entries found.", fontSize = 12.sp)
+                Text(text = stringResource(id = R.string.no_feed_schedule_entries_found), fontSize = 12.sp)
             }
         }
     }

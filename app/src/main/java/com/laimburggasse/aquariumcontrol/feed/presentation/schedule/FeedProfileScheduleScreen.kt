@@ -129,7 +129,7 @@ fun FeedProfileScheduleScreen(
                 Spacer(modifier = Modifier.height(height = 16.dp))
                 Row {
                     Button(onClick = { datePickerDialog.show() }) {
-                        Text(text = "Select Date")
+                        Text(text = stringResource(id = R.string.select_date))
                     }
                     Spacer(modifier = Modifier.height(height = 16.dp))
                     Text(
@@ -186,7 +186,7 @@ fun FeedProfileScheduleScreen(
                                 feedScheduleEntry,
                                 selectedCalendar,
                                 millisSinceEpoch,
-                                isNewScheduleEntry
+                                isNewEntry = isNewScheduleEntry
                             )
                         )
                         // Show the Toast after the API call

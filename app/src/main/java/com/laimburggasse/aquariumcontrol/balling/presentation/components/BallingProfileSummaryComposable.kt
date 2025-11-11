@@ -13,9 +13,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.balling.presentation.navigation.BallingNavigationEvent
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
@@ -43,10 +45,10 @@ fun BallingProfileSummaryComposable(
     ) {
         Column(
             modifier = Modifier
-                .weight(1f)
+                .weight(weight = 1f)
         ) {
             Text(
-                text = "Balling dosing profile:",
+                text = stringResource(id = R.string.balling_dosing_profile),
                 fontSize = 12.sp
             )
             Text(
@@ -55,14 +57,16 @@ fun BallingProfileSummaryComposable(
             )
         }
         Column(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(weight = 1f)
         ) {
             Text(
-                text = "Pump ID: ${ballingProfile.pumpId}",
+                text = stringResource(id = R.string.pump_id) + ballingProfile.pumpId,
                 fontSize = 12.sp
             )
             Text(
-                text = "Dosing volume: ${"%.2f".format(ballingProfile.volume)} ml",
+                text = stringResource(id = R.string.dosing_volume) +
+                        "%.2f".format(ballingProfile.volume) +
+                        stringResource(id = R.string.ml),
                 fontSize = 12.sp
             )
         }

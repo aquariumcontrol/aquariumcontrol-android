@@ -47,7 +47,7 @@ fun VentilationButtonsComposable(
     ) {
         Text(text = stringResource(R.string.update_ventilation_controller_values))
     }
-    Spacer(modifier = Modifier.width(10.dp))
+    Spacer(modifier = Modifier.width(width = 10.dp))
     Button(
         onClick = { onResetClicked() }
     ) {

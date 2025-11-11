@@ -82,7 +82,7 @@ fun ControllerEditScreen(
                     ControllerAddEditHostnamePortnumberComposable(
                         state = state,
                         onEvent = onEvent,
-                        modifier = Modifier.weight(0.5f)
+                        modifier = Modifier.weight(weight = 0.5f)
                     )
                 }
                 Row(
@@ -92,7 +92,7 @@ fun ControllerEditScreen(
                     ControllerAddEditUsernamePasswordComposable(
                         state = state,
                         onEvent = onEvent,
-                        modifier = Modifier.weight(0.5f)
+                        modifier = Modifier.weight(weight = 0.5f)
                     )
                 }
             }

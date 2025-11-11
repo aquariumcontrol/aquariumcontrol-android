@@ -57,12 +57,12 @@ fun RefillHistoryScreen(
         modifier = Modifier.fillMaxSize().padding(all = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ScreenHeadlineComposable(text = stringResource(R.string.refill_log))
+        ScreenHeadlineComposable(text = stringResource(id = R.string.refill_log))
         val subHeadlineText: String =
             if (showFullWeek) {
-                stringResource(R.string.refill_events_last_7d)
+                stringResource(id = R.string.refill_events_last_7d)
             } else {
-                stringResource(R.string.refill_events_last_24h)
+                stringResource(id = R.string.refill_events_last_24h)
             }
         Text(text = subHeadlineText)
 
@@ -109,7 +109,8 @@ fun RefillHistoryScreen(
                             }
                             is RefillHistoryUiState.Error -> {
                                 Text(
-                                    text = "Error loading data: ${refillHistoryUiState.errorMessage}",
+                                    text = stringResource(R.string.error_loading_data) +
+                                            refillHistoryUiState.errorMessage,
                                     style = TextStyle(
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.Bold

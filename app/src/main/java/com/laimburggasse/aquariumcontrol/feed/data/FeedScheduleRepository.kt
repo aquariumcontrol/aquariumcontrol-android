@@ -1,6 +1,5 @@
 package com.laimburggasse.aquariumcontrol.feed.data
 
-import android.util.Log
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
@@ -118,7 +117,6 @@ open class FeedScheduleRepository @Inject constructor(
         flow3 = pendingUpdates
     ) { networkResult, deletions, updates ->
         // This transformation logic runs whenever the network data OR any pending update changes.
-        Log.d("FeedScheduleRepository", "Combining flows...")
         when (networkResult) {
             is DataFetchResult.Success -> {
                 var profiles: List<FeedScheduleEntry> = networkResult.data
@@ -155,8 +153,6 @@ open class FeedScheduleRepository @Inject constructor(
     )
 
     open suspend fun deleteFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry) {
-        Log.d("FeedScheduleRepository", "Request to delete feed schedule entry: $feedScheduleEntry")
-
         val keyToDelete = FeedScheduleEntryKey(
             profileId = feedScheduleEntry.profileId,
             timestamp = feedScheduleEntry.timestamp.time
@@ -166,10 +162,6 @@ open class FeedScheduleRepository @Inject constructor(
         if (pendingDeletions.value.contains(keyToDelete)) return
 
         pendingDeletions.value += keyToDelete
-        Log.d(
-            "FeedScheduleRepository",
-            "Deleting a server entry. Pending deletions: $pendingDeletions"
-        )
 
         // In both cases, trigger the network request, because the add operation
         // may have committed to the server meanwhile.

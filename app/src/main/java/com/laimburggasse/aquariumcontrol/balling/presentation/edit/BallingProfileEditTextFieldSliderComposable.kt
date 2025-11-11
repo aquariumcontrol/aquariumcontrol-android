@@ -40,12 +40,12 @@ fun BallingProfileEditTextFieldSliderComposable(
         label = stringResource(R.string.new_dosing_volume_ml_h),
         textAlign = TextAlign.Center,
         modifier = Modifier
-            .width(200.dp)
+            .width(width = 200.dp)
             .padding(top = 16.dp),
     )
     Slider(
         value = sliderPositionNewDosingVolume.toFloat(),
-        modifier = Modifier.padding(16.dp),
+        modifier = Modifier.padding(all = 16.dp),
         onValueChange = {
             onEvent(BallingProfileEditUiEvent.ChangeDosingVolume(newDosingValue = it.toDouble()))
         },

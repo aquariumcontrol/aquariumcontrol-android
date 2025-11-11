@@ -152,7 +152,7 @@ fun VentilationScreen(
                     }
                     is VentilationSetValsUiState.Loading -> {
                         Column(
-                            modifier = Modifier.fillMaxSize().padding(16.dp),
+                            modifier = Modifier.fillMaxSize().padding(all = 16.dp),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
@@ -160,7 +160,7 @@ fun VentilationScreen(
                                 modifier = Modifier.size(size = 150.dp),
                                 color = MaterialTheme.colorScheme.primary
                             )
-                            Text(text = "Loading...")
+                            Text(text = stringResource(id = R.string.loading_set_value_data))
                         }
                     }
                     is VentilationSetValsUiState.Empty -> {
@@ -169,7 +169,7 @@ fun VentilationScreen(
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text(text = "No set values configured - check server configuration.")
+                            Text(text = stringResource(id = R.string.no_set_values_configured_check_server_configuration))
                         }
                     }
                 }

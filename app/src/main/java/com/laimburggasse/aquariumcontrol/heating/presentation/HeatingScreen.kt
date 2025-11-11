@@ -180,7 +180,7 @@ fun HeatingScreen(
                                     modifier = Modifier.size(size = 150.dp),
                                     color = MaterialTheme.colorScheme.primary
                                 )
-                                Text(text = "Loading set value data...")
+                                Text(text = stringResource(id = R.string.loading_set_value_data))
                             }
                         }
                     }
@@ -196,7 +196,7 @@ fun HeatingScreen(
                                 verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Text(text = "No set values configured - check server configuration.")
+                                Text(text = stringResource(id = R.string.no_set_values_configured_check_server_configuration))
                             }
                         }
                     }
@@ -215,7 +215,10 @@ fun HeatingScreen(
                                 verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Text(text = "Error loading statistical data: ${heatingStatsUiState.errorMessage}")
+                                Text(
+                                    text = stringResource(id = R.string.error_loading_statistical_data) +
+                                        heatingStatsUiState.errorMessage
+                                )
                             }
                         }
                     }
@@ -235,7 +238,7 @@ fun HeatingScreen(
                                     modifier = Modifier.size(size = 150.dp),
                                     color = MaterialTheme.colorScheme.primary
                                 )
-                                Text(text = "Loading statistical data...")
+                                Text(text = stringResource(id = R.string.loading_statistical_data))
                             }
                         }
                     }
@@ -258,7 +261,7 @@ fun HeatingScreen(
                                 verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Text(text = "No heating stats available.")
+                                Text(text = stringResource(id = R.string.no_heating_stats_available))
                             }
                         }
                     }
@@ -269,7 +272,7 @@ fun HeatingScreen(
 }
 
 fun createMockStatsData(): List<HeatingStatsEntry> {
-    val mockHeatingStatsStringEntries = listOf(
+    val mockHeatingStatsStringEntries: List<HeatingStatsStringEntry> = listOf(
         HeatingStatsStringEntry(
             dateString = "2025-1-12",
             energy = 1988.17,

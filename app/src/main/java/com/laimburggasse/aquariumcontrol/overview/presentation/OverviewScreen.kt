@@ -67,25 +67,35 @@ fun OverviewScreen(
             }
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth().verticalScroll(state = rememberScrollState()),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(state = rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 when (overviewUiState) {
                     is OverviewUiState.Error -> {
                         Column(
-                            modifier = Modifier.fillMaxSize().padding(all = 16.dp),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(all = 16.dp),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text(text = "Error loading data: ${overviewUiState.errorMessage}")
-                        }                                }
+                            Text(
+                                text = stringResource(id = R.string.error_loading_data) +
+                                    overviewUiState.errorMessage
+                            )
+                        }
+                    }
                     OverviewUiState.Loading -> {
                         Column(
-                            modifier = Modifier.fillMaxSize().padding(all = 16.dp),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(all = 16.dp),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text(text = "Loading...")
+                            Text(text = stringResource(id = R.string.loading_overview_data))
                         }
                     }
                     is OverviewUiState.Success -> {
@@ -128,7 +138,9 @@ fun OverviewScreen(
                 }
                 Spacer(modifier = Modifier.padding(vertical = 8.dp))
                 Button(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
                     onClick = { onOverviewEvent(OverviewUiEvent.Refresh) },
                 ) {
                     Text(

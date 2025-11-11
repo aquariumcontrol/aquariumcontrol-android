@@ -1,6 +1,5 @@
 package com.laimburggasse.aquariumcontrol.balling.data
 
-import android.util.Log
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingProfileReader
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
@@ -114,10 +113,8 @@ open class BallingProfilesRepository @Inject constructor(
         // set the updated profile as the pending update
         // this will trigger instant UI update
         pendingUpdate.value = ballingProfile
-        Log.d("BallingRepository", "Updating balling profile: $ballingProfile")
         val controllerAddress: String? = sessionManager.getControllerAddress()
         if (controllerAddress.isNullOrBlank()) {
-            Log.e("BallingRepository", "Update failed: No controller address.")
             pendingUpdate.value = null
             failureResult.value = DataFetchResult.Error(
                 exception = null,

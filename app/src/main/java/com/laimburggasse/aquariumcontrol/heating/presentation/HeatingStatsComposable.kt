@@ -70,7 +70,7 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: ()
 
                         override fun getFormattedValue(value: Float): String {
                             // Convert the float value (which represents days) back to a Date object.
-                            val date: Date? = heatingStats.getOrNull(value.toInt())?.date
+                            val date: Date? = heatingStats.getOrNull(index = value.toInt())?.date
                             return date?.let { dateFormat.format(it) }
                                 ?: "" // Return formatted date or empty
                         }
@@ -154,7 +154,7 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: ()
                     chart.data = combinedData
                     chart.invalidate()
                 } else {
-                    // Handle empty data state (e.g., show a placeholder or clear the chart)
+                    // Handle empty data state
                     chart.clear()
                     chart.setNoDataText("No data available") // Optional: Display a message
                     chart.invalidate()

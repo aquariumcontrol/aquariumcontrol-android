@@ -108,12 +108,13 @@ fun FeedHistoryScreen(
 
                             is FeedHistoryUiState.Error -> {
                                 Text(
-                                    text = "Error loading data: ${feedHistoryUiState.errorMessage}",
+                                    text = stringResource(id = R.string.error_loading_data) +
+                                            feedHistoryUiState.errorMessage,
                                     style = TextStyle(
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.Bold
                                     ),
-                                    modifier = Modifier.weight(1f),
+                                    modifier = Modifier.weight(weight = 1f),
                                     textAlign = TextAlign.Center
                                 )
                             }

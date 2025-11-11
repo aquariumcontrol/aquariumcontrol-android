@@ -92,7 +92,7 @@ fun ScheduleAdjustmentComposable(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = stringResource(R.string.start_time) + formatTime(value = startTime),
+                            text = stringResource(id = R.string.start_time) + formatTime(value = startTime),
                             modifier = Modifier.padding(top = 16.dp)
                         )
                         Button(onClick = { showStartTimeDialog = true }) {
@@ -121,7 +121,7 @@ fun ScheduleAdjustmentComposable(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = stringResource(R.string.stop_time) + formatTime(stopTime),
+                            text = stringResource(R.string.stop_time) + formatTime(value = stopTime),
                             modifier = Modifier.padding(top = 16.dp)
                         )
                         Button(onClick = { showStopTimeDialog = true }) {

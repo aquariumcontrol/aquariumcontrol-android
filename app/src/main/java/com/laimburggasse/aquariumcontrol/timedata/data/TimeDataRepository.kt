@@ -1,11 +1,10 @@
 package com.laimburggasse.aquariumcontrol.timedata.data
 
-import android.util.Log
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.timedata.data.remote.TimeDataReader
-import com.laimburggasse.aquariumcontrol.timedata.domain.model.TimeDataSample
 import com.laimburggasse.aquariumcontrol.timedata.data.remote.dto.TimeDataStringSample
+import com.laimburggasse.aquariumcontrol.timedata.domain.model.TimeDataSample
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiUrls
 import kotlinx.coroutines.CoroutineScope
@@ -59,7 +58,6 @@ open class TimeDataRepository @Inject constructor(
                                     timeDataStringSample.transformToTimeDataSample()
                                 }
                             } else {
-                                Log.d("TimeDataRepository", "readResult.data is empty")
                                 emptyList()
                             }
                         DataFetchResult.Success(data = timeDataSamples)

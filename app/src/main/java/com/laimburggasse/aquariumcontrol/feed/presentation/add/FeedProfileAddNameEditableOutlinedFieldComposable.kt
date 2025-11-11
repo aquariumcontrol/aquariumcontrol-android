@@ -12,9 +12,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
@@ -34,7 +36,7 @@ fun FeedProfileAddNameEditableOutlinedFieldComposable(
             feedProfileName = filteredValue // Update the state
             onFeedProfileNameChange(filteredValue)
         },
-        label = { Text(text = "Feed Profile Name") },
+        label = { Text(text = stringResource(id = R.string.feed_profile_name)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
         modifier = modifier,
         textStyle = MaterialTheme.typography.bodyLarge.copy(

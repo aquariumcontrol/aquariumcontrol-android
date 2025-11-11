@@ -14,8 +14,10 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
@@ -66,7 +68,10 @@ fun FeedProfileEditMenuItemComposable(
             Spacer(Modifier.weight(weight = 1f))
             if (feedProfileEditMenuItem.children.isNotEmpty() && !isThisItemExpanded) {
                 // Icon to indicate expandability
-                Icon(imageVector = Icons.Default.MoreVert, contentDescription = "More options")
+                Icon(
+                    imageVector = Icons.Default.MoreVert,
+                    contentDescription = stringResource(id = R.string.more_options)
+                )
             }
             Switch(
                 checked = isChecked,

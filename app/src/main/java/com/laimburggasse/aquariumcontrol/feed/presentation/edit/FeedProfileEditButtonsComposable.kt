@@ -50,9 +50,9 @@ fun FeedProfileEditButtonsComposable(
             fontSize = 16.sp
         )
     }
-    Spacer(modifier = Modifier.width(10.dp))
+    Spacer(modifier = Modifier.width(width = 10.dp))
     Button(
-        modifier = modifier?.then(Modifier
+        modifier = modifier?.then(other = Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp)) ?: Modifier,
         onClick = { onFeedProfileEditUiEvent(FeedProfileEditUiEvent.Reset) },

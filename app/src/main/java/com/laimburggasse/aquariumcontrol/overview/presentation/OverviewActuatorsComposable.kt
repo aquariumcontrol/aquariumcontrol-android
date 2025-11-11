@@ -25,42 +25,42 @@ fun OverviewActuatorsComposable(overviewData: OverviewData) {
     Column(
         modifier = Modifier.border(
             border = BorderStroke(
-                1.dp,
-                MaterialTheme.colorScheme.onSurface
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.onSurface
             )
-        ).padding(8.dp)
+        ).padding(all = 8.dp)
     ) {
         Row(Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.weight(1f)) {
+            Column(modifier = Modifier.weight(weight = 1f)) {
                 Row(modifier = Modifier.align(Alignment.Start)) {
                     Text(text = stringResource(R.string.tank_level_switch_position))
                 }
             }
-            Column(modifier = Modifier.weight(0.5f)) {
+            Column(modifier = Modifier.weight(weight = 0.5f)) {
                 Row(modifier = Modifier.align(Alignment.End)) {
                     Text(text = overviewData.tankLevelSwitchPosition)
                 }
             }
         }
         Row(Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.weight(1f)) {
+            Column(modifier = Modifier.weight(weight = 1f)) {
                 Row(modifier = Modifier.align(Alignment.Start)) {
                     Text(text = stringResource(R.string.ventilation))
                 }
             }
-            Column(modifier = Modifier.weight(1f)) {
+            Column(modifier = Modifier.weight(weight = 1f)) {
                 Row(modifier = Modifier.align(Alignment.End)) {
                     Text(text = overviewData.surfaceVentilation)
                 }
             }
         }
         Row(Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.weight(1f)) {
+            Column(modifier = Modifier.weight(weight = 1f)) {
                 Row(modifier = Modifier.align(Alignment.Start)) {
                     Text(text = stringResource(R.string.heating))
                 }
             }
-            Column(modifier = Modifier.weight(1f)) {
+            Column(modifier = Modifier.weight(weight = 1f)) {
                 Row(modifier = Modifier.align(Alignment.End)) {
                     Text(text = overviewData.heater)
                 }

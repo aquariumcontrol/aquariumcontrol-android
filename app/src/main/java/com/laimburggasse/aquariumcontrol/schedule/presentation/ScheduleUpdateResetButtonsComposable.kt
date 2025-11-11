@@ -36,13 +36,13 @@ fun ScheduleUpdateResetButtonsComposable(onScheduleEvent: (ScheduleUiEvent) -> U
     ) {
         Text(text = stringResource(R.string.update_actuator_schedules))
     }
-    Spacer(modifier = Modifier.width(10.dp))
+    Spacer(modifier = Modifier.width(width = 10.dp))
     Button(
         onClick = {
             onScheduleEvent(ScheduleUiEvent.Reset)
         }
     ) {
-        Text(text = "Reset actuator schedules")
+        Text(text = stringResource(id = R.string.reset_actuator_schedules))
     }
 }
 

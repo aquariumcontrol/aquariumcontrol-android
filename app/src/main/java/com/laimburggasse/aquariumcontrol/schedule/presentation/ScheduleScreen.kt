@@ -245,7 +245,7 @@ fun ScheduleScreen(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(text = "Loading...")
+                        Text(text = stringResource(id = R.string.loading_actuator_schedule))
                     }
                 }
 
@@ -257,7 +257,7 @@ fun ScheduleScreen(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(text = "No schedule configured - check server configuration.")
+                        Text(text = stringResource(id = R.string.no_schedule_configured_check_server_configuration))
                     }
                 }
             }

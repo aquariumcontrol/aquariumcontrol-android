@@ -1,7 +1,6 @@
 package com.laimburggasse.aquariumcontrol.controller.presentation.selection
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,8 +32,8 @@ import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.controller.presentation.navigation.ControllerNavigationEvent
 import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
+import com.laimburggasse.aquariumcontrol.controller.presentation.navigation.ControllerNavigationEvent
 import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -58,7 +57,6 @@ fun ControllerSelectionScreen(
     // Countdown and navigation logic
     LaunchedEffect(key1 = isWaitFinished) {
         // Time has passed without user interaction, navigate to the default profile
-        Log.d("ControllerSelectionScreen", "isWaitFinished: $isWaitFinished")
         if (isWaitFinished && defaultProfileId.value != null) {
             withContext(context = Dispatchers.Main) { // Switch to the main thread
                 onNavigateFromController(ControllerNavigationEvent.ToOverview, defaultProfileId.value)

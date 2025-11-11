@@ -17,8 +17,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
@@ -44,13 +46,13 @@ fun HeatingButtonsComposable(
         },
         enabled = heatingSetValsValid.value == true
     ) {
-        Text(text = "Update Heating Controller Values")
+        Text(text = stringResource(id = R.string.update_heating_controller_values))
     }
     Spacer(modifier = Modifier.width(width = 10.dp))
     Button(
         onClick = { onResetClicked() }
     ) {
-        Text(text = "Reset Heating Controller Values")
+        Text(text = stringResource(id = R.string.reset_heating_controller_values))
     }
 
 }

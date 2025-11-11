@@ -1,6 +1,5 @@
 package com.laimburggasse.aquariumcontrol.feed.presentation.entry
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -34,10 +33,8 @@ class FeedScheduleViewModel @Inject constructor(
                 is DataFetchResult.Error -> FeedScheduleSelectionUiState.Error(errorMessage = result.errorMessage)
                 is DataFetchResult.Success -> {
                     if (result.data.isEmpty()) {
-                        Log.d("FeedScheduleViewModel", "No feed schedule entries found")
                         FeedScheduleSelectionUiState.Empty
                     } else {
-                        Log.d("FeedScheduleViewModel", "Found ${result.data.size} feed schedule entries")
                         FeedScheduleSelectionUiState.Success(feedScheduleEntries = result.data)
                     }
                 }

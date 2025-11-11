@@ -42,7 +42,7 @@ open class SessionManager(
 
     init {
         externalScope.launch {
-            val defaultId = withContext(context = Dispatchers.IO) { // Use Dispatchers.IO for file access
+            val defaultId: Long? = withContext(context = Dispatchers.IO) { // Use Dispatchers.IO for file access
                 sharedPreferences?.getLong(KEY_DEFAULT_PROFILE_ID, NO_DEFAULT_ID)
             }
             if (defaultId != NO_DEFAULT_ID) {

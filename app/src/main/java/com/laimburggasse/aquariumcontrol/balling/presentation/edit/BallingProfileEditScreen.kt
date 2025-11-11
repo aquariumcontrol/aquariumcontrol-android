@@ -66,19 +66,19 @@ fun BallingProfileEditScreen(
 
                 is BallingProfileEditUiState.Error -> {
                     val errorMessage: String = ballingProfileEditUiState.errorMessage
-                    Text(text = "Error loading data: $errorMessage")
+                    Text(text = stringResource(id = R.string.error_loading_data) + errorMessage)
                 }
                 BallingProfileEditUiState.Loading -> {
-                    Text(text = "Loading...")
+                    Text(text = stringResource(id = R.string.loading_balling_profile))
                 }
                 BallingProfileEditUiState.NotFound -> {
-                    Text(text = "Balling profile not found")
+                    Text(text = stringResource(id = R.string.balling_profile_not_found))
                 }
                 is BallingProfileEditUiState.Success -> {
                     val ballingProfile: BallingProfile = ballingProfileEditUiState.ballingProfile
 
-                    var sliderPositionNewDosingVolume by remember {
-                        mutableDoubleStateOf(ballingProfile.volume)
+                    var sliderPositionNewDosingVolume: Double by remember {
+                        mutableDoubleStateOf(value = ballingProfile.volume)
                     }
 
                     LaunchedEffect(key1 = ballingProfile.volume) {
@@ -111,7 +111,9 @@ fun BallingProfileEditScreen(
                         }
                     }
                     Button(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
                         onClick = {
                             onEvent(BallingProfileEditUiEvent.ConfirmDosingVolume(
                                 newDosingValue = sliderPositionNewDosingVolume)

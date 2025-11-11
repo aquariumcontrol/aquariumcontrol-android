@@ -59,7 +59,7 @@ fun FeedProfileSelectionComposable(
     ) {
         when (feedProfilesUiState) {
             is FeedProfilesUiState.Loading -> {
-                Text(text = "Loading...")
+                Text(text = stringResource(id = R.string.loading_feed_profiles))
             }
 
             is FeedProfilesUiState.Error -> {
@@ -110,7 +110,7 @@ fun FeedProfileSelectionComposable(
                 }
             }
             is FeedProfilesUiState.Empty -> {
-                Text(text = "Empty")
+                Text(text = stringResource(id = R.string.there_are_no_feed_profiles_create_a_new_one))
             }
         }
     }
@@ -120,7 +120,7 @@ fun FeedProfileSelectionComposable(
     ) {
         Icon(
             imageVector = Icons.Filled.Add,
-            contentDescription = "Create New Profile"
+            contentDescription = stringResource(id = R.string.add_feed_profile)
         )
     }
 }

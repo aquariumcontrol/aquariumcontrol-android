@@ -44,7 +44,6 @@ fun createFeedProfileEditMenuItem(
         else -> ""
     }
     val id: Int = mapIndexToMenuItemId(level, phaseType, index, toggleButtonType)
-    //Log.d("createFeedProfileEditMenuItem", "id: $id, level: $level, text: $text")
 
     return FeedProfileEditMenuItem(
         id,

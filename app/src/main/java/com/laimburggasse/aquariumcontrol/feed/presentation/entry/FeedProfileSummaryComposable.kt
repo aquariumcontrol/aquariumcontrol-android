@@ -22,9 +22,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.presentation.edit.mockFeedProfile
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
@@ -56,7 +58,7 @@ fun FeedProfileSummaryComposable(
         Column(modifier = Modifier.weight(weight = 1f)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "ID: ${feedProfile.profileID}",
+                    text = stringResource(id = R.string.id) + feedProfile.profileID,
                     fontSize = 12.sp
                 )
             }
@@ -65,7 +67,7 @@ fun FeedProfileSummaryComposable(
         Column(modifier = Modifier.weight(weight = 3f)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "Name: ${feedProfile.profileName}",
+                    text = stringResource(id = R.string.name) + ": " + feedProfile.profileName,
                     fontSize = 12.sp
                 )
             }
@@ -74,19 +76,19 @@ fun FeedProfileSummaryComposable(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Filled.Edit,
-                    contentDescription = "Edit",
+                    contentDescription = stringResource(id = R.string.edit),
                     modifier = Modifier.size(size = 48.dp).clickable {onEditClick()}
                 )
                 Spacer(modifier = Modifier.width(width = 16.dp))
                 Icon(
                     imageVector = Icons.Filled.Schedule,
-                    contentDescription = "Schedule",
+                    contentDescription = stringResource(id = R.string.schedule),
                     modifier = Modifier.size(size = 48.dp).clickable {onScheduleClick()}
                 )
                 Spacer(modifier = Modifier.width(width = 16.dp))
                 Icon(
                     imageVector = Icons.Filled.Delete,
-                    contentDescription = "Delete",
+                    contentDescription = stringResource(id = R.string.delete),
                     modifier = Modifier.size(size = 48.dp).clickable {onDeleteClick()}
                 )
             }

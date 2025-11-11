@@ -23,8 +23,8 @@ import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 @Composable
 fun OverviewWaterSignalsComposable(overviewData: OverviewData) {
     Column(modifier = Modifier
-            .border(border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.onSurface))
-            .padding(all = 8.dp)
+        .border(border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.onSurface))
+        .padding(all = 8.dp)
     ) {
         Row(Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.weight(weight = 1f)) {
@@ -41,7 +41,7 @@ fun OverviewWaterSignalsComposable(overviewData: OverviewData) {
         Row(Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.weight(weight = 1f)) {
                 Row(modifier = Modifier.align(Alignment.Start)) {
-                    Text(text = "pH")
+                    Text(text = stringResource(id = R.string.ph))
                 }
             }
             Column(modifier = Modifier.weight(weight = 1f)) {
@@ -53,7 +53,7 @@ fun OverviewWaterSignalsComposable(overviewData: OverviewData) {
         Row(Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.weight(weight = 1f)) {
                 Row(modifier = Modifier.align(Alignment.Start)) {
-                    Text(text = "Conductivity")
+                    Text(text = stringResource(id = R.string.conductivity))
                 }
             }
             Column(modifier = Modifier.weight(weight = 1f)) {

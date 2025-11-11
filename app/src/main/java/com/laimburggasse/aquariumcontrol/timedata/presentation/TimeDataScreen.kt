@@ -60,7 +60,9 @@ fun TimeDataScreen(timeDataUiState: TimeDataUiState, onTimeDataEvent: (TimeDataU
             indicator = {
                 if (timeDataUiState is TimeDataUiState.Loading && displayCircularProgressIndicatorInPreview) {
                     CircularProgressIndicator(
-                        modifier = Modifier.size(size = 64.dp).fillMaxWidth(),
+                        modifier = Modifier
+                            .size(size = 64.dp)
+                            .fillMaxWidth(),
                         color = MaterialTheme.colorScheme.primary,
                         strokeWidth = 5.dp
                     )
@@ -69,17 +71,21 @@ fun TimeDataScreen(timeDataUiState: TimeDataUiState, onTimeDataEvent: (TimeDataU
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxSize().verticalScroll(state = rememberScrollState())
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(state = rememberScrollState())
             ) {
                 when (timeDataUiState) {
                     is TimeDataUiState.Empty -> {
                         Column(
-                            modifier = Modifier.fillMaxSize().padding(all = 16.dp),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(all = 16.dp),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "No data available.",
+                                text = stringResource(id = R.string.no_time_data_available),
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Spacer(modifier = Modifier.height(height = 8.dp))
@@ -108,12 +114,16 @@ fun TimeDataScreen(timeDataUiState: TimeDataUiState, onTimeDataEvent: (TimeDataU
                             )
                             Spacer(modifier = Modifier.height(height = 16.dp))
                             Button(onClick = { onTimeDataEvent(TimeDataUiEvent.Refresh) }) {
-                                Text("Retry")
+                                Text(text = stringResource(id = R.string.retry))
                             }
                         }
                     }
                     is TimeDataUiState.Loading -> {
-                        Text(text = "Loading...")
+                        Text(text = stringResource(id = R.string.loading_time_data))
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(size = 150.dp),
+                            color = MaterialTheme.colorScheme.primary
+                        )
                     }
                     is TimeDataUiState.Success -> {
                         val timeDataSets: TimeDataSets = timeDataUiState.timeDataSets

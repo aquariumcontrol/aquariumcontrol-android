@@ -17,7 +17,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.laimburggasse.aquariumcontrol.R
-import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingStatsSignal
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
@@ -38,7 +37,7 @@ fun HeatingStatsLegendComposable() {
                         Text(
                             text = rectBullet,
                             fontSize = 12.sp,
-                            color = heatingStatsTextColorDefinition(HeatingStatsSignal.WATER_TEMPERATURE),
+                            color = heatingStatsTextColorDefinition(signal = HeatingStatsSignal.WATER_TEMPERATURE),
                             modifier = Modifier.padding(
                                 horizontal = 4.dp
                             )
@@ -46,13 +45,13 @@ fun HeatingStatsLegendComposable() {
                         Text(text = stringResource(R.string.water_temperature_c), fontSize = 12.sp)
                     }
                 }
-                Spacer(modifier = Modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(width = 10.dp))
                 Column {
                     Row {
                         Text(
                             text = rectBullet,
                             fontSize = 12.sp,
-                            color = heatingStatsTextColorDefinition(HeatingStatsSignal.AMBIENT_TEMPERATURE),
+                            color = heatingStatsTextColorDefinition(signal = HeatingStatsSignal.AMBIENT_TEMPERATURE),
                             modifier = Modifier.padding(
                                 horizontal = 4.dp
                             )
@@ -63,12 +62,12 @@ fun HeatingStatsLegendComposable() {
                         )
                     }
                 }
-                Spacer(modifier = Modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(width = 10.dp))
                 Column {
                     Row {
                         Text(
                             text = rectBullet, fontSize = 12.sp,
-                            color = heatingStatsTextColorDefinition(HeatingStatsSignal.ENERGY),
+                            color = heatingStatsTextColorDefinition(signal = HeatingStatsSignal.ENERGY),
                             modifier = Modifier.padding(
                                 horizontal = 4.dp
                             )
@@ -90,7 +89,7 @@ fun HeatingStatsLegendComposable() {
                         Text(
                             text = rectBullet,
                             fontSize = 12.sp,
-                            color = heatingStatsTextColorDefinition(HeatingStatsSignal.WATER_TEMPERATURE),
+                            color = heatingStatsTextColorDefinition(signal = HeatingStatsSignal.WATER_TEMPERATURE),
                             modifier = Modifier.padding(
                                 horizontal = 4.dp
                             )
@@ -101,7 +100,7 @@ fun HeatingStatsLegendComposable() {
                         Text(
                             text = rectBullet,
                             fontSize = 12.sp,
-                            color = heatingStatsTextColorDefinition(HeatingStatsSignal.AMBIENT_TEMPERATURE),
+                            color = heatingStatsTextColorDefinition(signal = HeatingStatsSignal.AMBIENT_TEMPERATURE),
                             modifier = Modifier.padding(
                                 horizontal = 4.dp
                             )
@@ -114,7 +113,7 @@ fun HeatingStatsLegendComposable() {
                     Row {
                         Text(
                             text = rectBullet, fontSize = 12.sp,
-                            color = heatingStatsTextColorDefinition(HeatingStatsSignal.ENERGY),
+                            color = heatingStatsTextColorDefinition(signal = HeatingStatsSignal.ENERGY),
                             modifier = Modifier.padding(
                                 horizontal = 4.dp
                             )

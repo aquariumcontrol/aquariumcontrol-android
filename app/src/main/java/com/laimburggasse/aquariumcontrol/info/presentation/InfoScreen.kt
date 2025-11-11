@@ -14,10 +14,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.MainScaffold
+import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.lib_composables.HyperlinkTextComposable
 
@@ -38,21 +40,21 @@ fun InfoScreen() {
         )
         Spacer(Modifier.size(size = 10.dp))
         Text(
-            text = "Aquarium Control is an open source control system for marine fish tanks.",
+            text = stringResource(id = R.string.aquarium_control_is_an_open_source_control_system_for_marine_fish_tanks),
             textAlign = TextAlign.Center
         )
         HyperlinkTextComposable(
-            text = "Developer documentation",
-            url = "http://217.79.180.177/mediawiki/index.php/Main_Page",
+            text = stringResource(id = R.string.developer_documentation),
+            url = stringResource(id = R.string.http_217_79_180_177_mediawiki_index_php_main_page),
             textAlign = TextAlign.Center
         )
         HyperlinkTextComposable(
-            text = "Developer information",
-            url = "mailto:uwe.martin@gmail.com",
+            text = stringResource(id = R.string.developer_information),
+            url = stringResource(id = R.string.mailto_uwe_martin_gmail_com),
             textAlign = TextAlign.Center
         )
         Text(
-            text = "This software comes with no warranties. Usage at your own risk.",
+            text = stringResource(id = R.string.this_software_comes_with_no_warranties_usage_at_your_own_risk),
             textAlign = TextAlign.Center
         )
     }

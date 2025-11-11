@@ -47,7 +47,7 @@ fun NumericDoubleOutlinedTextFieldComposable(
         mutableStateOf(value = TextFieldValue(text = value.toString()))
     }
 
-    LaunchedEffect(value) { // Trigger when 'value' changes
+    LaunchedEffect(key1 = value) { // Trigger when 'value' changes
         snapshotFlow { value }
             .collect { newValue ->
                 val formattedValue: String =

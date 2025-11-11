@@ -53,21 +53,33 @@ fun ControllerProfileComposable(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .border(border = BorderStroke(width = 1.dp,color = MaterialTheme.colorScheme.onSurface))
+            .border(
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            )
             .padding(all = 8.dp)
     ) {
         Column(
-            modifier = Modifier.weight(weight = 1f).clickable {
-                onEvent(ControllerSelectionUiEvent.SelectControllerProfile(controllerProfile))
-                onNavigateFromController(ControllerNavigationEvent.ToOverview, controllerProfile.id)
-            }
+            modifier = Modifier
+                .weight(weight = 1f)
+                .clickable {
+                    onEvent(ControllerSelectionUiEvent.SelectControllerProfile(controllerProfile))
+                    onNavigateFromController(
+                        ControllerNavigationEvent.ToOverview,
+                        controllerProfile.id
+                    )
+                }
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Column(modifier = Modifier.weight(weight = 1f)) {
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
                         horizontalArrangement = Arrangement.Start
                     ) {
                         Column(horizontalAlignment = Alignment.Start) {
@@ -83,7 +95,7 @@ fun ControllerProfileComposable(
                             if (isDefaultProfile) {
                                 Icon(
                                     imageVector = Icons.Outlined.Star,
-                                    contentDescription = "DefaultProfile",
+                                    contentDescription = stringResource(id = R.string.defaultprofile),
                                 )
                             }
                         }
@@ -92,7 +104,7 @@ fun ControllerProfileComposable(
             }
             Row(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = "Address: " + controllerProfile.address,
+                    text = stringResource(id = R.string.address) + controllerProfile.address,
                     fontSize = 12.sp
                 )
 
@@ -140,7 +152,7 @@ fun ControllerProfileComposable(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Edit,
-                        contentDescription = "Edit"
+                        contentDescription = stringResource(id = R.string.edit)
                     )
                 }
                 Button(
@@ -149,7 +161,7 @@ fun ControllerProfileComposable(
                     }) {
                     Icon(
                         imageVector = Icons.Outlined.Delete,
-                        contentDescription = "Delete"
+                        contentDescription = stringResource(id = R.string.delete)
                     )
                 }
             }

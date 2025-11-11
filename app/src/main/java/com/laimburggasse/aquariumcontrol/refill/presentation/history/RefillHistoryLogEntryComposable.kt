@@ -12,9 +12,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 import java.sql.Timestamp
@@ -31,17 +33,17 @@ fun RefillEventComposable(
             .fillMaxWidth()
             .border(
                 border = BorderStroke(
-                    1.dp,
-                    MaterialTheme.colorScheme.onSurface
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             )
-            .padding(8.dp)
+            .padding(all = 8.dp)
     ) {
         Column(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(weight = 1f)
         ) {
             Text(
-                text = "Timestamp",
+                text = stringResource(id = R.string.timestamp),
                 fontSize = 12.sp
             )
             Text(
@@ -50,14 +52,18 @@ fun RefillEventComposable(
             )
         }
         Column(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(weight = 1f)
         ) {
             Text(
-                text = "Duration: ${"%.1f".format(refillHistoryLogEntry.duration)} seconds",
+                text = stringResource(id = R.string.duration) +
+                        "%.1f".format(refillHistoryLogEntry.duration) +
+                        stringResource(id = R.string.seconds),
                 fontSize = 12.sp
             )
             Text(
-                text = "Volume: ${"%.2f".format(refillHistoryLogEntry.volume)} Liters",
+                text = stringResource(id = R.string.volume) +
+                        "%.2f".format(refillHistoryLogEntry.volume) +
+                        stringResource(id = R.string.liters),
                 fontSize = 12.sp
             )
         }
@@ -78,7 +84,7 @@ internal fun RefillEventComposablePreview() {
 
     AquariumControllerTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
-            RefillEventComposable(mockEvent)
+            RefillEventComposable(refillHistoryLogEntry = mockEvent)
         }
     }
 }
