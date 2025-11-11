@@ -48,7 +48,7 @@ fun HeatingRangeSliderTextFieldsLandscapeComposable(
                 .weight(weight = 0.25f),
             textAlign = TextAlign.Center
         )
-        Spacer(modifier = Modifier.width(10.dp))
+        Spacer(modifier = Modifier.width(width = 10.dp))
         RangeSlider(
             value = sliderRange,
             onValueChange = { newValue ->

@@ -16,6 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.lib_composables.NumericDoubleOutlinedTextFieldComposable
+import com.laimburggasse.aquariumcontrol.lib_composables.RoundRefreshButtonComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
@@ -24,7 +25,8 @@ fun VentilationRangeSliderTextFieldsLandscapeComposable(
     ventilationSwitchOnTemp: Double,
     onLowerValueChanged: (Double) -> Unit,
     onUpperValueChanged: (Double) -> Unit,
-    onSliderValueChanged: (Float, Float) -> Unit
+    onSliderValueChanged: (Float, Float) -> Unit,
+    onRefresh: () -> Unit
 ) {
     // This composable displays a slider and two text fields.
     // The slider is arrange in between the two text fields in one row.
@@ -44,10 +46,10 @@ fun VentilationRangeSliderTextFieldsLandscapeComposable(
             modifier = Modifier
                 .padding(top = 16.dp)
                 .size(width = 128.dp, height = 72.dp)
-                .weight(0.2f),
+                .weight(weight = 0.2f),
             textAlign = TextAlign.Center
         )
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(width = 8.dp))
         RangeSlider(
             value = sliderRange,
             onValueChange = { newValue ->
@@ -56,9 +58,9 @@ fun VentilationRangeSliderTextFieldsLandscapeComposable(
             valueRange = 20f..30f,
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(0.6f)
+                .weight(weight = 0.6f)
         )
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(width = 8.dp))
         NumericDoubleOutlinedTextFieldComposable(
             value = ventilationSwitchOnTemp,
             onValueChange = { newStringValue ->
@@ -70,9 +72,11 @@ fun VentilationRangeSliderTextFieldsLandscapeComposable(
             modifier = Modifier
                 .padding(top = 16.dp)
                 .size(width = 128.dp, height = 72.dp)
-                .weight(0.2f),
+                .weight(weight = 0.2f),
             textAlign = TextAlign.Center
         )
+        Spacer(modifier = Modifier.size(width = 24.dp, height = 12.dp))
+        RoundRefreshButtonComposable { onRefresh() }
     }
 }
 
@@ -95,7 +99,8 @@ internal fun VentilationRangeSliderTextFieldsLandscapeComposablePreview() {
                 ventilationSwitchOnTemp = 27.0,
                 onLowerValueChanged = {},
                 onUpperValueChanged = {},
-                onSliderValueChanged = {lowerValue, upperValue -> }
+                onSliderValueChanged = {lowerValue, upperValue -> },
+                onRefresh = {}
             )
         }
     }

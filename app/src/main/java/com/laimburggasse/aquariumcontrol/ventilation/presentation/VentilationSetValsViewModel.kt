@@ -95,6 +95,11 @@ class VentilationSetValsViewModel @Inject constructor(
             VentilationSetValsUiEvent.Update -> {
                 updateValues()
             }
+            VentilationSetValsUiEvent.Refresh -> {
+                viewModelScope.launch {
+                    ventilationSetValsRepository.triggerRefresh()
+                }
+            }
         }
     }
 }

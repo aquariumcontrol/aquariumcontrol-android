@@ -7,6 +7,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -56,7 +59,7 @@ fun VentilationScreen(
             ) {
                 when (ventilationSetValsUiState) {
                     is VentilationSetValsUiState.Success -> {
-                        val ventilationSetVals = ventilationSetValsUiState.ventilationSetVals
+                        val ventilationSetVals: VentilationSetVals = ventilationSetValsUiState.ventilationSetVals
                         when (configuration.orientation) {
                             Configuration.ORIENTATION_LANDSCAPE -> {
                                 Row {
@@ -93,6 +96,9 @@ fun VentilationScreen(
                                             )
                                         )
                                     },
+                                    onRefresh = { onVentilationSetValsEvent(
+                                        VentilationSetValsUiEvent.Refresh
+                                    )}
                                 )
                             }
                             else -> {
@@ -128,6 +134,9 @@ fun VentilationScreen(
                                             )
                                         )
                                     },
+                                    onRefresh = { onVentilationSetValsEvent(
+                                        VentilationSetValsUiEvent.Refresh
+                                    )}
                                 )
                             }
                         }
@@ -147,6 +156,10 @@ fun VentilationScreen(
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(size = 150.dp),
+                                color = MaterialTheme.colorScheme.primary
+                            )
                             Text(text = "Loading...")
                         }
                     }

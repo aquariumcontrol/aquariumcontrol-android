@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -174,6 +176,10 @@ fun HeatingScreen(
                                 verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(size = 150.dp),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
                                 Text(text = "Loading set value data...")
                             }
                         }
@@ -225,6 +231,10 @@ fun HeatingScreen(
                                 verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(size = 150.dp),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
                                 Text(text = "Loading statistical data...")
                             }
                         }

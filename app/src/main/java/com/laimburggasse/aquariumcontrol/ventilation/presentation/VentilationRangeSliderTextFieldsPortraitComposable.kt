@@ -16,6 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.lib_composables.NumericDoubleOutlinedTextFieldComposable
+import com.laimburggasse.aquariumcontrol.lib_composables.RoundRefreshButtonComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable
@@ -24,7 +25,8 @@ fun VentilationRangeSliderTextFieldsPortraitComposable(
     ventilationSwitchOnTemp: Double,
     onLowerValueChanged: (Double) -> Unit,
     onUpperValueChanged: (Double) -> Unit,
-    onSliderValueChanged: (Float, Float) -> Unit
+    onSliderValueChanged: (Float, Float) -> Unit,
+    onRefresh: () -> Unit
 ) {
     // This composable displays a slider and two text fields.
     // The slider is arrange on top of the two text fields.
@@ -55,7 +57,7 @@ fun VentilationRangeSliderTextFieldsPortraitComposable(
                 .size(width = 128.dp, height = 72.dp),
             textAlign = TextAlign.Center
         )
-        Spacer(modifier = Modifier.size(width = 72.dp, height = 10.dp))
+        Spacer(modifier = Modifier.size(width = 36.dp, height = 10.dp))
         NumericDoubleOutlinedTextFieldComposable(
             value = ventilationSwitchOnTemp,
             onValueChange = { newStringValue ->
@@ -69,6 +71,8 @@ fun VentilationRangeSliderTextFieldsPortraitComposable(
                 .size(width = 128.dp, height = 72.dp),
             textAlign = TextAlign.Center
         )
+        Spacer(modifier = Modifier.size(width = 24.dp, height = 12.dp))
+        RoundRefreshButtonComposable { onRefresh() }
     }
 }
 
@@ -84,7 +88,8 @@ internal fun VentilationRangeSliderTextFieldsPortraitComposablePreview() {
                     ventilationSwitchOnTemp = 27.0,
                     onLowerValueChanged = {},
                     onUpperValueChanged = {},
-                    onSliderValueChanged = {lowerValue, upperValue -> }
+                    onSliderValueChanged = {lowerValue, upperValue -> },
+                    onRefresh = {}
                 )
             }
         }

@@ -6,4 +6,5 @@ sealed interface VentilationSetValsUiEvent {
     data class ChangeUpperValue(val upperValue: Float): VentilationSetValsUiEvent
     object Update: VentilationSetValsUiEvent
     object Reset: VentilationSetValsUiEvent
+    object Refresh: VentilationSetValsUiEvent
 }
