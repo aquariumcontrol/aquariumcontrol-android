@@ -7,6 +7,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 
+private const val MAX_FEED_HISTORY_LOG_ENTRIES = 5000
 class FeedHistoryLogEntryReader(private val url: String) {
     // This class will read the feed events from the server using a GET request.
     private val client = OkHttpClient()
@@ -31,6 +32,12 @@ class FeedHistoryLogEntryReader(private val url: String) {
                 try {
                     val decodedData: List<FeedHistoryLogEntry> =
                         json.decodeFromString<List<FeedHistoryLogEntry>>(string = responseBody)
+                    if (decodedData.size > MAX_FEED_HISTORY_LOG_ENTRIES) {
+                        return DataFetchResult.Error(
+                            exception = null,
+                            errorMessage = "Server responded with more than $MAX_FEED_HISTORY_LOG_ENTRIES entries."
+                        )
+                    }
                     return DataFetchResult.Success(decodedData)
                 } catch (exception: Exception) {
                     return DataFetchResult.Error(

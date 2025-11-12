@@ -7,6 +7,8 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 
+private const val MAX_REFILL_HISTORY_LOG_ENTRIES = 5000
+
 class RefillHistoryLogEntryReader(private val url: String) {
     // This class reads the refill events from the server using a GET request.
     private val client = OkHttpClient()
@@ -31,6 +33,12 @@ class RefillHistoryLogEntryReader(private val url: String) {
                 try {
                     val decodedData: List<RefillHistoryLogEntry> =
                         json.decodeFromString<List<RefillHistoryLogEntry>>(string = responseBody)
+                    if (decodedData.size > MAX_REFILL_HISTORY_LOG_ENTRIES) {
+                        return DataFetchResult.Error(
+                            exception = null,
+                            errorMessage = "Server responded with more than $MAX_REFILL_HISTORY_LOG_ENTRIES entries."
+                        )
+                    }
                     return DataFetchResult.Success(decodedData)
                 } catch (exception: Exception) {
                     return DataFetchResult.Error(
