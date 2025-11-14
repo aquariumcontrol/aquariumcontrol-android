@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol.schedule.data.remote
 
+import com.laimburggasse.aquariumcontrol.GlobalConstants
 import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleStringEntry
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
@@ -31,6 +32,12 @@ class ScheduleEntryReader(private val url: String) {
                 try {
                     val decodedData: List<ScheduleStringEntry> =
                         json.decodeFromString<List<ScheduleStringEntry>>(string = responseBody)
+                    if (decodedData.size > GlobalConstants.MAX_SCHEDULE_ENTRIES) {
+                        return DataFetchResult.Error(
+                            exception = null,
+                            errorMessage = "Server responded with more than ${GlobalConstants.MAX_SCHEDULE_ENTRIES} entries."
+                        )
+                    }
                     return DataFetchResult.Success(decodedData)
                 } catch (exception: Exception) {
                     return DataFetchResult.Error(

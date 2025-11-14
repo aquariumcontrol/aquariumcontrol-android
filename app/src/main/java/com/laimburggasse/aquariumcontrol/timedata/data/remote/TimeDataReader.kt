@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol.timedata.data.remote
 
+import com.laimburggasse.aquariumcontrol.GlobalConstants
 import com.laimburggasse.aquariumcontrol.timedata.data.remote.dto.TimeDataStringSample
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
@@ -60,6 +61,12 @@ class TimeDataReader(private val urlWithoutParameters: String) {
                 try {
                     val decodedData:List<TimeDataStringSample> = json.
                         decodeFromString<List<TimeDataStringSample>>(string = responseBody)
+                    if (decodedData.size > GlobalConstants.MAX_TIME_DATA_SAMPLES) {
+                        return DataFetchResult.Error(
+                            exception = null,
+                            errorMessage = "Server responded with more than ${GlobalConstants.MAX_TIME_DATA_SAMPLES} entries."
+                        )
+                    }
                     return DataFetchResult.Success(decodedData)
                 } catch (exception: Exception) {
                     return DataFetchResult.Error(

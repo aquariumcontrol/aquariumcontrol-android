@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol.feed.data.remote
 
+import com.laimburggasse.aquariumcontrol.GlobalConstants
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedProfileImport
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
@@ -32,6 +33,12 @@ class FeedProfileReader(private val url: String) {
                 try {
                     val decodedData: List<FeedProfileImport> =
                         json.decodeFromString<List<FeedProfileImport>>(string = responseBody)
+                    if (decodedData.size > GlobalConstants.MAX_PROFILE_ENTRIES) {
+                        return DataFetchResult.Error(
+                            exception = null,
+                            errorMessage = "Server responded with more than ${GlobalConstants.MAX_PROFILE_ENTRIES} entries."
+                        )
+                    }
                     DataFetchResult.Success(data = decodedData)
                 } catch (exception: Exception) {
                     return DataFetchResult.Error(

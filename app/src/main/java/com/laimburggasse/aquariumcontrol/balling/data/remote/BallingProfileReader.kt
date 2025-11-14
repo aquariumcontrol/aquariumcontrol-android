@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol.balling.data.remote
 
+import com.laimburggasse.aquariumcontrol.GlobalConstants
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
@@ -31,6 +32,12 @@ class BallingProfileReader(private val url: String) {
                 try {
                     val decodedData: List<BallingProfile> =
                         json.decodeFromString<List<BallingProfile>>(string = responseBody)
+                    if (decodedData.size > GlobalConstants.MAX_PROFILE_ENTRIES) {
+                        return DataFetchResult.Error(
+                            exception = null,
+                            errorMessage = "Server responded with more than ${GlobalConstants.MAX_PROFILE_ENTRIES} entries."
+                        )
+                    }
                     return DataFetchResult.Success(decodedData)
                 }
                 catch (exception: Exception) {
