@@ -52,16 +52,22 @@ fun RefillScreen(
             snackbarHost = { SnackbarHost(hostState = remember { SnackbarHostState() })}
         ) { innerPadding ->
             Column(
-                modifier = Modifier.fillMaxSize().padding(paddingValues = innerPadding),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues = innerPadding),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Row(modifier = Modifier.padding(all = 8.dp)) {
                     Column(
-                        modifier = Modifier.fillMaxWidth().padding(paddingValues = innerPadding),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(paddingValues = innerPadding),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Button(
-                            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp),
                             onClick = { onNavigateFromRefill(RefillNavigationEvent.ToRefillHistory24h) },
                         ) {
                             Text(
@@ -70,7 +76,9 @@ fun RefillScreen(
                             )
                         }
                         Button(
-                            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp),
                             onClick = { onNavigateFromRefill(RefillNavigationEvent.ToRefillHistory7d) },
                         ) {
                             Text(
@@ -79,7 +87,9 @@ fun RefillScreen(
                             )
                         }
                         Button(
-                            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp),
                             onClick = {
                                 onRefillEvent(RefillUiEvent.StartControl)
                                 Toast.makeText(
@@ -95,7 +105,9 @@ fun RefillScreen(
                             )
                         }
                         Button(
-                            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp),
                             onClick = {
                                 onRefillEvent(RefillUiEvent.StopControl)
                                 Toast.makeText(
@@ -111,7 +123,9 @@ fun RefillScreen(
                             )
                         }
                         Button(
-                            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp),
                             onClick = {
                                 onRefillEvent(RefillUiEvent.ResetErrors)
                                 Toast.makeText(

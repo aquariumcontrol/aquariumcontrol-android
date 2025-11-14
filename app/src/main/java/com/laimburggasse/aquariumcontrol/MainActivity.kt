@@ -1,12 +1,15 @@
 package com.laimburggasse.aquariumcontrol
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -62,6 +65,7 @@ import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewUiState
 import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewViewModel
 import com.laimburggasse.aquariumcontrol.refill.presentation.navigation.handleRefillNavigation
 import com.laimburggasse.aquariumcontrol.refill.presentation.entry.RefillScreen
+import com.laimburggasse.aquariumcontrol.refill.presentation.entry.RefillScreenEvent
 import com.laimburggasse.aquariumcontrol.refill.presentation.entry.RefillViewModel
 import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryScreen
 import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryUiState
@@ -413,10 +417,21 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(route = ViewNavigationRoutes.refill) {
                         val refillViewModel: RefillViewModel = hiltViewModel()
+                        val context: Context = LocalContext.current
+
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.refill,
                             screenContent = {
+                                LaunchedEffect(key1 = true) {
+                                    refillViewModel.events.collect { event ->
+                                        when (event) {
+                                            is RefillScreenEvent.ShowToast -> {
+                                                Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
+                                    }
+                                }
                                 RefillScreen(
                                     onNavigateFromRefill = {
                                         event -> navHostController.handleRefillNavigation(event)
