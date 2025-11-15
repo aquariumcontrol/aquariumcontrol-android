@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-open class BallingProfilesRepository @Inject constructor(
+open class BallingProfilesRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     @ApplicationScope private val repositoryScope: CoroutineScope
 ) {

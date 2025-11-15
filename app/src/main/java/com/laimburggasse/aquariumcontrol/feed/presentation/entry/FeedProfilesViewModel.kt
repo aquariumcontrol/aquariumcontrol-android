@@ -2,7 +2,7 @@ package com.laimburggasse.aquariumcontrol.feed.presentation.entry
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.feed.data.FeedProfilesRepository
+import com.laimburggasse.aquariumcontrol.feed.data.FeedProfilesRepositoryImpl
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FeedProfilesViewModel @Inject constructor(
-    val feedProfilesRepository: FeedProfilesRepository
+    val feedProfilesRepository: FeedProfilesRepositoryImpl
 ) : ViewModel() {
 
     val feedProfilesUiState: StateFlow<FeedProfilesUiState> = feedProfilesRepository.profilesFlow

@@ -2,7 +2,7 @@ package com.laimburggasse.aquariumcontrol.heating.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.heating.data.HeatingSetValsRepository
+import com.laimburggasse.aquariumcontrol.heating.data.HeatingSetValsRepositoryImpl
 import com.laimburggasse.aquariumcontrol.heating.domain.heatingSetValsSanityCheck
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
 import com.laimburggasse.aquariumcontrol.lib.domain.model.SetValsSanityCheckResult
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HeatingSetValsViewModel @Inject constructor(
-    private var heatingSetValsRepository: HeatingSetValsRepository,
+    private var heatingSetValsRepository: HeatingSetValsRepositoryImpl,
 ) : ViewModel() {
     val heatingSetValsValid = MutableStateFlow<Boolean?>(value = true)
     val heatingSetValsUiState: StateFlow<HeatingSetValsUiState> = heatingSetValsRepository.heatingSetValsFlow

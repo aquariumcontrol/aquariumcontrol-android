@@ -2,7 +2,7 @@ package com.laimburggasse.aquariumcontrol.heating.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.heating.data.HeatingStatsRepository
+import com.laimburggasse.aquariumcontrol.heating.data.HeatingStatsRepositoryImpl
 import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HeatingStatsViewModel @Inject constructor(
-    private val heatingStatsRepository: HeatingStatsRepository
+    private val heatingStatsRepository: HeatingStatsRepositoryImpl
 ): ViewModel() {
     val heatingStatsUiState: StateFlow<HeatingStatsUiState> = heatingStatsRepository.heatingStatsFlow
         .map { result ->

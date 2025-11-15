@@ -33,7 +33,7 @@ import javax.inject.Singleton
 
 
 @Singleton
-open class HeatingSetValsRepository @Inject constructor(
+open class HeatingSetValsRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     @ApplicationScope private val repositoryScope: CoroutineScope
 ) {

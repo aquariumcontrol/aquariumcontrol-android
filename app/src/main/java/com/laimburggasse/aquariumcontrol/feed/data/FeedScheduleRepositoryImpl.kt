@@ -34,7 +34,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-open class FeedScheduleRepository @Inject constructor(
+open class FeedScheduleRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     @ApplicationScope private val repositoryScope: CoroutineScope
 ) {

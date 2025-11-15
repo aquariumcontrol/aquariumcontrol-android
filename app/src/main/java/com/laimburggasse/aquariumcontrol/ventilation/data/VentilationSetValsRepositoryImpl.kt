@@ -33,7 +33,7 @@ import javax.inject.Singleton
 
 
 @Singleton
-open class VentilationSetValsRepository @Inject constructor(
+open class VentilationSetValsRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     @ApplicationScope private val repositoryScope: CoroutineScope
 ) {

@@ -3,7 +3,7 @@ package com.laimburggasse.aquariumcontrol.ventilation.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.lib.domain.model.SetValsSanityCheckResult
-import com.laimburggasse.aquariumcontrol.ventilation.data.VentilationSetValsRepository
+import com.laimburggasse.aquariumcontrol.ventilation.data.VentilationSetValsRepositoryImpl
 import com.laimburggasse.aquariumcontrol.ventilation.domain.model.VentilationSetVals
 import com.laimburggasse.aquariumcontrol.ventilation.domain.ventilationSetValsSanityCheck
 import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class VentilationSetValsViewModel @Inject constructor(
-    private val ventilationSetValsRepository: VentilationSetValsRepository
+    private val ventilationSetValsRepository: VentilationSetValsRepositoryImpl
 ) : ViewModel() {
     val ventilationSetValsValid = MutableStateFlow<Boolean?>(value = true)
 

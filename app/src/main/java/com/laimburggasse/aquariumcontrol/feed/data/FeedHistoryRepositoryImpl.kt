@@ -1,10 +1,10 @@
-package com.laimburggasse.aquariumcontrol.balling.data
+package com.laimburggasse.aquariumcontrol.feed.data
 
 import com.laimburggasse.aquariumcontrol.SessionManager
-import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingHistoryLogEntryReader
-import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
+import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedHistoryLogEntryReader
 import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.lib.data.remote.WebApiUrls
 import kotlinx.coroutines.CoroutineScope
@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-open class BallingHistoryRepository @Inject constructor(
+open class FeedHistoryRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
     @ApplicationScope private val repositoryScope: CoroutineScope
 ) {
@@ -35,7 +35,7 @@ open class BallingHistoryRepository @Inject constructor(
     private val showFullWeek = MutableStateFlow(value = false)
 
     /**
-     * A reactive Flow that provides the Balling History events.
+     * A reactive Flow that provides the Feed History events.
      * It combines three sources:
      *  - The selected controller from SessionManager.
      *  - The manual refresh trigger.
@@ -44,7 +44,7 @@ open class BallingHistoryRepository @Inject constructor(
      * It automatically re-fetches data when any of these inputs change.
      */
     @OptIn(ExperimentalCoroutinesApi::class)
-    open val ballingHistoryDosingEventFlow: Flow<DataFetchResult<List<BallingHistoryLogEntry>>> =
+    open val feedHistoryEventFlow: Flow<DataFetchResult<List<FeedHistoryLogEntry>>> =
         combine(
             flow = sessionManager.selectedControllerProfile,
             flow2 = refreshTrigger.onStart { emit(value = Unit) }, // Trigger on first collection
@@ -59,15 +59,14 @@ open class BallingHistoryRepository @Inject constructor(
                 emit(value = DataFetchResult.Loading)
 
                 val url: String = if (isFullWeek) {
-                    "http://${controller!!.address}:${controller.port}${WebApiUrls.BALLING_GET_EVENTS_7D}"
+                    "http://${controller!!.address}:${controller.port}${WebApiUrls.FEED_GET_EVENTS_7D}"
                 } else {
-                    "http://${controller!!.address}:${controller.port}${WebApiUrls.BALLING_GET_EVENTS_24H}"
+                    "http://${controller!!.address}:${controller.port}${WebApiUrls.FEED_GET_EVENTS_24H}"
                 }
-
-                val result: DataFetchResult<List<BallingHistoryLogEntry>> =
+                val result: DataFetchResult<List<FeedHistoryLogEntry>> =
                     withContext(context = Dispatchers.IO) {
-                        val reader = BallingHistoryLogEntryReader(url)
-                        reader.readBallingEvents()
+                        val reader = FeedHistoryLogEntryReader(url)
+                        reader.readFeedEvents()
                     }
 
                 emit(value = result)

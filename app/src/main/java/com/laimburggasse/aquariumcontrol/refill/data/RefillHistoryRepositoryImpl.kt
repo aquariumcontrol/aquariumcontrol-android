@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-open class RefillHistoryRepository @Inject constructor(
+open class RefillHistoryRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
     @ApplicationScope private val repositoryScope: CoroutineScope
 ) {

@@ -3,7 +3,7 @@ package com.laimburggasse.aquariumcontrol.feed.presentation.edit
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.feed.data.FeedProfilesRepository
+import com.laimburggasse.aquariumcontrol.feed.data.FeedProfilesRepositoryImpl
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfilePhase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class FeedProfileEditViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val feedProfilesRepository: FeedProfilesRepository,
+    private val feedProfilesRepository: FeedProfilesRepositoryImpl,
 ) : ViewModel() {
     private var originalFeedProfile: FeedProfile = FeedProfile()
 

@@ -26,7 +26,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-open class HeatingStatsRepository @Inject constructor(
+open class HeatingStatsRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
     @ApplicationScope private val repositoryScope: CoroutineScope
 ) {

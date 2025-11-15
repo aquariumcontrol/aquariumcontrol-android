@@ -22,7 +22,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @OptIn(DelicateCoroutinesApi::class)
-open class OverviewRepository @Inject constructor(
+open class OverviewRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
     @ApplicationScope private val repositoryScope: CoroutineScope
 ) {

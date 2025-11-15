@@ -2,7 +2,7 @@ package com.laimburggasse.aquariumcontrol.feed.presentation.add
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.feed.data.FeedProfilesRepository
+import com.laimburggasse.aquariumcontrol.feed.data.FeedProfilesRepositoryImpl
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FeedProfileAddViewModel @Inject constructor(
-    private val feedProfilesRepository: FeedProfilesRepository
+    private val feedProfilesRepository: FeedProfilesRepositoryImpl
 ) : ViewModel() {
     private val _feedProfileName = MutableStateFlow(value = "")
     private val _feedProfileNameExists = MutableStateFlow(value = false)

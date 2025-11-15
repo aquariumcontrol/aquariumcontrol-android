@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.GlobalConstants
-import com.laimburggasse.aquariumcontrol.balling.data.BallingProfilesRepository
+import com.laimburggasse.aquariumcontrol.balling.data.BallingProfilesRepositoryImpl
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class BallingProfileEditViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val ballingProfilesRepository: BallingProfilesRepository,
+    private val ballingProfilesRepository: BallingProfilesRepositoryImpl,
 ): ViewModel() {
     // This class will allow the user to edit the Balling dosing profile.
 

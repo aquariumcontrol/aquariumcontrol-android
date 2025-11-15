@@ -32,7 +32,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-open class ScheduleRepository @Inject constructor(
+open class ScheduleRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     @ApplicationScope private val repositoryScope: CoroutineScope
 ) {
