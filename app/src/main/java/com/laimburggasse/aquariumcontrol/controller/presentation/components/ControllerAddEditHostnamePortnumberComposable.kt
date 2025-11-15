@@ -16,7 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.R
-import com.laimburggasse.aquariumcontrol.lib_composables.NumericIntOutlinedTextFieldComposable
+import com.laimburggasse.aquariumcontrol.lib_composables.presentation.NumericIntOutlinedTextFieldComposable
 import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
 
 @Composable

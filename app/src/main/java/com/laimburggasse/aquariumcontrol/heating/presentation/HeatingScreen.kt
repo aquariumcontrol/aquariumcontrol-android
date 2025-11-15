@@ -32,7 +32,7 @@ import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
 import com.laimburggasse.aquariumcontrol.heating.data.remote.dto.HeatingStatsStringEntry
-import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.lib_composables.presentation.ScreenHeadlineComposable
 
 @Composable
 fun HeatingScreen(

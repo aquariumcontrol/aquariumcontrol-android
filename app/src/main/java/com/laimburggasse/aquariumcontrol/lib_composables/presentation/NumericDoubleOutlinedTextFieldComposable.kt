@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.lib_composables
+package com.laimburggasse.aquariumcontrol.lib_composables.presentation
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box

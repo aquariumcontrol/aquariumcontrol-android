@@ -35,7 +35,7 @@ import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.balling.presentation.components.BallingProfileSummaryComposable
 import com.laimburggasse.aquariumcontrol.balling.presentation.navigation.BallingNavigationEvent
-import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.lib_composables.presentation.ScreenHeadlineComposable
 
 @Composable
 fun BallingScreen(

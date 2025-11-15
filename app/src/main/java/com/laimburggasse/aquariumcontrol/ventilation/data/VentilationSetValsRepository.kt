@@ -4,7 +4,7 @@ import com.laimburggasse.aquariumcontrol.GlobalConstants
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
-import com.laimburggasse.aquariumcontrol.lib_model.SetValsSanityCheckResult
+import com.laimburggasse.aquariumcontrol.lib_composables.domain.model.SetValsSanityCheckResult
 import com.laimburggasse.aquariumcontrol.ventilation.data.remote.VentilationSetValsReader
 import com.laimburggasse.aquariumcontrol.ventilation.domain.model.VentilationSetVals
 import com.laimburggasse.aquariumcontrol.ventilation.domain.ventilationSetValsSanityCheck

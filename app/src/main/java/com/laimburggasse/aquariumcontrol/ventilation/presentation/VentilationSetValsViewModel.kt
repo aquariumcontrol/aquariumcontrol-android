@@ -2,7 +2,7 @@ package com.laimburggasse.aquariumcontrol.ventilation.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.lib_model.SetValsSanityCheckResult
+import com.laimburggasse.aquariumcontrol.lib_composables.domain.model.SetValsSanityCheckResult
 import com.laimburggasse.aquariumcontrol.ventilation.data.VentilationSetValsRepository
 import com.laimburggasse.aquariumcontrol.ventilation.domain.model.VentilationSetVals
 import com.laimburggasse.aquariumcontrol.ventilation.domain.ventilationSetValsSanityCheck

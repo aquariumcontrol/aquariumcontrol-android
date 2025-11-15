@@ -19,7 +19,7 @@ import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedProfileImport
-import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.lib_composables.presentation.ScreenHeadlineComposable
 
 @Composable
 fun FeedProfileEditScreen(

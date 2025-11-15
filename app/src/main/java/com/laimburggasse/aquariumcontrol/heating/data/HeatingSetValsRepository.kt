@@ -7,7 +7,7 @@ import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingSetValsReader
 import com.laimburggasse.aquariumcontrol.heating.domain.heatingSetValsSanityCheck
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
-import com.laimburggasse.aquariumcontrol.lib_model.SetValsSanityCheckResult
+import com.laimburggasse.aquariumcontrol.lib_composables.domain.model.SetValsSanityCheckResult
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
 import com.laimburggasse.aquariumcontrol.webapi.WebApiPostRequest

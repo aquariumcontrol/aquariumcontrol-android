@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.lib_model
+package com.laimburggasse.aquariumcontrol.lib_composables.domain.model
 
 sealed interface SetValsSanityCheckResult<out T> {
     data class Success<T>(val data: T) : SetValsSanityCheckResult<T>

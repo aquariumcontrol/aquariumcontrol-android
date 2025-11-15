@@ -28,7 +28,7 @@ import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.presentation.navigation.FeedNavigationEvent
-import com.laimburggasse.aquariumcontrol.lib_composables.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.lib_composables.presentation.ScreenHeadlineComposable
 
 @Composable
 fun FeedProfileAddScreen(
