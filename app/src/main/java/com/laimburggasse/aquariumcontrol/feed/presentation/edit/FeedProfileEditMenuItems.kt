@@ -1,5 +1,7 @@
 package com.laimburggasse.aquariumcontrol.feed.presentation.edit
 
+import com.laimburggasse.aquariumcontrol.GlobalConstants
+
 fun mapIndexToMenuItemId(
     level: Int,
     phaseType: FeedProfileEditPhaseType?,
@@ -31,14 +33,17 @@ fun createFeedProfileEditMenuItem(
 ): FeedProfileEditMenuItem {
     val feedProfileNumber: Int = index + 1
     val text: String = when (level) {
-        1 -> "Phase $feedProfileNumber"
-        2 -> if (phaseType == FeedProfileEditPhaseType.FEED) "Feed" else "Pause"
+        1 -> GlobalConstants.LABEL_PHASE + feedProfileNumber
+        2 -> if (phaseType == FeedProfileEditPhaseType.FEED)
+                 GlobalConstants.LABEL_FEED
+             else
+                 GlobalConstants.LABEL_PAUSE
         3 -> when (toggleButtonType) {
-            FeedProfileEditToggleButtonType.Skimmer -> "Skimmer"
-            FeedProfileEditToggleButtonType.MainPump1 -> "Main Pump 1"
-            FeedProfileEditToggleButtonType.MainPump2 -> "Main Pump 2"
-            FeedProfileEditToggleButtonType.AuxPump1 -> "Aux. Pump 1"
-            FeedProfileEditToggleButtonType.AuxPump2 -> "Aux. Pump 2"
+            FeedProfileEditToggleButtonType.Skimmer -> GlobalConstants.LABEL_SKIMMER
+            FeedProfileEditToggleButtonType.MainPump1 -> GlobalConstants.LABEL_MAIN_PUMP_1
+            FeedProfileEditToggleButtonType.MainPump2 -> GlobalConstants.LABEL_MAIN_PUMP_2
+            FeedProfileEditToggleButtonType.AuxPump1 -> GlobalConstants.LABEL_AUX_PUMP_1
+            FeedProfileEditToggleButtonType.AuxPump2 -> GlobalConstants.LABEL_AUX_PUMP_2
             null -> ""
         }
         else -> ""

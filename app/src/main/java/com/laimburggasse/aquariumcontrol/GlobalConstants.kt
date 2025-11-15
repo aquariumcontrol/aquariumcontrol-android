@@ -20,4 +20,10 @@ object GlobalConstants {
     const val LABEL_AUX_PUMP_1 = "Aux. Pump 1"
 
     const val LABEL_AUX_PUMP_2 = "Aux. Pump 2"
+
+    const val LABEL_FEED = "Feed"
+
+    const val LABEL_PAUSE = "Pause"
+
+    const val LABEL_PHASE = "Phase"
 }
