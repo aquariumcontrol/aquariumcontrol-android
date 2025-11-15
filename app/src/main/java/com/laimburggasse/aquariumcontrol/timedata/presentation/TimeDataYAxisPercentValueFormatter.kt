@@ -4,12 +4,13 @@ import android.annotation.SuppressLint
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.formatter.ValueFormatter
+import com.laimburggasse.aquariumcontrol.GlobalConstants
 
 class TimeDataYAxisPercentValueFormatter: ValueFormatter() {
     @SuppressLint("DefaultLocale")
     override fun getAxisLabel(value: Float, axis: AxisBase?): String {
         if (axis is YAxis) {
-            return String.format("%2.0f", value) + " %"
+            return String.format("%2.0f", value) + GlobalConstants.LABEL_UNIT_PERCENT
         }
         return ""
     }

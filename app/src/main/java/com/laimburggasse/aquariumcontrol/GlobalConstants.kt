@@ -50,4 +50,14 @@ object GlobalConstants {
     const val LABEL_SURFACE_VENTILATION = "Surface Ventilation"
 
     const val LABEL_HEATING = "Heating"
+
+    const val LABEL_UNIT_DEGREE_CELSIUS = " °C"
+
+    const val LABEL_UNIT_MICROSIEVERT_PER_CM = " mS/cm"
+
+    const val LABEL_UNIT_ON = "ON"
+
+    const val LABEL_UNIT_OFF = "OFF"
+
+    const val LABEL_UNIT_PERCENT = " %"
 }
