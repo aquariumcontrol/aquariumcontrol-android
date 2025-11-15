@@ -4,6 +4,7 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.laimburggasse.aquariumcontrol.GlobalConstants
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfilePhase
 import kotlin.math.abs
@@ -19,33 +20,52 @@ object FeedProfileChartDataFactory {
 
     fun create(feedProfile: FeedProfile): FeedProfileChartDataBundle {
         val chartLines = listOf(
-            FeedProfileChartLineDefinition(name = "Feeder", signal = FeedProfileSignal.FEEDER,
+            FeedProfileChartLineDefinition(
+                name = GlobalConstants.LABEL_FEEDER,
+                signal = FeedProfileSignal.FEEDER,
                 getValue = { phase -> !phase.isPause },
                 yAxisValueOn = FeedProfileDisplayYAxisValueDefinition.FEEDER_ON,
-                yAxisValueOff = FeedProfileDisplayYAxisValueDefinition.FEEDER_OFF),
-            FeedProfileChartLineDefinition(name = "Skimmer", signal = FeedProfileSignal.SKIMMER,
+                yAxisValueOff = FeedProfileDisplayYAxisValueDefinition.FEEDER_OFF
+            ),
+            FeedProfileChartLineDefinition(
+                name = GlobalConstants.LABEL_SKIMMER,
+                signal = FeedProfileSignal.SKIMMER,
                 getValue = { phase -> phase.skimmer },
                 yAxisValueOn = FeedProfileDisplayYAxisValueDefinition.SKIMMER_ON,
-                yAxisValueOff = FeedProfileDisplayYAxisValueDefinition.SKIMMER_OFF),
-            FeedProfileChartLineDefinition(name = "Main Pump 1", signal = FeedProfileSignal.MAIN_PUMP1,
+                yAxisValueOff = FeedProfileDisplayYAxisValueDefinition.SKIMMER_OFF
+            ),
+            FeedProfileChartLineDefinition(
+                name = GlobalConstants.LABEL_MAIN_PUMP_1,
+                signal = FeedProfileSignal.MAIN_PUMP1,
                 getValue = { phase -> phase.mainPump1 },
                 yAxisValueOn = FeedProfileDisplayYAxisValueDefinition.MAIN_PUMP1_ON,
-                yAxisValueOff = FeedProfileDisplayYAxisValueDefinition.MAIN_PUMP1_OFF),
-            FeedProfileChartLineDefinition(name = "Main Pump 2", signal = FeedProfileSignal.MAIN_PUMP2,
+                yAxisValueOff = FeedProfileDisplayYAxisValueDefinition.MAIN_PUMP1_OFF
+            ),
+            FeedProfileChartLineDefinition(
+                name = GlobalConstants.LABEL_MAIN_PUMP_2,
+                signal = FeedProfileSignal.MAIN_PUMP2,
                 getValue = { phase -> phase.mainPump2 },
                 yAxisValueOn = FeedProfileDisplayYAxisValueDefinition.MAIN_PUMP2_ON,
-                yAxisValueOff = FeedProfileDisplayYAxisValueDefinition.MAIN_PUMP2_OFF),
-            FeedProfileChartLineDefinition(name = "Aux. Pump 1", signal = FeedProfileSignal.AUX_PUMP1,
+                yAxisValueOff = FeedProfileDisplayYAxisValueDefinition.MAIN_PUMP2_OFF
+            ),
+            FeedProfileChartLineDefinition(
+                name = GlobalConstants.LABEL_AUX_PUMP_1,
+                signal = FeedProfileSignal.AUX_PUMP1,
                 getValue = { phase -> phase.auxPump1 },
                 yAxisValueOn = FeedProfileDisplayYAxisValueDefinition.AUX_PUMP1_ON,
-                yAxisValueOff = FeedProfileDisplayYAxisValueDefinition.AUX_PUMP1_OFF),
-            FeedProfileChartLineDefinition(name = "Aux. Pump 2", signal = FeedProfileSignal.AUX_PUMP2,
+                yAxisValueOff = FeedProfileDisplayYAxisValueDefinition.AUX_PUMP1_OFF
+            ),
+            FeedProfileChartLineDefinition(
+                name = GlobalConstants.LABEL_AUX_PUMP_2,
+                signal = FeedProfileSignal.AUX_PUMP2,
                 getValue = { phase -> phase.auxPump2 },
                 yAxisValueOn = FeedProfileDisplayYAxisValueDefinition.AUX_PUMP2_ON,
-                yAxisValueOff = FeedProfileDisplayYAxisValueDefinition.AUX_PUMP2_OFF)
+                yAxisValueOff = FeedProfileDisplayYAxisValueDefinition.AUX_PUMP2_OFF
+            )
         )
 
-        val valuesMap: Map<FeedProfileChartLineDefinition, MutableList<Entry>> = chartLines.associateWith { mutableListOf() }
+        val valuesMap: Map<FeedProfileChartLineDefinition, MutableList<Entry>> =
+            chartLines.associateWith { mutableListOf() }
         var cumulatedTime = 0.0f
         val firstPhase: FeedProfilePhase = feedProfile.feedProfilePhases.firstOrNull() ?:
             return FeedProfileChartDataBundle(
@@ -61,7 +81,7 @@ object FeedProfileChartDataFactory {
         // Initial state
         chartLines.forEach { line ->
             val initialValue: Float = if (line.getValue(firstPhase)) line.yAxisValueOn else line.yAxisValueOff
-            valuesMap.getValue(line).add(Entry(0f, initialValue))
+            valuesMap.getValue(key =line).add(Entry(0f, initialValue))
         }
 
         // Process transitions
