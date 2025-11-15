@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol.heating.presentation
 
+import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Color
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -15,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -29,6 +31,7 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
+import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.heating.data.remote.dto.HeatingStatsStringEntry
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
 import com.laimburggasse.aquariumcontrol.lib_composables.RoundRefreshButtonComposable
@@ -41,9 +44,10 @@ import java.util.Locale
 fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: () -> Unit) {
     // This composable is only displaying time data charts without any user interaction.
     // Therefore, this composable does not use a view model.
-    val isDarkMode = isSystemInDarkTheme()
-    val textColor = if (isDarkMode) Color.WHITE else Color.BLACK
-
+    val isDarkMode: Boolean = isSystemInDarkTheme()
+    val textColor: Int = if (isDarkMode) Color.WHITE else Color.BLACK
+    val context: Context = LocalContext.current
+    
     Column(horizontalAlignment = CenterHorizontally) {
         AndroidView(
             modifier = Modifier
@@ -57,8 +61,8 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: ()
                     legend.isEnabled = false
                     setDrawGridBackground(false) // No grid
                     isDragEnabled = true
-                    setScaleEnabled(true)  //Allow zooming
-                    setPinchZoom(true)    //Allow zooming via Pinch gesture
+                    setScaleEnabled(true)  // Allow zooming
+                    setPinchZoom(true)    // Allow zooming via Pinch gesture
 
                     // X-Axis configuration
                     xAxis.position = XAxis.XAxisPosition.BOTTOM
@@ -115,7 +119,8 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: ()
                     }
 
                     // Energy Bar Data Set
-                    val energyDataSet: BarDataSet = BarDataSet(energyEntries, "Energy [Wh]").apply {
+                    val energyDataSet: BarDataSet = BarDataSet(energyEntries,
+                        context.getString(R.string.energy_wh)).apply {
                         color = Color.RED
                         valueTextColor = Color.RED
                         valueTextSize = 10f
@@ -124,7 +129,8 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: ()
 
                     // Ambient Temperature Line Data Set
                     val ambientTempDataSet: LineDataSet =
-                        LineDataSet(ambientTempEntries, "Ambient Temperature [°C]").apply {
+                        LineDataSet(ambientTempEntries,
+                            context.getString(R.string.ambient_temperature_c)).apply {
                             color =
                                 heatingStatsLineColorDefinition(signal = HeatingStatsSignal.AMBIENT_TEMPERATURE)
                             lineWidth = 2f
@@ -135,7 +141,7 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: ()
 
                     // Water Temperature Line Data Set
                     val waterTempDataSet: LineDataSet =
-                        LineDataSet(waterTempEntries, "Water Temperature [°C]").apply {
+                        LineDataSet(waterTempEntries, context.getString(R.string.water_temperature_c)).apply {
                             color =
                                 heatingStatsLineColorDefinition(signal = HeatingStatsSignal.WATER_TEMPERATURE)
                             lineWidth = 2f
@@ -156,7 +162,7 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: ()
                 } else {
                     // Handle empty data state
                     chart.clear()
-                    chart.setNoDataText("No data available") // Optional: Display a message
+                    chart.setNoDataText(context.getString(R.string.no_data_available)) // Optional: Display a message
                     chart.invalidate()
                 }
             }

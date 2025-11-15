@@ -179,4 +179,7 @@
     <string name="retry">Retry</string>
     <string name="loading_time_data">Loading time data…</string>
     <string name="successfully_added_feed_profile">Successfully added feed profile.</string>
+    <string name="energy_wh">Energy [Wh]</string>
+    <string name="ambient_temperature_c">Ambient Temperature [°C]</string>
+    <string name="no_data_available">No data available</string>
 </resources>
