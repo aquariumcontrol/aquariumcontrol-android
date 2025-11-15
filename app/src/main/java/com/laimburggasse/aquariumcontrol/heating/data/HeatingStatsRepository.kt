@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol.heating.data
 
+import com.laimburggasse.aquariumcontrol.GlobalConstants
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
@@ -69,7 +70,7 @@ open class HeatingStatsRepository @Inject constructor(
                         }
                         is DataFetchResult.Loading -> DataFetchResult.Error(
                             exception = null,
-                            errorMessage = "Loading heating stats data failed."
+                            errorMessage = GlobalConstants.ERR_MSG_LOADING_HEATING_STATS_FAILED
                         )
                     }
                 }

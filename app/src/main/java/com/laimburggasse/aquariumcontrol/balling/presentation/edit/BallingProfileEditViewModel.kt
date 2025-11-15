@@ -3,6 +3,7 @@ package com.laimburggasse.aquariumcontrol.balling.presentation.edit
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.laimburggasse.aquariumcontrol.GlobalConstants
 import com.laimburggasse.aquariumcontrol.balling.data.BallingProfilesRepository
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
@@ -32,13 +33,17 @@ class BallingProfileEditViewModel @Inject constructor(
             // Get the ID from navigation arguments.
             val ballingProfileId: Int? = savedStateHandle["ballingProfileId"]
             if (ballingProfileId == null) {
-                return@combine BallingProfileEditUiState.Error(errorMessage = "Profile ID not provided.")
+                return@combine BallingProfileEditUiState.Error(
+                    errorMessage = GlobalConstants.ERR_MSG_PROFILE_ID_NOT_PROVIDED
+                )
             }
 
             when (result) {
                 is DataFetchResult.Success -> {
                     // Find the specific profile from the list.
-                    val profileFromServer: BallingProfile? = result.data.find { it.pumpId == ballingProfileId }
+                    val profileFromServer: BallingProfile? = result.data.find {
+                        it.pumpId == ballingProfileId
+                    }
                     if (profileFromServer != null) {
                         // 2. Prioritize the unconfirmed profile if it exists.
                         //    If the user has started editing, show their edits.
@@ -50,12 +55,14 @@ class BallingProfileEditViewModel @Inject constructor(
                         BallingProfileEditUiState.NotFound
                     }
                 }
-                is DataFetchResult.Error -> BallingProfileEditUiState.Error(errorMessage = result.errorMessage)
+                is DataFetchResult.Error -> BallingProfileEditUiState.Error(
+                    errorMessage = result.errorMessage
+                )
                 is DataFetchResult.Loading -> BallingProfileEditUiState.Loading
             }
         }.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
             initialValue = BallingProfileEditUiState.Loading // Start in a loading state.
         )
 
@@ -77,14 +84,14 @@ class BallingProfileEditViewModel @Inject constructor(
      */
     fun onVolumeChange(newVolume: Double) {
         // Read the current state of the UI
-        val currentState = ballingProfileEditUiState.value
+        val currentState: BallingProfileEditUiState = ballingProfileEditUiState.value
 
         // Only proceed if we have a successful state to work with
         if (currentState is BallingProfileEditUiState.Success) {
             // If the user hasn't edited before, `unconfirmedProfile` is null.
             // In that case, we start with a copy of the profile from the UI state.
             // Otherwise, we continue editing the existing `unconfirmedProfile`.
-            val baseProfile = unconfirmedProfile.value ?: currentState.ballingProfile
+            val baseProfile: BallingProfile = unconfirmedProfile.value ?: currentState.ballingProfile
 
             // Create a new copy with the updated volume and set it.
             unconfirmedProfile.value = baseProfile.copy(volume = newVolume)

@@ -176,7 +176,7 @@ val mockControllerProfile = ControllerProfile(
 )
 
 val mockOverviewUiStateSuccess = OverviewUiState.Success(mockOverviewData)
-val mockOverviewUiStateError = OverviewUiState.Error(errorMessage = "Error loading data")
+val mockOverviewUiStateError = OverviewUiState.Error(errorMessage = "Mock Error loading data")
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)

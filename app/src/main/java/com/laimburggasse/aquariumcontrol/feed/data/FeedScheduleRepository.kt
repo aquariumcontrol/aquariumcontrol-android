@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol.feed.data
 
+import com.laimburggasse.aquariumcontrol.GlobalConstants
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
@@ -67,7 +68,7 @@ open class FeedScheduleRepository @Inject constructor(
                 emit(
                     value = DataFetchResult.Error(
                         exception = null,
-                        errorMessage = "No controller selected."
+                        errorMessage = GlobalConstants.ERR_MSG_NO_CONTROLLER_SELECTED
                     )
                 )
                 return@flow
@@ -90,7 +91,7 @@ open class FeedScheduleRepository @Inject constructor(
                         is DataFetchResult.Error -> importResult
                         is DataFetchResult.Loading -> DataFetchResult.Error(
                             exception = null,
-                            errorMessage = "Loading feed schedule entries failed."
+                            errorMessage = GlobalConstants.ERR_MSG_LOADING_FEED_SCHEDULE_ENTRIES_FAILED
                         )
                     }
                 }
@@ -105,7 +106,7 @@ open class FeedScheduleRepository @Inject constructor(
     }.stateIn(
         scope = repositoryScope,
         started = SharingStarted.Companion.WhileSubscribed(stopTimeoutMillis = 5000L),
-        initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial")
+        initialValue = DataFetchResult.Loading
     )
 
     // The PUBLIC flow combines the stable network data with fast-changing local updates.
@@ -149,7 +150,7 @@ open class FeedScheduleRepository @Inject constructor(
     }.stateIn(
         scope = repositoryScope,
         started = SharingStarted.Companion.WhileSubscribed(stopTimeoutMillis = 5000L),
-        initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial")
+        initialValue = DataFetchResult.Loading
     )
 
     open suspend fun deleteFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry) {
@@ -181,7 +182,7 @@ open class FeedScheduleRepository @Inject constructor(
                 pendingDeletions.value -= keyToDelete
                 failureResult.value = DataFetchResult.Error(
                     exception = null,
-                    errorMessage = "Deleting feed schedule entry failed."
+                    errorMessage = GlobalConstants.ERR_MSG_DELETING_FEED_SCHEDULE_ENTRY_FAILED
                 )
             }
         }
@@ -224,7 +225,7 @@ open class FeedScheduleRepository @Inject constructor(
             else {
                 failureResult.value = DataFetchResult.Error(
                     exception = null,
-                    errorMessage = "Adding feed schedule entry failed."
+                    errorMessage = GlobalConstants.ERR_MSG_ADDING_FEED_SCHEDULE_ENTRY_FAILED
                 )
             }
         }
@@ -270,7 +271,7 @@ open class FeedScheduleRepository @Inject constructor(
                 pendingUpdates.value -= originalKey
                 failureResult.value = DataFetchResult.Error(
                     exception = null,
-                    errorMessage = "Updating feed schedule entry failed."
+                    errorMessage = GlobalConstants.ERR_MSG_UPDATING_FEED_SCHEDULE_ENTRY_FAILED
                 )
             }
         }

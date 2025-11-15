@@ -261,7 +261,7 @@ val mockTimeDataSets =
 
 val mockTimeDataUiStateSuccess = TimeDataUiState.Success(timeDataSets = mockTimeDataSets)
 
-val mockTimeDataUiStateError = TimeDataUiState.Error(errorMessage = "Error loading data")
+val mockTimeDataUiStateError = TimeDataUiState.Error(errorMessage = "Mock Error loading data")
 
 val mockTimeDataUiStateEmpty = TimeDataUiState.Empty
 

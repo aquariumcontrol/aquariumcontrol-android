@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol.feed.data
 
+import com.laimburggasse.aquariumcontrol.GlobalConstants
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
@@ -63,7 +64,7 @@ open class FeedProfilesRepository @Inject constructor(
                 if (controller == null) {
                     emit(value = DataFetchResult.Error(
                         exception = null,
-                        errorMessage = "No controller selected."
+                        errorMessage = GlobalConstants.ERR_MSG_NO_CONTROLLER_SELECTED
                     ))
                     return@flow
                 }
@@ -95,7 +96,7 @@ open class FeedProfilesRepository @Inject constructor(
                     is DataFetchResult.Error -> networkResult // Pass through errors
                     is DataFetchResult.Loading -> DataFetchResult.Error(
                         exception = null,
-                        errorMessage = "Could not load feed profiles."
+                        errorMessage = GlobalConstants.ERR_MSG_LOADING_FEED_PROFILES_FAILED
                     )
                 }
                 emit(value = finalResult)
@@ -122,7 +123,7 @@ open class FeedProfilesRepository @Inject constructor(
             if (!success) {
                 failureResult.value = DataFetchResult.Error(
                     exception = null,
-                    errorMessage = "Could not delete the feed profile."
+                    errorMessage = GlobalConstants.ERR_MSG_COULD_NOT_DELETE_FEED_PROFILE
                 )
             }
         }
@@ -142,7 +143,7 @@ open class FeedProfilesRepository @Inject constructor(
             } else {
                 failureResult.value = DataFetchResult.Error(
                     exception = null,
-                    errorMessage = "Could not delete the feed profile."
+                    errorMessage = GlobalConstants.ERR_MSG_COULD_NOT_ADD_FEED_PROFILE
                 )
             }
         }
@@ -178,7 +179,7 @@ open class FeedProfilesRepository @Inject constructor(
             if (!success) {
                 failureResult.value = DataFetchResult.Error(
                     exception = null,
-                    errorMessage = "Could not update the feed profile."
+                    errorMessage = GlobalConstants.ERR_MSG_UPDATING_FEED_PROFILE_FAILED
                 )
             }
         }

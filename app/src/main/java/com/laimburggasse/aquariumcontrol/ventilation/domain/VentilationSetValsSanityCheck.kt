@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol.ventilation.domain
 
+import com.laimburggasse.aquariumcontrol.GlobalConstants
 import com.laimburggasse.aquariumcontrol.lib_model.SetValsSanityCheckResult
 import com.laimburggasse.aquariumcontrol.ventilation.domain.model.VentilationSetVals
 
@@ -11,12 +12,12 @@ fun ventilationSetValsSanityCheck(ventilationSetVals: VentilationSetVals):
         ventilationSetVals.ventilationSwitchOnTemp !in ventilationSetValInterval
     ) {
         return SetValsSanityCheckResult.Error(
-            errorMessage = "Incorrect data received from server: values are out of range"
+            errorMessage = GlobalConstants.ERR_MSG_RECEIVED_SET_VALS_OUT_OF_RANGE
         )
     }
     if (ventilationSetVals.ventilationSwitchOffTemp >= ventilationSetVals.ventilationSwitchOnTemp) {
         return SetValsSanityCheckResult.Error(
-            errorMessage = "Incorrect data received from server: switch off value must be smaller than switch on value"
+            errorMessage = GlobalConstants.ERR_MSG_VENTILATION_INCORRECT_SET_VALS
         )
     }
     return SetValsSanityCheckResult.Success(data = Unit)

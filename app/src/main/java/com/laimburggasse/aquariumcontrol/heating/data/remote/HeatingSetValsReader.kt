@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol.heating.data.remote
 
+import com.laimburggasse.aquariumcontrol.GlobalConstants
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
@@ -25,7 +26,7 @@ class HeatingSetValsReader(private val url: String) {
                 if (!responseBody.startsWith(prefix = "[")) {
                     return DataFetchResult.Error(
                         exception = null,
-                        errorMessage = "Server responded with non-JSON data: $responseBody"
+                        errorMessage = GlobalConstants.ERR_MSG_MALFORMED_JSON + responseBody
                     )
                 }
                 try {
@@ -35,19 +36,19 @@ class HeatingSetValsReader(private val url: String) {
                 } catch (exception: Exception) {
                     return DataFetchResult.Error(
                         exception,
-                        errorMessage = "Error decoding data sent from server: ${exception.message}"
+                        errorMessage = GlobalConstants.ERR_MSG_DECODING_DATA + exception.message
                     )
                 }
             } else {
                 return DataFetchResult.Error(
                     exception = null,
-                    errorMessage = "Server responded with error code: ${response.code}"
+                    errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_ERR_CODE + response.code
                 )
             }
-        } catch (e: Exception) {
+        } catch (exception: Exception) {
             return DataFetchResult.Error(
-                exception = e,
-                errorMessage = "An unexpected error occurred during preparation of server communication."
+                exception,
+                errorMessage = GlobalConstants.ERR_MSG_UNEXPECTED_ERR_DURING_PREP + exception.message
             )
         }
     }

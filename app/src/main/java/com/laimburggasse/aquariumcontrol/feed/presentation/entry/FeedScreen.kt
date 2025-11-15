@@ -166,13 +166,13 @@ val mockFeedProfilesUiStateSuccess = FeedProfilesUiState.Success(
     feedProfiles = mockFeedProfiles
 )
 
-val mockFeedProfilesUiStateError = FeedProfilesUiState.Error(errorMessage = "Error")
+val mockFeedProfilesUiStateError = FeedProfilesUiState.Error(errorMessage = "Mock Error")
 
 val mockFeedScheduleSelectionUiStateSuccess = FeedScheduleSelectionUiState.Success(
     feedScheduleEntries = createMockFeedSchedule()
 )
 
-val mockFeedScheduleSelectionUiStateError = FeedScheduleSelectionUiState.Error(errorMessage = "Error")
+val mockFeedScheduleSelectionUiStateError = FeedScheduleSelectionUiState.Error(errorMessage = "Mock Error")
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)

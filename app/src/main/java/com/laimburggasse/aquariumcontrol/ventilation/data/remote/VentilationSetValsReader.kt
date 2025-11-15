@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol.ventilation.data.remote
 
+import com.laimburggasse.aquariumcontrol.GlobalConstants
 import com.laimburggasse.aquariumcontrol.ventilation.domain.model.VentilationSetVals
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
@@ -25,7 +26,7 @@ class VentilationSetValsReader(private val url: String) {
                 if (!responseBody.startsWith(prefix = "[")) {
                     return DataFetchResult.Error(
                         exception = null,
-                        errorMessage = "Server responded with invalid JSON: $responseBody"
+                        errorMessage = GlobalConstants.ERR_MSG_MALFORMED_JSON + responseBody
                     )
                 }
                 try {
@@ -35,19 +36,19 @@ class VentilationSetValsReader(private val url: String) {
                 } catch (e: Exception) {
                     return DataFetchResult.Error(
                         exception = e,
-                        errorMessage = "Error decoding data sent from server: ${e.message}"
+                        errorMessage = GlobalConstants.ERR_MSG_MALFORMED_JSON + e.message
                     )
                 }
             } else {
                 return DataFetchResult.Error(
                     exception = null,
-                    errorMessage = "Server responded with error code: ${response.code}"
+                    errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_ERR_CODE + response.code
                 )
             }
-        } catch (e: Exception) {
+        } catch (exception: Exception) {
             return DataFetchResult.Error(
-                exception = e,
-                errorMessage = "An unexpected error occurred during preparation of server communication."
+                exception,
+                errorMessage = GlobalConstants.ERR_MSG_UNEXPECTED_ERR_DURING_PREP + exception.message
             )
         }
     }

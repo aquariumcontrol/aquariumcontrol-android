@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol.balling.data
 
+import com.laimburggasse.aquariumcontrol.GlobalConstants
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingProfileReader
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
@@ -68,7 +69,7 @@ open class BallingProfilesRepository @Inject constructor(
                 if (controller == null) {
                     emit(value = DataFetchResult.Error(
                         exception = null,
-                        errorMessage = "No controller selected."
+                        errorMessage = GlobalConstants.ERR_MSG_NO_CONTROLLER_SELECTED
                     ))
                     return@flow
                 }
@@ -118,7 +119,7 @@ open class BallingProfilesRepository @Inject constructor(
             pendingUpdate.value = null
             failureResult.value = DataFetchResult.Error(
                 exception = null,
-                errorMessage = "No controller address."
+                errorMessage = GlobalConstants.ERR_MSG_INVALID_CONTROLLER_ADDRESS
             )
             return
         }
@@ -144,7 +145,7 @@ open class BallingProfilesRepository @Inject constructor(
                 pendingUpdate.value = null
                 failureResult.value = DataFetchResult.Error(
                     exception = null,
-                    errorMessage = "Update of feed profile on server failed."
+                    errorMessage = GlobalConstants.ERR_MSG_UPDATING_BALLING_PROFILE_FAILED
                 )
             }
         }

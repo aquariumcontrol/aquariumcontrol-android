@@ -162,7 +162,7 @@ val mockBallingProfile2 = BallingProfile(pumpId = 2, volume = 3.1, label = "mock
 val mockBallingProfiles: List<BallingProfile> = listOf(mockBallingProfile1, mockBallingProfile2)
 
 val mockBallingProfilesUiStateSuccess = BallingProfilesUiState.Success(ballingProfiles = mockBallingProfiles)
-val mockBallingProfilesUiStateError = BallingProfilesUiState.Error(errorMessage = "Error message")
+val mockBallingProfilesUiStateError = BallingProfilesUiState.Error(errorMessage = "Mock Error message")
 val mockBallingProfilesUiStateLoading = BallingProfilesUiState.Loading
 val mockBallingProfilesUiStateEmpty = BallingProfilesUiState.Empty
 

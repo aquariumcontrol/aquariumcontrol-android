@@ -27,7 +27,7 @@ class HeatingStatsReader(private val url: String) {
                 if (!responseBody.startsWith(prefix = "[")) {
                     return DataFetchResult.Error(
                         exception = null,
-                        errorMessage = "Server responded with non-JSON data: $responseBody"
+                        errorMessage = GlobalConstants.ERR_MSG_MALFORMED_JSON + responseBody
                     )
                 }
                 try {
@@ -36,27 +36,27 @@ class HeatingStatsReader(private val url: String) {
                     if (decodedData.size > GlobalConstants.MAX_STATS_ENTRIES) {
                         return DataFetchResult.Error(
                             exception = null,
-                            errorMessage = "Server responded with more than ${GlobalConstants.MAX_STATS_ENTRIES} entries."
+                            errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_TOO_MANY_ENTRIES
                         )
                     }
                     return DataFetchResult.Success(decodedData)
                 }
-                catch (e: Exception) {
+                catch (exception: Exception) {
                     return DataFetchResult.Error(
-                        exception = e,
-                        errorMessage = "Error decoding data sent from server: ${e.message}"
+                        exception,
+                        errorMessage = GlobalConstants.ERR_MSG_DECODING_DATA + exception.message
                     )
                 }
             } else {
                 return DataFetchResult.Error(
                     exception = null,
-                    errorMessage = "Request failed with code ${response.code}"
+                    errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_ERR_CODE + response.code
                 )
             }
-        } catch (e: Exception) {
+        } catch (exception: Exception) {
             return DataFetchResult.Error(
-                exception = e,
-                errorMessage = "Exception occurred: ${e.message}"
+                exception,
+                errorMessage = GlobalConstants.ERR_MSG_UNEXPECTED_ERR_DURING_PREP + exception.message
             )
         }
     }

@@ -289,7 +289,7 @@ val mockScheduleUiStateSuccess = ScheduleUiState.Success(
 )
 
 val mockScheduleUiStateError = ScheduleUiState.Error(
-    errorMessage = "Error loading data"
+    errorMessage = "Mock Error loading data"
 )
 
 @Preview(showBackground = true, heightDp = 1200, uiMode = Configuration.UI_MODE_NIGHT_YES)

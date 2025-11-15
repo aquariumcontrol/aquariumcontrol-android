@@ -27,7 +27,7 @@ class FeedProfileReader(private val url: String) {
                 if (!responseBody.startsWith(prefix = "[")) {
                     return DataFetchResult.Error(
                         exception = null,
-                        errorMessage = "Server responded with non-JSON data: $responseBody"
+                        errorMessage = GlobalConstants.ERR_MSG_MALFORMED_JSON + responseBody
                     )
                 }
                 try {
@@ -36,26 +36,26 @@ class FeedProfileReader(private val url: String) {
                     if (decodedData.size > GlobalConstants.MAX_PROFILE_ENTRIES) {
                         return DataFetchResult.Error(
                             exception = null,
-                            errorMessage = "Server responded with more than ${GlobalConstants.MAX_PROFILE_ENTRIES} entries."
+                            errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_TOO_MANY_ENTRIES
                         )
                     }
                     DataFetchResult.Success(data = decodedData)
                 } catch (exception: Exception) {
                     return DataFetchResult.Error(
                         exception,
-                        errorMessage = "Error decoding data sent from server: ${exception.message}"
+                        errorMessage = GlobalConstants.ERR_MSG_DECODING_DATA + exception.message
                     )
                 }
             } else {
                 DataFetchResult.Error(
                     exception = null,
-                    errorMessage = "Server responded with error code: ${response.code}"
+                    errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_ERR_CODE + response.code
                 )
             }
         } catch (e: Exception) {
             DataFetchResult.Error(
                 exception = e,
-                errorMessage = "An unexpected error occurred during preparation of server communication."
+                errorMessage = GlobalConstants.ERR_MSG_UNEXPECTED_ERR_DURING_PREP
             )
         }
     }

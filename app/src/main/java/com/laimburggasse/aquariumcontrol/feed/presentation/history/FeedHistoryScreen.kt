@@ -175,7 +175,7 @@ val mockFeedHistoryUiStateSuccess = FeedHistoryUiState.Success(
 )
 
 val mockFeedHistoryUiStateError = FeedHistoryUiState.Error(
-    errorMessage = "Error message"
+    errorMessage = "Mock Error message"
 )
 
 val mockFeedHistoryUiStateEmpty = FeedHistoryUiState.Empty

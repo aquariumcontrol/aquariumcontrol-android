@@ -26,7 +26,7 @@ class ScheduleEntryReader(private val url: String) {
                 if (!responseBody.startsWith(prefix = "[")) {
                     return DataFetchResult.Error(
                         exception = null,
-                        errorMessage = "Server responded with invalid JSON: $responseBody"
+                        errorMessage = GlobalConstants.ERR_MSG_MALFORMED_JSON + responseBody
                     )
                 }
                 try {
@@ -35,26 +35,26 @@ class ScheduleEntryReader(private val url: String) {
                     if (decodedData.size > GlobalConstants.MAX_SCHEDULE_ENTRIES) {
                         return DataFetchResult.Error(
                             exception = null,
-                            errorMessage = "Server responded with more than ${GlobalConstants.MAX_SCHEDULE_ENTRIES} entries."
+                            errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_TOO_MANY_ENTRIES
                         )
                     }
                     return DataFetchResult.Success(decodedData)
                 } catch (exception: Exception) {
                     return DataFetchResult.Error(
                         exception,
-                        errorMessage = "Error decoding data sent from server: ${exception.message}"
+                        errorMessage = GlobalConstants.ERR_MSG_DECODING_DATA + exception.message
                     )
                 }
             } else {
                 return DataFetchResult.Error(
                     exception = null,
-                    errorMessage = "Server responded with error code: ${response.code}"
+                    errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_ERR_CODE + response.code
                 )
             }
         } catch (exception: Exception) {
             return DataFetchResult.Error(
                 exception,
-                errorMessage = "An unexpected error occurred during preparation of server communication."
+                errorMessage = GlobalConstants.ERR_MSG_UNEXPECTED_ERR_DURING_PREP + exception.message
             )
         }
     }

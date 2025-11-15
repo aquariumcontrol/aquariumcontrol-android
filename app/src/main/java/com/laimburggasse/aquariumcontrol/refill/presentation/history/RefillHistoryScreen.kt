@@ -177,7 +177,7 @@ val mockRefillHistoryUiStateSuccess = RefillHistoryUiState.Success(
 val mockRefillHistoryUiStateEmpty = RefillHistoryUiState.Empty
 
 val mockRefillHistoryUiStateError = RefillHistoryUiState.Error(
-    errorMessage = "Error message"
+    errorMessage = "Mock Error message"
 )
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)

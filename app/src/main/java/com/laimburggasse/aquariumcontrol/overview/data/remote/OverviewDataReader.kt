@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol.overview.data.remote
 
+import com.laimburggasse.aquariumcontrol.GlobalConstants
 import com.laimburggasse.aquariumcontrol.overview.domain.model.OverviewData
 import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
 import kotlinx.serialization.json.Json
@@ -23,13 +24,13 @@ class OverviewDataReader(private val url: String) {
                 if (responseBody.isEmpty()) {
                     return DataFetchResult.Error(
                         exception = null,
-                        errorMessage = "Server responded with empty body"
+                        errorMessage = GlobalConstants.ERR_MSG_EMPTY_RESPONSE
                     )
                 }
                 if (!responseBody.startsWith(prefix = "[")) {
                     return DataFetchResult.Error(
                         exception = null,
-                        errorMessage = "Server responded with invalid JSON: $responseBody"
+                        errorMessage = GlobalConstants.ERR_MSG_MALFORMED_JSON + responseBody
                     )
                 }
                 try {
@@ -38,34 +39,34 @@ class OverviewDataReader(private val url: String) {
                 catch (exception: Exception) {
                     return DataFetchResult.Error(
                         exception,
-                        errorMessage = "Error decoding data sent from server: ${exception.message}"
+                        errorMessage = GlobalConstants.ERR_MSG_DECODING_DATA + exception.message
                     )
                 }
             } else {
                 return DataFetchResult.Error(
                     exception = null,
-                    errorMessage = "Server responded with error code: ${response.code}"
+                    errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_ERR_CODE + response.code
                 )
             }
         } catch (exception: Exception) {
             return DataFetchResult.Error(
                 exception,
-                errorMessage = "An unexpected error occurred during preparation of server communication: ${exception.message}"
+                errorMessage = GlobalConstants.ERR_MSG_UNEXPECTED_ERR_DURING_PREP + exception.message
             )
         }
         if (jsonArray.size == 12) {
-            val timestamp = jsonArray[0].replace(" ", "T")
-            val temperatureWater = jsonArray[1].toDouble()
-            val temperatureWaterFiltered = jsonArray[2].toDouble()
-            val pH = jsonArray[3].toDouble()
-            val pHFiltered = jsonArray[4].toDouble()
-            val conductivity = jsonArray[5].toDouble()
-            val conductivityFiltered = jsonArray[6].toDouble()
-            val tankLevelSwitchPosition = jsonArray[7]
-            val surfaceVentilation = jsonArray[8]
-            val ambientTemperature = jsonArray[9].toDouble()
-            val ambientHumidity = jsonArray[10].toDouble()
-            val heater = jsonArray[11]
+            val timestamp: String = jsonArray[0].replace(oldValue = " ", newValue = "T")
+            val temperatureWater: Double = jsonArray[1].toDouble()
+            val temperatureWaterFiltered: Double = jsonArray[2].toDouble()
+            val pH: Double = jsonArray[3].toDouble()
+            val pHFiltered: Double = jsonArray[4].toDouble()
+            val conductivity: Double = jsonArray[5].toDouble()
+            val conductivityFiltered: Double = jsonArray[6].toDouble()
+            val tankLevelSwitchPosition: String = jsonArray[7]
+            val surfaceVentilation: String = jsonArray[8]
+            val ambientTemperature: Double = jsonArray[9].toDouble()
+            val ambientHumidity: Double = jsonArray[10].toDouble()
+            val heater: String = jsonArray[11]
 
             return DataFetchResult.Success(data = OverviewData(
                 timestamp = timestamp,
@@ -85,7 +86,7 @@ class OverviewDataReader(private val url: String) {
         } else {
             return DataFetchResult.Error(
                 exception = null,
-                errorMessage = "Invalid JSON array size: ${jsonArray.size}"
+                errorMessage = GlobalConstants.ERR_MSG_INVALID_JSON_ARRAY_SIZE + jsonArray.size
             )
         }
     }

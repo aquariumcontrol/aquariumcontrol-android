@@ -76,7 +76,7 @@ open class RefillHistoryRepository @Inject constructor(
             .stateIn(
                 scope = repositoryScope,
                 started = SharingStarted.Companion.WhileSubscribed(stopTimeoutMillis = 5000),
-                initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial loading")
+                initialValue = DataFetchResult.Loading
             )
 
     /**

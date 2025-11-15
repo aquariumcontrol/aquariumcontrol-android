@@ -30,7 +30,7 @@ class FeedScheduleEntryReader(private val url: String) {
                     if (decodedData.size > GlobalConstants.MAX_SCHEDULE_ENTRIES) {
                         return DataFetchResult.Error(
                             exception = null,
-                            errorMessage = "Server responded with more than ${GlobalConstants.MAX_SCHEDULE_ENTRIES} entries."
+                            errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_TOO_MANY_ENTRIES
                         )
                     }
                     return DataFetchResult.Success(data = decodedData)
@@ -38,13 +38,13 @@ class FeedScheduleEntryReader(private val url: String) {
             } else {
                 return DataFetchResult.Error(
                     exception = null,
-                    errorMessage = "Server responded with error code: ${response.code}"
+                    errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_ERR_CODE + response.code
                 )
             }
         } catch (e: Exception) {
             return DataFetchResult.Error(
                 exception = e,
-                errorMessage = "An unexpected error occurred during preparation of server communication: ${e.message}"
+                errorMessage = GlobalConstants.ERR_MSG_UNEXPECTED_ERR_DURING_PREP + e.message
             )
         }
     }

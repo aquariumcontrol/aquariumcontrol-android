@@ -195,7 +195,7 @@ val mockBallingHistoryUiStateSuccess = BallingHistoryUiState.Success(
     ballingHistoryLogEntries = mockBallingHistoryLogEntries
 )
 val mockBallingHistoryUiStateEmpty = BallingHistoryUiState.Empty
-val mockBallingHistoryUiStateError = BallingHistoryUiState.Error(errorMessage = "Error message")
+val mockBallingHistoryUiStateError = BallingHistoryUiState.Error(errorMessage = "Mock Error message")
 val mockBallingHistoryUiStateLoading = BallingHistoryUiState.Loading
 
 

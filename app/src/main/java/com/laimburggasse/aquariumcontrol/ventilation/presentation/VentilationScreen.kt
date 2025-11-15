@@ -186,7 +186,7 @@ val mockVentilationSetValsUiStateSuccess = VentilationSetValsUiState.Success(
 )
 
 val mockVentilationSetValsUiStateError = VentilationSetValsUiState.Error(
-    errorMessage = "Error loading data"
+    errorMessage = "Mock Error loading data"
 )
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)

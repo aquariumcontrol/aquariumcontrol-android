@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol.schedule.data
 
+import com.laimburggasse.aquariumcontrol.GlobalConstants
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
@@ -60,7 +61,7 @@ open class ScheduleRepository @Inject constructor(
             if (controller == null) {
                 emit(value = DataFetchResult.Error(
                     exception = null,
-                    errorMessage = "No controller selected."
+                    errorMessage = GlobalConstants.ERR_MSG_NO_CONTROLLER_SELECTED
                 ))
                 return@flow
             }
@@ -93,7 +94,7 @@ open class ScheduleRepository @Inject constructor(
     }.stateIn(
         scope = repositoryScope,
         started = SharingStarted.Companion.WhileSubscribed(stopTimeoutMillis = 5000L),
-        initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial Load")
+        initialValue = DataFetchResult.Loading
     )
 
     /**
@@ -166,7 +167,7 @@ open class ScheduleRepository @Inject constructor(
                 is DataFetchResult.Loading -> {
                     DataFetchResult.Error(
                         exception = null,
-                        errorMessage = "Failed to load schedule information."
+                        errorMessage = GlobalConstants.ERR_MSG_LOADING_SCHEDULE_INFO_FAILED
                     )
                 }
             }

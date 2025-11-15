@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol.timedata.data
 
+import com.laimburggasse.aquariumcontrol.GlobalConstants
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.timedata.data.remote.TimeDataReader
@@ -70,7 +71,7 @@ open class TimeDataRepository @Inject constructor(
                     }
                     is DataFetchResult.Loading -> DataFetchResult.Error(
                         exception = null,
-                        errorMessage = "Loading time data failed."
+                        errorMessage = GlobalConstants.ERR_MSG_LOADING_TIME_DATA_FAILED
                     )
                 }
 

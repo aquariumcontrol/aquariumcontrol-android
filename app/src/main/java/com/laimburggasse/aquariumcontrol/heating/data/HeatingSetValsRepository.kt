@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol.heating.data
 
+import com.laimburggasse.aquariumcontrol.GlobalConstants
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
@@ -65,7 +66,7 @@ open class HeatingSetValsRepository @Inject constructor(
             if (controller == null) {
                 emit(value = DataFetchResult.Error(
                     exception = null,
-                    errorMessage = "No controller selected."
+                    errorMessage = GlobalConstants.ERR_MSG_NO_CONTROLLER_SELECTED
                 ))
                 return@flow
             }
@@ -96,13 +97,16 @@ open class HeatingSetValsRepository @Inject constructor(
                                 }
                             }
                         } else {
-                            DataFetchResult.Error(exception = null, errorMessage = "Server returned an empty list.")
+                            DataFetchResult.Error(
+                                exception = null,
+                                errorMessage = GlobalConstants.ERR_MSG_SERVER_RETURNED_EMPTY_LIST
+                            )
                         }
                     }
                     is DataFetchResult.Error -> setValsList
                     is DataFetchResult.Loading -> DataFetchResult.Error(
                         exception = null,
-                        errorMessage = "Could not load heating set values."
+                        errorMessage = GlobalConstants.ERR_MSG_LOADING_SET_VALS_FAILED
                     )
                 }
             }
@@ -128,8 +132,8 @@ open class HeatingSetValsRepository @Inject constructor(
         }
     }.stateIn(
         scope = repositoryScope,
-        started = SharingStarted.WhileSubscribed(5000L),
-        initialValue = DataFetchResult.Error(exception = null, errorMessage = "Initial loading")
+        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
+        initialValue = DataFetchResult.Loading
     )
 
     /**
@@ -163,7 +167,7 @@ open class HeatingSetValsRepository @Inject constructor(
                 if (!success) {
                     failureResult.value = DataFetchResult.Error(
                         exception = null,
-                        errorMessage = "Could not update heating set values."
+                        errorMessage = GlobalConstants.ERR_MSG_UPDATING_SET_VALS_FAILED
                     )
                 }
             }
