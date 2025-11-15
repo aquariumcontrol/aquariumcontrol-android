@@ -5,6 +5,7 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.laimburggasse.aquariumcontrol.GlobalConstants
 import com.laimburggasse.aquariumcontrol.timedata.domain.model.TimeDataSample
 
 class TimeDataSets(timeData: List<TimeDataSample>) {
@@ -103,20 +104,42 @@ class TimeDataSets(timeData: List<TimeDataSample>) {
         }
 
         // create a dataset and give it a type
-        val setTemperature = LineDataSet(valuesTemperature, "Temperature")
-        val setTemperatureFiltered = LineDataSet(valuesTemperatureFiltered, "Temperature filtered")
-        val setpH = LineDataSet(valuespH, "pH")
-        val setpHFiltered = LineDataSet(valuespHFiltered, "pH filtered")
-        val setConductivity = LineDataSet(valuesConductivity, "Conductivity")
-        val setConductivityFiltered =
-            LineDataSet(valuesConductivityFiltered, "Conductivity filtered")
-        val setMainTankLevelSwitch =
-            LineDataSet(valuesMainTankLevelSwitch, "Main tank level switch")
-        val setRefillInProgress = LineDataSet(valuesRefillInProgress, "Refill in progress")
-        val setAmbientTemperature = LineDataSet(valuesAmbientTemperature, "Ambient Temperature")
-        val setAmbientHumidity = LineDataSet(valuesAmbientHumidity, "Ambient Humidity")
-        val setSurfaceVentilation = LineDataSet(valuesSurfaceVentilation, "Surface Ventilation")
-        val setHeating = LineDataSet(valuesHeating, "Heating")
+        val setTemperature = LineDataSet(
+            valuesTemperature, GlobalConstants.LABEL_TEMPERATURE
+        )
+        val setTemperatureFiltered = LineDataSet(
+            valuesTemperatureFiltered, GlobalConstants.LABEL_TEMPERATURE_FILTERED
+        )
+        val setpH = LineDataSet(
+            valuespH, GlobalConstants.LABEL_PH
+        )
+        val setpHFiltered = LineDataSet(
+            valuespHFiltered, GlobalConstants.LABEL_PH_FILTERED
+        )
+        val setConductivity = LineDataSet(
+            valuesConductivity, GlobalConstants.LABEL_CONDUCTIVITY
+        )
+        val setConductivityFiltered = LineDataSet(
+            valuesConductivityFiltered, GlobalConstants.LABEL_CONDUCTIVITY_FILTERED
+        )
+        val setMainTankLevelSwitch = LineDataSet(
+            valuesMainTankLevelSwitch, GlobalConstants.LABEL_MAIN_TANK_LEVEL_SWITCH
+        )
+        val setRefillInProgress = LineDataSet(
+            valuesRefillInProgress, GlobalConstants.LABEL_REFILL_IN_PROGRESS
+        )
+        val setAmbientTemperature = LineDataSet(
+            valuesAmbientTemperature, GlobalConstants.LABEL_AMBIENT_TEMPERATURE
+        )
+        val setAmbientHumidity = LineDataSet(
+            valuesAmbientHumidity, GlobalConstants.LABEL_AMBIENT_HUMIDITY
+        )
+        val setSurfaceVentilation = LineDataSet(
+            valuesSurfaceVentilation, GlobalConstants.LABEL_SURFACE_VENTILATION
+        )
+        val setHeating = LineDataSet(
+            valuesHeating, GlobalConstants.LABEL_HEATING
+        )
 
         setTemperature.color = Color.RED
         setTemperatureFiltered.color = Color.BLUE

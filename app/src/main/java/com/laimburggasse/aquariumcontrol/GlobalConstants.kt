@@ -26,4 +26,28 @@ object GlobalConstants {
     const val LABEL_PAUSE = "Pause"
 
     const val LABEL_PHASE = "Phase"
+
+    const val LABEL_TEMPERATURE = "Temperature"
+
+    const val LABEL_TEMPERATURE_FILTERED = "Temperature filtered"
+
+    const val LABEL_PH = "pH"
+
+    const val LABEL_PH_FILTERED = "pH filtered"
+
+    const val LABEL_CONDUCTIVITY = "Conductivity"
+
+    const val LABEL_CONDUCTIVITY_FILTERED = "Conductivity filtered"
+
+    const val LABEL_MAIN_TANK_LEVEL_SWITCH = "Main tank level switch"
+
+    const val LABEL_REFILL_IN_PROGRESS = "Refill in progress"
+
+    const val LABEL_AMBIENT_TEMPERATURE = "Ambient Temperature"
+
+    const val LABEL_AMBIENT_HUMIDITY = "Ambient Humidity"
+
+    const val LABEL_SURFACE_VENTILATION = "Surface Ventilation"
+
+    const val LABEL_HEATING = "Heating"
 }
