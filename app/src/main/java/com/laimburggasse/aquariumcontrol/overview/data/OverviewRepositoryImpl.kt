@@ -6,6 +6,7 @@ import com.laimburggasse.aquariumcontrol.overview.data.remote.OverviewDataReader
 import com.laimburggasse.aquariumcontrol.overview.domain.model.OverviewData
 import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.lib.data.remote.WebApiUrls
+import com.laimburggasse.aquariumcontrol.overview.domain.repository.OverviewRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +26,7 @@ import javax.inject.Inject
 open class OverviewRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
     @ApplicationScope private val repositoryScope: CoroutineScope
-) {
+): OverviewRepository {
     // This SharedFlow doesn't hold state; it just emits a signal when we call emit().
     // We use replay=1 so it emits the last signal to new subscribers if needed.
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
@@ -40,7 +41,7 @@ open class OverviewRepositoryImpl @Inject constructor(
      * it cancels any ongoing fetch and starts a new one.
      */
     @OptIn(ExperimentalCoroutinesApi::class)
-    open val overviewData: Flow<DataFetchResult<OverviewData>> =
+    override val overviewData: Flow<DataFetchResult<OverviewData>> =
         combine(
             flow = sessionManager.selectedControllerProfile,
             flow2 = refreshTrigger
@@ -73,7 +74,7 @@ open class OverviewRepositoryImpl @Inject constructor(
      * It simply emits a new signal on the `refreshTrigger` flow, which causes the
      * `flatMapLatest` block above to re-execute.
      */
-    open suspend fun fetchOverviewData() {
+    override suspend fun fetchOverviewData() {
         refreshTrigger.emit(value = Unit)
     }
 }

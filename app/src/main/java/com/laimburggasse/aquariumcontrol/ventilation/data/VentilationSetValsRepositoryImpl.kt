@@ -13,6 +13,7 @@ import com.laimburggasse.aquariumcontrol.lib.data.remote.WebApiParams
 import com.laimburggasse.aquariumcontrol.lib.data.remote.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.lib.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.lib.data.remote.webApiPostRequestExecution
+import com.laimburggasse.aquariumcontrol.ventilation.domain.repository.VentilationSetValsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -36,7 +37,7 @@ import javax.inject.Singleton
 open class VentilationSetValsRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     @ApplicationScope private val repositoryScope: CoroutineScope
-) {
+): VentilationSetValsRepository {
     // Triggers for manual refreshes and optimistic updates.
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
     private val pendingUpdate = MutableStateFlow<VentilationSetVals?>(value = null)
@@ -118,7 +119,7 @@ open class VentilationSetValsRepositoryImpl @Inject constructor(
     )
 
     // The public flow now combines the stable network data with the fast-changing local edits.
-    open val ventilationSetValsFlow: StateFlow<DataFetchResult<VentilationSetVals>> = combine(
+    override val ventilationSetValsFlow: StateFlow<DataFetchResult<VentilationSetVals>> = combine(
         flow = networkDataFlow,
         flow2 = pendingUpdate
     ) { networkResult, pending ->
@@ -139,14 +140,14 @@ open class VentilationSetValsRepositoryImpl @Inject constructor(
      * Applies an optimistic update to the local state without committing to the server.
      * The UI will show this change instantly.
      */
-    open fun updateLocalValues(ventilationSetVals: VentilationSetVals) {
+    override fun updateLocalValues(ventilationSetVals: VentilationSetVals) {
         pendingUpdate.value = ventilationSetVals
     }
 
     /**
      * Commits the current (potentially local) values to the server.
      */
-    open suspend fun updateValues() {
+    override suspend fun updateValues() {
         // Get the most recent values, either from the pending update or the last fetched state
         val currentValues: VentilationSetVals? = pendingUpdate.value ?:
         (ventilationSetValsFlow.value as? DataFetchResult.Success)?.data
@@ -178,14 +179,14 @@ open class VentilationSetValsRepositoryImpl @Inject constructor(
      * Reverts any uncommitted local changes by clearing the pending update.
      * The flow will automatically revert to the last successfully fetched state.
      */
-    fun reset() {
+    override fun reset() {
         pendingUpdate.value = null
     }
 
     /**
      * Triggers a manual refresh of the heating setpoints.
      */
-    suspend fun triggerRefresh() {
+    override suspend fun triggerRefresh() {
         // Check if the current state is a failure.
         if (failureResult.value != null) {
             // If it is, setting it to null is sufficient to trigger the combine/flatMapLatest chain again.

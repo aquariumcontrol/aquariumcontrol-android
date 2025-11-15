@@ -2,7 +2,7 @@ package com.laimburggasse.aquariumcontrol.balling.presentation.entry
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.balling.data.BallingProfilesRepositoryImpl
+import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingProfilesRepository
 import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BallingProfilesViewModel @Inject constructor(
-    private val ballingProfilesRepository: BallingProfilesRepositoryImpl
+    private val ballingProfilesRepository: BallingProfilesRepository
 ): ViewModel() {
 
     val ballingProfilesUiState: StateFlow<BallingProfilesUiState> = ballingProfilesRepository.ballingProfiles

@@ -7,6 +7,7 @@ import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEnt
 import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillHistoryLogEntryReader
 import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.lib.data.remote.WebApiUrls
+import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillHistoryRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,7 +27,7 @@ import javax.inject.Inject
 open class RefillHistoryRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
     @ApplicationScope private val repositoryScope: CoroutineScope
-) {
+): RefillHistoryRepository {
 
     // Trigger for manual refreshes (e.g., pull-to-refresh)
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
@@ -44,7 +45,7 @@ open class RefillHistoryRepositoryImpl @Inject constructor(
      * It automatically re-fetches data when any of these inputs change.
      */
     @OptIn(ExperimentalCoroutinesApi::class)
-    open val refillHistoryEventFlow: Flow<DataFetchResult<List<RefillHistoryLogEntry>>> =
+    override val refillHistoryEventFlow: Flow<DataFetchResult<List<RefillHistoryLogEntry>>> =
         combine(
             flow = sessionManager.selectedControllerProfile,
             flow2 = refreshTrigger.onStart { emit(value = Unit) }, // Trigger on first collection
@@ -83,7 +84,7 @@ open class RefillHistoryRepositoryImpl @Inject constructor(
      * Public function to tell the repository to fetch a different time range.
      * Setting the value will automatically trigger the flow to re-fetch the data.
      */
-    suspend fun setHistoryTimeRange(fetchFullWeek: Boolean) {
+    override suspend fun setHistoryTimeRange(fetchFullWeek: Boolean) {
         // Only emit if the value has changed to avoid unnecessary fetches.
         if (showFullWeek.value != fetchFullWeek) {
             showFullWeek.emit(value = fetchFullWeek)
@@ -93,7 +94,7 @@ open class RefillHistoryRepositoryImpl @Inject constructor(
     /**
      * Public function for the ViewModel to trigger a manual refresh.
      */
-    suspend fun triggerRefresh() {
+    override suspend fun triggerRefresh() {
         refreshTrigger.emit(value = Unit)
     }
 }

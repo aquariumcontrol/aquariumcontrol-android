@@ -7,6 +7,7 @@ import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingSetValsReader
 import com.laimburggasse.aquariumcontrol.heating.domain.heatingSetValsSanityCheck
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
+import com.laimburggasse.aquariumcontrol.heating.domain.repository.HeatingSetValsRepository
 import com.laimburggasse.aquariumcontrol.lib.domain.model.SetValsSanityCheckResult
 import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.lib.data.remote.WebApiParams
@@ -36,7 +37,7 @@ import javax.inject.Singleton
 open class HeatingSetValsRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     @ApplicationScope private val repositoryScope: CoroutineScope
-) {
+): HeatingSetValsRepository {
     // Triggers for manual refreshes and optimistic updates.
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
     private val pendingUpdate = MutableStateFlow<HeatingSetVals?>(value = null)
@@ -119,7 +120,7 @@ open class HeatingSetValsRepositoryImpl @Inject constructor(
     )
 
     // The public flow now combines the stable network data with the fast-changing local edits.
-    open val heatingSetValsFlow: StateFlow<DataFetchResult<HeatingSetVals>> = combine(
+    override val heatingSetValsFlow: StateFlow<DataFetchResult<HeatingSetVals>> = combine(
         flow = networkDataFlow,
         flow2 = pendingUpdate
     ) { networkResult, pending ->
@@ -140,14 +141,14 @@ open class HeatingSetValsRepositoryImpl @Inject constructor(
      * Applies an optimistic update to the local state without committing to the server.
      * The UI will show this change instantly.
      */
-    open fun updateLocalValues(heatingSetVals: HeatingSetVals) {
+    override fun updateLocalValues(heatingSetVals: HeatingSetVals) {
         pendingUpdate.value = heatingSetVals
     }
 
     /**
      * Commits the current (potentially local) values to the server.
      */
-    open suspend fun updateValues() {
+    override suspend fun updateValues() {
         // Get the most recent values, either from the pending update or the last fetched state
         val currentValues: HeatingSetVals? = pendingUpdate.value ?:
             (heatingSetValsFlow.value as? DataFetchResult.Success)?.data
@@ -178,14 +179,14 @@ open class HeatingSetValsRepositoryImpl @Inject constructor(
      * Reverts any uncommitted local changes by clearing the pending update.
      * The flow will automatically revert to the last successfully fetched state.
      */
-    fun reset() {
+    override fun reset() {
         pendingUpdate.value = null
     }
 
     /**
      * Triggers a manual refresh of the heating setpoints.
      */
-    suspend fun triggerRefresh() {
+    override suspend fun triggerRefresh() {
         // Check if the current state is a failure.
         if (failureResult.value != null) {
             // If it is, setting it to null is sufficient to trigger the combine/flatMapLatest chain again.

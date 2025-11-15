@@ -13,6 +13,7 @@ import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.lib.data.remote.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.lib.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.lib.data.remote.webApiPostRequestExecution
+import com.laimburggasse.aquariumcontrol.schedule.domain.repository.ScheduleRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -35,7 +36,7 @@ import javax.inject.Singleton
 open class ScheduleRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     @ApplicationScope private val repositoryScope: CoroutineScope
-) {
+): ScheduleRepository {
     // Triggers for manual refreshes and a holder for optimistic local updates.
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
     private val pendingUpdate = MutableStateFlow<ScheduleEntries?>(value = null)
@@ -44,7 +45,7 @@ open class ScheduleRepositoryImpl @Inject constructor(
     private val failureResult = MutableStateFlow<DataFetchResult.Error?>(value = null)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    open val networkFlow: StateFlow<DataFetchResult<ScheduleEntries>> = combine(
+    private val networkFlow: StateFlow<DataFetchResult<ScheduleEntries>> = combine(
         flow = sessionManager.selectedControllerProfile,
         flow2 = refreshTrigger.onStart { emit(value = Unit) }, // Triggers the first fetch
         flow3 = failureResult
@@ -80,7 +81,7 @@ open class ScheduleRepositoryImpl @Inject constructor(
     )
 
     // The final UI state combines the network data with any local (optimistic) updates.
-    val scheduleFlow: StateFlow<DataFetchResult<ScheduleEntries>> = combine(
+    override val scheduleFlow: StateFlow<DataFetchResult<ScheduleEntries>> = combine(
         flow = networkFlow,
         flow2 = pendingUpdate
     ) { networkResult, pending ->
@@ -100,14 +101,14 @@ open class ScheduleRepositoryImpl @Inject constructor(
     /**
      * Applies an optimistic update to the local state without committing to the server.
      */
-    fun updateLocalSchedule(newScheduleEntries: ScheduleEntries) {
+    override fun updateLocalSchedule(newScheduleEntries: ScheduleEntries) {
         pendingUpdate.value = newScheduleEntries
     }
 
     /**
      * Commits the current local values to the server.
      */
-    open suspend fun updateSchedule() {
+    override suspend fun updateSchedule() {
         if (scheduleFlow.value is DataFetchResult.Success) {
             val scheduleEntries: ScheduleEntries = (scheduleFlow.value as DataFetchResult.Success).data
             repositoryScope.launch(context = Dispatchers.IO) {
@@ -125,7 +126,7 @@ open class ScheduleRepositoryImpl @Inject constructor(
      * Reverts any uncommitted local changes by clearing the pending update.
      * The public flow will automatically revert to the last successfully fetched state.
      */
-    fun reset() {
+    override fun reset() {
         pendingUpdate.value = null
     }
 
@@ -178,7 +179,7 @@ open class ScheduleRepositoryImpl @Inject constructor(
     /**
      * Triggers a manual refresh of the schedule data.
      */
-    suspend fun triggerRefresh() {
+    override suspend fun triggerRefresh() {
         // Check if the current state is a failure.
         if (failureResult.value != null) {
             // If it is, setting it to null is sufficient to trigger the combine/flatMapLatest chain again.

@@ -2,9 +2,9 @@ package com.laimburggasse.aquariumcontrol.schedule.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntries
-import com.laimburggasse.aquariumcontrol.schedule.data.ScheduleRepositoryImpl
 import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntries
+import com.laimburggasse.aquariumcontrol.schedule.domain.repository.ScheduleRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ScheduleViewModel @Inject constructor(
-    private val scheduleRepository: ScheduleRepositoryImpl
+    private val scheduleRepository: ScheduleRepository
 ): ViewModel() {
 
     val scheduleUiState: StateFlow<ScheduleUiState> = scheduleRepository.scheduleFlow

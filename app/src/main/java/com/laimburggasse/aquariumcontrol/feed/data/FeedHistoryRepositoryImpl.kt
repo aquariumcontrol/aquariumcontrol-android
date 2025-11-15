@@ -5,6 +5,7 @@ import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedHistoryLogEntryReader
+import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedHistoryRepository
 import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.lib.data.remote.WebApiUrls
 import kotlinx.coroutines.CoroutineScope
@@ -26,7 +27,7 @@ import javax.inject.Inject
 open class FeedHistoryRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
     @ApplicationScope private val repositoryScope: CoroutineScope
-) {
+): FeedHistoryRepository {
 
     // Trigger for manual refreshes (e.g., pull-to-refresh)
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
@@ -44,7 +45,7 @@ open class FeedHistoryRepositoryImpl @Inject constructor(
      * It automatically re-fetches data when any of these inputs change.
      */
     @OptIn(ExperimentalCoroutinesApi::class)
-    open val feedHistoryEventFlow: Flow<DataFetchResult<List<FeedHistoryLogEntry>>> =
+    override val feedHistoryEventFlow: Flow<DataFetchResult<List<FeedHistoryLogEntry>>> =
         combine(
             flow = sessionManager.selectedControllerProfile,
             flow2 = refreshTrigger.onStart { emit(value = Unit) }, // Trigger on first collection
@@ -82,7 +83,7 @@ open class FeedHistoryRepositoryImpl @Inject constructor(
      * Public function to tell the repository to fetch a different time range.
      * Setting the value will automatically trigger the flow to re-fetch the data.
      */
-    suspend fun setHistoryTimeRange(fetchFullWeek: Boolean) {
+    override suspend fun setHistoryTimeRange(fetchFullWeek: Boolean) {
         // Only emit if the value has changed to avoid unnecessary fetches.
         if (showFullWeek.value != fetchFullWeek) {
             showFullWeek.emit(value = fetchFullWeek)
@@ -92,7 +93,7 @@ open class FeedHistoryRepositoryImpl @Inject constructor(
     /**
      * Public function for the ViewModel to trigger a manual refresh.
      */
-    suspend fun triggerRefresh() {
+    override suspend fun triggerRefresh() {
         refreshTrigger.emit(value = Unit)
     }
 }

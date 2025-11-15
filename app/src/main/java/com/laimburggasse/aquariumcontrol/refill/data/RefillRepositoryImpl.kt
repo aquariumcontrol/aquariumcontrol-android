@@ -5,6 +5,7 @@ import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.lib.data.remote.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.lib.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.lib.data.remote.webApiPostRequestExecution
+import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -14,18 +15,18 @@ import javax.inject.Inject
 open class RefillRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     @ApplicationScope private val repositoryScope: CoroutineScope,
-) {
+): RefillRepository {
     private val _errorEvents = MutableSharedFlow<String>()
-    val errorEvents = _errorEvents.asSharedFlow()
-    open suspend fun sendStartRequest() {
+    override val errorEvents = _errorEvents.asSharedFlow()
+    override suspend fun sendStartRequest() {
         executeRequest(apiUrl = WebApiUrls.REFILL_POST_CONTROL_START)
     }
 
-    open suspend fun sendStopRequest() {
+    override suspend fun sendStopRequest() {
         executeRequest(apiUrl = WebApiUrls.REFILL_POST_CONTROL_STOP)
     }
 
-    open suspend fun sendResetRequest() {
+    override suspend fun sendResetRequest() {
         executeRequest(apiUrl = WebApiUrls.REFILL_POST_CONTROL_RESET)
     }
 

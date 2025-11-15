@@ -7,6 +7,7 @@ import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
 import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingStatsReader
 import com.laimburggasse.aquariumcontrol.heating.data.remote.dto.HeatingStatsStringEntry
+import com.laimburggasse.aquariumcontrol.heating.domain.repository.HeatingStatsRepository
 import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.lib.data.remote.WebApiUrls
 import kotlinx.coroutines.CoroutineScope
@@ -29,12 +30,12 @@ import javax.inject.Singleton
 open class HeatingStatsRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
     @ApplicationScope private val repositoryScope: CoroutineScope
-) {
+): HeatingStatsRepository {
     // for triggering manual refreshes
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    open val heatingStatsFlow: StateFlow<DataFetchResult<List<HeatingStatsEntry>>> = combine(
+    override val heatingStatsFlow: StateFlow<DataFetchResult<List<HeatingStatsEntry>>> = combine(
         flow = sessionManager.selectedControllerProfile,
         flow2 = refreshTrigger.onStart { emit(value = Unit) } // Triggers the first fetch
     ) { controller, _ ->
@@ -85,7 +86,7 @@ open class HeatingStatsRepositoryImpl @Inject constructor(
     /**
      * Triggers a manual refresh of the heating stats.
      */
-    open suspend fun triggerRefresh() {
+    override suspend fun triggerRefresh() {
         refreshTrigger.emit(Unit)
     }
 }

@@ -4,10 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.feed.data.FeedProfilesRepositoryImpl
-import com.laimburggasse.aquariumcontrol.feed.data.FeedScheduleRepositoryImpl
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
+import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedProfilesRepository
+import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedScheduleRepository
 import com.laimburggasse.aquariumcontrol.feed.presentation.schedule.FeedScheduleEntryUiEvent
 import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,8 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class FeedScheduleViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    val feedScheduleRepository: FeedScheduleRepositoryImpl,
-    val feedProfilesRepository: FeedProfilesRepositoryImpl
+    val feedScheduleRepository: FeedScheduleRepository,
+    val feedProfilesRepository: FeedProfilesRepository
 ) : ViewModel() {
 
     val feedScheduleSelectionUiState: StateFlow<FeedScheduleSelectionUiState> = feedScheduleRepository.scheduleFlow

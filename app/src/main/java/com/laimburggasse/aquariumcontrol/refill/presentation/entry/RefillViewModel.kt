@@ -2,7 +2,7 @@ package com.laimburggasse.aquariumcontrol.refill.presentation.entry
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.refill.data.RefillRepositoryImpl
+import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RefillViewModel @Inject constructor(private val refillRepository: RefillRepositoryImpl): ViewModel() {
+class RefillViewModel @Inject constructor(private val refillRepository: RefillRepository): ViewModel() {
     private val _events = MutableSharedFlow<RefillScreenEvent>()
     val events = _events.asSharedFlow()
 

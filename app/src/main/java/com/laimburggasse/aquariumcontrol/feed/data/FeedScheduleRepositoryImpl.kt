@@ -7,6 +7,7 @@ import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedScheduleEntryReader
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedScheduleEntryImport
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
+import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedScheduleRepository
 import com.laimburggasse.aquariumcontrol.feed.presentation.schedule.toFeedScheduleEntryList
 import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.lib.data.remote.WebApiPostRequest
@@ -37,7 +38,7 @@ import javax.inject.Singleton
 open class FeedScheduleRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     @ApplicationScope private val repositoryScope: CoroutineScope
-) {
+): FeedScheduleRepository {
     // Triggers and holders for optimistic updates
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
     private val pendingDeletions = MutableStateFlow<Set<FeedScheduleEntryKey>>(value = emptySet())
@@ -112,7 +113,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
     // The PUBLIC flow combines the stable network data with fast-changing local updates.
     // This flow will NOT trigger a network fetch when local data changes.
     @OptIn(ExperimentalCoroutinesApi::class)
-    open val scheduleFlow: StateFlow<DataFetchResult<List<FeedScheduleEntry>>> = combine(
+    override val scheduleFlow: StateFlow<DataFetchResult<List<FeedScheduleEntry>>> = combine(
         flow = networkFlow, // The "slow but truthful" source
         flow2 = pendingDeletions,
         flow3 = pendingUpdates
@@ -153,7 +154,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
         initialValue = DataFetchResult.Loading
     )
 
-    open suspend fun deleteFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry) {
+    override suspend fun deleteFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry) {
         val keyToDelete = FeedScheduleEntryKey(
             profileId = feedScheduleEntry.profileId,
             timestamp = feedScheduleEntry.timestamp.time
@@ -188,7 +189,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
         }
     }
 
-    fun addFeedScheduleEntry(
+    override fun addFeedScheduleEntry(
         feedProfileId: Int,
         feedProfileName: String,
         repeatDaily: Boolean,
@@ -231,7 +232,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
         }
     }
 
-    fun updateFeedScheduleEntry(
+    override fun updateFeedScheduleEntry(
         feedProfileId: Int,
         feedProfileName: String,
         repeatDaily: Boolean,
@@ -277,7 +278,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
         }
     }
 
-    suspend fun triggerRefresh() {
+    override suspend fun triggerRefresh() {
         // Check if the current state is a failure.
         if (failureResult.value != null) {
             // If it is, setting it to null is sufficient to trigger the combine/flatMapLatest chain again.

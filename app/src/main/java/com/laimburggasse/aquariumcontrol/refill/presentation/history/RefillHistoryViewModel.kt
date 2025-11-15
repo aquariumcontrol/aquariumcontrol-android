@@ -2,8 +2,8 @@ package com.laimburggasse.aquariumcontrol.refill.presentation.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.refill.data.RefillHistoryRepositoryImpl
 import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillHistoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RefillHistoryViewModel @Inject constructor(
-    private val refillHistoryRepository: RefillHistoryRepositoryImpl
+    private val refillHistoryRepository: RefillHistoryRepository
 ): ViewModel() {
     
     val refillHistoryUiState: StateFlow<RefillHistoryUiState> = refillHistoryRepository.refillHistoryEventFlow

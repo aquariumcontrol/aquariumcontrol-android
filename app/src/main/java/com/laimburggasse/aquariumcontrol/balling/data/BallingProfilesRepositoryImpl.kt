@@ -4,6 +4,7 @@ import com.laimburggasse.aquariumcontrol.GlobalConstants
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingProfileReader
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
+import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingProfilesRepository
 import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
@@ -31,7 +32,7 @@ import javax.inject.Inject
 open class BallingProfilesRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     @ApplicationScope private val repositoryScope: CoroutineScope
-) {
+): BallingProfilesRepository {
 
     // For triggering manual refreshes
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
@@ -49,7 +50,7 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
      */
     @Suppress("UNCHECKED_CAST")
     @OptIn(ExperimentalCoroutinesApi::class)
-    open val ballingProfiles: Flow<DataFetchResult<List<BallingProfile>>> =
+    override val ballingProfiles: Flow<DataFetchResult<List<BallingProfile>>> =
         combine(
             // 1. We still listen to the selected controller profile.
             flow = sessionManager.selectedControllerProfile,
@@ -110,7 +111,7 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
             initialValue = DataFetchResult.Loading
         )
 
-    fun updateBallingProfile(ballingProfile: BallingProfile) {
+    override fun updateBallingProfile(ballingProfile: BallingProfile) {
         // set the updated profile as the pending update
         // this will trigger instant UI update
         pendingUpdate.value = ballingProfile
@@ -154,7 +155,7 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
     /**
      * Public function to allow the ViewModel to trigger a manual refresh (e.g., for pull-to-refresh).
      */
-    suspend fun triggerRefresh() {
+    override suspend fun triggerRefresh() {
         // Check if the current state is a failure.
         if (failureResult.value != null) {
             // If it is, setting it to null is sufficient to trigger the combine/flatMapLatest chain again.

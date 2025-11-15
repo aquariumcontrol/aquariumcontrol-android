@@ -3,6 +3,7 @@ package com.laimburggasse.aquariumcontrol.balling.data
 import com.laimburggasse.aquariumcontrol.SessionManager
 import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingHistoryLogEntryReader
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
+import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingHistoryRepository
 import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
@@ -26,7 +27,7 @@ import javax.inject.Inject
 open class BallingHistoryRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
     @ApplicationScope private val repositoryScope: CoroutineScope
-) {
+): BallingHistoryRepository {
 
     // Trigger for manual refreshes (e.g., pull-to-refresh)
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
@@ -44,7 +45,7 @@ open class BallingHistoryRepositoryImpl @Inject constructor(
      * It automatically re-fetches data when any of these inputs change.
      */
     @OptIn(ExperimentalCoroutinesApi::class)
-    open val ballingHistoryDosingEventFlow: Flow<DataFetchResult<List<BallingHistoryLogEntry>>> =
+    override val ballingHistoryDosingEventFlow: Flow<DataFetchResult<List<BallingHistoryLogEntry>>> =
         combine(
             flow = sessionManager.selectedControllerProfile,
             flow2 = refreshTrigger.onStart { emit(value = Unit) }, // Trigger on first collection
@@ -83,7 +84,7 @@ open class BallingHistoryRepositoryImpl @Inject constructor(
      * Public function to tell the repository to fetch a different time range.
      * Setting the value will automatically trigger the flow to re-fetch the data.
      */
-    suspend fun setHistoryTimeRange(fetchFullWeek: Boolean) {
+    override suspend fun setHistoryTimeRange(fetchFullWeek: Boolean) {
         // Only emit if the value has changed to avoid unnecessary fetches.
         if (showFullWeek.value != fetchFullWeek) {
             showFullWeek.emit(value = fetchFullWeek)
@@ -93,7 +94,7 @@ open class BallingHistoryRepositoryImpl @Inject constructor(
     /**
      * Public function for the ViewModel to trigger a manual refresh.
      */
-    suspend fun triggerRefresh() {
+    override suspend fun triggerRefresh() {
         refreshTrigger.emit(value = Unit)
     }
 }

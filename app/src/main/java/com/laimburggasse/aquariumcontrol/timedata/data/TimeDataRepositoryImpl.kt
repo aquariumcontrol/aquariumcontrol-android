@@ -8,6 +8,7 @@ import com.laimburggasse.aquariumcontrol.timedata.data.remote.dto.TimeDataString
 import com.laimburggasse.aquariumcontrol.timedata.domain.model.TimeDataSample
 import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.lib.data.remote.WebApiUrls
+import com.laimburggasse.aquariumcontrol.timedata.domain.repository.TimeDataRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,11 +27,11 @@ import javax.inject.Inject
 open class TimeDataRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     @ApplicationScope private val repositoryScope: CoroutineScope,
-) {
+): TimeDataRepository {
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    open val timeDataSamples: Flow<DataFetchResult<List<TimeDataSample>>> =
+    override val timeDataSamples: Flow<DataFetchResult<List<TimeDataSample>>> =
         combine(
             flow = sessionManager.selectedControllerProfile,
             flow2 = refreshTrigger.onStart { emit(value = Unit) }
@@ -88,7 +89,7 @@ open class TimeDataRepositoryImpl @Inject constructor(
     /**
      * Public function to allow the ViewModel to trigger a manual refresh (e.g., for pull-to-refresh).
      */
-    suspend fun triggerRefresh() {
+    override suspend fun triggerRefresh() {
         refreshTrigger.emit(value = Unit)
     }
 }

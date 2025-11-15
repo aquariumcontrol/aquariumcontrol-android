@@ -2,11 +2,11 @@ package com.laimburggasse.aquariumcontrol.heating.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.heating.data.HeatingSetValsRepositoryImpl
 import com.laimburggasse.aquariumcontrol.heating.domain.heatingSetValsSanityCheck
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
-import com.laimburggasse.aquariumcontrol.lib.domain.model.SetValsSanityCheckResult
+import com.laimburggasse.aquariumcontrol.heating.domain.repository.HeatingSetValsRepository
 import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.lib.domain.model.SetValsSanityCheckResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HeatingSetValsViewModel @Inject constructor(
-    private var heatingSetValsRepository: HeatingSetValsRepositoryImpl,
+    private var heatingSetValsRepository: HeatingSetValsRepository,
 ) : ViewModel() {
     val heatingSetValsValid = MutableStateFlow<Boolean?>(value = true)
     val heatingSetValsUiState: StateFlow<HeatingSetValsUiState> = heatingSetValsRepository.heatingSetValsFlow

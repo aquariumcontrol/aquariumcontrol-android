@@ -7,6 +7,7 @@ import com.laimburggasse.aquariumcontrol.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedProfileReader
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedProfileImport
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
+import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedProfilesRepository
 import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.lib.data.remote.WebApiParams
 import com.laimburggasse.aquariumcontrol.lib.data.remote.WebApiPostRequest
@@ -35,7 +36,7 @@ import javax.inject.Singleton
 open class FeedProfilesRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     @ApplicationScope private val repositoryScope: CoroutineScope
-) {
+): FeedProfilesRepository {
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
 
     // Holds a list of profile IDs that are pending deletions (POST request triggered, local update required).
@@ -45,7 +46,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
     private val failureResult = MutableStateFlow<DataFetchResult.Error?>(value = null)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    open val profilesFlow: StateFlow<DataFetchResult<List<FeedProfile>>> =
+    override val profilesFlow: StateFlow<DataFetchResult<List<FeedProfile>>> =
         combine(
             flow = sessionManager.selectedControllerProfile,
             flow2 = refreshTrigger.onStart { emit(value = Unit) },
@@ -107,7 +108,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
             initialValue = DataFetchResult.Loading
         )
 
-    open suspend fun deleteFeedProfile(feedProfile: FeedProfile) {
+    override suspend fun deleteFeedProfile(feedProfile: FeedProfile) {
         // Optimistic Update: Immediately add the ID to the pending deletions list.
         // The UI will react to this instantly.
         pendingDeletions.value += feedProfile.profileID
@@ -129,7 +130,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
         }
     }
 
-    open suspend fun addFeedProfile(feedProfileName: String) {
+    override suspend fun addFeedProfile(feedProfileName: String) {
         repositoryScope.launch(context = Dispatchers.IO) {
             val success: Boolean = webApiPostRequestExecution(
                 sessionManager = sessionManager,
@@ -149,7 +150,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
         }
     }
 
-    open fun findProfileById(profileId: Int): FeedProfile? {
+    override fun findProfileById(profileId: Int): FeedProfile? {
         val currentData: DataFetchResult<List<FeedProfile>> = profilesFlow.value
         return if (currentData is DataFetchResult.Success) {
             currentData.data.find { it.profileID == profileId }
@@ -158,7 +159,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
         }
     }
 
-    open fun findProfileByName(profileName: String): FeedProfile? {
+    override fun findProfileByName(profileName: String): FeedProfile? {
         val currentData: DataFetchResult<List<FeedProfile>> = profilesFlow.value
         return if (currentData is DataFetchResult.Success) {
             currentData.data.find { it.profileName == profileName }
@@ -167,7 +168,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
         }
     }
 
-    fun updateFeedProfile(modifiedFeedProfile: FeedProfile) {
+    override fun updateFeedProfile(modifiedFeedProfile: FeedProfile) {
         val apiCallParameters: Map<String, String> = modifiedFeedProfile.getFeedProfileApiCallParameters()
         repositoryScope.launch(context = Dispatchers.IO) {
             val success: Boolean = webApiPostRequestExecution(
@@ -189,7 +190,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
     /**
      * Public function to allow the ViewModel to trigger a manual refresh (e.g., for pull-to-refresh).
      */
-    suspend fun triggerRefresh() {
+    override suspend fun triggerRefresh() {
         // Check if the current state is a failure.
         if (failureResult.value != null) {
             // If it is, setting it to null is sufficient to trigger the combine/flatMapLatest chain again.

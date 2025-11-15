@@ -2,8 +2,8 @@ package com.laimburggasse.aquariumcontrol.timedata.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.timedata.data.TimeDataRepositoryImpl
 import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.timedata.domain.repository.TimeDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TimeDataViewModel @Inject constructor(
-    private val timeDataRepository: TimeDataRepositoryImpl
+    private val timeDataRepository: TimeDataRepository
 ) : ViewModel() {
     val timeDataUiState: StateFlow<TimeDataUiState> = timeDataRepository.timeDataSamples
         .map { result ->

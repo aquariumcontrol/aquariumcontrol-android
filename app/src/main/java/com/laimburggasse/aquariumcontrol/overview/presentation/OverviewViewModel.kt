@@ -2,8 +2,8 @@ package com.laimburggasse.aquariumcontrol.overview.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.overview.data.OverviewRepositoryImpl
 import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.overview.domain.repository.OverviewRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OverviewViewModel @Inject constructor(
-    private val overviewRepository: OverviewRepositoryImpl
+    private val overviewRepository: OverviewRepository
 ): ViewModel() {
     val overviewUiState: StateFlow<OverviewUiState> = overviewRepository.overviewData
         .map { result ->
