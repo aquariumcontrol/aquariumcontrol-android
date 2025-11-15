@@ -50,7 +50,7 @@ fun FeedProfileAddScreen(
             is FeedProfileAddUiState.Success -> {
                 Toast.makeText(
                     context,
-                    "Successfully added profile.",
+                    context.getString(R.string.successfully_added_feed_profile),
                     Toast.LENGTH_SHORT
                 ).show()
                 onNavigateFromFeed(FeedNavigationEvent.ToFeedMain, null, null, null)
@@ -66,7 +66,9 @@ fun FeedProfileAddScreen(
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize().verticalScroll(state = rememberScrollState())
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(state = rememberScrollState())
     ) {
         ScreenHeadlineComposable(text = stringResource(id = R.string.feed_profile_add))
 
@@ -80,7 +82,9 @@ fun FeedProfileAddScreen(
                 )
 
                 Button(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
                     enabled = feedProfileName.isNotEmpty() && !feedProfileNameExists!!,
                     onClick = { onFeedProfileAddEvent(FeedProfileAddUiEvent.Add) },
                 ) {

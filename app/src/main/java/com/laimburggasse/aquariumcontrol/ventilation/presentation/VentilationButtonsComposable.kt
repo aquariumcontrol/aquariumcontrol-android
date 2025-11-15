@@ -32,7 +32,7 @@ fun VentilationButtonsComposable(
     // This composable displays two buttons for the Ventilation control.
     // Arrangement of the buttons follows the device's orientation.
 
-    val context: Context = LocalContext.current // context for web API request and Toasts
+    val context: Context = LocalContext.current // context for Toasts
 
     Button(
         onClick = {

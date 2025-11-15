@@ -86,6 +86,7 @@
     <string name="stop_time">"Stop time: "</string>
     <string name="activate_schedule_restriction">activate schedule restriction</string>
     <string name="sent_request_to_controller_for_updating_ventilation_set_values">Sent request to controller for updating ventilation set values</string>
+    <string name="sent_request_to_controller_for_updating_heating_set_values">Sent request to controller for updating heating set values</string>
     <string name="update_ventilation_controller_values">Update Ventilation Controller Values</string>
     <string name="reset_ventilation_controller_values">Reset Ventilation Controller Values</string>
     <string name="loading_default_profile">Loading default profile.</string>
@@ -177,4 +178,5 @@
     <string name="no_time_data_available">No time data available.</string>
     <string name="retry">Retry</string>
     <string name="loading_time_data">Loading time data…</string>
+    <string name="successfully_added_feed_profile">Successfully added feed profile.</string>
 </resources>
