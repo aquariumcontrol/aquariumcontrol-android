@@ -1,7 +1,7 @@
 package com.laimburggasse.aquariumcontrol.feed.domain.model
 
 import android.annotation.SuppressLint
-import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
+import com.laimburggasse.aquariumcontrol.lib.data.remote.WebApiParams
 
 data class FeedProfilePhase(
     var duration: Double = 0.0,

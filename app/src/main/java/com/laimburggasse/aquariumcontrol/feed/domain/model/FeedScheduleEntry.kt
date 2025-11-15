@@ -1,6 +1,6 @@
 package com.laimburggasse.aquariumcontrol.feed.domain.model
 
-import com.laimburggasse.aquariumcontrol.webapi.WebApiParams
+import com.laimburggasse.aquariumcontrol.lib.data.remote.WebApiParams
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Locale

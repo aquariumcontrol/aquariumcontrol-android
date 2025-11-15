@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.lib_composables.presentation.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.lib.presentation.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntries
 
 @Composable

@@ -37,7 +37,7 @@ import com.laimburggasse.aquariumcontrol.feed.presentation.navigation.FeedNaviga
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedProfileImport
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
-import com.laimburggasse.aquariumcontrol.lib_composables.presentation.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.lib.presentation.ScreenHeadlineComposable
 import java.sql.Timestamp
 import java.util.Calendar
 import java.util.Locale

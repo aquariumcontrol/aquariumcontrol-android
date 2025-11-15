@@ -32,7 +32,7 @@ import com.laimburggasse.aquariumcontrol.controller.presentation.components.Cont
 import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiState
 import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUsernamePasswordComposable
 import com.laimburggasse.aquariumcontrol.controller.presentation.navigation.ControllerNavigationEvent
-import com.laimburggasse.aquariumcontrol.lib_composables.presentation.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.lib.presentation.ScreenHeadlineComposable
 
 @Composable
 fun ControllerEditScreen(

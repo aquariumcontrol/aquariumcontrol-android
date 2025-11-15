@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.webapi
+package com.laimburggasse.aquariumcontrol.lib.data.remote
 
 object WebApiUrls {
     private const val BASE_URL = "/aquarium-web/api/v01/"

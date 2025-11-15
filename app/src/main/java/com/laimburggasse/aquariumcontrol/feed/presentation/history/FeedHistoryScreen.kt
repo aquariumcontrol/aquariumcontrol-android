@@ -36,7 +36,7 @@ import com.laimburggasse.aquariumcontrol.MainScaffold
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
-import com.laimburggasse.aquariumcontrol.lib_composables.presentation.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.lib.presentation.ScreenHeadlineComposable
 
 @Composable
 fun FeedHistoryScreen(

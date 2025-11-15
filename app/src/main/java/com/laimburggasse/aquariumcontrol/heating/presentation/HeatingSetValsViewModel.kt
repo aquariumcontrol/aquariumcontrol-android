@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.heating.data.HeatingSetValsRepository
 import com.laimburggasse.aquariumcontrol.heating.domain.heatingSetValsSanityCheck
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
-import com.laimburggasse.aquariumcontrol.lib_composables.domain.model.SetValsSanityCheckResult
-import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
+import com.laimburggasse.aquariumcontrol.lib.domain.model.SetValsSanityCheckResult
+import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.webapi
+package com.laimburggasse.aquariumcontrol.lib.data.remote
 
 object WebApiParams {
     const val PROFILE_NAME = "ProfileName"

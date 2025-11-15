@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.webapi
+package com.laimburggasse.aquariumcontrol.lib.data.remote
 
 import okhttp3.FormBody
 import okhttp3.OkHttpClient

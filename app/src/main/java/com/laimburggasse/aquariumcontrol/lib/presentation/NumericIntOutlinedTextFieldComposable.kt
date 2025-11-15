@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.lib_composables.presentation
+package com.laimburggasse.aquariumcontrol.lib.presentation
 
 import android.content.res.Configuration
 import androidx.compose.foundation.text.KeyboardOptions

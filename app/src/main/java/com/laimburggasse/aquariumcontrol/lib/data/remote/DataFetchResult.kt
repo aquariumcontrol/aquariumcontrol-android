@@ -1,4 +1,4 @@
-package com.laimburggasse.aquariumcontrol.webapi
+package com.laimburggasse.aquariumcontrol.lib.data.remote
 
 sealed class DataFetchResult<out T> {
     data class Success<out T>(val data: T) : DataFetchResult<T>()

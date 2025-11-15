@@ -1,18 +1,18 @@
-package com.laimburggasse.aquariumcontrol.lib_composables
+package com.laimburggasse.aquariumcontrol.lib
 
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.lib_composables.presentation.NumericDoubleOutlinedTextFieldComposablePreview
+import com.laimburggasse.aquariumcontrol.lib.presentation.NumericIntOutlinedTextFieldComposablePreview
 
 @Suppress("unused")
-class NumericDoubleOutlinedTextFieldComposableTest {
+class NumericIntOutlinedTextFieldComposableTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun NumericDoubleOutlinedTextFieldComposableSnapshotTest() {
-        NumericDoubleOutlinedTextFieldComposablePreview()
+    fun NumericIntOutlinedTextFieldComposableSnapshotTest() {
+        NumericIntOutlinedTextFieldComposablePreview()
     }
 }

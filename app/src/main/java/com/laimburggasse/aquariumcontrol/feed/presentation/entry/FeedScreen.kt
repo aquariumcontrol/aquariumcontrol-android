@@ -25,7 +25,7 @@ import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedScheduleEntryI
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.presentation.navigation.FeedNavigationEvent
-import com.laimburggasse.aquariumcontrol.lib_composables.presentation.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.lib.presentation.ScreenHeadlineComposable
 
 @Composable
 fun FeedScreen(

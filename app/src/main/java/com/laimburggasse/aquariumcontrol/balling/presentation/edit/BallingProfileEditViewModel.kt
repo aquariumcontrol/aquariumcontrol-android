@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.GlobalConstants
 import com.laimburggasse.aquariumcontrol.balling.data.BallingProfilesRepository
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
-import com.laimburggasse.aquariumcontrol.webapi.DataFetchResult
+import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
