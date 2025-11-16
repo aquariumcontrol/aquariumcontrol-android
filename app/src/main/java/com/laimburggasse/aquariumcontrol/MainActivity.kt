@@ -27,10 +27,14 @@ import com.laimburggasse.aquariumcontrol.balling.presentation.entry.BallingScree
 import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryScreen
 import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryUiState
 import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryViewModel
+import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
+import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.controller.presentation.add.ControllerAddScreen
 import com.laimburggasse.aquariumcontrol.controller.presentation.add.ControllerAddViewModel
 import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiState
-import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
+import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
+import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.controller.presentation.navigation.handleControllerNavigation
 import com.laimburggasse.aquariumcontrol.controller.presentation.edit.ControllerEditScreen
 import com.laimburggasse.aquariumcontrol.controller.presentation.edit.ControllerEditViewModel
@@ -59,7 +63,7 @@ import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingSetValsView
 import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingStatsUiState
 import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingStatsViewModel
 import com.laimburggasse.aquariumcontrol.info.presentation.InfoScreen
-import com.laimburggasse.aquariumcontrol.maindropdownmenu.presentation.handleMainDropDownMenuNavigation
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.handleMainDropDownMenuNavigation
 import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewScreen
 import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewUiState
 import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewViewModel
@@ -86,23 +90,16 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    companion object {
-        private const val PREFS_NAME = "app_prefs"
-        const val KEY_DEFAULT_PROFILE_ID = "default_profile_id"
-
-        const val NO_DEFAULT_ID = -1L
-    }
-
     @Inject
     lateinit var sessionManager: SessionManager
 
     override fun onPause() {
         super.onPause()
-        val sharedPrefs: SharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+        val sharedPrefs: SharedPreferences = getSharedPreferences(GlobalConstants.PREFS_NAME, MODE_PRIVATE)
         with(receiver = sharedPrefs.edit()) {
             sessionManager.defaultControllerProfileId.value.let {
                 putLong(
-                    KEY_DEFAULT_PROFILE_ID,
+                    GlobalConstants.KEY_DEFAULT_PROFILE_ID,
                     sessionManager.defaultControllerProfileId.value!!
                 )
                 apply()
@@ -134,13 +131,22 @@ class MainActivity : ComponentActivity() {
                                     controllerProfileList,
                                     onEvent = controllerSelectionViewModel::onEvent,
                                     onNavigateFromController = { event, controllerProfileId ->
-                                        navHostController.handleControllerNavigation(event, controllerProfileId)
+                                        navHostController.handleControllerNavigation(
+                                            event,
+                                            controllerProfileId
+                                        )
                                     },
                                     defaultProfileId = sessionManager.defaultControllerProfileId.collectAsState(),
                                     canStartWaitForNavigation = controllerSelectionViewModel.canStartWaitForDefaultNavigation.collectAsState(),
                                     progressToDefaultNavigation = controllerSelectionViewModel.progressToDefaultNavigation.collectAsState()
-                               ) },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }
+                                )
+                            },
+                            onNavigate = { event ->
+                                navHostController.handleMainDropDownMenuNavigation(
+                                    event,
+                                    sessionManager
+                                )
+                            }
                         )
                     }
                     composable(route = ViewNavigationRoutes.controllerAdd)
@@ -162,7 +168,12 @@ class MainActivity : ComponentActivity() {
                                     }
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }
+                            onNavigate = { event ->
+                                navHostController.handleMainDropDownMenuNavigation(
+                                    event,
+                                    sessionManager
+                                )
+                            }
                         )
                     }
                     composable(route = ViewNavigationRoutes.controllerEdit,
@@ -187,11 +198,19 @@ class MainActivity : ComponentActivity() {
                                     onEvent = controllerEditViewModel::onEvent,
                                     isDefaultProfileInitialValue = sessionManager.defaultControllerProfileId.collectAsState().value == controllerProfileId,
                                     onNavigateFromController = { event, controllerProfileId ->
-                                        navHostController.handleControllerNavigation(event, controllerProfileId)
+                                        navHostController.handleControllerNavigation(
+                                            event,
+                                            controllerProfileId
+                                        )
                                     }
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }
+                            onNavigate = { event ->
+                                navHostController.handleMainDropDownMenuNavigation(
+                                    event,
+                                    sessionManager
+                                )
+                            }
                         )
                     }
                     composable(route = ViewNavigationRoutes.feed) {
@@ -219,7 +238,12 @@ class MainActivity : ComponentActivity() {
                                     onFeedSchedulesUiEvent = feedScheduleViewModel::onFeedSchedulesUiEvent,
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) },
+                            onNavigate = { event ->
+                                navHostController.handleMainDropDownMenuNavigation(
+                                    event,
+                                    sessionManager
+                                )
+                            },
                         )
                     }
                     composable(route = ViewNavigationRoutes.feedHistory24h) {
@@ -236,7 +260,12 @@ class MainActivity : ComponentActivity() {
                                     onFeedHistoryEvent = feedHistoryViewModel::onEvent
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }
+                            onNavigate = { event ->
+                                navHostController.handleMainDropDownMenuNavigation(
+                                    event,
+                                    sessionManager
+                                )
+                            }
                         )
                     }
                     composable(route = ViewNavigationRoutes.feedHistory7d) {
@@ -253,7 +282,12 @@ class MainActivity : ComponentActivity() {
                                     onFeedHistoryEvent = feedHistoryViewModel::onEvent
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }
+                            onNavigate = { event ->
+                                navHostController.handleMainDropDownMenuNavigation(
+                                    event,
+                                    sessionManager
+                                )
+                            }
                         )
                     }
                     composable(route = ViewNavigationRoutes.feedEdit,
@@ -266,11 +300,18 @@ class MainActivity : ComponentActivity() {
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.feedEdit,
-                            screenContent = { FeedProfileEditScreen(
-                                uiState,
-                                onFeedProfileEditUiEvent = feedProfileEditViewModel::onFeedProfileEditUiEvent,
-                            ) },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }
+                            screenContent = {
+                                FeedProfileEditScreen(
+                                    uiState,
+                                    onFeedProfileEditUiEvent = feedProfileEditViewModel::onFeedProfileEditUiEvent,
+                                )
+                            },
+                            onNavigate = { event ->
+                                navHostController.handleMainDropDownMenuNavigation(
+                                    event,
+                                    sessionManager
+                                )
+                            }
                         )
                     }
                     composable(route = ViewNavigationRoutes.feedAddProfile) {
@@ -299,7 +340,10 @@ class MainActivity : ComponentActivity() {
                                 )
                             },
                             onNavigate = { event ->
-                                navHostController.handleMainDropDownMenuNavigation(event, sessionManager)
+                                navHostController.handleMainDropDownMenuNavigation(
+                                    event,
+                                    sessionManager
+                                )
                             },
                         )
                     }
@@ -351,13 +395,18 @@ class MainActivity : ComponentActivity() {
                             screenContent = {
                                 BallingScreen(
                                     ballingProfilesUiState,
-                                    onNavigateFromBalling = {
-                                        event, pumpId -> navHostController.handleBallingNavigation(event, pumpId)
+                                    onNavigateFromBalling = { event, pumpId ->
+                                        navHostController.handleBallingNavigation(event, pumpId)
                                     },
                                     onRefresh = ballingViewModel::onRefresh,
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) },
+                            onNavigate = { event ->
+                                navHostController.handleMainDropDownMenuNavigation(
+                                    event,
+                                    sessionManager
+                                )
+                            },
                         )
                     }
                     composable(route = ViewNavigationRoutes.ballingHistory24h) {
@@ -374,7 +423,12 @@ class MainActivity : ComponentActivity() {
                                     onEvent = ballingHistoryViewModel::onEvent
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) },
+                            onNavigate = { event ->
+                                navHostController.handleMainDropDownMenuNavigation(
+                                    event,
+                                    sessionManager
+                                )
+                            },
                         )
                     }
                     composable(route = ViewNavigationRoutes.ballingHistory7d) {
@@ -391,7 +445,12 @@ class MainActivity : ComponentActivity() {
                                     onEvent = ballingHistoryViewModel::onEvent
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) },
+                            onNavigate = { event ->
+                                navHostController.handleMainDropDownMenuNavigation(
+                                    event,
+                                    sessionManager
+                                )
+                            },
                         )
                     }
                     composable(route = ViewNavigationRoutes.ballingEdit,
@@ -412,7 +471,12 @@ class MainActivity : ComponentActivity() {
                                     onEvent = ballingProfileEditViewModel::onEvent,
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) },
+                            onNavigate = { event ->
+                                navHostController.handleMainDropDownMenuNavigation(
+                                    event,
+                                    sessionManager
+                                )
+                            },
                         )
                     }
                     composable(route = ViewNavigationRoutes.refill) {
@@ -427,19 +491,28 @@ class MainActivity : ComponentActivity() {
                                     refillViewModel.events.collect { event ->
                                         when (event) {
                                             is RefillScreenEvent.ShowToast -> {
-                                                Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(
+                                                    context,
+                                                    event.message,
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
                                             }
                                         }
                                     }
                                 }
                                 RefillScreen(
-                                    onNavigateFromRefill = {
-                                        event -> navHostController.handleRefillNavigation(event)
+                                    onNavigateFromRefill = { event ->
+                                        navHostController.handleRefillNavigation(event)
                                     },
                                     onRefillEvent = refillViewModel::onRefillEvent,
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }
+                            onNavigate = { event ->
+                                navHostController.handleMainDropDownMenuNavigation(
+                                    event,
+                                    sessionManager
+                                )
+                            }
                         )
                     }
                     composable(route = ViewNavigationRoutes.refillHistory24h) {
@@ -455,7 +528,12 @@ class MainActivity : ComponentActivity() {
                                     onRefillHistoryEvent = refillHistoryViewModel::onEvent
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }
+                            onNavigate = { event ->
+                                navHostController.handleMainDropDownMenuNavigation(
+                                    event,
+                                    sessionManager
+                                )
+                            }
                         )
                     }
                     composable(route = ViewNavigationRoutes.refillHistory7d) {
@@ -471,7 +549,12 @@ class MainActivity : ComponentActivity() {
                                     onRefillHistoryEvent = refillHistoryViewModel::onEvent,
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }
+                            onNavigate = { event ->
+                                navHostController.handleMainDropDownMenuNavigation(
+                                    event,
+                                    sessionManager
+                                )
+                            }
                         )
                     }
                     composable(route = ViewNavigationRoutes.heating) {
@@ -493,7 +576,12 @@ class MainActivity : ComponentActivity() {
                                     onHeatingStatsEvent = heatingStatsViewModel::onHeatingStatsEvent
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) },
+                            onNavigate = { event ->
+                                navHostController.handleMainDropDownMenuNavigation(
+                                    event,
+                                    sessionManager
+                                )
+                            },
                         )
                     }
                     composable(route = ViewNavigationRoutes.ventilation) {
@@ -511,7 +599,12 @@ class MainActivity : ComponentActivity() {
                                     onVentilationSetValsEvent = ventilationSetValsViewModel::onVentilationSetValsEvent,
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) }
+                            onNavigate = { event ->
+                                navHostController.handleMainDropDownMenuNavigation(
+                                    event,
+                                    sessionManager
+                                )
+                            }
                         )
                     }
                     composable(route = ViewNavigationRoutes.timeData) {
@@ -527,7 +620,12 @@ class MainActivity : ComponentActivity() {
                                     onTimeDataEvent = timeDataViewModel::onTimeDataEvent
                                 )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) },
+                            onNavigate = { event ->
+                                navHostController.handleMainDropDownMenuNavigation(
+                                    event,
+                                    sessionManager
+                                )
+                            },
                         )
                     }
                     composable(route = ViewNavigationRoutes.schedule) {
@@ -539,9 +637,15 @@ class MainActivity : ComponentActivity() {
                             screenContent = {
                                 ScheduleScreen(
                                     scheduleUiState,
-                                    onScheduleEvent = scheduleViewModel::onScheduleEvent)
+                                    onScheduleEvent = scheduleViewModel::onScheduleEvent
+                                )
                             },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) },
+                            onNavigate = { event ->
+                                navHostController.handleMainDropDownMenuNavigation(
+                                    event,
+                                    sessionManager
+                                )
+                            },
                         )
                     }
                     composable(route = ViewNavigationRoutes.info) {
@@ -549,7 +653,12 @@ class MainActivity : ComponentActivity() {
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.info,
                             screenContent = { InfoScreen() },
-                            onNavigate = { event -> navHostController.handleMainDropDownMenuNavigation(event, sessionManager) },
+                            onNavigate = { event ->
+                                navHostController.handleMainDropDownMenuNavigation(
+                                    event,
+                                    sessionManager
+                                )
+                            },
                         )
                     }
                     composable(route = ViewNavigationRoutes.overView,
@@ -581,7 +690,10 @@ class MainActivity : ComponentActivity() {
                                     )
                                 },
                                 onNavigate = { event ->
-                                    navHostController.handleMainDropDownMenuNavigation(event, sessionManager)
+                                    navHostController.handleMainDropDownMenuNavigation(
+                                        event,
+                                        sessionManager
+                                    )
                                 }
                             )
                         }

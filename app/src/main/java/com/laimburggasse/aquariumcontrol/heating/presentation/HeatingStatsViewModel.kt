@@ -3,7 +3,7 @@ package com.laimburggasse.aquariumcontrol.heating.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.heating.domain.repository.HeatingStatsRepository
-import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

@@ -17,7 +17,7 @@ import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.LineData
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
-import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
 
 @Composable
 fun FeedProfileDisplayComposable(

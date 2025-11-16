@@ -32,10 +32,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.laimburggasse.aquariumcontrol.MainScaffold
+import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.R
-import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.lib.presentation.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
 import java.sql.Timestamp
 

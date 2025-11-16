@@ -1,7 +1,7 @@
 package com.laimburggasse.aquariumcontrol.feed.presentation.navigation
 
 import androidx.navigation.NavHostController
-import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 
 fun NavHostController.handleFeedNavigation(
     event: FeedNavigationEvent,

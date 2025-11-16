@@ -1,0 +1,29 @@
+package com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation
+
+import androidx.navigation.NavHostController
+import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
+import kotlinx.coroutines.flow.StateFlow
+
+fun NavHostController.handleMainDropDownMenuNavigation(
+    event: MainDropDownMenuNavigationEvent,
+    sessionManager: SessionManager
+) {
+    when (event) {
+        MainDropDownMenuNavigationEvent.ToOverview -> {
+            val currentProfileId: StateFlow<Long?> = sessionManager.defaultControllerProfileId
+            if (currentProfileId.value != null) {
+                this.navigate(route = ViewNavigationRoutes.overView(controllerProfileId = currentProfileId.value!!))
+            }
+        }
+        MainDropDownMenuNavigationEvent.ToSchedule -> this.navigate(route = ViewNavigationRoutes.schedule)
+        MainDropDownMenuNavigationEvent.ToControllerSelection -> this.navigate(route = ViewNavigationRoutes.controllerSelection)
+        MainDropDownMenuNavigationEvent.ToDisplayData -> this.navigate(route = ViewNavigationRoutes.timeData)
+        MainDropDownMenuNavigationEvent.ToBalling -> this.navigate(route = ViewNavigationRoutes.balling)
+        MainDropDownMenuNavigationEvent.ToRefill -> this.navigate(route = ViewNavigationRoutes.refill)
+        MainDropDownMenuNavigationEvent.ToFeed -> this.navigate(route = ViewNavigationRoutes.feed)
+        MainDropDownMenuNavigationEvent.ToHeating -> this.navigate(route = ViewNavigationRoutes.heating)
+        MainDropDownMenuNavigationEvent.ToVentilation -> this.navigate(route = ViewNavigationRoutes.ventilation)
+        MainDropDownMenuNavigationEvent.ToInfo -> this.navigate(route = ViewNavigationRoutes.info)
+    }
+}

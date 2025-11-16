@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.sp
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedScheduleEntryImport
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
-import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
 
 @Composable
 fun FeedScheduleEntryComposable(

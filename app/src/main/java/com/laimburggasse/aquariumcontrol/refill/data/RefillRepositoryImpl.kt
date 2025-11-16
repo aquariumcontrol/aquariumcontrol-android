@@ -1,10 +1,10 @@
 package com.laimburggasse.aquariumcontrol.refill.data
 
-import com.laimburggasse.aquariumcontrol.SessionManager
-import com.laimburggasse.aquariumcontrol.di.ApplicationScope
-import com.laimburggasse.aquariumcontrol.lib.data.remote.WebApiPostRequest
-import com.laimburggasse.aquariumcontrol.lib.data.remote.WebApiUrls
-import com.laimburggasse.aquariumcontrol.lib.data.remote.webApiPostRequestExecution
+import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiPostRequest
+import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
+import com.laimburggasse.aquariumcontrol.common.data.remote.webApiPostRequestExecution
 import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow

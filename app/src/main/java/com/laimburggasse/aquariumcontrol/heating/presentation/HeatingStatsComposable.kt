@@ -34,8 +34,8 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.heating.data.remote.dto.HeatingStatsStringEntry
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
-import com.laimburggasse.aquariumcontrol.lib.presentation.RoundRefreshButtonComposable
-import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.common.presentation.RoundRefreshButtonComposable
+import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

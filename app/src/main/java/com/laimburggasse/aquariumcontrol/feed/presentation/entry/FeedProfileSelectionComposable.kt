@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.presentation.navigation.FeedNavigationEvent
-import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
 
 @Composable
 fun FeedProfileSelectionComposable(

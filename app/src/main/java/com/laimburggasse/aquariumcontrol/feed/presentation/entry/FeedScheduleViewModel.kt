@@ -3,13 +3,13 @@ package com.laimburggasse.aquariumcontrol.feed.presentation.entry
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedProfilesRepository
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedScheduleRepository
 import com.laimburggasse.aquariumcontrol.feed.presentation.schedule.FeedScheduleEntryUiEvent
-import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

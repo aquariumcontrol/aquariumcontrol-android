@@ -1,6 +1,6 @@
 package com.laimburggasse.aquariumcontrol.schedule.domain.repository
 
-import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntries
 import kotlinx.coroutines.flow.StateFlow
 

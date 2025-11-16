@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiEvent
 import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiState
-import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
-import com.laimburggasse.aquariumcontrol.controller.data.ControllerProfileDao
+import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
+import com.laimburggasse.aquariumcontrol.common.data.ControllerProfileDao
 import com.laimburggasse.aquariumcontrol.controller.domain.isHostName
 import com.laimburggasse.aquariumcontrol.controller.domain.isValidPortNumber
 import dagger.hilt.android.lifecycle.HiltViewModel

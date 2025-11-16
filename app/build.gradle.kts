@@ -22,15 +22,16 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["clearPackageData"] = "false"
-        testOptions {
-            //execution = "ANDROIDX_TEST_ORCHESTRATOR"
-            screenshotTests {
-                imageDifferenceThreshold = 0.0001f // 0.01%
-            }
-        }
 
         vectorDrawables {
             useSupportLibrary = true
+        }
+    }
+
+    testOptions {
+        //execution = "ANDROIDX_TEST_ORCHESTRATOR"
+        screenshotTests {
+            imageDifferenceThreshold = 0.0001f // 0.01%
         }
     }
 
@@ -44,11 +45,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
         freeCompilerArgs = listOf("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
     }
     buildFeatures {
@@ -94,10 +95,10 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     //Room
-    implementation("androidx.room:room-runtime:${rootProject.extra["room_version"]}")
-    implementation(libs.symbol.processing.api)
-    ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
-    implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")
+    //implementation("androidx.room:room-runtime:${rootProject.extra["room_version"]}")
+    //implementation(libs.symbol.processing.api)
+    //ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
+    //implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")
 
     // for charts (time data. heating stats and feed profile)
     implementation (libs.mpandroidchart)
@@ -110,4 +111,7 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
+
+    implementation(project(":balling"))
+    implementation(project(":common"))
 }

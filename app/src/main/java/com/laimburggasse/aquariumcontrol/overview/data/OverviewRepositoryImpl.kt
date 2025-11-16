@@ -1,11 +1,11 @@
 package com.laimburggasse.aquariumcontrol.overview.data
 
-import com.laimburggasse.aquariumcontrol.SessionManager
-import com.laimburggasse.aquariumcontrol.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.overview.data.remote.OverviewDataReader
 import com.laimburggasse.aquariumcontrol.overview.domain.model.OverviewData
-import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
-import com.laimburggasse.aquariumcontrol.lib.data.remote.WebApiUrls
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.overview.domain.repository.OverviewRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi

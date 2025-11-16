@@ -25,7 +25,7 @@ import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.presentation.navigation.FeedNavigationEvent
 import com.laimburggasse.aquariumcontrol.feed.presentation.schedule.FeedScheduleEntryComposable
-import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
 
 @Composable
 fun FeedScheduleSelectionComposable(

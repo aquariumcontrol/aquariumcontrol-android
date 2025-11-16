@@ -29,8 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.controller.presentation.navigation.ControllerNavigationEvent
-import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
-import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
+import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
 
 @Composable
 fun ControllerProfileComposable(

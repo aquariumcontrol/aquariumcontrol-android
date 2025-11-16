@@ -4,9 +4,9 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.laimburggasse.aquariumcontrol.MainScaffold
+import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.ScreenshotTestHelper
-import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.presentation.add.FeedProfileAddScreen
 import com.laimburggasse.aquariumcontrol.feed.presentation.add.FeedProfileAddUiState
 import org.junit.Rule

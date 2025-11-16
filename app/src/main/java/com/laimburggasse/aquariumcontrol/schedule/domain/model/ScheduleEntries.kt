@@ -1,7 +1,7 @@
 package com.laimburggasse.aquariumcontrol.schedule.domain.model
 
 import android.annotation.SuppressLint
-import com.laimburggasse.aquariumcontrol.lib.data.remote.WebApiParams
+import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import java.util.Locale
 
 @SuppressLint("SimpleDateFormat")

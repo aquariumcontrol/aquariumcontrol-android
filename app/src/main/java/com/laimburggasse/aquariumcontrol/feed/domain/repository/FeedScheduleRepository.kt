@@ -1,7 +1,7 @@
 package com.laimburggasse.aquariumcontrol.feed.domain.repository
 
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
-import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import kotlinx.coroutines.flow.StateFlow
 import java.util.Calendar
 

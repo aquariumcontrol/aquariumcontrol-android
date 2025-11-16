@@ -1,9 +1,9 @@
 package com.laimburggasse.aquariumcontrol.timedata.data.remote
 
-import com.laimburggasse.aquariumcontrol.GlobalConstants
+import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.timedata.data.remote.dto.TimeDataStringSample
-import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
-import com.laimburggasse.aquariumcontrol.lib.data.remote.WebApiParams
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request

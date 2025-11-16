@@ -29,12 +29,12 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.laimburggasse.aquariumcontrol.MainScaffold
+import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.R
-import com.laimburggasse.aquariumcontrol.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
+import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.controller.presentation.navigation.ControllerNavigationEvent
-import com.laimburggasse.aquariumcontrol.lib.presentation.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

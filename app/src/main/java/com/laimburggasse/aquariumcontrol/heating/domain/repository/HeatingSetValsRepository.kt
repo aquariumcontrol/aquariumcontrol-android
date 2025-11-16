@@ -1,7 +1,7 @@
 package com.laimburggasse.aquariumcontrol.heating.domain.repository
 
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
-import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import kotlinx.coroutines.flow.StateFlow
 
 interface HeatingSetValsRepository {

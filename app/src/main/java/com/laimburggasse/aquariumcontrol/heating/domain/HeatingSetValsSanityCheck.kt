@@ -1,7 +1,7 @@
 package com.laimburggasse.aquariumcontrol.heating.domain
 
-import com.laimburggasse.aquariumcontrol.GlobalConstants
-import com.laimburggasse.aquariumcontrol.lib.domain.model.SetValsSanityCheckResult
+import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
+import com.laimburggasse.aquariumcontrol.common.domain.model.SetValsSanityCheckResult
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
 
 fun heatingSetValsSanityCheck(heatingSetVals: HeatingSetVals):

@@ -1,0 +1,26 @@
+<resources>
+    <string name="balling_log">Balling Log</string>
+    <string name="balling_events_last_7d">Balling dosing events of last 7 days</string>
+    <string name="balling_events_last_24h">Balling dosing events of last 24h</string>
+    <string name="view_balling_events_24h">View balling dosing events of last 24h</string>
+    <string name="view_balling_events_7d">View balling dosing events of last 7 days</string>
+    <string name="balling_dosing">Balling Dosing</string>
+    <string name="loading_balling_dosing_events">Loading Balling dosing events.</string>
+    <string name="no_balling_events_found">No Balling events found.</string>
+    <string name="balling_dosing_schedule">Balling dosing schedule</string>
+    <string name="error_loading_balling_data">"Error loading Balling data: "</string>
+    <string name="balling_dosing_profile">"Balling dosing profile: "</string>
+    <string name="ml">" ml"</string>
+    <string name="sent_request_to_controller_for_updating_dosing_volume">Sent request to controller for updating dosing volume</string>
+    <string name="new_dosing_volume_ml_h">New Dosing Volume (ml/h)</string>
+    <string name="pump_id">"Pump ID: "</string>
+    <string name="dosing_volume">"Dosing volume: "</string>
+    <string name="milliliter_unit">" ml"</string>
+    <string name="no_balling_profiles_found">There are no configured Balling profiles. Check the controller configuration.</string>
+    <string name="loading_balling_profiles">Loading Balling profiles…</string>
+    <string name="timestamp">Timestamp</string>
+    <string name="loading_balling_profile">Loading Balling profile</string>
+    <string name="balling_profile_not_found">Balling profile not found</string>
+    <string name="label">"Label: "</string>
+    <string name="update_dosing_value">Update Dosing Value</string>
+</resources>

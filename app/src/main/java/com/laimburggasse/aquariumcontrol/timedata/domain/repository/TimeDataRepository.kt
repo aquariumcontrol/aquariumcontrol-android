@@ -1,6 +1,6 @@
 package com.laimburggasse.aquariumcontrol.timedata.domain.repository
 
-import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.timedata.domain.model.TimeDataSample
 import kotlinx.coroutines.flow.Flow
 

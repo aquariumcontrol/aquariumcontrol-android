@@ -1,12 +1,12 @@
 package com.laimburggasse.aquariumcontrol.refill.data
 
-import com.laimburggasse.aquariumcontrol.SessionManager
-import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
-import com.laimburggasse.aquariumcontrol.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillHistoryLogEntryReader
-import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
-import com.laimburggasse.aquariumcontrol.lib.data.remote.WebApiUrls
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillHistoryRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

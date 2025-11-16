@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.laimburggasse.aquariumcontrol.R
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
-import com.laimburggasse.aquariumcontrol.ui.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
 import java.sql.Timestamp
 
 @Composable

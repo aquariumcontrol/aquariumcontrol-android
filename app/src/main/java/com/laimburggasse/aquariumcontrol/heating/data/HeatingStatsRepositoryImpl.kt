@@ -1,15 +1,15 @@
 package com.laimburggasse.aquariumcontrol.heating.data
 
-import com.laimburggasse.aquariumcontrol.GlobalConstants
-import com.laimburggasse.aquariumcontrol.SessionManager
-import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
-import com.laimburggasse.aquariumcontrol.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
+import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
 import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingStatsReader
 import com.laimburggasse.aquariumcontrol.heating.data.remote.dto.HeatingStatsStringEntry
 import com.laimburggasse.aquariumcontrol.heating.domain.repository.HeatingStatsRepository
-import com.laimburggasse.aquariumcontrol.lib.data.remote.DataFetchResult
-import com.laimburggasse.aquariumcontrol.lib.data.remote.WebApiUrls
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -79,7 +79,7 @@ open class HeatingStatsRepositoryImpl @Inject constructor(
         }
     }.stateIn(
         scope = repositoryScope,
-        started = SharingStarted.Companion.WhileSubscribed(5000L),
+        started = SharingStarted.Companion.WhileSubscribed(stopTimeoutMillis = 5000L),
         initialValue = DataFetchResult.Loading
     )
 
@@ -87,6 +87,6 @@ open class HeatingStatsRepositoryImpl @Inject constructor(
      * Triggers a manual refresh of the heating stats.
      */
     override suspend fun triggerRefresh() {
-        refreshTrigger.emit(Unit)
+        refreshTrigger.emit(value = Unit)
     }
 }

@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.formatter.ValueFormatter
-import com.laimburggasse.aquariumcontrol.GlobalConstants
+import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 
 class TimeDataYAxisOnOffValueFormatter: ValueFormatter() {
     @SuppressLint("DefaultLocale")

@@ -1,6 +1,6 @@
 package com.laimburggasse.aquariumcontrol.controller.presentation.selection
 
-import com.laimburggasse.aquariumcontrol.controller.domain.ControllerProfile
+import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 
 sealed interface ControllerSelectionUiEvent {
     // This interface defines all events that can be triggered from

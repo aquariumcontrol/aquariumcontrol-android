@@ -1,6 +1,6 @@
 package com.laimburggasse.aquariumcontrol.feed.presentation.edit
 
-import com.laimburggasse.aquariumcontrol.GlobalConstants
+import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 
 fun mapIndexToMenuItemId(
     level: Int,

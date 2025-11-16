@@ -22,3 +22,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "AquariumControl"
 include(":app")
+include(":balling")
+include(":common")
