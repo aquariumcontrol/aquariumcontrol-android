@@ -31,7 +31,7 @@ import javax.inject.Inject
 
 open class BallingProfilesRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
-    @ApplicationScope private val repositoryScope: CoroutineScope
+    @param:ApplicationScope private val repositoryScope: CoroutineScope
 ): BallingProfilesRepository {
 
     // For triggering manual refreshes

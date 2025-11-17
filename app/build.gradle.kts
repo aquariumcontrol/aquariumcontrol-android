@@ -9,6 +9,13 @@ plugins {
     id("kotlin-kapt")
 }
 
+kotlin {
+    jvmToolchain(jdkVersion = 11)
+    compilerOptions {
+        freeCompilerArgs.add("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
+    }
+}
+
 android {
     namespace = "com.laimburggasse.aquariumcontrol"
     compileSdk = 36
@@ -17,21 +24,14 @@ android {
         applicationId = "com.laimburggasse.aquariumcontrol"
         minSdk = 26
         targetSdk = 34
-        versionCode = 12
-        versionName = "2.0.1"
+        versionCode = 13
+        versionName = "3.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["clearPackageData"] = "false"
 
         vectorDrawables {
             useSupportLibrary = true
-        }
-    }
-
-    testOptions {
-        //execution = "ANDROIDX_TEST_ORCHESTRATOR"
-        screenshotTests {
-            imageDifferenceThreshold = 0.0001f // 0.01%
         }
     }
 
@@ -48,13 +48,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
-        freeCompilerArgs = listOf("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
-    }
     buildFeatures {
         compose = true
     }
+    @Suppress("UnstableApiUsage")
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.15"
     }
@@ -63,6 +60,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    @Suppress("UnstableApiUsage")
     experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
 

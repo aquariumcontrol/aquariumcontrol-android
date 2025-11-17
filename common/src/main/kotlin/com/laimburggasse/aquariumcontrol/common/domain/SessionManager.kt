@@ -18,7 +18,7 @@ import kotlinx.coroutines.withContext
 open class SessionManager(
     private val sharedPreferences: SharedPreferences? = null,
     private val dao: ControllerProfileDao,
-    @ApplicationScope private val externalScope: CoroutineScope
+    @param:ApplicationScope private val externalScope: CoroutineScope
 ) {
     private val _selectedControllerProfile = MutableStateFlow<ControllerProfile?>(value = null)
     val selectedControllerProfile: StateFlow<ControllerProfile?> = _selectedControllerProfile.asStateFlow()

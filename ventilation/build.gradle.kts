@@ -9,17 +9,17 @@ plugins {
     id("kotlin-kapt")
 }
 
+kotlin {
+    jvmToolchain(jdkVersion = 11)
+}
+
 android {
     namespace = "com.laimburggasse.aquariumcontrol.ventilation"
     compileSdk = 36
-
     defaultConfig {
         minSdk = 24
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        // consumerProguardFiles("consumer-rules.pro")
     }
-
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -33,15 +33,14 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
     buildFeatures {
         compose = true
     }
+    @Suppress("UnstableApiUsage")
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3"
+        kotlinCompilerExtensionVersion = "1.5.15"
     }
+    @Suppress("UnstableApiUsage")
     experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
 

@@ -26,7 +26,7 @@ import javax.inject.Inject
 
 open class BallingHistoryRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
-    @ApplicationScope private val repositoryScope: CoroutineScope
+    @param:ApplicationScope private val repositoryScope: CoroutineScope
 ): BallingHistoryRepository {
 
     // Trigger for manual refreshes (e.g., pull-to-refresh)

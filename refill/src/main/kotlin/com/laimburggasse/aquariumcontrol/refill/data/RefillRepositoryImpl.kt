@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 open class RefillRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
-    @ApplicationScope private val repositoryScope: CoroutineScope,
+    @param:ApplicationScope private val repositoryScope: CoroutineScope,
 ): RefillRepository {
     private val _errorEvents = MutableSharedFlow<String>()
     override val errorEvents = _errorEvents.asSharedFlow()

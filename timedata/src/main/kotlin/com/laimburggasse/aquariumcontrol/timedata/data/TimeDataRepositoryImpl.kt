@@ -26,7 +26,7 @@ import javax.inject.Inject
 
 open class TimeDataRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
-    @ApplicationScope private val repositoryScope: CoroutineScope,
+    @param:ApplicationScope private val repositoryScope: CoroutineScope,
 ): TimeDataRepository {
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
 

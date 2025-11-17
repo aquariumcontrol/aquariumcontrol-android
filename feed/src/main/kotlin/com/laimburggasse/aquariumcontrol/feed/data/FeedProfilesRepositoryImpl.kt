@@ -35,7 +35,7 @@ import javax.inject.Singleton
 @Singleton
 open class FeedProfilesRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
-    @ApplicationScope private val repositoryScope: CoroutineScope
+    @param:ApplicationScope private val repositoryScope: CoroutineScope
 ): FeedProfilesRepository {
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
 

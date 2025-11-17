@@ -9,30 +9,26 @@ plugins {
     id("kotlin-kapt")
 }
 
+kotlin {
+    jvmToolchain(jdkVersion = 11)
+}
+
 android {
     namespace = "com.laimburggasse.aquariumcontrol.common"
     compileSdk = 36
-
     defaultConfig {
         minSdk = 24
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        // consumerProguardFiles("consumer-rules.pro")
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        testInstrumentationRunnerArguments["clearPackageData"] = "false"
-
         vectorDrawables {
             useSupportLibrary = true
         }
     }
-
     testOptions {
         //execution = "ANDROIDX_TEST_ORCHESTRATOR"
         screenshotTests {
             imageDifferenceThreshold = 0.0001f // 0.01%
         }
     }
-
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -46,18 +42,18 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
     buildFeatures {
         compose = true
     }
+    @Suppress("UnstableApiUsage")
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.15"
     }
+    @Suppress("UnstableApiUsage")
     testFixtures {
         enable = true
     }
+    @Suppress("UnstableApiUsage")
     experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
 

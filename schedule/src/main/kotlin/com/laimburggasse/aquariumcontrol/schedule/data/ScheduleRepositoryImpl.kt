@@ -35,7 +35,7 @@ import javax.inject.Singleton
 @Singleton
 open class ScheduleRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
-    @ApplicationScope private val repositoryScope: CoroutineScope
+    @param:ApplicationScope private val repositoryScope: CoroutineScope
 ): ScheduleRepository {
     // Triggers for manual refreshes and a holder for optimistic local updates.
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)

@@ -29,7 +29,7 @@ import javax.inject.Singleton
 @Singleton
 open class HeatingStatsRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
-    @ApplicationScope private val repositoryScope: CoroutineScope
+    @param:ApplicationScope private val repositoryScope: CoroutineScope
 ): HeatingStatsRepository {
     // for triggering manual refreshes
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)

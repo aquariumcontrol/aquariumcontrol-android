@@ -25,7 +25,7 @@ import javax.inject.Inject
 @OptIn(DelicateCoroutinesApi::class)
 open class OverviewRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
-    @ApplicationScope private val repositoryScope: CoroutineScope
+    @param:ApplicationScope private val repositoryScope: CoroutineScope
 ): OverviewRepository {
     // This SharedFlow doesn't hold state; it just emits a signal when we call emit().
     // We use replay=1 so it emits the last signal to new subscribers if needed.

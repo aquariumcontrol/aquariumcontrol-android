@@ -36,7 +36,7 @@ import javax.inject.Singleton
 @Singleton
 open class VentilationSetValsRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
-    @ApplicationScope private val repositoryScope: CoroutineScope
+    @param:ApplicationScope private val repositoryScope: CoroutineScope
 ): VentilationSetValsRepository {
     // Triggers for manual refreshes and optimistic updates.
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
