@@ -27,6 +27,16 @@ data class FeedProfile(
     )
 
     companion object {
+        fun fromFeedProfileImportUpdateIdName(
+            feedProfileImport: FeedProfileImport,
+            profileId: Int,
+            profileName: String
+        ): FeedProfile {
+            feedProfileImport.profileId = profileId
+            feedProfileImport.profileName = profileName
+            return fromFeedProfileImport(feedProfileImport)
+        }
+
         fun fromFeedProfileImport(feedProfileImport: FeedProfileImport): FeedProfile {
             val phases: List<FeedProfilePhase> = List(size = 20) { index ->
                 val isPause: Boolean = index % 2 == 0

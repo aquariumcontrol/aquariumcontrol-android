@@ -8,8 +8,8 @@ import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewScreen
-import com.laimburggasse.aquariumcontrol.overview.presentation.mockControllerProfile
-import com.laimburggasse.aquariumcontrol.overview.presentation.mockOverviewUiStateSuccess
+import com.laimburggasse.aquariumcontrol.overview.testing.OverviewMockData.mockControllerProfile
+import com.laimburggasse.aquariumcontrol.overview.testing.OverviewMockData.mockOverviewUiStateSuccess
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

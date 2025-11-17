@@ -8,7 +8,7 @@ import com.laimburggasse.aquariumcontrol.common.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileEditScreen
-import com.laimburggasse.aquariumcontrol.feed.presentation.edit.mockFeedProfileEditUiStateSuccess
+import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedProfileEditUiStateSuccess
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

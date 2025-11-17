@@ -16,8 +16,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.LineData
-import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockChartData
 
 @Composable
 fun FeedProfileDisplayComposable(
@@ -193,25 +193,17 @@ fun FeedProfileDisplayComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun FeedProfileDisplayComposablePreview() {
-    val mockFeedProfile: FeedProfile = FeedProfile().apply {
-        feedProfilePhases[0].duration = 5.0
-        feedProfilePhases[1].duration = 10.0
-        feedProfilePhases[1].skimmer = true
-    }
-
-    val chartData: FeedProfileChartDataBundle = FeedProfileChartDataFactory.create(mockFeedProfile)
-
     AquariumControllerTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             Column {
                 FeedProfileDisplayComposable(
-                    lineDataFeeder = chartData.lineDataFeeder,
-                    lineDataSkimmer = chartData.lineDataSkimmer,
-                    lineDataMainPump1 = chartData.lineDataMainPump1,
-                    lineDataMainPump2 = chartData.lineDataMainPump2,
-                    lineDataAuxPump1 = chartData.lineDataAuxPump1,
-                    lineDataAuxPump2 = chartData.lineDataAuxPump2,
-                    totalDuration = chartData.totalDuration
+                    lineDataFeeder = mockChartData.lineDataFeeder,
+                    lineDataSkimmer = mockChartData.lineDataSkimmer,
+                    lineDataMainPump1 = mockChartData.lineDataMainPump1,
+                    lineDataMainPump2 = mockChartData.lineDataMainPump2,
+                    lineDataAuxPump1 = mockChartData.lineDataAuxPump1,
+                    lineDataAuxPump2 = mockChartData.lineDataAuxPump2,
+                    totalDuration = mockChartData.totalDuration
                 )
             }
         }

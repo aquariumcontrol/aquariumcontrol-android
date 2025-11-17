@@ -11,8 +11,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.controller.controller.ControllerMockData.mockControllerProfileList
 import com.laimburggasse.aquariumcontrol.controller.presentation.selection.ControllerSelectionScreen
-import com.laimburggasse.aquariumcontrol.controller.presentation.selection.mockControllerProfileList
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

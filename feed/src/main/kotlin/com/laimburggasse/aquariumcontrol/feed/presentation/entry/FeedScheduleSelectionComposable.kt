@@ -26,6 +26,8 @@ import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.presentation.navigation.FeedNavigationEvent
 import com.laimburggasse.aquariumcontrol.feed.presentation.schedule.FeedScheduleEntryComposable
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedScheduleSelectionUiStateEmpty
+import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedScheduleSelectionUiStateSuccess
 
 @Composable
 fun FeedScheduleSelectionComposable(
@@ -141,7 +143,6 @@ internal fun FeedScheduleSelectionComposableSuccessPreview() {
     }
 }
 
-val mockFeedScheduleSelectionUiStateEmpty = FeedScheduleSelectionUiState.Empty
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)

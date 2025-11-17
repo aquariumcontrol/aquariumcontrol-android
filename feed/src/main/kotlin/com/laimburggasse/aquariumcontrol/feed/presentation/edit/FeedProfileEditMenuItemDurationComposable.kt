@@ -20,6 +20,8 @@ import com.laimburggasse.aquariumcontrol.feed.R
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.common.presentation.NumericDoubleOutlinedTextFieldComposable
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedProfile
+import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedProfileEditNumericMenuItem
 
 @Composable
 fun FeedProfileEditMenuItemDurationComposable(
@@ -71,16 +73,6 @@ fun FeedProfileEditMenuItemDurationComposable(
     }
 }
 
-val mockFeedProfileEditMenuItem = FeedProfileEditMenuItem(
-    id = 100,
-    level = 3,
-    text = "Preview",
-    isToggleButton = false,
-    children = emptyList(),
-    isNumericInput = true,
-    phaseType = FeedProfileEditPhaseType.FEED,
-)
-
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
@@ -89,7 +81,7 @@ internal fun FeedProfileEditMenuItemDurationComposablePreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             FeedProfileEditMenuItemDurationComposable(
                 feedProfile = mockFeedProfile,
-                feedProfileEditMenuItem = mockFeedProfileEditMenuItem,
+                feedProfileEditMenuItem = mockFeedProfileEditNumericMenuItem,
                 onFeedProfileEditUiEvent = {},
             )
         }

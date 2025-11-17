@@ -15,6 +15,7 @@ import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.LineData
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.timedata.testing.TimedataMockData.mockTimeDataSets
 
 @Composable
 fun TimeDataAmbientChartComposable(
@@ -55,12 +56,11 @@ fun TimeDataAmbientChartComposable(
 @Preview(showBackground = true, heightDp = 450, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun TimeDataAmbientChartComposablePreview() {
-    val textColor = if (isSystemInDarkTheme()) Color.WHITE else Color.BLACK
-    val mockDataSets = TimeDataSets(timeData = generateMockTimeData())
+    val textColor: Int = if (isSystemInDarkTheme()) Color.WHITE else Color.BLACK
     AquariumControllerTheme {
         Surface {
             TimeDataAmbientChartComposable(
-                ambientDataSet = mockDataSets.dataAmbient,
+                ambientDataSet = mockTimeDataSets.dataAmbient,
                 textColor = textColor
             )
         }

@@ -34,6 +34,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.laimburggasse.aquariumcontrol.balling.R
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
+import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData.mockBallingHistoryUiStateEmpty
+import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData.mockBallingHistoryUiStateError
+import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData.mockBallingHistoryUiStateLoading
+import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData.mockBallingHistoryUiStateSuccess
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
@@ -175,29 +179,6 @@ fun BallingHistoryScreen(
         }
     }
 }
-
-val mockBallingHistoryLogEntries = listOf(
-    BallingHistoryLogEntry(
-        timestamp = "2025-01-18 12:00:00",
-        pumpId = 1,
-        volume = 1.5,
-        label = "MockDosingUnit 1"
-    ),
-    BallingHistoryLogEntry(
-        timestamp = "2025-01-18 12:00:00",
-        pumpId = 2,
-        volume = 2.5,
-        label = "MockDosingUnit 2"
-    ),
-)
-
-val mockBallingHistoryUiStateSuccess = BallingHistoryUiState.Success(
-    ballingHistoryLogEntries = mockBallingHistoryLogEntries
-)
-val mockBallingHistoryUiStateEmpty = BallingHistoryUiState.Empty
-val mockBallingHistoryUiStateError = BallingHistoryUiState.Error(errorMessage = "Mock Error message")
-val mockBallingHistoryUiStateLoading = BallingHistoryUiState.Loading
-
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)

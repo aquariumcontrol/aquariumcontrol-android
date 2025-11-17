@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol.common
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.compose.ui.graphics.ImageBitmap
@@ -8,6 +9,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
+import java.io.IOException
 
 object ScreenshotTestHelper {
     private const val GOLDEN_IMAGE_ASSETS_PATH = "assets"
@@ -36,13 +38,39 @@ object ScreenshotTestHelper {
         }
     }
 
+    /**
+     * Checks if a given golden image asset exists within the test APK's assets.
+     * @return True if the file exists, false otherwise.
+     */
+    private fun goldenImageExists(context: Context, goldenFileRelativePath: String): Boolean {
+        return try {
+            // The most reliable way to check for existence is to try to open it.
+            // We must close it immediately to free up resources.
+            context.assets.open(goldenFileRelativePath).close()
+            println("✅ Golden image found at: $goldenFileRelativePath")
+            true
+        } catch (e: IOException) {
+            // IOException (including FileNotFoundException) means the asset is not there.
+            println("🚨 Golden image NOT FOUND at: $goldenFileRelativePath ({${e.message}})")
+            false
+        }
+    }
+
     fun verifyBitmap(
         capturedBitmap: ImageBitmap,
         subfolder: String,
         goldenName: String
     ): Boolean {
-        val context = InstrumentationRegistry.getInstrumentation().context
+        val context: Context = InstrumentationRegistry.getInstrumentation().context
         val goldenFileRelativePath = "screenshots/$subfolder/$goldenName.png"
+
+        // Check  for the golden image's existence first.
+        if (!goldenImageExists(context, goldenFileRelativePath)) {
+            println("VERIFICATION FAILED: Golden image is missing. If this is a new test, set recordMode=true to create the reference image.")
+            // Save the captured bitmap for easy debugging and copying.
+            recordBitmap(capturedBitmap, goldenName)
+            return false // Fail the test immediately.
+        }
 
         try {
             val apkPath = context.packageResourcePath
@@ -110,20 +138,15 @@ object ScreenshotTestHelper {
             println("RECORD MODE: Screenshot for '$goldenName' captured. Ensure it's copied to assets and switch recordMode to false.")
         } else {
 
-            val matches = verifyBitmap(
-                imageBitmap,
+            val matches: Boolean = verifyBitmap(
+                capturedBitmap = imageBitmap,
                 subfolder,
                 goldenName
             )
 
-            assert(matches) {
+            assert(value = matches) {
                 "Screenshot '$goldenName' does not match the golden image. " +
-                        "If this is an intentional change, re-record the screenshot by setting recordMode=true. " +
-                        "Debug images might be in: ${
-                            File(
-                                getDeviceOutputDirectory(),
-                                "debug_diffs"
-                            ).absolutePath}"
+                "If this is an intentional change, re-record the screenshot by setting recordMode=true."
             }
         }
     }

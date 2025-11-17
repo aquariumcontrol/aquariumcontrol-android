@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.laimburggasse.aquariumcontrol.balling.R
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
+import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData.mockBallingEvent
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
 
 @Composable
@@ -57,16 +58,9 @@ fun BallingHistoryEventComposable(ballingHistoryLogEntry: BallingHistoryLogEntry
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun BallingHistoryEventComposablePreview() {
-    val mockEvent = BallingHistoryLogEntry(
-        timestamp = "2025-01-18 12:00:00",
-        pumpId = 1,
-        volume = 1.5,
-        label = "MockDosingUnit 1"
-    )
-
     AquariumControllerTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
-            BallingHistoryEventComposable(ballingHistoryLogEntry = mockEvent)
+            BallingHistoryEventComposable(ballingHistoryLogEntry = mockBallingEvent)
         }
     }
 }

@@ -33,6 +33,7 @@ import com.laimburggasse.aquariumcontrol.controller.presentation.components.Cont
 import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUsernamePasswordComposable
 import com.laimburggasse.aquariumcontrol.controller.presentation.navigation.ControllerNavigationEvent
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.controller.controller.ControllerMockData.mockControllerEditState
 
 @Composable
 fun ControllerEditScreen(
@@ -144,14 +145,6 @@ fun ControllerEditScreen(
         }
     }
 }
-
-val mockControllerEditState = ControllerAddEditUiState(
-    controllerProfileName = "Controller",
-    controllerProfileAddress = "192.168.1.1",
-    controllerProfilePort = 80,
-    controllerProfileUser = "user",
-    controllerProfilePassword = "password",
-)
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)

@@ -37,6 +37,10 @@ import com.laimburggasse.aquariumcontrol.feed.R
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedHistoryUiStateEmpty
+import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedHistoryUiStateError
+import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedHistoryUiStateLoading
+import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedHistoryUiStateSuccess
 
 @Composable
 fun FeedHistoryScreen(
@@ -154,33 +158,6 @@ fun FeedHistoryScreen(
         }
     }
 }
-
-val mockFeedHistoryLogEntries = listOf(
-    FeedHistoryLogEntry(
-        timestamp = "2025-01-18 12:00:00",
-        feederOnTime = 20000,
-        profileName = "Mock feed profile 1",
-        idx = 1
-    ),
-    FeedHistoryLogEntry(
-        timestamp = "2025-01-18 12:00:00",
-        feederOnTime = 10000,
-        profileName = "Mock feed profile 2",
-        idx = 2
-    ),
-)
-
-val mockFeedHistoryUiStateSuccess = FeedHistoryUiState.Success(
-    feedHistoryLogEntries = mockFeedHistoryLogEntries
-)
-
-val mockFeedHistoryUiStateError = FeedHistoryUiState.Error(
-    errorMessage = "Mock Error message"
-)
-
-val mockFeedHistoryUiStateEmpty = FeedHistoryUiState.Empty
-
-val mockFeedHistoryUiStateLoading = FeedHistoryUiState.Loading
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)

@@ -27,12 +27,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
-import com.laimburggasse.aquariumcontrol.heating.R
+import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.heating.R
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
-import com.laimburggasse.aquariumcontrol.heating.data.remote.dto.HeatingStatsStringEntry
-import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.heating.testing.HeatingMockData.mockHeatingSetValsUiState
+import com.laimburggasse.aquariumcontrol.heating.testing.HeatingMockData.mockHeatingStatsUiState
 
 @Composable
 fun HeatingScreen(
@@ -270,42 +271,6 @@ fun HeatingScreen(
         }
     }
 }
-
-fun createMockStatsData(): List<HeatingStatsEntry> {
-    val mockHeatingStatsStringEntries: List<HeatingStatsStringEntry> = listOf(
-        HeatingStatsStringEntry(
-            dateString = "2025-1-12",
-            energy = 1988.17,
-            ambientTemperatureAverage = 22.6869,
-            waterTemperatureAverage = 25.4176,
-            heatingControlRuntime = 36235
-        ),
-        HeatingStatsStringEntry(
-            dateString = "2025-1-25",
-            energy = 18.7222,
-            ambientTemperatureAverage = 18.9717,
-            waterTemperatureAverage = 25.4007,
-            heatingControlRuntime = 389
-        )
-    )
-
-    return mockHeatingStatsStringEntries.map {
-        it.transformToHeatingStatsEntry()
-    }
-}
-
-val mockHeatingStatsUiState = HeatingStatsUiState.Success(
-    heatingStats = createMockStatsData()
-)
-
-val mockHeatingSetVals = HeatingSetVals(
-    heatingSwitchOffTemp = 23.5,
-    heatingSwitchOnTemp = 27.5
-)
-
-val mockHeatingSetValsUiState = HeatingSetValsUiState.Success(
-    heatingSetVals = mockHeatingSetVals
-)
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)

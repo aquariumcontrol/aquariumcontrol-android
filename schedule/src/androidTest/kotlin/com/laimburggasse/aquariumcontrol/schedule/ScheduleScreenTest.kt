@@ -8,7 +8,7 @@ import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.schedule.presentation.ScheduleScreen
-import com.laimburggasse.aquariumcontrol.schedule.presentation.mockScheduleUiStateSuccess
+import com.laimburggasse.aquariumcontrol.schedule.testing.ScheduleMockData.mockScheduleUiStateSuccess
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

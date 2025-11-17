@@ -31,11 +31,11 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
-import com.laimburggasse.aquariumcontrol.heating.R
-import com.laimburggasse.aquariumcontrol.heating.data.remote.dto.HeatingStatsStringEntry
-import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
 import com.laimburggasse.aquariumcontrol.common.presentation.RoundRefreshButtonComposable
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.heating.R
+import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
+import com.laimburggasse.aquariumcontrol.heating.testing.HeatingMockData.mockHeatingStatsData
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -178,29 +178,6 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: ()
     }
 }
 
-fun createMockHeatingStatsData(): List<HeatingStatsEntry> {
-    val mockHeatingStatsStringEntries: List<HeatingStatsStringEntry> = listOf(
-        HeatingStatsStringEntry(
-            dateString = "2025-1-12",
-            energy = 1988.17,
-            ambientTemperatureAverage = 22.6869,
-            waterTemperatureAverage = 25.4176,
-            heatingControlRuntime = 36235
-        ),
-        HeatingStatsStringEntry(
-            dateString = "2025-1-25",
-            energy = 18.7222,
-            ambientTemperatureAverage = 18.9717,
-            waterTemperatureAverage = 25.4007,
-            heatingControlRuntime = 389
-        )
-    )
-
-    return mockHeatingStatsStringEntries.map {
-        it.transformToHeatingStatsEntry()
-    }
-}
-
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
@@ -215,11 +192,9 @@ fun createMockHeatingStatsData(): List<HeatingStatsEntry> {
 )
 @Composable
 internal fun HeatingStatsComposablePreview() {
-    val mockData: List<HeatingStatsEntry> = createMockHeatingStatsData()
-
     AquariumControllerTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
-            HeatingStatsComposable(heatingStats = mockData, updateData = {})
+            HeatingStatsComposable(heatingStats = mockHeatingStatsData, updateData = {})
         }
     }
 }

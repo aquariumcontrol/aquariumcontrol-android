@@ -16,10 +16,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.refill.R
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
-import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
-import java.sql.Timestamp
+import com.laimburggasse.aquariumcontrol.refill.testing.RefillMockData.mockEvent
 
 @Composable
 fun RefillEventComposable(
@@ -74,14 +74,6 @@ fun RefillEventComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun RefillEventComposablePreview() {
-    val fixedTimestamp = Timestamp(0L)
-
-    val mockEvent = RefillHistoryLogEntry(
-        timestamp = fixedTimestamp,
-        duration = 60.0,
-        volume = 10.0
-    )
-
     AquariumControllerTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             RefillEventComposable(refillHistoryLogEntry = mockEvent)

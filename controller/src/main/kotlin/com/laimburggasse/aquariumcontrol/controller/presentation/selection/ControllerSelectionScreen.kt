@@ -35,6 +35,7 @@ import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoute
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.controller.presentation.navigation.ControllerNavigationEvent
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.controller.controller.ControllerMockData.mockControllerProfileList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -123,27 +124,6 @@ fun ControllerSelectionScreen(
         }
     }
 }
-
-val mockControllerProfile1 = ControllerProfile(
-    id = 1,
-    name = "Controller 1",
-    address = "192.168.1.1",
-    port = 80,
-    user = "user",
-    password = "password",
-)
-val mockControllerProfile2 = ControllerProfile(
-    id = 2,
-    name = "Controller 2",
-    address = "servername.external.com",
-    port = 80,
-    user = "userXYZ",
-    password = "passwordXYZ",
-)
-
-val mockControllerProfileList: List<ControllerProfile> = listOf(
-    mockControllerProfile1, mockControllerProfile2
-)
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)

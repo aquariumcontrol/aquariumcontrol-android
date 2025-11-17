@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.controller.R
 import com.laimburggasse.aquariumcontrol.common.presentation.NumericIntOutlinedTextFieldComposable
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.controller.controller.ControllerMockData.mockControllerState
 
 @Composable
 fun ControllerAddEditHostnamePortnumberComposable(
@@ -46,11 +47,6 @@ fun ControllerAddEditHostnamePortnumberComposable(
         modifier = modifier?.then(other = Modifier.padding(top = 16.dp)) ?: Modifier
     )
 }
-
-val mockControllerState = ControllerAddEditUiState(
-    controllerProfileAddress = "mock.hostname.com",
-    controllerProfilePort = 80,
-)
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)

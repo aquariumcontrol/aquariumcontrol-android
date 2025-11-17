@@ -8,8 +8,8 @@ import com.laimburggasse.aquariumcontrol.common.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedProfileImport
-import com.laimburggasse.aquariumcontrol.feed.presentation.edit.mockFeedProfile
 import com.laimburggasse.aquariumcontrol.feed.presentation.schedule.FeedProfileScheduleScreen
+import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedProfile
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

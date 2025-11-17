@@ -33,11 +33,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
-import com.laimburggasse.aquariumcontrol.refill.R
-import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.refill.R
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
-import java.sql.Timestamp
+import com.laimburggasse.aquariumcontrol.refill.testing.RefillMockData.mockRefillHistoryUiStateEmpty
+import com.laimburggasse.aquariumcontrol.refill.testing.RefillMockData.mockRefillHistoryUiStateError
+import com.laimburggasse.aquariumcontrol.refill.testing.RefillMockData.mockRefillHistoryUiStateSuccess
 
 @Composable
 fun RefillHistoryScreen(
@@ -157,29 +159,6 @@ fun RefillHistoryScreen(
     }
 }
 
-val mockRefillHistoryLogEntries = listOf(
-    RefillHistoryLogEntry(
-        timestamp = Timestamp(0L),
-        duration = 60.0,
-        volume = 10.0
-    ),
-    RefillHistoryLogEntry(
-        timestamp = Timestamp(1000L),
-        duration = 30.0,
-        volume = 5.0
-    )
-)
-
-val mockRefillHistoryUiStateSuccess = RefillHistoryUiState.Success(
-    refillHistoryLogEntries = mockRefillHistoryLogEntries
-)
-
-val mockRefillHistoryUiStateEmpty = RefillHistoryUiState.Empty
-
-val mockRefillHistoryUiStateError = RefillHistoryUiState.Error(
-    errorMessage = "Mock Error message"
-)
-
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
@@ -246,17 +225,3 @@ internal fun RefillHistoryScreenPreviewEmpty() {
         darkTheme = isSystemInDarkTheme()
     )
 }
-
-/* deactivated until update of DataFetchResult
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Composable
-internal fun RefillHistoryScreenPreviewLoading() {
-    RefillHistoryScreen(
-        showFullWeek = true,
-        refillHistoryViewModelFactory = RefillHistoryViewModelFactory(
-            refillHistoryRepository = mockRefillHistoryRepositorySuccess
-        ),
-    )
-}
-*/

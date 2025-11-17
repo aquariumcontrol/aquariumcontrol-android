@@ -33,6 +33,10 @@ import com.laimburggasse.aquariumcontrol.balling.R
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.balling.presentation.components.BallingProfileSummaryComposable
 import com.laimburggasse.aquariumcontrol.balling.presentation.navigation.BallingNavigationEvent
+import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData.mockBallingProfilesUiStateEmpty
+import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData.mockBallingProfilesUiStateError
+import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData.mockBallingProfilesUiStateLoading
+import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData.mockBallingProfilesUiStateSuccess
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
@@ -157,14 +161,7 @@ fun BallingScreen(
     }
 }
 
-val mockBallingProfile1 = BallingProfile(pumpId = 1, volume = 2.1, label = "mock1")
-val mockBallingProfile2 = BallingProfile(pumpId = 2, volume = 3.1, label = "mock2")
-val mockBallingProfiles: List<BallingProfile> = listOf(mockBallingProfile1, mockBallingProfile2)
 
-val mockBallingProfilesUiStateSuccess = BallingProfilesUiState.Success(ballingProfiles = mockBallingProfiles)
-val mockBallingProfilesUiStateError = BallingProfilesUiState.Error(errorMessage = "Mock Error message")
-val mockBallingProfilesUiStateLoading = BallingProfilesUiState.Loading
-val mockBallingProfilesUiStateEmpty = BallingProfilesUiState.Empty
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)

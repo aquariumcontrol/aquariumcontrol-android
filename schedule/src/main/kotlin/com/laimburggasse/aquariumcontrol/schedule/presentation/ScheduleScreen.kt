@@ -33,6 +33,8 @@ import com.laimburggasse.aquariumcontrol.schedule.R
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntries
+import com.laimburggasse.aquariumcontrol.schedule.testing.ScheduleMockData.mockScheduleUiStateError
+import com.laimburggasse.aquariumcontrol.schedule.testing.ScheduleMockData.mockScheduleUiStateSuccess
 
 @Composable
 fun ScheduleScreen(
@@ -265,32 +267,7 @@ fun ScheduleScreen(
     }
 }
 
-val mockScheduleEntries = ScheduleEntries(
-    ballingStartTime = 2F,
-    ballingStopTime = 22F,
-    ballingLimitationActive = false,
-    ballingScheduleLoaded = true,
-    refillStartTime = 3F,
-    refillStopTime = 21F,
-    refillLimitationActive = true,
-    refillScheduleLoaded = true,
-    ventilationStartTime = 4F,
-    ventilationStopTime = 20F,
-    ventilationLimitationActive = false,
-    ventilationScheduleLoaded = true,
-    heatingStartTime = 5F,
-    heatingStopTime = 19F,
-    heatingLimitationActive = true,
-    heatingScheduleLoaded = true
-)
 
-val mockScheduleUiStateSuccess = ScheduleUiState.Success(
-    scheduleEntries = mockScheduleEntries
-)
-
-val mockScheduleUiStateError = ScheduleUiState.Error(
-    errorMessage = "Mock Error loading data"
-)
 
 @Preview(showBackground = true, heightDp = 1200, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, heightDp = 1200, uiMode = Configuration.UI_MODE_NIGHT_NO)

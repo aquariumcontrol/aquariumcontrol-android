@@ -20,6 +20,9 @@ import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.feed.R
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedProfile
+import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedProfileEditNumericMenuItem
+import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockInitialExpandedItemIdsEmpty
 
 @Composable
 fun FeedProfileEditMenuItemComposable(
@@ -105,26 +108,13 @@ fun FeedProfileEditMenuItemComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun FeedProfileEditMenuItemComposablePreview() {
-    val mockFeedProfileEditMenuItem = FeedProfileEditMenuItem(
-        id = 100,
-        level = 3,
-        text = "Preview",
-        isToggleButton = true,
-        children = emptyList(),
-        phaseType = FeedProfileEditPhaseType.FEED,
-        toggleButtonType = FeedProfileEditToggleButtonType.Skimmer,
-        isNumericInput = false,
-    )
-
-    val mockInitialExpandedItemIds: Set<Int> = emptySet()
-
     AquariumControllerTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             FeedProfileEditMenuItemComposable(
-                feedProfileEditMenuItem = mockFeedProfileEditMenuItem,
+                feedProfileEditMenuItem = mockFeedProfileEditNumericMenuItem,
                 feedProfile = mockFeedProfile,
                 onFeedProfileEditUiEvent = {},
-                isExpanded = mockInitialExpandedItemIds,
+                isExpanded = mockInitialExpandedItemIdsEmpty,
             )
         }
     }

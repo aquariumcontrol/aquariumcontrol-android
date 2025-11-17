@@ -31,6 +31,7 @@ import com.laimburggasse.aquariumcontrol.controller.R
 import com.laimburggasse.aquariumcontrol.controller.presentation.navigation.ControllerNavigationEvent
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.controller.controller.ControllerMockData.mockControllerProfile1
 
 @Composable
 fun ControllerProfileComposable(
@@ -173,15 +174,6 @@ fun ControllerProfileComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun ControllerProfileComposablePreview() {
-    val mockControllerProfile1 = ControllerProfile(
-        id = 1,
-        name = "Controller 1",
-        address = "192.168.1.1",
-        port = 80,
-        user = "user",
-        password = "password",
-    )
-
     AquariumControllerTheme {
         Surface(
             color = MaterialTheme.colorScheme.background

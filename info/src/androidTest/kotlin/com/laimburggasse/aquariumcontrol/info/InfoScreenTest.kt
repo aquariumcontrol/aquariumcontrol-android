@@ -27,7 +27,7 @@ class InfoScreenTest {
         composeTestRule.setContent {
             MainScaffold(
                 isControllerLoaded = true,
-                navigationRouteSource = ViewNavigationRoutes.heating,
+                navigationRouteSource = ViewNavigationRoutes.info,
                 screenContent = { InfoScreen() },
                 onNavigate = {},
                 darkTheme = true
@@ -47,7 +47,7 @@ class InfoScreenTest {
         composeTestRule.setContent {
             MainScaffold(
                 isControllerLoaded = true,
-                navigationRouteSource = ViewNavigationRoutes.heating,
+                navigationRouteSource = ViewNavigationRoutes.info,
                 screenContent = { InfoScreen() },
                 onNavigate = {},
                 darkTheme = false

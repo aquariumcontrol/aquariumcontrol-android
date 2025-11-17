@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.feed.R
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
+import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockEvent
 
 @Composable
 fun FeedHistoryEventComposable(
@@ -65,17 +66,8 @@ fun FeedHistoryEventComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun FeedHistoryEventComposablePreview() {
-    val mockEvent = FeedHistoryLogEntry(
-        timestamp = "2025-01-18 12:00:00",
-        feederOnTime = 20000,
-        profileName = "Mock feed profile 1",
-        idx = 1
-    )
-
     AquariumControllerTheme {
-        Surface(
-            color = MaterialTheme.colorScheme.background
-        ) {
+        Surface(color = MaterialTheme.colorScheme.background) {
             FeedHistoryEventComposable(feedHistoryLogEntry = mockEvent)
         }
     }

@@ -8,8 +8,9 @@ import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreen
-import com.laimburggasse.aquariumcontrol.timedata.presentation.mockTimeDataUiStateError
-import com.laimburggasse.aquariumcontrol.timedata.presentation.mockTimeDataUiStateSuccess
+import com.laimburggasse.aquariumcontrol.timedata.testing.TimedataMockData.mockTimeDataUiStateError
+import com.laimburggasse.aquariumcontrol.timedata.testing.TimedataMockData.mockTimeDataUiStateSuccess
+
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -92,7 +93,7 @@ class TimeDataScreenTest {
         }
         composeTestRule.waitForIdle()
         ScreenshotTestHelper.performScreenshotTest(
-            goldenName = "time_data_screen_error_dark",
+            goldenName = "time_data_screen_success_dark",
             recordMode = recordMode,
             subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()
@@ -117,7 +118,7 @@ class TimeDataScreenTest {
         }
         composeTestRule.waitForIdle()
         ScreenshotTestHelper.performScreenshotTest(
-            goldenName = "time_data_screen_error_light",
+            goldenName = "time_data_screen_success_light",
             recordMode = recordMode,
             subfolder = subfolder,
             imageBitmap = composeTestRule.onRoot().captureToImage()

@@ -29,6 +29,8 @@ import com.laimburggasse.aquariumcontrol.ventilation.R
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.ventilation.domain.model.VentilationSetVals
+import com.laimburggasse.aquariumcontrol.ventilation.testing.VentilationMockData.mockVentilationSetValsUiStateError
+import com.laimburggasse.aquariumcontrol.ventilation.testing.VentilationMockData.mockVentilationSetValsUiStateSuccess
 
 @Composable
 fun VentilationScreen(
@@ -178,16 +180,7 @@ fun VentilationScreen(
     }
 }
 
-val mockVentilationSetValsUiStateSuccess = VentilationSetValsUiState.Success(
-    ventilationSetVals = VentilationSetVals(
-        ventilationSwitchOffTemp = 23.5,
-        ventilationSwitchOnTemp = 27.5
-    )
-)
 
-val mockVentilationSetValsUiStateError = VentilationSetValsUiState.Error(
-    errorMessage = "Mock Error loading data"
-)
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)

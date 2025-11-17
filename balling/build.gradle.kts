@@ -38,10 +38,12 @@ android {
     }
     buildFeatures {
         compose = true
+        composeOptions.useLiveLiterals = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.3"
     }
+    testFixtures.enable = true
     experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
 

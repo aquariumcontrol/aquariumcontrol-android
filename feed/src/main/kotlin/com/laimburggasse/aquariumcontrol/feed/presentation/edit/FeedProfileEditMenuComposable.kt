@@ -14,6 +14,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedProfile
+import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockInitialExpandedItemIds
 
 @Composable
 fun FeedProfileEditMenuComposable(
@@ -54,12 +56,8 @@ fun FeedProfileEditMenuComposable(
 @Preview(showBackground = true, heightDp = 1400, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun FeedProfileEditMenuComposablePreview() {
-    val mockInitialExpandedItemIds: Set<Int> = setOf(1)
-
     AquariumControllerTheme {
-        Surface(
-            color = MaterialTheme.colorScheme.background
-        ) {
+        Surface(color = MaterialTheme.colorScheme.background) {
             FeedProfileEditMenuComposable(
                 itemsToRender = FeedProfileEditMenuItems.phases,
                 feedProfile = mockFeedProfile,

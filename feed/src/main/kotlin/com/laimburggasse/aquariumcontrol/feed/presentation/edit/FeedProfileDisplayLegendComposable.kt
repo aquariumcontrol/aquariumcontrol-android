@@ -232,9 +232,7 @@ fun FeedProfileDisplayLegendComposable() {
 @Composable
 internal fun FeedProfileDisplayLegendPreview() {
     AquariumControllerTheme {
-        Surface(
-            color = MaterialTheme.colorScheme.background
-        ) {
+        Surface(color = MaterialTheme.colorScheme.background) {
             FeedProfileDisplayLegendComposable()
         }
     }

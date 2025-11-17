@@ -94,16 +94,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    //Room
-    //implementation("androidx.room:room-runtime:${rootProject.extra["room_version"]}")
-    //implementation(libs.symbol.processing.api)
-    //ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
-    //implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")
-
-    // for compose preview snapshot testing
-    screenshotTestImplementation(libs.screenshot.validation.api)
-    screenshotTestImplementation(libs.androidx.ui.tooling)
-
     // for Dagger/Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)

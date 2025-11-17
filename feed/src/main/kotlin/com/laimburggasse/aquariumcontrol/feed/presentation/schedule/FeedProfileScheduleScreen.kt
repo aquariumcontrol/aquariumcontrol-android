@@ -31,13 +31,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
-import com.laimburggasse.aquariumcontrol.feed.R
-import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.feed.presentation.navigation.FeedNavigationEvent
-import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
-import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedProfileImport
-import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.feed.R
+import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
+import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
+import com.laimburggasse.aquariumcontrol.feed.presentation.navigation.FeedNavigationEvent
+import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedProfileForScheduleScreen
 import java.sql.Timestamp
 import java.util.Calendar
 import java.util.Locale
@@ -222,17 +222,12 @@ fun FeedProfileScheduleScreen(
 )
 @Composable
 fun FeedProfileScheduleScreenPreviewSuccess() {
-    val mockFeedProfileImport = FeedProfileImport()
-    mockFeedProfileImport.profileId = 1
-    mockFeedProfileImport.profileName = "Test Profile 1"
-    val mockFeedProfile: FeedProfile = FeedProfile.fromFeedProfileImport(mockFeedProfileImport)
-    
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
         screenContent = {
             FeedProfileScheduleScreen(
-                feedProfile = mockFeedProfile,
+                feedProfile = mockFeedProfileForScheduleScreen,
                 isNewScheduleEntry = false,
                 millisSinceEpoch = 0,
                 onNavigateFromFeed = { event, id, isNew, millis -> },

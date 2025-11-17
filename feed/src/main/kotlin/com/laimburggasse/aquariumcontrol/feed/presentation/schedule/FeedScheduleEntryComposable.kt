@@ -25,10 +25,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.laimburggasse.aquariumcontrol.feed.R
-import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedScheduleEntryImport
-import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.feed.R
+import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
+import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedScheduleEntry
 
 @Composable
 fun FeedScheduleEntryComposable(
@@ -87,19 +87,8 @@ fun FeedScheduleEntryComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun FeedScheduleEntryComposablePreview() {
-    val mockFeedScheduleEntryImport = FeedScheduleEntryImport(
-        timestampString = "2023-09-01 12:00:00",
-        profileId = 1,
-        profileName = "MockProfile",
-        isDaily = 1
-    )
-
-    val mockFeedScheduleEntry = mockFeedScheduleEntryImport.transformToFeedScheduleEntry()
-
     AquariumControllerTheme {
-        Surface(
-            color = MaterialTheme.colorScheme.background
-        ) {
+        Surface(color = MaterialTheme.colorScheme.background) {
             FeedScheduleEntryComposable(
                 feedScheduleEntry = mockFeedScheduleEntry,
                 onEditClick = { },

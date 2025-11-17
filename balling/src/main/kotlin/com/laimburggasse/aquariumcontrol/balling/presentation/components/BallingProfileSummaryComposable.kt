@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import com.laimburggasse.aquariumcontrol.balling.R
 import com.laimburggasse.aquariumcontrol.balling.presentation.navigation.BallingNavigationEvent
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
+import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
 
 @Composable
@@ -73,11 +74,7 @@ fun BallingProfileSummaryComposable(
     }
 }
 
-val mockBallingProfile = BallingProfile(
-    pumpId = 1,
-    volume = 1.5,
-    label = "MockDosingUnit 1",
-)
+
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -86,7 +83,7 @@ internal fun BallingProfileSummaryPreview() {
     AquariumControllerTheme {
         Surface {
             BallingProfileSummaryComposable(
-                ballingProfile = mockBallingProfile,
+                ballingProfile = BallingMockData.mockBallingProfile,
                 onNavigateFromBalling = { event, pumpId -> }
             )
         }

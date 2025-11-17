@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import com.laimburggasse.aquariumcontrol.balling.R
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.balling.presentation.components.BallingProfileSummaryComposable
+import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData.mockBallingProfileEditUiState
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
@@ -136,15 +137,7 @@ fun BallingProfileEditScreen(
     }
 }
 
-val mockBallingProfile = BallingProfile(
-    pumpId = 1,
-    volume = 1.5,
-    label = "MockDosingUnit 1",
-)
 
-val mockBallingProfileEditUiState = BallingProfileEditUiState.Success(
-    ballingProfile = mockBallingProfile
-)
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)

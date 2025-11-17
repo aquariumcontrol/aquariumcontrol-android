@@ -10,7 +10,7 @@ import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.ventilation.presentation.VentilationScreen
-import com.laimburggasse.aquariumcontrol.ventilation.presentation.mockVentilationSetValsUiStateSuccess
+import com.laimburggasse.aquariumcontrol.ventilation.testing.VentilationMockData.mockVentilationSetValsUiStateSuccess
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
