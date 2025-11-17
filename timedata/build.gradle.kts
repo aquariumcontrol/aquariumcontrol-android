@@ -6,7 +6,6 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp") version "2.2.20-2.0.3"
     id("com.google.dagger.hilt.android")
-    id("kotlin-kapt")
 }
 
 kotlin {
@@ -81,7 +80,7 @@ dependencies {
 
     // for Dagger/Hilt
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
     implementation(libs.androidx.core.ktx)
@@ -90,7 +89,7 @@ dependencies {
     implementation(libs.material)
     testImplementation(libs.junit)
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.material3)
