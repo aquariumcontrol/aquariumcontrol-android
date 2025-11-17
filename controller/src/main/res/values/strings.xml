@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_profile">Add profile</string>
+    <string name="create_profile">Create profile</string>
+    <string name="app_shall_use_as_default">App shall use this profile as default</string>
+    <string name="password">Password</string>
+    <string name="port">"Port: "</string>
+    <string name="id">"ID: "</string>
+    <string name="user">"User: "</string>
+    <string name="controller_name">Controller Name</string>
+    <string name="controller_address">Controller Address</string>
+    <string name="controller_port">Controller Port</string>
+    <string name="password_label">"Password: "</string>
+    <string name="hostname">Hostname (IP or DNS name)</string>
+    <string name="profile_name">Profile name</string>
+    <string name="port_number">Port number</string>
+    <string name="edit_profile">Edit profile</string>
+    <string name="update_controller_profile">Update controller profile</string>
+    <string name="list_of_controllers">List of controllers</string>
+    <string name="defaultprofile">DefaultProfile</string>
+    <string name="address">"Address: "</string>
+    <string name="edit">Edit</string>
+    <string name="user_name">User name</string>
+    <string name="loading_default_profile">Loading default profile.</string>
+    <string name="create_new_profile">Create New Profile</string>
+    <string name="delete">Delete</string>
+</resources>

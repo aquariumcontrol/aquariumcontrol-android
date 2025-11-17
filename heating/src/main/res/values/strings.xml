@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sent_request_to_controller_for_updating_heating_set_values">Sent request to controller for updating heating set values</string>
+    <string name="update_heating_controller_values">Update Heating Controller Values</string>
+    <string name="reset_heating_controller_values">Reset Heating Controller Values</string>
+    <string name="no_heating_stats_available">No heating stats available.</string>
+    <string name="heating_stats_energy_wh">Energy [Wh]</string>
+    <string name="ambient_temperature_c">Ambient Temperature [°C]</string>
+    <string name="water_temperature_c">Water temperature [°C]</string>
+    <string name="heating_stats_ambient_temperature_c">Ambient temperature [°C]</string>
+    <string name="switch_on_at">Switch on at</string>
+    <string name="switch_off_at">Switch off at</string>
+    <string name="rect_bullet">\u25A0</string>
+    <string name="loading_set_value_data">Loading set value data…</string>
+    <string name="heating_control">Heating Control</string>
+    <string name="no_set_values_configured_check_server_configuration">No set values configured - check server configuration.</string>
+    <string name="error_loading_statistical_data">"Error loading statistical data: "</string>
+    <string name="loading_statistical_data">Loading statistical data…</string>
+    <string name="no_data_available">No data available</string>
+</resources>

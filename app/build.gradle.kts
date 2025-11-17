@@ -100,9 +100,6 @@ dependencies {
     //ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
     //implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")
 
-    // for charts (time data. heating stats and feed profile)
-    implementation (libs.mpandroidchart)
-
     // for compose preview snapshot testing
     screenshotTestImplementation(libs.screenshot.validation.api)
     screenshotTestImplementation(libs.androidx.ui.tooling)
@@ -114,4 +111,13 @@ dependencies {
 
     implementation(project(":balling"))
     implementation(project(":common"))
+    implementation(project(":controller"))
+    implementation(project(":feed"))
+    implementation(project(":heating"))
+    implementation(project(":info"))
+    implementation(project(":overview"))
+    implementation(project(":refill"))
+    implementation(project(":schedule"))
+    implementation(project(":timedata"))
+    implementation(project(":ventilation"))
 }

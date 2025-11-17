@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="aquarium_control_is_an_open_source_control_system_for_marine_fish_tanks">Aquarium Control is an open source control system for marine fish tanks.</string>
+    <string name="developer_documentation">Developer documentation</string>
+    <string name="http_217_79_180_177_mediawiki_index_php_main_page">http://217.79.180.177/mediawiki/index.php/Main_Page</string>
+    <string name="developer_information">Developer information</string>
+    <string name="mailto_uwe_martin_gmail_com">mailto:uwe.martin@gmail.com</string>
+    <string name="this_software_comes_with_no_warranties_usage_at_your_own_risk">This software comes with no warranties. Usage at your own risk.</string>
+</resources>

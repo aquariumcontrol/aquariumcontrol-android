@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="time_data_series">Time Data Series</string>
+    <string name="no_time_data_available">No time data available.</string>
+    <string name="retry">Retry</string>
+    <string name="loading_time_data">Loading time data…</string>
+</resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ventilation_control">Ventilation Control</string>
+    <string name="loading_set_value_data">Loading set value data…</string>
+    <string name="sent_request_to_controller_for_updating_ventilation_set_values">Sent request to controller for updating ventilation set values</string>
+    <string name="update_ventilation_controller_values">Update Ventilation Controller Values</string>
+    <string name="reset_ventilation_controller_values">Reset Ventilation Controller Values</string>
+    <string name="no_ventilation_set_values_configured_check_server_configuration">No ventilation set values configured - check server configuration.</string>
+    <string name="switch_on_at">Switch on at</string>
+    <string name="switch_off_at">Switch off at</string>
+</resources>
