@@ -31,7 +31,7 @@ plugins {
 }
 
 kotlin {
-    jvmToolchain(jdkVersion = 11)
+    jvmToolchain(jdkVersion = 17)
 }
 
 android {
@@ -52,8 +52,6 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
     }
     buildFeatures {
         compose = true

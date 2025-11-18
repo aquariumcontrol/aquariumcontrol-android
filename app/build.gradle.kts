@@ -31,7 +31,7 @@ plugins {
 }
 
 kotlin {
-    jvmToolchain(jdkVersion = 11)
+    jvmToolchain(jdkVersion = 17)
     compilerOptions {
         freeCompilerArgs.add("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
     }
@@ -66,8 +66,6 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
     }
     buildFeatures {
         compose = true
@@ -83,14 +81,6 @@ android {
     }
     @Suppress("UnstableApiUsage")
     experimentalProperties["android.experimental.enableScreenshotTest"] = true
-}
-
-// Configure the standard JVM unit test task.
-tasks.withType<Test> {
-    // This tells the Gradle test runner to run the tests in the same process
-    // as the Gradle daemon, rather than forking a new JVM for each test worker.
-    // This avoids the SecurityManager initialization error on modern JDKs (17+).
-    forkEvery = 1
 }
 
 dependencies {
