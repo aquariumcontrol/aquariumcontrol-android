@@ -66,6 +66,9 @@ android {
     buildFeatures {
         compose = true
     }
+    kotlinOptions {
+        jvmTarget = "11"
+    }
     @Suppress("UnstableApiUsage")
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.15"
@@ -93,11 +96,9 @@ dependencies {
     implementation(libs.androidx.espresso.core)
     implementation(libs.kotlinx.serialization.json.v162)
     implementation(libs.okhttp)
-    implementation(libs.androidx.core.ktx.v1120)
     implementation(libs.kotlin.stdlib.jdk8.v1922)
     implementation(libs.androidx.tracing.perfetto.handshake)
     implementation(libs.androidx.junit.ktx)
-    implementation(libs.androidx.compose.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -130,6 +131,5 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.material3)
     implementation(libs.okhttp)
 }

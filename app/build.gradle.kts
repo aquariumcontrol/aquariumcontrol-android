@@ -85,8 +85,15 @@ android {
     experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
 
-dependencies {
+// Configure the standard JVM unit test task.
+tasks.withType<Test> {
+    // This tells the Gradle test runner to run the tests in the same process
+    // as the Gradle daemon, rather than forking a new JVM for each test worker.
+    // This avoids the SecurityManager initialization error on modern JDKs (17+).
+    forkEvery = 1
+}
 
+dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -101,11 +108,9 @@ dependencies {
     implementation(libs.androidx.espresso.core)
     implementation(libs.kotlinx.serialization.json.v162)
     implementation(libs.okhttp)
-    implementation(libs.androidx.core.ktx.v1120)
     implementation(libs.kotlin.stdlib.jdk8.v1922)
     implementation(libs.androidx.tracing.perfetto.handshake)
     implementation(libs.androidx.junit.ktx)
-    implementation(libs.androidx.compose.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))

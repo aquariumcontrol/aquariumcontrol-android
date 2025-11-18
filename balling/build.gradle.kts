@@ -19,6 +19,12 @@ android {
         minSdk = 24
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    testOptions {
+        //execution = "ANDROIDX_TEST_ORCHESTRATOR"
+        screenshotTests {
+            imageDifferenceThreshold = 0.0001f // 0.01%
+        }
+    }
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -61,11 +67,9 @@ dependencies {
     implementation(libs.androidx.espresso.core)
     implementation(libs.kotlinx.serialization.json.v162)
     implementation(libs.okhttp)
-    implementation(libs.androidx.core.ktx.v1120)
     implementation(libs.kotlin.stdlib.jdk8.v1922)
     implementation(libs.androidx.tracing.perfetto.handshake)
     implementation(libs.androidx.junit.ktx)
-    implementation(libs.androidx.compose.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -91,7 +95,6 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.material3)
     implementation(libs.okhttp)
 
     implementation(project(":common"))
