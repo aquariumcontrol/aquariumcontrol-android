@@ -20,30 +20,30 @@
  * SOFTWARE.
  */
 
-package com.laimburggasse.aquariumcontrol.common.maindropdownmenu
+package com.laimburggasse.aquariumcontrol.common
 
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemDisplayDataDisabledPreview
-import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemDisplayDataEnabledPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemBallingDataDisabledPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemBallingEnabledPreview
 
 @Suppress("unused")
-class MainDropDownMenuItemDisplayDataComposableTest {
+class MainDropDownMenuItemBallingComposableTest {
     @PreviewTest
     @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun MainDropdownMenuItemDisplayDataEnabledTest() {
-        MainDropdownMenuItemDisplayDataEnabledPreview()
+    fun MainDropdownMenuItemBallingEnabledTest() {
+        MainDropdownMenuItemBallingEnabledPreview()
     }
 
     @PreviewTest
     @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun MainDropdownMenuItemDisplayDataDisabledTest() {
-        MainDropdownMenuItemDisplayDataDisabledPreview()
+    fun MainDropdownMenuItemBallingDataDisabledTest() {
+        MainDropdownMenuItemBallingDataDisabledPreview()
     }
 }

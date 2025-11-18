@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package com.laimburggasse.aquariumcontrol.common.maindropdownmenu
+package com.laimburggasse.aquariumcontrol.common
 
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
