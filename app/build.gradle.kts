@@ -24,6 +24,8 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.screenshot)
+    alias(libs.plugins.aboutLibraries)
+    alias(libs.plugins.mikepenz.aboutlibraries.android)
     id("org.jetbrains.kotlin.plugin.compose") version "2.2.21"
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp") version "2.2.20-2.0.3"
@@ -63,6 +65,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
+            isMinifyEnabled = false
         }
     }
     compileOptions {

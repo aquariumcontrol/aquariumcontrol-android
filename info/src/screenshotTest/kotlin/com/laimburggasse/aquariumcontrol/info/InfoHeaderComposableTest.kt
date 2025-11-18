@@ -25,15 +25,16 @@ package com.laimburggasse.aquariumcontrol.info
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.laimburggasse.aquariumcontrol.info.presentation.InfoScreenPreview
+import com.android.tools.screenshot.PreviewTest
+import com.laimburggasse.aquariumcontrol.info.presentation.InfoHeaderComposablePreview
 
 @Suppress("unused")
-class InfoScreenTest {
-    //@PreviewTest
+class InfoHeaderComposableTest {
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun InfoScreenSnapshotTest() {
-        InfoScreenPreview()
+    fun InfoHeaderComposableSnapshotTest() {
+        InfoHeaderComposablePreview()
     }
 }

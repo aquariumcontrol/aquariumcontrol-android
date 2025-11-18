@@ -117,14 +117,16 @@ class MainActivity : ComponentActivity() {
 
     override fun onPause() {
         super.onPause()
-        val sharedPrefs: SharedPreferences = getSharedPreferences(GlobalConstants.PREFS_NAME, MODE_PRIVATE)
-        with(receiver = sharedPrefs.edit()) {
-            sessionManager.defaultControllerProfileId.value.let {
-                putLong(
-                    GlobalConstants.KEY_DEFAULT_PROFILE_ID,
-                    sessionManager.defaultControllerProfileId.value!!
-                )
-                apply()
+        if (sessionManager.defaultControllerProfileId.value != null) {
+            val sharedPrefs: SharedPreferences = getSharedPreferences(GlobalConstants.PREFS_NAME, MODE_PRIVATE)
+            with(receiver = sharedPrefs.edit()) {
+                sessionManager.defaultControllerProfileId.value.let {
+                    putLong(
+                        GlobalConstants.KEY_DEFAULT_PROFILE_ID,
+                        sessionManager.defaultControllerProfileId.value!!
+                    )
+                    apply()
+                }
             }
         }
     }

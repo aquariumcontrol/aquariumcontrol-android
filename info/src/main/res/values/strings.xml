@@ -6,4 +6,9 @@
     <string name="developer_information">Developer information</string>
     <string name="mailto_uwe_martin_gmail_com">mailto:uwe.martin@gmail.com</string>
     <string name="this_software_comes_with_no_warranties_usage_at_your_own_risk">This software comes with no warranties. Usage at your own risk.</string>
+    <string name="aquarium_control_license_statement">AquariumControl itself is released under the MIT License.</string>
+    <string name="aquarium_control_repo">View the repository</string>
+    <string name="repo_url">https://bitbucket.org/in-dubio/androidapp/src/main/</string>
+    <string name="aquarium_control_version">3.0.0</string>
+    <string name="this_app_is_built_using_the_following_libraries">This app is built using the following libraries:</string>
 </resources>

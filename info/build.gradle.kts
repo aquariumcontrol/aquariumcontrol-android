@@ -111,4 +111,8 @@ dependencies {
     implementation(project(":common"))
     androidTestImplementation(testFixtures(notation = project(":common")))
     androidTestImplementation(libs.androidx.junit)
+
+    implementation(libs.aboutlibraries.core)
+    implementation(libs.aboutlibraries.compose.m3)
+    implementation(libs.mikepenz.aboutlibraries)
 }
