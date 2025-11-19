@@ -25,11 +25,12 @@ package com.laimburggasse.aquariumcontrol.refill.entry
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import com.android.tools.screenshot.PreviewTest
 import com.laimburggasse.aquariumcontrol.refill.presentation.entry.RefillScreenPreview
 
 @Suppress("unused")
 class RefillScreenTest {
-    //@PreviewTest
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(

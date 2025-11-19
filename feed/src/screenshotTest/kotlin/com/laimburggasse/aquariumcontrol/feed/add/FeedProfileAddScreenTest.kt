@@ -29,7 +29,6 @@ import com.android.tools.screenshot.PreviewTest
 import com.laimburggasse.aquariumcontrol.feed.presentation.add.FeedProfileAddScreenIdlePreview
 import com.laimburggasse.aquariumcontrol.feed.presentation.add.FeedProfileAddScreenLoadingPreview
 
-@Suppress("unused")
 class FeedProfileAddScreenTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)

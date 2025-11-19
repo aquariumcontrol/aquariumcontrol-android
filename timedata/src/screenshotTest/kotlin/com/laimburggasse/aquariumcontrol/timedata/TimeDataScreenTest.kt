@@ -25,13 +25,14 @@ package com.laimburggasse.aquariumcontrol.timedata
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import com.android.tools.screenshot.PreviewTest
 import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreenPreviewEmpty
 import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreenPreviewError
 import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreenPreviewSuccess
 
 @Suppress("unused")
 class TimeDataScreenTest {
-    //@PreviewTest
+    @PreviewTest
     @Preview(showBackground = true, heightDp = 1250, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, heightDp = 1250, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
@@ -49,7 +50,7 @@ class TimeDataScreenTest {
         TimeDataScreenPreviewSuccess()
     }
 
-    //@PreviewTest
+    @PreviewTest
     @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
@@ -67,7 +68,7 @@ class TimeDataScreenTest {
        TimeDataScreenPreviewError()
     }
 
-    //@PreviewTest
+    @PreviewTest
     @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(

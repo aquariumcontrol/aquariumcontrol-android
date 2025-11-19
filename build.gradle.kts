@@ -30,6 +30,12 @@ plugins {
     id("com.google.dagger.hilt.android") version "2.57.2" apply false
 }
 
+tasks.withType<Test>().configureEach {
+    // Increase the maximum heap size for testing
+    // -Xmx2g allocates 2 Gigabytes. Adjust this value (e.g., -Xmx4g) if needed.
+    jvmArgs(listOf("-Xmx4g"))
+}
+
 buildscript {
     extra.apply {
         set("room_version", "2.8.1")

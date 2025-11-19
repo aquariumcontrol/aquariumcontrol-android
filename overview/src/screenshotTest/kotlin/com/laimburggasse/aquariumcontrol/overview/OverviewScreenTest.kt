@@ -25,12 +25,13 @@ package com.laimburggasse.aquariumcontrol.overview
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import com.android.tools.screenshot.PreviewTest
 import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewScreenPreviewError
 import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewScreenPreviewSuccess
 
 @Suppress("unused")
 class OverviewScreenTest {
-    //@PreviewTest
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
@@ -48,7 +49,7 @@ class OverviewScreenTest {
         OverviewScreenPreviewError()
     }
 
-    //@PreviewTest
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
@@ -65,5 +66,4 @@ class OverviewScreenTest {
     fun OverviewScreenSuccessSnapshotTest() {
         OverviewScreenPreviewSuccess()
     }
-
 }

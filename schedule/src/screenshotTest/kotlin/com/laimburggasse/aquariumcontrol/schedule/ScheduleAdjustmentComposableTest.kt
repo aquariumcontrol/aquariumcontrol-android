@@ -33,7 +33,7 @@ class ScheduleAdjustmentComposableTest{
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
-    /* The tests for landscape orientation consume too much heap space
+    // The tests for landscape orientation consume too much heap space
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_YES,
@@ -43,7 +43,7 @@ class ScheduleAdjustmentComposableTest{
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_NO,
         device = "spec:width=800dp,height=400dp,orientation=landscape"
-    )*/
+    )
     @Composable
     fun ScheduleAdjustmentComposableSnapshotTest() {
         ScheduleAdjustmentComposablePreview()

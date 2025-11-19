@@ -25,12 +25,13 @@ package com.laimburggasse.aquariumcontrol.feed.entry
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import com.android.tools.screenshot.PreviewTest
 import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScreenPreviewError
 import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScreenPreviewSuccess
 
 @Suppress("unused")
 class FeedScreenTest {
-    //@PreviewTest
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
@@ -48,7 +49,7 @@ class FeedScreenTest {
         FeedScreenPreviewSuccess()
     }
 
-    //@PreviewTest
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
