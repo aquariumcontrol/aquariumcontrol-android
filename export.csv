@@ -1,0 +1,159 @@
+;;;
+Activity;androidx.activity:activity:1.11.0;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/activity#1.11.0
+Activity Compose;androidx.activity:activity-compose:1.11.0;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/activity#1.11.0
+Activity Kotlin Extensions;androidx.activity:activity-ktx:1.11.0;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/activity#1.11.0
+Annotation;androidx.annotation:annotation:1.9.1;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/annotation#1.9.1
+Experimental annotation;androidx.annotation:annotation-experimental:1.5.0;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/annotation#1.5.0
+AppCompat;androidx.appcompat:appcompat:1.7.1;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/appcompat#1.7.1
+AppCompat Resources;androidx.appcompat:appcompat-resources:1.7.1;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/appcompat#1.7.1
+Android Arch-Common;androidx.arch.core:core-common:2.2.0;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/arch-core#2.2.0
+Android Arch-Runtime;androidx.arch.core:core-runtime:2.2.0;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/arch-core#2.2.0
+AndroidX Autofill;androidx.autofill:autofill:1.0.0;Apache-2.0;https://developer.android.com/jetpack/androidx
+Support CardView v7;androidx.cardview:cardview:1.0.0;Apache-2.0;http://developer.android.com/tools/extras/support-library.html
+collections;androidx.collection:collection:1.5.0;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/collection#1.5.0
+Collections Kotlin Extensions;androidx.collection:collection-ktx:1.5.0;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/collection#1.5.0
+Compose Animation;androidx.compose.animation:animation:1.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/compose-animation#1.9.4
+Compose Animation Core;androidx.compose.animation:animation-core:1.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/compose-animation#1.9.4
+Compose Foundation;androidx.compose.foundation:foundation:1.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/compose-foundation#1.9.4
+Compose Layouts;androidx.compose.foundation:foundation-layout:1.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/compose-foundation#1.9.4
+Compose Material3 Components;androidx.compose.material3:material3:1.4.0;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/compose-material3#1.4.0
+Compose Material Components;androidx.compose.material:material:1.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/compose-material#1.9.4
+Compose Material Icons Core;androidx.compose.material:material-icons-core:1.7.8;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/compose-material#1.7.8
+Compose Material Icons Extended;androidx.compose.material:material-icons-extended:1.7.8;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/compose-material#1.7.8
+Compose Material Ripple;androidx.compose.material:material-ripple:1.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/compose-material#1.9.4
+Compose Runtime;androidx.compose.runtime:runtime:1.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/compose-runtime#1.9.4
+Compose Runtime Annotation;androidx.compose.runtime:runtime-annotation:1.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/compose-runtime#1.9.4
+Compose Saveable;androidx.compose.runtime:runtime-saveable:1.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/compose-runtime#1.9.4
+Compose UI;androidx.compose.ui:ui:1.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/compose-ui#1.9.4
+Compose Geometry;androidx.compose.ui:ui-geometry:1.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/compose-ui#1.9.4
+Compose Graphics;androidx.compose.ui:ui-graphics:1.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/compose-ui#1.9.4
+Compose Testing manifest dependency;androidx.compose.ui:ui-test-manifest:1.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/compose-ui#1.9.4
+Compose UI Text;androidx.compose.ui:ui-text:1.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/compose-ui#1.9.4
+Compose Tooling;androidx.compose.ui:ui-tooling:1.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/compose-ui#1.9.4
+Compose Tooling Data;androidx.compose.ui:ui-tooling-data:1.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/compose-ui#1.9.4
+Compose UI Preview Tooling;androidx.compose.ui:ui-tooling-preview:1.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/compose-ui#1.9.4
+Compose Unit;androidx.compose.ui:ui-unit:1.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/compose-ui#1.9.4
+Compose Util;androidx.compose.ui:ui-util:1.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/compose-ui#1.9.4
+Jetpack Compose Libraries BOM;androidx.compose:compose-bom:2025.11.00;Apache-2.0;https://developer.android.com/jetpack
+Futures;androidx.concurrent:concurrent-futures:1.2.0;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/concurrent#1.2.0
+Futures Kotlin Extensions;androidx.concurrent:concurrent-futures-ktx:1.2.0;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/concurrent#1.2.0
+Android ConstraintLayout;androidx.constraintlayout:constraintlayout:2.1.0;Apache-2.0;http://tools.android.com
+Android ConstraintLayout Core;androidx.constraintlayout:constraintlayout-core:1.0.0;Apache-2.0;http://tools.android.com
+Support Coordinator Layout;androidx.coordinatorlayout:coordinatorlayout:1.1.0;Apache-2.0;https://developer.android.com/jetpack/androidx
+Core;androidx.core:core:1.17.0;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/core#1.17.0
+Core Kotlin Extensions;androidx.core:core-ktx:1.17.0;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/core#1.17.0
+androidx.core:core-viewtree;androidx.core:core-viewtree:1.0.0;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/core#1.0.0
+Support Cursor Adapter;androidx.cursoradapter:cursoradapter:1.0.0;Apache-2.0;http://developer.android.com/tools/extras/support-library.html
+Support Custom View;androidx.customview:customview:1.1.0;Apache-2.0;https://developer.android.com/jetpack/androidx
+androidx.customview:poolingcontainer;androidx.customview:customview-poolingcontainer:1.0.0;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/customview#1.0.0
+Support Drawer Layout;androidx.drawerlayout:drawerlayout:1.1.1;Apache-2.0;https://developer.android.com/jetpack/androidx
+DynamicAnimation;androidx.dynamicanimation:dynamicanimation:1.1.0;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/dynamicanimation#1.1.0
+Emoji2;androidx.emoji2:emoji2:1.4.0;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/emoji2#1.4.0
+Emoji2 Views Helper;androidx.emoji2:emoji2-views-helper:1.4.0;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/emoji2#1.4.0
+Support fragment;androidx.fragment:fragment:1.5.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/fragment#1.5.4
+Android Graphics Path;androidx.graphics:graphics-path:1.0.1;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/graphics#1.0.1
+Graphics Shapes;androidx.graphics:graphics-shapes:1.0.1;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/graphics#1.0.1
+ViewModel Hilt Extension;androidx.hilt:hilt-lifecycle-viewmodel:1.3.0;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/hilt#1.3.0
+ViewModel Compose Hilt Extension;androidx.hilt:hilt-lifecycle-viewmodel-compose:1.3.0;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/hilt#1.3.0
+Navigation Compose Hilt Integration;androidx.hilt:hilt-navigation-compose:1.3.0;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/hilt#1.3.0
+Support Interpolators;androidx.interpolator:interpolator:1.0.0;Apache-2.0;http://developer.android.com/tools/extras/support-library.html
+Lifecycle-Common;androidx.lifecycle:lifecycle-common:2.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/lifecycle#2.9.4
+Lifecycle-Common for Java 8;androidx.lifecycle:lifecycle-common-java8:2.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/lifecycle#2.9.4
+Lifecycle LiveData;androidx.lifecycle:lifecycle-livedata:2.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/lifecycle#2.9.4
+Lifecycle LiveData Core;androidx.lifecycle:lifecycle-livedata-core:2.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/lifecycle#2.9.4
+LiveData Core Kotlin Extensions;androidx.lifecycle:lifecycle-livedata-core-ktx:2.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/lifecycle#2.9.4
+Lifecycle Process;androidx.lifecycle:lifecycle-process:2.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/lifecycle#2.9.4
+Lifecycle Runtime;androidx.lifecycle:lifecycle-runtime:2.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/lifecycle#2.9.4
+Lifecycle Runtime Compose;androidx.lifecycle:lifecycle-runtime-compose:2.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/lifecycle#2.9.4
+Lifecycle Kotlin Extensions;androidx.lifecycle:lifecycle-runtime-ktx:2.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/lifecycle#2.9.4
+Lifecycle ViewModel;androidx.lifecycle:lifecycle-viewmodel:2.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/lifecycle#2.9.4
+Lifecycle ViewModel Compose;androidx.lifecycle:lifecycle-viewmodel-compose:2.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/lifecycle#2.9.4
+Lifecycle ViewModel Kotlin Extensions;androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/lifecycle#2.9.4
+Lifecycle ViewModel with SavedState;androidx.lifecycle:lifecycle-viewmodel-savedstate:2.9.4;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/lifecycle#2.9.4
+Support loader;androidx.loader:loader:1.0.0;Apache-2.0;http://developer.android.com/tools/extras/support-library.html
+Navigation Common;androidx.navigation:navigation-common:2.9.6;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/navigation#2.9.6
+Compose Navigation;androidx.navigation:navigation-compose:2.9.6;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/navigation#2.9.6
+Navigation Runtime;androidx.navigation:navigation-runtime:2.9.6;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/navigation#2.9.6
+Profile Installer;androidx.profileinstaller:profileinstaller:1.4.0;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/profileinstaller#1.4.0
+Support RecyclerView;androidx.recyclerview:recyclerview:1.2.1;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/recyclerview#1.2.1
+Android Resource Inspection - Annotations;androidx.resourceinspection:resourceinspection-annotation:1.0.1;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/resourceinspection#1.0.1
+Room-Common;androidx.room:room-common:2.8.3;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/room#2.8.3
+Room Kotlin Extensions;androidx.room:room-ktx:2.8.3;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/room#2.8.3
+Room-Runtime;androidx.room:room-runtime:2.8.3;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/room#2.8.3
+Saved State;androidx.savedstate:savedstate:1.3.3;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/savedstate#1.3.3
+Saved State Compose;androidx.savedstate:savedstate-compose:1.3.3;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/savedstate#1.3.3
+SavedState Kotlin Extensions;androidx.savedstate:savedstate-ktx:1.3.3;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/savedstate#1.3.3
+SQLite;androidx.sqlite:sqlite:2.6.1;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/sqlite#2.6.1
+SQLite Framework Integration;androidx.sqlite:sqlite-framework:2.6.1;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/sqlite#2.6.1
+Startup Runtime;androidx.startup:startup-runtime:1.2.0;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/startup#1.2.0
+AndroidX Test Library;androidx.test.espresso:espresso-core:3.7.0;Apache-2.0;https://developer.android.com/testing
+AndroidX Test Library;androidx.test.ext:junit-ktx:1.3.0;Apache-2.0;https://developer.android.com/testing
+AndroidX Test Library;androidx.test.services:storage:1.6.0;Apache-2.0;https://developer.android.com/testing
+AndroidX Test Library;androidx.test:monitor:1.8.0;Apache-2.0;https://developer.android.com/testing
+Android Tracing;androidx.tracing:tracing:1.2.0;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/tracing#1.2.0
+Tracing Perfetto Handshake;androidx.tracing:tracing-perfetto-handshake:1.0.0;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/tracing#1.0.0
+Transition;androidx.transition:transition:1.5.0;Apache-2.0;https://developer.android.com/jetpack/androidx/releases/transition#1.5.0
+Support VectorDrawable;androidx.vectordrawable:vectordrawable:1.1.0;Apache-2.0;https://developer.android.com/jetpack/androidx
+Support AnimatedVectorDrawable;androidx.vectordrawable:vectordrawable-animated:1.1.0;Apache-2.0;https://developer.android.com/jetpack/androidx
+VersionedParcelable;androidx.versionedparcelable:versionedparcelable:1.1.1;Apache-2.0;http://developer.android.com/tools/extras/support-library.html
+AndroidX Widget ViewPager2;androidx.viewpager2:viewpager2:1.0.0;Apache-2.0;https://developer.android.com/jetpack/androidx
+Support View Pager;androidx.viewpager:viewpager:1.0.0;Apache-2.0;http://developer.android.com/tools/extras/support-library.html
+com.github.PhilJay:MPAndroidChart;com.github.PhilJay:MPAndroidChart:v3.1.0;;null
+Material Components for Android;com.google.android.material:material:1.13.0;Apache-2.0;https://github.com/material-components/material-components-android
+FindBugs-jsr305;com.google.code.findbugs:jsr305:3.0.2;Apache-2.0;http://findbugs.sourceforge.net/
+Dagger;com.google.dagger:dagger:2.57.2;Apache-2.0;https://github.com/google/dagger
+Dagger Lint Rules AAR Distribution;com.google.dagger:dagger-lint-aar:2.57.2;Apache-2.0;https://github.com/google/dagger
+Hilt Android;com.google.dagger:hilt-android:2.57.2;Apache-2.0;https://github.com/google/dagger
+Hilt Core;com.google.dagger:hilt-core:2.57.2;Apache-2.0;https://github.com/google/dagger
+com.google.devtools.ksp:symbol-processing-api;com.google.devtools.ksp:symbol-processing-api:2.2.20-2.0.3;Apache-2.0;https://goo.gle/ksp
+error-prone annotations;com.google.errorprone:error_prone_annotations:2.30.0;Apache-2.0;https://errorprone.info/error_prone_annotations
+Guava ListenableFuture only;com.google.guava:listenablefuture:1.0;Apache-2.0;https://github.com/google/guava/listenablefuture
+AboutLibraries Compose UI Library;com.mikepenz:aboutlibraries-compose-core:13.1.0;Apache-2.0;https://github.com/mikepenz/AboutLibraries
+AboutLibraries Compose Material 3 Library;com.mikepenz:aboutlibraries-compose-m3:13.1.0;Apache-2.0;https://github.com/mikepenz/AboutLibraries
+AboutLibraries Core Library;com.mikepenz:aboutlibraries-core:13.1.0;Apache-2.0;https://github.com/mikepenz/AboutLibraries
+okhttp;com.squareup.okhttp3:okhttp:5.3.0;Apache-2.0;https://square.github.io/okhttp/
+okio;com.squareup.okio:okio:3.16.2;Apache-2.0;https://github.com/square/okio/
+Jakarta Dependency Injection;jakarta.inject:jakarta.inject-api:2.0.1;Apache-2.0;https://github.com/eclipse-ee4j/injection-api
+javax.inject;javax.inject:javax.inject:1;Apache-2.0;http://code.google.com/p/atinject/
+JUnit;junit:junit:4.13.2;EPL-1.0;http://junit.org
+Hamcrest Core;org.hamcrest:hamcrest-core:1.3;BSD-3-Clause;https://github.com/hamcrest/JavaHamcrest/hamcrest-core
+Hamcrest library;org.hamcrest:hamcrest-library:1.3;BSD-3-Clause;https://github.com/hamcrest/JavaHamcrest/hamcrest-library
+Lifecycle-Common;org.jetbrains.androidx.lifecycle:lifecycle-common:2.9.4;Apache-2.0;https://github.com/JetBrains/compose-jb
+Lifecycle Runtime;org.jetbrains.androidx.lifecycle:lifecycle-runtime:2.9.4;Apache-2.0;https://github.com/JetBrains/compose-jb
+Lifecycle Runtime Compose;org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose:2.9.4;Apache-2.0;https://github.com/JetBrains/compose-jb
+Lifecycle ViewModel;org.jetbrains.androidx.lifecycle:lifecycle-viewmodel:2.9.4;Apache-2.0;https://github.com/JetBrains/compose-jb
+Lifecycle ViewModel with SavedState;org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-savedstate:2.9.4;Apache-2.0;https://github.com/JetBrains/compose-jb
+Saved State;org.jetbrains.androidx.savedstate:savedstate:1.3.4;Apache-2.0;https://github.com/JetBrains/compose-jb
+Saved State Compose;org.jetbrains.androidx.savedstate:savedstate-compose:1.3.4;Apache-2.0;https://github.com/JetBrains/compose-jb
+Compose Animation;org.jetbrains.compose.animation:animation:1.9.0;Apache-2.0;https://github.com/JetBrains/compose-jb
+Compose Animation Core;org.jetbrains.compose.animation:animation-core:1.9.0;Apache-2.0;https://github.com/JetBrains/compose-jb
+Annotation;org.jetbrains.compose.annotation-internal:annotation:1.9.0;Apache-2.0;https://github.com/JetBrains/compose-jb
+collections;org.jetbrains.compose.collection-internal:collection:1.9.0;Apache-2.0;https://github.com/JetBrains/compose-jb
+Compose Foundation;org.jetbrains.compose.foundation:foundation:1.9.0;Apache-2.0;https://github.com/JetBrains/compose-jb
+Compose Layouts;org.jetbrains.compose.foundation:foundation-layout:1.9.0;Apache-2.0;https://github.com/JetBrains/compose-jb
+Compose Material3 Components;org.jetbrains.compose.material3:material3:1.8.2;Apache-2.0;https://github.com/JetBrains/compose-jb
+Compose Material Ripple;org.jetbrains.compose.material:material-ripple:1.8.2;Apache-2.0;https://github.com/JetBrains/compose-jb
+Compose Runtime;org.jetbrains.compose.runtime:runtime:1.9.0;Apache-2.0;https://github.com/JetBrains/compose-jb
+Compose Saveable;org.jetbrains.compose.runtime:runtime-saveable:1.9.0;Apache-2.0;https://github.com/JetBrains/compose-jb
+Compose UI primitives;org.jetbrains.compose.ui:ui:1.9.0;Apache-2.0;https://github.com/JetBrains/compose-jb
+Compose Multiplatform BackHandler;org.jetbrains.compose.ui:ui-backhandler:1.8.2;Apache-2.0;https://github.com/JetBrains/compose-jb
+Compose Geometry;org.jetbrains.compose.ui:ui-geometry:1.9.0;Apache-2.0;https://github.com/JetBrains/compose-jb
+Compose Graphics;org.jetbrains.compose.ui:ui-graphics:1.9.0;Apache-2.0;https://github.com/JetBrains/compose-jb
+Compose UI Text;org.jetbrains.compose.ui:ui-text:1.9.0;Apache-2.0;https://github.com/JetBrains/compose-jb
+Compose UI Preview Tooling;org.jetbrains.compose.ui:ui-tooling-preview:1.9.0;Apache-2.0;https://github.com/JetBrains/compose-jb
+Compose Unit;org.jetbrains.compose.ui:ui-unit:1.9.0;Apache-2.0;https://github.com/JetBrains/compose-jb
+Compose Util;org.jetbrains.compose.ui:ui-util:1.9.0;Apache-2.0;https://github.com/JetBrains/compose-jb
+Kotlin Libraries bill-of-materials;org.jetbrains.kotlin:kotlin-bom:1.8.22;Apache-2.0;https://kotlinlang.org/
+Kotlin Stdlib;org.jetbrains.kotlin:kotlin-stdlib:2.2.21;Apache-2.0;https://kotlinlang.org/
+Kotlin Stdlib Common;org.jetbrains.kotlin:kotlin-stdlib-common:2.2.21;Apache-2.0;https://kotlinlang.org/
+Kotlin Stdlib Jdk7;org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.2.0;Apache-2.0;https://kotlinlang.org/
+Kotlin Stdlib Jdk8;org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.0;Apache-2.0;https://kotlinlang.org/
+kotlinx-collections-immutable;org.jetbrains.kotlinx:kotlinx-collections-immutable:0.4.0;Apache-2.0;https://github.com/Kotlin/kotlinx.collections.immutable
+kotlinx-coroutines-android;org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1;Apache-2.0;https://github.com/Kotlin/kotlinx.coroutines
+kotlinx-coroutines-bom;org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.8.1;Apache-2.0;https://github.com/Kotlin/kotlinx.coroutines
+kotlinx-coroutines-core;org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1;Apache-2.0;https://github.com/Kotlin/kotlinx.coroutines
+kotlinx-serialization-bom;org.jetbrains.kotlinx:kotlinx-serialization-bom:1.9.0;Apache-2.0;https://github.com/Kotlin/kotlinx.serialization
+kotlinx-serialization-core;org.jetbrains.kotlinx:kotlinx-serialization-core:1.9.0;Apache-2.0;https://github.com/Kotlin/kotlinx.serialization
+kotlinx-serialization-json;org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.9.0;Apache-2.0;https://github.com/Kotlin/kotlinx.serialization
+JetBrains Java Annotations;org.jetbrains:annotations:23.0.0;Apache-2.0;https://github.com/JetBrains/java-annotations
+JSpecify annotations;org.jspecify:jspecify:1.0.0;Apache-2.0;http://jspecify.org/

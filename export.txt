@@ -1,0 +1,172 @@
+LIBRARIES:
+
+Activity;androidx.activity:activity:1.11.0;Apache-2.0
+Activity Compose;androidx.activity:activity-compose:1.11.0;Apache-2.0
+Activity Kotlin Extensions;androidx.activity:activity-ktx:1.11.0;Apache-2.0
+Annotation;androidx.annotation:annotation:1.9.1;Apache-2.0
+Experimental annotation;androidx.annotation:annotation-experimental:1.5.0;Apache-2.0
+AppCompat;androidx.appcompat:appcompat:1.7.1;Apache-2.0
+AppCompat Resources;androidx.appcompat:appcompat-resources:1.7.1;Apache-2.0
+Android Arch-Common;androidx.arch.core:core-common:2.2.0;Apache-2.0
+Android Arch-Runtime;androidx.arch.core:core-runtime:2.2.0;Apache-2.0
+AndroidX Autofill;androidx.autofill:autofill:1.0.0;Apache-2.0
+Support CardView v7;androidx.cardview:cardview:1.0.0;Apache-2.0
+collections;androidx.collection:collection:1.5.0;Apache-2.0
+Collections Kotlin Extensions;androidx.collection:collection-ktx:1.5.0;Apache-2.0
+Compose Animation;androidx.compose.animation:animation:1.9.4;Apache-2.0
+Compose Animation Core;androidx.compose.animation:animation-core:1.9.4;Apache-2.0
+Compose Foundation;androidx.compose.foundation:foundation:1.9.4;Apache-2.0
+Compose Layouts;androidx.compose.foundation:foundation-layout:1.9.4;Apache-2.0
+Compose Material3 Components;androidx.compose.material3:material3:1.4.0;Apache-2.0
+Compose Material Components;androidx.compose.material:material:1.9.4;Apache-2.0
+Compose Material Icons Core;androidx.compose.material:material-icons-core:1.7.8;Apache-2.0
+Compose Material Icons Extended;androidx.compose.material:material-icons-extended:1.7.8;Apache-2.0
+Compose Material Ripple;androidx.compose.material:material-ripple:1.9.4;Apache-2.0
+Compose Runtime;androidx.compose.runtime:runtime:1.9.4;Apache-2.0
+Compose Runtime Annotation;androidx.compose.runtime:runtime-annotation:1.9.4;Apache-2.0
+Compose Saveable;androidx.compose.runtime:runtime-saveable:1.9.4;Apache-2.0
+Compose UI;androidx.compose.ui:ui:1.9.4;Apache-2.0
+Compose Geometry;androidx.compose.ui:ui-geometry:1.9.4;Apache-2.0
+Compose Graphics;androidx.compose.ui:ui-graphics:1.9.4;Apache-2.0
+Compose Testing manifest dependency;androidx.compose.ui:ui-test-manifest:1.9.4;Apache-2.0
+Compose UI Text;androidx.compose.ui:ui-text:1.9.4;Apache-2.0
+Compose Tooling;androidx.compose.ui:ui-tooling:1.9.4;Apache-2.0
+Compose Tooling Data;androidx.compose.ui:ui-tooling-data:1.9.4;Apache-2.0
+Compose UI Preview Tooling;androidx.compose.ui:ui-tooling-preview:1.9.4;Apache-2.0
+Compose Unit;androidx.compose.ui:ui-unit:1.9.4;Apache-2.0
+Compose Util;androidx.compose.ui:ui-util:1.9.4;Apache-2.0
+Jetpack Compose Libraries BOM;androidx.compose:compose-bom:2025.11.00;Apache-2.0
+Futures;androidx.concurrent:concurrent-futures:1.2.0;Apache-2.0
+Futures Kotlin Extensions;androidx.concurrent:concurrent-futures-ktx:1.2.0;Apache-2.0
+Android ConstraintLayout;androidx.constraintlayout:constraintlayout:2.1.0;Apache-2.0
+Android ConstraintLayout Core;androidx.constraintlayout:constraintlayout-core:1.0.0;Apache-2.0
+Support Coordinator Layout;androidx.coordinatorlayout:coordinatorlayout:1.1.0;Apache-2.0
+Core;androidx.core:core:1.17.0;Apache-2.0
+Core Kotlin Extensions;androidx.core:core-ktx:1.17.0;Apache-2.0
+androidx.core:core-viewtree;androidx.core:core-viewtree:1.0.0;Apache-2.0
+Support Cursor Adapter;androidx.cursoradapter:cursoradapter:1.0.0;Apache-2.0
+Support Custom View;androidx.customview:customview:1.1.0;Apache-2.0
+androidx.customview:poolingcontainer;androidx.customview:customview-poolingcontainer:1.0.0;Apache-2.0
+Support Drawer Layout;androidx.drawerlayout:drawerlayout:1.1.1;Apache-2.0
+DynamicAnimation;androidx.dynamicanimation:dynamicanimation:1.1.0;Apache-2.0
+Emoji2;androidx.emoji2:emoji2:1.4.0;Apache-2.0
+Emoji2 Views Helper;androidx.emoji2:emoji2-views-helper:1.4.0;Apache-2.0
+Support fragment;androidx.fragment:fragment:1.5.4;Apache-2.0
+Android Graphics Path;androidx.graphics:graphics-path:1.0.1;Apache-2.0
+Graphics Shapes;androidx.graphics:graphics-shapes:1.0.1;Apache-2.0
+ViewModel Hilt Extension;androidx.hilt:hilt-lifecycle-viewmodel:1.3.0;Apache-2.0
+ViewModel Compose Hilt Extension;androidx.hilt:hilt-lifecycle-viewmodel-compose:1.3.0;Apache-2.0
+Navigation Compose Hilt Integration;androidx.hilt:hilt-navigation-compose:1.3.0;Apache-2.0
+Support Interpolators;androidx.interpolator:interpolator:1.0.0;Apache-2.0
+Lifecycle-Common;androidx.lifecycle:lifecycle-common:2.9.4;Apache-2.0
+Lifecycle-Common for Java 8;androidx.lifecycle:lifecycle-common-java8:2.9.4;Apache-2.0
+Lifecycle LiveData;androidx.lifecycle:lifecycle-livedata:2.9.4;Apache-2.0
+Lifecycle LiveData Core;androidx.lifecycle:lifecycle-livedata-core:2.9.4;Apache-2.0
+LiveData Core Kotlin Extensions;androidx.lifecycle:lifecycle-livedata-core-ktx:2.9.4;Apache-2.0
+Lifecycle Process;androidx.lifecycle:lifecycle-process:2.9.4;Apache-2.0
+Lifecycle Runtime;androidx.lifecycle:lifecycle-runtime:2.9.4;Apache-2.0
+Lifecycle Runtime Compose;androidx.lifecycle:lifecycle-runtime-compose:2.9.4;Apache-2.0
+Lifecycle Kotlin Extensions;androidx.lifecycle:lifecycle-runtime-ktx:2.9.4;Apache-2.0
+Lifecycle ViewModel;androidx.lifecycle:lifecycle-viewmodel:2.9.4;Apache-2.0
+Lifecycle ViewModel Compose;androidx.lifecycle:lifecycle-viewmodel-compose:2.9.4;Apache-2.0
+Lifecycle ViewModel Kotlin Extensions;androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4;Apache-2.0
+Lifecycle ViewModel with SavedState;androidx.lifecycle:lifecycle-viewmodel-savedstate:2.9.4;Apache-2.0
+Support loader;androidx.loader:loader:1.0.0;Apache-2.0
+Navigation Common;androidx.navigation:navigation-common:2.9.6;Apache-2.0
+Compose Navigation;androidx.navigation:navigation-compose:2.9.6;Apache-2.0
+Navigation Runtime;androidx.navigation:navigation-runtime:2.9.6;Apache-2.0
+Profile Installer;androidx.profileinstaller:profileinstaller:1.4.0;Apache-2.0
+Support RecyclerView;androidx.recyclerview:recyclerview:1.2.1;Apache-2.0
+Android Resource Inspection - Annotations;androidx.resourceinspection:resourceinspection-annotation:1.0.1;Apache-2.0
+Room-Common;androidx.room:room-common:2.8.3;Apache-2.0
+Room Kotlin Extensions;androidx.room:room-ktx:2.8.3;Apache-2.0
+Room-Runtime;androidx.room:room-runtime:2.8.3;Apache-2.0
+Saved State;androidx.savedstate:savedstate:1.3.3;Apache-2.0
+Saved State Compose;androidx.savedstate:savedstate-compose:1.3.3;Apache-2.0
+SavedState Kotlin Extensions;androidx.savedstate:savedstate-ktx:1.3.3;Apache-2.0
+SQLite;androidx.sqlite:sqlite:2.6.1;Apache-2.0
+SQLite Framework Integration;androidx.sqlite:sqlite-framework:2.6.1;Apache-2.0
+Startup Runtime;androidx.startup:startup-runtime:1.2.0;Apache-2.0
+AndroidX Test Library;androidx.test.espresso:espresso-core:3.7.0;Apache-2.0
+AndroidX Test Library;androidx.test.ext:junit-ktx:1.3.0;Apache-2.0
+AndroidX Test Library;androidx.test.services:storage:1.6.0;Apache-2.0
+AndroidX Test Library;androidx.test:monitor:1.8.0;Apache-2.0
+Android Tracing;androidx.tracing:tracing:1.2.0;Apache-2.0
+Tracing Perfetto Handshake;androidx.tracing:tracing-perfetto-handshake:1.0.0;Apache-2.0
+Transition;androidx.transition:transition:1.5.0;Apache-2.0
+Support VectorDrawable;androidx.vectordrawable:vectordrawable:1.1.0;Apache-2.0
+Support AnimatedVectorDrawable;androidx.vectordrawable:vectordrawable-animated:1.1.0;Apache-2.0
+VersionedParcelable;androidx.versionedparcelable:versionedparcelable:1.1.1;Apache-2.0
+AndroidX Widget ViewPager2;androidx.viewpager2:viewpager2:1.0.0;Apache-2.0
+Support View Pager;androidx.viewpager:viewpager:1.0.0;Apache-2.0
+com.github.PhilJay:MPAndroidChart;com.github.PhilJay:MPAndroidChart:v3.1.0;
+Material Components for Android;com.google.android.material:material:1.13.0;Apache-2.0
+FindBugs-jsr305;com.google.code.findbugs:jsr305:3.0.2;Apache-2.0
+Dagger;com.google.dagger:dagger:2.57.2;Apache-2.0
+Dagger Lint Rules AAR Distribution;com.google.dagger:dagger-lint-aar:2.57.2;Apache-2.0
+Hilt Android;com.google.dagger:hilt-android:2.57.2;Apache-2.0
+Hilt Core;com.google.dagger:hilt-core:2.57.2;Apache-2.0
+com.google.devtools.ksp:symbol-processing-api;com.google.devtools.ksp:symbol-processing-api:2.2.20-2.0.3;Apache-2.0
+error-prone annotations;com.google.errorprone:error_prone_annotations:2.30.0;Apache-2.0
+Guava ListenableFuture only;com.google.guava:listenablefuture:1.0;Apache-2.0
+AboutLibraries Compose UI Library;com.mikepenz:aboutlibraries-compose-core:13.1.0;Apache-2.0
+AboutLibraries Compose Material 3 Library;com.mikepenz:aboutlibraries-compose-m3:13.1.0;Apache-2.0
+AboutLibraries Core Library;com.mikepenz:aboutlibraries-core:13.1.0;Apache-2.0
+okhttp;com.squareup.okhttp3:okhttp:5.3.0;Apache-2.0
+okio;com.squareup.okio:okio:3.16.2;Apache-2.0
+Jakarta Dependency Injection;jakarta.inject:jakarta.inject-api:2.0.1;Apache-2.0
+javax.inject;javax.inject:javax.inject:1;Apache-2.0
+JUnit;junit:junit:4.13.2;EPL-1.0
+Hamcrest Core;org.hamcrest:hamcrest-core:1.3;BSD-3-Clause
+Hamcrest library;org.hamcrest:hamcrest-library:1.3;BSD-3-Clause
+Lifecycle-Common;org.jetbrains.androidx.lifecycle:lifecycle-common:2.9.4;Apache-2.0
+Lifecycle Runtime;org.jetbrains.androidx.lifecycle:lifecycle-runtime:2.9.4;Apache-2.0
+Lifecycle Runtime Compose;org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose:2.9.4;Apache-2.0
+Lifecycle ViewModel;org.jetbrains.androidx.lifecycle:lifecycle-viewmodel:2.9.4;Apache-2.0
+Lifecycle ViewModel with SavedState;org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-savedstate:2.9.4;Apache-2.0
+Saved State;org.jetbrains.androidx.savedstate:savedstate:1.3.4;Apache-2.0
+Saved State Compose;org.jetbrains.androidx.savedstate:savedstate-compose:1.3.4;Apache-2.0
+Compose Animation;org.jetbrains.compose.animation:animation:1.9.0;Apache-2.0
+Compose Animation Core;org.jetbrains.compose.animation:animation-core:1.9.0;Apache-2.0
+Annotation;org.jetbrains.compose.annotation-internal:annotation:1.9.0;Apache-2.0
+collections;org.jetbrains.compose.collection-internal:collection:1.9.0;Apache-2.0
+Compose Foundation;org.jetbrains.compose.foundation:foundation:1.9.0;Apache-2.0
+Compose Layouts;org.jetbrains.compose.foundation:foundation-layout:1.9.0;Apache-2.0
+Compose Material3 Components;org.jetbrains.compose.material3:material3:1.8.2;Apache-2.0
+Compose Material Ripple;org.jetbrains.compose.material:material-ripple:1.8.2;Apache-2.0
+Compose Runtime;org.jetbrains.compose.runtime:runtime:1.9.0;Apache-2.0
+Compose Saveable;org.jetbrains.compose.runtime:runtime-saveable:1.9.0;Apache-2.0
+Compose UI primitives;org.jetbrains.compose.ui:ui:1.9.0;Apache-2.0
+Compose Multiplatform BackHandler;org.jetbrains.compose.ui:ui-backhandler:1.8.2;Apache-2.0
+Compose Geometry;org.jetbrains.compose.ui:ui-geometry:1.9.0;Apache-2.0
+Compose Graphics;org.jetbrains.compose.ui:ui-graphics:1.9.0;Apache-2.0
+Compose UI Text;org.jetbrains.compose.ui:ui-text:1.9.0;Apache-2.0
+Compose UI Preview Tooling;org.jetbrains.compose.ui:ui-tooling-preview:1.9.0;Apache-2.0
+Compose Unit;org.jetbrains.compose.ui:ui-unit:1.9.0;Apache-2.0
+Compose Util;org.jetbrains.compose.ui:ui-util:1.9.0;Apache-2.0
+Kotlin Libraries bill-of-materials;org.jetbrains.kotlin:kotlin-bom:1.8.22;Apache-2.0
+Kotlin Stdlib;org.jetbrains.kotlin:kotlin-stdlib:2.2.21;Apache-2.0
+Kotlin Stdlib Common;org.jetbrains.kotlin:kotlin-stdlib-common:2.2.21;Apache-2.0
+Kotlin Stdlib Jdk7;org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.2.0;Apache-2.0
+Kotlin Stdlib Jdk8;org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.0;Apache-2.0
+kotlinx-collections-immutable;org.jetbrains.kotlinx:kotlinx-collections-immutable:0.4.0;Apache-2.0
+kotlinx-coroutines-android;org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1;Apache-2.0
+kotlinx-coroutines-bom;org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.8.1;Apache-2.0
+kotlinx-coroutines-core;org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1;Apache-2.0
+kotlinx-serialization-bom;org.jetbrains.kotlinx:kotlinx-serialization-bom:1.9.0;Apache-2.0
+kotlinx-serialization-core;org.jetbrains.kotlinx:kotlinx-serialization-core:1.9.0;Apache-2.0
+kotlinx-serialization-json;org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.9.0;Apache-2.0
+JetBrains Java Annotations;org.jetbrains:annotations:23.0.0;Apache-2.0
+JSpecify annotations;org.jspecify:jspecify:1.0.0;Apache-2.0
+
+
+LICENSES:
+BSD-3-Clause;BSD 3-Clause "New" or "Revised" License;https://spdx.org/licenses/BSD-3-Clause.html
+Apache-2.0;Apache License 2.0;https://spdx.org/licenses/Apache-2.0.html
+EPL-1.0;Eclipse Public License 1.0;https://spdx.org/licenses/EPL-1.0.html
+
+
+ARTIFACTS WITHOUT LICENSE:
+
+
+UNKNOWN LICENSES:
