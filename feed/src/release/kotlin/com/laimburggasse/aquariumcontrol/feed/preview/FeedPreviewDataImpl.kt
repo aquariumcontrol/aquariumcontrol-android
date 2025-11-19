@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package com.laimburggasse.aquariumcontrol.feed
+package com.laimburggasse.aquariumcontrol.feed.preview
 
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedProfileImport
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedScheduleEntryImport
@@ -91,7 +91,7 @@ object FeedPreviewDataImpl: FeedPreviewData {
     override val mockFeedHistoryUiStateEmpty = FeedHistoryUiState.Empty
     override val mockFeedHistoryUiStateLoading = FeedHistoryUiState.Loading
     override val mockFeedProfileImportForScheduleScreen = FeedProfileImport()
-    override val mockFeedProfileForScheduleScreen: FeedProfile = FeedProfile.fromFeedProfileImportUpdateIdName(
+    override val mockFeedProfileForScheduleScreen: FeedProfile = FeedProfile.Companion.fromFeedProfileImportUpdateIdName(
         feedProfileImport = mockFeedProfileImportForScheduleScreen,
         profileId = 0,
         profileName = "Release build"
