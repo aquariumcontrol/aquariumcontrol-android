@@ -54,12 +54,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.laimburggasse.aquariumcontrol.balling.preview.BallingPreviewDataImpl.mockBallingHistoryUiStateEmpty
+import com.laimburggasse.aquariumcontrol.balling.preview.BallingPreviewDataImpl.mockBallingHistoryUiStateError
+import com.laimburggasse.aquariumcontrol.balling.preview.BallingPreviewDataImpl.mockBallingHistoryUiStateLoading
+import com.laimburggasse.aquariumcontrol.balling.preview.BallingPreviewDataImpl.mockBallingHistoryUiStateSuccess
 import com.laimburggasse.aquariumcontrol.balling.R
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
-import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData.mockBallingHistoryUiStateEmpty
-import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData.mockBallingHistoryUiStateError
-import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData.mockBallingHistoryUiStateLoading
-import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData.mockBallingHistoryUiStateSuccess
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable

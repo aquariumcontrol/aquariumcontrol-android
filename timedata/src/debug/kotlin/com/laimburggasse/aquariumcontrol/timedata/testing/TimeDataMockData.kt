@@ -130,7 +130,7 @@ fun generateMockTimeData(): List<TimeDataSample> {
     return samples
 }
 
-object TimedataMockData {
+object TimeDataMockData {
     val mockTimeDataSets =
         TimeDataSets(timeData = generateMockTimeData())
 

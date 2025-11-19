@@ -39,9 +39,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockEvent
 import com.laimburggasse.aquariumcontrol.feed.R
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
-import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockEvent
 
 @Composable
 fun FeedHistoryEventComposable(

@@ -42,8 +42,8 @@ import com.laimburggasse.aquariumcontrol.feed.R
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.common.presentation.NumericDoubleOutlinedTextFieldComposable
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
-import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedProfile
-import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedProfileEditNumericMenuItem
+import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedProfile
+import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedProfileEditNumericMenuItem
 
 @Composable
 fun FeedProfileEditMenuItemDurationComposable(

@@ -53,10 +53,10 @@ import com.laimburggasse.aquariumcontrol.overview.R
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.overview.preview.OverviewPreviewDataImpl.mockControllerProfile
+import com.laimburggasse.aquariumcontrol.overview.preview.OverviewPreviewDataImpl.mockOverviewUiStateError
+import com.laimburggasse.aquariumcontrol.overview.preview.OverviewPreviewDataImpl.mockOverviewUiStateSuccess
 import com.laimburggasse.aquariumcontrol.overview.domain.model.OverviewData
-import com.laimburggasse.aquariumcontrol.overview.testing.OverviewMockData.mockControllerProfile
-import com.laimburggasse.aquariumcontrol.overview.testing.OverviewMockData.mockOverviewUiStateError
-import com.laimburggasse.aquariumcontrol.overview.testing.OverviewMockData.mockOverviewUiStateSuccess
 
 @Composable
 fun OverviewScreen(

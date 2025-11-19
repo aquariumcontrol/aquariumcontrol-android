@@ -59,10 +59,10 @@ import com.laimburggasse.aquariumcontrol.feed.R
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
-import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedHistoryUiStateEmpty
-import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedHistoryUiStateError
-import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedHistoryUiStateLoading
-import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedHistoryUiStateSuccess
+import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedHistoryUiStateEmpty
+import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedHistoryUiStateError
+import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedHistoryUiStateLoading
+import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedHistoryUiStateSuccess
 
 @Composable
 fun FeedHistoryScreen(

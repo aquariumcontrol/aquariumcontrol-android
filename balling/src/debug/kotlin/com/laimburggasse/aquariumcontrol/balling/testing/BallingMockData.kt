@@ -34,15 +34,12 @@ object BallingMockData {
         volume = 1.5,
         label = "MockDosingUnit 1",
     )
-
     val mockBallingProfileEditUiState = BallingProfileEditUiState.Success(
         ballingProfile = mockBallingProfile
     )
-
     val mockBallingProfile1 = BallingProfile(pumpId = 1, volume = 2.1, label = "mock1")
     val mockBallingProfile2 = BallingProfile(pumpId = 2, volume = 3.1, label = "mock2")
     val mockBallingProfiles: List<BallingProfile> = listOf(mockBallingProfile1, mockBallingProfile2)
-
     val mockBallingProfilesUiStateSuccess = BallingProfilesUiState.Success(ballingProfiles = mockBallingProfiles)
     val mockBallingProfilesUiStateError = BallingProfilesUiState.Error(errorMessage = "Mock Error message")
     val mockBallingProfilesUiStateLoading = BallingProfilesUiState.Loading

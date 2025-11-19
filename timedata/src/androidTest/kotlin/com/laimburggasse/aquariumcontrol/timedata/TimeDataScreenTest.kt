@@ -30,8 +30,8 @@ import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreen
-import com.laimburggasse.aquariumcontrol.timedata.testing.TimedataMockData.mockTimeDataUiStateError
-import com.laimburggasse.aquariumcontrol.timedata.testing.TimedataMockData.mockTimeDataUiStateSuccess
+import com.laimburggasse.aquariumcontrol.timedata.testing.TimeDataMockData.mockTimeDataUiStateError
+import com.laimburggasse.aquariumcontrol.timedata.testing.TimeDataMockData.mockTimeDataUiStateSuccess
 
 import org.junit.Rule
 import org.junit.Test

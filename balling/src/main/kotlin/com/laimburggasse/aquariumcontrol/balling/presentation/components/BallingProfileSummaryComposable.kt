@@ -39,10 +39,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.laimburggasse.aquariumcontrol.balling.preview.BallingPreviewDataImpl.mockBallingProfile
 import com.laimburggasse.aquariumcontrol.balling.R
 import com.laimburggasse.aquariumcontrol.balling.presentation.navigation.BallingNavigationEvent
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
-import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
 
 @Composable
@@ -105,7 +105,7 @@ internal fun BallingProfileSummaryPreview() {
     AquariumControllerTheme {
         Surface {
             BallingProfileSummaryComposable(
-                ballingProfile = BallingMockData.mockBallingProfile,
+                ballingProfile = mockBallingProfile,
                 onNavigateFromBalling = { event, pumpId -> }
             )
         }

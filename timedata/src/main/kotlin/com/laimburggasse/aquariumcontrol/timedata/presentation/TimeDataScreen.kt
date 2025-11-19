@@ -52,9 +52,9 @@ import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.timedata.R
-import com.laimburggasse.aquariumcontrol.timedata.testing.TimedataMockData.mockTimeDataUiStateEmpty
-import com.laimburggasse.aquariumcontrol.timedata.testing.TimedataMockData.mockTimeDataUiStateError
-import com.laimburggasse.aquariumcontrol.timedata.testing.TimedataMockData.mockTimeDataUiStateSuccess
+import com.laimburggasse.aquariumcontrol.timedata.preview.TimeDataPreviewDataImpl.mockTimeDataUiStateEmpty
+import com.laimburggasse.aquariumcontrol.timedata.preview.TimeDataPreviewDataImpl.mockTimeDataUiStateError
+import com.laimburggasse.aquariumcontrol.timedata.preview.TimeDataPreviewDataImpl.mockTimeDataUiStateSuccess
 
 const val chartHeight = 200
 const val axisGranularityOnOff = 1.0f

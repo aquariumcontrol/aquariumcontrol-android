@@ -51,11 +51,11 @@ import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.heating.preview.HeatingPreviewDataImpl.mockHeatingSetValsUiState
+import com.laimburggasse.aquariumcontrol.heating.preview.HeatingPreviewDataImpl.mockHeatingStatsUiState
 import com.laimburggasse.aquariumcontrol.heating.R
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
-import com.laimburggasse.aquariumcontrol.heating.testing.HeatingMockData.mockHeatingSetValsUiState
-import com.laimburggasse.aquariumcontrol.heating.testing.HeatingMockData.mockHeatingStatsUiState
 
 @Composable
 fun HeatingScreen(

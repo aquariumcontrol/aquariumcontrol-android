@@ -42,12 +42,12 @@ import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedProfilesUiStateError
+import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedProfilesUiStateSuccess
+import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedScheduleSelectionUiStateError
+import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedScheduleSelectionUiStateSuccess
 import com.laimburggasse.aquariumcontrol.feed.R
 import com.laimburggasse.aquariumcontrol.feed.presentation.navigation.FeedNavigationEvent
-import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedProfilesUiStateError
-import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedProfilesUiStateSuccess
-import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedScheduleSelectionUiStateError
-import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedScheduleSelectionUiStateSuccess
 
 @Composable
 fun FeedScreen(

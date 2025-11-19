@@ -58,10 +58,10 @@ import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.refill.R
+import com.laimburggasse.aquariumcontrol.refill.preview.RefillPreviewDataImpl.mockRefillHistoryUiStateEmpty
+import com.laimburggasse.aquariumcontrol.refill.preview.RefillPreviewDataImpl.mockRefillHistoryUiStateError
+import com.laimburggasse.aquariumcontrol.refill.preview.RefillPreviewDataImpl.mockRefillHistoryUiStateSuccess
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
-import com.laimburggasse.aquariumcontrol.refill.testing.RefillMockData.mockRefillHistoryUiStateEmpty
-import com.laimburggasse.aquariumcontrol.refill.testing.RefillMockData.mockRefillHistoryUiStateError
-import com.laimburggasse.aquariumcontrol.refill.testing.RefillMockData.mockRefillHistoryUiStateSuccess
 
 @Composable
 fun RefillHistoryScreen(
