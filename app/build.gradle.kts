@@ -48,7 +48,7 @@ android {
         minSdk = 26
         targetSdk = 34
         versionCode = 13
-        versionName = "3.0.1"
+        versionName = "3.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["clearPackageData"] = "false"
