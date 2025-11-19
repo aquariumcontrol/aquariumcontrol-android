@@ -28,7 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
 import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingRangeSliderTextFieldsLandscapeComposablePreview
 
-@Suppress("unused")
+
 class HeatingRangeSliderTextFieldsLandscapeComposableTest {
     @PreviewTest
     @Preview(

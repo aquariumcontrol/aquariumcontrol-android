@@ -30,7 +30,7 @@ import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHisto
 import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryScreenPreviewError
 import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryScreenPreviewSuccess
 
-@Suppress("unused")
+
 class RefillHistoryScreenTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)

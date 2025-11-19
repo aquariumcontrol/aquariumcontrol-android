@@ -29,11 +29,12 @@ import com.android.tools.screenshot.PreviewTest
 import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryScreenPreviewEmpty
 import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryScreenPreviewSuccess
 
-@Suppress("unused")
+
 class FeedHistoryScreenTest {
     @PreviewTest
-    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+    // Portrait orientation screen tests consume too much heap space
+    //@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    //@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_YES,

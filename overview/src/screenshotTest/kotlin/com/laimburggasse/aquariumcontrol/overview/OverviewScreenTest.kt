@@ -29,7 +29,7 @@ import com.android.tools.screenshot.PreviewTest
 import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewScreenPreviewError
 import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewScreenPreviewSuccess
 
-@Suppress("unused")
+
 class OverviewScreenTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)

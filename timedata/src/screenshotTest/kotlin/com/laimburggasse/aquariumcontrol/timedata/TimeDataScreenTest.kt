@@ -30,7 +30,7 @@ import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreenPre
 import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreenPreviewError
 import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreenPreviewSuccess
 
-@Suppress("unused")
+
 class TimeDataScreenTest {
     @PreviewTest
     @Preview(showBackground = true, heightDp = 1250, uiMode = Configuration.UI_MODE_NIGHT_YES)

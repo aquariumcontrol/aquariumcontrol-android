@@ -29,7 +29,7 @@ import com.android.tools.screenshot.PreviewTest
 import com.laimburggasse.aquariumcontrol.ventilation.presentation.VentilationButtonsComposableLandscapePreview
 import com.laimburggasse.aquariumcontrol.ventilation.presentation.VentilationButtonsComposablePortraitPreview
 
-@Suppress("unused")
+
 class VentilationButtonsComposableTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)

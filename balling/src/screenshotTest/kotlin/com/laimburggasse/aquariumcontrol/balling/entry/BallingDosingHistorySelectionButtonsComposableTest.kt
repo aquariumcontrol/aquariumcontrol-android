@@ -29,7 +29,7 @@ import com.android.tools.screenshot.PreviewTest
 import com.laimburggasse.aquariumcontrol.balling.presentation.entry.BallingDosingHistorySelectionButtonsComposableLandscapePreview
 import com.laimburggasse.aquariumcontrol.balling.presentation.entry.BallingDosingHistorySelectionButtonsComposablePortraitPreview
 
-@Suppress("unused")
+
 class BallingDosingHistorySelectionButtonsComposableTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)

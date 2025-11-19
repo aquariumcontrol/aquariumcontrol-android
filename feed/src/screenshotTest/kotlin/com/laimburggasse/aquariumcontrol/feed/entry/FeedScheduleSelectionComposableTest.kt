@@ -29,7 +29,7 @@ import com.android.tools.screenshot.PreviewTest
 import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScheduleSelectionComposableEmptyPreview
 import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScheduleSelectionComposableSuccessPreview
 
-@Suppress("unused")
+
 class FeedScheduleSelectionComposableTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)

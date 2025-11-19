@@ -29,7 +29,7 @@ import com.android.tools.screenshot.PreviewTest
 import com.laimburggasse.aquariumcontrol.balling.presentation.edit.BallingProfileEditTextFieldSliderComposableLandscapePreview
 import com.laimburggasse.aquariumcontrol.balling.presentation.edit.BallingProfileEditTextFieldSliderComposablePortraitPreview
 
-@Suppress("unused")
+
 class BallingProfileEditTextFieldSliderComposableTest {
     @PreviewTest
     @Preview(

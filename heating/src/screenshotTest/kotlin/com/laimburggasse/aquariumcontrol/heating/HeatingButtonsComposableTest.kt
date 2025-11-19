@@ -29,7 +29,7 @@ import com.android.tools.screenshot.PreviewTest
 import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingButtonsComposableLandscapePreview
 import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingButtonsComposablePortraitPreview
 
-@Suppress("unused")
+
 class HeatingButtonsComposableTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)

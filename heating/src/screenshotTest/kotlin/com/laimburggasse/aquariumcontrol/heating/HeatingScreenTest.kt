@@ -29,7 +29,7 @@ import com.android.tools.screenshot.PreviewTest
 import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingScreenPreviewError
 import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingScreenPreviewSuccess
 
-@Suppress("unused")
+
 class HeatingScreenTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)

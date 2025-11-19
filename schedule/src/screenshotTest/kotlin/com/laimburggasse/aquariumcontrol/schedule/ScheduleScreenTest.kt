@@ -28,7 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
 import com.laimburggasse.aquariumcontrol.schedule.presentation.ScheduleScreenPreviewSuccess
 
-@Suppress("unused")
+
 class ScheduleScreenTest {
     @PreviewTest
     @Preview(showBackground = true, heightDp = 1200, uiMode = Configuration.UI_MODE_NIGHT_YES)

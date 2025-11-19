@@ -28,7 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
 import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileEditMenuComposablePreview
 
-@Suppress("unused")
+
 class FeedProfileEditMenuComposableTest {
     @PreviewTest
     @Preview(showBackground = true, heightDp = 600, uiMode = Configuration.UI_MODE_NIGHT_YES)

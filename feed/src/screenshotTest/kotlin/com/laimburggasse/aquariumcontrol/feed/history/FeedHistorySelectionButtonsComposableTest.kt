@@ -29,7 +29,7 @@ import com.android.tools.screenshot.PreviewTest
 import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedHistorySelectionButtonsComposableLandscapePreview
 import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedHistorySelectionButtonsComposablePortraitPreview
 
-@Suppress("unused")
+
 class FeedHistorySelectionButtonsComposableTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)

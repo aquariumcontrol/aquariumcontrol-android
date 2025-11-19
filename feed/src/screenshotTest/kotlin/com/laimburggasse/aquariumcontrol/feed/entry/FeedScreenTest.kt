@@ -29,7 +29,6 @@ import com.android.tools.screenshot.PreviewTest
 import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScreenPreviewError
 import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScreenPreviewSuccess
 
-@Suppress("unused")
 class FeedScreenTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)

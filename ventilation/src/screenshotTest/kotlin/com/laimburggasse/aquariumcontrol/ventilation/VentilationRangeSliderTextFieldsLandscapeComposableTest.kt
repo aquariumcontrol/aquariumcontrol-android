@@ -28,7 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
 import com.laimburggasse.aquariumcontrol.ventilation.presentation.VentilationRangeSliderTextFieldsLandscapeComposablePreview
 
-@Suppress("unused")
+
 class VentilationRangeSliderTextFieldsLandscapeComposableTest {
     @PreviewTest
     @Preview(
