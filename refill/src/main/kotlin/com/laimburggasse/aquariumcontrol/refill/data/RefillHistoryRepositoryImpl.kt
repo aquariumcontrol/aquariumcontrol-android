@@ -89,7 +89,9 @@ open class RefillHistoryRepositoryImpl @Inject constructor(
 
                 val result: DataFetchResult<List<RefillHistoryLogEntry>> =
                     withContext(context = Dispatchers.IO) {
-                        val reader = RefillHistoryLogEntryReader(url)
+                        val reader = RefillHistoryLogEntryReader(
+                            url, username = controller.user, password = controller.password
+                        )
                         reader.readRefillEvents()
                     }
 

@@ -72,7 +72,9 @@ open class HeatingStatsRepositoryImpl @Inject constructor(
             val result: DataFetchResult<List<HeatingStatsEntry>> =
                 withContext(context = Dispatchers.IO) {
                     val url = "http://${controller.address}:${controller.port}${WebApiUrls.HEATING_LOAD_STATS}"
-                    val heatingStatsReader = HeatingStatsReader(url)
+                    val heatingStatsReader = HeatingStatsReader(
+                        url, username = controller.user, password = controller.password
+                    )
                     val stringResult: DataFetchResult<List<HeatingStatsStringEntry>> =
                         heatingStatsReader.readStatsEntry()
 

@@ -4,17 +4,25 @@ import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import kotlinx.serialization.json.Json
+import okhttp3.Credentials
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 
-class BallingProfileReader(private val url: String) {
+class BallingProfileReader(
+    private val url: String,
+    username: String,
+    password: String
+) {
     // This class reads the Balling profiles from the server using a GET request.
     private val client = OkHttpClient()
     private val json = Json { ignoreUnknownKeys = true }
+    private val authHeaderValue: String = Credentials.basic(username, password)
 
     fun readBallingProfiles(): DataFetchResult<List<BallingProfile>> {
-        val request: Request = Request.Builder().url(url).build()
+        val request: Request = Request.Builder().url(url).header(
+            name = "Authorization", authHeaderValue
+        ).get().build()
 
         try {
             val response: Response = client.newCall(request).execute()

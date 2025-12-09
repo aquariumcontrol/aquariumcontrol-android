@@ -99,7 +99,9 @@ open class VentilationSetValsRepositoryImpl @Inject constructor(
 
             val networkResult: DataFetchResult<VentilationSetVals> = withContext(context = Dispatchers.IO) {
                 val url = "http://${controller.address}:${controller.port}${WebApiUrls.VENTILATION_LOAD_SET_VALS}"
-                val ventilationSetValsReader = VentilationSetValsReader(url)
+                val ventilationSetValsReader = VentilationSetValsReader(
+                    url, username = controller.user, password = controller.password
+                )
                 when (val setValsList: DataFetchResult<List<VentilationSetVals>> =
                     ventilationSetValsReader.readVentilationSetVals()) {
                     is DataFetchResult.Success -> {

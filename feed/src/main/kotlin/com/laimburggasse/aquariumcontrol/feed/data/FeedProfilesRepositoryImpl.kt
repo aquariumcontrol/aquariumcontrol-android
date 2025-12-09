@@ -97,8 +97,10 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
 
                 val networkResult: DataFetchResult<List<FeedProfileImport>> =
                     withContext(context = Dispatchers.IO) {
-                        val profileUrl = "http://${controller.address}:${controller.port}${WebApiUrls.FEED_LOAD_PROFILES}"
-                        val profileReader = FeedProfileReader(profileUrl)
+                        val url = "http://${controller.address}:${controller.port}${WebApiUrls.FEED_LOAD_PROFILES}"
+                        val profileReader = FeedProfileReader(
+                            url, username = controller.user, password = controller.password
+                        )
                         profileReader.readFeedProfiles()
                     }
 

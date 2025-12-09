@@ -1,28 +1,29 @@
 package com.laimburggasse.aquariumcontrol.timedata.data.remote
 
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.timedata.data.remote.dto.TimeDataStringSample
-import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import kotlinx.serialization.json.Json
+import okhttp3.Credentials
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
-import java.sql.Date
-import java.sql.Time
-import java.util.Calendar
-import kotlin.collections.iterator
 
-class TimeDataReader(private val urlWithoutParameters: String) {
+class TimeDataReader(
+    private val url: String,
+    username: String,
+    password: String
+) {
     // This class reads the time series from the server using a GET request.
     private val client = OkHttpClient()
     private val json = Json { ignoreUnknownKeys = true }
+    private val authHeaderValue: String = Credentials.basic(username, password)
 
     fun readTimeDataSeries(): DataFetchResult<List<TimeDataStringSample>> {
         try {
-            val url: String = urlWithoutParameters
-
-            val request: Request = Request.Builder().url(url).build()
+            val request: Request = Request.Builder().url(url).header(
+                name = "Authorization", authHeaderValue
+            ).get().build()
 
             val response: Response = client.newCall(request).execute()
             if (response.isSuccessful) {

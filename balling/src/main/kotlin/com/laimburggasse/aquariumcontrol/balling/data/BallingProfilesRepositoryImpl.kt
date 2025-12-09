@@ -101,7 +101,9 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
                 emit(value = DataFetchResult.Loading)
 
                 val url = "http://${controller.address}:${controller.port}${WebApiUrls.BALLING_LOAD_SET_VALS}"
-                val reader = BallingProfileReader(url)
+                val reader = BallingProfileReader(
+                    url, username = controller.user, password = controller.password
+                )
                 // Perform the network request on a background thread.
                 val networkResult: DataFetchResult<List<BallingProfile>> =
                     withContext(context = Dispatchers.IO) {

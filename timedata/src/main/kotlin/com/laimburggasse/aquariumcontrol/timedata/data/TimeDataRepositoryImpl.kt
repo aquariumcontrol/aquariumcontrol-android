@@ -70,7 +70,9 @@ open class TimeDataRepositoryImpl @Inject constructor(
                         val url: String =
                             "http://" + sessionManager.getControllerAddress() + ":" +
                             sessionManager.getControllerPort() + WebApiUrls.LOAD_TIME_DATA
-                        val reader = TimeDataReader(urlWithoutParameters = url)
+                        val reader = TimeDataReader(
+                            url, username = controller.user, password = controller.password
+                        )
                         reader.readTimeDataSeries()
                     }
                 val processedResult: DataFetchResult<List<TimeDataSample>> = when (readResult) {

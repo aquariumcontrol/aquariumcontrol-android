@@ -93,7 +93,9 @@ open class ScheduleRepositoryImpl @Inject constructor(
             emit(value = DataFetchResult.Loading)
 
             // A controller is present, so start fetching
-            val networkResult: DataFetchResult<ScheduleEntries> = fetchScheduleSetVals()
+            val networkResult: DataFetchResult<ScheduleEntries> = fetchScheduleSetVals(
+                username = controller.user, password = controller.password
+            )
             emit(value = networkResult)
         }
     }.stateIn(
@@ -153,13 +155,13 @@ open class ScheduleRepositoryImpl @Inject constructor(
     }
 
     // helper function for the flow
-    open suspend fun fetchScheduleSetVals(): DataFetchResult<ScheduleEntries> {
+    open suspend fun fetchScheduleSetVals(username: String, password: String): DataFetchResult<ScheduleEntries> {
         return withContext(context = Dispatchers.IO) {
             val url: String =
                 "http://" + sessionManager.getControllerAddress() + ":" +
                 sessionManager.getControllerPort() + WebApiUrls.ACTUATOR_SCHEDULE_LOAD
 
-            val scheduleEntryReader = ScheduleEntryReader(url)
+            val scheduleEntryReader = ScheduleEntryReader(url, username, password)
             val result: DataFetchResult<List<ScheduleStringEntry>> =
                 scheduleEntryReader.readScheduleEntryList()
             val processedResult: DataFetchResult<ScheduleEntries> = when (result) {

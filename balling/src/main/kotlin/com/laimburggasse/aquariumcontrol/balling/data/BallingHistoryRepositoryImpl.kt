@@ -89,7 +89,9 @@ open class BallingHistoryRepositoryImpl @Inject constructor(
 
                 val result: DataFetchResult<List<BallingHistoryLogEntry>> =
                     withContext(context = Dispatchers.IO) {
-                        val reader = BallingHistoryLogEntryReader(url)
+                        val reader = BallingHistoryLogEntryReader(
+                            url, username = controller.user, password = controller.password
+                        )
                         reader.readBallingEvents()
                     }
 
