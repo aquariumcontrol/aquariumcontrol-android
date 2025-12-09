@@ -97,7 +97,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
 
                 val networkResult: DataFetchResult<List<FeedProfileImport>> =
                     withContext(context = Dispatchers.IO) {
-                        val profileUrl = "http://${controller.address}:${controller.port}${WebApiUrls.FEED_GET_PROFILES}"
+                        val profileUrl = "http://${controller.address}:${controller.port}${WebApiUrls.FEED_LOAD_PROFILES}"
                         val profileReader = FeedProfileReader(profileUrl)
                         profileReader.readFeedProfiles()
                     }
@@ -138,7 +138,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
         // Perform the actual network request in the background.
         repositoryScope.launch(context = Dispatchers.IO) {
             val success: Boolean = webApiPostRequestExecution(
-                apiUrl = WebApiUrls.FEED_POST_REMOVE_PROFILE,
+                apiUrl = WebApiUrls.FEED_DELETE_PROFILE + feedProfile.profileID,
                 sessionManager = sessionManager,
                 webApiPostRequest = WebApiPostRequest(),
                 optionalGetParams = feedProfile.getFeedProfileApiCallParameters()
@@ -156,7 +156,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
         repositoryScope.launch(context = Dispatchers.IO) {
             val success: Boolean = webApiPostRequestExecution(
                 sessionManager = sessionManager,
-                apiUrl = WebApiUrls.FEED_POST_PROFILE_CREATE,
+                apiUrl = WebApiUrls.FEED_PROFILE_CREATE,
                 webApiPostRequest = WebApiPostRequest(),
                 optionalGetParams = mapOf(WebApiParams.PROFILE_NAME to feedProfileName)
             )
@@ -195,7 +195,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
         repositoryScope.launch(context = Dispatchers.IO) {
             val success: Boolean = webApiPostRequestExecution(
                 sessionManager = sessionManager,
-                apiUrl = WebApiUrls.FEED_POST_PROFILE_UPDATE,
+                apiUrl = WebApiUrls.FEED_PROFILE_UPDATE,
                 webApiPostRequest = WebApiPostRequest(),
                 optionalGetParams = apiCallParameters
             )

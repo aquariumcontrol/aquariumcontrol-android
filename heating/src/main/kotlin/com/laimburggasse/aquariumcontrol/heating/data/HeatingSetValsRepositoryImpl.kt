@@ -98,7 +98,7 @@ open class HeatingSetValsRepositoryImpl @Inject constructor(
             emit(value = DataFetchResult.Loading)
 
             val networkResult: DataFetchResult<HeatingSetVals> = withContext(context = Dispatchers.IO) {
-                val url = "http://${controller.address}:${controller.port}${WebApiUrls.HEATING_GET_SET_VALS}"
+                val url = "http://${controller.address}:${controller.port}${WebApiUrls.HEATING_LOAD_SET_VALS}"
                 val heatingSetValsReader = HeatingSetValsReader(url)
                 when (val setValsList: DataFetchResult<List<HeatingSetVals>> =
                     heatingSetValsReader.readHeatingSetVals()) {
@@ -179,7 +179,7 @@ open class HeatingSetValsRepositoryImpl @Inject constructor(
             repositoryScope.launch(context = Dispatchers.IO) {
                 val success: Boolean = webApiPostRequestExecution(
                     sessionManager = sessionManager,
-                    apiUrl = WebApiUrls.HEATING_POST_SET_VALS,
+                    apiUrl = WebApiUrls.HEATING_UPDATE_SET_VALS,
                     webApiPostRequest = WebApiPostRequest(),
                     optionalGetParams = mapOf(
                         WebApiParams.HEATING_SWITCH_ON_TEMPERATURE to currentValues.heatingSwitchOnTemp.toString(),

@@ -57,7 +57,7 @@ fun OverviewWaterSignalsComposable(overviewData: OverviewData) {
             }
             Column(modifier = Modifier.weight(weight = 1f)) {
                 Row(modifier = Modifier.align(Alignment.End)) {
-                    Text(text = overviewData.temperatureWater.toString() + stringResource(R.string.degree_celsius))
+                    Text(text = overviewData.waterTemperature.toString() + stringResource(R.string.degree_celsius))
                 }
             }
         }
@@ -69,7 +69,7 @@ fun OverviewWaterSignalsComposable(overviewData: OverviewData) {
             }
             Column(modifier = Modifier.weight(weight = 1f)) {
                 Row(modifier = Modifier.align(Alignment.End)) {
-                    Text(text = "${overviewData.pH}")
+                    Text(text = "${overviewData.phValue}")
                 }
             }
         }

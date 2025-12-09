@@ -78,7 +78,9 @@ open class OverviewRepositoryImpl @Inject constructor(
 
                 val result: DataFetchResult<OverviewData> = withContext(context = Dispatchers.IO) {
                     val url = "http://${controller.address}:${controller.port}${WebApiUrls.OVERVIEW_GET_DATA}"
-                    val reader = OverviewDataReader(url)
+                    val reader = OverviewDataReader(
+                        url, username = controller.user, password = controller.password
+                    )
                     reader.readOverviewData()
                 }
 

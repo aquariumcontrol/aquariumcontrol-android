@@ -102,7 +102,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
 
             val networkResult: DataFetchResult<List<FeedScheduleEntry>> =
                 withContext(context = Dispatchers.IO) {
-                    val url = "http://${controller.address}:${controller.port}${WebApiUrls.FEED_GET_SCHEDULE}"
+                    val url = "http://${controller.address}:${controller.port}${WebApiUrls.FEED_LOAD_SCHEDULE}"
                     val scheduleReader = FeedScheduleEntryReader(url)
                     val importResult: DataFetchResult<List<FeedScheduleEntryImport>> =
                         scheduleReader.readFeedScheduleEntries()
@@ -191,7 +191,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
         // may have committed to the server meanwhile.
         repositoryScope.launch(context = Dispatchers.IO) {
             val result: Boolean = webApiPostRequestExecution(
-                apiUrl = WebApiUrls.FEED_POST_SCHEDULE_REMOVE_ENTRY,
+                apiUrl = WebApiUrls.FEED_SCHEDULE_DELETE_ENTRY,
                 sessionManager = sessionManager,
                 webApiPostRequest = WebApiPostRequest(),
                 optionalGetParams = feedScheduleEntry.getApiParameters()
@@ -239,7 +239,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
                 sessionManager = sessionManager,
                 webApiPostRequest = WebApiPostRequest(),
                 optionalGetParams = apiParams,
-                apiUrl = WebApiUrls.FEED_POST_PROFILE_SCHEDULE_NEW
+                apiUrl = WebApiUrls.FEED_PROFILE_SCHEDULE_NEW
             )
             if (result) {
                 delay(timeMillis = 3000L)
@@ -283,7 +283,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
                 sessionManager = sessionManager,
                 webApiPostRequest = WebApiPostRequest(),
                 optionalGetParams = modifiedEntry.getApiParametersForUpdating(timestampOld),
-                apiUrl = WebApiUrls.FEED_POST_PROFILE_UPDATE_SCHEDULE
+                apiUrl = WebApiUrls.FEED_UPDATE_SCHEDULE
             )
             if (result) {
                 delay(timeMillis = 3000L)

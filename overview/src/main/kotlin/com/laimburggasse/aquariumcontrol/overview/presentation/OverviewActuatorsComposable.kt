@@ -73,7 +73,7 @@ fun OverviewActuatorsComposable(overviewData: OverviewData) {
             }
             Column(modifier = Modifier.weight(weight = 1f)) {
                 Row(modifier = Modifier.align(Alignment.End)) {
-                    Text(text = overviewData.surfaceVentilation)
+                    Text(text = overviewData.surfaceVentilationStatus)
                 }
             }
         }
@@ -85,7 +85,7 @@ fun OverviewActuatorsComposable(overviewData: OverviewData) {
             }
             Column(modifier = Modifier.weight(weight = 1f)) {
                 Row(modifier = Modifier.align(Alignment.End)) {
-                    Text(text = overviewData.heater)
+                    Text(text = overviewData.heatingStatus)
                 }
             }
         }

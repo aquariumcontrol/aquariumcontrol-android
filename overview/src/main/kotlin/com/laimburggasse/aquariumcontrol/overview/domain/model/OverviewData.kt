@@ -22,18 +22,21 @@
 
 package com.laimburggasse.aquariumcontrol.overview.domain.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class OverviewData(
     // This class represents the data that is displayed on the overview screen.
     val timestamp: String,
-    val temperatureWater: Double,
-    val temperatureWaterFiltered: Double,
-    val pH: Double,
-    val pHFiltered: Double,
+    val waterTemperature: Double,
+    val filteredWaterTemperature: Double,
+    val phValue: Double,
+    val filteredPhValue: Double,
     val conductivity: Double,
-    val conductivityFiltered: Double,
+    val filteredConductivity: Double,
     val tankLevelSwitchPosition: String,
-    val surfaceVentilation: String,
-    val temperatureAmbient: Double,
-    val humidityAmbient: Double,
-    val heater: String,
+    val surfaceVentilationStatus: String,
+    val ambientTemperature: Double,
+    val ambientHumidity: Double,
+    val heatingStatus: String,
 )

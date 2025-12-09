@@ -41,15 +41,15 @@ open class RefillRepositoryImpl @Inject constructor(
     private val _errorEvents = MutableSharedFlow<String>()
     override val errorEvents = _errorEvents.asSharedFlow()
     override suspend fun sendStartRequest() {
-        executeRequest(apiUrl = WebApiUrls.REFILL_POST_CONTROL_START)
+        executeRequest(apiUrl = WebApiUrls.REFILL_CONTROL_START)
     }
 
     override suspend fun sendStopRequest() {
-        executeRequest(apiUrl = WebApiUrls.REFILL_POST_CONTROL_STOP)
+        executeRequest(apiUrl = WebApiUrls.REFILL_CONTROL_STOP)
     }
 
     override suspend fun sendResetRequest() {
-        executeRequest(apiUrl = WebApiUrls.REFILL_POST_CONTROL_RESET)
+        executeRequest(apiUrl = WebApiUrls.REFILL_CONTROL_RESET)
     }
 
     private fun executeRequest(apiUrl: String) {

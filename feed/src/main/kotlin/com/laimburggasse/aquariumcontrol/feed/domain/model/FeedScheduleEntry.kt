@@ -52,7 +52,7 @@ data class FeedScheduleEntry (
         val params: MutableMap<String, String> = mutableMapOf()
         params[WebApiParams.PROFILE_ID] = profileId.toString()
         params[WebApiParams.REPEAT_DAILY] = if (repeatDaily) "1" else "0"
-        params[WebApiParams.TIMESTAMP_OLD] = getTimestampString(
+        params[WebApiParams.TIMESTAMP] = getTimestampString(
             timestampToBeFormatted = timestampOld
         ).replace(oldValue = " ", newValue = "T")
         params[WebApiParams.TIMESTAMP_NEW] = getTimestampString(

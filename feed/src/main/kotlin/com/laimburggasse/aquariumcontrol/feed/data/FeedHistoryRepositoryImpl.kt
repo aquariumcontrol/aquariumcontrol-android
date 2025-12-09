@@ -82,13 +82,15 @@ open class FeedHistoryRepositoryImpl @Inject constructor(
                 emit(value = DataFetchResult.Loading)
 
                 val url: String = if (isFullWeek) {
-                    "http://${controller!!.address}:${controller.port}${WebApiUrls.FEED_GET_EVENTS_7D}"
+                    "http://${controller!!.address}:${controller.port}${WebApiUrls.FEED_LOAD_EVENTS_7D}"
                 } else {
-                    "http://${controller!!.address}:${controller.port}${WebApiUrls.FEED_GET_EVENTS_24H}"
+                    "http://${controller!!.address}:${controller.port}${WebApiUrls.FEED_LOAD_EVENTS_24H}"
                 }
                 val result: DataFetchResult<List<FeedHistoryLogEntry>> =
                     withContext(context = Dispatchers.IO) {
-                        val reader = FeedHistoryLogEntryReader(url)
+                        val reader = FeedHistoryLogEntryReader(
+                            url, username = controller.user, password = controller.password
+                        )
                         reader.readFeedEvents()
                     }
 

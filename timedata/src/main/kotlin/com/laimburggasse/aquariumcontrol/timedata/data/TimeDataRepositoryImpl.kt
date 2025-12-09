@@ -69,7 +69,7 @@ open class TimeDataRepositoryImpl @Inject constructor(
                     withContext(context = Dispatchers.IO) {
                         val url: String =
                             "http://" + sessionManager.getControllerAddress() + ":" +
-                            sessionManager.getControllerPort() + WebApiUrls.DATA_GET_START_STOP
+                            sessionManager.getControllerPort() + WebApiUrls.LOAD_TIME_DATA
                         val reader = TimeDataReader(urlWithoutParameters = url)
                         reader.readTimeDataSeries()
                     }

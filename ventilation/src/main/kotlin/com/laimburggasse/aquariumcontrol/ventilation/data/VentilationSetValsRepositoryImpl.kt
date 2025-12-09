@@ -98,7 +98,7 @@ open class VentilationSetValsRepositoryImpl @Inject constructor(
             emit(value = DataFetchResult.Loading)
 
             val networkResult: DataFetchResult<VentilationSetVals> = withContext(context = Dispatchers.IO) {
-                val url = "http://${controller.address}:${controller.port}${WebApiUrls.VENTILATION_GET_SET_VALS}"
+                val url = "http://${controller.address}:${controller.port}${WebApiUrls.VENTILATION_LOAD_SET_VALS}"
                 val ventilationSetValsReader = VentilationSetValsReader(url)
                 when (val setValsList: DataFetchResult<List<VentilationSetVals>> =
                     ventilationSetValsReader.readVentilationSetVals()) {
@@ -178,7 +178,7 @@ open class VentilationSetValsRepositoryImpl @Inject constructor(
             repositoryScope.launch(context = Dispatchers.IO) {
                 val success: Boolean = webApiPostRequestExecution(
                     sessionManager = sessionManager,
-                    apiUrl = WebApiUrls.VENTILATION_POST_SET_VALS,
+                    apiUrl = WebApiUrls.VENTILATION_UPDATE_SET_VALS,
                     webApiPostRequest = WebApiPostRequest(),
                     optionalGetParams = mapOf(
                         WebApiParams.VENTILATION_SWITCH_ON_TEMPERATURE to

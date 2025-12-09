@@ -82,9 +82,9 @@ open class RefillHistoryRepositoryImpl @Inject constructor(
                 emit(value = DataFetchResult.Loading)
 
                 val url: String = if (isFullWeek) {
-                    "http://${controller!!.address}:${controller.port}${WebApiUrls.REFILL_GET_EVENTS_7D}"
+                    "http://${controller!!.address}:${controller.port}${WebApiUrls.REFILL_LOAD_EVENTS_7D}"
                 } else {
-                    "http://${controller!!.address}:${controller.port}${WebApiUrls.REFILL_GET_EVENTS_24H}"
+                    "http://${controller!!.address}:${controller.port}${WebApiUrls.REFILL_LOAD_EVENTS_24H}"
                 }
 
                 val result: DataFetchResult<List<RefillHistoryLogEntry>> =

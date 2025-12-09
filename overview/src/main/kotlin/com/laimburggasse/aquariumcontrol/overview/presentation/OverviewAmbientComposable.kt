@@ -63,7 +63,7 @@ fun OverviewAmbientComposable(overviewData: OverviewData) {
             }
             Column(modifier = Modifier.weight(weight = 1f)) {
                 Row(modifier = Modifier.align(Alignment.End)) {
-                    Text(text = overviewData.temperatureAmbient.toString() + stringResource(R.string.degree_celsius))
+                    Text(text = overviewData.ambientTemperature.toString() + stringResource(R.string.degree_celsius))
                 }
             }
         }
@@ -75,7 +75,7 @@ fun OverviewAmbientComposable(overviewData: OverviewData) {
             }
             Column(modifier = Modifier.weight(weight = 1f)) {
                 Row(modifier = Modifier.align(Alignment.End)) {
-                    Text(text = overviewData.humidityAmbient.toString() + stringResource(R.string.percentage))
+                    Text(text = overviewData.ambientHumidity.toString() + stringResource(R.string.percentage))
                 }
             }
         }

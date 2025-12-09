@@ -100,7 +100,7 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
                 // If there is no failure and we have a controller, proceed with loading.
                 emit(value = DataFetchResult.Loading)
 
-                val url = "http://${controller.address}:${controller.port}${WebApiUrls.BALLING_GET_SET_VALS}"
+                val url = "http://${controller.address}:${controller.port}${WebApiUrls.BALLING_LOAD_SET_VALS}"
                 val reader = BallingProfileReader(url)
                 // Perform the network request on a background thread.
                 val networkResult: DataFetchResult<List<BallingProfile>> =
@@ -151,7 +151,7 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
             val requestSuccess: Boolean = withContext(context = Dispatchers.IO) {
                 webApiPostRequestExecution(
                     sessionManager = sessionManager,
-                    apiUrl = WebApiUrls.BALLING_POST_SET_VALS,
+                    apiUrl = WebApiUrls.BALLING_UPDATE_SET_VALS,
                     webApiPostRequest = WebApiPostRequest(),
                     optionalGetParams = mapOf(
                         WebApiParams.PUMP_ID to ballingProfile.pumpId.toString(),

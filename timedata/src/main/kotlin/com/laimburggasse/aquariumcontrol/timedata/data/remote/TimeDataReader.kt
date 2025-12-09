@@ -20,30 +20,8 @@ class TimeDataReader(private val urlWithoutParameters: String) {
 
     fun readTimeDataSeries(): DataFetchResult<List<TimeDataStringSample>> {
         try {
-            val calendar24hAgo: Calendar = Calendar.getInstance()
-            calendar24hAgo.add(Calendar.HOUR, -24)
+            val url: String = urlWithoutParameters
 
-            val calendarNow: Calendar = Calendar.getInstance()
-
-            val dateTimeInMillis24hAgo: Long = calendar24hAgo.time.time
-            val date24hAgo = Date(dateTimeInMillis24hAgo)
-            val time24hAgo = Time(dateTimeInMillis24hAgo)
-
-            val dateTimeInMillisNow: Long = calendarNow.time.time
-            val dateNow = Date(dateTimeInMillisNow)
-            val timeNow = Time(dateTimeInMillisNow)
-
-            val optionalGetParams: Map<String, String> = mapOf(
-                WebApiParams.START_DATE to date24hAgo.toString().replace(oldChar = ':', newChar =  '-'),
-                WebApiParams.STOP_DATE to dateNow.toString().replace(oldChar = ':', newChar = '-'),
-                WebApiParams.START_TIME to time24hAgo.toString(),
-                WebApiParams.STOP_TIME to timeNow.toString())
-
-            var url = "$urlWithoutParameters?"
-
-            for ((key: String, value: String) in optionalGetParams) {
-                url += "$key=$value&"
-            }
             val request: Request = Request.Builder().url(url).build()
 
             val response: Response = client.newCall(request).execute()

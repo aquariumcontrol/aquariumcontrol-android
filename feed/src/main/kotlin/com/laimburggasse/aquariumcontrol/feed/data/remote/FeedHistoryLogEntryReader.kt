@@ -25,18 +25,29 @@ package com.laimburggasse.aquariumcontrol.feed.data.remote
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import kotlinx.serialization.json.Json
+import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 
-class FeedHistoryLogEntryReader(private val url: String) {
-    // This class will read the feed events from the server using a GET request.
+class FeedHistoryLogEntryReader(
+    private val url: String,
+    private val username: String,
+    private val password: String
+) {
+    // This class will read the feed events from the server primarily using a GET request.
     private val client = OkHttpClient()
     private val json = Json { ignoreUnknownKeys = true }
 
+    val formBody: FormBody = FormBody.Builder()
+        .add(name = WebApiParams.POST_PARAM_USERNAME, value = username)
+        .add(name = WebApiParams.POST_PARAM_PASSWORD, value = password)
+        .build()
+
     fun readFeedEvents(): DataFetchResult<List<FeedHistoryLogEntry>> {
-        val request: Request = Request.Builder().url(url).build()
+        val request: Request = Request.Builder().url(url).post(formBody).build()
 
         try {
             val response: Response = client.newCall(request).execute()

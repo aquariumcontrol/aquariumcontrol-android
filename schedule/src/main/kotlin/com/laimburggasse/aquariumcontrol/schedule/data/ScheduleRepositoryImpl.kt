@@ -136,7 +136,7 @@ open class ScheduleRepositoryImpl @Inject constructor(
             repositoryScope.launch(context = Dispatchers.IO) {
                 webApiPostRequestExecution(
                     sessionManager = sessionManager,
-                    apiUrl = WebApiUrls.ACTUATOR_SCHEDULE_POST_UPDATE,
+                    apiUrl = WebApiUrls.ACTUATOR_SCHEDULE_UPDATE,
                     webApiPostRequest = WebApiPostRequest(),
                     optionalGetParams = scheduleEntries.getApiParams(),
                 )
@@ -157,7 +157,7 @@ open class ScheduleRepositoryImpl @Inject constructor(
         return withContext(context = Dispatchers.IO) {
             val url: String =
                 "http://" + sessionManager.getControllerAddress() + ":" +
-                sessionManager.getControllerPort() + WebApiUrls.ACTUATOR_SCHEDULE_GET_VALS
+                sessionManager.getControllerPort() + WebApiUrls.ACTUATOR_SCHEDULE_LOAD
 
             val scheduleEntryReader = ScheduleEntryReader(url)
             val result: DataFetchResult<List<ScheduleStringEntry>> =
