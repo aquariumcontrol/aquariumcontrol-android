@@ -22,19 +22,19 @@
 
 package com.laimburggasse.aquariumcontrol.schedule.data
 
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiPostRequest
+import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
+import com.laimburggasse.aquariumcontrol.common.data.remote.webApiPostRequestExecution
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
-import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
-import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.schedule.data.remote.ScheduleEntryReader
 import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleEntry
 import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleStringEntry
 import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntries
 import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntriesFactory
-import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiPostRequest
-import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
-import com.laimburggasse.aquariumcontrol.common.data.remote.webApiPostRequestExecution
 import com.laimburggasse.aquariumcontrol.schedule.domain.repository.ScheduleRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -140,7 +140,7 @@ open class ScheduleRepositoryImpl @Inject constructor(
                     sessionManager = sessionManager,
                     apiUrl = WebApiUrls.ACTUATOR_SCHEDULE_UPDATE,
                     webApiPostRequest = WebApiPostRequest(),
-                    optionalGetParams = scheduleEntries.getApiParams(),
+                    postParams = scheduleEntries.getApiParams(),
                 )
             }
         }
@@ -160,7 +160,6 @@ open class ScheduleRepositoryImpl @Inject constructor(
             val url: String =
                 "http://" + sessionManager.getControllerAddress() + ":" +
                 sessionManager.getControllerPort() + WebApiUrls.ACTUATOR_SCHEDULE_LOAD
-
             val scheduleEntryReader = ScheduleEntryReader(url, username, password)
             val result: DataFetchResult<List<ScheduleStringEntry>> =
                 scheduleEntryReader.readScheduleEntryList()

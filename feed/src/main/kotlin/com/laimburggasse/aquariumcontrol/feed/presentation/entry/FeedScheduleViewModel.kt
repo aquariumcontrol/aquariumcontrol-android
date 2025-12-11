@@ -166,14 +166,14 @@ class FeedScheduleViewModel @Inject constructor(
                 if (event.isNewEntry) {
                     addFeedScheduleEntry(
                         feedProfile = event.feedProfile,
-                        repeatDaily = event.feedScheduleEntry.repeatDaily,
+                        repeatDaily = event.feedScheduleEntry.isDaily,
                         selectedCalendar = event.selectedCalendar
                     )
                 }
                 else {
                     updateFeedScheduleEntry(
                         feedProfile = event.feedProfile,
-                        repeatDaily = event.feedScheduleEntry.repeatDaily,
+                        repeatDaily = event.feedScheduleEntry.isDaily,
                         selectedCalendar = event.selectedCalendar,
                         millisSinceEpoch = event.millisSinceEpoch
                     )

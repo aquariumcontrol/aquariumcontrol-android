@@ -49,10 +49,10 @@ data class FeedProfilePhase(
         return mapOf(
             getPostParameterNameBase(idx)+ WebApiParams.DURATION to (durationMillis).toString(),
             getPostParameterNameBase(idx)+ WebApiParams.SKIMMER to (if (skimmer) 1 else 0).toString(),
-            getPostParameterNameBase(idx)+ WebApiParams.MAINPUMP1 to (if (mainPump1) 1 else 0).toString(),
-            getPostParameterNameBase(idx)+ WebApiParams.MAINPUMP2 to (if (mainPump2) 1 else 0).toString(),
-            getPostParameterNameBase(idx)+ WebApiParams.AUXPUMP1 to (if (auxPump1) 1 else 0).toString(),
-            getPostParameterNameBase(idx)+ WebApiParams.AUXPUMP2 to (if (auxPump2) 1 else 0).toString(),
+            getPostParameterNameBase(idx)+ WebApiParams.MAIN_PUMP1 to (if (mainPump1) 1 else 0).toString(),
+            getPostParameterNameBase(idx)+ WebApiParams.MAIN_PUMP2 to (if (mainPump2) 1 else 0).toString(),
+            getPostParameterNameBase(idx)+ WebApiParams.AUX_PUMP1 to (if (auxPump1) 1 else 0).toString(),
+            getPostParameterNameBase(idx)+ WebApiParams.AUX_PUMP2 to (if (auxPump2) 1 else 0).toString(),
         )
     }
 

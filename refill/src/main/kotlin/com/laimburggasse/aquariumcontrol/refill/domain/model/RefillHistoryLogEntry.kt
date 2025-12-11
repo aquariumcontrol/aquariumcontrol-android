@@ -28,11 +28,11 @@ import java.sql.Timestamp
 
 @Serializable
 data class RefillHistoryLogEntry(
-    @SerialName(value = "Timestamp")
+    @SerialName(value = "timestamp")
     val timestamp: String,
-    @SerialName(value = "Duration")
+    @SerialName(value = "duration")
     val duration: Double,
-    @SerialName(value = "Volume")
+    @SerialName(value = "volume")
     val volume: Double
 ) {
     // This class is used to represent a refill event.

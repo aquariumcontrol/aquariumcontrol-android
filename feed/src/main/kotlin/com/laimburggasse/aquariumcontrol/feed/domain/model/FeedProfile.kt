@@ -91,12 +91,12 @@ data class FeedProfile(
                 }
 
                 FeedProfilePhase(
-                    duration = getImportProperty(name = "${importPrefix}duration", 0.0) / 1000.0f,
-                    skimmer = getImportBoolProperty(name = "${importPrefix}skimmer"),
-                    mainPump1 = getImportBoolProperty(name = "${importPrefix}mainPump1"),
-                    mainPump2 = getImportBoolProperty(name = "${importPrefix}mainPump2"),
-                    auxPump1 = getImportBoolProperty(name = "${importPrefix}auxPump1"),
-                    auxPump2 = getImportBoolProperty(name = "${importPrefix}auxPump2"),
+                    duration = getImportProperty(name = "${importPrefix}${WebApiParams.DURATION}}", 0.0) / 1000.0f,
+                    skimmer = getImportBoolProperty(name = "${importPrefix}${WebApiParams.SKIMMER}"),
+                    mainPump1 = getImportBoolProperty(name = "${importPrefix}${WebApiParams.MAIN_PUMP1}"),
+                    mainPump2 = getImportBoolProperty(name = "${importPrefix}${WebApiParams.MAIN_PUMP2}"),
+                    auxPump1 = getImportBoolProperty(name = "${importPrefix}${WebApiParams.AUX_PUMP1}"),
+                    auxPump2 = getImportBoolProperty(name = "${importPrefix}${WebApiParams.MAIN_PUMP2}"),
                     isPause = isPause,
                     idx = index
                 )

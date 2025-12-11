@@ -196,7 +196,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
                 apiUrl = WebApiUrls.FEED_SCHEDULE_DELETE_ENTRY,
                 sessionManager = sessionManager,
                 webApiPostRequest = WebApiPostRequest(),
-                optionalGetParams = feedScheduleEntry.getApiParameters()
+                postParams = feedScheduleEntry.getApiParameters()
             )
             if (result) {
                 delay(timeMillis = 3000L)
@@ -232,7 +232,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
             timestamp = timestamp,
             profileId = feedProfileId,
             profileName = feedProfileName,
-            repeatDaily = repeatDaily
+            isDaily = repeatDaily
         )
 
         val apiParams: Map<String, String> = tempEntry.getApiParameters()
@@ -240,7 +240,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
             val result: Boolean = webApiPostRequestExecution(
                 sessionManager = sessionManager,
                 webApiPostRequest = WebApiPostRequest(),
-                optionalGetParams = apiParams,
+                postParams = apiParams,
                 apiUrl = WebApiUrls.FEED_PROFILE_SCHEDULE_NEW
             )
             if (result) {
@@ -271,7 +271,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
             timestamp = Timestamp(selectedCalendar.timeInMillis),
             profileId = feedProfileId,
             profileName = feedProfileName,
-            repeatDaily = repeatDaily
+            isDaily = repeatDaily
         )
 
         // Optimistic Update: Add the change to the pendingUpdates map.
@@ -284,7 +284,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
             val result: Boolean = webApiPostRequestExecution(
                 sessionManager = sessionManager,
                 webApiPostRequest = WebApiPostRequest(),
-                optionalGetParams = modifiedEntry.getApiParametersForUpdating(timestampOld),
+                postParams = modifiedEntry.getApiParametersForUpdating(timestampOld),
                 apiUrl = WebApiUrls.FEED_UPDATE_SCHEDULE
             )
             if (result) {

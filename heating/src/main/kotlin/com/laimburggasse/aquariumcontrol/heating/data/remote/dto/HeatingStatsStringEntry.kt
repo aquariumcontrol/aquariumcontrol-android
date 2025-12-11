@@ -9,19 +9,19 @@ import java.util.Locale
 
 @Serializable
 data class HeatingStatsStringEntry(
-    @SerialName(value = "Date")
+    @SerialName(value = "date")
     val dateString: String,
 
-    @SerialName(value = "Energy")
+    @SerialName(value = "energy")
     val energy: Double,
 
-    @SerialName(value = "AmbientTempAverage")
+    @SerialName(value = "ambientTempAverage")
     val ambientTemperatureAverage: Double,
 
-    @SerialName(value = "WaterTempAverage")
+    @SerialName(value = "waterTempAverage")
     val waterTemperatureAverage: Double,
 
-    @SerialName(value = "HeatingControlRuntime")
+    @SerialName(value = "heatingControlRuntime")
     val heatingControlRuntime: Int
 ) {
     fun transformToHeatingStatsEntry(): HeatingStatsEntry {

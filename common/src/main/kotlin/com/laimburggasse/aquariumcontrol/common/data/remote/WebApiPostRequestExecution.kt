@@ -30,7 +30,8 @@ suspend fun webApiPostRequestExecution(
     apiUrl: String,
     sessionManager: SessionManager,
     webApiPostRequest: WebApiPostRequest,
-    optionalGetParams: Map<String, String> = emptyMap()
+    getParams: Map<String, String> = emptyMap(),
+    postParams: Map<String, String> = emptyMap()
 ): Boolean {
     val user: String? = sessionManager.getControllerUser()
     val password: String? = sessionManager.getControllerPassword()
@@ -39,17 +40,23 @@ suspend fun webApiPostRequestExecution(
         return false
     }
     var url: String = "http://" + sessionManager.getControllerAddress() + ":" +
-                        sessionManager.getControllerPort() + apiUrl + "?"
+                        sessionManager.getControllerPort() + apiUrl
 
-    for ((index: Int, entry: Map.Entry<String, String>) in optionalGetParams.entries.withIndex()) {
+    if (!getParams.isEmpty()) {
+        url += "&"
+    }
+
+    for ((index: Int, entry: Map.Entry<String, String>) in getParams.entries.withIndex()) {
         val (key: String, value: String) = entry
         url += "$key=$value"
-        if (index != optionalGetParams.size - 1) {
+        if (index != getParams.size - 1) {
             url += "&"
         }
     }
 
     return withContext(context = Dispatchers.IO) {
-        webApiPostRequest.postData(url, username = user, password).isSuccess
+        webApiPostRequest.postData(
+            url, username = user, password = password, postParams = postParams
+        ).isSuccess
     }
 }

@@ -155,7 +155,7 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
                     sessionManager = sessionManager,
                     apiUrl = WebApiUrls.BALLING_UPDATE_SET_VALS,
                     webApiPostRequest = WebApiPostRequest(),
-                    optionalGetParams = mapOf(
+                    postParams = mapOf(
                         WebApiParams.PUMP_ID to ballingProfile.pumpId.toString(),
                         WebApiParams.DOSING_VOLUME to ballingProfile.volume.toString()
                     )

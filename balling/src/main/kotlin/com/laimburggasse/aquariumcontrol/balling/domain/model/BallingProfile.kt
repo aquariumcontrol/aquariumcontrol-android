@@ -28,9 +28,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class BallingProfile(
     // This class represents a Balling dosing profile.
-    @SerialName(value = "pumpid")
+    @SerialName(value = "pumpId")
     val pumpId: Int,
-    @SerialName(value = "dosingvolume")
+    @SerialName(value = "dosingVolume")
     var volume: Double,
     @SerialName(value = "label")
     val label: String

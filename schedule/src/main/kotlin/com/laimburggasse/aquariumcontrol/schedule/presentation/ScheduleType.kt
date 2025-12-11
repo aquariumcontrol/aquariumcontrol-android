@@ -23,8 +23,8 @@
 package com.laimburggasse.aquariumcontrol.schedule.presentation
 
 enum class ScheduleType(val key: String) {
-    BALLING(key = "Balling"),
-    REFILL(key = "Refill"),
-    VENTILATION(key = "Ventilation"),
-    HEATING(key = "Heating"),
+    BALLING(key = "balling"),
+    REFILL(key = "refill"),
+    VENTILATION(key = "ventilation"),
+    HEATING(key = "heating"),
 }

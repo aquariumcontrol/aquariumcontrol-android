@@ -143,7 +143,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
                 apiUrl = WebApiUrls.FEED_DELETE_PROFILE + feedProfile.profileID,
                 sessionManager = sessionManager,
                 webApiPostRequest = WebApiPostRequest(),
-                optionalGetParams = feedProfile.getFeedProfileApiCallParameters()
+                getParams = feedProfile.getFeedProfileApiCallParameters()
             )
             if (!success) {
                 failureResult.value = DataFetchResult.Error(
@@ -160,7 +160,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
                 sessionManager = sessionManager,
                 apiUrl = WebApiUrls.FEED_PROFILE_CREATE,
                 webApiPostRequest = WebApiPostRequest(),
-                optionalGetParams = mapOf(WebApiParams.PROFILE_NAME to feedProfileName)
+                postParams = mapOf(WebApiParams.PROFILE_NAME to feedProfileName)
             )
             if (success) {
                 delay(timeMillis = 3000L)
@@ -199,7 +199,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
                 sessionManager = sessionManager,
                 apiUrl = WebApiUrls.FEED_PROFILE_UPDATE,
                 webApiPostRequest = WebApiPostRequest(),
-                optionalGetParams = apiCallParameters
+                postParams = apiCallParameters
             )
             if (!success) {
                 failureResult.value = DataFetchResult.Error(

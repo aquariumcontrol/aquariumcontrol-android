@@ -10,53 +10,50 @@ import java.util.Locale
 @Serializable
 data class TimeDataStringSample(
     // This class is used to represent a time data sample read from API with timestamp as String
-    @SerialName(value = "Timestamp")
+    @SerialName(value = "timestamp")
     var timestamp: String = "",
 
-    @SerialName(value = "Temperature")
+    @SerialName(value = "waterTemperature")
     val temperature: Double = 0.0,
 
-    @SerialName(value = "TemperatureFiltered")
+    @SerialName(value = "filteredWaterTemperature")
     val temperatureFiltered: Double = 0.0,
 
-    @SerialName(value = "pH")
+    @SerialName(value = "phValue")
     val pH: Double = 0.0,
 
-    @SerialName(value = "pHFiltered")
+    @SerialName(value = "filteredPhValue")
     val pHFiltered: Double = 0.0,
 
-    @SerialName(value = "Conductivity")
+    @SerialName(value = "conductivity")
     val conductivity: Double = 0.0,
 
-    @SerialName(value = "ConductivityFiltered")
+    @SerialName(value = "filteredConductivity")
     val conductivityFiltered: Double = 0.0,
 
-    @SerialName(value = "ConductivityCompensated")
-    val conductivityCompensated: Double = 0.0,
-
-    @SerialName(value = "RefillInProgress")
+    @SerialName(value = "refillInProgress")
     val refillInProgress: Int = 0,
 
-    @SerialName(value = "MainTankLevelSwitchStatus")
+    @SerialName(value = "tankLevelSwitchPosition")
     val mainTankLevelSwitchStatus: Int = 0,
 
-    @SerialName(value = "SurfaceVentilation")
+    @SerialName(value = "tankLevelSwitchInvalid")
+    val mainTankLevelSwitchInvalid: Int = 0,
+
+    @SerialName(value = "tankLevelSwitchPositionStabilized")
+    val mainTankLevelSwitchPositionStabilized: Int = 0,
+
+    @SerialName(value = "surfaceVentilationStatus")
     val surfaceVentilation: Int = 0,
 
-    @SerialName(value = "AmbTemp")
+    @SerialName(value = "ambientTemperature")
     val ambientTemperature: Double = 0.0,
 
-    @SerialName(value = "AmbHum")
+    @SerialName(value = "ambientHumidity")
     val ambientHumidity: Double = 0.0,
 
-    @SerialName(value = "Heater")
+    @SerialName(value = "heaterStatus")
     val heater: Int = 0,
-
-    @SerialName(value = "RefillTankLevel")
-    val refillTankLevel: Double = 0.0,
-
-    @SerialName(value = "RefillTankLevelFiltered")
-    val refillTankLevelFiltered: Double = 0.0
 ) {
     fun transformToTimeDataSample(): TimeDataSample {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)

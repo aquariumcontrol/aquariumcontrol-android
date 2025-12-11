@@ -23,28 +23,34 @@
 package com.laimburggasse.aquariumcontrol.common.data.remote
 
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
-import okhttp3.FormBody
+import kotlinx.serialization.json.Json
+import okhttp3.Credentials
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import java.io.IOException
 
 class WebApiPostRequest {
     private val client = OkHttpClient()
+    private val jsonContentType = "application/json; charset=utf-8".toMediaType()
+    private val json = Json
 
     fun postData(
         url: String,
         username: String,
         password: String,
+        postParams: Map<String, String> = emptyMap()
     ): Result<String> {
-        val formBody: FormBody = FormBody.Builder()
-            .add(name = WebApiParams.POST_PARAM_USERNAME, value = username)
-            .add(name = WebApiParams.POST_PARAM_PASSWORD, value = password)
-            .build()
-
+        val authHeaderValue: String = Credentials.basic(username, password)
+        val jsonString: String = json.encodeToString(value = postParams)
+        val requestBody: RequestBody = jsonString.toRequestBody(contentType = jsonContentType)
         val request: Request = Request.Builder()
             .url(url)
-            .post(formBody)
+            .header(name = "Authorization", authHeaderValue)
+            .post(requestBody)
             .build()
 
         return try {
@@ -54,7 +60,7 @@ class WebApiPostRequest {
                 Result.success(value = responseBody)
             } else {
                 Result.failure(exception = IOException(
-                    GlobalConstants.ERR_MSG_SERVER_RESPONDED_ERR_CODE + response.code)
+                GlobalConstants.ERR_MSG_SERVER_RESPONDED_ERR_CODE + response.code)
                 )
             }
         } catch (exception: IOException) {

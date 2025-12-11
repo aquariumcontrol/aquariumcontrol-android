@@ -182,7 +182,7 @@ open class VentilationSetValsRepositoryImpl @Inject constructor(
                     sessionManager = sessionManager,
                     apiUrl = WebApiUrls.VENTILATION_UPDATE_SET_VALS,
                     webApiPostRequest = WebApiPostRequest(),
-                    optionalGetParams = mapOf(
+                    postParams = mapOf(
                         WebApiParams.VENTILATION_SWITCH_ON_TEMPERATURE to
                                 currentValues.ventilationSwitchOnTemp.toString(),
                         WebApiParams.VENTILATION_SWITCH_OFF_TEMPERATURE to

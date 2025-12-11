@@ -70,6 +70,16 @@ fun ScheduleScreen(
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         ScreenHeadlineComposable(text = stringResource(R.string.actuator_schedule))
+        when (configuration.orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> {
+                Row(horizontalArrangement = Arrangement.Center) {
+                    ScheduleUpdateResetButtonsComposable(onScheduleEvent)
+                }
+            }
+            else -> {
+                ScheduleUpdateResetButtonsComposable(onScheduleEvent)
+            }
+        }
         PullToRefreshBox(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center,
@@ -88,17 +98,6 @@ fun ScheduleScreen(
             when (scheduleUiState) {
                 is ScheduleUiState.Success -> {
                     val scheduleEntries: ScheduleEntries = scheduleUiState.scheduleEntries
-                    when (configuration.orientation) {
-                        Configuration.ORIENTATION_LANDSCAPE -> {
-                            Row {
-                                ScheduleUpdateResetButtonsComposable(onScheduleEvent)
-                            }
-                        }
-
-                        else -> {
-                            ScheduleUpdateResetButtonsComposable(onScheduleEvent)
-                        }
-                    }
                     Scaffold(
                         topBar = { },
                         bottomBar = { },
@@ -111,7 +110,8 @@ fun ScheduleScreen(
                         ) {
                             Spacer(modifier = Modifier.size(width = 10.dp, height = 10.dp))
                             Column(
-                                modifier = Modifier.verticalScroll(state = rememberScrollState())
+                                modifier = Modifier.verticalScroll(state = rememberScrollState()),
+                                horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 // --- Balling Adjustment ---
                                 ScheduleAdjustmentComposable(

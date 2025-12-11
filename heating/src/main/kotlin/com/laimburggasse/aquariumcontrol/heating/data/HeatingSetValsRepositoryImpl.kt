@@ -183,7 +183,7 @@ open class HeatingSetValsRepositoryImpl @Inject constructor(
                     sessionManager = sessionManager,
                     apiUrl = WebApiUrls.HEATING_UPDATE_SET_VALS,
                     webApiPostRequest = WebApiPostRequest(),
-                    optionalGetParams = mapOf(
+                    postParams = mapOf(
                         WebApiParams.HEATING_SWITCH_ON_TEMPERATURE to currentValues.heatingSwitchOnTemp.toString(),
                         WebApiParams.HEATING_SWITCH_OFF_TEMPERATURE to currentValues.heatingSwitchOffTemp.toString()
                     ),

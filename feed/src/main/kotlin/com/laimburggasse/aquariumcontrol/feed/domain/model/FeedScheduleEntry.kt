@@ -31,7 +31,7 @@ data class FeedScheduleEntry (
     var timestamp: Timestamp,
     val profileId: Int,
     val profileName: String,
-    val repeatDaily: Boolean
+    val isDaily: Boolean
 ) {
     fun getTimestampString(timestampToBeFormatted: Timestamp): String {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
@@ -41,7 +41,7 @@ data class FeedScheduleEntry (
     fun getApiParameters(): Map<String, String> {
         val params: MutableMap<String, String> = mutableMapOf()
         params[WebApiParams.PROFILE_ID] = profileId.toString()
-        params[WebApiParams.REPEAT_DAILY] = if (repeatDaily) "1" else "0"
+        params[WebApiParams.IS_DAILY] = if (isDaily) "1" else "0"
         params[WebApiParams.TIMESTAMP] = getTimestampString(
             timestampToBeFormatted = timestamp
         ).replace(oldValue = " ", newValue = "T")
@@ -51,7 +51,7 @@ data class FeedScheduleEntry (
     fun getApiParametersForUpdating(timestampOld: Timestamp): Map<String, String> {
         val params: MutableMap<String, String> = mutableMapOf()
         params[WebApiParams.PROFILE_ID] = profileId.toString()
-        params[WebApiParams.REPEAT_DAILY] = if (repeatDaily) "1" else "0"
+        params[WebApiParams.IS_DAILY] = if (isDaily) "1" else "0"
         params[WebApiParams.TIMESTAMP] = getTimestampString(
             timestampToBeFormatted = timestampOld
         ).replace(oldValue = " ", newValue = "T")

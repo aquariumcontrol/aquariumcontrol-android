@@ -48,6 +48,6 @@ data class FeedScheduleEntryImport (
         val parsedTimestamp = dateFormat.parse(timestampString)
         val timestamp = Timestamp(parsedTimestamp!!.time)
 
-        return (FeedScheduleEntry(timestamp, profileId, profileName, repeatDaily = isDaily == 1))
+        return (FeedScheduleEntry(timestamp, profileId, profileName, isDaily = isDaily == 1))
     }
 }

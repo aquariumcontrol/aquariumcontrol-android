@@ -96,7 +96,7 @@ fun FeedProfileScheduleScreen(
         timestamp,
         profileId = feedProfile?.profileID ?: -1,
         profileName = feedProfile?.profileName ?: "Non existing profile",
-        repeatDaily = repeatDaily
+        isDaily = repeatDaily
     )
     // Get the initial date and time from the timestamp
     val initialCalendar = Calendar.getInstance(Locale.getDefault()).apply {

@@ -31,11 +31,12 @@ data class ScheduleStringEntry (
     }
 
     fun transformToSetVal(): ScheduleEntry {
-        return ScheduleEntry(
+        val newEntry = ScheduleEntry(
             scheduleType = scheduleType,
             startTime = stringTimeToFloat(timeString = startTime, alternativeValue = 0f),
             stopTime = stringTimeToFloat(timeString = stopTime, alternativeValue = 24f),
             isLimitationActive = isLimitationActive > 0
         )
+        return newEntry
     }
 }

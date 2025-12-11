@@ -28,11 +28,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class BallingHistoryLogEntry(
     // This data class represents a Balling dosing event.
-    @SerialName(value = "Timestamp")
+    @SerialName(value = "timestamp")
     val timestamp: String,
-    @SerialName(value = "pumpid")
+    @SerialName(value = "pumpId")
     val pumpId: Int,
-    @SerialName(value = "dosingvolume")
+    @SerialName(value = "dosingVolume")
     val volume: Double,
     @SerialName(value = "label")
     val label: String
