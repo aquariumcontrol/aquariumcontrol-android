@@ -170,20 +170,14 @@ fun RefillScreen(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    device = "spec:width=800dp,height=400dp,orientation=landscape"
-)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-internal fun RefillScreenPreview() {
+internal fun RefillScreenDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.refill,
@@ -195,5 +189,28 @@ internal fun RefillScreenPreview() {
         },
         onNavigate = {},
         darkTheme = isSystemInDarkTheme()
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=800dp,height=400dp,orientation=landscape"
+)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun RefillScreenLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.refill,
+        screenContent = {
+            RefillScreen(
+                onNavigateFromRefill = { event -> },
+                onRefillEvent = { event -> }
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
     )
 }

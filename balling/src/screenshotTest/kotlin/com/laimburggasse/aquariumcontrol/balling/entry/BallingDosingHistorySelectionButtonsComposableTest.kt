@@ -26,17 +26,24 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.balling.presentation.entry.BallingDosingHistorySelectionButtonsComposableLandscapePreview
-import com.laimburggasse.aquariumcontrol.balling.presentation.entry.BallingDosingHistorySelectionButtonsComposablePortraitPreview
-
+import com.laimburggasse.aquariumcontrol.balling.presentation.entry.BallingDosingHistorySelectionButtonsPortraitComposableDarkPreview
+import com.laimburggasse.aquariumcontrol.balling.presentation.entry.BallingDosingHistorySelectionButtonsPortraitComposableLightPreview
+import com.laimburggasse.aquariumcontrol.balling.presentation.entry.BallingDosingHistorySelectionButtonsLandscapeComposableDarkPreview
+import com.laimburggasse.aquariumcontrol.balling.presentation.entry.BallingDosingHistorySelectionButtonsLandscapeComposableLightPreview
 
 class BallingDosingHistorySelectionButtonsComposableTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun BallingDosingHistorySelectionButtonsPortraitComposableDarkTest() {
+        BallingDosingHistorySelectionButtonsPortraitComposableDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun BallingDosingHistorySelectionButtonsComposablePortraitTest() {
-        BallingDosingHistorySelectionButtonsComposablePortraitPreview()
+    fun BallingDosingHistorySelectionButtonsPortraitComposableLightTest() {
+        BallingDosingHistorySelectionButtonsPortraitComposableLightPreview()
     }
 
     @PreviewTest
@@ -45,13 +52,19 @@ class BallingDosingHistorySelectionButtonsComposableTest {
         uiMode = Configuration.UI_MODE_NIGHT_YES,
         device = "spec:width=600dp,height=400dp,orientation=landscape"
     )
+    @Composable
+    fun BallingDosingHistorySelectionButtonsLandscapeComposableDarkTest() {
+        BallingDosingHistorySelectionButtonsLandscapeComposableDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_NO,
         device = "spec:width=600dp,height=400dp,orientation=landscape"
     )
     @Composable
-    fun BallingDosingHistorySelectionButtonsComposableLandscapeTest() {
-        BallingDosingHistorySelectionButtonsComposableLandscapePreview()
+    fun BallingDosingHistorySelectionButtonsLandscapeComposableLightTest() {
+        BallingDosingHistorySelectionButtonsLandscapeComposableLightPreview()
     }
 }

@@ -26,15 +26,21 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingRangeSliderTextFieldsPortraitComposablePreview
-
+import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingRangeSliderTextFieldsPortraitComposableDarkPreview
+import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingRangeSliderTextFieldsPortraitComposableLightPreview
 
 class HeatingRangeSliderTextFieldsPortraitComposableTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun HeatingRangeSliderTextFieldsPortraitComposableDarkTest() {
+        HeatingRangeSliderTextFieldsPortraitComposableDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun HeatingRangeSliderTextFieldsPortraitComposableSnapshotTest() {
-        HeatingRangeSliderTextFieldsPortraitComposablePreview()
+    fun HeatingRangeSliderTextFieldsPortraitComposableLightTest() {
+        HeatingRangeSliderTextFieldsPortraitComposableLightPreview()
     }
 }

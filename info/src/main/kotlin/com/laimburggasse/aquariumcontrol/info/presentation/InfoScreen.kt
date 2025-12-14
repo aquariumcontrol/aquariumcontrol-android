@@ -96,6 +96,7 @@ internal fun InfoScreenPreview() {
         navigationRouteSource = ViewNavigationRoutes.heating,
         screenContent = { InfoScreen() },
         onNavigate = {},
+        // we can use isSystemInDarkTheme here, because this preview is not used for snapshot testing
         darkTheme = isSystemInDarkTheme()
     )
 }

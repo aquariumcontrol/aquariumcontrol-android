@@ -26,14 +26,21 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposablePreview
+import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposableDarkPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposableLightPreview
 
 class ScreenHeadlineComposableTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun ScreenHeadlineComposableDarkTest() {
+        ScreenHeadlineComposableDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun ScreenHeadlineComposableSnapshotTest() {
-        ScreenHeadlineComposablePreview()
+    fun ScreenHeadlineComposableLightTest() {
+        ScreenHeadlineComposableLightPreview()
     }
 }

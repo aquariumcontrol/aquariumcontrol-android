@@ -58,10 +58,23 @@ fun MainDropDownMenuItemControllerSelectionComposable(
 }
 
 @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun MainDropdownMenuItemControllerSelectionDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface(
+            color = MaterialTheme.colorScheme.background,
+        ) {
+            MainDropDownMenuItemControllerSelectionComposable(
+                onNavigate = {}
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun MainDropdownMenuItemControllerSelectionPreview() {
-    AquariumControllerTheme {
+internal fun MainDropdownMenuItemControllerSelectionLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {

@@ -61,10 +61,19 @@ fun RoundRefreshButtonComposable(onClick: () -> Unit) {
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun RoundRefreshButtonComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            RoundRefreshButtonComposable(onClick = {})
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun RoundRefreshButtonComposablePreview() {
-    AquariumControllerTheme {
+internal fun RoundRefreshButtonComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface(color = MaterialTheme.colorScheme.background) {
             RoundRefreshButtonComposable(onClick = {})
         }

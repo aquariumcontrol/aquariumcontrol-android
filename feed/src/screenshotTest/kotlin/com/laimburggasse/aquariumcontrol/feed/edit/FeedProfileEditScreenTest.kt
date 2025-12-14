@@ -26,25 +26,57 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileEditScreenSuccessPreview
-
+import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileEditScreenFailureDarkPreview
+import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileEditScreenFailureLightPreview
+import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileEditScreenSuccessDarkPreview
+import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileEditScreenSuccessLightPreview
 
 class FeedProfileEditScreenTest {
     @PreviewTest
     @Preview(showBackground = true, heightDp = 1100, uiMode = Configuration.UI_MODE_NIGHT_YES)
-    @Preview(showBackground = true, heightDp = 1100, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_YES,
         device = "spec:width=600dp,height=1100dp,orientation=landscape"
     )
+    @Composable
+    fun FeedProfileEditScreenSuccessDarkTest() {
+        FeedProfileEditScreenSuccessDarkPreview()
+    }
+
+    @PreviewTest
+    @Preview(showBackground = true, heightDp = 1100, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_NO,
         device = "spec:width=600dp,height=1100dp,orientation=landscape"
     )
     @Composable
-    fun FeedProfileEditScreenSnapshotTest() {
-        FeedProfileEditScreenSuccessPreview()
+    fun FeedProfileEditScreenSuccessLightTest() {
+        FeedProfileEditScreenSuccessLightPreview()
+    }
+
+    @PreviewTest
+    @Preview(showBackground = true, heightDp = 1100, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Preview(
+        showBackground = true,
+        uiMode = Configuration.UI_MODE_NIGHT_YES,
+        device = "spec:width=600dp,height=1100dp,orientation=landscape"
+    )
+    @Composable
+    fun FeedProfileEditScreenFailureDarkTest() {
+        FeedProfileEditScreenFailureDarkPreview()
+    }
+
+    @PreviewTest
+    @Preview(showBackground = true, heightDp = 1100, uiMode = Configuration.UI_MODE_NIGHT_NO)
+    @Preview(
+        showBackground = true,
+        uiMode = Configuration.UI_MODE_NIGHT_NO,
+        device = "spec:width=600dp,height=1100dp,orientation=landscape"
+    )
+    @Composable
+    fun FeedProfileEditScreenFailureLightTest() {
+        FeedProfileEditScreenFailureLightPreview()
     }
 }

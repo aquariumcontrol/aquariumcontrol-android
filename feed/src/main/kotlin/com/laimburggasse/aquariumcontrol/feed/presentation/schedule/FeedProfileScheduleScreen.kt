@@ -231,19 +231,13 @@ fun FeedProfileScheduleScreen(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    device = "spec:width=600dp,height=400dp,orientation=landscape"
-)
 @Composable
-fun FeedProfileScheduleScreenPreviewSuccess() {
+fun FeedProfileScheduleScreenSuccessDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
@@ -257,14 +251,38 @@ fun FeedProfileScheduleScreenPreviewSuccess() {
             )
         },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=600dp,height=400dp,orientation=landscape"
+)
+@Composable
+fun FeedProfileScheduleScreenSuccessLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
+        screenContent = {
+            FeedProfileScheduleScreen(
+                feedProfile = mockFeedProfileForScheduleScreen,
+                isNewScheduleEntry = false,
+                millisSinceEpoch = 0,
+                onNavigateFromFeed = { event, id, isNew, millis -> },
+                onFeedScheduleEntryUiEvent = {}
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
     )
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun FeedProfileScheduleScreenPreviewError() {
+fun FeedProfileScheduleScreenErrorDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
@@ -278,6 +296,26 @@ fun FeedProfileScheduleScreenPreviewError() {
             )
         },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+fun FeedProfileScheduleScreenErrorLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
+        screenContent = {
+            FeedProfileScheduleScreen(
+                feedProfile = null,
+                isNewScheduleEntry = false,
+                millisSinceEpoch = 0,
+                onNavigateFromFeed = { event, id, isNew, millis -> },
+                onFeedScheduleEntryUiEvent = {}
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
     )
 }

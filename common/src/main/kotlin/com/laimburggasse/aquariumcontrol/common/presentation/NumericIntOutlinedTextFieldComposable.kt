@@ -64,11 +64,26 @@ fun NumericIntOutlinedTextFieldComposable(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun NumericIntOutlinedTextFieldComposablePreview() {
+internal fun NumericIntOutlinedTextFieldComposableDarkPreview() {
     val testValue = 5
-    AquariumControllerTheme {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            NumericIntOutlinedTextFieldComposable(
+                value = testValue,
+                onValueChange = {},
+                label = "testLabel",
+                modifier = Modifier,
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun NumericIntOutlinedTextFieldComposableLightPreview() {
+    val testValue = 5
+    AquariumControllerTheme(darkTheme = false) {
         Surface(color = MaterialTheme.colorScheme.background) {
             NumericIntOutlinedTextFieldComposable(
                 value = testValue,

@@ -93,10 +93,19 @@ fun OverviewActuatorsComposable(overviewData: OverviewData) {
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun OverviewActuatorsComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            OverviewActuatorsComposable(mockOverviewData)
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun OverviewActuatorsComposablePreview() {
-    AquariumControllerTheme {
+internal fun OverviewActuatorsComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface {
             OverviewActuatorsComposable(mockOverviewData)
         }

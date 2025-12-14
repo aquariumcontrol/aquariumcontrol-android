@@ -60,10 +60,24 @@ fun MainDropDownMenuItemBallingComposable(
 }
 
 @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun MainDropdownMenuItemBallingEnabledDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface(
+            color = MaterialTheme.colorScheme.background,
+        ) {
+            MainDropDownMenuItemBallingComposable(
+                isControllerLoaded = true,
+                onNavigate = {}
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun MainDropdownMenuItemBallingEnabledPreview() {
-    AquariumControllerTheme {
+internal fun MainDropdownMenuItemBallingEnabledLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {
@@ -76,10 +90,23 @@ internal fun MainDropdownMenuItemBallingEnabledPreview() {
 }
 
 @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun MainDropdownMenuItemBallingDataDisabledDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface(
+            color = MaterialTheme.colorScheme.background,
+        ) {
+            MainDropDownMenuItemBallingComposable(
+                isControllerLoaded = false,
+                onNavigate = {}
+            )
+        }
+    }
+}
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun MainDropdownMenuItemBallingDataDisabledPreview() {
-    AquariumControllerTheme {
+internal fun MainDropdownMenuItemBallingDataDisabledLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {

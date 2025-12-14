@@ -201,20 +201,29 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: ()
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
+@Composable
+internal fun HeatingStatsComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            HeatingStatsComposable(heatingStats = mockHeatingStatsData, updateData = {})
+        }
+    }
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO,
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
 @Composable
-internal fun HeatingStatsComposablePreview() {
-    AquariumControllerTheme {
+internal fun HeatingStatsComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface(color = MaterialTheme.colorScheme.background) {
             HeatingStatsComposable(heatingStats = mockHeatingStatsData, updateData = {})
         }

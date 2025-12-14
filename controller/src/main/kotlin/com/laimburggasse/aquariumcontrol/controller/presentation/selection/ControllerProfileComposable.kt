@@ -193,10 +193,26 @@ fun ControllerProfileComposable(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun ControllerProfileComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface(
+            color = MaterialTheme.colorScheme.background
+        ) {
+            ControllerProfileComposable(
+                onEvent = {},
+                controllerProfile = mockControllerProfile1,
+                isDefaultProfile = true,
+                onNavigateFromController = { event, profileId -> }
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun ControllerProfileComposablePreview() {
-    AquariumControllerTheme {
+internal fun ControllerProfileComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {

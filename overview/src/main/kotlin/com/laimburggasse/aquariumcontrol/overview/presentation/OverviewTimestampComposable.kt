@@ -71,10 +71,19 @@ fun OverviewTimestampComposable(overviewData: OverviewData) {
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun OverviewTimestampComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            OverviewTimestampComposable(mockOverviewData)
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun OverviewTimestampComposablePreview() {
-    AquariumControllerTheme {
+internal fun OverviewTimestampComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface {
             OverviewTimestampComposable(mockOverviewData)
         }

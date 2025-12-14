@@ -26,14 +26,21 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.common.presentation.RoundRefreshButtonComposablePreview
+import com.laimburggasse.aquariumcontrol.common.presentation.RoundRefreshButtonComposableDarkPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.RoundRefreshButtonComposableLightPreview
 
 class RoundRefreshButtonComposableTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun RoundRefreshButtonComposableDarkTest() {
+        RoundRefreshButtonComposableDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun RoundRefreshButtonComposableSnapshotTest() {
-        RoundRefreshButtonComposablePreview()
+    fun RoundRefreshButtonComposableLightTest() {
+        RoundRefreshButtonComposableLightPreview()
     }
 }

@@ -106,19 +106,13 @@ fun FeedProfileEditScreen(
 
 
 @Preview(showBackground = true, heightDp = 1100, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, heightDp = 1100, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=600dp,height=1100dp,orientation=landscape"
 )
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    device = "spec:width=600dp,height=1100dp,orientation=landscape"
-)
 @Composable
-internal fun FeedProfileEditScreenSuccessPreview() {
+internal fun FeedProfileEditScreenSuccessDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.feedEdit,
@@ -129,14 +123,35 @@ internal fun FeedProfileEditScreenSuccessPreview() {
             )
         },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
+    )
+}
+
+@Preview(showBackground = true, heightDp = 1100, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=600dp,height=1100dp,orientation=landscape"
+)
+@Composable
+internal fun FeedProfileEditScreenSuccessLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.feedEdit,
+        screenContent = {
+            FeedProfileEditScreen(
+                uiState = mockFeedProfileEditUiStateSuccess,
+                onFeedProfileEditUiEvent = {}
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
     )
 }
 
 @Preview(showBackground = true, heightDp = 1100, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, heightDp = 1100, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun FeedProfileEditScreenFailurePreview() {
+internal fun FeedProfileEditScreenFailureDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.feedEdit,
@@ -147,6 +162,23 @@ internal fun FeedProfileEditScreenFailurePreview() {
             )
         },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
+    )
+}
+
+@Preview(showBackground = true, heightDp = 1100, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+internal fun FeedProfileEditScreenFailureLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.feedEdit,
+        screenContent = {
+            FeedProfileEditScreen(
+                uiState = mockFeedProfileEditUiStateFailure,
+                onFeedProfileEditUiEvent = {}
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
     )
 }

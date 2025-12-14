@@ -212,10 +212,29 @@ fun FeedProfileDisplayComposable(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun FeedProfileDisplayComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            Column {
+                FeedProfileDisplayComposable(
+                    lineDataFeeder = mockChartData.lineDataFeeder,
+                    lineDataSkimmer = mockChartData.lineDataSkimmer,
+                    lineDataMainPump1 = mockChartData.lineDataMainPump1,
+                    lineDataMainPump2 = mockChartData.lineDataMainPump2,
+                    lineDataAuxPump1 = mockChartData.lineDataAuxPump1,
+                    lineDataAuxPump2 = mockChartData.lineDataAuxPump2,
+                    totalDuration = mockChartData.totalDuration
+                )
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun FeedProfileDisplayComposablePreview() {
-    AquariumControllerTheme {
+internal fun FeedProfileDisplayComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface(color = MaterialTheme.colorScheme.background) {
             Column {
                 FeedProfileDisplayComposable(

@@ -101,10 +101,9 @@ fun VentilationRangeSliderTextFieldsPortraitComposable(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun VentilationRangeSliderTextFieldsPortraitComposablePreview() {
-    AquariumControllerTheme {
+internal fun VentilationRangeSliderTextFieldsPortraitComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 VentilationRangeSliderTextFieldsPortraitComposable(
@@ -119,5 +118,25 @@ internal fun VentilationRangeSliderTextFieldsPortraitComposablePreview() {
         }
     }
 }
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+internal fun VentilationRangeSliderTextFieldsPortraitComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
+        Surface {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                VentilationRangeSliderTextFieldsPortraitComposable(
+                    ventilationSwitchOffTemp = 23.0,
+                    ventilationSwitchOnTemp = 27.0,
+                    onLowerValueChanged = {},
+                    onUpperValueChanged = {},
+                    onSliderValueChanged = {lowerValue, upperValue -> },
+                    onRefresh = {}
+                )
+            }
+        }
+    }
+}
+
 
 

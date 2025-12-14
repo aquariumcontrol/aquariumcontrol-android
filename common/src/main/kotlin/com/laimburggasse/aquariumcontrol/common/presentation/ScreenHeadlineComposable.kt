@@ -50,10 +50,19 @@ fun ScreenHeadlineComposable(text: String) {
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun ScreenHeadlineComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            ScreenHeadlineComposable(text = "PreviewTest Headline")
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun ScreenHeadlineComposablePreview() {
-    AquariumControllerTheme {
+internal fun ScreenHeadlineComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface(color = MaterialTheme.colorScheme.background) {
             ScreenHeadlineComposable(text = "PreviewTest Headline")
         }

@@ -295,19 +295,38 @@ fun HeatingScreen(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
+@Composable
+fun HeatingScreenSuccessDarkPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.heating,
+        screenContent = {
+            HeatingScreen(
+                heatingSetValsUiState = mockHeatingSetValsUiState,
+                onHeatingSetValsEvent = {},
+                heatingStatsUiState = mockHeatingStatsUiState,
+                onHeatingStatsEvent = {},
+                heatingSetValsValid = remember { mutableStateOf(value = true) }
+            )
+        },
+        onNavigate = {},
+        darkTheme = true
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO,
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
 @Composable
-fun HeatingScreenPreviewSuccess() {
+fun HeatingScreenSuccessLightPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.heating,
@@ -321,14 +340,13 @@ fun HeatingScreenPreviewSuccess() {
             )
         },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = false
     )
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun HeatingScreenPreviewError() {
+fun HeatingScreenErrorDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.heating,
@@ -342,6 +360,26 @@ fun HeatingScreenPreviewError() {
             )
         },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+fun HeatingScreenErrorLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.heating,
+        screenContent = {
+            HeatingScreen(
+                heatingSetValsUiState = mockHeatingSetValsUiState,
+                onHeatingSetValsEvent = {},
+                heatingStatsUiState = mockHeatingStatsUiState,
+                onHeatingStatsEvent = {},
+                heatingSetValsValid = remember { mutableStateOf(value = true) }
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
     )
 }

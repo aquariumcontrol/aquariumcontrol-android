@@ -76,11 +76,24 @@ fun TimeDataTemperatureChartComposable(
 }
 
 @Preview(showBackground = true, heightDp = 450, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun TimeDataTemperatureChartComposableDarkPreview() {
+    val textColor: Int = Color.WHITE
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            TimeDataTemperatureChartComposable(
+                temperatureDataSet = mockTimeDataSets.dataTemperature,
+                textColor = textColor
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true, heightDp = 450, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun TimeDataTemperatureChartComposablePreview() {
-    val textColor: Int = if (isSystemInDarkTheme()) Color.WHITE else Color.BLACK
-    AquariumControllerTheme {
+internal fun TimeDataTemperatureChartComposableLightPreview() {
+    val textColor: Int = Color.BLACK
+    AquariumControllerTheme(darkTheme = false) {
         Surface {
             TimeDataTemperatureChartComposable(
                 temperatureDataSet = mockTimeDataSets.dataTemperature,

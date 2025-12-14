@@ -159,22 +159,9 @@ fun BallingProfileEditScreen(
     }
 }
 
-
-
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    device = "spec:width=600dp,height=400dp,orientation=landscape"
-)
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    device = "spec:width=600dp,height=400dp,orientation=landscape"
-)
 @Composable
-internal fun BallingProfileEditScreenPreview() {
+internal fun BallingProfileEditScreenPortraitDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.balling,
@@ -185,6 +172,65 @@ internal fun BallingProfileEditScreenPreview() {
             )
         },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+internal fun BallingProfileEditScreenPortraitLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.balling,
+        screenContent = {
+            BallingProfileEditScreen(
+                ballingProfileEditUiState = mockBallingProfileEditUiState,
+                onEvent = {}
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
+    )
+}
+
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    device = "spec:width=600dp,height=400dp,orientation=landscape"
+)
+@Composable
+internal fun BallingProfileEditScreenLandscapeDarkPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.balling,
+        screenContent = {
+            BallingProfileEditScreen(
+                ballingProfileEditUiState = mockBallingProfileEditUiState,
+                onEvent = {}
+            )
+        },
+        onNavigate = {},
+        darkTheme = true
+    )
+}
+
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=600dp,height=400dp,orientation=landscape"
+)
+@Composable
+internal fun BallingProfileEditScreenLandscapeLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.balling,
+        screenContent = {
+            BallingProfileEditScreen(
+                ballingProfileEditUiState = mockBallingProfileEditUiState,
+                onEvent = {}
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
     )
 }

@@ -26,17 +26,24 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.ventilation.presentation.VentilationButtonsComposableLandscapePreview
-import com.laimburggasse.aquariumcontrol.ventilation.presentation.VentilationButtonsComposablePortraitPreview
-
+import com.laimburggasse.aquariumcontrol.ventilation.presentation.VentilationButtonsComposableLandscapeDarkPreview
+import com.laimburggasse.aquariumcontrol.ventilation.presentation.VentilationButtonsComposableLandscapeLightPreview
+import com.laimburggasse.aquariumcontrol.ventilation.presentation.VentilationButtonsComposablePortraitDarkPreview
+import com.laimburggasse.aquariumcontrol.ventilation.presentation.VentilationButtonsComposablePortraitLightPreview
 
 class VentilationButtonsComposableTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun VentilationButtonsComposablePortraitDarkTest() {
+        VentilationButtonsComposablePortraitDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun VentilationButtonsComposablePortraitTest() {
-        VentilationButtonsComposablePortraitPreview()
+    fun VentilationButtonsComposablePortraitLightTest() {
+        VentilationButtonsComposablePortraitLightPreview()
     }
 
     @PreviewTest
@@ -45,13 +52,19 @@ class VentilationButtonsComposableTest {
         uiMode = Configuration.UI_MODE_NIGHT_YES,
         device = "spec:width=800dp,height=400dp,orientation=landscape"
     )
+    @Composable
+    fun VentilationButtonsComposableLandscapeDarkTest() {
+        VentilationButtonsComposableLandscapeDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_NO,
         device = "spec:width=800dp,height=400dp,orientation=landscape"
     )
     @Composable
-    fun VentilationButtonsComposableLandscapeTest() {
-        VentilationButtonsComposableLandscapePreview()
+    fun VentilationButtonsComposableLandscapeLightTest() {
+        VentilationButtonsComposableLandscapeLightPreview()
     }
 }

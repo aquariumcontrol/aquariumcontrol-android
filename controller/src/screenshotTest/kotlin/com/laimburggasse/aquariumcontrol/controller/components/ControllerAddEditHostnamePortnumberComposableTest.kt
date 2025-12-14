@@ -26,17 +26,25 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditHostnamePortnumberComposableLandscapePreview
-import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditHostnamePortnumberComposablePortraitPreview
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditHostnamePortnumberComposableLandscapeDarkPreview
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditHostnamePortnumberComposableLandscapeLightPreview
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditHostnamePortnumberComposablePortraitDarkPreview
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditHostnamePortnumberComposablePortraitLightPreview
 
 
 class ControllerAddEditHostnamePortnumberComposableTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun ControllerAddEditHostnamePortnumberComposablePortraitDarkTest() {
+        ControllerAddEditHostnamePortnumberComposablePortraitDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun ControllerAddEditHostnamePortnumberComposablePortraitTest() {
-        ControllerAddEditHostnamePortnumberComposablePortraitPreview()
+    fun ControllerAddEditHostnamePortnumberComposablePortraitLightTest() {
+        ControllerAddEditHostnamePortnumberComposablePortraitLightPreview()
     }
 
     @PreviewTest
@@ -45,13 +53,19 @@ class ControllerAddEditHostnamePortnumberComposableTest {
         uiMode = Configuration.UI_MODE_NIGHT_YES,
         device = "spec:width=600dp,height=400dp,orientation=landscape"
     )
+    @Composable
+    fun ControllerAddEditHostnamePortnumberComposableLandscapeDarkTest() {
+        ControllerAddEditHostnamePortnumberComposableLandscapeDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_NO,
         device = "spec:width=600dp,height=400dp,orientation=landscape"
     )
     @Composable
-    fun ControllerAddEditHostnamePortnumberComposableLandscapeTest() {
-        ControllerAddEditHostnamePortnumberComposableLandscapePreview()
+    fun ControllerAddEditHostnamePortnumberComposableLandscapeLightTest() {
+        ControllerAddEditHostnamePortnumberComposableLandscapeLightPreview()
     }
 }

@@ -26,14 +26,21 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.common.presentation.NumericDoubleOutlinedTextFieldComposablePreview
+import com.laimburggasse.aquariumcontrol.common.presentation.NumericDoubleOutlinedTextFieldComposableDarkPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.NumericDoubleOutlinedTextFieldComposableLightPreview
 
 class NumericDoubleOutlinedTextFieldComposableTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun NumericDoubleOutlinedTextFieldComposableDarkTest() {
+        NumericDoubleOutlinedTextFieldComposableDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun NumericDoubleOutlinedTextFieldComposableSnapshotTest() {
-        NumericDoubleOutlinedTextFieldComposablePreview()
+    fun NumericDoubleOutlinedTextFieldComposableLightTest() {
+        NumericDoubleOutlinedTextFieldComposableLightPreview()
     }
 }

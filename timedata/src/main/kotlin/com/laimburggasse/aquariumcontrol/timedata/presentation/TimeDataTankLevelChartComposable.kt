@@ -73,11 +73,24 @@ fun TimeDataTankLevelChartComposable(
 }
 
 @Preview(showBackground = true, heightDp = 450, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun TimeDataTankLevelChartComposableDarkPreview() {
+    val textColor: Int = Color.WHITE
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            TimeDataTankLevelChartComposable(
+                tankLevelDataSet = mockTimeDataSets.dataTankLevel,
+                textColor = textColor
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true, heightDp = 450, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun TimeDataTankLevelChartComposablePreview() {
-    val textColor: Int = if (isSystemInDarkTheme()) Color.WHITE else Color.BLACK
-    AquariumControllerTheme {
+internal fun TimeDataTankLevelChartComposableLightPreview() {
+    val textColor: Int = Color.BLACK
+    AquariumControllerTheme(darkTheme = false) {
         Surface {
             TimeDataTankLevelChartComposable(
                 tankLevelDataSet = mockTimeDataSets.dataTankLevel,

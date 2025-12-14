@@ -26,44 +26,57 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScheduleSelectionComposableEmptyPreview
-import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScheduleSelectionComposableSuccessPreview
-
+import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScheduleSelectionComposableEmptyDarkPreview
+import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScheduleSelectionComposableEmptyLightPreview
+import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScheduleSelectionComposableSuccessDarkPreview
+import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScheduleSelectionComposableSuccessLightPreview
 
 class FeedScheduleSelectionComposableTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_YES,
         device = "spec:width=600dp,height=400dp,orientation=landscape"
     )
+    @Composable
+    fun FeedScheduleSelectionComposableSuccessDarkTest() {
+        FeedScheduleSelectionComposableSuccessDarkPreview()
+    }
+
+    @PreviewTest
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_NO,
         device = "spec:width=600dp,height=400dp,orientation=landscape"
     )
     @Composable
-    fun FeedScheduleSelectionComposableSuccessSnapshotTest() {
-        FeedScheduleSelectionComposableSuccessPreview()
+    fun FeedScheduleSelectionComposableSuccessLightTest() {
+        FeedScheduleSelectionComposableSuccessLightPreview()
     }
 
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_YES,
         device = "spec:width=600dp,height=400dp,orientation=landscape"
     )
+    @Composable
+    fun FeedScheduleSelectionComposableEmptyDarkTest() {
+        FeedScheduleSelectionComposableEmptyDarkPreview()
+    }
+
+    @PreviewTest
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_NO,
         device = "spec:width=600dp,height=400dp,orientation=landscape"
     )
     @Composable
-    fun FeedScheduleSelectionComposableEmptySnapshotTest() {
-        FeedScheduleSelectionComposableEmptyPreview()
+    fun FeedScheduleSelectionComposableEmptyLightTest() {
+        FeedScheduleSelectionComposableEmptyLightPreview()
     }
 }

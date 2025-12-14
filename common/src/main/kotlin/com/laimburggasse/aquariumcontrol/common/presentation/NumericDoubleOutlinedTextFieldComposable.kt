@@ -106,11 +106,27 @@ fun NumericDoubleOutlinedTextFieldComposable(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun NumericDoubleOutlinedTextFieldComposableDarkPreview() {
+    val testValue = 0.5
+    AquariumControllerTheme(darkTheme = true) {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            NumericDoubleOutlinedTextFieldComposable(
+                value = testValue,
+                onValueChange = {},
+                label = "testLabel",
+                modifier = Modifier,
+                textAlign = TextAlign.Center,
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun NumericDoubleOutlinedTextFieldComposablePreview() {
+internal fun NumericDoubleOutlinedTextFieldComposableLightPreview() {
     val testValue = 0.5
-    AquariumControllerTheme {
+    AquariumControllerTheme(darkTheme = false) {
         Surface(color = MaterialTheme.colorScheme.background) {
             NumericDoubleOutlinedTextFieldComposable(
                 value = testValue,

@@ -26,15 +26,21 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewControllerComposablePreview
-
+import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewControllerComposableDarkPreview
+import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewControllerComposableLightPreview
 
 class OverviewControllerComposableTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun OverviewControllerComposableDarkTest() {
+        OverviewControllerComposableDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun OverviewControllerComposableSnapshotTest() {
-        OverviewControllerComposablePreview()
+    fun OverviewControllerComposableLightTest() {
+        OverviewControllerComposableLightPreview()
     }
 }

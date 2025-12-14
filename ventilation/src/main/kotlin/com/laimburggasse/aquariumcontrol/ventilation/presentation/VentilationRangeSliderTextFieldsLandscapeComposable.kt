@@ -106,17 +106,33 @@ fun VentilationRangeSliderTextFieldsLandscapeComposable(
 
 @Preview(
     showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
+@Composable
+internal fun VentilationRangeSliderTextFieldsLandscapeComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            VentilationRangeSliderTextFieldsLandscapeComposable(
+                ventilationSwitchOffTemp = 23.0,
+                ventilationSwitchOnTemp = 27.0,
+                onLowerValueChanged = {},
+                onUpperValueChanged = {},
+                onSliderValueChanged = {lowerValue, upperValue -> },
+                onRefresh = {}
+            )
+        }
+    }
+}
+
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO,
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
 @Composable
-internal fun VentilationRangeSliderTextFieldsLandscapeComposablePreview() {
-    AquariumControllerTheme {
+internal fun VentilationRangeSliderTextFieldsLandscapeComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface {
             VentilationRangeSliderTextFieldsLandscapeComposable(
                 ventilationSwitchOffTemp = 23.0,

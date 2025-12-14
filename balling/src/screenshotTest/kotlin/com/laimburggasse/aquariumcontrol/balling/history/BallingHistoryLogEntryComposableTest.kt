@@ -26,15 +26,21 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryEventComposablePreview
-
+import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryEventComposableDarkPreview
+import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryEventComposableLightPreview
 
 class BallingHistoryLogEntryComposableTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun BallingHistoryEventComposableDarkTest() {
+        BallingHistoryEventComposableDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun BallingHistoryEventComposableScreenshotTest() {
-        BallingHistoryEventComposablePreview()
+    fun BallingHistoryEventComposableLightTest() {
+        BallingHistoryEventComposableLightPreview()
     }
 }

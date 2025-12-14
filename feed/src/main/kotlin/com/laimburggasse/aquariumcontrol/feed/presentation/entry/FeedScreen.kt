@@ -142,19 +142,13 @@ fun FeedScreen(
 
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    device = "spec:width=800dp,height=400dp,orientation=landscape"
-)
 @Composable
-fun FeedScreenPreviewSuccess() {
+fun FeedScreenSuccessDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.feed,
@@ -168,24 +162,43 @@ fun FeedScreenPreviewSuccess() {
             )
         },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
     )
 }
 
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    device = "spec:width=800dp,height=400dp,orientation=landscape"
-)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO,
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
 @Composable
-fun FeedScreenPreviewError() {
+fun FeedScreenSuccessLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.feed,
+        screenContent = {
+            FeedScreen(
+                feedProfilesUiState = mockFeedProfilesUiStateSuccess,
+                feedScheduleSelectionUiState = mockFeedScheduleSelectionUiStateSuccess,
+                onNavigateFromFeed = { event, id, isNew, millis -> },
+                onFeedProfilesUiEvent = {},
+                onFeedSchedulesUiEvent = { event -> return@FeedScreen null }
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    device = "spec:width=800dp,height=400dp,orientation=landscape"
+)
+@Composable
+fun FeedScreenErrorDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.feed,
@@ -199,6 +212,31 @@ fun FeedScreenPreviewError() {
             )
         },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=800dp,height=400dp,orientation=landscape"
+)
+@Composable
+fun FeedScreenErrorLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.feed,
+        screenContent = {
+            FeedScreen(
+                feedProfilesUiState = mockFeedProfilesUiStateError,
+                feedScheduleSelectionUiState = mockFeedScheduleSelectionUiStateError,
+                onNavigateFromFeed = { event, id, isNew, millis -> },
+                onFeedProfilesUiEvent = {},
+                onFeedSchedulesUiEvent = { event -> return@FeedScreen null }
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
     )
 }

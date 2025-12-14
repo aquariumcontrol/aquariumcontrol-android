@@ -26,24 +26,45 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.balling.presentation.edit.BallingProfileEditScreenPreview
+import com.laimburggasse.aquariumcontrol.balling.presentation.edit.BallingProfileEditScreenLandscapeDarkPreview
+import com.laimburggasse.aquariumcontrol.balling.presentation.edit.BallingProfileEditScreenLandscapeLightPreview
+import com.laimburggasse.aquariumcontrol.balling.presentation.edit.BallingProfileEditScreenPortraitDarkPreview
+import com.laimburggasse.aquariumcontrol.balling.presentation.edit.BallingProfileEditScreenPortraitLightPreview
 
 class BallingProfileEditScreenTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun BallingProfileEditScreenPortraitDarkTest() {
+        BallingProfileEditScreenPortraitDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+    @Composable
+    fun BallingProfileEditScreenPortraitLightTest() {
+        BallingProfileEditScreenPortraitLightPreview()
+    }
+
+    @PreviewTest
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_YES,
         device = "spec:width=600dp,height=400dp,orientation=landscape"
     )
+    @Composable
+    fun BallingProfileEditScreenLandscapeDarkTest() {
+        BallingProfileEditScreenLandscapeDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_NO,
         device = "spec:width=600dp,height=400dp,orientation=landscape"
     )
     @Composable
-    fun BallingProfileEditScreenSnapshotTest() {
-        BallingProfileEditScreenPreview()
+    fun BallingProfileEditScreenLandscapeLightTest() {
+        BallingProfileEditScreenLandscapeLightPreview()
     }
 }

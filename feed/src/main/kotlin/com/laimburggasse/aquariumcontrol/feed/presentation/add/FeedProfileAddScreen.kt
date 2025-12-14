@@ -132,18 +132,13 @@ fun FeedProfileAddScreen(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    device = "spec:width=600dp,height=400dp,orientation=landscape"
-)@Composable
-internal fun FeedProfileAddScreenIdlePreview() {
+@Composable
+internal fun FeedProfileAddScreenIdleDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
@@ -157,23 +152,43 @@ internal fun FeedProfileAddScreenIdlePreview() {
             )
         },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=600dp,height=400dp,orientation=landscape"
+)
+@Composable
+internal fun FeedProfileAddScreenIdleLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
+        screenContent = {
+            FeedProfileAddScreen(
+                feedProfileName = "test",
+                feedProfileNameExists = true,
+                feedProfileAddUiState = FeedProfileAddUiState.Idle,
+                onNavigateFromFeed = {event, id, isNew, time ->},
+                onFeedProfileAddEvent = {event ->}
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
     )
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    device = "spec:width=600dp,height=400dp,orientation=landscape"
-)@Composable
-internal fun FeedProfileAddScreenLoadingPreview() {
+@Composable
+internal fun FeedProfileAddScreenLoadingDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
@@ -186,6 +201,30 @@ internal fun FeedProfileAddScreenLoadingPreview() {
             )
         },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=600dp,height=400dp,orientation=landscape"
+)
+@Composable
+internal fun FeedProfileAddScreenLoadingLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
+        screenContent = {
+            FeedProfileAddScreen(
+                feedProfileName = "test",
+                feedProfileAddUiState = FeedProfileAddUiState.Loading,
+                onNavigateFromFeed = {event, id, isNew, time ->},
+                onFeedProfileAddEvent = {event ->}
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
     )
 }

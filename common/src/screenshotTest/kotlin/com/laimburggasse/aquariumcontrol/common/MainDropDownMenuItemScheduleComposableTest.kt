@@ -26,23 +26,41 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemScheduleDisabledPreview
-import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemScheduleEnabledPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemScheduleDisabledDarkPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemScheduleDisabledLightPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemScheduleEnabledDarkPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemScheduleEnabledLightPreview
 
 class MainDropDownMenuItemScheduleComposableTest {
     @PreviewTest
     @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun MainDropdownMenuItemScheduleEnabledTest() {
-        MainDropdownMenuItemScheduleEnabledPreview()
+    fun MainDropdownMenuItemScheduleEnabledDarkTest() {
+        MainDropdownMenuItemScheduleEnabledDarkPreview()
     }
 
     @PreviewTest
     @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun MainDropdownMenuItemScheduleDisabledTest() {
-        MainDropdownMenuItemScheduleDisabledPreview()
+    fun MainDropdownMenuItemScheduleEnabledLightTest() {
+        MainDropdownMenuItemScheduleEnabledLightPreview()
+    }
+
+    @PreviewTest
+    @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+    @Composable
+    fun MainDropdownMenuItemScheduleDisabledDarkTest() {
+        MainDropdownMenuItemScheduleDisabledDarkPreview()
+    }
+
+    @PreviewTest
+    @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+    @Composable
+    fun MainDropdownMenuItemScheduleDisabledLightTest() {
+        MainDropdownMenuItemScheduleDisabledLightPreview()
     }
 }

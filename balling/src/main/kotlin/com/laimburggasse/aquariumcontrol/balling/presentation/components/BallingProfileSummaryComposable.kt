@@ -99,10 +99,22 @@ fun BallingProfileSummaryComposable(
 
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun BallingProfileSummaryComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            BallingProfileSummaryComposable(
+                ballingProfile = mockBallingProfile,
+                onNavigateFromBalling = { event, pumpId -> }
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun BallingProfileSummaryPreview() {
-    AquariumControllerTheme {
+internal fun BallingProfileSummaryComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface {
             BallingProfileSummaryComposable(
                 ballingProfile = mockBallingProfile,

@@ -65,27 +65,20 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun AquariumControllerTheme(
-    darkTheme: Boolean? = null,
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    darkTheme: Boolean,
     content: @Composable () -> Unit
 ) {
-    val useDarkTheme: Boolean = darkTheme ?: isSystemInDarkTheme()
-    val colorScheme: ColorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context: Context = LocalContext.current
-            if (useDarkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-        useDarkTheme -> DarkColorScheme
+    val colorScheme = when {
+        darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
+
     val view: View = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
-            val window: Window = (view.context as Activity).window
-            @Suppress("DEPRECATION")
+            val window = (view.context as Activity).window
             window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = useDarkTheme
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }
     }
 

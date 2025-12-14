@@ -202,23 +202,14 @@ fun VentilationScreen(
     }
 }
 
-
-
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    device = "spec:width=800dp,height=400dp,orientation=landscape"
-)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-internal fun VentilationScreenPreviewSuccess() {
+internal fun VentilationScreenSuccessDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.ventilation,
@@ -230,14 +221,36 @@ internal fun VentilationScreenPreviewSuccess() {
             )
         },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=800dp,height=400dp,orientation=landscape"
+)
+@Composable
+internal fun VentilationScreenSuccessLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.ventilation,
+        screenContent = {
+            VentilationScreen(
+                ventilationSetValsUiState = mockVentilationSetValsUiStateSuccess,
+                onVentilationSetValsEvent = {},
+                ventilationSetValsValid = remember {mutableStateOf(value = true)}
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
     )
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun VentilationScreenPreviewError() {
+internal fun VentilationScreenErrorDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.ventilation,
@@ -250,5 +263,23 @@ internal fun VentilationScreenPreviewError() {
         },
         onNavigate = {},
         darkTheme = isSystemInDarkTheme()
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+internal fun VentilationScreenErrorLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.ventilation,
+        screenContent = {
+            VentilationScreen(
+                ventilationSetValsUiState = mockVentilationSetValsUiStateError,
+                ventilationSetValsValid = remember {mutableStateOf(value = true)},
+                onVentilationSetValsEvent = {},
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
     )
 }

@@ -78,10 +78,25 @@ fun VentilationButtonsComposable(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun VentilationButtonsComposablePortraitDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                VentilationButtonsComposable(
+                    onUpdateClicked = { },
+                    onResetClicked = { },
+                    ventilationSetValsValid = remember {mutableStateOf(value = true)}
+                )
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun VentilationButtonsComposablePortraitPreview() {
-    AquariumControllerTheme {
+internal fun VentilationButtonsComposablePortraitLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 VentilationButtonsComposable(
@@ -99,14 +114,30 @@ internal fun VentilationButtonsComposablePortraitPreview() {
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
+@Composable
+internal fun VentilationButtonsComposableLandscapeDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            Row {
+                VentilationButtonsComposable(
+                    onUpdateClicked = { },
+                    onResetClicked = { },
+                    ventilationSetValsValid = remember {mutableStateOf(value = true)}
+                )
+            }
+        }
+    }
+}
+
+
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO,
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
 @Composable
-internal fun VentilationButtonsComposableLandscapePreview() {
-    AquariumControllerTheme {
+internal fun VentilationButtonsComposableLandscapeLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface {
             Row {
                 VentilationButtonsComposable(

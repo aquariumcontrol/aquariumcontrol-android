@@ -139,20 +139,36 @@ fun FeedScheduleSelectionComposable(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
+@Composable
+internal fun FeedScheduleSelectionComposableSuccessDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                FeedScheduleSelectionComposable(
+                    feedScheduleSelectionUiState = mockFeedScheduleSelectionUiStateSuccess,
+                    onFeedSchedulesUiEvent = {event: FeedScheduleUiEvent -> return@FeedScheduleSelectionComposable null },
+                    onNavigateFromFeed = { event, id, isNew, millis -> },
+                )
+            }
+        }
+    }
+}
+
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO,
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
 @Composable
-internal fun FeedScheduleSelectionComposableSuccessPreview() {
-    AquariumControllerTheme {
+internal fun FeedScheduleSelectionComposableSuccessLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 FeedScheduleSelectionComposable(
@@ -167,10 +183,25 @@ internal fun FeedScheduleSelectionComposableSuccessPreview() {
 
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun FeedScheduleSelectionComposableEmptyDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                FeedScheduleSelectionComposable(
+                    feedScheduleSelectionUiState = mockFeedScheduleSelectionUiStateEmpty,
+                    onFeedSchedulesUiEvent = {event: FeedScheduleUiEvent -> return@FeedScheduleSelectionComposable null },
+                    onNavigateFromFeed = { event, id, isNew, millis -> },
+                )
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun FeedScheduleSelectionComposableEmptyPreview() {
-    AquariumControllerTheme {
+internal fun FeedScheduleSelectionComposableEmptyLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 FeedScheduleSelectionComposable(

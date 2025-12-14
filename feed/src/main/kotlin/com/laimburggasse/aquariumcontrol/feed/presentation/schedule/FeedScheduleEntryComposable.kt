@@ -106,10 +106,23 @@ fun FeedScheduleEntryComposable(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun FeedScheduleEntryComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            FeedScheduleEntryComposable(
+                feedScheduleEntry = mockFeedScheduleEntry,
+                onEditClick = { },
+                onDeleteClick = {}
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun FeedScheduleEntryComposablePreview() {
-    AquariumControllerTheme {
+internal fun FeedScheduleEntryComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface(color = MaterialTheme.colorScheme.background) {
             FeedScheduleEntryComposable(
                 feedScheduleEntry = mockFeedScheduleEntry,

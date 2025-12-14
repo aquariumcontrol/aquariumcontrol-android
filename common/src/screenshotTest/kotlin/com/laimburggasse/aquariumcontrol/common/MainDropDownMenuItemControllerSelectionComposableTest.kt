@@ -26,14 +26,21 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemControllerSelectionPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemControllerSelectionDarkPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemControllerSelectionLightPreview
 
 class MainDropDownMenuItemControllerSelectionComposableTest {
     @PreviewTest
     @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun MainDropdownMenuItemControllerSelectionDarkTest() {
+        MainDropdownMenuItemControllerSelectionDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun MainDropdownMenuItemControllerSelectionTest() {
-        MainDropdownMenuItemControllerSelectionPreview()
+    fun MainDropdownMenuItemControllerSelectionLightTest() {
+        MainDropdownMenuItemControllerSelectionLightPreview()
     }
 }

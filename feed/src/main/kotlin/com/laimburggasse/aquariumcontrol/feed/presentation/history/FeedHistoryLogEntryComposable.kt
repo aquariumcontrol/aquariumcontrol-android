@@ -85,10 +85,20 @@ fun FeedHistoryEventComposable(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun FeedHistoryEventComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            FeedHistoryEventComposable(feedHistoryLogEntry = mockEvent)
+        }
+    }
+}
+
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun FeedHistoryEventComposablePreview() {
-    AquariumControllerTheme {
+internal fun FeedHistoryEventComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface(color = MaterialTheme.colorScheme.background) {
             FeedHistoryEventComposable(feedHistoryLogEntry = mockEvent)
         }

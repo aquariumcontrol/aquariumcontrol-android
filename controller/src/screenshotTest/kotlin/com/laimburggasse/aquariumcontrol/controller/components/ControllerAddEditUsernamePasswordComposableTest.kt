@@ -26,25 +26,42 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUsernamePasswordComposableLandscapePreview
-import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUsernamePasswordComposablePortraitPreview
-
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUsernamePasswordPortraitComposableDarkPreview
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUsernamePasswordPortraitComposableLightPreview
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUsernamePasswordLandscapeComposableDarkPreview
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUsernamePasswordLandscapeComposableLightPreview
 
 class ControllerAddEditUsernamePasswordComposableTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun ControllerAddEditUsernamePasswordComposablePortraitTest() {
-        ControllerAddEditUsernamePasswordComposablePortraitPreview()
+    fun ControllerAddEditUsernamePasswordPortraitComposableDarkTest() {
+        ControllerAddEditUsernamePasswordPortraitComposableDarkPreview()
     }
 
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun ControllerAddEditUsernamePasswordComposableLandscapeTest() {
-        ControllerAddEditUsernamePasswordComposableLandscapePreview()
+    fun ControllerAddEditUsernamePasswordPortraitComposableLightTest() {
+        ControllerAddEditUsernamePasswordPortraitComposableLightPreview()
+    }
 
+    @PreviewTest
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+    @Composable
+    fun ControllerAddEditUsernamePasswordLandscapeComposableDarkTest() {
+        ControllerAddEditUsernamePasswordLandscapeComposableDarkPreview()
+
+    }
+
+    @PreviewTest
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+    @Composable
+    fun ControllerAddEditUsernamePasswordLandscapeComposableLightTest() {
+        ControllerAddEditUsernamePasswordLandscapeComposableLightPreview()
     }
 }

@@ -80,10 +80,25 @@ fun HeatingButtonsComposable(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun HeatingButtonsComposablePortraitDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                HeatingButtonsComposable(
+                    onUpdateClicked = { },
+                    onResetClicked = { },
+                    heatingSetValsValid = remember { mutableStateOf(value = true) }
+                )
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun HeatingButtonsComposablePortraitPreview() {
-    AquariumControllerTheme {
+internal fun HeatingButtonsComposablePortraitLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 HeatingButtonsComposable(
@@ -101,14 +116,28 @@ internal fun HeatingButtonsComposablePortraitPreview() {
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
+@Composable
+internal fun HeatingButtonsComposableLandscapeDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            Row {
+                HeatingButtonsComposable(
+                    onUpdateClicked = { },
+                    onResetClicked = { },
+                    heatingSetValsValid = remember { mutableStateOf(value = true) }
+                )
+            }
+        }
+    }
+}
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO,
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
 @Composable
-internal fun HeatingButtonsComposableLandscapePreview() {
-    AquariumControllerTheme {
+internal fun HeatingButtonsComposableLandscapeLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface {
             Row {
                 HeatingButtonsComposable(

@@ -26,25 +26,34 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.feed.presentation.add.FeedProfileAddScreenIdlePreview
-import com.laimburggasse.aquariumcontrol.feed.presentation.add.FeedProfileAddScreenLoadingPreview
+import com.laimburggasse.aquariumcontrol.feed.presentation.add.FeedProfileAddScreenIdleDarkPreview
+import com.laimburggasse.aquariumcontrol.feed.presentation.add.FeedProfileAddScreenIdleLightPreview
+import com.laimburggasse.aquariumcontrol.feed.presentation.add.FeedProfileAddScreenLoadingDarkPreview
+import com.laimburggasse.aquariumcontrol.feed.presentation.add.FeedProfileAddScreenLoadingLightPreview
 
 class FeedProfileAddScreenTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_YES,
         device = "spec:width=600dp,height=400dp,orientation=landscape"
     )
+    @Composable
+    fun FeedProfileAddScreenLoadingDarkTest() {
+        FeedProfileAddScreenLoadingDarkPreview()
+    }
+
+    @PreviewTest
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_NO,
         device = "spec:width=600dp,height=400dp,orientation=landscape"
-    )@Composable
-    fun FeedProfileAddScreenLoadingSnapshotTest() {
-        FeedProfileAddScreenLoadingPreview()
+    )
+    @Composable
+    fun FeedProfileAddScreenLoadingLightTest() {
+        FeedProfileAddScreenLoadingLightPreview()
     }
 
     @PreviewTest
@@ -59,8 +68,21 @@ class FeedProfileAddScreenTest {
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_NO,
         device = "spec:width=600dp,height=400dp,orientation=landscape"
-    )@Composable
-    fun FeedProfileAddScreenIdleTest() {
-        FeedProfileAddScreenIdlePreview()
+    )
+    @Composable
+    fun FeedProfileAddScreenIdleDarkTest() {
+        FeedProfileAddScreenIdleDarkPreview()
+    }
+
+    @PreviewTest
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+    @Preview(
+        showBackground = true,
+        uiMode = Configuration.UI_MODE_NIGHT_NO,
+        device = "spec:width=600dp,height=400dp,orientation=landscape"
+    )
+    @Composable
+    fun FeedProfileAddScreenIdleLightTest() {
+        FeedProfileAddScreenIdleLightPreview()
     }
 }

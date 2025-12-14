@@ -83,10 +83,19 @@ fun OverviewAmbientComposable(overviewData: OverviewData) {
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun OverviewAmbientComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            OverviewAmbientComposable(mockOverviewData)
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun OverviewAmbientComposablePreview() {
-    AquariumControllerTheme {
+internal fun OverviewAmbientComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface {
             OverviewAmbientComposable(mockOverviewData)
         }

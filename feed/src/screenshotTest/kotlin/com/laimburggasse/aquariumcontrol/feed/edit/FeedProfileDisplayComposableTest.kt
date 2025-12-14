@@ -26,7 +26,8 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileDisplayComposablePreview
+import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileDisplayComposableDarkPreview
+import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileDisplayComposableLightPreview
 
 
 class FeedProfileDisplayComposableTest {
@@ -34,15 +35,21 @@ class FeedProfileDisplayComposableTest {
     @Preview(
         showBackground = true,
         device = "spec:width=600dp,height=400dp",
-        uiMode = Configuration.UI_MODE_NIGHT_NO
-    )
-    @Preview(
-        showBackground = true,
-        device = "spec:width=600dp,height=400dp",
         uiMode = Configuration.UI_MODE_NIGHT_YES
     )
     @Composable
-    fun FeedProfileDisplayComposableSnapshotTest() {
-        FeedProfileDisplayComposablePreview()
+    fun FeedProfileDisplayComposableDarkTest() {
+        FeedProfileDisplayComposableDarkPreview()
+    }
+
+    @PreviewTest
+    @Preview(
+        showBackground = true,
+        device = "spec:width=600dp,height=400dp",
+        uiMode = Configuration.UI_MODE_NIGHT_NO
+    )
+    @Composable
+    fun FeedProfileDisplayComposableLightTest() {
+        FeedProfileDisplayComposableLightPreview()
     }
 }

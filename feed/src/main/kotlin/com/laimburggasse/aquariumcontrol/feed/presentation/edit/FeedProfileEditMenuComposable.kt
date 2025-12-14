@@ -75,10 +75,24 @@ fun FeedProfileEditMenuComposable(
 }
 
 @Preview(showBackground = true, heightDp = 1400, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun FeedProfileEditMenuComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            FeedProfileEditMenuComposable(
+                itemsToRender = FeedProfileEditMenuItems.phases,
+                feedProfile = mockFeedProfile,
+                isExpanded = mockInitialExpandedItemIds,
+                onFeedProfileEditUiEvent = {}
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true, heightDp = 1400, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun FeedProfileEditMenuComposablePreview() {
-    AquariumControllerTheme {
+internal fun FeedProfileEditMenuComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface(color = MaterialTheme.colorScheme.background) {
             FeedProfileEditMenuComposable(
                 itemsToRender = FeedProfileEditMenuItems.phases,

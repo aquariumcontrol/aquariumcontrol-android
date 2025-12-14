@@ -89,10 +89,19 @@ fun OverviewWaterSignalsComposable(overviewData: OverviewData) {
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun OverviewWaterSignalsComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            OverviewWaterSignalsComposable(mockOverviewData)
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun OverviewWaterSignalsComposablePreview() {
-    AquariumControllerTheme {
+internal fun OverviewWaterSignalsComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface {
             OverviewWaterSignalsComposable(mockOverviewData)
         }

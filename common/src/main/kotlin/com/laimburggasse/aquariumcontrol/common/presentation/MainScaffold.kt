@@ -38,7 +38,7 @@ fun MainScaffold(
     navigationRouteSource: String,
     screenContent: @Composable () -> Unit,
     onNavigate: (MainDropDownMenuNavigationEvent) -> Unit,
-    darkTheme: Boolean? = true
+    darkTheme: Boolean
 ) {
     AquariumControllerTheme(darkTheme) {
         Surface(

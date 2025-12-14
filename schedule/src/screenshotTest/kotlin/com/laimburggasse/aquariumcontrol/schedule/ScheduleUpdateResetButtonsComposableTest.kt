@@ -26,15 +26,22 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.schedule.presentation.ScheduleUpdateResetButtonsComposablePreview
-
+import com.laimburggasse.aquariumcontrol.schedule.presentation.ScheduleUpdateResetButtonsComposableDarkPreview
+import com.laimburggasse.aquariumcontrol.schedule.presentation.ScheduleUpdateResetButtonsComposableLightPreview
 
 class ScheduleUpdateResetButtonsComposableTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun ScheduleUpdateResetButtonsComposableDarkTest() {
+        ScheduleUpdateResetButtonsComposableDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun ScheduleUpdateResetButtonsComposableSnapshotTest() {
-        ScheduleUpdateResetButtonsComposablePreview()
+    fun ScheduleUpdateResetButtonsComposableLightTest() {
+        ScheduleUpdateResetButtonsComposableLightPreview()
     }
+
 }

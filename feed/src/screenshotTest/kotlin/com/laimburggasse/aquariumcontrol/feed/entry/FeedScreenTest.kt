@@ -26,43 +26,57 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScreenPreviewError
-import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScreenPreviewSuccess
+import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScreenErrorDarkPreview
+import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScreenErrorLightPreview
+import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScreenSuccessDarkPreview
+import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScreenSuccessLightPreview
 
 class FeedScreenTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_YES,
         device = "spec:width=800dp,height=400dp,orientation=landscape"
     )
+    @Composable
+    fun FeedScreenSuccessDarkTest() {
+        FeedScreenSuccessDarkPreview()
+    }
+
+    @PreviewTest
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_NO,
         device = "spec:width=800dp,height=400dp,orientation=landscape"
     )
     @Composable
-    fun FeedScreenSuccessSnapshotTest() {
-        FeedScreenPreviewSuccess()
+    fun FeedScreenSuccessLightTest() {
+        FeedScreenSuccessLightPreview()
     }
 
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_YES,
-        device = "spec:width=800dp,height=400dp,orientation=landscape"
+        device = "spec:width=600dp,height=400dp,orientation=landscape"
     )
+    @Composable
+    fun FeedScreenErrorDarkTest() {
+        FeedScreenErrorDarkPreview()
+    }
+
+    @PreviewTest
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_NO,
-        device = "spec:width=800dp,height=400dp,orientation=landscape"
+        device = "spec:width=600dp,height=400dp,orientation=landscape"
     )
     @Composable
-    fun FeedScreenErrorSnapshotTest() {
-        FeedScreenPreviewError()
+    fun FeedScreenErrorLightTest() {
+        FeedScreenErrorLightPreview()
     }
 }

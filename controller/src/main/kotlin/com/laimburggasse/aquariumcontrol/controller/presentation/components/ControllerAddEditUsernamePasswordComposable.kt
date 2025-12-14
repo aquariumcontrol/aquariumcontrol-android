@@ -71,10 +71,24 @@ fun ControllerAddEditUsernamePasswordComposable(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun ControllerAddEditUsernamePasswordPortraitComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            Column {
+                ControllerAddEditUsernamePasswordComposable(
+                    onEvent = {},
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun ControllerAddEditUsernamePasswordComposablePortraitPreview() {
-    AquariumControllerTheme {
+internal fun ControllerAddEditUsernamePasswordPortraitComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface {
             Column {
                 ControllerAddEditUsernamePasswordComposable(
@@ -87,10 +101,24 @@ internal fun ControllerAddEditUsernamePasswordComposablePortraitPreview() {
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun ControllerAddEditUsernamePasswordLandscapeComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            Row {
+                ControllerAddEditUsernamePasswordComposable(
+                    onEvent = {},
+                    modifier = Modifier.weight(weight = 0.5f)
+                )
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun ControllerAddEditUsernamePasswordComposableLandscapePreview() {
-    AquariumControllerTheme {
+internal fun ControllerAddEditUsernamePasswordLandscapeComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = true) {
         Surface {
             Row {
                 ControllerAddEditUsernamePasswordComposable(

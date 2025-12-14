@@ -183,22 +183,14 @@ fun BallingScreen(
     }
 }
 
-
-
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    device = "spec:width=600dp,height=400dp,orientation=landscape"
-)
 @Composable
-internal fun BallingScreenPreviewSuccess() {
+internal fun BallingScreenSuccessDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.balling,
@@ -210,14 +202,36 @@ internal fun BallingScreenPreviewSuccess() {
             )
         },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=600dp,height=400dp,orientation=landscape"
+)
+@Composable
+internal fun BallingScreenSuccessLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.balling,
+        screenContent = {
+            BallingScreen(
+                ballingProfilesUiState = mockBallingProfilesUiStateSuccess,
+                onNavigateFromBalling = { event, pumpId -> },
+                onRefresh = {}
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
     )
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun BallingScreenPreviewError() {
+internal fun BallingScreenErrorDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.balling,
@@ -229,14 +243,31 @@ internal fun BallingScreenPreviewError() {
             )
         },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+internal fun BallingScreenErrorLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.balling,
+        screenContent = {
+            BallingScreen(
+                ballingProfilesUiState = mockBallingProfilesUiStateError,
+                onNavigateFromBalling = { event, pumpId -> },
+                onRefresh = {}
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
     )
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun BallingScreenPreviewLoading() {
+internal fun BallingScreenLoadingDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.balling,
@@ -248,14 +279,31 @@ internal fun BallingScreenPreviewLoading() {
             )
         },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+internal fun BallingScreenLoadingLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.balling,
+        screenContent = {
+            BallingScreen(
+                ballingProfilesUiState = mockBallingProfilesUiStateLoading,
+                onNavigateFromBalling = { event, pumpId -> },
+                onRefresh = {}
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
     )
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun BallingScreenPreviewEmpty() {
+internal fun BallingScreenEmptyDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.balling,
@@ -267,6 +315,24 @@ internal fun BallingScreenPreviewEmpty() {
             )
         },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+internal fun BallingScreenEmptyLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.balling,
+        screenContent = {
+            BallingScreen(
+                ballingProfilesUiState = mockBallingProfilesUiStateEmpty,
+                onNavigateFromBalling = { event, pumpId -> },
+                onRefresh = {}
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
     )
 }

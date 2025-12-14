@@ -26,8 +26,8 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.ventilation.presentation.VentilationRangeSliderTextFieldsLandscapeComposablePreview
-
+import com.laimburggasse.aquariumcontrol.ventilation.presentation.VentilationRangeSliderTextFieldsLandscapeComposableDarkPreview
+import com.laimburggasse.aquariumcontrol.ventilation.presentation.VentilationRangeSliderTextFieldsLandscapeComposableLightPreview
 
 class VentilationRangeSliderTextFieldsLandscapeComposableTest {
     @PreviewTest
@@ -36,13 +36,19 @@ class VentilationRangeSliderTextFieldsLandscapeComposableTest {
         uiMode = Configuration.UI_MODE_NIGHT_YES,
         device = "spec:width=800dp,height=400dp,orientation=landscape"
     )
+    @Composable
+    fun VentilationRangeSliderTextFieldsLandscapeComposableDarkTest() {
+        VentilationRangeSliderTextFieldsLandscapeComposableDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_NO,
         device = "spec:width=800dp,height=400dp,orientation=landscape"
     )
     @Composable
-    fun VentilationRangeSliderTextFieldsLandscapeComposableSnapshotTest() {
-        VentilationRangeSliderTextFieldsLandscapeComposablePreview()
+    fun VentilationRangeSliderTextFieldsLandscapeComposableLightTest() {
+        VentilationRangeSliderTextFieldsLandscapeComposableLightPreview()
     }
 }

@@ -123,12 +123,34 @@ fun MainDropdownMenuComposable(
 }
 
 @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun MainDropdownMenuComposablePreview() {
+internal fun MainDropdownMenuComposableDarkPreview() {
     // Preview consists of drop down menu items instead of complete menu,
     // because complete menu is not displayed correctly.
-    AquariumControllerTheme {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            Column {
+                MainDropDownMenuItemOverviewComposable(isControllerLoaded = true,onNavigate = {})
+                MainDropDownMenuItemDisplayDataComposable(isControllerLoaded = true, onNavigate = {})
+                MainDropDownMenuItemBallingComposable(isControllerLoaded = true, onNavigate = {})
+                MainDropDownMenuItemRefillComposable(isControllerLoaded = true, onNavigate = {})
+                MainDropDownMenuItemFeedComposable(isControllerLoaded = true, onNavigate = {})
+                MainDropDownMenuItemHeatingComposable(isControllerLoaded = true, onNavigate = {})
+                MainDropDownMenuItemVentilationComposable(isControllerLoaded = true, onNavigate = {})
+                MainDropDownMenuItemScheduleComposable(isControllerLoaded = true, onNavigate = {})
+                HorizontalDivider()
+                MainDropDownMenuItemControllerSelectionComposable(onNavigate = {})
+                MainDropDownMenuItemInfoComposable(onNavigate = {})
+            }
+        }
+    }
+}
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+internal fun MainDropdownMenuComposableLightPreview() {
+    // Preview consists of drop down menu items instead of complete menu,
+    // because complete menu is not displayed correctly.
+    AquariumControllerTheme(darkTheme = false) {
         Surface(color = MaterialTheme.colorScheme.background) {
             Column {
                 MainDropDownMenuItemOverviewComposable(isControllerLoaded = true,onNavigate = {})

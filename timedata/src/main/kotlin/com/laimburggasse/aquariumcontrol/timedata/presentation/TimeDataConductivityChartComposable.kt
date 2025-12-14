@@ -72,11 +72,24 @@ fun TimeDataConductivityChartComposable(
 }
 
 @Preview(showBackground = true, heightDp = 450, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun TimeDataConductivityChartComposableDarkPreview() {
+    val textColor: Int = Color.WHITE
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            TimeDataConductivityChartComposable(
+                conductivityDataSet = mockTimeDataSets.dataConductivity,
+                textColor = textColor
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true, heightDp = 450, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun TimeDataConductivityChartComposablePreview() {
-    val textColor: Int = if (isSystemInDarkTheme()) Color.WHITE else Color.BLACK
-    AquariumControllerTheme {
+internal fun TimeDataConductivityChartComposableLightPreview() {
+    val textColor: Int = Color.BLACK
+    AquariumControllerTheme(darkTheme = false) {
         Surface {
             TimeDataConductivityChartComposable(
                 conductivityDataSet = mockTimeDataSets.dataConductivity,

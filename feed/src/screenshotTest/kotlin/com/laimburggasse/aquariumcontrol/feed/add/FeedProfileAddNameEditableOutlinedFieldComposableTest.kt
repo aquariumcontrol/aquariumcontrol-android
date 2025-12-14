@@ -26,15 +26,22 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.feed.presentation.add.FeedProfileAddNameEditableOutlinedFieldComposablePreview
-
+import com.laimburggasse.aquariumcontrol.feed.presentation.add.FeedProfileAddNameEditableOutlinedFieldComposableDarkPreview
+import com.laimburggasse.aquariumcontrol.feed.presentation.add.FeedProfileAddNameEditableOutlinedFieldComposableLightPreview
 
 class FeedProfileAddNameEditableOutlinedFieldComposableTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun FeedProfileAddNameEditableOutlinedFieldComposableDarkTest() {
+        FeedProfileAddNameEditableOutlinedFieldComposableDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun FeedProfileAddNameEditableOutlinedFieldComposableSnapshotTest() {
-        FeedProfileAddNameEditableOutlinedFieldComposablePreview()
+    fun FeedProfileAddNameEditableOutlinedFieldComposableLightTest() {
+        FeedProfileAddNameEditableOutlinedFieldComposableLightPreview()
     }
+
 }

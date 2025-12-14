@@ -26,15 +26,21 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewWaterSignalsComposablePreview
-
+import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewWaterSignalsComposableDarkPreview
+import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewWaterSignalsComposableLightPreview
 
 class OverviewWaterSignalsComposableTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun OverviewWaterSignalsComposableDarkTest() {
+        OverviewWaterSignalsComposableDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun OverviewWaterSignalsComposableSnapshotTest() {
-        OverviewWaterSignalsComposablePreview()
+    fun OverviewWaterSignalsComposableLightTest() {
+        OverviewWaterSignalsComposableLightPreview()
     }
 }

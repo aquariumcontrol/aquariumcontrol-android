@@ -148,19 +148,13 @@ fun ControllerSelectionScreen(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=600dp,height=600dp,orientation=landscape"
 )
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    device = "spec:width=600dp,height=600dp,orientation=landscape"
-)
 @Composable
-internal fun ControllerSelectionScreenPreview() {
+internal fun ControllerSelectionScreenDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.controllerSelection,
@@ -175,7 +169,32 @@ internal fun ControllerSelectionScreenPreview() {
             )
          },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
     )
 }
 
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=600dp,height=600dp,orientation=landscape"
+)
+@Composable
+internal fun ControllerSelectionScreenLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.controllerSelection,
+        screenContent = {
+            ControllerSelectionScreen(
+                controllerProfileList = mockControllerProfileList,
+                onEvent = {},
+                progressToDefaultNavigation = remember { mutableFloatStateOf(value = 0.3f) },
+                onNavigateFromController = { event, profileId -> },
+                defaultProfileId = remember { mutableLongStateOf(value = 1L) },
+                canStartWaitForNavigation = remember { mutableStateOf(value = true) },
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
+    )
+}

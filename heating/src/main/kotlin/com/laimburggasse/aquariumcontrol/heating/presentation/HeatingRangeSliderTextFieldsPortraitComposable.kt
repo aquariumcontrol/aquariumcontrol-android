@@ -101,10 +101,9 @@ fun HeatingRangeSliderTextFieldsPortraitComposable(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun HeatingRangeSliderTextFieldsPortraitComposablePreview() {
-    AquariumControllerTheme {
+internal fun HeatingRangeSliderTextFieldsPortraitComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 HeatingRangeSliderTextFieldsPortraitComposable(
@@ -120,4 +119,21 @@ internal fun HeatingRangeSliderTextFieldsPortraitComposablePreview() {
     }
 }
 
-
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+internal fun HeatingRangeSliderTextFieldsPortraitComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
+        Surface {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                HeatingRangeSliderTextFieldsPortraitComposable(
+                    heatingSwitchOffTemp = 23.0,
+                    heatingSwitchOnTemp = 27.0,
+                    onLowerValueChanged = {},
+                    onUpperValueChanged = {},
+                    onSliderValueChanged = {lowerValue, upperValue -> },
+                    onRefresh = {}
+                )
+            }
+        }
+    }
+}

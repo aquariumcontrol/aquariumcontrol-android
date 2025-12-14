@@ -71,10 +71,25 @@ fun ControllerAddEditHostnamePortnumberComposable(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun ControllerAddEditHostnamePortnumberComposablePortraitDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            Column {
+                ControllerAddEditHostnamePortnumberComposable(
+                    onEvent = {},
+                    modifier = Modifier.fillMaxWidth(),
+                    state = mockControllerState
+                )
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun ControllerAddEditHostnamePortnumberComposablePortraitPreview() {
-    AquariumControllerTheme {
+internal fun ControllerAddEditHostnamePortnumberComposablePortraitLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface {
             Column {
                 ControllerAddEditHostnamePortnumberComposable(
@@ -92,14 +107,30 @@ internal fun ControllerAddEditHostnamePortnumberComposablePortraitPreview() {
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
+@Composable
+internal fun ControllerAddEditHostnamePortnumberComposableLandscapeDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            Row {
+                ControllerAddEditHostnamePortnumberComposable(
+                    onEvent = {},
+                    modifier = Modifier.weight(weight = 0.5f),
+                    state = mockControllerState
+                )
+            }
+        }
+    }
+}
+
+
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO,
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
 @Composable
-internal fun ControllerAddEditHostnamePortnumberComposableLandscapePreview() {
-    AquariumControllerTheme {
+internal fun ControllerAddEditHostnamePortnumberComposableLandscapeLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface {
             Row {
                 ControllerAddEditHostnamePortnumberComposable(

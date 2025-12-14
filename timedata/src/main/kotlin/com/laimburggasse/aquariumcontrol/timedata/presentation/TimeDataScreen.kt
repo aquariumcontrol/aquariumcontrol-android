@@ -24,6 +24,7 @@ package com.laimburggasse.aquariumcontrol.timedata.presentation
 
 import android.content.res.Configuration
 import android.graphics.Color
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -61,10 +62,14 @@ const val axisGranularityOnOff = 1.0f
 const val axisGranularityTime = 14400f
 
 @Composable
-fun TimeDataScreen(timeDataUiState: TimeDataUiState, onTimeDataEvent: (TimeDataUiEvent) -> Unit) {
+fun TimeDataScreen(
+    timeDataUiState: TimeDataUiState,
+    onTimeDataEvent: (TimeDataUiEvent) -> Unit,
+    isDarkMode: Boolean
+) {
     // This screen displays time data charts without data flow back to server.
-    val isDarkMode: Boolean = isSystemInDarkTheme()
     val textColor: Int = if (isDarkMode) Color.WHITE else Color.BLACK
+    Log.d("TimeDataScreen", "isDarkMode: $isDarkMode, textColor=$textColor")
     val displayCircularProgressIndicatorInPreview: Boolean =
         LocalConfiguration.current.orientation != Configuration.ORIENTATION_LANDSCAPE
 
@@ -179,83 +184,135 @@ fun TimeDataScreen(timeDataUiState: TimeDataUiState, onTimeDataEvent: (TimeDataU
 }
 
 @Preview(showBackground = true, heightDp = 1250, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, heightDp = 1250, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=1600dp,height=1200dp,orientation=landscape"
 )
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    device = "spec:width=1600dp,height=1200dp,orientation=landscape"
-)
 @Composable
-internal fun TimeDataScreenPreviewSuccess() {
+internal fun TimeDataScreenSuccessDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.timeData,
         screenContent = {
             TimeDataScreen(
                 timeDataUiState = mockTimeDataUiStateSuccess,
-                onTimeDataEvent = {}
+                onTimeDataEvent = {},
+                isDarkMode = true
             )
         },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
+    )
+}
+
+@Preview(showBackground = true, heightDp = 1250, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=1600dp,height=1200dp,orientation=landscape"
+)
+@Composable
+internal fun TimeDataScreenSuccessLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.timeData,
+        screenContent = {
+            TimeDataScreen(
+                timeDataUiState = mockTimeDataUiStateSuccess,
+                onTimeDataEvent = {},
+                isDarkMode = false
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
     )
 }
 
 @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=250dp,height=350dp,orientation=landscape"
 )
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    device = "spec:width=250dp,height=350dp,orientation=landscape"
-)
 @Composable
-internal fun TimeDataScreenPreviewError() {
+internal fun TimeDataScreenErrorDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.timeData,
         screenContent = { TimeDataScreen(
             timeDataUiState = mockTimeDataUiStateError,
-            onTimeDataEvent = {}
+            onTimeDataEvent = {},
+            isDarkMode = true
         ) },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
     )
 }
 
-@Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    device = "spec:width=250dp,height=350dp,orientation=landscape"
-)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO,
     device = "spec:width=250dp,height=350dp,orientation=landscape"
 )
 @Composable
-internal fun TimeDataScreenPreviewEmpty() {
+internal fun TimeDataScreenErrorLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.timeData,
+        screenContent = { TimeDataScreen(
+            timeDataUiState = mockTimeDataUiStateError,
+            onTimeDataEvent = {},
+            isDarkMode = false
+        ) },
+        onNavigate = {},
+        darkTheme = false
+    )
+}
+
+@Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    device = "spec:width=250dp,height=350dp,orientation=landscape"
+)
+@Composable
+internal fun TimeDataScreenEmptyDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.timeData,
         screenContent = {
             TimeDataScreen(
                 timeDataUiState = mockTimeDataUiStateEmpty,
-                onTimeDataEvent = {}
+                onTimeDataEvent = {},
+                isDarkMode = true
             )
         },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
+    )
+}
+
+@Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=250dp,height=350dp,orientation=landscape"
+)
+@Composable
+internal fun TimeDataScreenEmptyLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.timeData,
+        screenContent = {
+            TimeDataScreen(
+                timeDataUiState = mockTimeDataUiStateEmpty,
+                onTimeDataEvent = {},
+                isDarkMode = false
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
     )
 }

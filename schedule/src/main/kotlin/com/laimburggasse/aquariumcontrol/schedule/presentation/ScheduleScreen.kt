@@ -289,22 +289,14 @@ fun ScheduleScreen(
     }
 }
 
-
-
 @Preview(showBackground = true, heightDp = 1200, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, heightDp = 1200, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=1200dp,height=950dp,orientation=landscape"
 )
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    device = "spec:width=1200dp,height=950dp,orientation=landscape"
-)
 @Composable
-internal fun ScheduleScreenPreviewSuccess() {
+internal fun ScheduleScreenSuccessDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.schedule,
@@ -315,17 +307,40 @@ internal fun ScheduleScreenPreviewSuccess() {
             )
         },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
     )
 }
 
+@Preview(showBackground = true, heightDp = 1200, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO,
     device = "spec:width=1200dp,height=950dp,orientation=landscape"
 )
 @Composable
-internal fun ScheduleScreenPreviewError() {
+internal fun ScheduleScreenSuccessLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.schedule,
+        screenContent = {
+            ScheduleScreen(
+                scheduleUiState = mockScheduleUiStateSuccess,
+                onScheduleEvent = {}
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
+    )
+}
+
+@Preview(showBackground = true, heightDp = 1200, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    device = "spec:width=1200dp,height=950dp,orientation=landscape"
+)
+@Composable
+internal fun ScheduleScreenErrorDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.schedule,
@@ -336,6 +351,28 @@ internal fun ScheduleScreenPreviewError() {
             )
         },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
+    )
+}
+
+@Preview(showBackground = true, heightDp = 1200, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=1200dp,height=950dp,orientation=landscape"
+)
+@Composable
+internal fun ScheduleScreenErrorLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.schedule,
+        screenContent = {
+            ScheduleScreen(
+                scheduleUiState = mockScheduleUiStateError,
+                onScheduleEvent = {}
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
     )
 }

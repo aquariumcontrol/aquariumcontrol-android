@@ -26,14 +26,21 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.common.presentation.HyperlinkTextComposablePreview
+import com.laimburggasse.aquariumcontrol.common.presentation.HyperlinkTextComposableDarkPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.HyperlinkTextComposableLightPreview
 
 class HyperlinkTextComposableTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun HyperlinkTextComposableDarkTest() {
+        HyperlinkTextComposableDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun HyperlinkTextComposableSnapshotTest() {
-        HyperlinkTextComposablePreview()
+    fun HyperlinkTextComposableLightTest() {
+        HyperlinkTextComposableLightPreview()
     }
 }

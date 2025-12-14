@@ -26,14 +26,22 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileEditMenuItemComposablePreview
+import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileEditMenuItemComposableDarkPreview
+import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileEditMenuItemComposableLightPreview
 
 class FeedProfileEditMenuItemComposableTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun FeedProfileEditMenuItemComposableDarkTest() {
+        FeedProfileEditMenuItemComposableDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun FeedProfileEditMenuItemComposableSnapshotTest() {
-        FeedProfileEditMenuItemComposablePreview()
+    fun FeedProfileEditMenuItemComposableLightTest() {
+        FeedProfileEditMenuItemComposableLightPreview()
     }
+
 }

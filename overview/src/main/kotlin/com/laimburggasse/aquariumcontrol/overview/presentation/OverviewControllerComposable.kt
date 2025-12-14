@@ -108,10 +108,24 @@ fun OverviewControllerComposable(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun OverviewControllerComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            OverviewControllerComposable(
+                controllerProfileName = "mockProfileName",
+                controllerAddress = "mock.controller.address",
+                controllerPort = 80,
+                controllerUsername = "mock_user",
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun OverviewControllerComposablePreview() {
-    AquariumControllerTheme {
+internal fun OverviewControllerComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface {
             OverviewControllerComposable(
                 controllerProfileName = "mockProfileName",

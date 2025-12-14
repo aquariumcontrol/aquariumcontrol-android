@@ -240,20 +240,29 @@ fun FeedProfileDisplayLegendComposable() {
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=800dp,height=600dp,orientation=landscape"
 )
+@Composable
+internal fun FeedProfileDisplayLegendDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            FeedProfileDisplayLegendComposable()
+        }
+    }
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO,
     device = "spec:width=800dp,height=600dp,orientation=landscape"
 )
 @Composable
-internal fun FeedProfileDisplayLegendPreview() {
-    AquariumControllerTheme {
+internal fun FeedProfileDisplayLegendLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface(color = MaterialTheme.colorScheme.background) {
             FeedProfileDisplayLegendComposable()
         }

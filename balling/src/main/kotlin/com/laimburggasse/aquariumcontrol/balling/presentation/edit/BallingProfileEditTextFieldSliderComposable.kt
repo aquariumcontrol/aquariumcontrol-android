@@ -75,11 +75,24 @@ fun BallingProfileEditTextFieldSliderComposable(
     )
 }
 
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-internal fun BallingProfileEditTextFieldSliderComposablePortraitPreview() {
-    AquariumControllerTheme {
+internal fun BallingProfileEditTextFieldSliderPortraitComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                BallingProfileEditTextFieldSliderComposable(
+                    sliderPositionNewDosingVolume = 2.0,
+                )
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+internal fun BallingProfileEditTextFieldSliderPortraitComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface(color = MaterialTheme.colorScheme.background) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 BallingProfileEditTextFieldSliderComposable(
@@ -95,14 +108,27 @@ internal fun BallingProfileEditTextFieldSliderComposablePortraitPreview() {
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
+@Composable
+internal fun BallingProfileEditTextFieldSliderLandscapeComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            Row {
+                BallingProfileEditTextFieldSliderComposable(
+                    sliderPositionNewDosingVolume = 2.0,
+                )
+            }
+        }
+    }
+}
+
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO,
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
 @Composable
-internal fun BallingProfileEditTextFieldSliderComposableLandscapePreview() {
-    AquariumControllerTheme {
+internal fun BallingProfileEditTextFieldSliderLandscapeComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface(color = MaterialTheme.colorScheme.background) {
             Row {
                 BallingProfileEditTextFieldSliderComposable(

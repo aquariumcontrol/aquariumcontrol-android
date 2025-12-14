@@ -77,10 +77,24 @@ fun BallingDosingHistorySelectionButtonsComposable(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun BallingDosingHistorySelectionButtonsPortraitComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                BallingDosingHistorySelectionButtonsComposable(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                    onNavigateFromBalling = { ballingNavigationEvent, ballingPumpId -> }
+                )
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun BallingDosingHistorySelectionButtonsComposablePortraitPreview() {
-    AquariumControllerTheme {
+internal fun BallingDosingHistorySelectionButtonsPortraitComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface(color = MaterialTheme.colorScheme.background) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 BallingDosingHistorySelectionButtonsComposable(
@@ -97,14 +111,28 @@ internal fun BallingDosingHistorySelectionButtonsComposablePortraitPreview() {
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
+@Composable
+internal fun BallingDosingHistorySelectionButtonsLandscapeComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            Row {
+                BallingDosingHistorySelectionButtonsComposable(
+                    modifier = Modifier.padding(vertical = 8.dp).weight(weight = 0.5f),
+                    onNavigateFromBalling = { ballingNavigationEvent, ballingPumpId -> }
+                )
+            }
+        }
+    }
+}
+
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO,
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
 @Composable
-internal fun BallingDosingHistorySelectionButtonsComposableLandscapePreview() {
-    AquariumControllerTheme {
+internal fun BallingDosingHistorySelectionButtonsLandscapeComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface(color = MaterialTheme.colorScheme.background) {
             Row {
                 BallingDosingHistorySelectionButtonsComposable(

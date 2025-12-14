@@ -26,23 +26,36 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemFeedDisabledPreview
-import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemFeedEnabledPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemFeedDisabledDarkPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemFeedDisabledLightPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemFeedEnabledDarkPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemFeedEnabledLightPreview
 
 class MainDropDownMenuItemFeedComposableTest {
     @PreviewTest
     @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun MainDropdownMenuItemFeedEnabledDarkTest() {
+        MainDropdownMenuItemFeedEnabledDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun MainDropdownMenuItemFeedEnabledTest() {
-        MainDropdownMenuItemFeedEnabledPreview()
+    fun MainDropdownMenuItemFeedEnabledLightTest() {
+        MainDropdownMenuItemFeedEnabledLightPreview()
     }
 
     @PreviewTest
     @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun MainDropdownMenuItemFeedDisabledDarkTest() {
+        MainDropdownMenuItemFeedDisabledDarkPreview()
+    }
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun MainDropdownMenuItemFeedDisabledTest() {
-        MainDropdownMenuItemFeedDisabledPreview()
+    fun MainDropdownMenuItemFeedDisabledLightTest() {
+        MainDropdownMenuItemFeedDisabledLightPreview()
     }
 }

@@ -70,11 +70,24 @@ fun TimeDatapHChartComposable(
 }
 
 @Preview(showBackground = true, heightDp = 450, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun TimeDatapHChartComposableDarkPreview() {
+    val textColor: Int = Color.WHITE
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            TimeDatapHChartComposable(
+                pHDataSet = mockTimeDataSets.datapH,
+                textColor = textColor
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true, heightDp = 450, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun TimeDatapHChartComposablePreview() {
-    val textColor: Int = if (isSystemInDarkTheme()) Color.WHITE else Color.BLACK
-    AquariumControllerTheme {
+internal fun TimeDatapHChartComposableLightPreview() {
+    val textColor: Int = Color.BLACK
+    AquariumControllerTheme(darkTheme = false) {
         Surface {
             TimeDatapHChartComposable(
                 pHDataSet = mockTimeDataSets.datapH,

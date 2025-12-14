@@ -26,63 +26,84 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryScreenPreviewEmpty
-import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryScreenPreviewError
-import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryScreenPreviewSuccess
-
+import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryScreenEmptyDarkPreview
+import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryScreenEmptyLightPreview
+import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryScreenErrorDarkPreview
+import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryScreenErrorLightPreview
+import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryScreenSuccessLightPreview
+import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryScreenSuccessDarkPreview
 
 class RefillHistoryScreenTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_YES,
         device = "spec:width=800dp,height=400dp,orientation=landscape"
     )
+    @Composable
+    fun RefillHistoryScreenEmptyDarkTest() {
+        RefillHistoryScreenEmptyDarkPreview()
+    }
+
+    @PreviewTest
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_NO,
         device = "spec:width=800dp,height=400dp,orientation=landscape"
     )
     @Composable
-    fun RefillHistoryScreenEmptySnapshotTest() {
-        RefillHistoryScreenPreviewEmpty()
+    fun RefillHistoryScreenEmptyLightTest() {
+        RefillHistoryScreenEmptyLightPreview()
     }
 
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_YES,
         device = "spec:width=800dp,height=400dp,orientation=landscape"
     )
+    @Composable
+    fun RefillHistoryScreenErrorDarkTest() {
+        RefillHistoryScreenErrorDarkPreview()
+    }
+
+    @PreviewTest
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_NO,
         device = "spec:width=800dp,height=400dp,orientation=landscape"
     )
     @Composable
-    fun RefillHistoryScreenErrorSnapshotTest() {
-        RefillHistoryScreenPreviewError()
+    fun RefillHistoryScreenErrorLightTest() {
+        RefillHistoryScreenErrorLightPreview()
     }
 
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_YES,
         device = "spec:width=800dp,height=400dp,orientation=landscape"
     )
+    @Composable
+    fun RefillHistoryScreenSuccessDarkTest() {
+        RefillHistoryScreenSuccessDarkPreview()
+    }
+
+    @PreviewTest
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_NO,
         device = "spec:width=800dp,height=400dp,orientation=landscape"
     )
     @Composable
-    fun RefillHistoryScreenSuccessSnapshotTest() {
-        RefillHistoryScreenPreviewSuccess()
+    fun RefillHistoryScreenSuccessLightTest() {
+        RefillHistoryScreenSuccessLightPreview()
     }
+
 }

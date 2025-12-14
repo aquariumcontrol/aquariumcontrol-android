@@ -71,10 +71,21 @@ fun FeedHistorySelectionButtonsComposable(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun FeedHistorySelectionButtonsPortraitComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            Column {
+                FeedHistorySelectionButtonsComposable( onNavigateFromFeed = { event, id, isNew, millis -> })
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun FeedHistorySelectionButtonsComposablePortraitPreview() {
-    AquariumControllerTheme {
+internal fun FeedHistorySelectionButtonsPortraitComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface {
             Column {
                 FeedHistorySelectionButtonsComposable( onNavigateFromFeed = { event, id, isNew, millis -> })
@@ -88,14 +99,25 @@ internal fun FeedHistorySelectionButtonsComposablePortraitPreview() {
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
+@Composable
+internal fun FeedHistorySelectionButtonsLandscapeComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            Row {
+                FeedHistorySelectionButtonsComposable( onNavigateFromFeed = { event, id, isNew, millis -> })
+            }
+        }
+    }
+}
+
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO,
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
 @Composable
-internal fun FeedHistorySelectionButtonsComposableLandscapePreview() {
-    AquariumControllerTheme {
+internal fun FeedHistorySelectionButtonsLandscapeComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface {
             Row {
                 FeedHistorySelectionButtonsComposable( onNavigateFromFeed = { event, id, isNew, millis -> })

@@ -20,38 +20,27 @@
  * SOFTWARE.
  */
 
-package com.laimburggasse.aquariumcontrol.feed.history
+package com.laimburggasse.aquariumcontrol.balling.edit
 
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedHistorySelectionButtonsComposableLandscapePreview
-import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedHistorySelectionButtonsComposablePortraitPreview
+import com.laimburggasse.aquariumcontrol.balling.presentation.components.BallingProfileSummaryComposableDarkPreview
+import com.laimburggasse.aquariumcontrol.balling.presentation.components.BallingProfileSummaryComposableLightPreview
 
-
-class FeedHistorySelectionButtonsComposableTest {
+class BallingProfileSummaryComposableTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun FeedHistorySelectionButtonsComposablePortraitTest() {
-        FeedHistorySelectionButtonsComposablePortraitPreview()
+    fun BallingProfileSummaryComposableDarkTest() {
+        BallingProfileSummaryComposableDarkPreview()
     }
 
     @PreviewTest
-    @Preview(
-        showBackground = true,
-        uiMode = Configuration.UI_MODE_NIGHT_YES,
-        device = "spec:width=600dp,height=400dp,orientation=landscape"
-    )
-    @Preview(
-        showBackground = true,
-        uiMode = Configuration.UI_MODE_NIGHT_NO,
-        device = "spec:width=600dp,height=400dp,orientation=landscape"
-    )
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun FeedHistorySelectionButtonsComposableLandscapeTest() {
-        FeedHistorySelectionButtonsComposableLandscapePreview()
+    fun BallingProfileSummaryComposableLightTest() {
+        BallingProfileSummaryComposableLightPreview()
     }
 }

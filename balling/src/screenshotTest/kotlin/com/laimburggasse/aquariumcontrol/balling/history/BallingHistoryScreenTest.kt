@@ -26,48 +26,79 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryScreenPreviewEmpty
-import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryScreenPreviewError
-import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryScreenPreviewLoading
-import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryScreenPreviewSuccess
+import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryScreenEmptyDarkPreview
+import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryScreenEmptyLightPreview
+import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryScreenErrorDarkPreview
+import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryScreenErrorLightPreview
+import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryScreenLoadingDarkPreview
+import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryScreenLoadingLightPreview
+import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryScreenSuccessDarkPreview
+import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryScreenSuccessLightPreview
 
 class BallingHistoryScreenTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_YES,
         device = "spec:width=600dp,height=400dp,orientation=landscape"
     )
+    @Composable
+    fun BallingHistoryScreenSuccessDarkTest() {
+        BallingHistoryScreenSuccessDarkPreview()
+    }
+
+    @PreviewTest
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_NO,
         device = "spec:width=600dp,height=400dp,orientation=landscape"
     )
     @Composable
-    fun BallingHistoryScreenSnapshotTestSuccess() {
-        BallingHistoryScreenPreviewSuccess()
+    fun BallingHistoryScreenSuccessLightTest() {
+        BallingHistoryScreenSuccessLightPreview()
     }
 
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Composable
-    fun BallingHistoryScreenSnapshotTestEmpty() {
-        BallingHistoryScreenPreviewEmpty()
+    fun BallingHistoryScreenEmptyDarkTest() {
+        BallingHistoryScreenEmptyDarkPreview()
+    }
+
+    @PreviewTest
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+    @Composable
+    fun BallingHistoryScreenEmptyLightTest() {
+        BallingHistoryScreenEmptyLightPreview()
     }
 
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Composable
-    fun BallingHistoryScreenSnapshotTestLoading() {
-        BallingHistoryScreenPreviewLoading()
+    fun BallingHistoryScreenErrorTest() {
+        BallingHistoryScreenErrorDarkPreview()
+    }
+
+    @PreviewTest
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+    @Composable
+    fun BallingHistoryScreenErrorLightTest() {
+        BallingHistoryScreenErrorLightPreview()
     }
 
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Composable
-    fun BallingHistoryScreenSnapshotTestError() {
-        BallingHistoryScreenPreviewError()
+    fun BallingHistoryScreenLoadingTest() {
+        BallingHistoryScreenLoadingDarkPreview()
+    }
+
+    @PreviewTest
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+    @Composable
+    fun BallingHistoryScreenLoadingLightTest() {
+        BallingHistoryScreenLoadingLightPreview()
     }
 }

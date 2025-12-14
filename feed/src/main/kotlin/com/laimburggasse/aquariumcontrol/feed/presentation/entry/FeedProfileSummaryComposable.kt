@@ -120,10 +120,27 @@ fun FeedProfileSummaryComposable(
 
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun FeedProfileSummaryComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface(
+            color = MaterialTheme.colorScheme.background
+        ) {
+            FeedProfileSummaryComposable(
+                feedProfile = mockFeedProfile,
+                onEditClick = {},
+                onScheduleClick = {},
+                onDeleteClick = {},
+            )
+        }
+    }
+}
+
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun FeedProfileSummaryComposablePreview() {
-    AquariumControllerTheme {
+internal fun FeedProfileSummaryComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {

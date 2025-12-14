@@ -33,7 +33,7 @@ plugins {
 }
 
 kotlin {
-    jvmToolchain(jdkVersion = 17)
+    jvmToolchain(jdkVersion = 21)
     compilerOptions {
         freeCompilerArgs.add("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
     }
@@ -77,7 +77,7 @@ android {
     }
     @Suppress("UnstableApiUsage")
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.15"
+        kotlinCompilerExtensionVersion = "2.2.21"
     }
     packaging {
         resources {

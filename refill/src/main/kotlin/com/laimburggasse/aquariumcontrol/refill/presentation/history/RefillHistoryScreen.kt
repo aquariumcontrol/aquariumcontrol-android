@@ -182,19 +182,13 @@ fun RefillHistoryScreen(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    device = "spec:width=800dp,height=400dp,orientation=landscape"
-)
 @Composable
-internal fun RefillHistoryScreenPreviewSuccess() {
+internal fun RefillHistoryScreenSuccessDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.refillHistory24h,
@@ -206,14 +200,36 @@ internal fun RefillHistoryScreenPreviewSuccess() {
             )
         },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=800dp,height=400dp,orientation=landscape"
+)
+@Composable
+internal fun RefillHistoryScreenSuccessLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.refillHistory24h,
+        screenContent = {
+            RefillHistoryScreen(
+                showFullWeek = true,
+                refillHistoryUiState = mockRefillHistoryUiStateSuccess,
+                onRefillHistoryEvent = {}
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
     )
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun RefillHistoryScreenPreviewError() {
+internal fun RefillHistoryScreenErrorDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.refillHistory24h,
@@ -225,14 +241,31 @@ internal fun RefillHistoryScreenPreviewError() {
             )
         },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+internal fun RefillHistoryScreenErrorLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.refillHistory24h,
+        screenContent = {
+            RefillHistoryScreen(
+                showFullWeek = true,
+                refillHistoryUiState = mockRefillHistoryUiStateError,
+                onRefillHistoryEvent = {}
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
     )
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun RefillHistoryScreenPreviewEmpty() {
+internal fun RefillHistoryScreenEmptyDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.refillHistory24h,
@@ -244,6 +277,24 @@ internal fun RefillHistoryScreenPreviewEmpty() {
             )
         },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+internal fun RefillHistoryScreenEmptyLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.refillHistory24h,
+        screenContent = {
+            RefillHistoryScreen(
+                showFullWeek = true,
+                refillHistoryUiState = mockRefillHistoryUiStateEmpty,
+                onRefillHistoryEvent = {}
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
     )
 }

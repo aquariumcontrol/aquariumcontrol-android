@@ -106,14 +106,9 @@ fun HeatingRangeSliderTextFieldsLandscapeComposable(
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    device = "spec:width=800dp,height=400dp,orientation=landscape"
-)
 @Composable
-internal fun HeatingRangeSliderTextFieldsLandscapeComposablePreview() {
-    AquariumControllerTheme {
+internal fun HeatingRangeSliderTextFieldsLandscapeComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
         Surface {
             HeatingRangeSliderTextFieldsLandscapeComposable(
                 heatingSwitchOffTemp = 23.0,
@@ -127,4 +122,24 @@ internal fun HeatingRangeSliderTextFieldsLandscapeComposablePreview() {
     }
 }
 
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=800dp,height=400dp,orientation=landscape"
+)
+@Composable
+internal fun HeatingRangeSliderTextFieldsLandscapeComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
+        Surface {
+            HeatingRangeSliderTextFieldsLandscapeComposable(
+                heatingSwitchOffTemp = 23.0,
+                heatingSwitchOnTemp = 27.0,
+                onLowerValueChanged = {},
+                onUpperValueChanged = {},
+                onSliderValueChanged = {lowerValue, upperValue -> },
+                onRefresh = {}
+            )
+        }
+    }
+}
 

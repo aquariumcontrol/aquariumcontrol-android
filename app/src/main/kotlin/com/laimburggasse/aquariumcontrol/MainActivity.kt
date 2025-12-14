@@ -28,6 +28,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -170,7 +171,8 @@ class MainActivity : ComponentActivity() {
                                     event,
                                     sessionManager
                                 )
-                            }
+                            },
+                            darkTheme = isSystemInDarkTheme()
                         )
                     }
                     composable(route = ViewNavigationRoutes.controllerAdd)
@@ -197,7 +199,8 @@ class MainActivity : ComponentActivity() {
                                     event,
                                     sessionManager
                                 )
-                            }
+                            },
+                            darkTheme = isSystemInDarkTheme()
                         )
                     }
                     composable(route = ViewNavigationRoutes.controllerEdit,
@@ -234,7 +237,8 @@ class MainActivity : ComponentActivity() {
                                     event,
                                     sessionManager
                                 )
-                            }
+                            },
+                            darkTheme = isSystemInDarkTheme()
                         )
                     }
                     composable(route = ViewNavigationRoutes.feed) {
@@ -268,6 +272,7 @@ class MainActivity : ComponentActivity() {
                                     sessionManager
                                 )
                             },
+                            darkTheme = isSystemInDarkTheme()
                         )
                     }
                     composable(route = ViewNavigationRoutes.feedHistory24h) {
@@ -289,7 +294,8 @@ class MainActivity : ComponentActivity() {
                                     event,
                                     sessionManager
                                 )
-                            }
+                            },
+                            darkTheme = isSystemInDarkTheme()
                         )
                     }
                     composable(route = ViewNavigationRoutes.feedHistory7d) {
@@ -311,7 +317,8 @@ class MainActivity : ComponentActivity() {
                                     event,
                                     sessionManager
                                 )
-                            }
+                            },
+                            darkTheme = isSystemInDarkTheme()
                         )
                     }
                     composable(route = ViewNavigationRoutes.feedEdit,
@@ -335,7 +342,8 @@ class MainActivity : ComponentActivity() {
                                     event,
                                     sessionManager
                                 )
-                            }
+                            },
+                            darkTheme = isSystemInDarkTheme()
                         )
                     }
                     composable(route = ViewNavigationRoutes.feedAddProfile) {
@@ -369,6 +377,7 @@ class MainActivity : ComponentActivity() {
                                     sessionManager
                                 )
                             },
+                            darkTheme = isSystemInDarkTheme()
                         )
                     }
                     composable(route = ViewNavigationRoutes.feedSchedule,
@@ -406,6 +415,7 @@ class MainActivity : ComponentActivity() {
                                     event, sessionManager
                                 )
                             },
+                            darkTheme = isSystemInDarkTheme()
                         )
                     }
                     composable(route = ViewNavigationRoutes.balling) {
@@ -431,6 +441,7 @@ class MainActivity : ComponentActivity() {
                                     sessionManager
                                 )
                             },
+                            darkTheme = isSystemInDarkTheme()
                         )
                     }
                     composable(route = ViewNavigationRoutes.ballingHistory24h) {
@@ -453,6 +464,7 @@ class MainActivity : ComponentActivity() {
                                     sessionManager
                                 )
                             },
+                            darkTheme = isSystemInDarkTheme()
                         )
                     }
                     composable(route = ViewNavigationRoutes.ballingHistory7d) {
@@ -475,6 +487,7 @@ class MainActivity : ComponentActivity() {
                                     sessionManager
                                 )
                             },
+                            darkTheme = isSystemInDarkTheme()
                         )
                     }
                     composable(route = ViewNavigationRoutes.ballingEdit,
@@ -501,6 +514,7 @@ class MainActivity : ComponentActivity() {
                                     sessionManager
                                 )
                             },
+                            darkTheme = isSystemInDarkTheme()
                         )
                     }
                     composable(route = ViewNavigationRoutes.refill) {
@@ -536,7 +550,8 @@ class MainActivity : ComponentActivity() {
                                     event,
                                     sessionManager
                                 )
-                            }
+                            },
+                            darkTheme = isSystemInDarkTheme()
                         )
                     }
                     composable(route = ViewNavigationRoutes.refillHistory24h) {
@@ -557,7 +572,8 @@ class MainActivity : ComponentActivity() {
                                     event,
                                     sessionManager
                                 )
-                            }
+                            },
+                            darkTheme = isSystemInDarkTheme()
                         )
                     }
                     composable(route = ViewNavigationRoutes.refillHistory7d) {
@@ -578,7 +594,8 @@ class MainActivity : ComponentActivity() {
                                     event,
                                     sessionManager
                                 )
-                            }
+                            },
+                            darkTheme = isSystemInDarkTheme()
                         )
                     }
                     composable(route = ViewNavigationRoutes.heating) {
@@ -606,6 +623,7 @@ class MainActivity : ComponentActivity() {
                                     sessionManager
                                 )
                             },
+                            darkTheme = isSystemInDarkTheme()
                         )
                     }
                     composable(route = ViewNavigationRoutes.ventilation) {
@@ -628,7 +646,8 @@ class MainActivity : ComponentActivity() {
                                     event,
                                     sessionManager
                                 )
-                            }
+                            },
+                            darkTheme = isSystemInDarkTheme()
                         )
                     }
                     composable(route = ViewNavigationRoutes.timeData) {
@@ -641,7 +660,8 @@ class MainActivity : ComponentActivity() {
                             screenContent = {
                                 TimeDataScreen(
                                     timeDataUiState,
-                                    onTimeDataEvent = timeDataViewModel::onTimeDataEvent
+                                    onTimeDataEvent = timeDataViewModel::onTimeDataEvent,
+                                    isDarkMode = isSystemInDarkTheme()
                                 )
                             },
                             onNavigate = { event ->
@@ -650,6 +670,7 @@ class MainActivity : ComponentActivity() {
                                     sessionManager
                                 )
                             },
+                            darkTheme = isSystemInDarkTheme()
                         )
                     }
                     composable(route = ViewNavigationRoutes.schedule) {
@@ -670,6 +691,7 @@ class MainActivity : ComponentActivity() {
                                     sessionManager
                                 )
                             },
+                            darkTheme = isSystemInDarkTheme()
                         )
                     }
                     composable(route = ViewNavigationRoutes.info) {
@@ -683,6 +705,7 @@ class MainActivity : ComponentActivity() {
                                     sessionManager
                                 )
                             },
+                            darkTheme = isSystemInDarkTheme()
                         )
                     }
                     composable(route = ViewNavigationRoutes.overView,
@@ -718,7 +741,8 @@ class MainActivity : ComponentActivity() {
                                         event,
                                         sessionManager
                                     )
-                                }
+                                },
+                                darkTheme = isSystemInDarkTheme()
                             )
                         }
                     }

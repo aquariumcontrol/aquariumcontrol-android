@@ -87,10 +87,21 @@ fun FeedProfileEditButtonsComposable(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun FeedProfileEditButtonsComposablePortraitDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            Column {
+                FeedProfileEditButtonsComposable(modifier = Modifier.fillMaxWidth(), onFeedProfileEditUiEvent = {})
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun FeedProfileEditButtonsComposablePortraitPreview() {
-    AquariumControllerTheme {
+internal fun FeedProfileEditButtonsComposablePortraitLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface {
             Column {
                 FeedProfileEditButtonsComposable(modifier = Modifier.fillMaxWidth(), onFeedProfileEditUiEvent = {})
@@ -104,14 +115,25 @@ internal fun FeedProfileEditButtonsComposablePortraitPreview() {
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
+@Composable
+internal fun FeedProfileEditButtonsComposableLandscapeDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            Row {
+                FeedProfileEditButtonsComposable(onFeedProfileEditUiEvent = {})
+            }
+        }
+    }
+}
+
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO,
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
 @Composable
-internal fun FeedProfileEditButtonsComposableLandscapePreview() {
-    AquariumControllerTheme {
+internal fun FeedProfileEditButtonsComposableLandscapeLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface {
             Row {
                 FeedProfileEditButtonsComposable(onFeedProfileEditUiEvent = {})

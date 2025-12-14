@@ -26,23 +26,37 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemHeatingDisabledPreview
-import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemHeatingEnabledPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemHeatingDisabledDarkPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemHeatingDisabledLightPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemHeatingEnabledDarkPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemHeatingEnabledLightPreview
 
 class MainDropDownMenuItemHeatingComposableTest {
     @PreviewTest
     @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun MainDropdownMenuItemHeatingEnabledDarkTest() {
+        MainDropdownMenuItemHeatingEnabledDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun MainDropdownMenuItemHeatingEnabledTest() {
-        MainDropdownMenuItemHeatingEnabledPreview()
+    fun MainDropdownMenuItemHeatingEnabledLightTest() {
+        MainDropdownMenuItemHeatingEnabledLightPreview()
     }
 
     @PreviewTest
     @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun MainDropdownMenuItemHeatingDisabledDarkTest() {
+        MainDropdownMenuItemHeatingDisabledDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun MainDropdownMenuItemHeatingDisabledTest() {
-        MainDropdownMenuItemHeatingDisabledPreview()
+    fun MainDropdownMenuItemHeatingDisabledLightTest() {
+        MainDropdownMenuItemHeatingDisabledLightPreview()
     }
 }

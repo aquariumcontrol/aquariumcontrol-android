@@ -93,10 +93,19 @@ fun RefillEventComposable(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun RefillEventComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            RefillEventComposable(refillHistoryLogEntry = mockEvent)
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun RefillEventComposablePreview() {
-    AquariumControllerTheme {
+internal fun RefillEventComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface(color = MaterialTheme.colorScheme.background) {
             RefillEventComposable(refillHistoryLogEntry = mockEvent)
         }

@@ -69,10 +69,21 @@ fun ScheduleUpdateResetButtonsComposable(onScheduleEvent: (ScheduleUiEvent) -> U
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun ScheduleUpdateResetButtonsComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                ScheduleUpdateResetButtonsComposable(onScheduleEvent = {})
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun ScheduleUpdateResetButtonsComposablePreview() {
-    AquariumControllerTheme {
+internal fun ScheduleUpdateResetButtonsComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface(color = MaterialTheme.colorScheme.background) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 ScheduleUpdateResetButtonsComposable(onScheduleEvent = {})

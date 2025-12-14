@@ -203,19 +203,13 @@ fun BallingHistoryScreen(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    device = "spec:width=600dp,height=400dp,orientation=landscape"
-)
 @Composable
-internal fun BallingHistoryScreenPreviewSuccess() {
+internal fun BallingHistoryScreenSuccessDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
@@ -226,15 +220,37 @@ internal fun BallingHistoryScreenPreviewSuccess() {
                 onEvent = {}
             )
         },
-        onNavigate = {}
+        onNavigate = {},
+        darkTheme = isSystemInDarkTheme()
     )
+}
 
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=600dp,height=400dp,orientation=landscape"
+)
+@Composable
+internal fun BallingHistoryScreenSuccessLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
+        screenContent = {
+            BallingHistoryScreen(
+                showFullWeek = false,
+                ballingHistoryUiState = mockBallingHistoryUiStateSuccess,
+                onEvent = {}
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
+    )
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun BallingHistoryScreenPreviewEmpty() {
+internal fun BallingHistoryScreenEmptyDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
@@ -245,14 +261,32 @@ internal fun BallingHistoryScreenPreviewEmpty() {
                 onEvent = {}
             )
         },
-        onNavigate = {}
+        onNavigate = {},
+        darkTheme = true
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+internal fun BallingHistoryScreenEmptyLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
+        screenContent = {
+            BallingHistoryScreen(
+                showFullWeek = false,
+                ballingHistoryUiState = mockBallingHistoryUiStateEmpty,
+                onEvent = {}
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
     )
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun BallingHistoryScreenPreviewError() {
+internal fun BallingHistoryScreenErrorDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
@@ -264,14 +298,31 @@ internal fun BallingHistoryScreenPreviewError() {
             )
         },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+internal fun BallingHistoryScreenErrorLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
+        screenContent = {
+            BallingHistoryScreen(
+                showFullWeek = false,
+                ballingHistoryUiState = mockBallingHistoryUiStateError,
+                onEvent = {}
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
     )
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun BallingHistoryScreenPreviewLoading() {
+internal fun BallingHistoryScreenLoadingDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
@@ -283,6 +334,24 @@ internal fun BallingHistoryScreenPreviewLoading() {
             )
         },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+internal fun BallingHistoryScreenLoadingLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
+        screenContent = {
+            BallingHistoryScreen(
+                showFullWeek = false,
+                ballingHistoryUiState = mockBallingHistoryUiStateLoading,
+                onEvent = {}
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
     )
 }

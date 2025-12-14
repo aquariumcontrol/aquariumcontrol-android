@@ -54,10 +54,19 @@ fun HyperlinkTextComposable(text: String, url: String, textAlign: TextAlign? = n
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun HyperlinkTextComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            HyperlinkTextComposable(text = "Click here", url = "https://www.google.com")
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun HyperlinkTextComposablePreview() {
-    AquariumControllerTheme {
+internal fun HyperlinkTextComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = true) {
         Surface {
             HyperlinkTextComposable(text = "Click here", url = "https://www.google.com")
         }

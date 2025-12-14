@@ -26,25 +26,57 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.schedule.presentation.ScheduleScreenPreviewSuccess
-
+import com.laimburggasse.aquariumcontrol.schedule.presentation.ScheduleScreenErrorDarkPreview
+import com.laimburggasse.aquariumcontrol.schedule.presentation.ScheduleScreenErrorLightPreview
+import com.laimburggasse.aquariumcontrol.schedule.presentation.ScheduleScreenSuccessDarkPreview
+import com.laimburggasse.aquariumcontrol.schedule.presentation.ScheduleScreenSuccessLightPreview
 
 class ScheduleScreenTest {
     @PreviewTest
     @Preview(showBackground = true, heightDp = 1200, uiMode = Configuration.UI_MODE_NIGHT_YES)
-    @Preview(showBackground = true, heightDp = 1200, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_YES,
         device = "spec:width=1200dp,height=950dp,orientation=landscape"
     )
+    @Composable
+    fun ScheduleScreenSuccessDarkTest() {
+        ScheduleScreenSuccessDarkPreview()
+    }
+
+    @PreviewTest
+    @Preview(showBackground = true, heightDp = 1200, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_NO,
         device = "spec:width=1200dp,height=950dp,orientation=landscape"
     )
     @Composable
-    fun ScheduleScreenSnapshotTest() {
-        ScheduleScreenPreviewSuccess()
+    fun ScheduleScreenSuccessLightTest() {
+        ScheduleScreenSuccessLightPreview()
+    }
+
+    @PreviewTest
+    @Preview(showBackground = true, heightDp = 1200, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Preview(
+        showBackground = true,
+        uiMode = Configuration.UI_MODE_NIGHT_YES,
+        device = "spec:width=1200dp,height=950dp,orientation=landscape"
+    )
+    @Composable
+    fun ScheduleScreenErrorDarkTest() {
+        ScheduleScreenErrorDarkPreview()
+    }
+
+    @PreviewTest
+    @Preview(showBackground = true, heightDp = 1200, uiMode = Configuration.UI_MODE_NIGHT_NO)
+    @Preview(
+        showBackground = true,
+        uiMode = Configuration.UI_MODE_NIGHT_NO,
+        device = "spec:width=1200dp,height=950dp,orientation=landscape"
+    )
+    @Composable
+    fun ScheduleScreenErrorLightTest() {
+        ScheduleScreenErrorLightPreview()
     }
 }

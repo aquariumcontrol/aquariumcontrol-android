@@ -26,23 +26,37 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemBallingDataDisabledPreview
-import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemBallingEnabledPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemBallingDataDisabledDarkPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemBallingDataDisabledLightPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemBallingEnabledDarkPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemBallingEnabledLightPreview
 
 class MainDropDownMenuItemBallingComposableTest {
     @PreviewTest
     @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun MainDropdownMenuItemBallingEnabledDarkTest() {
+        MainDropdownMenuItemBallingEnabledDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun MainDropdownMenuItemBallingEnabledTest() {
-        MainDropdownMenuItemBallingEnabledPreview()
+    fun MainDropdownMenuItemBallingEnabledLightTest() {
+        MainDropdownMenuItemBallingEnabledLightPreview()
     }
 
     @PreviewTest
     @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun MainDropdownMenuItemBallingDataDisabledDarkTest() {
+        MainDropdownMenuItemBallingDataDisabledDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun MainDropdownMenuItemBallingDataDisabledTest() {
-        MainDropdownMenuItemBallingDataDisabledPreview()
+    fun MainDropdownMenuItemBallingDataDisabledLightTest() {
+        MainDropdownMenuItemBallingDataDisabledLightPreview()
     }
 }

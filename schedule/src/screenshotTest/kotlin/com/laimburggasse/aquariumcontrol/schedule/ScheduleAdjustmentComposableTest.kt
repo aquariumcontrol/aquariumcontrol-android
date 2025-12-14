@@ -26,26 +26,31 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.schedule.presentation.ScheduleAdjustmentComposablePreview
-
+import com.laimburggasse.aquariumcontrol.schedule.presentation.ScheduleAdjustmentComposableDarkPreview
+import com.laimburggasse.aquariumcontrol.schedule.presentation.ScheduleAdjustmentComposableLightPreview
 
 class ScheduleAdjustmentComposableTest{
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
-    // The tests for landscape orientation consume too much heap space
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_YES,
         device = "spec:width=800dp,height=400dp,orientation=landscape"
     )
+    @Composable
+    fun ScheduleAdjustmentComposableDarkTest() {
+        ScheduleAdjustmentComposableDarkPreview()
+    }
+
+    @PreviewTest
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_NO,
         device = "spec:width=800dp,height=400dp,orientation=landscape"
     )
     @Composable
-    fun ScheduleAdjustmentComposableSnapshotTest() {
-        ScheduleAdjustmentComposablePreview()
+    fun ScheduleAdjustmentComposableLightTest() {
+        ScheduleAdjustmentComposableLightPreview()
     }
 }

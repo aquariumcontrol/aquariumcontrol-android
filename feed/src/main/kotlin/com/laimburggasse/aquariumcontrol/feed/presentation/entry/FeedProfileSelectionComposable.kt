@@ -149,20 +149,36 @@ fun FeedProfileSelectionComposable(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
+@Composable
+internal fun FeedProfileSelectionComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                FeedProfileSelectionComposable(
+                    feedProfilesUiState = mockFeedProfilesUiStateSuccess,
+                    onNavigateFromFeed = { event, id, isNew, millis -> },
+                    onFeedProfilesUiEvent = { event -> }
+                )
+            }
+        }
+    }
+}
+
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO,
     device = "spec:width=600dp,height=400dp,orientation=landscape"
 )
 @Composable
-internal fun FeedProfileSelectionComposablePreview() {
-    AquariumControllerTheme {
+internal fun FeedProfileSelectionComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 FeedProfileSelectionComposable(

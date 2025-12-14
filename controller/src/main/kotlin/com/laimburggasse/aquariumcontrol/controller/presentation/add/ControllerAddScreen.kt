@@ -121,19 +121,13 @@ fun ControllerAddScreen(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=600dp,height=480dp,orientation=landscape"
 )
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    device = "spec:width=600dp,height=480dp,orientation=landscape"
-)
 @Composable
-internal fun ControllerAddScreenPreview() {
+internal fun ControllerAddScreenDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.controllerAdd,
@@ -145,6 +139,29 @@ internal fun ControllerAddScreenPreview() {
             )
         },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=600dp,height=480dp,orientation=landscape"
+)
+@Composable
+internal fun ControllerAddScreenLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.controllerAdd,
+        screenContent = {
+            ControllerAddScreen(
+                state = ControllerAddEditUiState(),
+                onEvent = {},
+                onAddEvent = {}
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
     )
 }

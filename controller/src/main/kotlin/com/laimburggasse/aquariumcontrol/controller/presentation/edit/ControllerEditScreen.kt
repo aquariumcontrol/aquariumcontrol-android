@@ -169,19 +169,13 @@ fun ControllerEditScreen(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=600dp,height=480dp,orientation=landscape"
 )
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    device = "spec:width=600dp,height=480dp,orientation=landscape"
-)
 @Composable
-internal fun ControllerEditScreenPreview() {
+internal fun ControllerEditScreenDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.controllerEdit,
@@ -194,6 +188,30 @@ internal fun ControllerEditScreenPreview() {
             )
         },
         onNavigate = {},
-        darkTheme = isSystemInDarkTheme()
+        darkTheme = true
+    )
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    device = "spec:width=600dp,height=480dp,orientation=landscape"
+)
+@Composable
+internal fun ControllerEditScreenLightPreview() {
+    MainScaffold(
+        isControllerLoaded = true,
+        navigationRouteSource = ViewNavigationRoutes.controllerEdit,
+        screenContent = {
+            ControllerEditScreen(
+                state = mockControllerEditState,
+                onEvent = {},
+                isDefaultProfileInitialValue = true,
+                onNavigateFromController = {event, id -> }
+            )
+        },
+        onNavigate = {},
+        darkTheme = false
     )
 }

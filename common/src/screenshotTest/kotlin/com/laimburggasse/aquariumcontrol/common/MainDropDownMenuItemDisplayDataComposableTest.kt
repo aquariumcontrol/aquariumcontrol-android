@@ -26,23 +26,37 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemDisplayDataDisabledPreview
-import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemDisplayDataEnabledPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemDisplayDataDisabledDarkPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemDisplayDataDisabledLightPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemDisplayDataEnabledDarkPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemDisplayDataEnabledLightPreview
 
 class MainDropDownMenuItemDisplayDataComposableTest {
     @PreviewTest
     @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun MainDropdownMenuItemDisplayDataEnabledDarkTest() {
+        MainDropdownMenuItemDisplayDataEnabledDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun MainDropdownMenuItemDisplayDataEnabledTest() {
-        MainDropdownMenuItemDisplayDataEnabledPreview()
+    fun MainDropdownMenuItemDisplayDataEnabledLightTest() {
+        MainDropdownMenuItemDisplayDataEnabledLightPreview()
     }
 
     @PreviewTest
     @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun MainDropdownMenuItemDisplayDataDisabledDarkTest() {
+        MainDropdownMenuItemDisplayDataDisabledDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun MainDropdownMenuItemDisplayDataDisabledTest() {
-        MainDropdownMenuItemDisplayDataDisabledPreview()
+    fun MainDropdownMenuItemDisplayDataDisabledLightTest() {
+        MainDropdownMenuItemDisplayDataDisabledLightPreview()
     }
 }

@@ -31,7 +31,7 @@ plugins {
 }
 
 kotlin {
-    jvmToolchain(jdkVersion = 17)
+    jvmToolchain(jdkVersion = 21)
 }
 
 android {

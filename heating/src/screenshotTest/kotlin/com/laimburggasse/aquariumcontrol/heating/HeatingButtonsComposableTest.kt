@@ -26,17 +26,24 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingButtonsComposableLandscapePreview
-import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingButtonsComposablePortraitPreview
-
+import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingButtonsComposableLandscapeDarkPreview
+import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingButtonsComposableLandscapeLightPreview
+import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingButtonsComposablePortraitDarkPreview
+import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingButtonsComposablePortraitLightPreview
 
 class HeatingButtonsComposableTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun HeatingButtonsComposablePortraitDarkTest() {
+        HeatingButtonsComposablePortraitDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun HeatingButtonsComposablePortraitTest() {
-        HeatingButtonsComposablePortraitPreview()
+    fun HeatingButtonsComposablePortraitLightTest() {
+        HeatingButtonsComposablePortraitLightPreview()
     }
 
     @PreviewTest
@@ -45,13 +52,19 @@ class HeatingButtonsComposableTest {
         uiMode = Configuration.UI_MODE_NIGHT_YES,
         device = "spec:width=800dp,height=400dp,orientation=landscape"
     )
+    @Composable
+    fun HeatingButtonsComposableLandscapeDarkTest() {
+        HeatingButtonsComposableLandscapeDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_NO,
         device = "spec:width=800dp,height=400dp,orientation=landscape"
     )
     @Composable
-    fun HeatingButtonsComposableLandscapeTest() {
-        HeatingButtonsComposableLandscapePreview()
+    fun HeatingButtonsComposableLandscapeLightTest() {
+        HeatingButtonsComposableLandscapeLightPreview()
     }
 }

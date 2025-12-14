@@ -26,63 +26,83 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreenPreviewEmpty
-import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreenPreviewError
-import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreenPreviewSuccess
-
+import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreenEmptyDarkPreview
+import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreenEmptyLightPreview
+import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreenErrorDarkPreview
+import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreenErrorLightPreview
+import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreenSuccessDarkPreview
+import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataScreenSuccessLightPreview
 
 class TimeDataScreenTest {
     @PreviewTest
     @Preview(showBackground = true, heightDp = 1250, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Preview(
+        showBackground = true,
+        uiMode = Configuration.UI_MODE_NIGHT_YES,
+        device = "spec:width=1600dp,height=1200dp,orientation=landscape"
+    )
+    @Composable
+    fun TimeDataScreenSuccessDarkTest() {
+        TimeDataScreenSuccessDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(showBackground = true, heightDp = 1250, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
-        uiMode = Configuration.UI_MODE_NIGHT_YES,
-        device = "spec:width=1600dp,height=1200dp,orientation=landscape"
-    )
-    @Preview(
-        showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_NO,
         device = "spec:width=1600dp,height=1200dp,orientation=landscape"
     )
     @Composable
-    fun TimeDataScreenSuccessSnapshotTest() {
-        TimeDataScreenPreviewSuccess()
+    fun TimeDataScreenSuccessLightTest() {
+        TimeDataScreenSuccessLightPreview()
     }
 
     @PreviewTest
     @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_YES)
-    @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_YES,
         device = "spec:width=250dp,height=350dp,orientation=landscape"
     )
+    @Composable
+    fun TimeDataScreenErrorDarkTest() {
+       TimeDataScreenErrorDarkPreview()
+    }
+
+    @PreviewTest
+    @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_NO,
         device = "spec:width=250dp,height=350dp,orientation=landscape"
     )
     @Composable
-    fun TimeDataScreenErrorSnapshotTest() {
-       TimeDataScreenPreviewError()
+    fun TimeDataScreenErrorLightTest() {
+        TimeDataScreenErrorLightPreview()
     }
 
     @PreviewTest
     @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_YES)
-    @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_YES,
         device = "spec:width=250dp,height=350dp,orientation=landscape"
     )
+    @Composable
+    fun TimeDataScreenEmptyDarkTest() {
+        TimeDataScreenEmptyDarkPreview()
+    }
+
+    @PreviewTest
+    @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_NO,
         device = "spec:width=250dp,height=350dp,orientation=landscape"
     )
     @Composable
-    fun TimeDataScreenEmptySnapshotTest() {
-        TimeDataScreenPreviewEmpty()
+    fun TimeDataScreenEmptyLightTest() {
+        TimeDataScreenEmptyLightPreview()
     }
 }

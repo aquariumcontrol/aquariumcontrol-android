@@ -249,22 +249,39 @@ private fun getMinute(value: Float): Int = ((value - getHour(value)) * 60).toInt
 
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
+@Preview(showBackground = true)
+@Composable
+internal fun ScheduleAdjustmentComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            ScheduleAdjustmentComposable(
+                title = "Balling Dosing Schedule",
+                startTime = 8.5f, // 08:30
+                stopTime = 20.25f, // 20:15
+                isLimitationActive = true,
+                onStartTimeChanged = {},
+                onStopTimeChanged = {},
+                onLimitationActiveChanged = {}
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO,
     device = "spec:width=800dp,height=400dp,orientation=landscape"
 )
-
 @Preview(showBackground = true)
 @Composable
-internal fun ScheduleAdjustmentComposablePreview() {
-    AquariumControllerTheme {
+internal fun ScheduleAdjustmentComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface {
             ScheduleAdjustmentComposable(
                 title = "Balling Dosing Schedule",

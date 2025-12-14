@@ -77,10 +77,19 @@ fun BallingHistoryEventComposable(ballingHistoryLogEntry: BallingHistoryLogEntry
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun BallingHistoryEventComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            BallingHistoryEventComposable(ballingHistoryLogEntry = mockBallingEvent)
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun BallingHistoryEventComposablePreview() {
-    AquariumControllerTheme {
+internal fun BallingHistoryEventComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface(color = MaterialTheme.colorScheme.background) {
             BallingHistoryEventComposable(ballingHistoryLogEntry = mockBallingEvent)
         }

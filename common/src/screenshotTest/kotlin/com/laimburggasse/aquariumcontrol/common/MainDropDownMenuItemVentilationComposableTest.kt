@@ -26,23 +26,37 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemVentilationDisabledPreview
-import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemVentilationEnabledPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemVentilationDisabledDarkPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemVentilationDisabledLightPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemVentilationEnabledDarkPreview
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.MainDropdownMenuItemVentilationEnabledLightPreview
 
 class MainDropDownMenuItemVentilationComposableTest {
     @PreviewTest
     @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
-    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun MainDropdownMenuItemVentilationEnabledTest() {
-        MainDropdownMenuItemVentilationEnabledPreview()
+    fun MainDropdownMenuItemVentilationEnabledDarkTest() {
+        MainDropdownMenuItemVentilationEnabledDarkPreview()
     }
 
     @PreviewTest
-    @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Preview(showBackground = false, uiMode = Configuration.UI_MODE_NIGHT_NO)
+    @Composable
+    fun MainDropdownMenuItemVentilationEnabledLightTest() {
+        MainDropdownMenuItemVentilationEnabledLightPreview()
+    }
+
+    @PreviewTest
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun MainDropdownMenuItemVentilationDisabledDarkTest() {
+        MainDropdownMenuItemVentilationDisabledDarkPreview()
+    }
+
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
-    fun MainDropdownMenuItemVentilationDisabledTest() {
-        MainDropdownMenuItemVentilationDisabledPreview()
+    fun MainDropdownMenuItemVentilationDisabledLightTest() {
+        MainDropdownMenuItemVentilationDisabledLightPreview()
     }
 }

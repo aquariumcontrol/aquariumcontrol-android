@@ -68,10 +68,24 @@ fun FeedProfileAddNameEditableOutlinedFieldComposable(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun FeedProfileAddNameEditableOutlinedFieldComposableDarkPreview() {
+    AquariumControllerTheme(darkTheme = true) {
+        Surface(
+            color = MaterialTheme.colorScheme.background
+        ) {
+            FeedProfileAddNameEditableOutlinedFieldComposable(
+                onFeedProfileNameChange = {},
+                modifier = Modifier
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun FeedProfileAddNameEditableOutlinedFieldComposablePreview() {
-    AquariumControllerTheme {
+internal fun FeedProfileAddNameEditableOutlinedFieldComposableLightPreview() {
+    AquariumControllerTheme(darkTheme = false) {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {

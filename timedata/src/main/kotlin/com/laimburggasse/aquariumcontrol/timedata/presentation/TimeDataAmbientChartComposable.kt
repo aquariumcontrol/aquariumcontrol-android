@@ -75,11 +75,24 @@ fun TimeDataAmbientChartComposable(
 }
 
 @Preview(showBackground = true, heightDp = 450, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+internal fun TimeDataAmbientChartComposableDarkPreview() {
+    val textColor: Int = Color.WHITE
+    AquariumControllerTheme(darkTheme = true) {
+        Surface {
+            TimeDataAmbientChartComposable(
+                ambientDataSet = mockTimeDataSets.dataAmbient,
+                textColor = textColor
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true, heightDp = 450, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun TimeDataAmbientChartComposablePreview() {
-    val textColor: Int = if (isSystemInDarkTheme()) Color.WHITE else Color.BLACK
-    AquariumControllerTheme {
+internal fun TimeDataAmbientChartComposableLightPreview() {
+    val textColor: Int = Color.BLACK
+    AquariumControllerTheme(darkTheme = false) {
         Surface {
             TimeDataAmbientChartComposable(
                 ambientDataSet = mockTimeDataSets.dataAmbient,
