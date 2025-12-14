@@ -23,7 +23,6 @@
 package com.laimburggasse.aquariumcontrol.refill.presentation.history
 
 import android.content.res.Configuration
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -58,10 +57,10 @@ import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.refill.R
+import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.refill.preview.RefillPreviewDataImpl.mockRefillHistoryUiStateEmpty
 import com.laimburggasse.aquariumcontrol.refill.preview.RefillPreviewDataImpl.mockRefillHistoryUiStateError
 import com.laimburggasse.aquariumcontrol.refill.preview.RefillPreviewDataImpl.mockRefillHistoryUiStateSuccess
-import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
 
 @Composable
 fun RefillHistoryScreen(

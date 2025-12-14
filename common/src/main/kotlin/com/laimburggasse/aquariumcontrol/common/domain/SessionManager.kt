@@ -46,7 +46,7 @@ open class SessionManager(
     val selectedControllerProfile: StateFlow<ControllerProfile?> = _selectedControllerProfile.asStateFlow()
     val isControllerLoaded: StateFlow<Boolean> = selectedControllerProfile.map { it != null }
         .stateIn(
-            started = SharingStarted.Companion.Eagerly,
+            started = SharingStarted.Eagerly,
             initialValue = false,
             scope = externalScope
         )

@@ -72,7 +72,6 @@ object GlobalConstants {
     const val ERR_MSG_UPDATING_FEED_SCHEDULE_ENTRY_FAILED = "Updating feed schedule entry failed."
     const val ERR_MSG_ADDING_FEED_SCHEDULE_ENTRY_FAILED = "Adding feed schedule entry failed."
     const val ERR_MSG_DELETING_FEED_SCHEDULE_ENTRY_FAILED = "Deleting feed schedule entry failed."
-    const val ERR_MSG_INVALID_JSON_ARRAY_SIZE = "Invalid JSON array size."
     const val ERR_MSG_EMPTY_RESPONSE = "Server responded with empty body."
     const val ERR_MSG_COULD_NOT_ADD_FEED_PROFILE = "Could not add the feed profile."
     const val ERR_MSG_COULD_NOT_DELETE_FEED_PROFILE = "Could not delete the feed profile."

@@ -55,7 +55,7 @@ class FeedProfilesViewModel @Inject constructor(
             }
         }.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.Companion.Eagerly,
+            started = SharingStarted.Eagerly,
             initialValue = FeedProfilesUiState.Loading // The UI starts in a loading state
         )
 

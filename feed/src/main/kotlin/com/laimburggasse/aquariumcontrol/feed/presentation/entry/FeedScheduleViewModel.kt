@@ -64,17 +64,17 @@ class FeedScheduleViewModel @Inject constructor(
             }
         }.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.Companion.Eagerly,
+            started = SharingStarted.Eagerly,
             initialValue = FeedScheduleSelectionUiState.Loading // The UI starts in a loading state
         )
 
-    val _feedProfile = MutableStateFlow<FeedProfile?>(value = FeedProfile())
+    private val _feedProfile = MutableStateFlow<FeedProfile?>(value = FeedProfile())
     val feedProfile: StateFlow<FeedProfile?> = _feedProfile
 
-    val _isNewScheduleEntry = MutableStateFlow(value = false)
+    private val _isNewScheduleEntry = MutableStateFlow(value = false)
     val isNewScheduleEntry: StateFlow<Boolean> = _isNewScheduleEntry
 
-    val _millisSinceEpoch = MutableStateFlow(value = 0L)
+    private val _millisSinceEpoch = MutableStateFlow(value = 0L)
     val millisSinceEpoch: StateFlow<Long> = _millisSinceEpoch
 
     private fun loadDataForProfile(profileId: Int) {
@@ -85,9 +85,11 @@ class FeedScheduleViewModel @Inject constructor(
 
     init {
         // Get the initial values from navigation arguments
-        _isNewScheduleEntry.value = savedStateHandle.get(ViewNavigationRoutes.FEED_ARG_IS_NEW_SCHEDULE_ENTRY) ?: false
-        _millisSinceEpoch.value = savedStateHandle.get(ViewNavigationRoutes.FEED_ARG_MILLIS_SINCE_EPOCH) ?: 0L
-        val profileId: Int? = savedStateHandle.get(ViewNavigationRoutes.FEED_ARG_PROFILE_ID)
+        _isNewScheduleEntry.value = savedStateHandle[ViewNavigationRoutes.FEED_ARG_IS_NEW_SCHEDULE_ENTRY]
+            ?: false
+        _millisSinceEpoch.value = savedStateHandle[ViewNavigationRoutes.FEED_ARG_MILLIS_SINCE_EPOCH]
+            ?: 0L
+        val profileId: Int? = savedStateHandle[ViewNavigationRoutes.FEED_ARG_PROFILE_ID]
 
         if (profileId != null) {
             loadDataForProfile(profileId)

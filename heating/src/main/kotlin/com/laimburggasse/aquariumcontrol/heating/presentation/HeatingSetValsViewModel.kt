@@ -60,7 +60,7 @@ class HeatingSetValsViewModel @Inject constructor(
             }
         }.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.Companion.Eagerly,
+            started = SharingStarted.Eagerly,
             initialValue = HeatingSetValsUiState.Loading // The UI starts in a loading state
         )
 

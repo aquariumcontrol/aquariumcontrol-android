@@ -23,7 +23,6 @@
 package com.laimburggasse.aquariumcontrol.feed.presentation.history
 
 import android.content.res.Configuration
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -55,10 +54,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
-import com.laimburggasse.aquariumcontrol.feed.R
-import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.feed.R
+import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedHistoryUiStateEmpty
 import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedHistoryUiStateError
 import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedHistoryUiStateLoading

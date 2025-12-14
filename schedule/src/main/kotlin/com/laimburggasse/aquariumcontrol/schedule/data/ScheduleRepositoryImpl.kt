@@ -100,7 +100,7 @@ open class ScheduleRepositoryImpl @Inject constructor(
         }
     }.stateIn(
         scope = repositoryScope,
-        started = SharingStarted.Companion.WhileSubscribed(stopTimeoutMillis = 5000L),
+        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
         initialValue = DataFetchResult.Loading
     )
 
@@ -118,7 +118,7 @@ open class ScheduleRepositoryImpl @Inject constructor(
         }
     }.stateIn(
         scope = repositoryScope,
-        started = SharingStarted.Companion.WhileSubscribed(stopTimeoutMillis = 5000L),
+        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
         initialValue = DataFetchResult.Loading
     )
 

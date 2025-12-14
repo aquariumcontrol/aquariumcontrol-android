@@ -28,7 +28,7 @@ import androidx.room.PrimaryKey
 import com.laimburggasse.aquariumcontrol.common.data.ControllerProfileDatabase
 import java.io.Serializable
 
-@Entity(tableName = ControllerProfileDatabase.Companion.TABLE_NAME_CONTROLLER_LIST)
+@Entity(tableName = ControllerProfileDatabase.TABLE_NAME_CONTROLLER_LIST)
 data class ControllerProfile(
     // This class represents a controller profile.
     @PrimaryKey(autoGenerate = true)

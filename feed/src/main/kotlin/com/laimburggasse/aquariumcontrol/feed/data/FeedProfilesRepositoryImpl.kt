@@ -108,7 +108,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
                 val finalResult: DataFetchResult<List<FeedProfile>> = when (networkResult) {
                     is DataFetchResult.Success -> {
                         var profiles: List<FeedProfile> = networkResult.data.map {
-                            FeedProfile.Companion.fromFeedProfileImport(feedProfileImport = it)
+                            FeedProfile.fromFeedProfileImport(feedProfileImport = it)
                         }
 
                         // Apply pending deletions to the fetched list
@@ -128,7 +128,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
             }
         }.stateIn(
             scope = repositoryScope,
-            started = SharingStarted.Companion.WhileSubscribed(stopTimeoutMillis = 5000L),
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
             initialValue = DataFetchResult.Loading
         )
 

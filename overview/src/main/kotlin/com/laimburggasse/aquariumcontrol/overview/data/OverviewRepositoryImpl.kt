@@ -89,7 +89,7 @@ open class OverviewRepositoryImpl @Inject constructor(
         }
         .stateIn(
             scope = repositoryScope,
-            started = SharingStarted.Companion.Eagerly,
+            started = SharingStarted.Eagerly,
             initialValue = DataFetchResult.Loading
         )
 

@@ -23,7 +23,6 @@
 package com.laimburggasse.aquariumcontrol.schedule.presentation
 
 import android.content.res.Configuration
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -51,12 +50,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
-import com.laimburggasse.aquariumcontrol.schedule.R
-import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.schedule.R
+import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntries
 import com.laimburggasse.aquariumcontrol.schedule.preview.SchedulePreviewDataImpl.mockScheduleUiStateError
 import com.laimburggasse.aquariumcontrol.schedule.preview.SchedulePreviewDataImpl.mockScheduleUiStateSuccess
-import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntries
 
 @Composable
 fun ScheduleScreen(

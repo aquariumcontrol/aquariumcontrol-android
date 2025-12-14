@@ -23,7 +23,6 @@
 package com.laimburggasse.aquariumcontrol.balling.presentation.entry
 
 import android.content.res.Configuration
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -51,17 +50,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.laimburggasse.aquariumcontrol.balling.preview.BallingPreviewDataImpl.mockBallingProfilesUiStateEmpty
-import com.laimburggasse.aquariumcontrol.balling.preview.BallingPreviewDataImpl.mockBallingProfilesUiStateError
-import com.laimburggasse.aquariumcontrol.balling.preview.BallingPreviewDataImpl.mockBallingProfilesUiStateLoading
-import com.laimburggasse.aquariumcontrol.balling.preview.BallingPreviewDataImpl.mockBallingProfilesUiStateSuccess
 import com.laimburggasse.aquariumcontrol.balling.R
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.balling.presentation.components.BallingProfileSummaryComposable
 import com.laimburggasse.aquariumcontrol.balling.presentation.navigation.BallingNavigationEvent
+import com.laimburggasse.aquariumcontrol.balling.preview.BallingPreviewDataImpl.mockBallingProfilesUiStateEmpty
+import com.laimburggasse.aquariumcontrol.balling.preview.BallingPreviewDataImpl.mockBallingProfilesUiStateError
+import com.laimburggasse.aquariumcontrol.balling.preview.BallingPreviewDataImpl.mockBallingProfilesUiStateLoading
+import com.laimburggasse.aquariumcontrol.balling.preview.BallingPreviewDataImpl.mockBallingProfilesUiStateSuccess
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
-import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 
 @Composable
 fun BallingScreen(

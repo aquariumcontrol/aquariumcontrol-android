@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package com.laimburggasse.aquariumcontrol.heating.data.di
+package com.laimburggasse.aquariumcontrol.overview.data.di
 
 import com.laimburggasse.aquariumcontrol.overview.data.OverviewRepositoryImpl
 import com.laimburggasse.aquariumcontrol.overview.domain.repository.OverviewRepository

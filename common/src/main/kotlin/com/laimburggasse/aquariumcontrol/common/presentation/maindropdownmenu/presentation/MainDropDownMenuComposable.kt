@@ -59,7 +59,7 @@ fun MainDropdownMenuComposable(
 
     Box(modifier = Modifier.padding(all = 16.dp).fillMaxWidth().wrapContentSize(Alignment.TopStart)
     ) {
-        IconButton(onClick = { expanded = !expanded },) {
+        IconButton(onClick = { expanded = !expanded }) {
             Icon(
                 imageVector = Icons.Default.MoreVert,
                 contentDescription = stringResource(R.string.more_options)

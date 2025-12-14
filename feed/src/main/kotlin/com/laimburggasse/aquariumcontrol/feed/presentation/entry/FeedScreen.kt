@@ -23,7 +23,6 @@
 package com.laimburggasse.aquariumcontrol.feed.presentation.entry
 
 import android.content.res.Configuration
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -42,12 +41,12 @@ import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.feed.R
+import com.laimburggasse.aquariumcontrol.feed.presentation.navigation.FeedNavigationEvent
 import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedProfilesUiStateError
 import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedProfilesUiStateSuccess
 import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedScheduleSelectionUiStateError
 import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedScheduleSelectionUiStateSuccess
-import com.laimburggasse.aquariumcontrol.feed.R
-import com.laimburggasse.aquariumcontrol.feed.presentation.navigation.FeedNavigationEvent
 
 @Composable
 fun FeedScreen(

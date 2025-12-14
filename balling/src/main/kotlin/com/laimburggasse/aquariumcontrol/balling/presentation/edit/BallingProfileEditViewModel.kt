@@ -53,12 +53,10 @@ class BallingProfileEditViewModel @Inject constructor(
             flow2 = unconfirmedProfile
         ) { result, unconfirmedProfile ->
             // Get the ID from navigation arguments.
-            val ballingProfileId: Int? = savedStateHandle["ballingProfileId"]
-            if (ballingProfileId == null) {
-                return@combine BallingProfileEditUiState.Error(
+            val ballingProfileId: Int = savedStateHandle["ballingProfileId"]
+                ?: return@combine BallingProfileEditUiState.Error(
                     errorMessage = GlobalConstants.ERR_MSG_PROFILE_ID_NOT_PROVIDED
                 )
-            }
 
             when (result) {
                 is DataFetchResult.Success -> {

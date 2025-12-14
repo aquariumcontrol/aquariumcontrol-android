@@ -23,7 +23,6 @@
 package com.laimburggasse.aquariumcontrol.feed.presentation.edit
 
 import android.content.res.Configuration
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,9 +38,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.feed.R
 import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedProfileEditUiStateFailure
 import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedProfileEditUiStateSuccess
-import com.laimburggasse.aquariumcontrol.feed.R
 
 @Composable
 fun FeedProfileEditScreen(

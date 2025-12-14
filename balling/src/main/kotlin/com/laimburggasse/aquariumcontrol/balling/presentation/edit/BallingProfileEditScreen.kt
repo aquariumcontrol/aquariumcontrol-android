@@ -25,7 +25,6 @@ package com.laimburggasse.aquariumcontrol.balling.presentation.edit
 import android.content.Context
 import android.content.res.Configuration
 import android.widget.Toast
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -48,13 +47,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.laimburggasse.aquariumcontrol.balling.preview.BallingPreviewDataImpl.mockBallingProfileEditUiState
 import com.laimburggasse.aquariumcontrol.balling.R
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.balling.presentation.components.BallingProfileSummaryComposable
+import com.laimburggasse.aquariumcontrol.balling.preview.BallingPreviewDataImpl.mockBallingProfileEditUiState
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
-import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 
 @Composable
 fun BallingProfileEditScreen(
@@ -70,6 +69,7 @@ fun BallingProfileEditScreen(
 
     val context: Context = LocalContext.current
     val configuration: Configuration = LocalConfiguration.current
+    val toastText = stringResource(id = R.string.sent_request_to_controller_for_updating_dosing_volume)
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
@@ -141,11 +141,7 @@ fun BallingProfileEditScreen(
                             onEvent(BallingProfileEditUiEvent.ConfirmDosingVolume(
                                 newDosingValue = sliderPositionNewDosingVolume)
                             )
-                            Toast.makeText(
-                                context,
-                                context.getString(R.string.sent_request_to_controller_for_updating_dosing_volume),
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            Toast.makeText(context, toastText, Toast.LENGTH_SHORT).show()
                         },
                     ) {
                         Text(

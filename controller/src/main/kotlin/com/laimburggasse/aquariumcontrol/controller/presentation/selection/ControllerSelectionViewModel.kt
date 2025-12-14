@@ -66,7 +66,7 @@ class ControllerSelectionViewModel @Inject constructor(
         profiles.isNotEmpty() && (defaultId != null) && isFirstLoad
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.Companion.WhileSubscribed(stopTimeoutMillis = 5000),
+        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
         initialValue = false
     )
 
@@ -99,7 +99,7 @@ class ControllerSelectionViewModel @Inject constructor(
 
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.Companion.WhileSubscribed(stopTimeoutMillis = 5000),
+        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
         initialValue = 0.0f // The countdown starts at 0% progress
     )
 

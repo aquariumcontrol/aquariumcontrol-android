@@ -24,7 +24,6 @@ package com.laimburggasse.aquariumcontrol.timedata.presentation
 
 import android.content.res.Configuration
 import android.graphics.Color
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Surface

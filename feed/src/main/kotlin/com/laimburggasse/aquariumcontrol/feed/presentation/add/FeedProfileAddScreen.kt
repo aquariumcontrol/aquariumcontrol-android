@@ -25,7 +25,6 @@ package com.laimburggasse.aquariumcontrol.feed.presentation.add
 import android.content.Context
 import android.content.res.Configuration
 import android.widget.Toast
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,10 +46,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
-import com.laimburggasse.aquariumcontrol.feed.R
-import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.feed.presentation.navigation.FeedNavigationEvent
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.feed.R
+import com.laimburggasse.aquariumcontrol.feed.presentation.navigation.FeedNavigationEvent
 
 @Composable
 fun FeedProfileAddScreen(

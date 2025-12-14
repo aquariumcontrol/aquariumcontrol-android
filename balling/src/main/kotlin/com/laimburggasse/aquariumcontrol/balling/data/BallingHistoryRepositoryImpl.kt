@@ -100,7 +100,7 @@ open class BallingHistoryRepositoryImpl @Inject constructor(
         }
         .stateIn(
             scope = repositoryScope,
-            started = SharingStarted.Companion.WhileSubscribed(stopTimeoutMillis = 5000),
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
             initialValue = DataFetchResult.Loading
         )
 
