@@ -23,305 +23,306 @@
 package com.laimburggasse.aquariumcontrol.feed.data.remote.dto
 
 import android.util.Log
+import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 class FeedProfileImport {
-    @SerialName(value = "profileId")
+    @SerialName(value = WebApiParams.PROFILE_ID)
     var profileId: Int = 0
 
-    @SerialName(value = "profileName")
+    @SerialName(value = WebApiParams.PROFILE_NAME)
     var profileName: String = ""
 
     // Phase #1
-    @SerialName(value = "pause01Duration")
+    @SerialName(value = WebApiParams.PAUSE + "01" + WebApiParams.DURATION)
     var pause01Duration: Int? = 0
 
-    @SerialName(value = "pause01Skimmer")
+    @SerialName(value = WebApiParams.PAUSE + "01" + WebApiParams.SKIMMER)
     var pause01Skimmer: Int = 1
-    @SerialName(value = "pause01MPmp1")
+    @SerialName(value = WebApiParams.PAUSE + "01" + WebApiParams.MAIN_PUMP1)
     var pause01MainPump1: Int = 0
-    @SerialName(value = "pause01MPmp2")
+    @SerialName(value = WebApiParams.PAUSE + "01" + WebApiParams.MAIN_PUMP2)
     var pause01MainPump2: Int = 0
-    @SerialName(value = "pause01APmp1")
+    @SerialName(value = WebApiParams.PAUSE + "01" + WebApiParams.AUX_PUMP1)
     var pause01AuxPump1: Int = 0
-    @SerialName(value = "pause01APmp2")
+    @SerialName(value = WebApiParams.PAUSE + "01" + WebApiParams.AUX_PUMP2)
     var pause01AuxPump2: Int = 0
 
-    @SerialName(value = "feed01Duration")
+    @SerialName(value = WebApiParams.FEED + "01" + WebApiParams.DURATION)
     var feed01Duration: Int? = 0
 
-    @SerialName(value = "feed01Skimmer")
+    @SerialName(value = WebApiParams.FEED + "01" + WebApiParams.SKIMMER)
     var feed01Skimmer: Int = 1
-    @SerialName(value = "feed01MPmp1")
+    @SerialName(value = WebApiParams.FEED + "01" + WebApiParams.MAIN_PUMP1)
     var feed01MainPump1: Int = 0
-    @SerialName(value = "feed01MPmp2")
+    @SerialName(value = WebApiParams.FEED + "01" + WebApiParams.MAIN_PUMP2)
     var feed01MainPump2: Int = 0
-    @SerialName(value = "feed01APmp1")
+    @SerialName(value = WebApiParams.FEED + "01" + WebApiParams.AUX_PUMP1)
     var feed01AuxPump1: Int = 0
-    @SerialName(value = "feed01APmp2")
+    @SerialName(value = WebApiParams.FEED + "01" + WebApiParams.AUX_PUMP2)
     var feed01AuxPump2: Int = 0
 
     // Phase #2
-    @SerialName(value = "pause02Duration")
+    @SerialName(value = WebApiParams.PAUSE + "02" + WebApiParams.DURATION)
     var pause02Duration: Int? = 0
 
-    @SerialName(value = "pause02Skimmer")
+    @SerialName(value = WebApiParams.PAUSE + "02" + WebApiParams.SKIMMER)
     var pause02Skimmer: Int = 1
-    @SerialName(value = "pause02MPmp1")
+    @SerialName(value = WebApiParams.PAUSE + "02" + WebApiParams.MAIN_PUMP1)
     var pause02MainPump1: Int = 0
-    @SerialName(value = "pause02MPmp2")
+    @SerialName(value = WebApiParams.PAUSE + "02" + WebApiParams.MAIN_PUMP2)
     var pause02MainPump2: Int = 0
-    @SerialName(value = "pause02APmp1")
+    @SerialName(value = WebApiParams.PAUSE + "02" + WebApiParams.AUX_PUMP1)
     var pause02AuxPump1: Int = 0
-    @SerialName(value = "pause02APmp2")
+    @SerialName(value = WebApiParams.PAUSE + "02" + WebApiParams.AUX_PUMP2)
     var pause02AuxPump2: Int = 0
 
-    @SerialName(value = "feed02Duration")
+    @SerialName(value = WebApiParams.FEED + "02" + WebApiParams.DURATION)
     var feed02Duration: Int? = 0
 
-    @SerialName(value = "feed02Skimmer")
+    @SerialName(value = WebApiParams.FEED + "02" + WebApiParams.SKIMMER)
     var feed02Skimmer: Int = 1
-    @SerialName(value = "feed02MPmp1")
+    @SerialName(value = WebApiParams.FEED + "02" + WebApiParams.MAIN_PUMP1)
     var feed02MainPump1: Int = 0
-    @SerialName(value = "feed02MPmp2")
+    @SerialName(value = WebApiParams.FEED + "02" + WebApiParams.MAIN_PUMP2)
     var feed02MainPump2: Int = 0
-    @SerialName(value = "feed02APmp1")
+    @SerialName(value = WebApiParams.FEED + "02" + WebApiParams.AUX_PUMP1)
     var feed02AuxPump1: Int = 0
-    @SerialName(value = "feed02APmp2")
+    @SerialName(value = WebApiParams.FEED + "02" + WebApiParams.AUX_PUMP2)
     var feed02AuxPump2: Int = 0
 
     // Phase #3
-    @SerialName(value = "pause03Duration")
+    @SerialName(value = WebApiParams.PAUSE + "03" + WebApiParams.DURATION)
     var pause03Duration: Int? = 0
 
-    @SerialName(value = "pause03Skimmer")
+    @SerialName(value = WebApiParams.PAUSE + "03" + WebApiParams.SKIMMER)
     var pause03Skimmer: Int = 1
-    @SerialName(value = "pause03MPmp1")
+    @SerialName(value = WebApiParams.PAUSE + "03" + WebApiParams.MAIN_PUMP1)
     var pause03MainPump1: Int = 0
-    @SerialName(value = "pause03MPmp2")
+    @SerialName(value = WebApiParams.PAUSE + "03" + WebApiParams.MAIN_PUMP2)
     var pause03MainPump2: Int = 0
-    @SerialName(value = "pause03APmp1")
+    @SerialName(value = WebApiParams.PAUSE + "03" + WebApiParams.AUX_PUMP1)
     var pause03AuxPump1: Int = 0
-    @SerialName(value = "pause03APmp2")
+    @SerialName(value = WebApiParams.PAUSE + "03" + WebApiParams.AUX_PUMP2)
     var pause03AuxPump2: Int = 0
 
-    @SerialName(value = "feed03Duration")
+    @SerialName(value = WebApiParams.FEED + "03" + WebApiParams.DURATION)
     var feed03Duration: Int? = 0
 
-    @SerialName(value = "feed03Skimmer")
+    @SerialName(value = WebApiParams.FEED + "03" + WebApiParams.SKIMMER)
     var feed03Skimmer: Int = 1
-    @SerialName(value = "feed03MPmp1")
+    @SerialName(value = WebApiParams.FEED + "03" + WebApiParams.MAIN_PUMP1)
     var feed03MainPump1: Int = 0
-    @SerialName(value = "feed03MPmp2")
+    @SerialName(value = WebApiParams.FEED + "03" + WebApiParams.MAIN_PUMP2)
     var feed03MainPump2: Int = 0
-    @SerialName(value = "feed03APmp1")
+    @SerialName(value = WebApiParams.FEED + "03" + WebApiParams.AUX_PUMP1)
     var feed03AuxPump1: Int = 0
-    @SerialName(value = "feed03APmp2")
+    @SerialName(value = WebApiParams.FEED + "03" + WebApiParams.AUX_PUMP2)
     var feed03AuxPump2: Int = 0
 
     // Phase #4
-    @SerialName(value = "pause04Duration")
+    @SerialName(value = WebApiParams.PAUSE + "04" + WebApiParams.DURATION)
     var pause04Duration: Int? = 0
 
-    @SerialName(value = "pause04Skimmer")
+    @SerialName(value = WebApiParams.PAUSE + "04" + WebApiParams.SKIMMER)
     var pause04Skimmer: Int = 1
-    @SerialName(value = "pause04MPmp1")
+    @SerialName(value = WebApiParams.PAUSE + "04" + WebApiParams.MAIN_PUMP1)
     var pause04MainPump1: Int = 0
-    @SerialName(value = "pause04MPmp2")
+    @SerialName(value = WebApiParams.PAUSE + "04" + WebApiParams.MAIN_PUMP2)
     var pause04MainPump2: Int = 0
-    @SerialName(value = "pause04APmp1")
+    @SerialName(value = WebApiParams.PAUSE + "04" + WebApiParams.AUX_PUMP1)
     var pause04AuxPump1: Int = 0
-    @SerialName(value = "pause04APmp2")
+    @SerialName(value = WebApiParams.PAUSE + "04" + WebApiParams.AUX_PUMP2)
     var pause04AuxPump2: Int = 0
 
-    @SerialName(value = "feed04Duration")
+    @SerialName(value = WebApiParams.FEED + "04" + WebApiParams.DURATION)
     var feed04Duration: Int? = 0
 
-    @SerialName(value = "feed04Skimmer")
+    @SerialName(value = WebApiParams.FEED + "04" + WebApiParams.SKIMMER)
     var feed04Skimmer: Int = 1
-    @SerialName(value = "feed04MPmp1")
+    @SerialName(value = WebApiParams.FEED + "04" + WebApiParams.MAIN_PUMP1)
     var feed04MainPump1: Int = 0
-    @SerialName(value = "feed04MPmp2")
+    @SerialName(value = WebApiParams.FEED + "04" + WebApiParams.MAIN_PUMP2)
     var feed04MainPump2: Int = 0
-    @SerialName(value = "feed04APmp1")
+    @SerialName(value = WebApiParams.FEED + "04" + WebApiParams.AUX_PUMP1)
     var feed04AuxPump1: Int = 0
-    @SerialName(value = "feed04APmp2")
+    @SerialName(value = WebApiParams.FEED + "04" + WebApiParams.AUX_PUMP2)
     var feed04AuxPump2: Int = 0
 
     // Phase #5
-    @SerialName(value = "pause05Duration")
+    @SerialName(value = WebApiParams.PAUSE + "05" + WebApiParams.DURATION)
     var pause05Duration: Int? = 0
 
-    @SerialName(value = "pause05Skimmer")
+    @SerialName(value = WebApiParams.PAUSE + "05" + WebApiParams.SKIMMER)
     var pause05Skimmer: Int = 1
-    @SerialName(value = "pause05MPmp1")
+    @SerialName(value = WebApiParams.PAUSE + "05" + WebApiParams.MAIN_PUMP1)
     var pause05MainPump1: Int = 0
-    @SerialName(value = "pause05MPmp2")
+    @SerialName(value = WebApiParams.PAUSE + "05" + WebApiParams.MAIN_PUMP2)
     var pause05MainPump2: Int = 0
-    @SerialName(value = "pause05APmp1")
+    @SerialName(value = WebApiParams.PAUSE + "05" + WebApiParams.AUX_PUMP1)
     var pause05AuxPump1: Int = 0
-    @SerialName(value = "pause05APmp2")
+    @SerialName(value = WebApiParams.PAUSE + "05" + WebApiParams.AUX_PUMP2)
     var pause05AuxPump2: Int = 0
 
-    @SerialName(value = "feed05Duration")
+    @SerialName(value = WebApiParams.FEED + "05" + WebApiParams.DURATION)
     var feed05Duration: Int? = 0
 
-    @SerialName(value = "feed05Skimmer")
+    @SerialName(value = WebApiParams.FEED + "05" + WebApiParams.SKIMMER)
     var feed05Skimmer: Int = 1
-    @SerialName(value = "feed05MPmp1")
+    @SerialName(value = WebApiParams.FEED + "05" + WebApiParams.MAIN_PUMP1)
     var feed05MainPump1: Int = 0
-    @SerialName(value = "feed05MPmp2")
+    @SerialName(value = WebApiParams.FEED + "05" + WebApiParams.MAIN_PUMP2)
     var feed05MainPump2: Int = 0
-    @SerialName(value = "feed05APmp1")
+    @SerialName(value = WebApiParams.FEED + "05" + WebApiParams.AUX_PUMP1)
     var feed05AuxPump1: Int = 0
-    @SerialName(value = "feed05APmp2")
+    @SerialName(value = WebApiParams.FEED + "05" + WebApiParams.AUX_PUMP2)
     var feed05AuxPump2: Int = 0
 
     // Phase #6
-    @SerialName(value = "pause06Duration")
+    @SerialName(value = WebApiParams.PAUSE + "06" + WebApiParams.DURATION)
     var pause06Duration: Int? = 0
 
-    @SerialName(value = "pause06Skimmer")
+    @SerialName(value = WebApiParams.PAUSE + "06" + WebApiParams.SKIMMER)
     var pause06Skimmer: Int = 1
-    @SerialName(value = "pause06MPmp1")
+    @SerialName(value = WebApiParams.PAUSE + "06" + WebApiParams.MAIN_PUMP1)
     var pause06MainPump1: Int = 0
-    @SerialName(value = "pause06MPmp2")
+    @SerialName(value = WebApiParams.PAUSE + "06" + WebApiParams.MAIN_PUMP2)
     var pause06MainPump2: Int = 0
-    @SerialName(value = "pause06APmp1")
+    @SerialName(value = WebApiParams.PAUSE + "06" + WebApiParams.AUX_PUMP1)
     var pause06AuxPump1: Int = 0
-    @SerialName(value = "pause06APmp2")
+    @SerialName(value = WebApiParams.PAUSE + "06" + WebApiParams.AUX_PUMP2)
     var pause06AuxPump2: Int = 0
 
-    @SerialName(value = "feed06Duration")
+    @SerialName(value = WebApiParams.FEED + "06" + WebApiParams.DURATION)
     var feed06Duration: Int? = 0
 
-    @SerialName(value = "feed06Skimmer")
+    @SerialName(value = WebApiParams.FEED + "06" + WebApiParams.SKIMMER)
     var feed06Skimmer: Int = 1
-    @SerialName(value = "feed06MPmp1")
+    @SerialName(value = WebApiParams.FEED + "06" + WebApiParams.MAIN_PUMP1)
     var feed06MainPump1: Int = 0
-    @SerialName(value = "feed06MPmp2")
+    @SerialName(value = WebApiParams.FEED + "06" + WebApiParams.MAIN_PUMP2)
     var feed06MainPump2: Int = 0
-    @SerialName(value = "feed06APmp1")
+    @SerialName(value = WebApiParams.FEED + "06" + WebApiParams.AUX_PUMP1)
     var feed06AuxPump1: Int = 0
-    @SerialName(value = "feed06APmp2")
+    @SerialName(value = WebApiParams.FEED + "06" + WebApiParams.AUX_PUMP2)
     var feed06AuxPump2: Int = 0
 
     // Phase #7
-    @SerialName(value = "pause07Duration")
+    @SerialName(value = WebApiParams.PAUSE + "07" + WebApiParams.DURATION)
     var pause07Duration: Int? = 0
 
-    @SerialName(value = "pause07Skimmer")
+    @SerialName(value = WebApiParams.PAUSE + "07" + WebApiParams.SKIMMER)
     var pause07Skimmer: Int = 1
-    @SerialName(value = "pause07MPmp1")
+    @SerialName(value = WebApiParams.PAUSE + "07" + WebApiParams.MAIN_PUMP1)
     var pause07MainPump1: Int = 0
-    @SerialName(value = "pause07MPmp2")
+    @SerialName(value = WebApiParams.PAUSE + "07" + WebApiParams.MAIN_PUMP2)
     var pause07MainPump2: Int = 0
-    @SerialName(value = "pause07APmp1")
+    @SerialName(value = WebApiParams.PAUSE + "07" + WebApiParams.AUX_PUMP1)
     var pause07AuxPump1: Int = 0
-    @SerialName(value = "pause07APmp2")
+    @SerialName(value = WebApiParams.PAUSE + "07" + WebApiParams.AUX_PUMP2)
     var pause07AuxPump2: Int = 0
 
-    @SerialName(value = "feed07Duration")
+    @SerialName(value = WebApiParams.FEED + "07" + WebApiParams.DURATION)
     var feed07Duration: Int? = 0
 
-    @SerialName(value = "feed07Skimmer")
+    @SerialName(value = WebApiParams.FEED + "07" + WebApiParams.SKIMMER)
     var feed07Skimmer: Int = 1
-    @SerialName(value = "feed07MPmp1")
+    @SerialName(value = WebApiParams.FEED + "07" + WebApiParams.MAIN_PUMP1)
     var feed07MainPump1: Int = 0
-    @SerialName(value = "feed07MPmp2")
+    @SerialName(value = WebApiParams.FEED + "07" + WebApiParams.MAIN_PUMP2)
     var feed07MainPump2: Int = 0
-    @SerialName(value = "feed07APmp1")
+    @SerialName(value = WebApiParams.FEED + "07" + WebApiParams.AUX_PUMP1)
     var feed07AuxPump1: Int = 0
-    @SerialName(value = "feed07APmp2")
+    @SerialName(value = WebApiParams.FEED + "07" + WebApiParams.AUX_PUMP2)
     var feed07AuxPump2: Int = 0
 
     // Phase #8
-    @SerialName(value = "pause08Duration")
+    @SerialName(value = WebApiParams.PAUSE + "08" + WebApiParams.DURATION)
     var pause08Duration: Int? = 0
 
-    @SerialName(value = "pause08Skimmer")
+    @SerialName(value = WebApiParams.PAUSE + "08" + WebApiParams.SKIMMER)
     var pause08Skimmer: Int = 1
-    @SerialName(value = "pause08MPmp1")
+    @SerialName(value = WebApiParams.PAUSE + "08" + WebApiParams.MAIN_PUMP1)
     var pause08MainPump1: Int = 0
-    @SerialName(value = "pause08MPmp2")
+    @SerialName(value = WebApiParams.PAUSE + "08" + WebApiParams.MAIN_PUMP2)
     var pause08MainPump2: Int = 0
-    @SerialName(value = "pause08APmp1")
+    @SerialName(value = WebApiParams.PAUSE + "08" + WebApiParams.AUX_PUMP1)
     var pause08AuxPump1: Int = 0
-    @SerialName(value = "pause08APmp2")
+    @SerialName(value = WebApiParams.PAUSE + "08" + WebApiParams.AUX_PUMP2)
     var pause08AuxPump2: Int = 0
 
-    @SerialName(value = "feed08Duration")
+    @SerialName(value = WebApiParams.FEED + "08" + WebApiParams.DURATION)
     var feed08Duration: Int? = 0
 
-    @SerialName(value = "feed08Skimmer")
+    @SerialName(value = WebApiParams.FEED + "08" + WebApiParams.SKIMMER)
     var feed08Skimmer: Int = 1
-    @SerialName(value = "feed08MPmp1")
+    @SerialName(value = WebApiParams.FEED + "08" + WebApiParams.MAIN_PUMP1)
     var feed08MainPump1: Int = 0
-    @SerialName(value = "feed08MPmp2")
+    @SerialName(value = WebApiParams.FEED + "08" + WebApiParams.MAIN_PUMP2)
     var feed08MainPump2: Int = 0
-    @SerialName(value = "feed08APmp1")
+    @SerialName(value = WebApiParams.FEED + "08" + WebApiParams.AUX_PUMP1)
     var feed08AuxPump1: Int = 0
-    @SerialName(value = "feed08APmp2")
+    @SerialName(value = WebApiParams.FEED + "08" + WebApiParams.AUX_PUMP2)
     var feed08AuxPump2: Int = 0
 
     // Phase #9
-    @SerialName(value = "pause09Duration")
+    @SerialName(value = WebApiParams.PAUSE + "09" + WebApiParams.DURATION)
     var pause09Duration: Int? = 0
 
-    @SerialName(value = "pause09Skimmer")
+    @SerialName(value = WebApiParams.PAUSE + "09" + WebApiParams.SKIMMER)
     var pause09Skimmer: Int = 1
-    @SerialName(value = "pause09MPmp1")
+    @SerialName(value = WebApiParams.PAUSE + "09" + WebApiParams.MAIN_PUMP1)
     var pause09MainPump1: Int = 0
-    @SerialName(value = "pause09MPmp2")
+    @SerialName(value = WebApiParams.PAUSE + "09" + WebApiParams.MAIN_PUMP2)
     var pause09MainPump2: Int = 0
-    @SerialName(value = "pause09APmp1")
+    @SerialName(value = WebApiParams.PAUSE + "09" + WebApiParams.AUX_PUMP1)
     var pause09AuxPump1: Int = 0
-    @SerialName(value = "pause09APmp2")
+    @SerialName(value = WebApiParams.PAUSE + "09" + WebApiParams.AUX_PUMP2)
     var pause09AuxPump2: Int = 0
 
-    @SerialName(value = "feed09Duration")
+    @SerialName(value = WebApiParams.FEED + "09" + WebApiParams.DURATION)
     var feed09Duration: Int? = 0
 
-    @SerialName(value = "feed09Skimmer")
+    @SerialName(value = WebApiParams.FEED + "09" + WebApiParams.SKIMMER)
     var feed09Skimmer: Int = 1
-    @SerialName(value = "feed09MPmp1")
+    @SerialName(value = WebApiParams.FEED + "09" + WebApiParams.MAIN_PUMP1)
     var feed09MainPump1: Int = 0
-    @SerialName(value = "feed09MPmp2")
+    @SerialName(value = WebApiParams.FEED + "09" + WebApiParams.MAIN_PUMP2)
     var feed09MainPump2: Int = 0
-    @SerialName(value = "feed09APmp1")
+    @SerialName(value = WebApiParams.FEED + "09" + WebApiParams.AUX_PUMP1)
     var feed09AuxPump1: Int = 0
-    @SerialName(value = "feed09APmp2")
+    @SerialName(value = WebApiParams.FEED + "09" + WebApiParams.AUX_PUMP2)
     var feed09AuxPump2: Int = 0
 
     // Phase #10
-    @SerialName(value = "pause10Duration")
+    @SerialName(value = WebApiParams.PAUSE + "10" + WebApiParams.DURATION)
     var pause10Duration: Int? = 0
 
-    @SerialName(value = "pause10Skimmer")
+    @SerialName(value = WebApiParams.PAUSE + "10" + WebApiParams.SKIMMER)
     var pause10Skimmer: Int = 1
-    @SerialName(value = "pause10MPmp1")
+    @SerialName(value = WebApiParams.PAUSE + "10" + WebApiParams.MAIN_PUMP1)
     var pause10MainPump1: Int = 0
-    @SerialName(value = "pause10MPmp2")
+    @SerialName(value = WebApiParams.PAUSE + "10" + WebApiParams.MAIN_PUMP2)
     var pause10MainPump2: Int = 0
-    @SerialName(value = "pause10APmp1")
+    @SerialName(value = WebApiParams.PAUSE + "10" + WebApiParams.AUX_PUMP1)
     var pause10AuxPump1: Int = 0
-    @SerialName(value = "pause10APmp2")
+    @SerialName(value = WebApiParams.PAUSE + "10" + WebApiParams.AUX_PUMP2)
     var pause10AuxPump2: Int = 0
 
-    @SerialName(value = "feed10Duration")
+    @SerialName(value = WebApiParams.FEED + "10" + WebApiParams.DURATION)
     var feed10Duration: Int? = 0
 
-    @SerialName(value = "feed10Skimmer")
+    @SerialName(value = WebApiParams.FEED + "10" + WebApiParams.SKIMMER)
     var feed10Skimmer: Int = 1
-    @SerialName(value = "feed10MPmp1")
+    @SerialName(value = WebApiParams.FEED + "10" + WebApiParams.MAIN_PUMP1)
     var feed10MainPump1: Int = 0
-    @SerialName(value = "feed10MPmp2")
+    @SerialName(value = WebApiParams.FEED + "10" + WebApiParams.MAIN_PUMP2)
     var feed10MainPump2: Int = 0
-    @SerialName(value = "feed10APmp1")
+    @SerialName(value = WebApiParams.FEED + "10" + WebApiParams.AUX_PUMP1)
     var feed10AuxPump1: Int = 0
-    @SerialName(value = "feed10APmp2")
+    @SerialName(value = WebApiParams.FEED + "10" + WebApiParams.AUX_PUMP2)
     var feed10AuxPump2: Int = 0
 
     fun logContent(tag: String = "FeedProfileImport") {

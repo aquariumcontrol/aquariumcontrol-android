@@ -22,6 +22,7 @@
 
 package com.laimburggasse.aquariumcontrol.feed.data.remote.dto
 
+import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -31,16 +32,19 @@ import java.util.Locale
 
 @Serializable
 data class FeedScheduleEntryImport (
-    @SerialName(value = "Timestamp")
+    @SerialName(value = WebApiParams.TIMESTAMP)
     val timestampString: String,
 
-    @SerialName(value = "ProfileId")
+    @SerialName(value = WebApiParams.PROFILE_ID)
     val profileId: Int,
 
-    @SerialName(value = "ProfileName")
+    @SerialName(value = WebApiParams.PROFILE_NAME)
     val profileName: String,
 
-    @SerialName(value = "IsDaily")
+    @SerialName(value = WebApiParams.IS_WEEKLY)
+    val isWeekly: Int = 0,
+
+    @SerialName(value = WebApiParams.IS_DAILY)
     val isDaily: Int = 0,
 ) {
     fun transformToFeedScheduleEntry(): FeedScheduleEntry {

@@ -22,16 +22,17 @@
 
 package com.laimburggasse.aquariumcontrol.balling.domain.model
 
+import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class BallingProfile(
     // This class represents a Balling dosing profile.
-    @SerialName(value = "pumpId")
+    @SerialName(value = WebApiParams.PROFILE_ID)
     val pumpId: Int,
-    @SerialName(value = "dosingVolume")
+    @SerialName(value = WebApiParams.DOSING_VOLUME)
     var volume: Double,
-    @SerialName(value = "label")
+    @SerialName(value = WebApiParams.LABEL)
     val label: String
 )

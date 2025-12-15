@@ -22,14 +22,15 @@
 
 package com.laimburggasse.aquariumcontrol.heating.domain.model
 
+import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class HeatingSetVals(
-    @SerialName(value = "heatingSwitchOnTemp")
+    @SerialName(value = WebApiParams.HEATING_SWITCH_ON_TEMPERATURE)
     var heatingSwitchOnTemp: Double,
 
-    @SerialName(value = "heatingSwitchOffTemp")
+    @SerialName(value = WebApiParams.HEATING_SWITCH_OFF_TEMPERATURE)
     var heatingSwitchOffTemp: Double
 )

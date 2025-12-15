@@ -22,14 +22,15 @@
 
 package com.laimburggasse.aquariumcontrol.ventilation.domain.model
 
+import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class VentilationSetVals(
-    @SerialName("ventilationSwitchOffTemp")
+    @SerialName(WebApiParams.VENTILATION_SWITCH_OFF_TEMPERATURE)
     var ventilationSwitchOffTemp: Double,
 
-    @SerialName("ventilationSwitchOnTemp")
+    @SerialName(WebApiParams.VENTILATION_SWITCH_ON_TEMPERATURE)
     var ventilationSwitchOnTemp: Double
 )

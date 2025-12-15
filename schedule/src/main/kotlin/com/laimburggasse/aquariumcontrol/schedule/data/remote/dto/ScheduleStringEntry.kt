@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol.schedule.data.remote.dto
 
+import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.text.SimpleDateFormat
@@ -8,10 +9,10 @@ import java.util.Locale
 
 @Serializable
 data class ScheduleStringEntry (
-    @SerialName("scheduleType") var scheduleType: String,
-    @SerialName("startTime") var startTime: String,
-    @SerialName("stopTime") var stopTime: String,
-    @SerialName("isActive") var isLimitationActive: Int,
+    @SerialName(WebApiParams.SCHEDULE_TYPE) var scheduleType: String,
+    @SerialName(WebApiParams.START_TIME) var startTime: String,
+    @SerialName(WebApiParams.STOP_TIME) var stopTime: String,
+    @SerialName(WebApiParams.IS_ACTIVE) var isLimitationActive: Int,
 ) {
     private fun stringTimeToFloat(timeString: String, alternativeValue: Float): Float {
         val dateFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())

@@ -28,6 +28,8 @@ object WebApiParams {
     const val PUMP_ID = "pumpId"
     const val DOSING_VOLUME = "dosingVolume"
     const val DURATION = "Duration"
+    const val REFILL_VOLUME = "volume"
+    const val REFILL_DURATION = "duration"
     const val SKIMMER = "Skimmer"
     const val MAIN_PUMP1 = "MainPump1"
     const val MAIN_PUMP2 = "MainPump2"
@@ -40,7 +42,7 @@ object WebApiParams {
     const val IS_DAILY = "isDaily"
     const val IS_WEEKLY = "isWeekly"
     const val TIMESTAMP = "timestamp"
-    const val TIMESTAMP_NEW = "TimeStampNew" // @todo: update API
+    const val TIMESTAMP_NEW = "timestampNew"
     const val SCHEDULE_BALLING_START_TIME = "ballingRangeStartTime"
     const val SCHEDULE_BALLING_STOP_TIME = "ballingRangeFinishTime"
     const val SCHEDULE_BALLING_IS_ACTIVE = "ballingRangeIsActive"
@@ -53,4 +55,56 @@ object WebApiParams {
     const val SCHEDULE_HEATING_START_TIME = "heatingRangeStartTime"
     const val SCHEDULE_HEATING_STOP_TIME = "heatingRangeFinishTime"
     const val SCHEDULE_HEATING_IS_ACTIVE = "heatingRangeIsActive"
+
+    const val PAUSE = "pause"
+
+    const val FEED = "feed"
+
+    const val LABEL = "label"
+
+    const val DATE = "date"
+
+    const val ENERGY = "energy"
+
+    const val AMBIENT_TEMP_AVERAGE = "ambientTempAverage"
+
+    const val WATER_TEMP_AVERAGE = "waterTempAverage"
+
+    const val HEATING_CONTROL_RUNTIME = "heatingControlRuntime"
+
+    const val SCHEDULE_TYPE = "scheduleType"
+
+    const val START_TIME = "startTime"
+
+    const val STOP_TIME = "stopTime"
+
+    const val IS_ACTIVE = "isActive"
+
+    const val WATER_TEMPERATURE = "waterTemperature"
+
+    const val FILTERED_WATER_TEMPERATURE = "filteredWaterTemperature"
+
+    const val PH_VALUE = "phValue"
+
+    const val FILTERED_PH_VALUE = "filteredPhValue"
+
+    const val CONDUCTIVITY = "conductivity"
+
+    const val FILTERED_CONDUCTIVITY = "filteredConductivity"
+
+    const val REFILL_IN_PROGRESS = "refillInProgress"
+
+    const val TANK_LEVEL_SWITCH_POSITION = "tankLevelSwitchPosition"
+
+    const val TANK_LEVEL_SWITCH_INVALID = "tankLevelSwitchInvalid"
+
+    const val TANK_LEVEL_SWITCH_POSITION_STABILIZED = "tankLevelSwitchPositionStabilized"
+
+    const val SURFACE_VENTILATION_STATUS = "surfaceVentilationStatus"
+
+    const val AMBIENT_TEMPERATURE = "ambientTemperature"
+
+    const val AMBIENT_HUMIDITY = "ambientHumidity"
+
+    const val HEATER_STATUS = "heaterStatus"
 }

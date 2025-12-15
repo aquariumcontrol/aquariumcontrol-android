@@ -22,17 +22,18 @@
 
 package com.laimburggasse.aquariumcontrol.refill.domain.model
 
+import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.sql.Timestamp
 
 @Serializable
 data class RefillHistoryLogEntry(
-    @SerialName(value = "timestamp")
+    @SerialName(value = WebApiParams.TIMESTAMP)
     val timestamp: String,
-    @SerialName(value = "duration")
+    @SerialName(value = WebApiParams.REFILL_DURATION)
     val duration: Double,
-    @SerialName(value = "volume")
+    @SerialName(value = WebApiParams.REFILL_VOLUME)
     val volume: Double
 ) {
     // This class is used to represent a refill event.
