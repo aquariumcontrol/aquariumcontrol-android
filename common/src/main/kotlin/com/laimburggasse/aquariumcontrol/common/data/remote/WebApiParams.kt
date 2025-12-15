@@ -38,6 +38,7 @@ object WebApiParams {
     const val VENTILATION_SWITCH_OFF_TEMPERATURE = "ventilationSwitchOffTemp"
     const val VENTILATION_SWITCH_ON_TEMPERATURE = "ventilationSwitchOnTemp"
     const val IS_DAILY = "isDaily"
+    const val IS_WEEKLY = "isWeekly"
     const val TIMESTAMP = "timestamp"
     const val TIMESTAMP_NEW = "TimeStampNew" // @todo: update API
     const val SCHEDULE_BALLING_START_TIME = "ballingRangeStartTime"

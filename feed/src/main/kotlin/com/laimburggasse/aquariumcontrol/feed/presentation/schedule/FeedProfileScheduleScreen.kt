@@ -245,7 +245,7 @@ fun FeedProfileScheduleScreenSuccessDarkPreview() {
                 feedProfile = mockFeedProfileForScheduleScreen,
                 isNewScheduleEntry = false,
                 millisSinceEpoch = 0,
-                onNavigateFromFeed = { event, id, isNew, millis -> },
+                onNavigateFromFeed = { _, _, _, _ -> },
                 onFeedScheduleEntryUiEvent = {}
             )
         },
@@ -270,7 +270,7 @@ fun FeedProfileScheduleScreenSuccessLightPreview() {
                 feedProfile = mockFeedProfileForScheduleScreen,
                 isNewScheduleEntry = false,
                 millisSinceEpoch = 0,
-                onNavigateFromFeed = { event, id, isNew, millis -> },
+                onNavigateFromFeed = { _, _, _, _ -> },
                 onFeedScheduleEntryUiEvent = {}
             )
         },
@@ -290,7 +290,7 @@ fun FeedProfileScheduleScreenErrorDarkPreview() {
                 feedProfile = null,
                 isNewScheduleEntry = false,
                 millisSinceEpoch = 0,
-                onNavigateFromFeed = { event, id, isNew, millis -> },
+                onNavigateFromFeed = { _, _, _, _ -> },
                 onFeedScheduleEntryUiEvent = {}
             )
         },
@@ -310,7 +310,7 @@ fun FeedProfileScheduleScreenErrorLightPreview() {
                 feedProfile = null,
                 isNewScheduleEntry = false,
                 millisSinceEpoch = 0,
-                onNavigateFromFeed = { event, id, isNew, millis -> },
+                onNavigateFromFeed = { _, _, _, _ -> },
                 onFeedScheduleEntryUiEvent = {}
             )
         },

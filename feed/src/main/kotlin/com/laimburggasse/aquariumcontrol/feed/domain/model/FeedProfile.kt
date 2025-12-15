@@ -22,6 +22,7 @@
 
 package com.laimburggasse.aquariumcontrol.feed.domain.model
 
+import android.util.Log
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedProfileImport
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 
@@ -60,6 +61,7 @@ data class FeedProfile(
         }
 
         fun fromFeedProfileImport(feedProfileImport: FeedProfileImport): FeedProfile {
+            feedProfileImport.logContent()
             val phases: List<FeedProfilePhase> = List(size = 20) { index ->
                 val isPause: Boolean = index % 2 == 0
                 val phaseNum: Int = (index / 2) + 1 // e.g., 0,1 -> 1; 2,3 -> 2
@@ -67,12 +69,12 @@ data class FeedProfile(
 
                 // This is a more advanced way using reflection to avoid the massive wall of text.
                 // It dynamically gets the property from the import object.
-                fun <T> getImportProperty(name: String, default: T): T {
+                fun getImportPropertyInt(name: String, default: Int): Int {
                     return try {
                         @Suppress("UNCHECKED_CAST")
                         feedProfileImport::class.java.getDeclaredField(name).let { field ->
                             field.isAccessible = true
-                            (field.get(feedProfileImport) as? T) ?: default
+                            (field.get(feedProfileImport) as? Int) ?: default
                         }
                     } catch (_: Exception) {
                         default
@@ -91,12 +93,12 @@ data class FeedProfile(
                 }
 
                 FeedProfilePhase(
-                    duration = getImportProperty(name = "${importPrefix}${WebApiParams.DURATION}}", 0.0) / 1000.0f,
+                    duration = getImportPropertyInt(name = "${importPrefix}${WebApiParams.DURATION}", default = 0).toDouble() / 1000.0f,
                     skimmer = getImportBoolProperty(name = "${importPrefix}${WebApiParams.SKIMMER}"),
                     mainPump1 = getImportBoolProperty(name = "${importPrefix}${WebApiParams.MAIN_PUMP1}"),
                     mainPump2 = getImportBoolProperty(name = "${importPrefix}${WebApiParams.MAIN_PUMP2}"),
                     auxPump1 = getImportBoolProperty(name = "${importPrefix}${WebApiParams.AUX_PUMP1}"),
-                    auxPump2 = getImportBoolProperty(name = "${importPrefix}${WebApiParams.MAIN_PUMP2}"),
+                    auxPump2 = getImportBoolProperty(name = "${importPrefix}${WebApiParams.AUX_PUMP2}"),
                     isPause = isPause,
                     idx = index
                 )

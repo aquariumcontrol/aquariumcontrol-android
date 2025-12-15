@@ -22,6 +22,7 @@
 
 package com.laimburggasse.aquariumcontrol.feed.data
 
+import android.util.Log
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
@@ -110,7 +111,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
                         var profiles: List<FeedProfile> = networkResult.data.map {
                             FeedProfile.fromFeedProfileImport(feedProfileImport = it)
                         }
-
+                        Log.d("FeedProfilesRepositoryImpl", "profiles: $profiles")
                         // Apply pending deletions to the fetched list
                         if (deletions.isNotEmpty()) {
                             profiles = profiles.filterNot { deletions.contains(it.profileID) }
