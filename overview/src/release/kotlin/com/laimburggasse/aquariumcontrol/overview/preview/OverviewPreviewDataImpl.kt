@@ -31,17 +31,17 @@ import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewUiState
 object OverviewPreviewDataImpl: OverviewPreviewData {
     override val mockOverviewData = OverviewData(
         timestamp = "",
-        temperatureWater = 0.0,
-        temperatureWaterFiltered = 0.0,
-        pH = 0.0,
-        pHFiltered = 0.0,
+        waterTemperature = 0.0,
+        filteredWaterTemperature = 0.0,
+        phValue = 0.0,
+        filteredPhValue = 0.0,
         conductivity = 0.0,
-        conductivityFiltered = 0.0,
+        filteredConductivity = 0.0,
         tankLevelSwitchPosition = "",
-        surfaceVentilation = "",
-        temperatureAmbient = 0.0,
-        humidityAmbient = 0.0,
-        heater = ""
+        surfaceVentilationStatus = "",
+        ambientTemperature = 0.0,
+        ambientHumidity = 0.0,
+        heatingStatus = ""
     )
     override val mockControllerProfile = ControllerProfile()
     override val mockOverviewUiStateSuccess = OverviewUiState.Success(mockOverviewData)
