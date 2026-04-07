@@ -22,6 +22,7 @@
 
 package com.laimburggasse.aquariumcontrol.balling.data
 
+import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingProfileApiService
 import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingProfileReader
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingProfilesRepository
@@ -53,6 +54,7 @@ import javax.inject.Inject
 
 open class BallingProfilesRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
+    private val apiService: BallingProfileApiService,
     @param:ApplicationScope private val repositoryScope: CoroutineScope
 ): BallingProfilesRepository {
 
@@ -102,7 +104,7 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
 
                 val url = "http://${controller.address}:${controller.port}${WebApiUrls.BALLING_LOAD_SET_VALS}"
                 val reader = BallingProfileReader(
-                    url, username = controller.user, password = controller.password
+                    apiService, url, username = controller.user, password = controller.password
                 )
                 // Perform the network request on a background thread.
                 val networkResult: DataFetchResult<List<BallingProfile>> =

@@ -24,6 +24,7 @@ package com.laimburggasse.aquariumcontrol.balling.data.di
 
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingHistoryLogApiService
+import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingProfileApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -46,7 +47,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideBallingApiService(okHttpClient: OkHttpClient): BallingHistoryLogApiService {
+    fun provideBallingHistoryLogApiService(okHttpClient: OkHttpClient): BallingHistoryLogApiService {
         val contentType = "application/json".toMediaType()
         val json = Json {
             ignoreUnknownKeys = true
@@ -61,4 +62,23 @@ object NetworkModule {
             .build()
             .create(BallingHistoryLogApiService::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideBallingProfileApiService(okHttpClient: OkHttpClient): BallingProfileApiService {
+        val contentType = "application/json".toMediaType()
+        val json = Json {
+            ignoreUnknownKeys = true
+            coerceInputValues = true
+        }
+
+        return Retrofit.Builder()
+            // The project uses @Url (which overrides this).
+            .baseUrl("https://placeholder.com/")
+            .client(okHttpClient)
+            .addConverterFactory(json.asConverterFactory(contentType))
+            .build()
+            .create(BallingProfileApiService::class.java)
+    }
+
 }
