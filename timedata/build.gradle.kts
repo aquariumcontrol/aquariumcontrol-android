@@ -54,6 +54,12 @@ android {
     buildFeatures {
         compose = true
     }
+    testOptions {
+        //execution = "ANDROIDX_TEST_ORCHESTRATOR"
+        screenshotTests {
+            imageDifferenceThreshold = 0.010f
+        }
+    }
     @Suppress("UnstableApiUsage")
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.15"

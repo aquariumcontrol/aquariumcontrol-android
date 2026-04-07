@@ -92,104 +92,88 @@ fun BallingHistoryScreen(
             }
         Text(text = subHeadlineText)
 
-        PullToRefreshBox(
-            modifier = Modifier.fillMaxWidth(),
-            state = rememberPullToRefreshState(),
-            isRefreshing = ballingHistoryUiState == BallingHistoryUiState.Loading,
-            contentAlignment = Alignment.Center,
-            onRefresh = { onEvent(BallingHistoryUiEvent.Refresh) },
-            indicator = {
-                if (ballingHistoryUiState == BallingHistoryUiState.Loading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(size = 150.dp),
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
-            }
-        ) {
-            Scaffold(
-                topBar = {},
-                bottomBar = {},
-                floatingActionButton = {},
-                snackbarHost = { SnackbarHost(hostState = remember { SnackbarHostState() })}
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier.fillMaxSize().padding(paddingValues = innerPadding),
-                    horizontalAlignment = Alignment.CenterHorizontally
+        Scaffold(
+            topBar = {},
+            bottomBar = {},
+            floatingActionButton = {},
+            snackbarHost = { SnackbarHost(hostState = remember { SnackbarHostState() })}
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier.fillMaxSize().padding(paddingValues = innerPadding),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                PullToRefreshBox(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center,
+                    state = rememberPullToRefreshState(),
+                    isRefreshing = ballingHistoryUiState is BallingHistoryUiState.Loading,
+                    onRefresh = { onEvent(BallingHistoryUiEvent.Refresh) },
+                    indicator = {
+                        if (ballingHistoryUiState is BallingHistoryUiState.Loading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(size = 150.dp),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
                 ) {
-                    PullToRefreshBox(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center,
-                        state = rememberPullToRefreshState(),
-                        isRefreshing = ballingHistoryUiState is BallingHistoryUiState.Loading,
-                        onRefresh = { onEvent(BallingHistoryUiEvent.Refresh) },
-                        indicator = {
-                            if (ballingHistoryUiState is BallingHistoryUiState.Loading) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(size = 150.dp),
-                                    color = MaterialTheme.colorScheme.primary
+                    Row(
+                        modifier = Modifier.fillMaxSize().padding(all = 16.dp),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        when (ballingHistoryUiState) {
+                            is BallingHistoryUiState.Empty -> {
+                                Text(
+                                    text = stringResource(id = R.string.no_balling_events_found),
+                                    style = TextStyle(
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Bold
+                                    ),
+                                    modifier = Modifier.weight(weight = 1f),
+                                    textAlign = TextAlign.Center
                                 )
                             }
-                        }
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxSize().padding(all = 16.dp),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            when (ballingHistoryUiState) {
-                                is BallingHistoryUiState.Empty -> {
-                                    Text(
-                                        text = stringResource(id = R.string.no_balling_events_found),
-                                        style = TextStyle(
-                                            fontSize = 16.sp,
-                                            fontWeight = FontWeight.Bold
-                                        ),
-                                        modifier = Modifier.weight(weight = 1f),
-                                        textAlign = TextAlign.Center
-                                    )
-                                }
 
-                                is BallingHistoryUiState.Error -> {
-                                    Text(
-                                        text = stringResource(R.string.error_loading_balling_data) +
-                                                ballingHistoryUiState.errorMessage,
-                                        style = TextStyle(
-                                            fontSize = 16.sp,
-                                            fontWeight = FontWeight.Bold
-                                        ),
-                                        modifier = Modifier.weight(weight = 1f),
-                                        textAlign = TextAlign.Center
-                                    )
-                                }
+                            is BallingHistoryUiState.Error -> {
+                                Text(
+                                    text = stringResource(R.string.error_loading_balling_data) +
+                                            ballingHistoryUiState.errorMessage,
+                                    style = TextStyle(
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Bold
+                                    ),
+                                    modifier = Modifier.weight(weight = 1f),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
 
-                                is BallingHistoryUiState.Loading -> {
-                                    Text(
-                                        text = stringResource(id = R.string.loading_balling_dosing_events),
-                                        style = TextStyle(
-                                            fontSize = 16.sp,
-                                            fontWeight = FontWeight.Bold
-                                        ),
-                                        modifier = Modifier.weight(weight = 1f),
-                                        textAlign = TextAlign.Center
-                                    )
-                                }
+                            is BallingHistoryUiState.Loading -> {
+                                Text(
+                                    text = stringResource(id = R.string.loading_balling_dosing_events),
+                                    style = TextStyle(
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Bold
+                                    ),
+                                    modifier = Modifier.weight(weight = 1f),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
 
-                                is BallingHistoryUiState.Success -> {
-                                    val ballingHistoryDosingEvents: List<BallingHistoryLogEntry> =
-                                        ballingHistoryUiState.ballingHistoryLogEntries
-                                    if (LocalInspectionMode.current) {
-                                        // In Preview: Render a simple, static Column instead of LazyColumn
-                                        Column(modifier = Modifier.fillMaxSize()) {
-                                            ballingHistoryDosingEvents.forEach { ballingHistoryLogEntry ->
-                                                BallingHistoryEventComposable(ballingHistoryLogEntry = ballingHistoryLogEntry)
-                                            }
+                            is BallingHistoryUiState.Success -> {
+                                val ballingHistoryDosingEvents: List<BallingHistoryLogEntry> =
+                                    ballingHistoryUiState.ballingHistoryLogEntries
+                                if (LocalInspectionMode.current) {
+                                    // In Preview: Render a simple, static Column instead of LazyColumn
+                                    Column(modifier = Modifier.fillMaxSize()) {
+                                        ballingHistoryDosingEvents.forEach { ballingHistoryLogEntry ->
+                                            BallingHistoryEventComposable(ballingHistoryLogEntry = ballingHistoryLogEntry)
                                         }
-                                    } else {
-                                        // In App Runtime: Use the performant LazyColumn
-                                        LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                            items(items = ballingHistoryDosingEvents) { ballingHistoryLogEntry ->
-                                                BallingHistoryEventComposable(ballingHistoryLogEntry = ballingHistoryLogEntry)
-                                            }
+                                    }
+                                } else {
+                                    // In App Runtime: Use the performant LazyColumn
+                                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                        items(items = ballingHistoryDosingEvents) { ballingHistoryLogEntry ->
+                                            BallingHistoryEventComposable(ballingHistoryLogEntry = ballingHistoryLogEntry)
                                         }
                                     }
                                 }

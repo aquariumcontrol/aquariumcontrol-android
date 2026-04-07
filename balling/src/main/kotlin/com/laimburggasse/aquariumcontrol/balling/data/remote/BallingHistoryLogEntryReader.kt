@@ -3,66 +3,47 @@ package com.laimburggasse.aquariumcontrol.balling.data.remote
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
-import kotlinx.serialization.json.Json
 import okhttp3.Credentials
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
 
 class BallingHistoryLogEntryReader(
+    private val apiService: BallingHistoryLogApiService,
     private val url: String,
     username: String,
     password: String
 ) {
-    // This class will read the Balling dosing events from the server using a GET request.
-    private val client = OkHttpClient()
-    private val json = Json { ignoreUnknownKeys = true }
-
     private val authHeaderValue: String = Credentials.basic(username, password)
 
-    fun readBallingEvents(): DataFetchResult<List<BallingHistoryLogEntry>> {
-        val request: Request = Request.Builder().url(url).header(
-            name = "Authorization", authHeaderValue
-        ).get().build()
+    suspend fun readBallingEvents(): DataFetchResult<List<BallingHistoryLogEntry>> {
+        return try {
+            val response = apiService.getBallingHistoryEvents(
+                url = url, authHeader = authHeaderValue
+            )
 
-        try {
-            val response: Response = client.newCall(request).execute()
             if (response.isSuccessful) {
-                val responseBody: String = response.body.string()
-                if (responseBody.isEmpty()) {
+                val decodedData = response.body()
+
+                if (decodedData.isNullOrEmpty()) {
                     return DataFetchResult.Success(data = emptyList())
                 }
-                if (!responseBody.startsWith(prefix = "[")) {
+
+                if (decodedData.size > GlobalConstants.MAX_HISTORY_LOG_ENTRIES) {
                     return DataFetchResult.Error(
                         exception = null,
-                        errorMessage = GlobalConstants.ERR_MSG_MALFORMED_JSON + responseBody
+                        errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_TOO_MANY_ENTRIES
                     )
                 }
-                try {
-                    val decodedData: List<BallingHistoryLogEntry> =
-                        json.decodeFromString<List<BallingHistoryLogEntry>>(string = responseBody)
-                    if (decodedData.size > GlobalConstants.MAX_HISTORY_LOG_ENTRIES) {
-                        return DataFetchResult.Error(
-                            exception = null,
-                            errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_TOO_MANY_ENTRIES
-                        )
-                    }
-                    return DataFetchResult.Success(decodedData)
-                } catch (exception: Exception) {
-                    return DataFetchResult.Error(
-                        exception,
-                        errorMessage = GlobalConstants.ERR_MSG_DECODING_DATA + exception.message
-                    )
-                }
+
+                DataFetchResult.Success(decodedData)
             } else {
-                return DataFetchResult.Error(
+                DataFetchResult.Error(
                     exception = null,
-                    errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_ERR_CODE + response.code
+                    errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_ERR_CODE + response.code()
                 )
             }
         } catch (exception: Exception) {
-            return DataFetchResult.Error(
-                exception,
+            // Retrofit routes JSON mapping errors and network timeouts here
+            DataFetchResult.Error(
+                exception = exception,
                 errorMessage = GlobalConstants.ERR_MSG_UNEXPECTED_ERR_DURING_PREP + exception.message
             )
         }

@@ -22,6 +22,7 @@
 
 package com.laimburggasse.aquariumcontrol.balling.data
 
+import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingHistoryLogApiService
 import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingHistoryLogEntryReader
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingHistoryRepository
@@ -48,6 +49,7 @@ import javax.inject.Inject
 
 open class BallingHistoryRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
+    private val apiService: BallingHistoryLogApiService,
     @param:ApplicationScope private val repositoryScope: CoroutineScope
 ): BallingHistoryRepository {
 
@@ -90,7 +92,10 @@ open class BallingHistoryRepositoryImpl @Inject constructor(
                 val result: DataFetchResult<List<BallingHistoryLogEntry>> =
                     withContext(context = Dispatchers.IO) {
                         val reader = BallingHistoryLogEntryReader(
-                            url, username = controller.user, password = controller.password
+                            apiService,
+                            url,
+                            username = controller.user,
+                            password = controller.password
                         )
                         reader.readBallingEvents()
                     }

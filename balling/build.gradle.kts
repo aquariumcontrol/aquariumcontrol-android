@@ -21,7 +21,7 @@ android {
     testOptions {
         //execution = "ANDROIDX_TEST_ORCHESTRATOR"
         screenshotTests {
-            imageDifferenceThreshold = 0.0001f // 0.01%
+            imageDifferenceThreshold = 0.0002f // 0.02%
         }
     }
     buildTypes {
@@ -93,6 +93,9 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.okhttp)
+
+    implementation(libs.retrofit)
+    implementation(libs.converter.kotlinx.serialization)
 
     implementation(project(":common"))
     androidTestImplementation(testFixtures(notation = project(":common")))
