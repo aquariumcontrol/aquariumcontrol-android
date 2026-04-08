@@ -28,9 +28,7 @@ import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingProfilesRepository
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
-import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
-import com.laimburggasse.aquariumcontrol.common.data.remote.webApiPostRequestExecution
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
@@ -50,6 +48,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.Credentials
 import javax.inject.Inject
 
 open class BallingProfilesRepositoryImpl @Inject constructor(
@@ -152,16 +151,25 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
         }
 
         repositoryScope.launch(context = Dispatchers.IO) {
-            val requestSuccess: Boolean = withContext(context = Dispatchers.IO) {
-                webApiPostRequestExecution(
-                    sessionManager = sessionManager,
-                    apiUrl = WebApiUrls.BALLING_UPDATE_SET_VALS,
-                    webApiPostRequest = WebApiPostRequest(),
-                    postParams = mapOf(
-                        WebApiParams.PUMP_ID to ballingProfile.pumpId.toString(),
-                        WebApiParams.DOSING_VOLUME to ballingProfile.volume.toString()
-                    )
-                )
+            // Retrieve credentials and construct the dynamic URL
+            val user = sessionManager.getControllerUser() ?: ""
+            val password = sessionManager.getControllerPassword() ?: ""
+            val port = sessionManager.getControllerPort()
+
+            val url = "http://$controllerAddress:$port${WebApiUrls.BALLING_UPDATE_SET_VALS}"
+            val authHeader = Credentials.basic(user, password)
+
+            val postParams = mapOf(
+                WebApiParams.PUMP_ID to ballingProfile.pumpId.toString(),
+                WebApiParams.DOSING_VOLUME to ballingProfile.volume.toString()
+            )
+
+            // Make the Retrofit call
+            val requestSuccess = try {
+                val response = apiService.updateBallingProfile(url, authHeader, postParams)
+                response.isSuccessful
+            } catch (_: Exception) {
+                false // Catch network timeouts or connection errors
             }
 
             if (requestSuccess) {

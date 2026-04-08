@@ -38,7 +38,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 
-object NetworkModule {
+object BallingNetwork {
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
