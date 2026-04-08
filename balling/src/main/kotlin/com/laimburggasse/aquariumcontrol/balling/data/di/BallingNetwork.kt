@@ -41,12 +41,6 @@ import javax.inject.Singleton
 object BallingNetwork {
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder().build()
-    }
-
-    @Provides
-    @Singleton
     fun provideBallingHistoryLogApiService(okHttpClient: OkHttpClient): BallingHistoryLogApiService {
         val contentType = "application/json".toMediaType()
         val json = Json {

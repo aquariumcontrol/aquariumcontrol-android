@@ -32,49 +32,46 @@ import okhttp3.Request
 import okhttp3.Response
 
 class FeedScheduleEntryReader(
+    private val apiService: FeedScheduleEntryApiService,
     private val url: String,
     username: String,
     password: String
 ) {
     // This class reads the Feed schedule entries from the server using a GET request.
     // The data is read using class FeedScheduleEntryImport which needs to be converted to FeedScheduleEntry
-    private val client = OkHttpClient()
-    private val json = Json { ignoreUnknownKeys = true }
     private val authHeaderValue: String = Credentials.basic(username, password)
 
-    fun readFeedScheduleEntries(): DataFetchResult<List<FeedScheduleEntryImport>> {
-        val request: Request = Request.Builder().url(url).header(
-            name = "Authorization", authHeaderValue
-        ).get().build()
-
-        try {
-            val response: Response = client.newCall(request).execute()
+    suspend fun readFeedScheduleEntries(): DataFetchResult<List<FeedScheduleEntryImport>> {
+        return try {
+            val response = apiService.getFeedScheduleEntries(
+                url = url, authHeader = authHeaderValue
+            )
             if (response.isSuccessful) {
-                val responseBody: String = response.body.string()
-                if (responseBody.isEmpty()) {
+                val decodedData = response.body()
+
+                if (decodedData.isNullOrEmpty()) {
                     return DataFetchResult.Success(data = emptyList())
                 }
-                else {
-                    val decodedData: List<FeedScheduleEntryImport> =
-                        json.decodeFromString<List<FeedScheduleEntryImport>>(string = responseBody)
-                    if (decodedData.size > GlobalConstants.MAX_SCHEDULE_ENTRIES) {
-                        return DataFetchResult.Error(
-                            exception = null,
-                            errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_TOO_MANY_ENTRIES
-                        )
-                    }
-                    return DataFetchResult.Success(data = decodedData)
+
+                if (decodedData.size > GlobalConstants.MAX_SCHEDULE_ENTRIES) {
+                    return DataFetchResult.Error(
+                        exception = null,
+                        errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_TOO_MANY_ENTRIES
+                    )
                 }
+
+                DataFetchResult.Success(decodedData)
             } else {
                 return DataFetchResult.Error(
                     exception = null,
-                    errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_ERR_CODE + response.code
+                    errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_ERR_CODE + response.code()
                 )
             }
         } catch (e: Exception) {
+            // Retrofit routes JSON mapping errors and network timeouts here
             return DataFetchResult.Error(
                 exception = e,
-                errorMessage = GlobalConstants.ERR_MSG_UNEXPECTED_ERR_DURING_PREP + e.message
+                errorMessage = GlobalConstants.ERR_MSG_UNEXPECTED_ERR_DURING_PREP
             )
         }
     }

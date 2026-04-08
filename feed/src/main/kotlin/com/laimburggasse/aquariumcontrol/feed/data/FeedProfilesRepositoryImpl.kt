@@ -36,6 +36,7 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.common.data.remote.webApiPostRequestExecution
+import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedProfileApiService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -58,6 +59,7 @@ import javax.inject.Singleton
 @Singleton
 open class FeedProfilesRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
+    private val apiService: FeedProfileApiService,
     @param:ApplicationScope private val repositoryScope: CoroutineScope
 ): FeedProfilesRepository {
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
@@ -100,7 +102,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
                     withContext(context = Dispatchers.IO) {
                         val url = "http://${controller.address}:${controller.port}${WebApiUrls.FEED_LOAD_PROFILES}"
                         val profileReader = FeedProfileReader(
-                            url, username = controller.user, password = controller.password
+                            apiService, url, username = controller.user, password = controller.password
                         )
                         profileReader.readFeedProfiles()
                     }

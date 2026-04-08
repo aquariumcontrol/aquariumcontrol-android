@@ -35,6 +35,7 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.common.data.remote.webApiPostRequestExecution
+import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedScheduleEntryApiService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -59,6 +60,7 @@ import javax.inject.Singleton
 @Singleton
 open class FeedScheduleRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
+    private val apiService: FeedScheduleEntryApiService,
     @param:ApplicationScope private val repositoryScope: CoroutineScope
 ): FeedScheduleRepository {
     // Triggers and holders for optimistic updates
@@ -104,7 +106,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
                 withContext(context = Dispatchers.IO) {
                     val url = "http://${controller.address}:${controller.port}${WebApiUrls.FEED_LOAD_SCHEDULE}"
                     val scheduleReader = FeedScheduleEntryReader(
-                        url, username = controller.user, password = controller.password
+                        apiService, url, username = controller.user, password = controller.password
                     )
                     val importResult: DataFetchResult<List<FeedScheduleEntryImport>> =
                         scheduleReader.readFeedScheduleEntries()

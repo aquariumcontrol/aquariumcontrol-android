@@ -22,14 +22,15 @@
 
 package com.laimburggasse.aquariumcontrol.feed.data
 
-import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
-import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
-import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
-import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
-import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedHistoryLogEntryReader
-import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedHistoryRepository
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
+import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedHistoryLogApiService
+import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedHistoryLogEntryReader
+import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
+import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedHistoryRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -48,6 +49,7 @@ import javax.inject.Inject
 
 open class FeedHistoryRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
+    private val apiService: FeedHistoryLogApiService,
     @param:ApplicationScope private val repositoryScope: CoroutineScope
 ): FeedHistoryRepository {
 
@@ -89,7 +91,7 @@ open class FeedHistoryRepositoryImpl @Inject constructor(
                 val result: DataFetchResult<List<FeedHistoryLogEntry>> =
                     withContext(context = Dispatchers.IO) {
                         val reader = FeedHistoryLogEntryReader(
-                            url, username = controller.user, password = controller.password
+                            apiService, url, username = controller.user, password = controller.password
                         )
                         reader.readFeedEvents()
                     }

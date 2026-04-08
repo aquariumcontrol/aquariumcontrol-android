@@ -32,57 +32,41 @@ import okhttp3.Request
 import okhttp3.Response
 
 class FeedHistoryLogEntryReader(
+    private val apiService: FeedHistoryLogApiService,
     private val url: String,
     username: String,
     password: String
 ) {
-    // This class will read the feed events from the server primarily using a GET request.
-    private val client = OkHttpClient()
-    private val json = Json { ignoreUnknownKeys = true }
-
     private val authHeaderValue: String = Credentials.basic(username, password)
 
-    fun readFeedEvents(): DataFetchResult<List<FeedHistoryLogEntry>> {
-        val request: Request = Request.Builder().url(url).header(
-            name = "Authorization", authHeaderValue
-        ).get().build()
-
-        try {
-            val response: Response = client.newCall(request).execute()
+    suspend fun readFeedEvents(): DataFetchResult<List<FeedHistoryLogEntry>> {
+        return try {
+            val response = apiService.getFeedHistoryEvents(
+                url = url, authHeader = authHeaderValue
+            )
             if (response.isSuccessful) {
-                val responseBody: String = response.body.string()
-                if (responseBody.isEmpty()) {
+                val decodedData = response.body()
+
+                if (decodedData.isNullOrEmpty()) {
                     return DataFetchResult.Success(data = emptyList())
                 }
-                if (!responseBody.startsWith(prefix = "[")) {
+
+                if (decodedData.size > GlobalConstants.MAX_HISTORY_LOG_ENTRIES) {
                     return DataFetchResult.Error(
                         exception = null,
-                        errorMessage = GlobalConstants.ERR_MSG_MALFORMED_JSON + responseBody
+                        errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_TOO_MANY_ENTRIES
                     )
                 }
-                try {
-                    val decodedData: List<FeedHistoryLogEntry> =
-                        json.decodeFromString<List<FeedHistoryLogEntry>>(string = responseBody)
-                    if (decodedData.size > GlobalConstants.MAX_HISTORY_LOG_ENTRIES) {
-                        return DataFetchResult.Error(
-                            exception = null,
-                            errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_TOO_MANY_ENTRIES
-                        )
-                    }
-                    return DataFetchResult.Success(decodedData)
-                } catch (exception: Exception) {
-                    return DataFetchResult.Error(
-                        exception,
-                        errorMessage = GlobalConstants.ERR_MSG_DECODING_DATA + exception.message
-                    )
-                }
+
+                DataFetchResult.Success(decodedData)
             } else {
                 return DataFetchResult.Error(
                     exception = null,
-                    errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_ERR_CODE + response.code
+                    errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_ERR_CODE + response.code()
                 )
             }
         } catch (e: Exception) {
+            // Retrofit routes JSON mapping errors and network timeouts here
             return DataFetchResult.Error(
                 exception = e,
                 errorMessage = GlobalConstants.ERR_MSG_UNEXPECTED_ERR_DURING_PREP
