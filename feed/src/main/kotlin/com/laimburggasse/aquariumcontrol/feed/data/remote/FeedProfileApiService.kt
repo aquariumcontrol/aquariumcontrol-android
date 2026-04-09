@@ -44,4 +44,17 @@ interface FeedProfileApiService {
         @Header("Authorization") authHeader: String,
         @Body params: Map<String, String>
     ): Response<ResponseBody>
+
+    @POST
+    suspend fun addFeedProfile(
+        @Url url: String,
+        @Header("Authorization") authHeader: String,
+        @Body params: Map<String, String>
+    ): Response<ResponseBody>
+
+    @POST
+    suspend fun deleteFeedProfile(
+        @Url url: String,
+        @Header("Authorization") authHeader: String,
+    ): Response<ResponseBody>
 }

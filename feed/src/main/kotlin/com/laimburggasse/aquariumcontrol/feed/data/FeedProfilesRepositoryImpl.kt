@@ -53,6 +53,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.Credentials
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -95,7 +96,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
                     return@flow
                 }
 
-                // If there is no failure and we have a controller, proceed with loading.
+                // If there is no failure, and we have a controller, proceed with loading.
                 emit(value = DataFetchResult.Loading)
 
                 val networkResult: DataFetchResult<List<FeedProfileImport>> =
@@ -113,7 +114,6 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
                         var profiles: List<FeedProfile> = networkResult.data.map {
                             FeedProfile.fromFeedProfileImport(feedProfileImport = it)
                         }
-                        Log.d("FeedProfilesRepositoryImpl", "profiles: $profiles")
                         // Apply pending deletions to the fetched list
                         if (deletions.isNotEmpty()) {
                             profiles = profiles.filterNot { deletions.contains(it.profileID) }
@@ -136,19 +136,39 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
         )
 
     override suspend fun deleteFeedProfile(feedProfile: FeedProfile) {
+        val user = sessionManager.getControllerUser() ?: ""
+        val password = sessionManager.getControllerPassword() ?: ""
+        val port = sessionManager.getControllerPort()
+        val controllerAddress: String? = sessionManager.getControllerAddress()
+        if (controllerAddress.isNullOrBlank()) {
+            failureResult.value = DataFetchResult.Error(
+                exception = null,
+                errorMessage = GlobalConstants.ERR_MSG_INVALID_CONTROLLER_ADDRESS
+            )
+            return
+        }
+        val url = "http://$controllerAddress:$port${WebApiUrls.FEED_DELETE_PROFILE}" + feedProfile.profileID
+
+        val authHeader = Credentials.basic(user, password)
+
         // Optimistic Update: Immediately add the ID to the pending deletions list.
         // The UI will react to this instantly.
         pendingDeletions.value += feedProfile.profileID
 
         // Perform the actual network request in the background.
         repositoryScope.launch(context = Dispatchers.IO) {
-            val success: Boolean = webApiPostRequestExecution(
-                apiUrl = WebApiUrls.FEED_DELETE_PROFILE + feedProfile.profileID,
-                sessionManager = sessionManager,
-                webApiPostRequest = WebApiPostRequest(),
-                getParams = feedProfile.getFeedProfileApiCallParameters()
-            )
-            if (!success) {
+            val requestSuccess = try {
+                val response = apiService.deleteFeedProfile(
+                    url,
+                    authHeader
+                )
+                response.isSuccessful
+            }
+            catch (_: Exception) {
+                false
+            }
+
+            if (!requestSuccess) {
                 failureResult.value = DataFetchResult.Error(
                     exception = null,
                     errorMessage = GlobalConstants.ERR_MSG_COULD_NOT_DELETE_FEED_PROFILE
@@ -158,14 +178,35 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addFeedProfile(feedProfileName: String) {
-        repositoryScope.launch(context = Dispatchers.IO) {
-            val success: Boolean = webApiPostRequestExecution(
-                sessionManager = sessionManager,
-                apiUrl = WebApiUrls.FEED_PROFILE_CREATE,
-                webApiPostRequest = WebApiPostRequest(),
-                postParams = mapOf(WebApiParams.PROFILE_NAME to feedProfileName)
+        val user = sessionManager.getControllerUser() ?: ""
+        val password = sessionManager.getControllerPassword() ?: ""
+        val port = sessionManager.getControllerPort()
+        val controllerAddress: String? = sessionManager.getControllerAddress()
+        if (controllerAddress.isNullOrBlank()) {
+            failureResult.value = DataFetchResult.Error(
+                exception = null,
+                errorMessage = GlobalConstants.ERR_MSG_INVALID_CONTROLLER_ADDRESS
             )
-            if (success) {
+            return
+        }
+
+        val url = "http://$controllerAddress:$port${WebApiUrls.FEED_PROFILE_CREATE}"
+
+        val authHeader = Credentials.basic(user, password)
+
+        repositoryScope.launch(context = Dispatchers.IO) {
+            val requestSuccess = try {
+                val response = apiService.addFeedProfile(
+                    url,
+                    authHeader,
+                    params = mapOf(WebApiParams.PROFILE_NAME to feedProfileName)
+                )
+                response.isSuccessful
+            }
+            catch (_: Exception) {
+                false // Catch network timeouts or connection errors
+            }
+            if (requestSuccess) {
                 delay(timeMillis = 3000L)
                 triggerRefresh()
             } else {
@@ -196,15 +237,39 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
     }
 
     override fun updateFeedProfile(modifiedFeedProfile: FeedProfile) {
-        val apiCallParameters: Map<String, String> = modifiedFeedProfile.getFeedProfileApiCallParameters()
-        repositoryScope.launch(context = Dispatchers.IO) {
-            val success: Boolean = webApiPostRequestExecution(
-                sessionManager = sessionManager,
-                apiUrl = WebApiUrls.FEED_PROFILE_UPDATE,
-                webApiPostRequest = WebApiPostRequest(),
-                postParams = apiCallParameters
+        // Retrieve credentials and construct the dynamic URL
+        val user = sessionManager.getControllerUser() ?: ""
+        val password = sessionManager.getControllerPassword() ?: ""
+        val port = sessionManager.getControllerPort()
+        val controllerAddress: String? = sessionManager.getControllerAddress()
+        if (controllerAddress.isNullOrBlank()) {
+            failureResult.value = DataFetchResult.Error(
+                exception = null,
+                errorMessage = GlobalConstants.ERR_MSG_INVALID_CONTROLLER_ADDRESS
             )
-            if (!success) {
+            return
+        }
+
+        val url = "http://$controllerAddress:$port${WebApiUrls.FEED_PROFILE_UPDATE}"
+
+        val apiCallParameters: Map<String, String> = modifiedFeedProfile.getFeedProfileApiCallParameters()
+
+        val authHeader = Credentials.basic(user, password)
+
+        repositoryScope.launch(context = Dispatchers.IO) {
+            // Make the Retrofit call
+            val requestSuccess = try {
+                val response = apiService.updateFeedProfile(
+                    url,
+                    authHeader,
+                    apiCallParameters
+                )
+                response.isSuccessful
+            } catch (_: Exception) {
+                false // Catch network timeouts or connection errors
+            }
+
+            if (!requestSuccess) {
                 failureResult.value = DataFetchResult.Error(
                     exception = null,
                     errorMessage = GlobalConstants.ERR_MSG_UPDATING_FEED_PROFILE_FAILED
