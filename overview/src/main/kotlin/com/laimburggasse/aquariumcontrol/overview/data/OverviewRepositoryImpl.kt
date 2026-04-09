@@ -28,6 +28,7 @@ import com.laimburggasse.aquariumcontrol.overview.data.remote.OverviewDataReader
 import com.laimburggasse.aquariumcontrol.overview.domain.model.OverviewData
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
+import com.laimburggasse.aquariumcontrol.overview.data.remote.OverviewDataApiService
 import com.laimburggasse.aquariumcontrol.overview.domain.repository.OverviewRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -47,6 +48,7 @@ import javax.inject.Inject
 @OptIn(DelicateCoroutinesApi::class)
 open class OverviewRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
+    private val apiService: OverviewDataApiService,
     @param:ApplicationScope private val repositoryScope: CoroutineScope
 ): OverviewRepository {
     // This SharedFlow doesn't hold state; it just emits a signal when we call emit().
@@ -79,7 +81,7 @@ open class OverviewRepositoryImpl @Inject constructor(
                 val result: DataFetchResult<OverviewData> = withContext(context = Dispatchers.IO) {
                     val url = "http://${controller.address}:${controller.port}${WebApiUrls.OVERVIEW_GET_DATA}"
                     val reader = OverviewDataReader(
-                        url, username = controller.user, password = controller.password
+                        apiService, url, username = controller.user, password = controller.password
                     )
                     reader.readOverviewData()
                 }
