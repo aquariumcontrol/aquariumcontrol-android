@@ -22,20 +22,19 @@
 
 package com.laimburggasse.aquariumcontrol.ventilation.data
 
-import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
-import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
-import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
-import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
-import com.laimburggasse.aquariumcontrol.common.domain.model.SetValsSanityCheckResult
-import com.laimburggasse.aquariumcontrol.ventilation.data.remote.VentilationSetValsReader
-import com.laimburggasse.aquariumcontrol.ventilation.domain.model.VentilationSetVals
-import com.laimburggasse.aquariumcontrol.ventilation.domain.ventilationSetValsSanityCheck
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
-import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
-import com.laimburggasse.aquariumcontrol.common.data.remote.webApiPostRequestExecution
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
+import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
+import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+import com.laimburggasse.aquariumcontrol.common.domain.model.SetValsSanityCheckResult
+import com.laimburggasse.aquariumcontrol.ventilation.data.remote.VentilationSetValsApiService
+import com.laimburggasse.aquariumcontrol.ventilation.data.remote.VentilationSetValsReader
+import com.laimburggasse.aquariumcontrol.ventilation.domain.model.VentilationSetVals
 import com.laimburggasse.aquariumcontrol.ventilation.domain.repository.VentilationSetValsRepository
+import com.laimburggasse.aquariumcontrol.ventilation.domain.ventilationSetValsSanityCheck
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -51,6 +50,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.Credentials
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -58,6 +58,7 @@ import javax.inject.Singleton
 @Singleton
 open class VentilationSetValsRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
+    private val apiService: VentilationSetValsApiService,
     @param:ApplicationScope private val repositoryScope: CoroutineScope
 ): VentilationSetValsRepository {
     // Triggers for manual refreshes and optimistic updates.
@@ -100,7 +101,9 @@ open class VentilationSetValsRepositoryImpl @Inject constructor(
             val networkResult: DataFetchResult<VentilationSetVals> = withContext(context = Dispatchers.IO) {
                 val url = "http://${controller.address}:${controller.port}${WebApiUrls.VENTILATION_LOAD_SET_VALS}"
                 val ventilationSetValsReader = VentilationSetValsReader(
-                    url, username = controller.user, password = controller.password
+                    apiService,
+                    url,
+                    username = controller.user, password = controller.password
                 )
                 when (val setValsList: DataFetchResult<List<VentilationSetVals>> =
                     ventilationSetValsReader.readVentilationSetVals()) {
@@ -176,20 +179,44 @@ open class VentilationSetValsRepositoryImpl @Inject constructor(
         val currentValues: VentilationSetVals? = pendingUpdate.value ?:
         (ventilationSetValsFlow.value as? DataFetchResult.Success)?.data
 
+        val controllerAddress: String? = sessionManager.getControllerAddress()
+        if (controllerAddress.isNullOrBlank()) {
+            pendingUpdate.value = null
+            failureResult.value = DataFetchResult.Error(
+                exception = null,
+                errorMessage = GlobalConstants.ERR_MSG_INVALID_CONTROLLER_ADDRESS
+            )
+            return
+        }
+
         if (currentValues != null) {
             repositoryScope.launch(context = Dispatchers.IO) {
-                val success: Boolean = webApiPostRequestExecution(
-                    sessionManager = sessionManager,
-                    apiUrl = WebApiUrls.VENTILATION_UPDATE_SET_VALS,
-                    webApiPostRequest = WebApiPostRequest(),
-                    postParams = mapOf(
-                        WebApiParams.VENTILATION_SWITCH_ON_TEMPERATURE to
-                                currentValues.ventilationSwitchOnTemp.toString(),
-                        WebApiParams.VENTILATION_SWITCH_OFF_TEMPERATURE to
-                                currentValues.ventilationSwitchOffTemp.toString()
-                    ),
+                val user = sessionManager.getControllerUser() ?: ""
+                val password = sessionManager.getControllerPassword() ?: ""
+                val port = sessionManager.getControllerPort()
+
+                val url = "http://$controllerAddress:$port${WebApiUrls.VENTILATION_UPDATE_SET_VALS}"
+                val authHeader = Credentials.basic(user, password)
+
+                val postParams = mapOf(
+                    WebApiParams.VENTILATION_SWITCH_ON_TEMPERATURE to currentValues.ventilationSwitchOnTemp.toString(),
+                    WebApiParams.VENTILATION_SWITCH_OFF_TEMPERATURE to currentValues.ventilationSwitchOffTemp.toString()
                 )
-                if (!success) {
+
+                // Make the Retrofit call
+                val requestSuccess = try {
+                    val response = apiService.updateVentilationSetVals(url, authHeader, postParams)
+                    response.isSuccessful
+                } catch (_: Exception) {
+                    false // Catch network timeouts or connection errors
+                }
+
+                if (requestSuccess) {
+                    pendingUpdate.value = null
+                    failureResult.value = null
+                    refreshTrigger.emit(value = Unit) // This will cause the `profilesFlow` to re-fetch.
+                } else {
+                    pendingUpdate.value = null
                     failureResult.value = DataFetchResult.Error(
                         exception = null,
                         errorMessage = GlobalConstants.ERR_MSG_UPDATING_SET_VALS_FAILED

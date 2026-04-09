@@ -220,7 +220,7 @@ open class HeatingSetValsRepositoryImpl @Inject constructor(
                     pendingUpdate.value = null
                     failureResult.value = DataFetchResult.Error(
                         exception = null,
-                        errorMessage = GlobalConstants.ERR_MSG_UPDATING_BALLING_PROFILE_FAILED
+                        errorMessage = GlobalConstants.ERR_MSG_UPDATING_SET_VALS_FAILED
                     )
                 }
             }
