@@ -22,20 +22,18 @@
 
 package com.laimburggasse.aquariumcontrol.feed.data
 
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
-import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
-import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedScheduleEntryApiService
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedScheduleEntryReader
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedScheduleEntryImport
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedScheduleRepository
 import com.laimburggasse.aquariumcontrol.feed.presentation.schedule.toFeedScheduleEntryList
-import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiPostRequest
-import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
-import com.laimburggasse.aquariumcontrol.common.data.remote.webApiPostRequestExecution
-import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedScheduleEntryApiService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -52,6 +50,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.Credentials
 import java.sql.Timestamp
 import java.util.Calendar
 import javax.inject.Inject
@@ -99,7 +98,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
                 return@flow
             }
 
-            // If there is no failure and we have a controller, proceed with loading.
+            // If there is no failure, and we have a controller, proceed with loading.
             emit(value = DataFetchResult.Loading)
 
             val networkResult: DataFetchResult<List<FeedScheduleEntry>> =
@@ -191,16 +190,38 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
 
         pendingDeletions.value += keyToDelete
 
+        val user = sessionManager.getControllerUser() ?: ""
+        val password = sessionManager.getControllerPassword() ?: ""
+        val port = sessionManager.getControllerPort()
+        val controllerAddress: String? = sessionManager.getControllerAddress()
+        if (controllerAddress.isNullOrBlank()) {
+            failureResult.value = DataFetchResult.Error(
+                exception = null,
+                errorMessage = GlobalConstants.ERR_MSG_INVALID_CONTROLLER_ADDRESS
+            )
+            return
+        }
+        val url = "http://$controllerAddress:$port${WebApiUrls.FEED_SCHEDULE_DELETE_ENTRY}"
+
+        val authHeader = Credentials.basic(user, password)
+
+        val postParams = feedScheduleEntry.getApiParameters()
+
         // In both cases, trigger the network request, because the add operation
         // may have committed to the server meanwhile.
         repositoryScope.launch(context = Dispatchers.IO) {
-            val result: Boolean = webApiPostRequestExecution(
-                apiUrl = WebApiUrls.FEED_SCHEDULE_DELETE_ENTRY,
-                sessionManager = sessionManager,
-                webApiPostRequest = WebApiPostRequest(),
-                postParams = feedScheduleEntry.getApiParameters()
-            )
-            if (result) {
+            val requestSuccess = try {
+                val response = apiService.deleteFeedScheduleEntry(
+                    url,
+                    authHeader,
+                    postParams
+                )
+                response.isSuccessful
+            }
+            catch (_: Exception) {
+                false
+            }
+            if (requestSuccess) {
                 delay(timeMillis = 3000L)
                 triggerRefresh()
             }
@@ -237,15 +258,37 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
             isDaily = repeatDaily
         )
 
-        val apiParams: Map<String, String> = tempEntry.getApiParameters()
-        repositoryScope.launch(context = Dispatchers.IO) {
-            val result: Boolean = webApiPostRequestExecution(
-                sessionManager = sessionManager,
-                webApiPostRequest = WebApiPostRequest(),
-                postParams = apiParams,
-                apiUrl = WebApiUrls.FEED_PROFILE_SCHEDULE_NEW
+        val user = sessionManager.getControllerUser() ?: ""
+        val password = sessionManager.getControllerPassword() ?: ""
+        val port = sessionManager.getControllerPort()
+        val controllerAddress: String? = sessionManager.getControllerAddress()
+        if (controllerAddress.isNullOrBlank()) {
+            failureResult.value = DataFetchResult.Error(
+                exception = null,
+                errorMessage = GlobalConstants.ERR_MSG_INVALID_CONTROLLER_ADDRESS
             )
-            if (result) {
+            return
+        }
+        val url = "http://$controllerAddress:$port${WebApiUrls.FEED_PROFILE_SCHEDULE_NEW}"
+
+        val authHeader = Credentials.basic(user, password)
+
+        val apiParams: Map<String, String> = tempEntry.getApiParameters()
+
+        repositoryScope.launch(context = Dispatchers.IO) {
+            val requestSuccess = try {
+                val response = apiService.addFeedScheduleEntry(
+                    url,
+                    authHeader,
+                    apiParams
+                )
+                response.isSuccessful
+            }
+            catch (_: Exception) {
+                false
+            }
+
+            if (requestSuccess) {
                 delay(timeMillis = 3000L)
                 triggerRefresh()
             }
@@ -280,16 +323,36 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
         // The key is the original entry, the value is the new optimistic entry.
         pendingUpdates.value += (originalKey to modifiedEntry.copy(profileName = "$feedProfileName (Saving...)"))
 
+        val user = sessionManager.getControllerUser() ?: ""
+        val password = sessionManager.getControllerPassword() ?: ""
+        val port = sessionManager.getControllerPort()
+        val controllerAddress: String? = sessionManager.getControllerAddress()
+        if (controllerAddress.isNullOrBlank()) {
+            failureResult.value = DataFetchResult.Error(
+                exception = null,
+                errorMessage = GlobalConstants.ERR_MSG_INVALID_CONTROLLER_ADDRESS
+            )
+            return
+        }
+        val url = "http://$controllerAddress:$port${WebApiUrls.FEED_UPDATE_SCHEDULE}"
+        val authHeader = Credentials.basic(user, password)
+        val timestampOld = Timestamp(millisSinceEpoch)
+        val postParams = modifiedEntry.getApiParametersForUpdating(timestampOld)
+
         // Launch the background network request.
         repositoryScope.launch(context = Dispatchers.IO) {
-            val timestampOld = Timestamp(millisSinceEpoch)
-            val result: Boolean = webApiPostRequestExecution(
-                sessionManager = sessionManager,
-                webApiPostRequest = WebApiPostRequest(),
-                postParams = modifiedEntry.getApiParametersForUpdating(timestampOld),
-                apiUrl = WebApiUrls.FEED_UPDATE_SCHEDULE
-            )
-            if (result) {
+            val requestSuccess = try {
+                val response = apiService.updateFeedScheduleEntry(
+                    url,
+                    authHeader,
+                    postParams
+                )
+                response.isSuccessful
+            }
+            catch (_: Exception) {
+                false
+            }
+            if (requestSuccess) {
                 delay(timeMillis = 3000L)
                 triggerRefresh()
             }
