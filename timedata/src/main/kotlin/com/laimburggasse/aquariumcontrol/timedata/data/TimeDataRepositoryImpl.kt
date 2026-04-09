@@ -30,6 +30,7 @@ import com.laimburggasse.aquariumcontrol.timedata.data.remote.dto.TimeDataString
 import com.laimburggasse.aquariumcontrol.timedata.domain.model.TimeDataSample
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
+import com.laimburggasse.aquariumcontrol.timedata.data.remote.TimeDataApiService
 import com.laimburggasse.aquariumcontrol.timedata.domain.repository.TimeDataRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,6 +49,7 @@ import javax.inject.Inject
 
 open class TimeDataRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
+    private val apiService: TimeDataApiService,
     @param:ApplicationScope private val repositoryScope: CoroutineScope,
 ): TimeDataRepository {
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
@@ -71,7 +73,7 @@ open class TimeDataRepositoryImpl @Inject constructor(
                             "http://" + sessionManager.getControllerAddress() + ":" +
                             sessionManager.getControllerPort() + WebApiUrls.LOAD_TIME_DATA
                         val reader = TimeDataReader(
-                            url, username = controller.user, password = controller.password
+                            apiService, url, username = controller.user, password = controller.password
                         )
                         reader.readTimeDataSeries()
                     }
