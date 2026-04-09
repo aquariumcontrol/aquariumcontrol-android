@@ -10,6 +10,7 @@ import okhttp3.Request
 import okhttp3.Response
 
 class HeatingStatsReader(
+    private val apiService: HeatingStatsApiService,
     private val url: String,
     username: String,
     password: String
@@ -20,49 +21,35 @@ class HeatingStatsReader(
     private val json = Json { ignoreUnknownKeys = true }
     private val authHeaderValue: String = Credentials.basic(username, password)
 
-    fun readStatsEntry(): DataFetchResult<List<HeatingStatsStringEntry>> {
-        val request: Request = Request.Builder().url(url).header(
-            name = "Authorization", authHeaderValue
-        ).get().build()
+    suspend fun readStatsEntry(): DataFetchResult<List<HeatingStatsStringEntry>> {
+        return try {
+            val response = apiService.getHeatingStats(
+                url = url, authHeader = authHeaderValue
+            )
 
-        try {
-            val response: Response = client.newCall(request).execute()
             if (response.isSuccessful) {
-                val responseBody: String = response.body.string()
-                if (responseBody.isEmpty()) {
+                val decodedData = response.body()
+
+                if (decodedData.isNullOrEmpty()) {
                     return DataFetchResult.Success(data = emptyList())
                 }
-                if (!responseBody.startsWith(prefix = "[")) {
+                if (decodedData.size > GlobalConstants.MAX_STATS_ENTRIES) {
                     return DataFetchResult.Error(
                         exception = null,
-                        errorMessage = GlobalConstants.ERR_MSG_MALFORMED_JSON + responseBody
+                        errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_TOO_MANY_ENTRIES
                     )
                 }
-                try {
-                    val decodedData: List<HeatingStatsStringEntry> =
-                        json.decodeFromString<List<HeatingStatsStringEntry>>(string = responseBody)
-                    if (decodedData.size > GlobalConstants.MAX_STATS_ENTRIES) {
-                        return DataFetchResult.Error(
-                            exception = null,
-                            errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_TOO_MANY_ENTRIES
-                        )
-                    }
-                    return DataFetchResult.Success(decodedData)
-                }
-                catch (exception: Exception) {
-                    return DataFetchResult.Error(
-                        exception,
-                        errorMessage = GlobalConstants.ERR_MSG_DECODING_DATA + exception.message
-                    )
-                }
-            } else {
-                return DataFetchResult.Error(
+
+                DataFetchResult.Success(decodedData)
+            }
+            else {
+                DataFetchResult.Error(
                     exception = null,
-                    errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_ERR_CODE + response.code
+                    errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_ERR_CODE + response.code()
                 )
             }
         } catch (exception: Exception) {
-            return DataFetchResult.Error(
+            DataFetchResult.Error(
                 exception,
                 errorMessage = GlobalConstants.ERR_MSG_UNEXPECTED_ERR_DURING_PREP + exception.message
             )

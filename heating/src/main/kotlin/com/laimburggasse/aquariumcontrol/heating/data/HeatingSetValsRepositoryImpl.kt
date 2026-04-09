@@ -22,20 +22,21 @@
 
 package com.laimburggasse.aquariumcontrol.heating.data
 
-import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
-import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
-import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
-import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
-import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingSetValsReader
-import com.laimburggasse.aquariumcontrol.heating.domain.heatingSetValsSanityCheck
-import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
-import com.laimburggasse.aquariumcontrol.heating.domain.repository.HeatingSetValsRepository
-import com.laimburggasse.aquariumcontrol.common.domain.model.SetValsSanityCheckResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.common.data.remote.webApiPostRequestExecution
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
+import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
+import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+import com.laimburggasse.aquariumcontrol.common.domain.model.SetValsSanityCheckResult
+import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingSetValsApiService
+import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingSetValsReader
+import com.laimburggasse.aquariumcontrol.heating.domain.heatingSetValsSanityCheck
+import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
+import com.laimburggasse.aquariumcontrol.heating.domain.repository.HeatingSetValsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -51,6 +52,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.Credentials
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -58,6 +60,7 @@ import javax.inject.Singleton
 @Singleton
 open class HeatingSetValsRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
+    private val apiService: HeatingSetValsApiService,
     @param:ApplicationScope private val repositoryScope: CoroutineScope
 ): HeatingSetValsRepository {
     // Triggers for manual refreshes and optimistic updates.
@@ -94,13 +97,13 @@ open class HeatingSetValsRepositoryImpl @Inject constructor(
                 return@flow
             }
 
-            // If there is no failure and we have a controller, proceed with loading.
+            // If there is no failure, and we have a controller, proceed with loading.
             emit(value = DataFetchResult.Loading)
 
             val networkResult: DataFetchResult<HeatingSetVals> = withContext(context = Dispatchers.IO) {
                 val url = "http://${controller.address}:${controller.port}${WebApiUrls.HEATING_LOAD_SET_VALS}"
                 val heatingSetValsReader = HeatingSetValsReader(
-                    url, username = controller.user, password = controller.password
+                    apiService, url, username = controller.user, password = controller.password
                 )
                 when (val setValsList: DataFetchResult<List<HeatingSetVals>> =
                     heatingSetValsReader.readHeatingSetVals()) {
@@ -177,22 +180,47 @@ open class HeatingSetValsRepositoryImpl @Inject constructor(
         val currentValues: HeatingSetVals? = pendingUpdate.value ?:
             (heatingSetValsFlow.value as? DataFetchResult.Success)?.data
 
+        val controllerAddress: String? = sessionManager.getControllerAddress()
+        if (controllerAddress.isNullOrBlank()) {
+            pendingUpdate.value = null
+            failureResult.value = DataFetchResult.Error(
+                exception = null,
+                errorMessage = GlobalConstants.ERR_MSG_INVALID_CONTROLLER_ADDRESS
+            )
+            return
+        }
+
         if (currentValues != null) {
             repositoryScope.launch(context = Dispatchers.IO) {
-                val success: Boolean = webApiPostRequestExecution(
-                    sessionManager = sessionManager,
-                    apiUrl = WebApiUrls.HEATING_UPDATE_SET_VALS,
-                    webApiPostRequest = WebApiPostRequest(),
-                    postParams = mapOf(
-                        WebApiParams.HEATING_SWITCH_ON_TEMPERATURE to currentValues.heatingSwitchOnTemp.toString(),
-                        WebApiParams.HEATING_SWITCH_OFF_TEMPERATURE to currentValues.heatingSwitchOffTemp.toString()
-                    ),
+                val user = sessionManager.getControllerUser() ?: ""
+                val password = sessionManager.getControllerPassword() ?: ""
+                val port = sessionManager.getControllerPort()
+
+                val url = "http://$controllerAddress:$port${WebApiUrls.HEATING_UPDATE_SET_VALS}"
+                val authHeader = Credentials.basic(user, password)
+
+                val postParams = mapOf(
+                    WebApiParams.HEATING_SWITCH_ON_TEMPERATURE to currentValues.heatingSwitchOnTemp.toString(),
+                    WebApiParams.HEATING_SWITCH_OFF_TEMPERATURE to currentValues.heatingSwitchOffTemp.toString()
                 )
 
-                if (!success) {
+                // Make the Retrofit call
+                val requestSuccess = try {
+                    val response = apiService.updateHeatingSetVals(url, authHeader, postParams)
+                    response.isSuccessful
+                } catch (_: Exception) {
+                    false // Catch network timeouts or connection errors
+                }
+
+                if (requestSuccess) {
+                    pendingUpdate.value = null
+                    failureResult.value = null
+                    refreshTrigger.emit(value = Unit) // This will cause the `profilesFlow` to re-fetch.
+                } else {
+                    pendingUpdate.value = null
                     failureResult.value = DataFetchResult.Error(
                         exception = null,
-                        errorMessage = GlobalConstants.ERR_MSG_UPDATING_SET_VALS_FAILED
+                        errorMessage = GlobalConstants.ERR_MSG_UPDATING_BALLING_PROFILE_FAILED
                     )
                 }
             }

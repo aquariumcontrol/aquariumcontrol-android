@@ -32,6 +32,7 @@ import com.laimburggasse.aquariumcontrol.heating.data.remote.dto.HeatingStatsStr
 import com.laimburggasse.aquariumcontrol.heating.domain.repository.HeatingStatsRepository
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
+import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingStatsApiService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -51,6 +52,7 @@ import javax.inject.Singleton
 @Singleton
 open class HeatingStatsRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
+    private val apiService: HeatingStatsApiService,
     @param:ApplicationScope private val repositoryScope: CoroutineScope
 ): HeatingStatsRepository {
     // for triggering manual refreshes
@@ -73,7 +75,7 @@ open class HeatingStatsRepositoryImpl @Inject constructor(
                 withContext(context = Dispatchers.IO) {
                     val url = "http://${controller.address}:${controller.port}${WebApiUrls.HEATING_LOAD_STATS}"
                     val heatingStatsReader = HeatingStatsReader(
-                        url, username = controller.user, password = controller.password
+                        apiService, url, username = controller.user, password = controller.password
                     )
                     val stringResult: DataFetchResult<List<HeatingStatsStringEntry>> =
                         heatingStatsReader.readStatsEntry()
