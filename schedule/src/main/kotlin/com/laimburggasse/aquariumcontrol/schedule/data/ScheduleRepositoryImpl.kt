@@ -23,13 +23,12 @@
 package com.laimburggasse.aquariumcontrol.schedule.data
 
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
-import com.laimburggasse.aquariumcontrol.common.data.remote.webApiPostRequestExecution
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+import com.laimburggasse.aquariumcontrol.schedule.data.remote.ScheduleApiService
 import com.laimburggasse.aquariumcontrol.schedule.data.remote.ScheduleEntryReader
 import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleEntry
 import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleStringEntry
@@ -51,12 +50,14 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.Credentials
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 open class ScheduleRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
+    private val apiService: ScheduleApiService,
     @param:ApplicationScope private val repositoryScope: CoroutineScope
 ): ScheduleRepository {
     // Triggers for manual refreshes and a holder for optimistic local updates.
@@ -89,7 +90,7 @@ open class ScheduleRepositoryImpl @Inject constructor(
                 return@flow
             }
 
-            // If there is no failure and we have a controller, proceed with loading.
+            // If there is no failure, and we have a controller, proceed with loading.
             emit(value = DataFetchResult.Loading)
 
             // A controller is present, so start fetching
@@ -133,15 +134,26 @@ open class ScheduleRepositoryImpl @Inject constructor(
      * Commits the current local values to the server.
      */
     override suspend fun updateSchedule() {
+        val controllerAddress: String? = sessionManager.getControllerAddress()
+        if (controllerAddress.isNullOrBlank()) {
+            return
+        }
+
         if (scheduleFlow.value is DataFetchResult.Success) {
-            val scheduleEntries: ScheduleEntries = (scheduleFlow.value as DataFetchResult.Success).data
+            val user = sessionManager.getControllerUser() ?: ""
+            val password = sessionManager.getControllerPassword() ?: ""
+            val port = sessionManager.getControllerPort()
+
+            val url = "http://$controllerAddress:$port${WebApiUrls.ACTUATOR_SCHEDULE_UPDATE}"
+            val authHeader = Credentials.basic(user, password)
+
+            val scheduleEntries: ScheduleEntries =
+                (scheduleFlow.value as DataFetchResult.Success).data
+
+            val postParams = scheduleEntries.getApiParams()
+
             repositoryScope.launch(context = Dispatchers.IO) {
-                webApiPostRequestExecution(
-                    sessionManager = sessionManager,
-                    apiUrl = WebApiUrls.ACTUATOR_SCHEDULE_UPDATE,
-                    webApiPostRequest = WebApiPostRequest(),
-                    postParams = scheduleEntries.getApiParams(),
-                )
+                apiService.updateScheduleData(url, authHeader, postParams)
             }
         }
     }
@@ -160,7 +172,7 @@ open class ScheduleRepositoryImpl @Inject constructor(
             val url: String =
                 "http://" + sessionManager.getControllerAddress() + ":" +
                 sessionManager.getControllerPort() + WebApiUrls.ACTUATOR_SCHEDULE_LOAD
-            val scheduleEntryReader = ScheduleEntryReader(url, username, password)
+            val scheduleEntryReader = ScheduleEntryReader(apiService, url, username, password)
             val result: DataFetchResult<List<ScheduleStringEntry>> =
                 scheduleEntryReader.readScheduleEntryList()
             val processedResult: DataFetchResult<ScheduleEntries> = when (result) {

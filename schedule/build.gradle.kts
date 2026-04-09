@@ -108,6 +108,9 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.okhttp)
 
+    implementation(libs.retrofit)
+    implementation(libs.converter.kotlinx.serialization)
+
     implementation(project(":common"))
     androidTestImplementation(testFixtures(notation = project(":common")))
     androidTestImplementation(libs.androidx.junit)
