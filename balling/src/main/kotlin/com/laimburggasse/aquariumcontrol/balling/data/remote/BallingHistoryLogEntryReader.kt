@@ -15,7 +15,7 @@ class BallingHistoryLogEntryReader(
 
     suspend fun readBallingEvents(): DataFetchResult<List<BallingHistoryLogEntry>> {
         return try {
-            val response = apiService.getBallingHistoryEvents(
+            val response = apiService.getBallingHistoryLogEvents(
                 url = url, authHeader = authHeaderValue
             )
 

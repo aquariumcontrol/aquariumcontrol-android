@@ -30,7 +30,7 @@ import retrofit2.http.Url
 
 interface BallingHistoryLogApiService {
     @GET
-    suspend fun getBallingHistoryEvents(
+    suspend fun getBallingHistoryLogEvents(
         @Url url: String,
         @Header("Authorization") authHeader: String
     ): Response<List<BallingHistoryLogEntry>>

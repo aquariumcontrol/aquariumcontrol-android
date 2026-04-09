@@ -29,6 +29,7 @@ import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEnt
 import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillHistoryLogEntryReader
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
+import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillHistoryLogApiService
 import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillHistoryRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,6 +49,7 @@ import javax.inject.Inject
 
 open class RefillHistoryRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
+    apiService: RefillHistoryLogApiService,
     @param:ApplicationScope private val repositoryScope: CoroutineScope
 ): RefillHistoryRepository {
 
@@ -90,7 +92,7 @@ open class RefillHistoryRepositoryImpl @Inject constructor(
                 val result: DataFetchResult<List<RefillHistoryLogEntry>> =
                     withContext(context = Dispatchers.IO) {
                         val reader = RefillHistoryLogEntryReader(
-                            url, username = controller.user, password = controller.password
+                            apiService, url, username = controller.user, password = controller.password
                         )
                         reader.readRefillEvents()
                     }
