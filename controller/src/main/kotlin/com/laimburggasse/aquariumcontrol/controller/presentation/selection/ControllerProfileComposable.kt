@@ -66,7 +66,7 @@ fun ControllerProfileComposable(
     // - text with the name of the controller profile
     // - text with the address of the controller profile
     // - text with the port number of the controller profile
-    // - text with user name of the of the controller profile
+    // - text with username of the controller profile
     // - text with password of the controller profile
     // - button to edit the controller profile
     // - button to delete the controller profile

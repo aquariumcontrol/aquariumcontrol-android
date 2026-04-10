@@ -66,12 +66,14 @@ fun FeedProfileAddScreen(
 
     val context: Context = LocalContext.current // context Toasts
 
+    val messageFeedProfileAdded = stringResource(R.string.successfully_added_feed_profile)
+
     LaunchedEffect(key1 = feedProfileAddUiState) {
         when (val state: FeedProfileAddUiState = feedProfileAddUiState) {
             is FeedProfileAddUiState.Success -> {
                 Toast.makeText(
                     context,
-                    context.getString(R.string.successfully_added_feed_profile),
+                    messageFeedProfileAdded,
                     Toast.LENGTH_SHORT
                 ).show()
                 onNavigateFromFeed(FeedNavigationEvent.ToFeedMain, null, null, null)
@@ -146,8 +148,8 @@ internal fun FeedProfileAddScreenIdleDarkPreview() {
                 feedProfileName = "test",
                 feedProfileNameExists = true,
                 feedProfileAddUiState = FeedProfileAddUiState.Idle,
-                onNavigateFromFeed = {event, id, isNew, time ->},
-                onFeedProfileAddEvent = {event ->}
+                onNavigateFromFeed = { _, _, _, _ ->},
+                onFeedProfileAddEvent = { _ ->}
             )
         },
         onNavigate = {},
@@ -171,8 +173,8 @@ internal fun FeedProfileAddScreenIdleLightPreview() {
                 feedProfileName = "test",
                 feedProfileNameExists = true,
                 feedProfileAddUiState = FeedProfileAddUiState.Idle,
-                onNavigateFromFeed = {event, id, isNew, time ->},
-                onFeedProfileAddEvent = {event ->}
+                onNavigateFromFeed = { _, _, _, _ ->},
+                onFeedProfileAddEvent = { _ ->}
             )
         },
         onNavigate = {},
@@ -195,8 +197,8 @@ internal fun FeedProfileAddScreenLoadingDarkPreview() {
             FeedProfileAddScreen(
                 feedProfileName = "test",
                 feedProfileAddUiState = FeedProfileAddUiState.Loading,
-                onNavigateFromFeed = {event, id, isNew, time ->},
-                onFeedProfileAddEvent = {event ->}
+                onNavigateFromFeed = { _, _, _, _ ->},
+                onFeedProfileAddEvent = { _ ->}
             )
         },
         onNavigate = {},
@@ -219,8 +221,8 @@ internal fun FeedProfileAddScreenLoadingLightPreview() {
             FeedProfileAddScreen(
                 feedProfileName = "test",
                 feedProfileAddUiState = FeedProfileAddUiState.Loading,
-                onNavigateFromFeed = {event, id, isNew, time ->},
-                onFeedProfileAddEvent = {event ->}
+                onNavigateFromFeed = { _, _, _, _ ->},
+                onFeedProfileAddEvent = { _ ->}
             )
         },
         onNavigate = {},

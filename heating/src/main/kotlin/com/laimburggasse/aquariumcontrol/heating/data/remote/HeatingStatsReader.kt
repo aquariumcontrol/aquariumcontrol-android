@@ -1,13 +1,9 @@
 package com.laimburggasse.aquariumcontrol.heating.data.remote
 
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.heating.data.remote.dto.HeatingStatsStringEntry
-import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import kotlinx.serialization.json.Json
 import okhttp3.Credentials
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
 
 class HeatingStatsReader(
     private val apiService: HeatingStatsApiService,
@@ -15,10 +11,6 @@ class HeatingStatsReader(
     username: String,
     password: String
 ) {
-    // This class reads the heating stats from the server using a GET request.
-    // The data is read using class HeatingStatsStringEntry which needs to be converted to HeatingStatsEntry.
-    private val client = OkHttpClient()
-    private val json = Json { ignoreUnknownKeys = true }
     private val authHeaderValue: String = Credentials.basic(username, password)
 
     suspend fun readStatsEntry(): DataFetchResult<List<HeatingStatsStringEntry>> {

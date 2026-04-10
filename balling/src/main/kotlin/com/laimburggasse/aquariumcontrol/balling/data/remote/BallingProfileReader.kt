@@ -3,11 +3,7 @@ package com.laimburggasse.aquariumcontrol.balling.data.remote
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
-import kotlinx.serialization.json.Json
 import okhttp3.Credentials
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
 
 class BallingProfileReader(
     private val apiService: BallingProfileApiService,

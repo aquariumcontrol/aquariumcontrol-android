@@ -22,14 +22,10 @@
 
 package com.laimburggasse.aquariumcontrol.refill.data.remote
 
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
-import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import kotlinx.serialization.json.Json
 import okhttp3.Credentials
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
 
 class RefillHistoryLogEntryReader(
     private val apiService: RefillHistoryLogApiService,

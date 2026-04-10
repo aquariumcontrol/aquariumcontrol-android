@@ -34,7 +34,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.heating.R
@@ -52,7 +51,7 @@ fun HeatingRangeSliderTextFieldsLandscapeComposable(
     onRefresh: () -> Unit
 ) {
     // This composable displays a slider and two text fields.
-    // The slider is arrange in between the two text fields in one row.
+    // The slider is arranged in between the two text fields in one row.
     // This composable shall be exclusively used for landscape mode.
 
     val sliderRange: ClosedFloatingPointRange<Float> = heatingSwitchOnTemp.toFloat()..heatingSwitchOffTemp.toFloat()
@@ -70,7 +69,6 @@ fun HeatingRangeSliderTextFieldsLandscapeComposable(
                 .padding(top = 16.dp)
                 .size(width = 128.dp, height = 72.dp)
                 .weight(weight = 0.25f),
-            textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.width(width = 10.dp))
         RangeSlider(
@@ -94,7 +92,6 @@ fun HeatingRangeSliderTextFieldsLandscapeComposable(
                 .padding(top = 16.dp)
                 .size(width = 128.dp, height = 72.dp)
                 .weight(weight = 0.25f),
-            textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.size(width = 24.dp, height = 12.dp))
         RoundRefreshButtonComposable { onRefresh() }
@@ -115,7 +112,7 @@ internal fun HeatingRangeSliderTextFieldsLandscapeComposableDarkPreview() {
                 heatingSwitchOnTemp = 27.0,
                 onLowerValueChanged = {},
                 onUpperValueChanged = {},
-                onSliderValueChanged = {lowerValue, upperValue -> },
+                onSliderValueChanged = { _, _ -> },
                 onRefresh = {}
             )
         }
@@ -136,7 +133,7 @@ internal fun HeatingRangeSliderTextFieldsLandscapeComposableLightPreview() {
                 heatingSwitchOnTemp = 27.0,
                 onLowerValueChanged = {},
                 onUpperValueChanged = {},
-                onSliderValueChanged = {lowerValue, upperValue -> },
+                onSliderValueChanged = { _, _ -> },
                 onRefresh = {}
             )
         }

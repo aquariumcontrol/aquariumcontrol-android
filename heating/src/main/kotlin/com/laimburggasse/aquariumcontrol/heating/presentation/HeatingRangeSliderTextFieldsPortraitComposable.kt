@@ -35,7 +35,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.heating.R
@@ -53,7 +52,7 @@ fun HeatingRangeSliderTextFieldsPortraitComposable(
     onRefresh: () -> Unit
 ) {
     // This composable displays a slider and two text fields.
-    // The slider is arrange on top of the two text fields.
+    // The slider is arranged on top of the two text fields.
     // This composable shall be exclusively used for portrait mode.
 
     val sliderRange: ClosedFloatingPointRange<Float> = heatingSwitchOnTemp.toFloat()..heatingSwitchOffTemp.toFloat()
@@ -79,7 +78,6 @@ fun HeatingRangeSliderTextFieldsPortraitComposable(
             modifier = Modifier
                 .padding(top = 16.dp)
                 .size(width = 128.dp, height = 72.dp),
-            textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.size(width = 36.dp, height = 10.dp))
         NumericDoubleOutlinedTextFieldComposable(
@@ -93,7 +91,6 @@ fun HeatingRangeSliderTextFieldsPortraitComposable(
             modifier = Modifier
                 .padding(top = 16.dp)
                 .size(width = 128.dp, height = 72.dp),
-            textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.size(width = 24.dp, height = 12.dp))
         RoundRefreshButtonComposable { onRefresh() }
@@ -111,7 +108,7 @@ internal fun HeatingRangeSliderTextFieldsPortraitComposableDarkPreview() {
                     heatingSwitchOnTemp = 27.0,
                     onLowerValueChanged = {},
                     onUpperValueChanged = {},
-                    onSliderValueChanged = {lowerValue, upperValue -> },
+                    onSliderValueChanged = { _, _ -> },
                     onRefresh = {}
                 )
             }

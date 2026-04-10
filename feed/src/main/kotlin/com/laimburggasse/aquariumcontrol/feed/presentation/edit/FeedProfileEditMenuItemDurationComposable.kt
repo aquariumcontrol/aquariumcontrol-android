@@ -35,13 +35,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.laimburggasse.aquariumcontrol.feed.R
-import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.common.presentation.NumericDoubleOutlinedTextFieldComposable
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.feed.R
+import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedProfile
 import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedProfileEditNumericMenuItem
 
@@ -80,7 +79,6 @@ fun FeedProfileEditMenuItemDurationComposable(
                 }
             },
             label = stringResource(id = R.string.duration_in_seconds),
-            textAlign = TextAlign.Center
         )
         Slider(value = currentDuration.toFloat(),
             modifier = Modifier.padding(all = 16.dp),

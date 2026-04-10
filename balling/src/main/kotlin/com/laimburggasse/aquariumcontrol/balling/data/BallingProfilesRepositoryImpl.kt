@@ -98,7 +98,7 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
                     return@flow
                 }
 
-                // If there is no failure and we have a controller, proceed with loading.
+                // If there is no failure, and we have a controller, proceed with loading.
                 emit(value = DataFetchResult.Loading)
 
                 val url = "http://${controller.address}:${controller.port}${WebApiUrls.BALLING_LOAD_SET_VALS}"
@@ -124,7 +124,7 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
                                 networkProfile
                         }
                         DataFetchResult.Success(data = mergedList)
-                    } else { networkResult} // No pending update, just use the network result.
+                    } else { networkResult} // There are no pending updates, just use the network result.
                 } else { networkResult} // If the network call failed, just pass on the error.
                 // Emit the final result: local update merged into network result.
                 emit(value = finalResult)

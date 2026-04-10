@@ -47,7 +47,7 @@ fun ControllerAddEditUsernamePasswordComposable(
     modifier: Modifier? = Modifier,
     state: ControllerAddEditUiState? = null,
 ) {
-    // This composable displays text fields for user name and password.
+    // This composable displays text fields for username and password.
     // The arrangement of the fields follows the device orientation.
 
     OutlinedTextField(

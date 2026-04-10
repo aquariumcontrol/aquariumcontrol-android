@@ -22,9 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.feed.domain.model
 
-import android.util.Log
-import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedProfileImport
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
+import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedProfileImport
 
 data class FeedProfile(
     val profileID: Int,

@@ -22,8 +22,6 @@
 
 package com.laimburggasse.aquariumcontrol.timedata.testing
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.laimburggasse.aquariumcontrol.timedata.domain.model.TimeDataSample
 import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataSets
 import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataUiState

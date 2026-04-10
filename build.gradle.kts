@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+// Top-level build file where you can add configuration options common to all subprojects/modules.
 plugins {
     alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.androidLibrary) apply false
@@ -32,7 +32,7 @@ plugins {
 
 tasks.withType<Test>().configureEach {
     // Increase the maximum heap size for testing
-    // -Xmx2g allocates 2 Gigabytes. Adjust this value (e.g., -Xmx4g) if needed.
+    // "-Xmx4g" allocates 4 Gigabytes.
     jvmArgs(listOf("-Xmx4g"))
 }
 

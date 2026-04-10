@@ -22,7 +22,6 @@
 
 package com.laimburggasse.aquariumcontrol.heating.presentation
 
-import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Color
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -38,7 +37,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -56,9 +54,9 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.laimburggasse.aquariumcontrol.common.presentation.RoundRefreshButtonComposable
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
-import com.laimburggasse.aquariumcontrol.heating.preview.HeatingPreviewDataImpl.mockHeatingStatsData
 import com.laimburggasse.aquariumcontrol.heating.R
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
+import com.laimburggasse.aquariumcontrol.heating.preview.HeatingPreviewDataImpl.mockHeatingStatsData
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -74,8 +72,7 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: ()
 
     val isDarkMode: Boolean = isSystemInDarkTheme()
     val textColor: Int = if (isDarkMode) Color.WHITE else Color.BLACK
-    val context: Context = LocalContext.current
-    
+
     Column(horizontalAlignment = CenterHorizontally) {
         AndroidView(
             modifier = Modifier

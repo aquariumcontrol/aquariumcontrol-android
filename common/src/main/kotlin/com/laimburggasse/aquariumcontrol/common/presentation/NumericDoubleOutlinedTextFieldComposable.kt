@@ -63,7 +63,6 @@ fun NumericDoubleOutlinedTextFieldComposable(
     label: String,
     modifier: Modifier = Modifier,
     precision: Int = 2, // Add precision parameter with default value
-    textAlign: TextAlign,
 ) {
     var textFieldValueState: TextFieldValue by remember {
         mutableStateOf(value = TextFieldValue(text = value.toString()))
@@ -101,7 +100,7 @@ fun NumericDoubleOutlinedTextFieldComposable(
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
         modifier = modifier.width(width = 100.dp),
         singleLine = true,
-        textStyle = MaterialTheme.typography.bodyLarge.copy(textAlign = textAlign)
+        textStyle = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.Center)
     )
 }
 
@@ -116,7 +115,6 @@ internal fun NumericDoubleOutlinedTextFieldComposableDarkPreview() {
                 onValueChange = {},
                 label = "testLabel",
                 modifier = Modifier,
-                textAlign = TextAlign.Center,
             )
         }
     }
@@ -133,7 +131,6 @@ internal fun NumericDoubleOutlinedTextFieldComposableLightPreview() {
                 onValueChange = {},
                 label = "testLabel",
                 modifier = Modifier,
-                textAlign = TextAlign.Center,
             )
         }
     }

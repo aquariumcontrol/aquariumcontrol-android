@@ -25,11 +25,7 @@ package com.laimburggasse.aquariumcontrol.feed.data.remote
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
-import kotlinx.serialization.json.Json
 import okhttp3.Credentials
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
 
 class FeedHistoryLogEntryReader(
     private val apiService: FeedHistoryLogApiService,

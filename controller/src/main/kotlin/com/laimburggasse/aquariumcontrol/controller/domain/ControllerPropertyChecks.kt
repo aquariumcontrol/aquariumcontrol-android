@@ -31,8 +31,8 @@ package com.laimburggasse.aquariumcontrol.controller.domain
  * Four decimal numbers (0-255) separated by dots (.).
  * Example: 192.168.1.100
  * - IPv6 Address:
- * Eight groups of hexadecimal numbers (0-FFFF) separated by colons (:).
- * Can contain leading zeros and double colons (::) to represent consecutive groups of zeros.
+ * Eight groups of hexadecimal numbers (0-FFFF) separated by colons.
+ * Can contain leading zeros and double colons to represent consecutive groups of zeros.
  * Example: 2001:0db8:85a3:0000:0000:8a2e:0370:7334, 2001:db8::1
  * - DNS Hostname:
  * Example: www.example.com, my-server.example.org, localhost
@@ -42,12 +42,12 @@ fun isHostName(address: String): Boolean {
         return false
     } else {
         val ipv4Regex: Regex =
-            "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\$".toRegex()
-        val ipv6Regex = "^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\$".toRegex()
+            $$"^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$".toRegex()
+        val ipv6Regex = "^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$".toRegex()
         val ipv6CompressedRegex: Regex =
-            "^(([0-9a-fA-F]{1,4}:){0,1}(([0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4})?::([0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4})?\$".toRegex()
+            $$"^(([0-9a-fA-F]{1,4}:){0,1}(([0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4})?::([0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4})?$".toRegex()
         val dnsRegex: Regex =
-            "^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}\$".toRegex()
+            "^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}$".toRegex()
 
         return address.matches(ipv4Regex) ||
                 address.matches(ipv6Regex) ||

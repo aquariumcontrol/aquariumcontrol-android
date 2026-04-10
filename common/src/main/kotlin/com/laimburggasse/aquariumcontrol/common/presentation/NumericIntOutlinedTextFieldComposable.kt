@@ -54,7 +54,6 @@ fun NumericIntOutlinedTextFieldComposable(
         value = textFieldValueState,
         onValueChange = { newTextFieldValue ->
             val newValue: String = newTextFieldValue.text.filter { it.isDigit() }
-            textFieldValueState = newTextFieldValue.copy(text = newValue)
             onValueChange(newValue)
         },
         label = { Text(text = label) },

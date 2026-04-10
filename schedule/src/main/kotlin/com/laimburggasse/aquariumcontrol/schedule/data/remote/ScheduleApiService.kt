@@ -22,7 +22,6 @@
 
 package com.laimburggasse.aquariumcontrol.schedule.data.remote
 
-import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleEntry
 import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleStringEntry
 import okhttp3.ResponseBody
 import retrofit2.Response
