@@ -30,7 +30,7 @@ object WebApiUrls {
     const val REFILL_LOAD_EVENTS_7D = "${BASE_URL}load_refill_log&period=7d"
     const val REFILL_CONTROL_START = "${BASE_URL}set_refill_state&command=start"
     const val REFILL_CONTROL_STOP = "${BASE_URL}set_refill_state&command=stop"
-    const val REFILL_CONTROL_RESET = "${BASE_URL}set_refill_state&command=stop"
+    const val REFILL_CONTROL_RESET = "${BASE_URL}set_refill_state&command=reset"
     const val FEED_LOAD_PROFILES = "${BASE_URL}load_feed_profiles"
     const val FEED_LOAD_EVENTS_24H = "${BASE_URL}load_feed_log&period=24h"
     const val FEED_LOAD_EVENTS_7D = "${BASE_URL}load_feed_log&period=7d"

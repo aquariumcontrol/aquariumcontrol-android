@@ -23,6 +23,7 @@
 package com.laimburggasse.aquariumcontrol.refill.data.di
 
 import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillHistoryLogApiService
+import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillStateApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -55,4 +56,23 @@ object RefillNetwork {
             .build()
             .create(RefillHistoryLogApiService::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideRefillStateService(okHttpClient: OkHttpClient): RefillStateApiService {
+        val contentType = "application/json".toMediaType()
+        val json = Json {
+            ignoreUnknownKeys = true
+            coerceInputValues = true
+        }
+
+        return Retrofit.Builder()
+            // The project uses @Url (which overrides this).
+            .baseUrl("https://placeholder.com/")
+            .client(okHttpClient)
+            .addConverterFactory(json.asConverterFactory(contentType))
+            .build()
+            .create(RefillStateApiService::class.java)
+    }
+
 }

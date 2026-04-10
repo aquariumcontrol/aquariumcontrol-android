@@ -22,20 +22,25 @@
 
 package com.laimburggasse.aquariumcontrol.refill.data
 
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.common.data.remote.webApiPostRequestExecution
+import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
+import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillStateApiService
 import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import okhttp3.Credentials
 import javax.inject.Inject
 
 open class RefillRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
+    private val apiService: RefillStateApiService,
     @param:ApplicationScope private val repositoryScope: CoroutineScope,
 ): RefillRepository {
     private val _errorEvents = MutableSharedFlow<String>()
@@ -53,14 +58,20 @@ open class RefillRepositoryImpl @Inject constructor(
     }
 
     private fun executeRequest(apiUrl: String) {
-        val webApiPostRequest = WebApiPostRequest()
+        val user = sessionManager.getControllerUser() ?: ""
+        val password = sessionManager.getControllerPassword() ?: ""
+        val controllerAddress: String? = sessionManager.getControllerAddress()
+        if (controllerAddress.isNullOrBlank()) {
+            return
+        }
+        val controllerPort = sessionManager.getControllerPort()
+        val url = "http://${controllerAddress}:${controllerPort}${apiUrl}"
+        val authHeader = Credentials.basic(user, password)
 
         repositoryScope.launch {
-            val requestSuccess: Boolean = webApiPostRequestExecution(
-                apiUrl,
-                sessionManager,
-                webApiPostRequest,
-            )
+            val requestSuccess = apiService.resetRefillErrors(
+                url, authHeader
+            ).isSuccessful
             if (!requestSuccess) {
                 _errorEvents.emit(value = "Request failed. Please check connection and server configuration and try again.")
             }
