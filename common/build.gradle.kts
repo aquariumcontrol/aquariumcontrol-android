@@ -63,7 +63,6 @@ android {
     buildFeatures {
         compose = true
     }
-    @Suppress("UnstableApiUsage")
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.15"
     }
@@ -71,7 +70,6 @@ android {
     testFixtures {
         enable = true
     }
-    @Suppress("UnstableApiUsage")
     experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
 

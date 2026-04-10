@@ -74,7 +74,6 @@ android {
     buildFeatures {
         compose = true
     }
-    @Suppress("UnstableApiUsage")
     composeOptions {
         kotlinCompilerExtensionVersion = "2.2.21"
     }

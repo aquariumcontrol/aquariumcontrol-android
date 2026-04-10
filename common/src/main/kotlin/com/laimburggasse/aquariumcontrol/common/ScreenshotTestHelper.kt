@@ -32,6 +32,7 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
+import androidx.core.graphics.get
 
 object ScreenshotTestHelper {
     private const val GOLDEN_IMAGE_ASSETS_PATH = "assets"
@@ -109,7 +110,7 @@ object ScreenshotTestHelper {
                 }
                 for (x in 0 until goldenBitmap.width) {
                     for (y in 0 until goldenBitmap.height) {
-                        if (goldenBitmap.getPixel(x, y) != capturedAndroidBitmap.getPixel(x, y)) {
+                        if (goldenBitmap[x, y] != capturedAndroidBitmap[x, y]) {
                             println("▶️ verifyBitmap: Pixel mismatch at ($x, $y) for $goldenName.")
                             saveDebugBitmaps(capturedAndroidBitmap, goldenBitmap, goldenName)
                             return false
