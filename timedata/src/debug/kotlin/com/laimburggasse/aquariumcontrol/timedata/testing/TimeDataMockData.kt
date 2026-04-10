@@ -33,7 +33,6 @@ import java.time.ZoneOffset
 import kotlin.math.sin
 import kotlin.random.Random
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun generateMockTimeData(): List<TimeDataSample> {
     val startTime: LocalDateTime = LocalDateTime.of(2024, 10, 24, 0, 0) // October 24th, 2024, 0:00 AM
     val samples: MutableList<TimeDataSample> = mutableListOf()

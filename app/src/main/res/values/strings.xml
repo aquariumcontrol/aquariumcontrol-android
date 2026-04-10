@@ -1,16 +1,4 @@
 <resources>
     <string name="app_name">AquariumController</string>
-    <string name="balling_log">Balling Log</string>
-    <string name="water_temperature_c">Water temperature [°C]</string>
-    <string name="degree_celsius">" °C"</string>
-    <string name="percentage">" %"</string>
-    <string name="invalid_controller_address">Invalid controller address</string>
-    <string name="controller_not_loaded">Controller not loaded.</string>
-    <string name="refill_schedule">Refill schedule</string>
-    <string name="ventilation_schedule">Ventilation schedule</string>
-    <string name="heating_schedule">Heating schedule</string>
-    <string name="refresh">Refresh</string>
-    <string name="energy_wh">Energy [Wh]</string>
-    <string name="no_data_available">No data available</string>
     <string name="more_options">More options</string>
 </resources>

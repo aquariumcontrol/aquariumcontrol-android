@@ -7,7 +7,6 @@
     <string name="balling_dosing">Balling Dosing</string>
     <string name="loading_balling_dosing_events">Loading Balling dosing events.</string>
     <string name="no_balling_events_found">No Balling events found.</string>
-    <string name="balling_dosing_schedule">Balling dosing schedule</string>
     <string name="error_loading_balling_data">"Error loading Balling data: "</string>
     <string name="balling_dosing_profile">"Balling dosing profile: "</string>
     <string name="ml">" ml"</string>

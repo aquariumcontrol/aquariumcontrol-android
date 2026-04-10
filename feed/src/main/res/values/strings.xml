@@ -7,9 +7,7 @@
     <string name="feed_events_last_24h">Feed events of last 24h</string>
     <string name="feed_profile_editing">Feed profile editing</string>
     <string name="update_feed_profile">Update feed profile</string>
-    <string name="delete_feed_profile">Delete feed profile</string>
     <string name="duration_in_seconds">Duration in seconds</string>
-    <string name="reload_feed_profile">Reload feed profile</string>
     <string name="reset_changes_to_feed_profile">Reset changes to feed profile</string>
     <string name="feed_log">Feed Log</string>
     <string name="feed_scheduling">Feed Scheduling</string>
@@ -21,8 +19,6 @@
     <string name="confirm_scheduling">Confirm Scheduling</string>
     <string name="scheduled_for">"Scheduled for "</string>
     <string name="feed_profiles">Feed Profiles</string>
-    <string name="failed_to_add_feed_profile">Failed to add feed profile.</string>
-    <string name="update_of_feed_profile_failed">Update of feed profile failed</string>
     <string name="feed_profile_name">Feed Profile Name</string>
     <string name="feeder">Feeder</string>
     <string name="skimmer">Skimmer</string>
@@ -36,8 +32,6 @@
     <string name="no_feed_schedule_entries_found">No feed schedule entries found.</string>
     <string name="select_date">Select Date</string>
     <string name="successfully_added_feed_profile">Successfully added feed profile.</string>
-    <string name="on">"ON"</string>
-    <string name="off">"OFF"</string>
     <string name="main_pump_1">Main Pump 1</string>
     <string name="main_pump_2">Main Pump 2</string>
     <string name="rect_bullet">\u25A0</string>

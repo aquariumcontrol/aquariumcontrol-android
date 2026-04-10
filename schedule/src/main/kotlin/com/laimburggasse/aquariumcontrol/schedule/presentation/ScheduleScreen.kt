@@ -114,7 +114,7 @@ fun ScheduleScreen(
                             ) {
                                 // --- Balling Adjustment ---
                                 ScheduleAdjustmentComposable(
-                                    title = "Balling",
+                                    title = stringResource(R.string.balling),
                                     startTime = scheduleEntries.ballingStartTime,
                                     stopTime = scheduleEntries.ballingStopTime,
                                     isLimitationActive = scheduleEntries.ballingLimitationActive,
@@ -147,7 +147,7 @@ fun ScheduleScreen(
 
                                 // --- Refill Adjustment ---
                                 ScheduleAdjustmentComposable(
-                                    title = "Refill",
+                                    title = stringResource(R.string.refill),
                                     startTime = scheduleEntries.refillStartTime,
                                     stopTime = scheduleEntries.refillStopTime,
                                     isLimitationActive = scheduleEntries.refillLimitationActive,
@@ -180,7 +180,7 @@ fun ScheduleScreen(
 
                                 // --- Ventilation Adjustment ---
                                 ScheduleAdjustmentComposable(
-                                    title = "Ventilation",
+                                    title = stringResource(R.string.ventilation),
                                     startTime = scheduleEntries.ventilationStartTime,
                                     stopTime = scheduleEntries.ventilationStopTime,
                                     isLimitationActive = scheduleEntries.ventilationLimitationActive,
@@ -213,7 +213,7 @@ fun ScheduleScreen(
 
                                 // --- Ventilation Adjustment ---
                                 ScheduleAdjustmentComposable(
-                                    title = "Heating",
+                                    title = stringResource(R.string.ventilation),
                                     startTime = scheduleEntries.heatingStartTime,
                                     stopTime = scheduleEntries.heatingStopTime,
                                     isLimitationActive = scheduleEntries.heatingLimitationActive,

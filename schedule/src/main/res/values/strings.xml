@@ -8,6 +8,11 @@
     <string name="loading_actuator_schedule">Loading actuator schedule…</string>
     <string name="update_actuator_schedules">Update actuator schedules</string>
     <string name="reset_actuator_schedules">Reset actuator schedules</string>
+    <string name="refill">Refill</string>
+    <string name="ventilation">Ventilation</string>
+    <string name="heating">Heating</string>
+    <string name="balling">Balling</string>
+    <string name="refresh">Refresh</string>
     <string name="sent_request_to_controller_for_updating_schedule_set_values">Sent request to controller for updating schedule set values</string>
     <string name="no_schedule_configured_check_server_configuration">No schedule configured - check server configuration.</string>
 </resources>
