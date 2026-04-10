@@ -39,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -66,6 +67,11 @@ import java.util.Locale
 fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: () -> Unit) {
     // This composable is only displaying time data charts without any user interaction.
     // Therefore, this composable does not use a view model.
+    val labelHeatingStatsEnergyWh = stringResource(R.string.heating_stats_energy_wh)
+    val labelAmbientTemperatureC = stringResource(R.string.ambient_temperature_c)
+    val labelWaterTemperatureC = stringResource(R.string.water_temperature_c)
+    val labelNoDataAvailable = stringResource(R.string.no_data_available)
+
     val isDarkMode: Boolean = isSystemInDarkTheme()
     val textColor: Int = if (isDarkMode) Color.WHITE else Color.BLACK
     val context: Context = LocalContext.current
@@ -141,8 +147,9 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: ()
                     }
 
                     // Energy Bar Data Set
-                    val energyDataSet: BarDataSet = BarDataSet(energyEntries,
-                        context.getString(R.string.heating_stats_energy_wh)).apply {
+                    val energyDataSet: BarDataSet = BarDataSet(
+                        energyEntries, labelHeatingStatsEnergyWh
+                    ).apply {
                         color = Color.RED
                         valueTextColor = Color.RED
                         valueTextSize = 10f
@@ -151,10 +158,11 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: ()
 
                     // Ambient Temperature Line Data Set
                     val ambientTempDataSet: LineDataSet =
-                        LineDataSet(ambientTempEntries,
-                            context.getString(R.string.ambient_temperature_c)).apply {
+                        LineDataSet(ambientTempEntries, labelAmbientTemperatureC).apply {
                             color =
-                                heatingStatsLineColorDefinition(signal = HeatingStatsSignal.AMBIENT_TEMPERATURE)
+                                heatingStatsLineColorDefinition(
+                                    signal = HeatingStatsSignal.AMBIENT_TEMPERATURE
+                                )
                             lineWidth = 2f
                             setDrawCircles(false)
                             setDrawValues(false)
@@ -163,9 +171,11 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: ()
 
                     // Water Temperature Line Data Set
                     val waterTempDataSet: LineDataSet =
-                        LineDataSet(waterTempEntries, context.getString(R.string.water_temperature_c)).apply {
+                        LineDataSet(waterTempEntries, labelWaterTemperatureC).apply {
                             color =
-                                heatingStatsLineColorDefinition(signal = HeatingStatsSignal.WATER_TEMPERATURE)
+                                heatingStatsLineColorDefinition(
+                                    signal = HeatingStatsSignal.WATER_TEMPERATURE
+                                )
                             lineWidth = 2f
                             setDrawCircles(false)
                             setDrawValues(false)
@@ -184,7 +194,7 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: ()
                 } else {
                     // Handle empty data state
                     chart.clear()
-                    chart.setNoDataText(context.getString(R.string.no_data_available)) // Optional: Display a message
+                    chart.setNoDataText(labelNoDataAvailable) // Optional: Display a message
                     chart.invalidate()
                 }
             }

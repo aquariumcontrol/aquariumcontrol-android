@@ -53,7 +53,9 @@ fun VentilationButtonsComposable(
 ) {
     // This composable displays two buttons for the Ventilation control.
     // Arrangement of the buttons follows the device's orientation.
-
+    val messageSentVentilationUpdateRequest = stringResource(
+        R.string.sent_request_to_controller_for_updating_ventilation_set_values
+    )
     val context: Context = LocalContext.current // context for Toasts
 
     Button(
@@ -61,7 +63,7 @@ fun VentilationButtonsComposable(
             onUpdateClicked()
             Toast.makeText(
                 context,
-                context.getString(R.string.sent_request_to_controller_for_updating_ventilation_set_values),
+                messageSentVentilationUpdateRequest,
                 Toast.LENGTH_SHORT
             ).show()
         },

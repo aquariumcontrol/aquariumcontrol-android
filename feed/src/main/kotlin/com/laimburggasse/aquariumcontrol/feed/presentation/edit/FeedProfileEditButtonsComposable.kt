@@ -53,6 +53,9 @@ fun FeedProfileEditButtonsComposable(
     // The arrangement of the buttons follows the device orientation.
 
     val context: Context = LocalContext.current // context for Toasts
+    val messageSentFeedProfileUpdateRequest = stringResource(
+        R.string.sent_request_to_controller_for_updating_feed_profile
+    )
 
     Button(
         modifier = modifier?.then(other = Modifier
@@ -62,7 +65,7 @@ fun FeedProfileEditButtonsComposable(
             onFeedProfileEditUiEvent(FeedProfileEditUiEvent.Update)
             Toast.makeText(
                 context,
-                context.getString(R.string.sent_request_to_controller_for_updating_feed_profile),
+                messageSentFeedProfileUpdateRequest,
                 Toast.LENGTH_SHORT
             ).show()
         },

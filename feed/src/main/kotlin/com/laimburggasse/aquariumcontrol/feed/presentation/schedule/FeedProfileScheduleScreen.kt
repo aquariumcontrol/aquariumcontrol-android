@@ -81,6 +81,10 @@ fun FeedProfileScheduleScreen(
     // - Checkbox to repeat daily
     // - Button to confirm the scheduling of the feed profile
 
+    val messageSentFeedScheduleUpdateRequest = stringResource(
+        R.string.sent_request_to_controller_for_updating_feed_schedule
+    )
+
     var repeatDaily: Boolean by remember { mutableStateOf(value = false) }
 
     val timestamp: Timestamp = if (isNewScheduleEntry) {
@@ -213,7 +217,7 @@ fun FeedProfileScheduleScreen(
                         // Show the Toast after the API call
                         Toast.makeText(
                             context,
-                            context.getString(R.string.sent_request_to_controller_for_updating_feed_schedule),
+                            messageSentFeedScheduleUpdateRequest,
                             Toast.LENGTH_SHORT
                         ).show()
                         onNavigateFromFeed(FeedNavigationEvent.ToFeedMain, null, null, null)

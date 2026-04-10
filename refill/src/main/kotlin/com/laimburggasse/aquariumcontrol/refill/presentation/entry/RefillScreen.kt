@@ -63,6 +63,15 @@ fun RefillScreen(
     // - a button for stopping the refill controller
     // - a button for resetting errors of the refill controller
 
+    val messageStartRequestSent = stringResource(
+        R.string.sent_request_to_controller_for_starting_refill_control
+    )
+    val messageStopRequestSent = stringResource(
+        R.string.sent_request_to_controller_for_stopping_refill_control
+    )
+    val messageResetRequestSent = stringResource(
+        R.string.sent_request_to_controller_for_resetting_errors
+    )
     val context: Context = LocalContext.current // context for Toasts
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -116,7 +125,7 @@ fun RefillScreen(
                                 onRefillEvent(RefillUiEvent.StartControl)
                                 Toast.makeText(
                                     context,
-                                    context.getString(R.string.sent_request_to_controller_for_starting_refill_control),
+                                    messageStartRequestSent,
                                     Toast.LENGTH_SHORT
                                 ).show()
                             },
@@ -134,7 +143,7 @@ fun RefillScreen(
                                 onRefillEvent(RefillUiEvent.StopControl)
                                 Toast.makeText(
                                     context,
-                                    context.getString(R.string.sent_request_to_controller_for_stopping_refill_control),
+                                    messageStopRequestSent,
                                     Toast.LENGTH_SHORT
                                 ).show()
                             },
@@ -152,7 +161,7 @@ fun RefillScreen(
                                 onRefillEvent(RefillUiEvent.ResetErrors)
                                 Toast.makeText(
                                     context,
-                                    context.getString(R.string.sent_request_to_controller_for_resetting_errors),
+                                    messageResetRequestSent,
                                     Toast.LENGTH_SHORT
                                 ).show()
                             },

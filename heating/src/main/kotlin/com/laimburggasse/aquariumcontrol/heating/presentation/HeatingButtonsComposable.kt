@@ -53,7 +53,9 @@ fun HeatingButtonsComposable(
 ) {
     // This composable displays two buttons for the heating control.
     // Arrangement of the buttons follows the device's orientation.
-    
+    val messageSentHeatingUpdateRequest = stringResource(
+        R.string.sent_request_to_controller_for_updating_heating_set_values
+    )
     val context: Context = LocalContext.current // context for Toasts
 
     Button(
@@ -62,7 +64,7 @@ fun HeatingButtonsComposable(
             // Show the Toast after the API call
             Toast.makeText(
                 context,
-                context.getString(R.string.sent_request_to_controller_for_updating_heating_set_values),
+                messageSentHeatingUpdateRequest,
                 Toast.LENGTH_SHORT
             ).show()
         },
