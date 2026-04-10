@@ -22,13 +22,9 @@
 
 package com.laimburggasse.aquariumcontrol.refill.data
 
-import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
-import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
-import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiPostRequest
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
-import com.laimburggasse.aquariumcontrol.common.data.remote.webApiPostRequestExecution
-import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillStateApiService
 import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillRepository
 import kotlinx.coroutines.CoroutineScope
