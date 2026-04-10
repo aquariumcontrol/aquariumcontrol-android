@@ -45,7 +45,7 @@ android {
     defaultConfig {
         applicationId = "com.laimburggasse.aquariumcontrol"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 15
         versionName = "3.1.0"
 
