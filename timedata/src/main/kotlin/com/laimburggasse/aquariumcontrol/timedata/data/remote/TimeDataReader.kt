@@ -27,7 +27,7 @@ class TimeDataReader(
                     return DataFetchResult.Success(data = emptyList())
                 }
 
-                if (decodedData.size > GlobalConstants.MAX_HISTORY_LOG_ENTRIES) {
+                if (decodedData.size > GlobalConstants.MAX_TIME_DATA_SAMPLES) {
                     return DataFetchResult.Error(
                         exception = null,
                         errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_TOO_MANY_ENTRIES

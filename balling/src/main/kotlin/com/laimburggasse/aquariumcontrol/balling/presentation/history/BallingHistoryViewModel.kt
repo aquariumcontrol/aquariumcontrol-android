@@ -24,6 +24,7 @@ package com.laimburggasse.aquariumcontrol.balling.presentation.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingHistoryRepository
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,7 +37,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BallingHistoryViewModel @Inject constructor(
-    private val ballingHistoryRepository: BallingHistoryRepository
+    private val ballingHistoryRepository: BallingHistoryRepository<BallingHistoryLogEntry>
 ): ViewModel() {
     val ballingHistoryUiState: StateFlow<BallingHistoryUiState> =
         ballingHistoryRepository.ballingHistoryDosingEventFlow

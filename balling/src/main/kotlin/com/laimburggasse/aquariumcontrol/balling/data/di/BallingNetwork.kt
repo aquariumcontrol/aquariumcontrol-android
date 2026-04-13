@@ -22,9 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.balling.data.di
 
-import retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingHistoryLogApiService
 import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingProfileApiService
+import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryLogApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,33 +32,37 @@ import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-
 object BallingNetwork {
     @Provides
     @Singleton
-    fun provideBallingHistoryLogApiService(okHttpClient: OkHttpClient): BallingHistoryLogApiService {
-        val contentType = "application/json".toMediaType()
-        val json = Json {
-            ignoreUnknownKeys = true
-            coerceInputValues = true
-        }
-
-        return Retrofit.Builder()
-            // The project uses @Url (which overrides this).
-            .baseUrl("https://placeholder.com/")
-            .client(okHttpClient)
-            .addConverterFactory(json.asConverterFactory(contentType))
-            .build()
-            .create(BallingHistoryLogApiService::class.java)
+    fun provideJson(): Json = Json {
+        ignoreUnknownKeys = true
+        coerceInputValues = true
     }
 
     @Provides
     @Singleton
-    fun provideBallingProfileApiService(okHttpClient: OkHttpClient): BallingProfileApiService {
+    fun provideBallingHistoryLogApiService(
+        okHttpClient: OkHttpClient
+    ): HistoryLogApiService {
+        return createService<HistoryLogApiService>(okHttpClient)
+    }
+
+    @Provides
+    @Singleton
+    fun provideBallingProfileApiService(
+        okHttpClient: OkHttpClient
+    ): BallingProfileApiService {
+        return createService(okHttpClient)
+    }
+
+    // A generic internal helper function to create a Retrofit service
+    private inline fun <reified T: Any> createService(okHttpClient: OkHttpClient): T {
         val contentType = "application/json".toMediaType()
         val json = Json {
             ignoreUnknownKeys = true
@@ -67,12 +70,10 @@ object BallingNetwork {
         }
 
         return Retrofit.Builder()
-            // The project uses @Url (which overrides this).
             .baseUrl("https://placeholder.com/")
             .client(okHttpClient)
             .addConverterFactory(json.asConverterFactory(contentType))
             .build()
-            .create(BallingProfileApiService::class.java)
+            .create(T::class.java)
     }
-
 }

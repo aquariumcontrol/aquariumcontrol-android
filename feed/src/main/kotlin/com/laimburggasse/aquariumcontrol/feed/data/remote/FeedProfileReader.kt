@@ -48,6 +48,13 @@ class FeedProfileReader(
                     return DataFetchResult.Success(data = emptyList())
                 }
 
+                if (decodedData.size > GlobalConstants.MAX_PROFILE_ENTRIES) {
+                    return DataFetchResult.Error(
+                        exception = null,
+                        errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_TOO_MANY_ENTRIES
+                    )
+                }
+
                 return DataFetchResult.Success(decodedData)
             } else {
                 return DataFetchResult.Error(

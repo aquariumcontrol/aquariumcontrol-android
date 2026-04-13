@@ -22,11 +22,11 @@
 
 package com.laimburggasse.aquariumcontrol.balling.data
 
-import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingHistoryLogApiService
-import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingHistoryLogEntryReader
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingHistoryRepository
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryLogApiService
+import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryLogEntryReader
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
@@ -45,13 +45,15 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
-open class BallingHistoryRepositoryImpl @Inject constructor(
+open class BallingHistoryRepositoryImpl<T> @Inject constructor(
     sessionManager: SessionManager,
-    private val apiService: BallingHistoryLogApiService,
+    private val apiService: HistoryLogApiService,
+    private val json: Json,
     @param:ApplicationScope private val repositoryScope: CoroutineScope
-): BallingHistoryRepository {
+): BallingHistoryRepository<T> {
 
     // Trigger for manual refreshes (e.g., pull-to-refresh)
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
@@ -69,7 +71,7 @@ open class BallingHistoryRepositoryImpl @Inject constructor(
      * It automatically re-fetches data when any of these inputs change.
      */
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val ballingHistoryDosingEventFlow: Flow<DataFetchResult<List<BallingHistoryLogEntry>>> =
+    override val ballingHistoryDosingEventFlow: Flow<DataFetchResult<List<T>>> =
         combine(
             flow = sessionManager.selectedControllerProfile,
             flow2 = refreshTrigger.onStart { emit(value = Unit) }, // Trigger on first collection
@@ -89,15 +91,19 @@ open class BallingHistoryRepositoryImpl @Inject constructor(
                     "http://${controller!!.address}:${controller.port}${WebApiUrls.BALLING_LOAD_EVENTS_24H}"
                 }
 
-                val result: DataFetchResult<List<BallingHistoryLogEntry>> =
+                val result: DataFetchResult<List<T>> =
                     withContext(context = Dispatchers.IO) {
-                        val reader = BallingHistoryLogEntryReader(
+                        val reader = HistoryLogEntryReader(
                             apiService,
                             url,
                             username = controller.user,
-                            password = controller.password
+                            password = controller.password,
+                            decode = { jsonString ->
+                                // specific serializer for BallingHistoryLogEntry
+                                json.decodeFromString<List<BallingHistoryLogEntry>>(jsonString) as List<T>
+                            }
                         )
-                        reader.readBallingEvents()
+                        reader.readHistoryLogEvents()
                     }
 
                 emit(value = result)

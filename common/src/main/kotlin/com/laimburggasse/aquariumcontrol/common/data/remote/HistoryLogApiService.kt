@@ -20,18 +20,18 @@
  * SOFTWARE.
  */
 
-package com.laimburggasse.aquariumcontrol.balling.data.remote
+package com.laimburggasse.aquariumcontrol.common.data.remote
 
-import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Url
 
-interface BallingHistoryLogApiService {
+interface HistoryLogApiService {
     @GET
-    suspend fun getBallingHistoryLogEvents(
+    suspend fun getHistoryLogEvents(
         @Url url: String,
         @Header("Authorization") authHeader: String
-    ): Response<List<BallingHistoryLogEntry>>
+    ): Response<ResponseBody>
 }

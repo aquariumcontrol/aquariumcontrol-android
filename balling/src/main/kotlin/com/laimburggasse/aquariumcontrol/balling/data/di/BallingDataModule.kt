@@ -24,6 +24,7 @@ package com.laimburggasse.aquariumcontrol.balling.data.di
 
 import com.laimburggasse.aquariumcontrol.balling.data.BallingHistoryRepositoryImpl
 import com.laimburggasse.aquariumcontrol.balling.data.BallingProfilesRepositoryImpl
+import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingHistoryRepository
 import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingProfilesRepository
 import dagger.Binds
@@ -46,6 +47,6 @@ abstract class BallingDataModule {
     @Binds
     @Singleton
     abstract fun bindBallingHistoryRepository(
-        ballingHistoryRepositoryImpl: BallingHistoryRepositoryImpl
-    ): BallingHistoryRepository
+        ballingHistoryRepositoryImpl: BallingHistoryRepositoryImpl<BallingHistoryLogEntry>
+    ): BallingHistoryRepository<BallingHistoryLogEntry>
 }
