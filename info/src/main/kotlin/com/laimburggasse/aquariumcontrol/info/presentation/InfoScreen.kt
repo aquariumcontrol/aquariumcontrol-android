@@ -28,6 +28,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -60,24 +61,23 @@ fun InfoScreen() {
 
     val libs = librariesState.value
 
-    if (libs != null) {
-        // Only show the Container if data is loaded
-        LibrariesContainer(
-            modifier = Modifier.fillMaxSize(),
-            header = {
-                item {
-                    InfoHeaderComposable()
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
+    ) {
+        if (libs != null) {
+            // Only show the Container if data is loaded
+            LibrariesContainer(
+                modifier = Modifier.fillMaxSize(),
+                header = {
+                    item {
+                        InfoHeaderComposable()
+                    }
                 }
-            }
-        )
-    }
-    else {
-        // Fallback UI while loading or if generation failed
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
-        ) {
+            )
+        } else {
+            // Fallback UI while loading or if generation failed
             Text(text = "Loading Licenses...")
             CircularProgressIndicator(
                 modifier = Modifier.size(size = 150.dp),

@@ -28,6 +28,12 @@ plugins {
     alias(libs.plugins.ksp) apply false
     id("org.jetbrains.kotlin.plugin.serialization") version "2.3.20" apply false
     id("com.google.dagger.hilt.android") version "2.59.2" apply false
+
+    // Required for Firebase Crashlytics:
+    // Google services Gradle plugin 4.4.1+ dependency
+    id("com.google.gms.google-services") version "4.4.4" apply false
+    // Crashlytics Gradle plugin
+    id("com.google.firebase.crashlytics") version "3.0.7" apply false
 }
 
 tasks.withType<Test>().configureEach {

@@ -29,6 +29,12 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp") version "2.2.20-2.0.3"
     id("com.google.dagger.hilt.android")
+
+    // Required for Firebase Crashlytics:
+    // Google services Gradle plugin
+    id("com.google.gms.google-services")
+    // Crashlytics Gradle plugin
+    id("com.google.firebase.crashlytics")
 }
 
 kotlin {
@@ -127,4 +133,10 @@ dependencies {
     implementation(project(":schedule"))
     implementation(project(":timedata"))
     implementation(project(":ventilation"))
+
+    // BoM for the Firebase platform
+    implementation(platform(libs.firebase.bom))
+
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.analytics)
 }

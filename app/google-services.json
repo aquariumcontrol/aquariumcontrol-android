@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "443879946002",
+    "project_id": "aquariumcontrol-68e92",
+    "storage_bucket": "aquariumcontrol-68e92.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:443879946002:android:ec13d950be6047f40ea5cb",
+        "android_client_info": {
+          "package_name": "com.laimburggasse.aquariumcontrol"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxY5GxGyI6n7YTOy-xmFnKdTgQjSU91NE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
