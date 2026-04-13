@@ -35,3 +35,7 @@ annotation class BallingHistoryService
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class FeedHistoryService
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class RefillHistoryService

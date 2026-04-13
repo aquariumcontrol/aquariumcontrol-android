@@ -24,6 +24,7 @@ package com.laimburggasse.aquariumcontrol.refill.data.di
 
 import com.laimburggasse.aquariumcontrol.refill.data.RefillHistoryRepositoryImpl
 import com.laimburggasse.aquariumcontrol.refill.data.RefillRepositoryImpl
+import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillHistoryRepository
 import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillRepository
 import dagger.Binds
@@ -46,6 +47,6 @@ abstract class RefillDataModule {
     @Binds
     @Singleton
     abstract fun bindRefillHistoryRepository(
-        refillHistoryRepositoryImpl: RefillHistoryRepositoryImpl
-    ): RefillHistoryRepository
+        refillHistoryRepositoryImpl: RefillHistoryRepositoryImpl<RefillHistoryLogEntry>
+    ): RefillHistoryRepository<RefillHistoryLogEntry>
 }

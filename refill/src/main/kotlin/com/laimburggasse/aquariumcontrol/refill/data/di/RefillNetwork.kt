@@ -22,7 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.refill.data.di
 
-import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillHistoryLogApiService
+import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryLogApiService
+import com.laimburggasse.aquariumcontrol.common.di.RefillHistoryService
 import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillStateApiService
 import dagger.Module
 import dagger.Provides
@@ -41,20 +42,13 @@ import javax.inject.Singleton
 object RefillNetwork {
     @Provides
     @Singleton
-    fun provideRefillHistoryLogApiService(okHttpClient: OkHttpClient): RefillHistoryLogApiService {
-        val contentType = "application/json".toMediaType()
-        val json = Json {
-            ignoreUnknownKeys = true
-            coerceInputValues = true
-        }
-
-        return Retrofit.Builder()
-            // The project uses @Url (which overrides this).
-            .baseUrl("https://placeholder.com/")
-            .client(okHttpClient)
-            .addConverterFactory(json.asConverterFactory(contentType))
-            .build()
-            .create(RefillHistoryLogApiService::class.java)
+    @RefillHistoryService
+    fun provideRefillHistoryLogApiService(
+        okHttpClient: OkHttpClient
+    ): HistoryLogApiService {
+        return createService<HistoryLogApiService>(
+            okHttpClient
+        )
     }
 
     @Provides
@@ -75,4 +69,19 @@ object RefillNetwork {
             .create(RefillStateApiService::class.java)
     }
 
+    // A generic internal helper function to create a Retrofit service
+    private inline fun <reified T: Any> createService(okHttpClient: OkHttpClient): T {
+        val contentType = "application/json".toMediaType()
+        val json = Json {
+            ignoreUnknownKeys = true
+            coerceInputValues = true
+        }
+
+        return Retrofit.Builder()
+            .baseUrl("https://placeholder.com/")
+            .client(okHttpClient)
+            .addConverterFactory(json.asConverterFactory(contentType))
+            .build()
+            .create(T::class.java)
+    }
 }

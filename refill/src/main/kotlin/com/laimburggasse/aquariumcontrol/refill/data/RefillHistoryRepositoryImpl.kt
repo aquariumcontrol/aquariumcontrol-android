@@ -22,14 +22,15 @@
 
 package com.laimburggasse.aquariumcontrol.refill.data
 
-import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
-import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
-import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
-import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
-import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillHistoryLogEntryReader
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryLogApiService
+import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryLogEntryReader
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
-import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillHistoryLogApiService
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.common.di.RefillHistoryService
+import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
+import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillHistoryRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -45,13 +46,15 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
-open class RefillHistoryRepositoryImpl @Inject constructor(
+open class RefillHistoryRepositoryImpl<T> @Inject constructor(
     sessionManager: SessionManager,
-    apiService: RefillHistoryLogApiService,
-    @param:ApplicationScope private val repositoryScope: CoroutineScope
-): RefillHistoryRepository {
+    @param:RefillHistoryService private val apiService: HistoryLogApiService,
+    @param:ApplicationScope private val repositoryScope: CoroutineScope,
+    private val json: Json
+): RefillHistoryRepository<T> {
 
     // Trigger for manual refreshes (e.g., pull-to-refresh)
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
@@ -69,7 +72,7 @@ open class RefillHistoryRepositoryImpl @Inject constructor(
      * It automatically re-fetches data when any of these inputs change.
      */
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val refillHistoryEventFlow: Flow<DataFetchResult<List<RefillHistoryLogEntry>>> =
+    override val refillHistoryEventFlow: Flow<DataFetchResult<List<T>>> =
         combine(
             flow = sessionManager.selectedControllerProfile,
             flow2 = refreshTrigger.onStart { emit(value = Unit) }, // Trigger on first collection
@@ -89,12 +92,21 @@ open class RefillHistoryRepositoryImpl @Inject constructor(
                     "http://${controller!!.address}:${controller.port}${WebApiUrls.REFILL_LOAD_EVENTS_24H}"
                 }
 
-                val result: DataFetchResult<List<RefillHistoryLogEntry>> =
+                val result: DataFetchResult<List<T>> =
                     withContext(context = Dispatchers.IO) {
-                        val reader = RefillHistoryLogEntryReader(
-                            apiService, url, username = controller.user, password = controller.password
+                        val reader = HistoryLogEntryReader(
+                            apiService,
+                            url,
+                            username = controller.user,
+                            password = controller.password,
+                            decode = { jsonString ->
+                                // specific serializer for RefillHistoryLogEntry
+                                @Suppress("UNCHECKED_CAST")
+                                json.decodeFromString<List<RefillHistoryLogEntry>>(jsonString) as List<T>
+                            }
+
                         )
-                        reader.readRefillEvents()
+                        reader.readHistoryLogEvents()
                     }
 
                 emit(value = result)

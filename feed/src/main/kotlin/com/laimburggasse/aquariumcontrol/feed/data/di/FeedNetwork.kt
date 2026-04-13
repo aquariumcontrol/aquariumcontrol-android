@@ -24,7 +24,6 @@ package com.laimburggasse.aquariumcontrol.feed.data.di
 
 import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryLogApiService
 import com.laimburggasse.aquariumcontrol.common.di.FeedHistoryService
-import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedHistoryLogApiService
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedProfileApiService
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedScheduleEntryApiService
 import dagger.Module
