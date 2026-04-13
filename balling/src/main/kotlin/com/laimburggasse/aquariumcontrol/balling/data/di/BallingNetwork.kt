@@ -24,6 +24,7 @@ package com.laimburggasse.aquariumcontrol.balling.data.di
 
 import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingProfileApiService
 import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryLogApiService
+import com.laimburggasse.aquariumcontrol.common.di.BallingHistoryService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -40,13 +41,7 @@ import javax.inject.Singleton
 object BallingNetwork {
     @Provides
     @Singleton
-    fun provideJson(): Json = Json {
-        ignoreUnknownKeys = true
-        coerceInputValues = true
-    }
-
-    @Provides
-    @Singleton
+    @BallingHistoryService
     fun provideBallingHistoryLogApiService(
         okHttpClient: OkHttpClient
     ): HistoryLogApiService {

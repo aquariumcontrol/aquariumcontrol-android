@@ -26,6 +26,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedHistoryRepository
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -36,7 +37,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FeedHistoryViewModel @Inject constructor(
-    private val feedHistoryRepository: FeedHistoryRepository
+    private val feedHistoryRepository: FeedHistoryRepository<FeedHistoryLogEntry>
 ): ViewModel() {
     val feedHistoryUiState: StateFlow<FeedHistoryUiState> = feedHistoryRepository.feedHistoryEventFlow
         .map { result ->

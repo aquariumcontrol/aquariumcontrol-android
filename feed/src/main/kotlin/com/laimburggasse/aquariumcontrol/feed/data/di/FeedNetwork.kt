@@ -22,6 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.feed.data.di
 
+import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryLogApiService
+import com.laimburggasse.aquariumcontrol.common.di.FeedHistoryService
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedHistoryLogApiService
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedProfileApiService
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedScheduleEntryApiService
@@ -42,20 +44,13 @@ import javax.inject.Singleton
 object FeedNetwork {
     @Provides
     @Singleton
-    fun provideFeedHistoryLogApiService(okHttpClient: OkHttpClient): FeedHistoryLogApiService {
-        val contentType = "application/json".toMediaType()
-        val json = Json {
-            ignoreUnknownKeys = true
-            coerceInputValues = true
-        }
-
-        return Retrofit.Builder()
-            // The project uses @Url (which overrides this).
-            .baseUrl("https://placeholder.com/")
-            .client(okHttpClient)
-            .addConverterFactory(json.asConverterFactory(contentType))
-            .build()
-            .create(FeedHistoryLogApiService::class.java)
+    @FeedHistoryService
+    fun provideFeedHistoryLogApiService(
+        okHttpClient: OkHttpClient
+    ): HistoryLogApiService {
+        return createService<HistoryLogApiService>(
+            okHttpClient
+        )
     }
 
     @Provides
@@ -94,4 +89,19 @@ object FeedNetwork {
             .create(FeedScheduleEntryApiService::class.java)
     }
 
+    // A generic internal helper function to create a Retrofit service
+    private inline fun <reified T: Any> createService(okHttpClient: OkHttpClient): T {
+        val contentType = "application/json".toMediaType()
+        val json = Json {
+            ignoreUnknownKeys = true
+            coerceInputValues = true
+        }
+
+        return Retrofit.Builder()
+            .baseUrl("https://placeholder.com/")
+            .client(okHttpClient)
+            .addConverterFactory(json.asConverterFactory(contentType))
+            .build()
+            .create(T::class.java)
+    }
 }

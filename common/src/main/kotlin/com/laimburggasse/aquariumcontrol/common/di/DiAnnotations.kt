@@ -27,3 +27,11 @@ import javax.inject.Qualifier
 @Retention(value = AnnotationRetention.BINARY)
 @Qualifier
 annotation class ApplicationScope
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class BallingHistoryService
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class FeedHistoryService

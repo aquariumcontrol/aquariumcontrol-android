@@ -29,6 +29,7 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryLogApiService
 import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryLogEntryReader
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.common.di.BallingHistoryService
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import kotlinx.coroutines.CoroutineScope
@@ -50,7 +51,7 @@ import javax.inject.Inject
 
 open class BallingHistoryRepositoryImpl<T> @Inject constructor(
     sessionManager: SessionManager,
-    private val apiService: HistoryLogApiService,
+    @param:BallingHistoryService private val apiService: HistoryLogApiService,
     private val json: Json,
     @param:ApplicationScope private val repositoryScope: CoroutineScope
 ): BallingHistoryRepository<T> {
@@ -100,6 +101,7 @@ open class BallingHistoryRepositoryImpl<T> @Inject constructor(
                             password = controller.password,
                             decode = { jsonString ->
                                 // specific serializer for BallingHistoryLogEntry
+                                @Suppress("UNCHECKED_CAST")
                                 json.decodeFromString<List<BallingHistoryLogEntry>>(jsonString) as List<T>
                             }
                         )
