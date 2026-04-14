@@ -35,7 +35,7 @@ kotlin {
 
 android {
     namespace = "com.laimburggasse.aquariumcontrol.feed"
-    compileSdk = 36
+    compileSdk = 37
     defaultConfig {
         minSdk = 24
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

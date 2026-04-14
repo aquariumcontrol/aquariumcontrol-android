@@ -46,12 +46,12 @@ kotlin {
 
 android {
     namespace = "com.laimburggasse.aquariumcontrol"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.laimburggasse.aquariumcontrol"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 15
         versionName = "3.1.0"
 
