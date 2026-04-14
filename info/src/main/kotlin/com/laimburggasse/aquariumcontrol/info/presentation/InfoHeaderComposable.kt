@@ -41,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.common.presentation.HyperlinkTextComposable
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
+import com.laimburggasse.aquariumcontrol.info.BuildConfig
 import com.laimburggasse.aquariumcontrol.info.R
 
 @Composable
@@ -91,17 +92,20 @@ fun InfoHeaderComposable() {
             style = MaterialTheme.typography.bodySmall
         )
         Spacer(Modifier.size(size = 10.dp))
+        if (BuildConfig.DEBUG) {
+            Button(
+                onClick = {
+                    throw RuntimeException("Test Crash for Firebase Crashlytics")
+                }
+            ) {
+                Text("DEBUG: Force Crash")
+            }
+            Spacer(Modifier.size(size = 10.dp))
+        }
         Text(
             text = stringResource(id = R.string.this_app_is_built_using_the_following_libraries),
             textAlign = TextAlign.Center
         )
-        Button(
-            onClick = {
-                throw RuntimeException("Test Crash for Firebase Crashlytics")
-            }
-        ) {
-            Text("DEBUG: Force Crash")
-        }
     }
 }
 
