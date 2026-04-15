@@ -213,7 +213,7 @@ fun ScheduleScreen(
 
                                 // --- Ventilation Adjustment ---
                                 ScheduleAdjustmentComposable(
-                                    title = stringResource(R.string.ventilation),
+                                    title = stringResource(R.string.heating),
                                     startTime = scheduleEntries.heatingStartTime,
                                     stopTime = scheduleEntries.heatingStopTime,
                                     isLimitationActive = scheduleEntries.heatingLimitationActive,

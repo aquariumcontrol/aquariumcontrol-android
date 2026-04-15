@@ -69,8 +69,10 @@ fun AquariumControllerTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            val insetsController = WindowCompat.getInsetsController(window, view)
+            // On a dark theme, we want light status bars (white icons)
+            // On a light theme, we want dark status bars (dark icons)
+            insetsController.isAppearanceLightStatusBars = !darkTheme
         }
     }
 
