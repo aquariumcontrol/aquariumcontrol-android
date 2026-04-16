@@ -30,17 +30,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.laimburggasse.aquariumcontrol.balling.presentation.navigation.handleBallingNavigation
 import com.laimburggasse.aquariumcontrol.balling.presentation.edit.BallingProfileEditScreen
 import com.laimburggasse.aquariumcontrol.balling.presentation.edit.BallingProfileEditUiState
 import com.laimburggasse.aquariumcontrol.balling.presentation.edit.BallingProfileEditViewModel
@@ -50,35 +49,37 @@ import com.laimburggasse.aquariumcontrol.balling.presentation.entry.BallingScree
 import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryScreen
 import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryUiState
 import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryViewModel
+import com.laimburggasse.aquariumcontrol.balling.presentation.navigation.handleBallingNavigation
+import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
+import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.handleMainDropDownMenuNavigation
 import com.laimburggasse.aquariumcontrol.controller.presentation.add.ControllerAddScreen
 import com.laimburggasse.aquariumcontrol.controller.presentation.add.ControllerAddViewModel
 import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiState
-import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
-import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.controller.presentation.navigation.handleControllerNavigation
 import com.laimburggasse.aquariumcontrol.controller.presentation.edit.ControllerEditScreen
 import com.laimburggasse.aquariumcontrol.controller.presentation.edit.ControllerEditViewModel
+import com.laimburggasse.aquariumcontrol.controller.presentation.navigation.handleControllerNavigation
 import com.laimburggasse.aquariumcontrol.controller.presentation.selection.ControllerSelectionScreen
 import com.laimburggasse.aquariumcontrol.controller.presentation.selection.ControllerSelectionViewModel
+import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.presentation.add.FeedProfileAddScreen
 import com.laimburggasse.aquariumcontrol.feed.presentation.add.FeedProfileAddUiState
 import com.laimburggasse.aquariumcontrol.feed.presentation.add.FeedProfileAddViewModel
-import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
-import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedProfilesViewModel
-import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScheduleSelectionUiState
-import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScheduleViewModel
-import com.laimburggasse.aquariumcontrol.feed.presentation.navigation.handleFeedNavigation
 import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileEditScreen
 import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileEditUiState
 import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileEditViewModel
 import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedProfilesUiState
+import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedProfilesViewModel
+import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScheduleSelectionUiState
+import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScheduleViewModel
 import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScreen
 import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryScreen
 import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryUiState
 import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryViewModel
+import com.laimburggasse.aquariumcontrol.feed.presentation.navigation.handleFeedNavigation
 import com.laimburggasse.aquariumcontrol.feed.presentation.schedule.FeedProfileScheduleScreen
 import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingScreen
 import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingSetValsUiState
@@ -86,17 +87,16 @@ import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingSetValsView
 import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingStatsUiState
 import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingStatsViewModel
 import com.laimburggasse.aquariumcontrol.info.presentation.InfoScreen
-import com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.presentation.handleMainDropDownMenuNavigation
 import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewScreen
 import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewUiState
 import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewViewModel
-import com.laimburggasse.aquariumcontrol.refill.presentation.navigation.handleRefillNavigation
 import com.laimburggasse.aquariumcontrol.refill.presentation.entry.RefillScreen
 import com.laimburggasse.aquariumcontrol.refill.presentation.entry.RefillScreenEvent
 import com.laimburggasse.aquariumcontrol.refill.presentation.entry.RefillViewModel
 import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryScreen
 import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryUiState
 import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryViewModel
+import com.laimburggasse.aquariumcontrol.refill.presentation.navigation.handleRefillNavigation
 import com.laimburggasse.aquariumcontrol.schedule.presentation.ScheduleScreen
 import com.laimburggasse.aquariumcontrol.schedule.presentation.ScheduleUiState
 import com.laimburggasse.aquariumcontrol.schedule.presentation.ScheduleViewModel
@@ -119,7 +119,8 @@ class MainActivity : ComponentActivity() {
     override fun onPause() {
         super.onPause()
         if (sessionManager.defaultControllerProfileId.value != null) {
-            val sharedPrefs: SharedPreferences = getSharedPreferences(GlobalConstants.PREFS_NAME, MODE_PRIVATE)
+            val sharedPrefs: SharedPreferences =
+                getSharedPreferences(GlobalConstants.PREFS_NAME, MODE_PRIVATE)
             with(receiver = sharedPrefs.edit()) {
                 sessionManager.defaultControllerProfileId.value.let {
                     putLong(
@@ -137,17 +138,20 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val navHostController: NavHostController = rememberNavController()
-            val selectedControllerProfile: ControllerProfile? by sessionManager.selectedControllerProfile.collectAsState()
-            val isControllerLoaded: Boolean by sessionManager.isControllerLoaded.collectAsState()
-            
+            val selectedControllerProfile: ControllerProfile? by
+                sessionManager.selectedControllerProfile.collectAsStateWithLifecycle()
+            val isControllerLoaded: Boolean by
+                sessionManager.isControllerLoaded.collectAsStateWithLifecycle()
+
             NavHost(
                 navController = navHostController,
                 startDestination = ViewNavigationRoutes.controllerSelection,
                 builder = {
                     composable(route = ViewNavigationRoutes.controllerSelection) {
-                        val controllerSelectionViewModel: ControllerSelectionViewModel = hiltViewModel()
+                        val controllerSelectionViewModel: ControllerSelectionViewModel =
+                            hiltViewModel()
                         val controllerProfileList: List<ControllerProfile> by
-                            controllerSelectionViewModel.controllerProfiles.collectAsState()
+                        controllerSelectionViewModel.controllerProfiles.collectAsStateWithLifecycle()
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.controllerSelection,
@@ -161,9 +165,12 @@ class MainActivity : ComponentActivity() {
                                             controllerProfileId
                                         )
                                     },
-                                    defaultProfileId = sessionManager.defaultControllerProfileId.collectAsState(),
-                                    canStartWaitForNavigation = controllerSelectionViewModel.canStartWaitForDefaultNavigation.collectAsState(),
-                                    progressToDefaultNavigation = controllerSelectionViewModel.progressToDefaultNavigation.collectAsState()
+                                    defaultProfileId = sessionManager.defaultControllerProfileId.
+                                        collectAsStateWithLifecycle(),
+                                    canStartWaitForNavigation = controllerSelectionViewModel.
+                                        canStartWaitForDefaultNavigation.collectAsStateWithLifecycle(),
+                                    progressToDefaultNavigation = controllerSelectionViewModel.
+                                        progressToDefaultNavigation.collectAsStateWithLifecycle()
                                 )
                             },
                             onNavigate = { event ->
@@ -178,7 +185,8 @@ class MainActivity : ComponentActivity() {
                     composable(route = ViewNavigationRoutes.controllerAdd)
                     {
                         val controllerAddViewModel: ControllerAddViewModel = hiltViewModel()
-                        val state: ControllerAddEditUiState by controllerAddViewModel.state.collectAsState()
+                        val state: ControllerAddEditUiState by
+                            controllerAddViewModel.state.collectAsStateWithLifecycle()
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.controllerAdd,
@@ -203,7 +211,8 @@ class MainActivity : ComponentActivity() {
                             darkTheme = isSystemInDarkTheme()
                         )
                     }
-                    composable(route = ViewNavigationRoutes.controllerEdit,
+                    composable(
+                        route = ViewNavigationRoutes.controllerEdit,
                         arguments = listOf(
                             navArgument(name = "controllerProfileId") {
                                 type = NavType.LongType
@@ -212,9 +221,11 @@ class MainActivity : ComponentActivity() {
                         )
                     )
                     { backStackEntry ->
-                        val controllerProfileId: Long = backStackEntry.arguments?.getLong("controllerProfileId") ?: -1L
+                        val controllerProfileId: Long =
+                            backStackEntry.arguments?.getLong("controllerProfileId") ?: -1L
                         val controllerEditViewModel: ControllerEditViewModel = hiltViewModel()
-                        val editState: ControllerAddEditUiState by controllerEditViewModel.state.collectAsState()
+                        val editState: ControllerAddEditUiState by
+                            controllerEditViewModel.state.collectAsStateWithLifecycle()
 
                         MainScaffold(
                             isControllerLoaded,
@@ -223,7 +234,8 @@ class MainActivity : ComponentActivity() {
                                 ControllerEditScreen(
                                     state = editState,
                                     onEvent = controllerEditViewModel::onEvent,
-                                    isDefaultProfileInitialValue = sessionManager.defaultControllerProfileId.collectAsState().value == controllerProfileId,
+                                    isDefaultProfileInitialValue = sessionManager.defaultControllerProfileId.
+                                        collectAsStateWithLifecycle().value == controllerProfileId,
                                     onNavigateFromController = { event, controllerProfileId ->
                                         navHostController.handleControllerNavigation(
                                             event,
@@ -244,8 +256,10 @@ class MainActivity : ComponentActivity() {
                     composable(route = ViewNavigationRoutes.feed) {
                         val feedProfilesViewModel: FeedProfilesViewModel = hiltViewModel()
                         val feedScheduleViewModel: FeedScheduleViewModel = hiltViewModel()
-                        val feedProfilesUiState: FeedProfilesUiState by feedProfilesViewModel.feedProfilesUiState.collectAsState()
-                        val feedScheduleSelectionUiState: FeedScheduleSelectionUiState by feedScheduleViewModel.feedScheduleSelectionUiState.collectAsState()
+                        val feedProfilesUiState: FeedProfilesUiState by
+                            feedProfilesViewModel.feedProfilesUiState.collectAsStateWithLifecycle()
+                        val feedScheduleSelectionUiState: FeedScheduleSelectionUiState by
+                            feedScheduleViewModel.feedScheduleSelectionUiState.collectAsStateWithLifecycle()
 
                         MainScaffold(
                             isControllerLoaded,
@@ -278,7 +292,7 @@ class MainActivity : ComponentActivity() {
                     composable(route = ViewNavigationRoutes.feedHistory24h) {
                         val feedHistoryViewModel: FeedHistoryViewModel = hiltViewModel()
                         val feedHistoryUiState: FeedHistoryUiState by
-                            feedHistoryViewModel.feedHistoryUiState.collectAsState()
+                        feedHistoryViewModel.feedHistoryUiState.collectAsStateWithLifecycle()
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.feedHistory24h,
@@ -301,7 +315,7 @@ class MainActivity : ComponentActivity() {
                     composable(route = ViewNavigationRoutes.feedHistory7d) {
                         val feedHistoryViewModel: FeedHistoryViewModel = hiltViewModel()
                         val feedHistoryUiState: FeedHistoryUiState by
-                            feedHistoryViewModel.feedHistoryUiState.collectAsState()
+                        feedHistoryViewModel.feedHistoryUiState.collectAsStateWithLifecycle()
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.feedHistory7d,
@@ -321,13 +335,15 @@ class MainActivity : ComponentActivity() {
                             darkTheme = isSystemInDarkTheme()
                         )
                     }
-                    composable(route = ViewNavigationRoutes.feedEdit,
+                    composable(
+                        route = ViewNavigationRoutes.feedEdit,
                         arguments = listOf(
                             navArgument(name = "feedProfileId") { type = NavType.IntType }
                         )
-                    ) { backStackEntry ->
+                    ) { _ ->
                         val feedProfileEditViewModel: FeedProfileEditViewModel = hiltViewModel()
-                        val uiState: FeedProfileEditUiState by feedProfileEditViewModel.uiState.collectAsState()
+                        val uiState: FeedProfileEditUiState by
+                            feedProfileEditViewModel.uiState.collectAsStateWithLifecycle()
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.feedEdit,
@@ -348,9 +364,12 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(route = ViewNavigationRoutes.feedAddProfile) {
                         val feedProfileAddViewModel: FeedProfileAddViewModel = hiltViewModel()
-                        val feedProfileName: String by feedProfileAddViewModel.feedProfileName.collectAsState()
-                        val feedProfileNameExists: Boolean by feedProfileAddViewModel.feedProfileNameExists.collectAsState()
-                        val feedProfileAddUiState: FeedProfileAddUiState by feedProfileAddViewModel.feedProfileAddUiState.collectAsState()
+                        val feedProfileName: String by
+                            feedProfileAddViewModel.feedProfileName.collectAsStateWithLifecycle()
+                        val feedProfileNameExists: Boolean by
+                            feedProfileAddViewModel.feedProfileNameExists.collectAsStateWithLifecycle()
+                        val feedProfileAddUiState: FeedProfileAddUiState by
+                            feedProfileAddViewModel.feedProfileAddUiState.collectAsStateWithLifecycle()
 
                         MainScaffold(
                             isControllerLoaded,
@@ -380,17 +399,27 @@ class MainActivity : ComponentActivity() {
                             darkTheme = isSystemInDarkTheme()
                         )
                     }
-                    composable(route = ViewNavigationRoutes.feedSchedule,
+                    composable(
+                        route = ViewNavigationRoutes.feedSchedule,
                         arguments = listOf(
-                            navArgument(name = ViewNavigationRoutes.FEED_ARG_PROFILE_ID) { type = NavType.IntType },
-                            navArgument(name = ViewNavigationRoutes.FEED_ARG_IS_NEW_SCHEDULE_ENTRY) { type = NavType.BoolType },
-                            navArgument(name = ViewNavigationRoutes.FEED_ARG_MILLIS_SINCE_EPOCH) { type = NavType.LongType }
+                            navArgument(name = ViewNavigationRoutes.FEED_ARG_PROFILE_ID) {
+                                type = NavType.IntType
+                            },
+                            navArgument(name = ViewNavigationRoutes.FEED_ARG_IS_NEW_SCHEDULE_ENTRY) {
+                                type = NavType.BoolType
+                            },
+                            navArgument(name = ViewNavigationRoutes.FEED_ARG_MILLIS_SINCE_EPOCH) {
+                                type = NavType.LongType
+                            }
                         )
-                    ) { backStackEntry ->
+                    ) { _ ->
                         val feedScheduleViewModel: FeedScheduleViewModel = hiltViewModel()
-                        val feedProfile: FeedProfile? by feedScheduleViewModel.feedProfile.collectAsState()
-                        val isNewScheduleEntry: Boolean by feedScheduleViewModel.isNewScheduleEntry.collectAsState()
-                        val millisSinceEpoch: Long by feedScheduleViewModel.millisSinceEpoch.collectAsState()
+                        val feedProfile: FeedProfile? by
+                            feedScheduleViewModel.feedProfile.collectAsStateWithLifecycle()
+                        val isNewScheduleEntry: Boolean by
+                            feedScheduleViewModel.isNewScheduleEntry.collectAsStateWithLifecycle()
+                        val millisSinceEpoch: Long by
+                            feedScheduleViewModel.millisSinceEpoch.collectAsStateWithLifecycle()
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.feedSchedule,
@@ -399,7 +428,7 @@ class MainActivity : ComponentActivity() {
                                     feedProfile,
                                     isNewScheduleEntry,
                                     millisSinceEpoch,
-                                    onNavigateFromFeed = { event, profileId, isNew, millis ->
+                                    onNavigateFromFeed = { event, _, _, _ ->
                                         navHostController.handleFeedNavigation(
                                             event,
                                             feedProfileId = feedProfile?.profileID,
@@ -421,7 +450,7 @@ class MainActivity : ComponentActivity() {
                     composable(route = ViewNavigationRoutes.balling) {
                         val ballingViewModel: BallingProfilesViewModel = hiltViewModel()
                         val ballingProfilesUiState: BallingProfilesUiState by
-                            ballingViewModel.ballingProfilesUiState.collectAsState()
+                        ballingViewModel.ballingProfilesUiState.collectAsStateWithLifecycle()
 
                         MainScaffold(
                             isControllerLoaded,
@@ -447,7 +476,7 @@ class MainActivity : ComponentActivity() {
                     composable(route = ViewNavigationRoutes.ballingHistory24h) {
                         val ballingHistoryViewModel: BallingHistoryViewModel = hiltViewModel()
                         val ballingHistoryUiState: BallingHistoryUiState by
-                            ballingHistoryViewModel.ballingHistoryUiState.collectAsState()
+                        ballingHistoryViewModel.ballingHistoryUiState.collectAsStateWithLifecycle()
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
@@ -470,7 +499,7 @@ class MainActivity : ComponentActivity() {
                     composable(route = ViewNavigationRoutes.ballingHistory7d) {
                         val ballingHistoryViewModel: BallingHistoryViewModel = hiltViewModel()
                         val ballingHistoryUiState: BallingHistoryUiState by
-                        ballingHistoryViewModel.ballingHistoryUiState.collectAsState()
+                        ballingHistoryViewModel.ballingHistoryUiState.collectAsStateWithLifecycle()
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.ballingHistory7d,
@@ -490,15 +519,17 @@ class MainActivity : ComponentActivity() {
                             darkTheme = isSystemInDarkTheme()
                         )
                     }
-                    composable(route = ViewNavigationRoutes.ballingEdit,
+                    composable(
+                        route = ViewNavigationRoutes.ballingEdit,
                         arguments = listOf(
                             navArgument(name = "ballingProfileId") { type = NavType.IntType }
                         )
-                    ) { backStackEntry ->
+                    ) { _ ->
                         // view model needs to be created with dedicated balling profile
-                        val ballingProfileEditViewModel: BallingProfileEditViewModel = hiltViewModel()
+                        val ballingProfileEditViewModel: BallingProfileEditViewModel =
+                            hiltViewModel()
                         val ballingProfileEditUiState: BallingProfileEditUiState by
-                            ballingProfileEditViewModel.ballingProfileEditUiState.collectAsState()
+                        ballingProfileEditViewModel.ballingProfileEditUiState.collectAsStateWithLifecycle()
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.ballingEdit,
@@ -556,7 +587,8 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(route = ViewNavigationRoutes.refillHistory24h) {
                         val refillHistoryViewModel: RefillHistoryViewModel = hiltViewModel()
-                        val refillHistoryUiState: RefillHistoryUiState by refillHistoryViewModel.refillHistoryUiState.collectAsState()
+                        val refillHistoryUiState: RefillHistoryUiState by
+                            refillHistoryViewModel.refillHistoryUiState.collectAsStateWithLifecycle()
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.refillHistory24h,
@@ -578,7 +610,8 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(route = ViewNavigationRoutes.refillHistory7d) {
                         val refillHistoryViewModel: RefillHistoryViewModel = hiltViewModel()
-                        val refillHistoryUiState: RefillHistoryUiState by refillHistoryViewModel.refillHistoryUiState.collectAsState()
+                        val refillHistoryUiState: RefillHistoryUiState by
+                            refillHistoryViewModel.refillHistoryUiState.collectAsStateWithLifecycle()
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.refillHistory7d,
@@ -602,16 +635,17 @@ class MainActivity : ComponentActivity() {
                         val heatingSetValsViewModel: HeatingSetValsViewModel = hiltViewModel()
                         val heatingStatsViewModel: HeatingStatsViewModel = hiltViewModel()
                         val heatingSetValsUiState: HeatingSetValsUiState by
-                            heatingSetValsViewModel.heatingSetValsUiState.collectAsState()
+                        heatingSetValsViewModel.heatingSetValsUiState.collectAsStateWithLifecycle()
                         val heatingStatsUiState: HeatingStatsUiState by
-                            heatingStatsViewModel.heatingStatsUiState.collectAsState()
+                        heatingStatsViewModel.heatingStatsUiState.collectAsStateWithLifecycle()
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.heating,
                             screenContent = {
                                 HeatingScreen(
                                     heatingSetValsUiState,
-                                    heatingSetValsValid = heatingSetValsViewModel.heatingSetValsValid.collectAsState(),
+                                    heatingSetValsValid = heatingSetValsViewModel.
+                                        heatingSetValsValid.collectAsStateWithLifecycle(),
                                     onHeatingSetValsEvent = heatingSetValsViewModel::onHeatingSetValsEvent,
                                     heatingStatsUiState,
                                     onHeatingStatsEvent = heatingStatsViewModel::onHeatingStatsEvent
@@ -627,9 +661,10 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(route = ViewNavigationRoutes.ventilation) {
-                        val ventilationSetValsViewModel: VentilationSetValsViewModel = hiltViewModel()
+                        val ventilationSetValsViewModel: VentilationSetValsViewModel =
+                            hiltViewModel()
                         val ventilationSetValsUiState: VentilationSetValsUiState by
-                            ventilationSetValsViewModel.ventilationSetValsUiState.collectAsState()
+                            ventilationSetValsViewModel.ventilationSetValsUiState.collectAsStateWithLifecycle()
 
                         MainScaffold(
                             isControllerLoaded,
@@ -637,7 +672,8 @@ class MainActivity : ComponentActivity() {
                             screenContent = {
                                 VentilationScreen(
                                     ventilationSetValsUiState,
-                                    ventilationSetValsValid = ventilationSetValsViewModel.ventilationSetValsValid.collectAsState(),
+                                    ventilationSetValsValid = ventilationSetValsViewModel.
+                                        ventilationSetValsValid.collectAsStateWithLifecycle(),
                                     onVentilationSetValsEvent = ventilationSetValsViewModel::onVentilationSetValsEvent,
                                 )
                             },
@@ -652,7 +688,8 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(route = ViewNavigationRoutes.timeData) {
                         val timeDataViewModel: TimeDataViewModel = hiltViewModel()
-                        val timeDataUiState: TimeDataUiState by timeDataViewModel.timeDataUiState.collectAsState()
+                        val timeDataUiState: TimeDataUiState by
+                            timeDataViewModel.timeDataUiState.collectAsStateWithLifecycle()
 
                         MainScaffold(
                             isControllerLoaded,
@@ -675,7 +712,8 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(route = ViewNavigationRoutes.schedule) {
                         val scheduleViewModel: ScheduleViewModel = hiltViewModel()
-                        val scheduleUiState: ScheduleUiState by scheduleViewModel.scheduleUiState.collectAsState()
+                        val scheduleUiState: ScheduleUiState by
+                            scheduleViewModel.scheduleUiState.collectAsStateWithLifecycle()
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.schedule,
@@ -708,7 +746,8 @@ class MainActivity : ComponentActivity() {
                             darkTheme = isSystemInDarkTheme()
                         )
                     }
-                    composable(route = ViewNavigationRoutes.overView,
+                    composable(
+                        route = ViewNavigationRoutes.overView,
                         arguments = listOf(
                             navArgument(name = "controllerProfileId") {
                                 type = NavType.LongType
@@ -716,7 +755,8 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     ) { backStackEntry ->
-                        val controllerProfileId: Long? = backStackEntry.arguments?.getLong("controllerProfileId")
+                        val controllerProfileId: Long? =
+                            backStackEntry.arguments?.getLong("controllerProfileId")
                         if (controllerProfileId != null) {
                             LaunchedEffect(key1 = controllerProfileId) {
                                 if (controllerProfileId >= 0L) {
@@ -725,7 +765,8 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                             val overviewViewModel: OverviewViewModel = hiltViewModel()
-                            val overviewUiState: OverviewUiState by overviewViewModel.overviewUiState.collectAsState()
+                            val overviewUiState: OverviewUiState by
+                                overviewViewModel.overviewUiState.collectAsStateWithLifecycle()
                             MainScaffold(
                                 isControllerLoaded,
                                 navigationRouteSource = ViewNavigationRoutes.overView,
