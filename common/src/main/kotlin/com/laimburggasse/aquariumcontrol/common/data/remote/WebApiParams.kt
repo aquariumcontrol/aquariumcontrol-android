@@ -30,8 +30,7 @@ object WebApiParams {
     const val DURATION = "Duration"
     const val REFILL_VOLUME = "volume"
     const val REFILL_DURATION = "duration"
-
-    const val REFILL_CONTROL_STATE = "refillControlState"
+    const val REFILL_CONTROL_STATE_LABEL = "refillControlState"
     const val SKIMMER = "Skimmer"
     const val MAIN_PUMP1 = "MainPump1"
     const val MAIN_PUMP2 = "MainPump2"

@@ -24,10 +24,15 @@ package com.laimburggasse.aquariumcontrol.refill.presentation.entry
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -36,6 +41,20 @@ class RefillViewModel @Inject constructor(private val refillRepository: RefillRe
     private val _events = MutableSharedFlow<RefillScreenEvent>()
     val events = _events.asSharedFlow()
 
+    val refillStateUiState: StateFlow<RefillStateUiState> = refillRepository.refillStateFlow
+        .map { result ->
+            when (result) {
+                is DataFetchResult.Error -> RefillStateUiState.Error(errorMessage = result.errorMessage)
+                is DataFetchResult.Success -> {
+                    RefillStateUiState.Success(refillState = result.data)
+                }
+                DataFetchResult.Loading -> RefillStateUiState.Loading
+            }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = RefillStateUiState.Loading
+        )
     init {
         viewModelScope.launch {
             refillRepository.errorEvents.collect { errorMessage ->
@@ -43,6 +62,7 @@ class RefillViewModel @Inject constructor(private val refillRepository: RefillRe
             }
         }
     }
+
     fun sendStartRequest() {
         viewModelScope.launch {
             refillRepository.sendStartRequest()
@@ -71,6 +91,11 @@ class RefillViewModel @Inject constructor(private val refillRepository: RefillRe
             }
             RefillUiEvent.StopControl -> {
                 sendStopRequest()
+            }
+            RefillUiEvent.Refresh -> {
+                viewModelScope.launch {
+                    refillRepository.triggerRefresh()
+                }
             }
         }
     }

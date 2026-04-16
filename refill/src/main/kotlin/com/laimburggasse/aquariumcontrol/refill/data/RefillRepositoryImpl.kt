@@ -22,15 +22,30 @@
 
 package com.laimburggasse.aquariumcontrol.refill.data
 
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillStateApiService
+import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillStateReader
+import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillState
 import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillRepository
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.Credentials
 import javax.inject.Inject
 
@@ -39,8 +54,56 @@ open class RefillRepositoryImpl @Inject constructor(
     private val apiService: RefillStateApiService,
     @param:ApplicationScope private val repositoryScope: CoroutineScope,
 ): RefillRepository {
+    // Trigger for manual refreshes (e.g., pull-to-refresh)
+    private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
     private val _errorEvents = MutableSharedFlow<String>()
     override val errorEvents = _errorEvents.asSharedFlow()
+
+    /**
+     * A reactive Flow that provides the Refill state.
+     * It combines two sources:
+     *  - The selected controller from SessionManager.
+     *  - The manual refresh trigger.
+     *
+     * It automatically re-fetches data when any of these inputs change.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val refillStateFlow: Flow<DataFetchResult<RefillState>> =
+        combine(
+            flow = sessionManager.selectedControllerProfile,
+            flow2 = refreshTrigger.onStart { emit(value = Unit) }, // Trigger on first collection
+        ) { controller, _ ->
+            Pair(first = controller, second = Unit)
+        }
+            .filter { it.first != null } // Only proceed if a controller is selected
+            .flatMapLatest { (controller: ControllerProfile?, _) ->
+                flow {
+                    // UI shall temporarily show loading state, while fetching data
+                    emit(value = DataFetchResult.Loading)
+
+                    val url = "http://${controller!!.address}:${controller.port}${WebApiUrls.REFILL_LOAD_STATE}"
+
+                    val result: DataFetchResult<RefillState> =
+                        withContext(context = Dispatchers.IO) {
+                            val reader = RefillStateReader(
+                                apiService,
+                                url,
+                                username = controller.user,
+                                password = controller.password
+
+                            )
+                            reader.readRefillState()
+                        }
+
+                    emit(value = result)
+                }
+            }
+            .stateIn(
+                scope = repositoryScope,
+                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
+                initialValue = DataFetchResult.Loading
+            )
+
     override suspend fun sendStartRequest() {
         executeRequest(apiUrl = WebApiUrls.REFILL_CONTROL_START)
     }
@@ -72,5 +135,12 @@ open class RefillRepositoryImpl @Inject constructor(
                 _errorEvents.emit(value = "Request failed. Please check connection and server configuration and try again.")
             }
         }
+    }
+
+    /**
+     * Public function for the ViewModel to trigger a manual refresh.
+     */
+    override suspend fun triggerRefresh() {
+        refreshTrigger.emit(value = Unit)
     }
 }

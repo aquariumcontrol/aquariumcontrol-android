@@ -40,16 +40,7 @@ class RefillStateReader(
             val response = apiService.loadRefillState(
                 url = url, authHeader = authHeaderValue
             )
-
-            if (response.isSuccessful) {
-                DataFetchResult.Success(response.body() ?: RefillState.UNKNOWN)
-            }
-            else {
-                DataFetchResult.Error(
-                    exception = null,
-                    errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_ERR_CODE + response.code()
-                )
-            }
+            DataFetchResult.Success(response.state)
         } catch (exception: Exception) {
             DataFetchResult.Error(
                 exception,

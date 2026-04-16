@@ -52,9 +52,9 @@ class RefillScreenTest {
                 navigationRouteSource = ViewNavigationRoutes.refill,
                 screenContent = {
                     RefillScreen(
-                        onNavigateFromRefill = { event -> },
-                        onRefillEvent = { event -> }
-                    )
+                        refillStateUiState = refillStateUiState,
+                        onNavigateFromRefill = { event -> }
+                    ) { event -> }
                 },
                 onNavigate = {},
                 darkTheme = true
@@ -77,9 +77,9 @@ class RefillScreenTest {
                 navigationRouteSource = ViewNavigationRoutes.refill,
                 screenContent = {
                     RefillScreen(
-                        onNavigateFromRefill = { event -> },
-                        onRefillEvent = { event -> }
-                    )
+                        refillStateUiState = refillStateUiState,
+                        onNavigateFromRefill = { event -> }
+                    ) { event -> }
                 },
                 onNavigate = {},
                 darkTheme = false

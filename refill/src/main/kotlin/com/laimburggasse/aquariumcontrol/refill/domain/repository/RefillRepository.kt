@@ -22,11 +22,17 @@
 
 package com.laimburggasse.aquariumcontrol.refill.domain.repository
 
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillState
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 
 interface RefillRepository {
     val errorEvents: SharedFlow<String>
+    val refillStateFlow: Flow<DataFetchResult<RefillState>>
+
     suspend fun sendStartRequest()
     suspend fun sendStopRequest()
     suspend fun sendResetRequest()
+    suspend fun triggerRefresh()
 }

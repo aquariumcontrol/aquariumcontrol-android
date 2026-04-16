@@ -38,14 +38,6 @@ enum class RefillState {
     ERROR,
 
     // Fallback state if API is not returning a valid value
+    @SerialName(WebApiParams.UNKNOWN)
     UNKNOWN;
-
-    companion object {
-        fun fromString(value: String?): RefillState = when (value) {
-            WebApiParams.ACTIVE -> ACTIVE
-            WebApiParams.STOPPED -> STOPPED
-            WebApiParams.ERROR -> ERROR
-            else -> UNKNOWN
-        }
-    }
 }

@@ -26,4 +26,5 @@ sealed interface RefillUiEvent {
     object StartControl: RefillUiEvent
     object StopControl: RefillUiEvent
     object ResetErrors: RefillUiEvent
+    object Refresh: RefillUiEvent
 }

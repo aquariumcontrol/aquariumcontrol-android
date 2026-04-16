@@ -92,6 +92,7 @@ import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewUiState
 import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewViewModel
 import com.laimburggasse.aquariumcontrol.refill.presentation.entry.RefillScreen
 import com.laimburggasse.aquariumcontrol.refill.presentation.entry.RefillScreenEvent
+import com.laimburggasse.aquariumcontrol.refill.presentation.entry.RefillStateUiState
 import com.laimburggasse.aquariumcontrol.refill.presentation.entry.RefillViewModel
 import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryScreen
 import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryUiState
@@ -550,6 +551,8 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(route = ViewNavigationRoutes.refill) {
                         val refillViewModel: RefillViewModel = hiltViewModel()
+                        val refillStateUiState: RefillStateUiState by
+                                refillViewModel.refillStateUiState.collectAsStateWithLifecycle()
                         val context: Context = LocalContext.current
 
                         MainScaffold(
@@ -570,6 +573,7 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
                                 RefillScreen(
+                                    refillStateUiState,
                                     onNavigateFromRefill = { event ->
                                         navHostController.handleRefillNavigation(event)
                                     },
