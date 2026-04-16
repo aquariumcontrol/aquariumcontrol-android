@@ -22,12 +22,19 @@
 
 package com.laimburggasse.aquariumcontrol.refill.data.remote
 
+import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillState
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Url
 
 interface RefillStateApiService {
+    @GET
+    suspend fun loadRefillState(
+        @Url url: String,
+        @Header("Authorization") authHeader: String
+    ): Response<RefillState>
+
     @GET
     suspend fun resetRefillErrors(
         @Url url: String,

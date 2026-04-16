@@ -30,6 +30,8 @@ object WebApiParams {
     const val DURATION = "Duration"
     const val REFILL_VOLUME = "volume"
     const val REFILL_DURATION = "duration"
+
+    const val REFILL_CONTROL_STATE = "refillControlState"
     const val SKIMMER = "Skimmer"
     const val MAIN_PUMP1 = "MainPump1"
     const val MAIN_PUMP2 = "MainPump2"
@@ -107,4 +109,12 @@ object WebApiParams {
     const val AMBIENT_HUMIDITY = "ambientHumidity"
 
     const val HEATER_STATUS = "heaterStatus"
+
+    const val ACTIVE = "ACTIVE"
+
+    const val STOPPED = "STOPPED"
+
+    const val ERROR = "ERROR"
+
+    const val UNKNOWN = "UNKNOWN"
 }

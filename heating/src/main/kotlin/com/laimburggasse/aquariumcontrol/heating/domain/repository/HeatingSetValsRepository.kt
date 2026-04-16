@@ -31,4 +31,5 @@ interface HeatingSetValsRepository {
     fun updateLocalValues(heatingSetVals: HeatingSetVals)
     suspend fun updateValues()
     fun reset()
-    suspend fun triggerRefresh()}
+    suspend fun triggerRefresh()
+}
