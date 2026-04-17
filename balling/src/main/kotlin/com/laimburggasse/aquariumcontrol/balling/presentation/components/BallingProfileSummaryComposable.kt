@@ -105,7 +105,7 @@ internal fun BallingProfileSummaryComposableDarkPreview() {
         Surface {
             BallingProfileSummaryComposable(
                 ballingProfile = mockBallingProfile,
-                onNavigateFromBalling = { event, pumpId -> }
+                onNavigateFromBalling = { _, _ -> }
             )
         }
     }
@@ -118,7 +118,7 @@ internal fun BallingProfileSummaryComposableLightPreview() {
         Surface {
             BallingProfileSummaryComposable(
                 ballingProfile = mockBallingProfile,
-                onNavigateFromBalling = { event, pumpId -> }
+                onNavigateFromBalling = { _, _ -> }
             )
         }
     }
