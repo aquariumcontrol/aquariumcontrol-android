@@ -61,7 +61,7 @@ class ControllerSelectionScreenTest {
                         controllerProfileList = mockControllerProfileList,
                         onEvent = {},
                         progressToDefaultNavigation = remember { mutableFloatStateOf(value = 0.3f) },
-                        onNavigateFromController = { event, profileId -> },
+                        onNavigateFromController = { _, _ -> },
                         defaultProfileId = remember { mutableLongStateOf(value = 1L) },
                         canStartWaitForNavigation = remember { mutableStateOf(value = true) },
                     )
@@ -90,7 +90,7 @@ class ControllerSelectionScreenTest {
                         controllerProfileList = mockControllerProfileList,
                         onEvent = {},
                         progressToDefaultNavigation = remember { mutableFloatStateOf(value = 0.3f) },
-                        onNavigateFromController = { event, profileId -> },
+                        onNavigateFromController = { _, _ -> },
                         defaultProfileId = remember { mutableLongStateOf(value = 1L) },
                         canStartWaitForNavigation = remember { mutableStateOf(value = true) },
                     )

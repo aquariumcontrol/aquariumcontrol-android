@@ -61,7 +61,7 @@ class FeedProfileScheduleScreenTest {
                         feedProfile = mockFeedProfile,
                         isNewScheduleEntry = false,
                         millisSinceEpoch = 0,
-                        onNavigateFromFeed = { event, id, isNew, millis -> },
+                        onNavigateFromFeed = { _, _, _, _ -> },
                         onFeedScheduleEntryUiEvent = {}
                     )
                 },
@@ -93,7 +93,7 @@ class FeedProfileScheduleScreenTest {
                         feedProfile = mockFeedProfile,
                         isNewScheduleEntry = false,
                         millisSinceEpoch = 0,
-                        onNavigateFromFeed = { event, id, isNew, millis -> },
+                        onNavigateFromFeed = { _, _, _, _ -> },
                         onFeedScheduleEntryUiEvent = {}
                     )
                 },

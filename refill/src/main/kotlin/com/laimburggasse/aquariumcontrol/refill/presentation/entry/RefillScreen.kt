@@ -60,8 +60,6 @@ import com.laimburggasse.aquariumcontrol.refill.R
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillState
-import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryUiEvent
-import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryUiState
 import com.laimburggasse.aquariumcontrol.refill.presentation.navigation.RefillNavigationEvent
 
 @Composable

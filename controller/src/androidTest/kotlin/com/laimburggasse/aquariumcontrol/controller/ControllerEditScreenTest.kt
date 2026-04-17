@@ -56,7 +56,7 @@ class ControllerEditScreenTest {
                         state = mockControllerEditState,
                         onEvent = {},
                         isDefaultProfileInitialValue = true,
-                        onNavigateFromController = {event, id -> }
+                        onNavigateFromController = { _, _ -> }
                     )
                  },
                 onNavigate = {},
@@ -83,7 +83,7 @@ class ControllerEditScreenTest {
                         state = mockControllerEditState,
                         onEvent = {},
                         isDefaultProfileInitialValue = true,
-                        onNavigateFromController = {event, id -> }
+                        onNavigateFromController = { _, _ -> }
                     )
                 },
                 onNavigate = {},
