@@ -23,7 +23,6 @@
 package com.laimburggasse.aquariumcontrol.refill.data.remote
 
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillStateResponse
-import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
