@@ -102,4 +102,17 @@ class BallingScreenUITest {
         // Assert navigation to BallingEditScreen occurred with the correct ID
         Assert.assertEquals(BallingNavigationEvent.ToBallingEdit, capturedEvent)
     }
+
+    @Test
+    fun screenLaunch_triggersRefresh() {
+        var refreshCalled = false
+        composeTestRule.setContent {
+            BallingScreen(
+                ballingProfilesUiState = mockBallingProfilesUiStateSuccess,
+                onNavigateFromBalling = { _, _ -> },
+                onRefresh = { refreshCalled = true }
+            )
+        }
+        assert(refreshCalled)
+    }
 }

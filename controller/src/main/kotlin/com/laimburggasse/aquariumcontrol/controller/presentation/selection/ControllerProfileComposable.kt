@@ -203,7 +203,7 @@ internal fun ControllerProfileComposableDarkPreview() {
                 onEvent = {},
                 controllerProfile = mockControllerProfile1,
                 isDefaultProfile = true,
-                onNavigateFromController = { event, profileId -> }
+                onNavigateFromController = { _, _ -> }
             )
         }
     }
@@ -220,7 +220,7 @@ internal fun ControllerProfileComposableLightPreview() {
                 onEvent = {},
                 controllerProfile = mockControllerProfile1,
                 isDefaultProfile = true,
-                onNavigateFromController = { event, profileId -> }
+                onNavigateFromController = { _, _ -> }
             )
         }
     }
