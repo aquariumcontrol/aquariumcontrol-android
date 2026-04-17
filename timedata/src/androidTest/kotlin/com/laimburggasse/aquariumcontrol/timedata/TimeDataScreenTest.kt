@@ -56,7 +56,8 @@ class TimeDataScreenTest {
                 screenContent = {
                     TimeDataScreen(
                         timeDataUiState = mockTimeDataUiStateError,
-                        onTimeDataEvent = {}
+                        onTimeDataEvent = {},
+                        isDarkMode = true
                     )
                 },
                 onNavigate = {},
@@ -81,7 +82,8 @@ class TimeDataScreenTest {
                 screenContent = {
                     TimeDataScreen(
                         timeDataUiState = mockTimeDataUiStateError,
-                        onTimeDataEvent = {}
+                        onTimeDataEvent = {},
+                        isDarkMode = false
                     )
                 },
                 onNavigate = {},
@@ -106,7 +108,8 @@ class TimeDataScreenTest {
                 screenContent = {
                     TimeDataScreen(
                         timeDataUiState = mockTimeDataUiStateSuccess,
-                        onTimeDataEvent = {}
+                        onTimeDataEvent = {},
+                        isDarkMode = true
                     )
                 },
                 onNavigate = {},
@@ -131,7 +134,8 @@ class TimeDataScreenTest {
                 screenContent = {
                     TimeDataScreen(
                         timeDataUiState = mockTimeDataUiStateSuccess,
-                        onTimeDataEvent = {}
+                        onTimeDataEvent = {},
+                        isDarkMode = false
                     )
                 },
                 onNavigate = {},
@@ -146,5 +150,4 @@ class TimeDataScreenTest {
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
-
 }
