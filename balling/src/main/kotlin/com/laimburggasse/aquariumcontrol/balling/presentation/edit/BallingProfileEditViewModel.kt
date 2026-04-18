@@ -86,8 +86,6 @@ class BallingProfileEditViewModel @Inject constructor(
             initialValue = BallingProfileEditUiState.Loading // Start in a loading state.
         )
 
-
-
     fun onConfirmDosing(newVolume: Double) {
         val currentState: BallingProfileEditUiState = ballingProfileEditUiState.value
         if (currentState is BallingProfileEditUiState.Success) {

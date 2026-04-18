@@ -96,7 +96,6 @@ class ControllerSelectionViewModel @Inject constructor(
             // If the condition is not met, emit 0.0f to reset any progress indicator.
             emit(value = 0.0f)
         }
-
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
