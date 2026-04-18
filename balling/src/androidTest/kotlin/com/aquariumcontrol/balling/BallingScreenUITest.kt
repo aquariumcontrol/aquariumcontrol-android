@@ -59,8 +59,8 @@ class BallingScreenUITest {
         // Assert the callback was triggered with the expected enum value
         Assert.assertEquals(BallingNavigationEvent.ToBallingHistory24h, capturedEvent)
     }
-    @Test
 
+    @Test
     fun tapping_7d_history_button_navigates_to_BallingHistory7d() {
         var capturedEvent: BallingNavigationEvent? = null
         val label7d = context.getString(R.string.view_balling_events_7d)

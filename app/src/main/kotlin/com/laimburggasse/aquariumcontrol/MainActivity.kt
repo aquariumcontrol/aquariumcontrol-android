@@ -152,7 +152,7 @@ class MainActivity : ComponentActivity() {
                         val controllerSelectionViewModel: ControllerSelectionViewModel =
                             hiltViewModel()
                         val controllerProfileList: List<ControllerProfile> by
-                        controllerSelectionViewModel.controllerProfiles.collectAsStateWithLifecycle()
+                            controllerSelectionViewModel.controllerProfiles.collectAsStateWithLifecycle()
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.controllerSelection,
