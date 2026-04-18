@@ -52,8 +52,8 @@ android {
         applicationId = "com.laimburggasse.aquariumcontrol"
         minSdk = 26
         targetSdk = 37
-        versionCode = 16
-        versionName = "3.2.0"
+        versionCode = 18
+        versionName = "3.2.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["clearPackageData"] = "false"
