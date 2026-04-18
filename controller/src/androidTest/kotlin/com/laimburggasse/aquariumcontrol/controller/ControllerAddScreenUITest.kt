@@ -65,7 +65,7 @@ class ControllerAddScreenUITest {
                 screenContent = {
                     ControllerAddScreen(
                         state,
-                        onEvent = { event -> capturedEvent = event },
+                        onEvent = { _ -> },
                         onAddEvent = { event -> capturedEvent = event }
                     )
                 },

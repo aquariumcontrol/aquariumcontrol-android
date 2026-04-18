@@ -84,7 +84,7 @@ internal fun BallingDosingHistorySelectionButtonsPortraitComposableDarkPreview()
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 BallingDosingHistorySelectionButtonsComposable(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
-                    onNavigateFromBalling = { ballingNavigationEvent, ballingPumpId -> }
+                    onNavigateFromBalling = { _, _ -> }
                 )
             }
         }
@@ -99,7 +99,7 @@ internal fun BallingDosingHistorySelectionButtonsPortraitComposableLightPreview(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 BallingDosingHistorySelectionButtonsComposable(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
-                    onNavigateFromBalling = { ballingNavigationEvent, ballingPumpId -> }
+                    onNavigateFromBalling = { _, _ -> }
                 )
             }
         }
@@ -118,7 +118,7 @@ internal fun BallingDosingHistorySelectionButtonsLandscapeComposableDarkPreview(
             Row {
                 BallingDosingHistorySelectionButtonsComposable(
                     modifier = Modifier.padding(vertical = 8.dp).weight(weight = 0.5f),
-                    onNavigateFromBalling = { ballingNavigationEvent, ballingPumpId -> }
+                    onNavigateFromBalling = { _, _ -> }
                 )
             }
         }
@@ -137,7 +137,7 @@ internal fun BallingDosingHistorySelectionButtonsLandscapeComposableLightPreview
             Row {
                 BallingDosingHistorySelectionButtonsComposable(
                     modifier = Modifier.padding(vertical = 8.dp).weight(weight = 0.5f),
-                    onNavigateFromBalling = { ballingNavigationEvent, ballingPumpId -> }
+                    onNavigateFromBalling = { _, _ -> }
                 )
             }
         }
