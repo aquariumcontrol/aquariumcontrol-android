@@ -29,7 +29,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.laimburggasse.aquariumcontrol.common.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedProfileImport
 import com.laimburggasse.aquariumcontrol.feed.presentation.schedule.FeedProfileScheduleScreen
 import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedProfile
 import org.junit.Rule
@@ -48,10 +47,6 @@ class FeedProfileScheduleScreenTest {
 
     @Test
     fun feedScheduleScreenDarkTest() {
-        val mockFeedProfileImport = FeedProfileImport()
-        mockFeedProfileImport.profileId = 1
-        mockFeedProfileImport.profileName = "Test Profile 1"
-
         composeTestRule.setContent {
             MainScaffold(
                 isControllerLoaded = true,
@@ -80,10 +75,6 @@ class FeedProfileScheduleScreenTest {
 
     @Test
     fun feedScheduleScreenLightTest() {
-        val mockFeedProfileImport = FeedProfileImport()
-        mockFeedProfileImport.profileId = 1
-        mockFeedProfileImport.profileName = "Test Profile 1"
-
         composeTestRule.setContent {
             MainScaffold(
                 isControllerLoaded = true,

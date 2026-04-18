@@ -155,9 +155,9 @@ fun FeedScreenSuccessDarkPreview() {
             FeedScreen(
                 feedProfilesUiState = mockFeedProfilesUiStateSuccess,
                 feedScheduleSelectionUiState = mockFeedScheduleSelectionUiStateSuccess,
-                onNavigateFromFeed = { event, id, isNew, millis -> },
+                onNavigateFromFeed = { _, _, _, _ -> },
                 onFeedProfilesUiEvent = {},
-                onFeedSchedulesUiEvent = { event -> return@FeedScreen null }
+                onFeedSchedulesUiEvent = { _ -> return@FeedScreen null }
             )
         },
         onNavigate = {},
@@ -180,9 +180,9 @@ fun FeedScreenSuccessLightPreview() {
             FeedScreen(
                 feedProfilesUiState = mockFeedProfilesUiStateSuccess,
                 feedScheduleSelectionUiState = mockFeedScheduleSelectionUiStateSuccess,
-                onNavigateFromFeed = { event, id, isNew, millis -> },
+                onNavigateFromFeed = { _, _, _, _ -> },
                 onFeedProfilesUiEvent = {},
-                onFeedSchedulesUiEvent = { event -> return@FeedScreen null }
+                onFeedSchedulesUiEvent = { _ -> return@FeedScreen null }
             )
         },
         onNavigate = {},
@@ -205,9 +205,9 @@ fun FeedScreenErrorDarkPreview() {
             FeedScreen(
                 feedProfilesUiState = mockFeedProfilesUiStateError,
                 feedScheduleSelectionUiState = mockFeedScheduleSelectionUiStateError,
-                onNavigateFromFeed = { event, id, isNew, millis -> },
+                onNavigateFromFeed = { _, _, _, _ -> },
                 onFeedProfilesUiEvent = {},
-                onFeedSchedulesUiEvent = { event -> return@FeedScreen null }
+                onFeedSchedulesUiEvent = { _ -> return@FeedScreen null }
             )
         },
         onNavigate = {},
@@ -230,9 +230,9 @@ fun FeedScreenErrorLightPreview() {
             FeedScreen(
                 feedProfilesUiState = mockFeedProfilesUiStateError,
                 feedScheduleSelectionUiState = mockFeedScheduleSelectionUiStateError,
-                onNavigateFromFeed = { event, id, isNew, millis -> },
+                onNavigateFromFeed = { _, _, _, _ -> },
                 onFeedProfilesUiEvent = {},
-                onFeedSchedulesUiEvent = { event -> return@FeedScreen null }
+                onFeedSchedulesUiEvent = { _ -> return@FeedScreen null }
             )
         },
         onNavigate = {},

@@ -56,7 +56,7 @@ class FeedProfileAddScreenTest {
                         feedProfileName = "test",
                         feedProfileAddUiState = FeedProfileAddUiState.Idle,
                         onNavigateFromFeed = { _, _, _, _ ->},
-                        onFeedProfileAddEvent = {event ->}
+                        onFeedProfileAddEvent = { _ ->}
                     )
                 },
                 onNavigate = {},
@@ -82,8 +82,8 @@ class FeedProfileAddScreenTest {
                     FeedProfileAddScreen(
                         feedProfileName = "test",
                         feedProfileAddUiState = FeedProfileAddUiState.Idle,
-                        onNavigateFromFeed = {event, id, isNew, time ->},
-                        onFeedProfileAddEvent = {event ->}
+                        onNavigateFromFeed = { _, _, _, _ ->},
+                        onFeedProfileAddEvent = { _ ->}
                     )
                 },
                 onNavigate = {},

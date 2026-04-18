@@ -54,7 +54,7 @@ class BallingScreenTest {
                 screenContent = {
                     BallingScreen(
                         ballingProfilesUiState = mockBallingProfilesUiStateSuccess,
-                        onNavigateFromBalling = { event, pumpId -> },
+                        onNavigateFromBalling = { _, _ -> },
                         onRefresh = {}
                     )
                 },
@@ -79,7 +79,7 @@ class BallingScreenTest {
                 navigationRouteSource = ViewNavigationRoutes.balling,
                 screenContent = {
                     BallingScreen(
-                        onNavigateFromBalling = { event, pumpId -> },
+                        onNavigateFromBalling = { _, _ -> },
                         ballingProfilesUiState = mockBallingProfilesUiStateSuccess,
                         onRefresh = {}
                     )

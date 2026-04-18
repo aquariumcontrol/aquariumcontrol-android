@@ -43,6 +43,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -92,13 +93,19 @@ fun FeedScheduleEntryComposable(
                 Icon(
                     imageVector = Icons.Filled.Edit,
                     contentDescription = "Edit",
-                    Modifier.size(size = 48.dp).clickable { onEditClick() }
+                    Modifier
+                        .size(size = 48.dp)
+                        .testTag("feed_schedule_edit_${feedScheduleEntry.profileId}")
+                        .clickable { onEditClick() }
                 )
                 Spacer(modifier = Modifier.width(width = 16.dp))
                 Icon(
                     imageVector = Icons.Filled.Delete,
                     contentDescription = stringResource(R.string.delete),
-                    Modifier.size(size = 48.dp).clickable { onDeleteClick() }
+                    Modifier
+                        .size(size = 48.dp)
+                        .testTag("feed_schedule_delete_${feedScheduleEntry.profileId}")
+                        .clickable { onDeleteClick() }
                 )
             }
         }

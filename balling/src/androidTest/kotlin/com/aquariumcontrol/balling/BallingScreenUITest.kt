@@ -73,7 +73,7 @@ class BallingScreenUITest {
             )
         }
 
-        // Find the button for 24h history and click it
+        // Find the button for 7d history and click it
         composeTestRule.onNodeWithText(label7d).performClick()
 
         // Assert the callback was triggered with the expected enum value

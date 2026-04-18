@@ -44,6 +44,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -99,19 +100,28 @@ fun FeedProfileSummaryComposable(
                 Icon(
                     imageVector = Icons.Filled.Edit,
                     contentDescription = stringResource(id = R.string.edit),
-                    modifier = Modifier.size(size = 48.dp).clickable {onEditClick()}
+                    modifier = Modifier
+                        .size(size = 48.dp)
+                        .testTag("feed_profile_edit_${feedProfile.profileID}")
+                        .clickable {onEditClick()}
                 )
                 Spacer(modifier = Modifier.width(width = 16.dp))
                 Icon(
                     imageVector = Icons.Filled.Schedule,
                     contentDescription = stringResource(id = R.string.schedule),
-                    modifier = Modifier.size(size = 48.dp).clickable {onScheduleClick()}
+                    modifier = Modifier
+                        .size(size = 48.dp)
+                        .testTag("feed_profile_schedule_${feedProfile.profileID}")
+                        .clickable {onScheduleClick()}
                 )
                 Spacer(modifier = Modifier.width(width = 16.dp))
                 Icon(
                     imageVector = Icons.Filled.Delete,
                     contentDescription = stringResource(id = R.string.delete),
-                    modifier = Modifier.size(size = 48.dp).clickable {onDeleteClick()}
+                    modifier = Modifier
+                        .size(size = 48.dp)
+                        .testTag("feed_profile_delete_${feedProfile.profileID}")
+                        .clickable {onDeleteClick()}
                 )
             }
         }

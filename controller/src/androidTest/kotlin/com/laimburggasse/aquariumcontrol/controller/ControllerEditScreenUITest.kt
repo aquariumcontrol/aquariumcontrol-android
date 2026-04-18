@@ -29,7 +29,6 @@ import androidx.compose.ui.test.performClick
 import androidx.test.platform.app.InstrumentationRegistry
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.controller.presentation.add.ControllerAddScreen
 import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiEvent
 import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiState
 import com.laimburggasse.aquariumcontrol.controller.presentation.edit.ControllerEditScreen

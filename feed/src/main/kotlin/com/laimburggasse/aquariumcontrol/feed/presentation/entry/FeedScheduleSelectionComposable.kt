@@ -151,14 +151,13 @@ internal fun FeedScheduleSelectionComposableSuccessDarkPreview() {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 FeedScheduleSelectionComposable(
                     feedScheduleSelectionUiState = mockFeedScheduleSelectionUiStateSuccess,
-                    onFeedSchedulesUiEvent = {event: FeedScheduleUiEvent -> return@FeedScheduleSelectionComposable null },
-                    onNavigateFromFeed = { event, id, isNew, millis -> },
+                    onFeedSchedulesUiEvent = { _: FeedScheduleUiEvent -> return@FeedScheduleSelectionComposable null },
+                    onNavigateFromFeed = { _, _, _, _ -> },
                 )
             }
         }
     }
 }
-
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
@@ -173,14 +172,13 @@ internal fun FeedScheduleSelectionComposableSuccessLightPreview() {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 FeedScheduleSelectionComposable(
                     feedScheduleSelectionUiState = mockFeedScheduleSelectionUiStateSuccess,
-                    onFeedSchedulesUiEvent = {event: FeedScheduleUiEvent -> return@FeedScheduleSelectionComposable null },
-                    onNavigateFromFeed = { event, id, isNew, millis -> },
+                    onFeedSchedulesUiEvent = { _: FeedScheduleUiEvent -> return@FeedScheduleSelectionComposable null },
+                    onNavigateFromFeed = { _, _, _, _ -> },
                 )
             }
         }
     }
 }
-
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
@@ -190,8 +188,8 @@ internal fun FeedScheduleSelectionComposableEmptyDarkPreview() {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 FeedScheduleSelectionComposable(
                     feedScheduleSelectionUiState = mockFeedScheduleSelectionUiStateEmpty,
-                    onFeedSchedulesUiEvent = {event: FeedScheduleUiEvent -> return@FeedScheduleSelectionComposable null },
-                    onNavigateFromFeed = { event, id, isNew, millis -> },
+                    onFeedSchedulesUiEvent = { _: FeedScheduleUiEvent -> return@FeedScheduleSelectionComposable null },
+                    onNavigateFromFeed = { _, _, _, _ -> },
                 )
             }
         }
@@ -206,8 +204,8 @@ internal fun FeedScheduleSelectionComposableEmptyLightPreview() {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 FeedScheduleSelectionComposable(
                     feedScheduleSelectionUiState = mockFeedScheduleSelectionUiStateEmpty,
-                    onFeedSchedulesUiEvent = {event: FeedScheduleUiEvent -> return@FeedScheduleSelectionComposable null },
-                    onNavigateFromFeed = { event, id, isNew, millis -> },
+                    onFeedSchedulesUiEvent = { _: FeedScheduleUiEvent -> return@FeedScheduleSelectionComposable null },
+                    onNavigateFromFeed = { _, _, _, _ -> },
                 )
             }
         }
