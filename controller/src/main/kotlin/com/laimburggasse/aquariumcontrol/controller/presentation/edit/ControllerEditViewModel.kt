@@ -64,9 +64,9 @@ class ControllerEditViewModel @Inject constructor(
     init {
         // In the init block, load the profile from the database using the provided ID.
         // This populates the ViewModel's state as soon as it's created.
-        if (controllerProfileId != -1L) {
+        if ((controllerProfileId != null) && (controllerProfileId != -1L)) {
             viewModelScope.launch {
-                dao.getControllerProfileById(id = controllerProfileId!!)?.let { profile ->
+                dao.getControllerProfileById(id = controllerProfileId)?.let { profile ->
                     _state.update {
                         it.copy(
                             controllerProfileId = profile.id,
