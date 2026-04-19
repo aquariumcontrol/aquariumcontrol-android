@@ -22,6 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.ventilation.data
 
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
@@ -207,7 +209,8 @@ open class VentilationSetValsRepositoryImpl @Inject constructor(
                 val requestSuccess = try {
                     val response = apiService.updateVentilationSetVals(url, authHeader, postParams)
                     response.isSuccessful
-                } catch (_: Exception) {
+                } catch (e: Exception) { // recording exception in crashlytics
+                    Firebase.crashlytics.recordException(e)
                     false // Catch network timeouts or connection errors
                 }
 

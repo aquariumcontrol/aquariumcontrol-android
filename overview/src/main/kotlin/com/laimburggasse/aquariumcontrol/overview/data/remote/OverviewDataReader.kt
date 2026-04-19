@@ -1,5 +1,7 @@
 package com.laimburggasse.aquariumcontrol.overview.data.remote
 
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.overview.domain.model.OverviewData
@@ -31,7 +33,8 @@ class OverviewDataReader(
                     errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_ERR_CODE + response.code()
                 )
             }
-        } catch (e: Exception) {
+        } catch (e: Exception) { // recording exception in crashlytics
+            Firebase.crashlytics.recordException(e)
             return DataFetchResult.Error(
                 exception = e,
                 errorMessage = GlobalConstants.ERR_MSG_UNEXPECTED_ERR_DURING_PREP + e.message

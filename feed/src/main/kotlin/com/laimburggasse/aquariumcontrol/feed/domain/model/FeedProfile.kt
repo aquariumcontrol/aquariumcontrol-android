@@ -22,6 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.feed.domain.model
 
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedProfileImport
 
@@ -75,7 +77,8 @@ data class FeedProfile(
                             field.isAccessible = true
                             (field.get(feedProfileImport) as? Int) ?: default
                         }
-                    } catch (_: Exception) {
+                    } catch (e: Exception) { // recording exception in crashlytics
+                        Firebase.crashlytics.recordException(e)
                         default
                     }
                 }
@@ -86,7 +89,8 @@ data class FeedProfile(
                             field.isAccessible = true
                             (field.get(feedProfileImport) as Boolean)
                         }
-                    } catch (_: Exception) {
+                    } catch (e: Exception) { // recording exception in crashlytics
+                        Firebase.crashlytics.recordException(e)
                         false
                     }
                 }

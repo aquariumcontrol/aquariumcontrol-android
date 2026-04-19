@@ -22,6 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.balling.data
 
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingProfileApiService
 import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingProfileReader
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
@@ -168,7 +170,8 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
             val requestSuccess = try {
                 val response = apiService.updateBallingProfile(url, authHeader, postParams)
                 response.isSuccessful
-            } catch (_: Exception) {
+            } catch (e: Exception) { // recording exception in crashlytics
+                Firebase.crashlytics.recordException(e)
                 false // Catch network timeouts or connection errors
             }
 

@@ -112,4 +112,8 @@ dependencies {
     implementation(project(":common"))
     androidTestImplementation(testFixtures(notation = project(":common")))
     androidTestImplementation(libs.androidx.junit)
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.google.firebase.crashlytics)
+    implementation(libs.google.firebase.analytics)
 }

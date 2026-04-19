@@ -56,7 +56,7 @@ object ScreenshotTestHelper {
                 println("📸 Screenshot recorded: ${outputFile.absolutePath}")
                 println("❗ IMPORTANT: Manually copy this to src/androidTest/assets/$GOLDEN_IMAGE_ASSETS_PATH/$goldenName.png for future verification runs.")
             }
-        } catch (e: Exception) {
+        } catch (e: Exception) { // not recording with Firebase Crashlytics
             throw RuntimeException("Failed to save bitmap for $goldenName", e)
         }
     }

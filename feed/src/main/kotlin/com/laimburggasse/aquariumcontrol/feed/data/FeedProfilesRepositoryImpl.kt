@@ -22,6 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.feed.data
 
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
@@ -160,8 +162,8 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
                     authHeader
                 )
                 response.isSuccessful
-            }
-            catch (_: Exception) {
+            } catch (e: Exception) { // recording exception in crashlytics
+                Firebase.crashlytics.recordException(e)
                 false
             }
 
@@ -199,8 +201,8 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
                     params = mapOf(WebApiParams.PROFILE_NAME to feedProfileName)
                 )
                 response.isSuccessful
-            }
-            catch (_: Exception) {
+            } catch (e: Exception) { // recording exception in crashlytics
+                Firebase.crashlytics.recordException(e)
                 false // Catch network timeouts or connection errors
             }
             if (requestSuccess) {
@@ -262,7 +264,8 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
                     apiCallParameters
                 )
                 response.isSuccessful
-            } catch (_: Exception) {
+            } catch (e: Exception) { // recording exception in crashlytics
+                Firebase.crashlytics.recordException(e)
                 false // Catch network timeouts or connection errors
             }
 

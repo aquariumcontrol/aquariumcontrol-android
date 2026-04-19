@@ -1,5 +1,7 @@
 package com.laimburggasse.aquariumcontrol.heating.data.remote
 
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.heating.data.remote.dto.HeatingStatsStringEntry
@@ -40,7 +42,8 @@ class HeatingStatsReader(
                     errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_ERR_CODE + response.code()
                 )
             }
-        } catch (exception: Exception) {
+        } catch (exception: Exception) { // recording exception in crashlytics
+            Firebase.crashlytics.recordException(exception)
             DataFetchResult.Error(
                 exception,
                 errorMessage = GlobalConstants.ERR_MSG_UNEXPECTED_ERR_DURING_PREP + exception.message

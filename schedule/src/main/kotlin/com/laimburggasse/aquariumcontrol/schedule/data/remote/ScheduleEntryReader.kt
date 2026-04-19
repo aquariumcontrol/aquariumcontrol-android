@@ -1,5 +1,7 @@
 package com.laimburggasse.aquariumcontrol.schedule.data.remote
 
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleStringEntry
@@ -41,7 +43,8 @@ class ScheduleEntryReader(
                     errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_ERR_CODE + response.code()
                 )
             }
-        } catch (exception: Exception) {
+        } catch (exception: Exception) { // recording exception in crashlytics
+            Firebase.crashlytics.recordException(exception)
             // Retrofit routes JSON mapping errors and network timeouts here
             DataFetchResult.Error(
                 exception = exception,

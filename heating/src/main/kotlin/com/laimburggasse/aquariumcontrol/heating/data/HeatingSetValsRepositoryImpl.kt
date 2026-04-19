@@ -22,6 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.heating.data
 
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
@@ -206,7 +208,8 @@ open class HeatingSetValsRepositoryImpl @Inject constructor(
                 val requestSuccess = try {
                     val response = apiService.updateHeatingSetVals(url, authHeader, postParams)
                     response.isSuccessful
-                } catch (_: Exception) {
+                } catch (e: Exception) { // recording exception in crashlytics
+                    Firebase.crashlytics.recordException(e)
                     false // Catch network timeouts or connection errors
                 }
 

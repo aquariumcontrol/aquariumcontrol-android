@@ -38,6 +38,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.mikepenz.aboutlibraries.Libs
@@ -53,7 +55,8 @@ fun InfoScreen() {
     val librariesState = produceState<Libs?>(initialValue = null) {
         value = try {
             Libs.Builder().withContext(ctx = context).build()
-        } catch (_: Exception) {
+        } catch (e: Exception) { // recording exception in crashlytics
+            Firebase.crashlytics.recordException(e)
             null
         }
     }
