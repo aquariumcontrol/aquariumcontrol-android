@@ -59,9 +59,9 @@ class FeedProfileAddViewModel @Inject constructor(
 
     fun addFeedProfile() {
         if (_feedProfileAddUiState.value is FeedProfileAddUiState.Loading) return
+        _feedProfileAddUiState.value = FeedProfileAddUiState.Loading
 
         viewModelScope.launch {
-            _feedProfileAddUiState.value = FeedProfileAddUiState.Loading
             feedProfilesRepository.addFeedProfile(feedProfileName = feedProfileName.value)
             _feedProfileAddUiState.value = FeedProfileAddUiState.Success
         }

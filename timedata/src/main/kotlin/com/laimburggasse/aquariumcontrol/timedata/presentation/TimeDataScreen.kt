@@ -68,7 +68,7 @@ fun TimeDataScreen(
 ) {
     // This screen displays time data charts without data flow back to server.
     val textColor: Int = if (isDarkMode) Color.WHITE else Color.BLACK
-    Log.d("TimeDataScreen", "isDarkMode: $isDarkMode, textColor=$textColor")
+    //Log.d("TimeDataScreen", "isDarkMode: $isDarkMode, textColor=$textColor")
     val displayCircularProgressIndicatorInPreview: Boolean =
         LocalConfiguration.current.orientation != Configuration.ORIENTATION_LANDSCAPE
 
