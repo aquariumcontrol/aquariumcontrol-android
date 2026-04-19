@@ -30,5 +30,5 @@ data class ControllerAddEditUiState (
     val controllerProfilePort: Int = 80,
     val controllerProfileUser: String = "",
     val controllerProfilePassword: String = "",
-    val validControllerAddress: Boolean = true
+    val validControllerAddress: Boolean = false
 )
