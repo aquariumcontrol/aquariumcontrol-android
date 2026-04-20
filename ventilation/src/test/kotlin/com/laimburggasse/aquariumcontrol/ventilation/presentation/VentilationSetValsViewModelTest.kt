@@ -128,6 +128,21 @@ class VentilationSetValsViewModelTest {
     }
 
     @Test
+    fun `ChangeHigherValue event updates local repository using current state`() = runTest {
+        // Arrange: Start with success
+        repositoryFlow.value = DataFetchResult.Success(mockVentilationSetVals)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Act
+        viewModel.onVentilationSetValsEvent(VentilationSetValsUiEvent.ChangeUpperValue(28.0f))
+
+        // Assert
+        verify {
+            repository.updateLocalValues(match { it.ventilationSwitchOnTemp == 28.0 })
+        }
+    }
+
+    @Test
     fun `ChangeRange event updates local repository`() = runTest {
         // Act
         viewModel.onVentilationSetValsEvent(VentilationSetValsUiEvent.ChangeRange(22.0f, 25.0f))
