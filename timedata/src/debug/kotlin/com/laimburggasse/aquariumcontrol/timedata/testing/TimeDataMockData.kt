@@ -22,6 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.timedata.testing
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.laimburggasse.aquariumcontrol.timedata.domain.model.TimeDataSample
 import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataSets
 import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataUiState
@@ -31,6 +33,7 @@ import java.time.ZoneOffset
 import kotlin.math.sin
 import kotlin.random.Random
 
+@RequiresApi(Build.VERSION_CODES.O)
 fun generateMockTimeData(): List<TimeDataSample> {
     val startTime: LocalDateTime = LocalDateTime.of(2024, 10, 24, 0, 0) // October 24th, 2024, 0:00 AM
     val samples: MutableList<TimeDataSample> = mutableListOf()
@@ -127,6 +130,7 @@ fun generateMockTimeData(): List<TimeDataSample> {
     return samples
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 object TimeDataMockData {
     val mockTimeDataSets =
         TimeDataSets(timeData = generateMockTimeData())
