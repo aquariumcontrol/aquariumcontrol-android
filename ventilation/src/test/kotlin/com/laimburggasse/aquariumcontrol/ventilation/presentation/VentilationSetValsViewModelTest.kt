@@ -1,0 +1,171 @@
+package com.laimburggasse.aquariumcontrol.ventilation.presentation
+
+import app.cash.turbine.test
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.ventilation.domain.model.VentilationSetVals
+import com.laimburggasse.aquariumcontrol.ventilation.domain.repository.VentilationSetValsRepository
+import com.laimburggasse.aquariumcontrol.ventilation.testing.VentilationMockData.mockVentilationSetVals
+import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
+import org.junit.Before
+import org.junit.Test
+
+@OptIn(ExperimentalCoroutinesApi::class)
+class VentilationSetValsViewModelTest {
+
+    private val testDispatcher = StandardTestDispatcher()
+    private lateinit var repository: VentilationSetValsRepository
+    private lateinit var viewModel: VentilationSetValsViewModel
+
+    // Controlled source for repository updates
+    private val repositoryFlow = MutableStateFlow<DataFetchResult<VentilationSetVals>>(DataFetchResult.Loading)
+
+    @Before
+    fun setup() {
+        Dispatchers.setMain(testDispatcher)
+        repository = mockk(relaxed = true)
+
+        // Stub the repository flow
+        every { repository.ventilationSetValsFlow } returns repositoryFlow
+
+        viewModel = VentilationSetValsViewModel(repository)
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
+
+    @Test
+    fun `initial state is Loading`() = runTest {
+        viewModel.ventilationSetValsUiState.test {
+            assertEquals(VentilationSetValsUiState.Loading, awaitItem())
+        }
+    }
+
+    @Test
+    fun `successful fetch updates state to Success and validates data`() = runTest {
+        viewModel.ventilationSetValsUiState.test {
+            awaitItem() // Loading
+
+            // Act
+            repositoryFlow.value = DataFetchResult.Success(mockVentilationSetVals)
+
+            val state = awaitItem()
+            assertTrue(state is VentilationSetValsUiState.Success)
+            assertEquals(
+                mockVentilationSetVals.ventilationSwitchOffTemp,
+                (state as VentilationSetValsUiState.Success).ventilationSetVals.ventilationSwitchOffTemp,
+                0.0
+            )
+
+            // Verify the validity side effect
+            assertTrue(viewModel.ventilationSetValsValid.value == true)
+        }
+    }
+
+    @Test
+    fun `invalid data in fetch result sets ventilationSetValsValid to false`() = runTest {
+        // Arrange: Create invalid values (Off > On)
+        val invalidVals = VentilationSetVals(
+            ventilationSwitchOffTemp = 30.0,
+            ventilationSwitchOnTemp = 20.0
+        )
+
+        viewModel.ventilationSetValsUiState.test {
+            awaitItem() // Loading
+
+            // Act
+            repositoryFlow.value = DataFetchResult.Success(invalidVals)
+            awaitItem()
+
+            // Assert
+            assertFalse(viewModel.ventilationSetValsValid.value == true)
+        }
+    }
+
+    @Test
+    fun `failed fetch updates state to Error`() = runTest {
+        val errorMsg = "API Error"
+        viewModel.ventilationSetValsUiState.test {
+            awaitItem() // Loading
+
+            // Act
+            repositoryFlow.value = DataFetchResult.Error(Exception(), errorMsg)
+
+            val state = awaitItem()
+            assertTrue(state is VentilationSetValsUiState.Error)
+            assertEquals(errorMsg, (state as VentilationSetValsUiState.Error).errorMessage)
+        }
+    }
+
+    @Test
+    fun `ChangeLowerValue event updates local repository using current state`() = runTest {
+        // Arrange: Start with success
+        repositoryFlow.value = DataFetchResult.Success(mockVentilationSetVals)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Act
+        viewModel.onVentilationSetValsEvent(VentilationSetValsUiEvent.ChangeLowerValue(23.0f))
+
+        // Assert
+        verify {
+            repository.updateLocalValues(match { it.ventilationSwitchOffTemp == 23.0 })
+        }
+    }
+
+    @Test
+    fun `ChangeRange event updates local repository`() = runTest {
+        // Act
+        viewModel.onVentilationSetValsEvent(VentilationSetValsUiEvent.ChangeRange(22.0f, 25.0f))
+
+        // Assert
+        verify {
+            repository.updateLocalValues(match {
+                it.ventilationSwitchOffTemp == 22.0 && it.ventilationSwitchOnTemp == 25.0
+            })
+        }
+    }
+
+    @Test
+    fun `Update event triggers repository update`() = runTest {
+        // Act
+        viewModel.onVentilationSetValsEvent(VentilationSetValsUiEvent.Update)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Assert
+        coVerify(exactly = 1) { repository.updateValues() }
+    }
+
+    @Test
+    fun `Reset event triggers repository reset`() = runTest {
+        // Act
+        viewModel.onVentilationSetValsEvent(VentilationSetValsUiEvent.Reset)
+
+        // Assert
+        verify(exactly = 1) { repository.reset() }
+    }
+
+    @Test
+    fun `Refresh event triggers repository refresh`() = runTest {
+        // Act
+        viewModel.onVentilationSetValsEvent(VentilationSetValsUiEvent.Refresh)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Assert
+        coVerify(exactly = 1) { repository.triggerRefresh() }
+    }
+}

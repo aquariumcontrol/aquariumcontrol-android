@@ -26,11 +26,13 @@ import com.laimburggasse.aquariumcontrol.ventilation.domain.model.VentilationSet
 import com.laimburggasse.aquariumcontrol.ventilation.presentation.VentilationSetValsUiState
 
 object VentilationMockData {
+    val mockVentilationSetVals = VentilationSetVals(
+        ventilationSwitchOffTemp = 23.5,
+        ventilationSwitchOnTemp = 27.5
+    )
+
     val mockVentilationSetValsUiStateSuccess = VentilationSetValsUiState.Success(
-        ventilationSetVals = VentilationSetVals(
-            ventilationSwitchOffTemp = 23.5,
-            ventilationSwitchOnTemp = 27.5
-        )
+        ventilationSetVals = mockVentilationSetVals
     )
     val mockVentilationSetValsUiStateError = VentilationSetValsUiState.Error(
         errorMessage = "Mock Error loading data"
