@@ -57,8 +57,8 @@ object HeatingMockData {
         heatingStats = mockHeatingStatsData
     )
     val mockHeatingSetVals = HeatingSetVals(
-        heatingSwitchOffTemp = 23.5,
-        heatingSwitchOnTemp = 27.5
+        heatingSwitchOffTemp = 27.5,
+        heatingSwitchOnTemp = 23.5
     )
     val mockHeatingSetValsUiState = HeatingSetValsUiState.Success(
         heatingSetVals = mockHeatingSetVals
