@@ -28,7 +28,6 @@ room = "2.8.4"
 aboutLibraries = "14.0.1"
 mikepenzAboutLibrariesPlugin = "14.0.1"
 turbine = "1.2.1"
-firebaseCommonKtx = "22.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -79,7 +78,6 @@ aboutlibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref
 aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }      # Material 3 UI
 mikepenz-aboutlibraries = { group = "com.mikepenz", name = "aboutlibraries", version.ref = "mikepenzAboutLibrariesPlugin" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
-firebase-common-ktx = { group = "com.google.firebase", name = "firebase-common-ktx", version.ref = "firebaseCommonKtx" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

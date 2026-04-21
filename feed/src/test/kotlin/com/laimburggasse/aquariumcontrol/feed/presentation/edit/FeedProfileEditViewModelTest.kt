@@ -52,33 +52,46 @@ class FeedProfileEditViewModelTest {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
 
-        // Mock Android framework statics to prevent Chart library crashes
-        mockkStatic(android.graphics.Color::class)
+        // 1. Mock Statics (Ensure Log is mocked BEFORE Utils)
         mockkStatic(android.util.Log::class)
+        mockkStatic(android.graphics.Color::class)
         mockkStatic(Process::class)
         mockkStatic(FirebaseCrashlytics::class)
+        // Corrected: Use mockkStatic for Java classes, not mockkObject
+        mockkStatic(com.github.mikephil.charting.utils.Utils::class)
 
-        // Stub Process and Firebase
-        every { Process.myPid() } returns 1
-        val mockCrashlytics = mockk<FirebaseCrashlytics>(relaxed = true)
-        every { FirebaseCrashlytics.getInstance() } returns mockCrashlytics
-
-        // Stub Chart/Framework requirements
-        every { android.graphics.Color.rgb(any<Int>(), any(), any()) } returns 0
+        // 2. Stub Log first to swallow library warnings during recording
         every { android.util.Log.e(any(), any()) } returns 0
         every { android.util.Log.e(any(), any(), any()) } returns 0
         every { android.util.Log.d(any(), any()) } returns 0
-        every { android.util.Log.d(any(), any(), any()) } returns 0
 
+        // 3. Stub Framework requirements
+        every { Process.myPid() } returns 1
+        val mockCrashlytics = mockk<FirebaseCrashlytics>(relaxed = true)
+        every { FirebaseCrashlytics.getInstance() } returns mockCrashlytics
+        every { android.graphics.Color.rgb(any<Int>(), any(), any()) } returns 0
+
+        // 4. Stub MPAndroidChart Utils
+        // Stub INIT FIRST to satisfy internal library checks
+        every { com.github.mikephil.charting.utils.Utils.init(any<android.content.Context>()) } just runs
+        every { com.github.mikephil.charting.utils.Utils.init(any<android.content.res.Resources>()) } just runs
+
+        // Use a simple stub for convertDpToPixel without the complex firstArg matcher
+        // to minimize logic during MockK's recording phase
+        every { com.github.mikephil.charting.utils.Utils.convertDpToPixel(any<Float>()) } answers { 10f }
+
+        // 5. Initialize Repository and Mocks
         repository = mockk(relaxed = true)
-        savedStateHandle = mockk()
+        // Use relaxed = true for SavedStateHandle to prevent unmocked method crashes
+        savedStateHandle = mockk(relaxed = true)
 
         mockProfile = createMockFeedProfile().copy(profileID = 10)
 
-        // Mock Navigation Args
+        // 6. Setup data flow
         every { savedStateHandle.get<Int>("feedProfileId") } returns 10
         coEvery { repository.findProfileById(10) } returns mockProfile
 
+        // 7. Instantiate ViewModel LAST
         viewModel = FeedProfileEditViewModel(savedStateHandle, repository)
     }
 
@@ -89,7 +102,8 @@ class FeedProfileEditViewModelTest {
             android.graphics.Color::class,
             android.util.Log::class,
             Process::class,
-            FirebaseCrashlytics::class
+            FirebaseCrashlytics::class,
+            com.github.mikephil.charting.utils.Utils::class
         )
     }
 
