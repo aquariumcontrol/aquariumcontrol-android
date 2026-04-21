@@ -89,8 +89,7 @@ data class FeedProfile(
                             field.isAccessible = true
                             (field.get(feedProfileImport) as Boolean)
                         }
-                    } catch (e: Exception) { // recording exception in crashlytics
-                        Firebase.crashlytics.recordException(e)
+                    } catch (_: Exception) { // not recording exception in crashlytics
                         false
                     }
                 }

@@ -57,6 +57,13 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.3"
     }
+    testOptions {
+        unitTests {
+            // allows tests to see Android-specific classes instead of throwing "Method not mocked"
+            isIncludeAndroidResources = true
+            isReturnDefaultValues = true
+        }
+    }
     experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
 
