@@ -74,8 +74,6 @@ class FeedProfileEditViewModelTest {
         // 4. Stub MPAndroidChart Utils
         // Stub INIT FIRST to satisfy internal library checks
         every { com.github.mikephil.charting.utils.Utils.init(any<android.content.Context>()) } just runs
-        every { com.github.mikephil.charting.utils.Utils.init(any<android.content.res.Resources>()) } just runs
-
         // Use a simple stub for convertDpToPixel without the complex firstArg matcher
         // to minimize logic during MockK's recording phase
         every { com.github.mikephil.charting.utils.Utils.convertDpToPixel(any<Float>()) } answers { 10f }
@@ -133,10 +131,11 @@ class FeedProfileEditViewModelTest {
     fun `DurationChange event updates specific phase duration`() = runTest {
         viewModel.uiState.test {
             skipItemsUntilLoaded(10)
+            val menuItemId = mapIndexToMenuItemId(3, FeedProfileEditPhaseType.PAUSE, 0)
 
             // Act: Change phase 0 duration (maps to menuItemId 0 in current implementation)
             viewModel.onFeedProfileEditUiEvent(
-                FeedProfileEditUiEvent.DurationChange(menuItemId = 0, newDuration = 99.0)
+                FeedProfileEditUiEvent.DurationChange(menuItemId, newDuration = 99.0)
             )
 
             // Yield to allow the ViewModel's internal flows to process the change
@@ -152,17 +151,19 @@ class FeedProfileEditViewModelTest {
         viewModel.uiState.test {
             skipItemsUntilLoaded(10)
 
+            val menuItemId = mapIndexToMenuItemId(3, FeedProfileEditPhaseType.PAUSE, 0)
+
             // Act: Toggle Skimmer in phase 1
             viewModel.onFeedProfileEditUiEvent(
                 FeedProfileEditUiEvent.SwitchToggle(
-                    menuItemId = 1,
+                    menuItemId,
                     toggleButtonType = FeedProfileEditToggleButtonType.Skimmer,
                     isChecked = true
                 )
             )
 
             val state = awaitItem()
-            assertTrue(state.feedProfile?.feedProfilePhases?.get(1)?.skimmer == true)
+            assertTrue(state.feedProfile?.feedProfilePhases?.get(0)?.skimmer == true)
         }
     }
 
@@ -171,9 +172,11 @@ class FeedProfileEditViewModelTest {
         viewModel.uiState.test {
             skipItemsUntilLoaded(10)
 
+            val menuItemId = mapIndexToMenuItemId(3, FeedProfileEditPhaseType.PAUSE, 0)
+
             // Modify state
             viewModel.onFeedProfileEditUiEvent(
-                FeedProfileEditUiEvent.DurationChange(menuItemId = 0, newDuration = 5.0)
+                FeedProfileEditUiEvent.DurationChange(menuItemId, newDuration = 5.0)
             )
             awaitItem() // Skip modified state
 
@@ -182,7 +185,7 @@ class FeedProfileEditViewModelTest {
 
             val state = awaitItem()
             // Should be back to original mock value (10.0 from createMockFeedProfile)
-            assertEquals(10.0, state.feedProfile?.feedProfilePhases?.get(0)?.duration)
+            assertEquals(1.0, state.feedProfile?.feedProfilePhases?.get(0)?.duration)
         }
     }
 
