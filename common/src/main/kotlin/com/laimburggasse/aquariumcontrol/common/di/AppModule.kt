@@ -28,6 +28,7 @@ import androidx.room.Room
 import com.laimburggasse.aquariumcontrol.common.data.ControllerProfileDao
 import com.laimburggasse.aquariumcontrol.common.data.ControllerProfileDatabase
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+import com.laimburggasse.aquariumcontrol.common.domain.SessionManagerImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -77,6 +78,6 @@ object AppModule {
         dao: ControllerProfileDao,
         @ApplicationScope externalScope: CoroutineScope // Hilt gets this from the provider above
     ): SessionManager {
-        return SessionManager(sharedPreferences, dao, externalScope)
+        return SessionManagerImpl(sharedPreferences, dao, externalScope)
     }
 }

@@ -1,15 +1,15 @@
 /*
- * Copyright 2025 Uwe Martin
+ *  Copyright 2025 Uwe Martin
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -22,105 +22,29 @@
 
 package com.laimburggasse.aquariumcontrol.common.domain
 
-import android.content.SharedPreferences
-import androidx.core.content.edit
-import com.laimburggasse.aquariumcontrol.common.data.ControllerProfileDao
-import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-open class SessionManager(
-    private val sharedPreferences: SharedPreferences? = null,
-    private val dao: ControllerProfileDao,
-    @param:ApplicationScope private val externalScope: CoroutineScope
-) {
-    private val _selectedControllerProfile = MutableStateFlow<ControllerProfile?>(value = null)
-    val selectedControllerProfile: StateFlow<ControllerProfile?> = _selectedControllerProfile.asStateFlow()
-    val isControllerLoaded: StateFlow<Boolean> = selectedControllerProfile.map { it != null }
-        .stateIn(
-            started = SharingStarted.Eagerly,
-            initialValue = false,
-            scope = externalScope
-        )
-    private var previousControllerProfileId: Long? = null
+interface SessionManager {
+    val selectedControllerProfile: StateFlow<ControllerProfile?>
+    val isControllerLoaded: StateFlow<Boolean>
+    val defaultControllerProfileId: StateFlow<Long?>
+    val isFirstLoad: StateFlow<Boolean>
 
-    // Initialize with null. The value will be loaded asynchronously.
-    private val _defaultControllerProfileId = MutableStateFlow<Long?>(value = null)
-    val defaultControllerProfileId: StateFlow<Long?> = _defaultControllerProfileId.asStateFlow()
+    suspend fun selectControllerById(id: Long): Boolean
 
-    private val _isFirstLoad = MutableStateFlow(value = true)
-    val isFirstLoad: StateFlow<Boolean> = _isFirstLoad.asStateFlow()
+    fun saveDefaultControllerProfileId(id: Long)
 
-    init {
-        externalScope.launch {
-            val defaultId: Long? =
-                withContext(context = Dispatchers.IO) { // Use Dispatchers.IO for file access
-                    sharedPreferences?.getLong(
-                        GlobalConstants.KEY_DEFAULT_PROFILE_ID,
-                        GlobalConstants.NO_DEFAULT_ID
-                    )
-                }
-            if (defaultId != GlobalConstants.NO_DEFAULT_ID) {
-                // Emit the loaded value. This will trigger the 'combine' in the ViewModel.
-                _defaultControllerProfileId.value = defaultId
-            }
-        }
-    }
+    fun updateSelectedControllerProfile(controllerProfile: ControllerProfile)
 
-    suspend fun selectControllerById(id: Long): Boolean {
-        previousControllerProfileId = _defaultControllerProfileId.value
-        return withContext(context = Dispatchers.IO) {
-            val profile: ControllerProfile? = dao.getControllerProfileById(id)
-            if (profile != null) {
-                _selectedControllerProfile.value = profile
-                true
-            } else {
-                false
-            }
-        }
-    }
-    fun saveDefaultControllerProfileId(id: Long) {
-        sharedPreferences?.edit {
-            putLong(GlobalConstants.KEY_DEFAULT_PROFILE_ID, id)
-        } // .apply() writes asynchronously in the background.
-        _defaultControllerProfileId.value = id
-    }
+    fun getControllerAddress(): String?
 
-    fun updateSelectedControllerProfile(controllerProfile: ControllerProfile) {
-        _selectedControllerProfile.value = controllerProfile
-    }
+    fun getControllerUser(): String?
 
-    open fun getControllerAddress(): String? {
-        return selectedControllerProfile.value?.address
-    }
+    fun getControllerPassword(): String?
 
-    open fun getControllerUser(): String? {
-        return selectedControllerProfile.value?.user
-    }
+    fun getControllerPort(): Int?
 
-    fun getControllerPassword(): String? {
-        return selectedControllerProfile.value?.password
-    }
+    fun suppressAutoNavigation()
 
-    open fun getControllerPort(): Int? {
-        return selectedControllerProfile.value?.port
-    }
-
-    fun suppressAutoNavigation() {
-        _isFirstLoad.value = false
-    }
-
-    fun unsetDefaultControllerId() {
-        if (previousControllerProfileId != null) {
-            _defaultControllerProfileId.value = previousControllerProfileId!!
-        }
-    }
+    fun unsetDefaultControllerId()
 }
