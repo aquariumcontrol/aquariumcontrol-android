@@ -50,6 +50,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.Credentials
@@ -64,27 +65,24 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
 ): FeedProfilesRepository {
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
 
-    // Holds a list of profile IDs that are pending deletions (POST request triggered, local update required).
-    private val pendingDeletions = MutableStateFlow<Set<Int>>(value = emptySet())
-
-    // A flow to hold the failure value
-    private val failureResult = MutableStateFlow<DataFetchResult.Error?>(value = null)
+    // A flow to hold the (potential) pending deletions and the (potential) failure value
+    // This way we avoid race conditions when updating both in sequence.
+    private val localState = MutableStateFlow(FeedProfilesState())
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override val profilesFlow: StateFlow<DataFetchResult<List<FeedProfile>>> =
         combine(
             flow = sessionManager.selectedControllerProfile,
             flow2 = refreshTrigger.onStart { emit(value = Unit) },
-            flow3 = pendingDeletions,
-            flow4 = failureResult
-        ) { controller, _, deletions, failure ->
-            Triple(first = controller, second = deletions, third = failure)
+            flow3 = localState,
+        ) { controller, _, localState ->
+            Pair(first = controller, second = localState)
         }
         .filter{ it.first != null }
-        .flatMapLatest { (controller: ControllerProfile?, deletions: Set<Int>, failure: DataFetchResult.Error?) ->
+        .flatMapLatest { (controller: ControllerProfile?, localState: FeedProfilesState) ->
             flow {
-                if (failure != null) {
-                    emit(value = failure)
+                if (localState.failureResult != null) {
+                    emit(value = localState.failureResult)
                     return@flow
                 }
                 if (controller == null) {
@@ -114,8 +112,8 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
                             FeedProfile.fromFeedProfileImport(feedProfileImport = it)
                         }
                         // Apply pending deletions to the fetched list
-                        if (deletions.isNotEmpty()) {
-                            profiles = profiles.filterNot { deletions.contains(it.profileID) }
+                        if (localState.pendingDeletions.isNotEmpty()) {
+                            profiles = profiles.filterNot { localState.pendingDeletions.contains(it.profileID) }
                         }
 
                         DataFetchResult.Success(data = profiles)
@@ -140,10 +138,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
         val port = sessionManager.getControllerPort()
         val controllerAddress: String? = sessionManager.getControllerAddress()
         if (controllerAddress.isNullOrBlank()) {
-            failureResult.value = DataFetchResult.Error(
-                exception = null,
-                errorMessage = GlobalConstants.ERR_MSG_INVALID_CONTROLLER_ADDRESS
-            )
+            reportInvalidControllerAddress()
             return
         }
         val url = "http://$controllerAddress:$port${WebApiUrls.FEED_DELETE_PROFILE}" + feedProfile.profileID
@@ -152,7 +147,11 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
 
         // Optimistic Update: Immediately add the ID to the pending deletions list.
         // The UI will react to this instantly.
-        pendingDeletions.value += feedProfile.profileID
+        localState.update { currentState ->
+            currentState.copy(
+                pendingDeletions = localState.value.pendingDeletions + feedProfile.profileID
+            )
+        }
 
         // Perform the actual network request in the background.
         repositoryScope.launch(context = Dispatchers.IO) {
@@ -168,10 +167,13 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
             }
 
             if (!requestSuccess) {
-                failureResult.value = DataFetchResult.Error(
-                    exception = null,
-                    errorMessage = GlobalConstants.ERR_MSG_COULD_NOT_DELETE_FEED_PROFILE
-                )
+                localState.update { currentState -> currentState.copy(
+                        failureResult = DataFetchResult.Error(
+                            exception = null,
+                            errorMessage = GlobalConstants.ERR_MSG_COULD_NOT_DELETE_FEED_PROFILE
+                        )
+                    )
+                }
             }
         }
     }
@@ -182,10 +184,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
         val port = sessionManager.getControllerPort()
         val controllerAddress: String? = sessionManager.getControllerAddress()
         if (controllerAddress.isNullOrBlank()) {
-            failureResult.value = DataFetchResult.Error(
-                exception = null,
-                errorMessage = GlobalConstants.ERR_MSG_INVALID_CONTROLLER_ADDRESS
-            )
+            reportInvalidControllerAddress()
             return
         }
 
@@ -209,10 +208,13 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
                 delay(timeMillis = 3000L)
                 triggerRefresh()
             } else {
-                failureResult.value = DataFetchResult.Error(
-                    exception = null,
-                    errorMessage = GlobalConstants.ERR_MSG_COULD_NOT_ADD_FEED_PROFILE
-                )
+                localState.update { currentState -> currentState.copy(
+                        failureResult = DataFetchResult.Error(
+                            exception = null,
+                            errorMessage = GlobalConstants.ERR_MSG_COULD_NOT_ADD_FEED_PROFILE
+                        )
+                    )
+                }
             }
         }
     }
@@ -242,10 +244,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
         val port = sessionManager.getControllerPort()
         val controllerAddress: String? = sessionManager.getControllerAddress()
         if (controllerAddress.isNullOrBlank()) {
-            failureResult.value = DataFetchResult.Error(
-                exception = null,
-                errorMessage = GlobalConstants.ERR_MSG_INVALID_CONTROLLER_ADDRESS
-            )
+            reportInvalidControllerAddress()
             return
         }
 
@@ -270,10 +269,13 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
             }
 
             if (!requestSuccess) {
-                failureResult.value = DataFetchResult.Error(
-                    exception = null,
-                    errorMessage = GlobalConstants.ERR_MSG_UPDATING_FEED_PROFILE_FAILED
-                )
+                localState.update { currentState -> currentState.copy(
+                        failureResult = DataFetchResult.Error(
+                            exception = null,
+                            errorMessage = GlobalConstants.ERR_MSG_UPDATING_FEED_PROFILE_FAILED
+                        )
+                    )
+                }
             }
         }
         // Refresh is not required since this call emanates from FeedProfileEditViewModel.
@@ -284,13 +286,25 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
      */
     override suspend fun triggerRefresh() {
         // Check if the current state is a failure.
-        if (failureResult.value != null) {
+        if (localState.value.failureResult != null) {
             // If it is, setting it to null is sufficient to trigger the combine/flatMapLatest chain again.
-            failureResult.value = null
+            localState.update { currentState ->
+                currentState.copy(failureResult = null)
+            }
         } else {
             // If the system is NOT in a failure state, then we must emit the refreshTrigger
             // to force a new fetch, as nothing else has changed.
             refreshTrigger.emit(value = Unit)
+        }
+    }
+
+    fun reportInvalidControllerAddress() {
+            localState.update { currentState -> currentState.copy(
+                failureResult = DataFetchResult.Error(
+                    exception = null,
+                    errorMessage = GlobalConstants.ERR_MSG_INVALID_CONTROLLER_ADDRESS
+                )
+            )
         }
     }
 }

@@ -48,6 +48,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.Credentials
@@ -62,11 +63,9 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
     // For triggering manual refreshes
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
 
-    // A flow to hold the single pending optimistic update
-    private val pendingUpdate = MutableStateFlow<BallingProfile?>(value = null)
-
-    // A flow to hold the failure value
-    private val failureResult = MutableStateFlow<DataFetchResult.Error?>(value = null)
+    // A flow to hold the (potential) single pending optimistic update and the (potential) failure value
+    // This way we avoid race conditions when updating both in sequence.
+    private val localState = MutableStateFlow(BallingProfilesState())
 
     /**
      * A single, reactive Flow that provides the Balling Profiles.
@@ -80,16 +79,15 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
             // 1. We still listen to the selected controller profile.
             flow = sessionManager.selectedControllerProfile,
             flow2 = refreshTrigger.onStart { emit(value = Unit) },
-            flow3 = pendingUpdate,
-            flow4 = failureResult
-        ) { controller, _, pending, failure ->
-            Triple(first = controller, second = pending, third = failure)
+            flow3 = localState,
+        ) { controller, _, localState ->
+            Pair(first = controller, second = localState)
         }
         .filter{ it.first != null }
-        .flatMapLatest { (controller: ControllerProfile?, pending: BallingProfile?, failure: DataFetchResult.Error?) ->
+        .flatMapLatest { (controller: ControllerProfile?, localState: BallingProfilesState) ->
             flow {
-                if (failure != null) {
-                    emit(value = failure)
+                if (localState.failureResult != null) {
+                    emit(value = localState.failureResult)
                     return@flow
                 }
                 if (controller == null) {
@@ -116,12 +114,12 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
                         networkResult is DataFetchResult.Success
                 ) {
                     // If there is a pending update, merge it now.
-                    if (pending != null) {
+                    if (localState.pendingUpdate != null) {
                         val mergedList: List<BallingProfile> = networkResult.data.map { networkProfile ->
                             // If this profile's pumpId matches the pending update, use the updated version.
                             // Otherwise, use the one from the network.
-                            if (networkProfile.pumpId == pending.pumpId)
-                                pending
+                            if (networkProfile.pumpId == localState.pendingUpdate.pumpId)
+                                localState.pendingUpdate
                             else
                                 networkProfile
                         }
@@ -141,14 +139,16 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
     override fun updateBallingProfile(ballingProfile: BallingProfile) {
         // set the updated profile as the pending update
         // this will trigger instant UI update
-        pendingUpdate.value = ballingProfile
         val controllerAddress: String? = sessionManager.getControllerAddress()
         if (controllerAddress.isNullOrBlank()) {
-            pendingUpdate.value = null
-            failureResult.value = DataFetchResult.Error(
-                exception = null,
-                errorMessage = GlobalConstants.ERR_MSG_INVALID_CONTROLLER_ADDRESS
-            )
+            localState.update { currentState -> currentState.copy(
+                    pendingUpdate = null,
+                    failureResult = DataFetchResult.Error(
+                        exception = null,
+                        errorMessage = GlobalConstants.ERR_MSG_INVALID_CONTROLLER_ADDRESS
+                    )
+                )
+            }
             return
         }
 
@@ -176,15 +176,23 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
             }
 
             if (requestSuccess) {
-                pendingUpdate.value = null
-                failureResult.value = null
+                localState.update { currentState ->
+                    currentState.copy(
+                        pendingUpdate = null,
+                        failureResult = null
+                    )
+                }
                 refreshTrigger.emit(value = Unit) // This will cause the `profilesFlow` to re-fetch.
             } else {
-                pendingUpdate.value = null
-                failureResult.value = DataFetchResult.Error(
-                    exception = null,
-                    errorMessage = GlobalConstants.ERR_MSG_UPDATING_BALLING_PROFILE_FAILED
-                )
+                localState.update { currentState ->
+                    currentState.copy(
+                        pendingUpdate = null,
+                        failureResult = DataFetchResult.Error(
+                            exception = null,
+                            errorMessage = GlobalConstants.ERR_MSG_UPDATING_BALLING_PROFILE_FAILED
+                        )
+                    )
+                }
             }
         }
     }
@@ -194,9 +202,11 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
      */
     override suspend fun triggerRefresh() {
         // Check if the current state is a failure.
-        if (failureResult.value != null) {
+        if (localState.value.failureResult != null) {
             // If it is, setting it to null is sufficient to trigger the combine/flatMapLatest chain again.
-            failureResult.value = null
+            localState.update { currentState ->
+                currentState.copy(failureResult = null)
+            }
         } else {
             // If the system is NOT in a failure state, then we must emit the refreshTrigger
             // to force a new fetch, as nothing else has changed.
