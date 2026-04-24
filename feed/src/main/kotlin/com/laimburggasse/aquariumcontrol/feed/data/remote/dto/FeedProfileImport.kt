@@ -22,7 +22,6 @@
 
 package com.laimburggasse.aquariumcontrol.feed.data.remote.dto
 
-import android.util.Log
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -327,7 +326,7 @@ class FeedProfileImport {
 
     fun logContent(tag: String = "FeedProfileImport") {
         val sb = StringBuilder()
-        sb.append("--- FeedProfileImport Content Start ---\n")
+        sb.append("--- $tag Content Start ---\n")
         sb.append("  Profile ID: $profileId\n")
         sb.append("  Profile Name: $profileName\n")
 
@@ -518,7 +517,7 @@ class FeedProfileImport {
             feed10AuxPump2
         )
 
-        sb.append("--- FeedProfileImport Content End ---")
+        sb.append("--- $tag Content End ---")
         //Log.d(tag, sb.toString())
     }
 }
