@@ -127,6 +127,7 @@ class BallingProfilesRepositoryImplTest {
 
             val updatedBallingProfile = (optimisticResult2 as DataFetchResult.Success).data.first()
             assertEquals(updatedVolume, updatedBallingProfile.volume, 0.0)
+
             // Ensure no further emissions (like a second refresh or an error) occur
             expectNoEvents()
 
@@ -149,6 +150,9 @@ class BallingProfilesRepositoryImplTest {
 
             val result = awaitItem()
             assertTrue(result is DataFetchResult.Error)
+
+            // Ensure no further emissions (like a second refresh or an error) occur
+            expectNoEvents()
         }
     }
 }

@@ -196,7 +196,7 @@ internal fun BallingScreenSuccessDarkPreview() {
         screenContent = {
             BallingScreen(
                 ballingProfilesUiState = mockBallingProfilesUiStateSuccess,
-                onNavigateFromBalling = { event, pumpId -> },
+                onNavigateFromBalling = { _, _ -> },
                 onRefresh = {}
             )
         },
@@ -219,7 +219,7 @@ internal fun BallingScreenSuccessLightPreview() {
         screenContent = {
             BallingScreen(
                 ballingProfilesUiState = mockBallingProfilesUiStateSuccess,
-                onNavigateFromBalling = { event, pumpId -> },
+                onNavigateFromBalling = { _, _ -> },
                 onRefresh = {}
             )
         },
@@ -237,7 +237,7 @@ internal fun BallingScreenErrorDarkPreview() {
         screenContent = {
             BallingScreen(
                 ballingProfilesUiState = mockBallingProfilesUiStateError,
-                onNavigateFromBalling = { event, pumpId -> },
+                onNavigateFromBalling = { _, _ -> },
                 onRefresh = {}
             )
         },
@@ -255,7 +255,7 @@ internal fun BallingScreenErrorLightPreview() {
         screenContent = {
             BallingScreen(
                 ballingProfilesUiState = mockBallingProfilesUiStateError,
-                onNavigateFromBalling = { event, pumpId -> },
+                onNavigateFromBalling = { _, _ -> },
                 onRefresh = {}
             )
         },
@@ -273,7 +273,7 @@ internal fun BallingScreenLoadingDarkPreview() {
         screenContent = {
             BallingScreen(
                 ballingProfilesUiState = mockBallingProfilesUiStateLoading,
-                onNavigateFromBalling = { event, pumpId -> },
+                onNavigateFromBalling = { _, _ -> },
                 onRefresh = {}
             )
         },
@@ -291,7 +291,7 @@ internal fun BallingScreenLoadingLightPreview() {
         screenContent = {
             BallingScreen(
                 ballingProfilesUiState = mockBallingProfilesUiStateLoading,
-                onNavigateFromBalling = { event, pumpId -> },
+                onNavigateFromBalling = { _, _ -> },
                 onRefresh = {}
             )
         },
@@ -309,7 +309,7 @@ internal fun BallingScreenEmptyDarkPreview() {
         screenContent = {
             BallingScreen(
                 ballingProfilesUiState = mockBallingProfilesUiStateEmpty,
-                onNavigateFromBalling = { event, pumpId -> },
+                onNavigateFromBalling = { _, _ -> },
                 onRefresh = {}
             )
         },
@@ -327,7 +327,7 @@ internal fun BallingScreenEmptyLightPreview() {
         screenContent = {
             BallingScreen(
                 ballingProfilesUiState = mockBallingProfilesUiStateEmpty,
-                onNavigateFromBalling = { event, pumpId -> },
+                onNavigateFromBalling = { _, _ -> },
                 onRefresh = {}
             )
         },
