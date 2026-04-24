@@ -27,7 +27,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.crashlytics.crashlytics
 import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData.mockBallingProfiles
-import com.laimburggasse.aquariumcontrol.balling.testing.MockBallingProfileApiService
+import com.laimburggasse.aquariumcontrol.balling.testing.MockBallingProfileApiServiceImpl
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
 import com.laimburggasse.aquariumcontrol.common.testing.MockSessionManagerImpl
@@ -54,7 +54,7 @@ class BallingProfilesRepositoryImplTest {
     private lateinit var repository: BallingProfilesRepositoryImpl
     private val testDispatcher = StandardTestDispatcher()
     private val testScope = TestScope(testDispatcher)
-    private val mockBallingProfileApiService = MockBallingProfileApiService(
+    private val mockBallingProfileApiService = MockBallingProfileApiServiceImpl(
         mockBallingProfiles
     )
     private val mockSessionManagerImpl = MockSessionManagerImpl(

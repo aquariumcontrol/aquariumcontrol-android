@@ -28,7 +28,7 @@ import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Response
 
-class MockBallingProfileApiService(
+class MockBallingProfileApiServiceImpl(
     private var mockBallingProfiles: List<BallingProfile>? = null
 ): BallingProfileApiService {
 
