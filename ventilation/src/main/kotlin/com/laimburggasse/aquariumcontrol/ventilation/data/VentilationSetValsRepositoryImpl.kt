@@ -28,6 +28,7 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
@@ -37,8 +38,8 @@ import com.laimburggasse.aquariumcontrol.ventilation.data.remote.VentilationSetV
 import com.laimburggasse.aquariumcontrol.ventilation.domain.model.VentilationSetVals
 import com.laimburggasse.aquariumcontrol.ventilation.domain.repository.VentilationSetValsRepository
 import com.laimburggasse.aquariumcontrol.ventilation.domain.ventilationSetValsSanityCheck
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -61,7 +62,8 @@ import javax.inject.Singleton
 open class VentilationSetValsRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     private val apiService: VentilationSetValsApiService,
-    @param:ApplicationScope private val repositoryScope: CoroutineScope
+    @param:ApplicationScope private val repositoryScope: CoroutineScope,
+    @param:IoDispatcher private val context: CoroutineDispatcher
 ): VentilationSetValsRepository {
     // Triggers for manual refreshes and optimistic updates.
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
@@ -100,7 +102,7 @@ open class VentilationSetValsRepositoryImpl @Inject constructor(
             // UI shall temporarily show loading state, while fetching data
             emit(value = DataFetchResult.Loading)
 
-            val networkResult: DataFetchResult<VentilationSetVals> = withContext(context = Dispatchers.IO) {
+            val networkResult: DataFetchResult<VentilationSetVals> = withContext(context) {
                 val url = "http://${controller.address}:${controller.port}${WebApiUrls.VENTILATION_LOAD_SET_VALS}"
                 val ventilationSetValsReader = VentilationSetValsReader(
                     apiService,
@@ -192,7 +194,7 @@ open class VentilationSetValsRepositoryImpl @Inject constructor(
         }
 
         if (currentValues != null) {
-            repositoryScope.launch(context = Dispatchers.IO) {
+            repositoryScope.launch(context) {
                 val user = sessionManager.getControllerUser() ?: ""
                 val password = sessionManager.getControllerPassword() ?: ""
                 val port = sessionManager.getControllerPort()

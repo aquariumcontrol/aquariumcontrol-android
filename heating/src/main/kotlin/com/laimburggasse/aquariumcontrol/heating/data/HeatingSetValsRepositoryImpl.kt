@@ -28,6 +28,7 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
@@ -37,8 +38,8 @@ import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingSetValsReade
 import com.laimburggasse.aquariumcontrol.heating.domain.heatingSetValsSanityCheck
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
 import com.laimburggasse.aquariumcontrol.heating.domain.repository.HeatingSetValsRepository
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -61,7 +62,8 @@ import javax.inject.Singleton
 open class HeatingSetValsRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     private val apiService: HeatingSetValsApiService,
-    @param:ApplicationScope private val repositoryScope: CoroutineScope
+    @param:ApplicationScope private val repositoryScope: CoroutineScope,
+    @param:IoDispatcher private val context: CoroutineDispatcher
 ): HeatingSetValsRepository {
     // Triggers for manual refreshes and optimistic updates.
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
@@ -100,7 +102,7 @@ open class HeatingSetValsRepositoryImpl @Inject constructor(
             // If there is no failure, and we have a controller, proceed with loading.
             emit(value = DataFetchResult.Loading)
 
-            val networkResult: DataFetchResult<HeatingSetVals> = withContext(context = Dispatchers.IO) {
+            val networkResult: DataFetchResult<HeatingSetVals> = withContext(context) {
                 val url = "http://${controller.address}:${controller.port}${WebApiUrls.HEATING_LOAD_SET_VALS}"
                 val heatingSetValsReader = HeatingSetValsReader(
                     apiService, url, username = controller.user, password = controller.password
@@ -191,7 +193,7 @@ open class HeatingSetValsRepositoryImpl @Inject constructor(
         }
 
         if (currentValues != null) {
-            repositoryScope.launch(context = Dispatchers.IO) {
+            repositoryScope.launch(context) {
                 val user = sessionManager.getControllerUser() ?: ""
                 val password = sessionManager.getControllerPassword() ?: ""
                 val port = sessionManager.getControllerPort()
