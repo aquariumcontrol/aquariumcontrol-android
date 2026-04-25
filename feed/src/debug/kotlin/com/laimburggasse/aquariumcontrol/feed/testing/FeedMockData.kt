@@ -194,7 +194,7 @@ fun createMockFeedProfileImports(): List<FeedProfileImport> {
     return listOf(mockFeedProfileImport1, mockFeedProfileImport2)
 }
 
-fun createMockFeedSchedule(): List<FeedScheduleEntry> {
+fun createMockFeedScheduleEntries(): List<FeedScheduleEntry> {
     val mockFeedProfileImport1 = FeedProfileImport()
     mockFeedProfileImport1.profileId = 1
     mockFeedProfileImport1.profileName = "Test Profile 1"
@@ -219,6 +219,33 @@ fun createMockFeedSchedule(): List<FeedScheduleEntry> {
     ).transformToFeedScheduleEntry()
 
     return listOf(mockFeedScheduleEntry1, mockFeedScheduleEntry2)
+}
+
+fun createMockFeedScheduleEntryImports(): List<FeedScheduleEntryImport> {
+    val mockFeedProfileImport1 = FeedProfileImport()
+    mockFeedProfileImport1.profileId = 1
+    mockFeedProfileImport1.profileName = "Test Profile 1"
+
+    val mockFeedProfileImport2 = FeedProfileImport()
+    mockFeedProfileImport2.profileId = 2
+    mockFeedProfileImport2.profileName = "Test Profile 2"
+
+    // create mock feed schedule entries
+    val mockFeedScheduleEntryImport1 = FeedScheduleEntryImport(
+        timestampString = "2023-09-01 12:00:00",
+        profileId = 1,
+        profileName = "Test Profile 1",
+        isDaily = 1
+    )
+
+    val mockFeedScheduleEntryImport2 = FeedScheduleEntryImport(
+        timestampString = "2023-09-01 13:00:00",
+        profileId = 2,
+        profileName = "Test Profile 2",
+        isDaily = 0
+    )
+
+    return listOf(mockFeedScheduleEntryImport1, mockFeedScheduleEntryImport2)
 }
 
 object FeedMockData {
@@ -256,7 +283,7 @@ object FeedMockData {
     )
     val mockFeedProfilesUiStateError = FeedProfilesUiState.Error(errorMessage = "Mock Error")
     val mockFeedScheduleSelectionUiStateSuccess = FeedScheduleSelectionUiState.Success(
-        feedScheduleEntries = createMockFeedSchedule()
+        feedScheduleEntries = createMockFeedScheduleEntries()
     )
     val mockFeedScheduleSelectionUiStateError = FeedScheduleSelectionUiState.Error(errorMessage = "Mock Error")
     val mockEvent = FeedHistoryLogEntry(

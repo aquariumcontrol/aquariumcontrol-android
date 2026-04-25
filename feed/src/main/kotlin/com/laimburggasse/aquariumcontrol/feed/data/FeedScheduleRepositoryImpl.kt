@@ -27,6 +27,7 @@ import com.google.firebase.crashlytics.crashlytics
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
@@ -36,8 +37,8 @@ import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedScheduleEntryI
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedScheduleRepository
 import com.laimburggasse.aquariumcontrol.feed.presentation.schedule.toFeedScheduleEntryList
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -62,7 +63,8 @@ import javax.inject.Singleton
 open class FeedScheduleRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     private val apiService: FeedScheduleEntryApiService,
-    @param:ApplicationScope private val repositoryScope: CoroutineScope
+    @param:ApplicationScope private val repositoryScope: CoroutineScope,
+    @param:IoDispatcher private val context: CoroutineDispatcher
 ): FeedScheduleRepository {
     // Triggers and holders for optimistic updates
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
@@ -104,7 +106,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
             emit(value = DataFetchResult.Loading)
 
             val networkResult: DataFetchResult<List<FeedScheduleEntry>> =
-                withContext(context = Dispatchers.IO) {
+                withContext(context) {
                     val url = "http://${controller.address}:${controller.port}${WebApiUrls.FEED_LOAD_SCHEDULE}"
                     val scheduleReader = FeedScheduleEntryReader(
                         apiService, url, username = controller.user, password = controller.password
@@ -211,7 +213,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
 
         // In both cases, trigger the network request, because the add operation
         // may have committed to the server meanwhile.
-        repositoryScope.launch(context = Dispatchers.IO) {
+        repositoryScope.launch(context) {
             val requestSuccess = try {
                 val response = apiService.deleteFeedScheduleEntry(
                     url,
@@ -277,7 +279,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
 
         val apiParams: Map<String, String> = tempEntry.getApiParameters()
 
-        repositoryScope.launch(context = Dispatchers.IO) {
+        repositoryScope.launch(context) {
             val requestSuccess = try {
                 val response = apiService.addFeedScheduleEntry(
                     url,
@@ -342,7 +344,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
         val postParams = modifiedEntry.getApiParametersForUpdating(timestampOld)
 
         // Launch the background network request.
-        repositoryScope.launch(context = Dispatchers.IO) {
+        repositoryScope.launch(context) {
             val requestSuccess = try {
                 val response = apiService.updateFeedScheduleEntry(
                     url,

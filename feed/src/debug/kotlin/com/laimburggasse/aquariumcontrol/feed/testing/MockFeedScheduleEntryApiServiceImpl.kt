@@ -22,12 +22,16 @@
 
 package com.laimburggasse.aquariumcontrol.feed.testing
 
+import java.util.Locale
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedScheduleEntryApiService
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedScheduleEntryImport
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
+import kotlinx.coroutines.delay
 import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Response
+import java.sql.Timestamp
+import java.text.SimpleDateFormat
 import kotlin.collections.plus
 
 class MockFeedScheduleEntryApiServiceImpl(
@@ -40,6 +44,7 @@ class MockFeedScheduleEntryApiServiceImpl(
         url: String,
         authHeader: String
     ): Response<List<FeedScheduleEntryImport>> {
+        delay(10) // Small virtual delay to avoid conflation in flow
         return if (mockFeedScheduleEntryImports == null) {
             Response.error(500, "API error".toResponseBody())
         }
@@ -48,17 +53,27 @@ class MockFeedScheduleEntryApiServiceImpl(
         }
     }
 
-    fun updateMockFeedScheduleEntry(updatedFeedScheduleEntry: FeedScheduleEntry) {
+    fun updateMockFeedScheduleEntry(oldTimestamp: Long, updatedFeedScheduleEntry: FeedScheduleEntry) {
+        // 1. Update the domain model list
         mockFeedScheduleEntries = mockFeedScheduleEntries?.toMutableList()?.apply {
-            val index = indexOfFirst { it.timestamp == updatedFeedScheduleEntry.timestamp }
+            val index = indexOfFirst {
+                it.profileId == updatedFeedScheduleEntry.profileId && it.timestamp.time == oldTimestamp
+            }
             if (index != -1) {
                 set(index, updatedFeedScheduleEntry)
             }
         }
 
+        // 2. Update the Import DTO list
         mockFeedScheduleEntryImports = mockFeedScheduleEntryImports?.toMutableList()?.apply {
+            // Using SimpleDateFormat to match the DTO's format: "yyyy-MM-dd HH:mm:ss"
+            val dateFormat = SimpleDateFormat(
+                "yyyy-MM-dd HH:mm:ss",
+                Locale.US
+            )
+            val oldTimestampString = dateFormat.format(Timestamp(oldTimestamp))
             val index = indexOfFirst {
-                it.timestampString == updatedFeedScheduleEntry.timestamp.toString()
+                it.profileId == updatedFeedScheduleEntry.profileId && it.timestampString == oldTimestampString
             }
             if (index != -1) {
                 set(index, updatedFeedScheduleEntry.toFeedScheduleEntryImport())
@@ -71,7 +86,12 @@ class MockFeedScheduleEntryApiServiceImpl(
         authHeader: String,
         params: Map<String, String>
     ): Response<ResponseBody> {
-        return Response.success("OK".toResponseBody())
+        return if (mockFeedScheduleEntryImports == null) {
+            Response.error(500, "API ERROR".toResponseBody())
+        }
+        else {
+            Response.success("OK".toResponseBody())
+        }
     }
 
     fun addMockFeedScheduleEntry(additionalFeedScheduleEntry: FeedScheduleEntry) {
