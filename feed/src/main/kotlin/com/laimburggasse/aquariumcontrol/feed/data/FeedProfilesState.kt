@@ -23,9 +23,12 @@
 package com.laimburggasse.aquariumcontrol.feed.data
 
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 
 data class FeedProfilesState(
     // Holds a list of profile IDs that are pending deletions (POST request triggered, local update required).
     val pendingDeletions: Set<Int> = emptySet(),
+    // Holds a map of profile IDs to the modified profile for optimistic updates.
+    val pendingUpdates: Map<Int, FeedProfile> = emptyMap(),
     val failureResult: DataFetchResult.Error? = null
 )

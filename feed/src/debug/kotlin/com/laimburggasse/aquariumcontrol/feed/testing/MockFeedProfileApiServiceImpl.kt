@@ -68,7 +68,11 @@ class MockFeedProfileApiServiceImpl(
         authHeader: String,
         params: Map<String, String>
     ): Response<ResponseBody> {
-        return Response.success("OK".toResponseBody())
+        return if (mockFeedProfileImports == null) {
+            Response.error(500, "API error".toResponseBody())
+        } else {
+            Response.success("OK".toResponseBody())
+        }
     }
 
     fun addMockFeedProfile(additionalFeedProfile: FeedProfile) {
@@ -95,7 +99,11 @@ class MockFeedProfileApiServiceImpl(
         url: String,
         authHeader: String
     ): Response<ResponseBody> {
-        return Response.success("OK".toResponseBody())
+        return if (mockFeedProfileImports == null) {
+            Response.error(500, "API error".toResponseBody())
+        } else {
+            Response.success("OK".toResponseBody())
+        }
     }
 
     fun setMockFeedProfileImports(mockFeedProfileImports: List<FeedProfileImport>?) {

@@ -182,6 +182,18 @@ fun createMockFeedProfiles(): List<FeedProfile> {
     return listOf(mockFeedProfile1, mockFeedProfile2)
 }
 
+fun createMockFeedProfileImports(): List<FeedProfileImport> {
+    val mockFeedProfileImport1 = FeedProfileImport()
+    mockFeedProfileImport1.profileId = 1
+    mockFeedProfileImport1.profileName = "Test Profile 1"
+
+    val mockFeedProfileImport2 = FeedProfileImport()
+    mockFeedProfileImport2.profileId = 2
+    mockFeedProfileImport2.profileName = "Test Profile 2"
+
+    return listOf(mockFeedProfileImport1, mockFeedProfileImport2)
+}
+
 fun createMockFeedSchedule(): List<FeedScheduleEntry> {
     val mockFeedProfileImport1 = FeedProfileImport()
     mockFeedProfileImport1.profileId = 1
