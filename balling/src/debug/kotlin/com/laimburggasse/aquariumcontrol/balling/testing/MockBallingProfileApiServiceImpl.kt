@@ -49,11 +49,10 @@ class MockBallingProfileApiServiceImpl(
         authHeader: String,
         params: Map<String, String>
     ): Response<ResponseBody> {
-        if (mockBallingProfiles == null) {
-            return Response.error(500, "API error".toResponseBody())
-        }
-        else {
-            return Response.success(null)
+        return if (mockBallingProfiles == null) {
+            Response.error(500, "API error".toResponseBody())
+        } else {
+            Response.success(null)
         }
     }
 
@@ -67,7 +66,7 @@ class MockBallingProfileApiServiceImpl(
                 return
             }
             mockBallingProfiles!!.forEach {
-                if (it.pumpId == updatedBallingProfile!!.pumpId) {
+                if (it.pumpId == updatedBallingProfile.pumpId) {
                     it.volume = updatedBallingProfile.volume
                 }
             }

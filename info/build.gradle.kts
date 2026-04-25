@@ -23,9 +23,9 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.screenshot)
-    id("org.jetbrains.kotlin.plugin.compose") version "2.3.20"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.3.21"
     id("org.jetbrains.kotlin.plugin.serialization")
-    id("com.google.devtools.ksp") version "2.2.20-2.0.3"
+    id("com.google.devtools.ksp") version "2.3.7"
     id("com.google.dagger.hilt.android")
 }
 
