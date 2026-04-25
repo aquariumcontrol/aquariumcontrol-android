@@ -22,5 +22,124 @@
 
 package com.laimburggasse.aquariumcontrol.heating.data
 
+import app.cash.turbine.test
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.crashlytics.crashlytics
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
+import com.laimburggasse.aquariumcontrol.common.testing.MockSessionManagerImpl
+import com.laimburggasse.aquariumcontrol.heating.testing.HeatingMockData.mockHeatingStatsData
+import com.laimburggasse.aquariumcontrol.heating.testing.MockHeatingStatsApiServiceImpl
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkAll
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Before
+import org.junit.Test
+
+@OptIn(ExperimentalCoroutinesApi::class)
 class HeatingStatsRepositoryImplTest {
+
+    private lateinit var repository: HeatingStatsRepositoryImpl
+    private val testDispatcher = StandardTestDispatcher()
+    private val testScope = TestScope(testDispatcher)
+    private val mockHeatingStatsApiService = MockHeatingStatsApiServiceImpl(
+        mockHeatingStatsData
+    )
+    private val mockSessionManagerImpl = MockSessionManagerImpl(
+        controllerProfiles = mockControllerProfileList
+    )
+
+    @Before
+    fun setup() {
+        Dispatchers.setMain(testDispatcher)
+
+        // Mock Firebase Crashlytics statics
+        mockkStatic(FirebaseCrashlytics::class)
+        val mockCrashlytics = mockk<FirebaseCrashlytics>(relaxed = true)
+        every { FirebaseCrashlytics.getInstance() } returns mockCrashlytics
+        every { Firebase.crashlytics } returns mockCrashlytics
+
+        repository = HeatingStatsRepositoryImpl(
+            sessionManager = mockSessionManagerImpl,
+            apiService = mockHeatingStatsApiService,
+            repositoryScope = testScope
+        )
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+        unmockkAll()
+    }
+
+    @Test
+    fun `heatingStatsFlow emits Loading then Success when controller is selected`() = runTest {
+        repository.heatingStatsFlow.test {
+            // Initial state from stateIn
+            assertEquals(DataFetchResult.Loading, awaitItem())
+
+            // Act: Select a controller
+            mockSessionManagerImpl.selectControllerById(0)
+
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            // Assert
+            val result = awaitItem()
+            assertTrue(result is DataFetchResult.Success)
+            assertEquals(mockHeatingStatsData, (result as DataFetchResult.Success).data)
+
+            // Ensure no further emissions occur
+            expectNoEvents()
+        }
+    }
+
+    @Test
+    fun `triggerRefresh causes a new fetch`() = runTest {
+        mockSessionManagerImpl.selectControllerById(0)
+
+        repository.heatingStatsFlow.test {
+            // Initial states
+            assertTrue(awaitItem() is DataFetchResult.Loading)
+            testDispatcher.scheduler.advanceUntilIdle()
+            assertTrue(awaitItem() is DataFetchResult.Success)
+
+            // Act: Trigger refresh
+            repository.triggerRefresh()
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            // Assert: Should see Loading and then Success again
+            assertTrue(awaitItem() is DataFetchResult.Loading)
+            val result = awaitItem()
+            assertTrue(result is DataFetchResult.Success)
+            assertEquals(mockHeatingStatsData, (result as DataFetchResult.Success).data)
+        }
+    }
+
+    @Test
+    fun `heatingStatsFlow emits Error result on API failure`() = runTest {
+        mockSessionManagerImpl.selectControllerById(0)
+        
+        // induce failure
+        mockHeatingStatsApiService.setMockHeatingStats(null)
+
+        repository.heatingStatsFlow.test {
+             assertTrue(awaitItem() is DataFetchResult.Loading)
+             testDispatcher.scheduler.advanceUntilIdle()
+             
+             val result = awaitItem()
+             assertTrue(result is DataFetchResult.Error)
+        }
+    }
 }
