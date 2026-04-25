@@ -24,21 +24,27 @@ package com.laimburggasse.aquariumcontrol.overview.testing
 
 import com.laimburggasse.aquariumcontrol.overview.data.remote.OverviewDataApiService
 import com.laimburggasse.aquariumcontrol.overview.domain.model.OverviewData
+import kotlinx.coroutines.delay
 import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Response
 
 class MockOverviewDataApiServiceImpl(
-    private val overviewData: OverviewData?
+    private var overviewData: OverviewData?
 ): OverviewDataApiService {
     override suspend fun getOverviewData(
         url: String,
         authHeader: String
     ): Response<OverviewData> {
+        delay(10) // Small virtual delay to avoid conflation in flow
         return if (overviewData == null) {
             Response.error(500, "API ERROR".toResponseBody())
         }
         else {
             Response.success(overviewData)
         }
+    }
+
+    fun setOverviewData(newOverviewData: OverviewData?) {
+        overviewData = newOverviewData
     }
 }

@@ -24,15 +24,16 @@ package com.laimburggasse.aquariumcontrol.overview.data
 
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.overview.data.remote.OverviewDataReader
 import com.laimburggasse.aquariumcontrol.overview.domain.model.OverviewData
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.overview.data.remote.OverviewDataApiService
 import com.laimburggasse.aquariumcontrol.overview.domain.repository.OverviewRepository
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -49,7 +50,8 @@ import javax.inject.Inject
 open class OverviewRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
     private val apiService: OverviewDataApiService,
-    @param:ApplicationScope private val repositoryScope: CoroutineScope
+    @param:ApplicationScope private val repositoryScope: CoroutineScope,
+    @param:IoDispatcher private val context: CoroutineDispatcher
 ): OverviewRepository {
     // This SharedFlow doesn't hold state; it just emits a signal when we call emit().
     // We use replay=1 so it emits the last signal to new subscribers if needed.
@@ -78,7 +80,7 @@ open class OverviewRepositoryImpl @Inject constructor(
                 // UI shall temporarily show loading state, while fetching data
                 emit(value = DataFetchResult.Loading)
 
-                val result: DataFetchResult<OverviewData> = withContext(context = Dispatchers.IO) {
+                val result: DataFetchResult<OverviewData> = withContext(context) {
                     val url = "http://${controller.address}:${controller.port}${WebApiUrls.OVERVIEW_GET_DATA}"
                     val reader = OverviewDataReader(
                         apiService, url, username = controller.user, password = controller.password
