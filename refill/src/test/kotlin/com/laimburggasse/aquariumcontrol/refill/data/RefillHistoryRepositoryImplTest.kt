@@ -22,22 +22,160 @@
 
 package com.laimburggasse.aquariumcontrol.refill.data
 
+import app.cash.turbine.test
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.crashlytics.crashlytics
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
+import com.laimburggasse.aquariumcontrol.common.testing.MockSessionManagerImpl
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
-import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryLogApiService
+import com.laimburggasse.aquariumcontrol.refill.testing.MockRefillHistoryLogApiServiceImpl
+import com.laimburggasse.aquariumcontrol.refill.testing.RefillMockData.mockRefillHistoryLogEntries
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkAll
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import kotlinx.serialization.json.Json
-import okhttp3.ResponseBody
-import okhttp3.ResponseBody.Companion.toResponseBody
-import retrofit2.Response
+import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Before
+import org.junit.Test
 
-class MockRefillHistoryLogApiServiceImpl(
-    private val mockRefillHistoryLogEvents: List<RefillHistoryLogEntry>? = null
-): HistoryLogApiService {
-    override suspend fun getHistoryLogEvents(
-        url: String,
-        authHeader: String
-    ): Response<ResponseBody> {
-        val responseJsonString = Json.encodeToString(mockRefillHistoryLogEvents)
-        val responseBody = responseJsonString.toResponseBody()
-        return Response.success(responseBody)
+@OptIn(ExperimentalCoroutinesApi::class)
+class RefillHistoryRepositoryImplTest {
+
+    private lateinit var repository: RefillHistoryRepositoryImpl<RefillHistoryLogEntry>
+    private val testDispatcher = StandardTestDispatcher()
+    private val testScope = TestScope(testDispatcher)
+    private val mockRefillHistoryApiService = MockRefillHistoryLogApiServiceImpl(
+        mockRefillHistoryLogEntries
+    )
+    private val mockSessionManagerImpl = MockSessionManagerImpl(
+        controllerProfiles = mockControllerProfileList
+    )
+
+    @Before
+    fun setup() {
+        Dispatchers.setMain(testDispatcher)
+
+        // Mock Firebase Crashlytics statics
+        mockkStatic(FirebaseCrashlytics::class)
+        val mockCrashlytics = mockk<FirebaseCrashlytics>(relaxed = true)
+        every { FirebaseCrashlytics.getInstance() } returns mockCrashlytics
+        every { Firebase.crashlytics } returns mockCrashlytics
+
+        repository = RefillHistoryRepositoryImpl(
+            sessionManager = mockSessionManagerImpl,
+            apiService = mockRefillHistoryApiService,
+            repositoryScope = testScope,
+            json = Json,
+            context = testDispatcher
+        )
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+        unmockkAll()
+    }
+
+    @Test
+    fun `refillHistoryEventFlow emits Loading then Success when controller is selected`() = runTest {
+        repository.refillHistoryEventFlow.test {
+            // Initial state from stateIn
+            assertEquals(DataFetchResult.Loading, awaitItem())
+
+            // Act: Select a controller
+            mockSessionManagerImpl.selectControllerById(0)
+
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            // The flow transitions to Success (Loading from flatMapLatest is conflated)
+            val result = awaitItem()
+            assertTrue(result is DataFetchResult.Success)
+            assertEquals(mockRefillHistoryLogEntries, (result as DataFetchResult.Success).data)
+
+            // Ensure no further emissions occur
+            expectNoEvents()
+        }
+    }
+
+    @Test
+    fun `triggerRefresh causes a new fetch`() = runTest {
+        mockSessionManagerImpl.selectControllerById(0)
+
+        repository.refillHistoryEventFlow.test {
+            // Initial Loading and Success
+            assertTrue(awaitItem() is DataFetchResult.Loading)
+            testDispatcher.scheduler.advanceUntilIdle()
+            assertTrue(awaitItem() is DataFetchResult.Success)
+
+            // Act: Trigger refresh
+            repository.triggerRefresh()
+            
+            // Advance just enough to trigger Loading but not finish the API call
+            testDispatcher.scheduler.runCurrent()
+            assertTrue(awaitItem() is DataFetchResult.Loading)
+            
+            // Advance to finish the API call
+            testDispatcher.scheduler.advanceUntilIdle()
+            val result = awaitItem()
+            assertTrue(result is DataFetchResult.Success)
+            assertEquals(mockRefillHistoryLogEntries, (result as DataFetchResult.Success).data)
+        }
+    }
+
+    @Test
+    fun `refillHistoryEventFlow emits Error result on API failure`() = runTest {
+        mockSessionManagerImpl.selectControllerById(0)
+        
+        repository.refillHistoryEventFlow.test {
+             assertTrue(awaitItem() is DataFetchResult.Loading)
+             testDispatcher.scheduler.advanceUntilIdle()
+             assertTrue(awaitItem() is DataFetchResult.Success)
+
+             // induce failure
+             mockRefillHistoryApiService.setForceError(true)
+             repository.triggerRefresh()
+             
+             testDispatcher.scheduler.runCurrent()
+             assertTrue(awaitItem() is DataFetchResult.Loading)
+             
+             testDispatcher.scheduler.advanceUntilIdle()
+             val result = awaitItem()
+             assertTrue(result is DataFetchResult.Error)
+        }
+    }
+
+    @Test
+    fun `setHistoryTimeRange causes a new fetch`() = runTest {
+        mockSessionManagerImpl.selectControllerById(0)
+
+        repository.refillHistoryEventFlow.test {
+            // Initial Loading and Success
+            assertTrue(awaitItem() is DataFetchResult.Loading)
+            testDispatcher.scheduler.advanceUntilIdle()
+            assertTrue(awaitItem() is DataFetchResult.Success)
+
+            // Act: Change time range
+            repository.setHistoryTimeRange(true)
+            
+            testDispatcher.scheduler.runCurrent()
+            assertTrue(awaitItem() is DataFetchResult.Loading)
+            
+            testDispatcher.scheduler.advanceUntilIdle()
+            val result = awaitItem()
+            assertTrue(result is DataFetchResult.Success)
+            assertEquals(mockRefillHistoryLogEntries, (result as DataFetchResult.Success).data)
+        }
     }
 }

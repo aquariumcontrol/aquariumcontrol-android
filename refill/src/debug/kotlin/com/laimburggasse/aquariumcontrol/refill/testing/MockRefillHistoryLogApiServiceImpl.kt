@@ -30,14 +30,24 @@ import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Response
 
 class MockRefillHistoryLogApiServiceImpl(
-    private val mockRefillHistoryLogEvents: List<RefillHistoryLogEntry>? = null
+    private var mockRefillHistoryLogEvents: List<RefillHistoryLogEntry>? = null
 ): HistoryLogApiService {
+    private var forceError: Boolean = false
+
+    fun setForceError(force: Boolean) {
+        this.forceError = force
+    }
+
     override suspend fun getHistoryLogEvents(
         url: String,
         authHeader: String
     ): Response<ResponseBody> {
-        val responseJsonString = Json.encodeToString(mockRefillHistoryLogEvents)
-        val responseBody = responseJsonString.toResponseBody()
-        return Response.success(responseBody)
+        return if (forceError) {
+            Response.error(500, "API ERROR".toResponseBody())
+        } else {
+            val responseJsonString = Json.encodeToString(mockRefillHistoryLogEvents)
+            val responseBody = responseJsonString.toResponseBody()
+            Response.success(responseBody)
+        }
     }
 }

@@ -25,15 +25,25 @@ package com.laimburggasse.aquariumcontrol.refill.testing
 import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillStateApiService
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillState
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillStateResponse
+import kotlinx.coroutines.delay
+import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Response
 
 class MockRefillStateApiServiceImpl(
     private var refillState: RefillState?
 ): RefillStateApiService {
+    private var forceError: Boolean = false
+
+    fun setForceError(force: Boolean) {
+        this.forceError = force
+    }
+
     override suspend fun loadRefillState(
         url: String,
         authHeader: String
     ): RefillStateResponse {
+        delay(10) // Small virtual delay to avoid conflation in flow
+        if (forceError) throw Exception("Mock API Error")
         return if (refillState == null) {
             RefillStateResponse(RefillState.ERROR)
         }
@@ -46,7 +56,11 @@ class MockRefillStateApiServiceImpl(
         url: String,
         authHeader: String
     ): Response<Unit> {
-        refillState = RefillState.ACTIVE
-        return Response.success(Unit)
+        return if (forceError) {
+            Response.error(500, "API ERROR".toResponseBody())
+        } else {
+            refillState = RefillState.ACTIVE
+            Response.success(Unit)
+        }
     }
 }

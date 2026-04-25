@@ -27,13 +27,14 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryLogApiService
 import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryLogEntryReader
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.common.di.RefillHistoryService
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillHistoryRepository
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -53,7 +54,8 @@ open class RefillHistoryRepositoryImpl<T> @Inject constructor(
     sessionManager: SessionManager,
     @param:RefillHistoryService private val apiService: HistoryLogApiService,
     @param:ApplicationScope private val repositoryScope: CoroutineScope,
-    private val json: Json
+    private val json: Json,
+    @param:IoDispatcher private val context: CoroutineDispatcher
 ): RefillHistoryRepository<T> {
 
     // Trigger for manual refreshes (e.g., pull-to-refresh)
@@ -93,7 +95,7 @@ open class RefillHistoryRepositoryImpl<T> @Inject constructor(
                 }
 
                 val result: DataFetchResult<List<T>> =
-                    withContext(context = Dispatchers.IO) {
+                    withContext(context) {
                         val reader = HistoryLogEntryReader(
                             apiService,
                             url,
