@@ -25,6 +25,7 @@ package com.laimburggasse.aquariumcontrol.schedule.data
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
@@ -35,8 +36,8 @@ import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleString
 import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntries
 import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntriesFactory
 import com.laimburggasse.aquariumcontrol.schedule.domain.repository.ScheduleRepository
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -58,7 +59,8 @@ import javax.inject.Singleton
 open class ScheduleRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     private val apiService: ScheduleApiService,
-    @param:ApplicationScope private val repositoryScope: CoroutineScope
+    @param:ApplicationScope private val repositoryScope: CoroutineScope,
+    @param:IoDispatcher private val context: CoroutineDispatcher
 ): ScheduleRepository {
     // Triggers for manual refreshes and a holder for optimistic local updates.
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
@@ -152,7 +154,7 @@ open class ScheduleRepositoryImpl @Inject constructor(
 
             val postParams = scheduleEntries.getApiParams()
 
-            repositoryScope.launch(context = Dispatchers.IO) {
+            repositoryScope.launch(context) {
                 apiService.updateScheduleData(url, authHeader, postParams)
             }
         }
@@ -168,7 +170,7 @@ open class ScheduleRepositoryImpl @Inject constructor(
 
     // helper function for the flow
     open suspend fun fetchScheduleSetVals(username: String, password: String): DataFetchResult<ScheduleEntries> {
-        return withContext(context = Dispatchers.IO) {
+        return withContext(context) {
             val url: String =
                 "http://" + sessionManager.getControllerAddress() + ":" +
                 sessionManager.getControllerPort() + WebApiUrls.ACTUATOR_SCHEDULE_LOAD
