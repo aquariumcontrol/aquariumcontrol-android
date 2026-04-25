@@ -25,6 +25,7 @@ package com.laimburggasse.aquariumcontrol.timedata.data
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.timedata.data.remote.TimeDataReader
 import com.laimburggasse.aquariumcontrol.timedata.data.remote.dto.TimeDataStringSample
 import com.laimburggasse.aquariumcontrol.timedata.domain.model.TimeDataSample
@@ -32,8 +33,8 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.timedata.data.remote.TimeDataApiService
 import com.laimburggasse.aquariumcontrol.timedata.domain.repository.TimeDataRepository
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -51,6 +52,7 @@ open class TimeDataRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     private val apiService: TimeDataApiService,
     @param:ApplicationScope private val repositoryScope: CoroutineScope,
+    @param:IoDispatcher private val context: CoroutineDispatcher
 ): TimeDataRepository {
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
 
@@ -68,7 +70,7 @@ open class TimeDataRepositoryImpl @Inject constructor(
 
                 // Perform the network request on a background thread.
                 val readResult: DataFetchResult<List<TimeDataStringSample>> =
-                    withContext(context = Dispatchers.IO) {
+                    withContext(context) {
                         val url: String =
                             "http://" + sessionManager.getControllerAddress() + ":" +
                             sessionManager.getControllerPort() + WebApiUrls.LOAD_TIME_DATA

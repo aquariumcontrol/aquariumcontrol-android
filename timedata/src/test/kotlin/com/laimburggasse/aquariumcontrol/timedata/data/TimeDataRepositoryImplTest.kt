@@ -22,5 +22,129 @@
 
 package com.laimburggasse.aquariumcontrol.timedata.data
 
+import app.cash.turbine.test
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.crashlytics.crashlytics
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
+import com.laimburggasse.aquariumcontrol.common.testing.MockSessionManagerImpl
+import com.laimburggasse.aquariumcontrol.timedata.testing.MockTimeDataApiServiceImpl
+import com.laimburggasse.aquariumcontrol.timedata.testing.generateMockTimeData
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkAll
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Before
+import org.junit.Test
+
+@OptIn(ExperimentalCoroutinesApi::class)
 class TimeDataRepositoryImplTest {
+
+    private lateinit var repository: TimeDataRepositoryImpl
+    private val testDispatcher = StandardTestDispatcher()
+    private val testScope = TestScope(testDispatcher)
+    private val mockSamples = generateMockTimeData()
+    private val mockTimeDataApiService = MockTimeDataApiServiceImpl(
+        mockSamples
+    )
+    private val mockSessionManagerImpl = MockSessionManagerImpl(
+        controllerProfiles = mockControllerProfileList
+    )
+
+    @Before
+    fun setup() {
+        Dispatchers.setMain(testDispatcher)
+
+        // Mock Firebase Crashlytics statics
+        mockkStatic(FirebaseCrashlytics::class)
+        val mockCrashlytics = mockk<FirebaseCrashlytics>(relaxed = true)
+        every { FirebaseCrashlytics.getInstance() } returns mockCrashlytics
+        every { Firebase.crashlytics } returns mockCrashlytics
+
+        repository = TimeDataRepositoryImpl(
+            sessionManager = mockSessionManagerImpl,
+            apiService = mockTimeDataApiService,
+            repositoryScope = testScope,
+            context = testDispatcher
+        )
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+        unmockkAll()
+    }
+
+    @Test
+    fun `timeDataSamples emits Loading then Success when controller is selected`() = runTest {
+        repository.timeDataSamples.test {
+            // Initial state from stateIn
+            assertEquals(DataFetchResult.Loading, awaitItem())
+
+            // Act: Select a controller
+            mockSessionManagerImpl.selectControllerById(0)
+
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            // The flow first emits Loading from inside flatMapLatest (conflated because it's already Loading)
+            // Then it emits the Success result
+            val result = awaitItem()
+            assertTrue(result is DataFetchResult.Success)
+            assertEquals(mockSamples, (result as DataFetchResult.Success).data)
+
+            // Ensure no further emissions occur
+            expectNoEvents()
+        }
+    }
+
+    @Test
+    fun `triggerRefresh causes a new fetch`() = runTest {
+        mockSessionManagerImpl.selectControllerById(0)
+
+        repository.timeDataSamples.test {
+            // Initial Loading and Success
+            assertTrue(awaitItem() is DataFetchResult.Loading)
+            testDispatcher.scheduler.advanceUntilIdle()
+            assertTrue(awaitItem() is DataFetchResult.Success)
+
+            // Act: Trigger refresh
+            repository.triggerRefresh()
+            
+            // Advance just enough to trigger Loading but not finish the API call
+            testDispatcher.scheduler.runCurrent()
+            assertTrue(awaitItem() is DataFetchResult.Loading)
+            
+            // Advance to finish the API call
+            testDispatcher.scheduler.advanceUntilIdle()
+            val result = awaitItem()
+            assertTrue(result is DataFetchResult.Success)
+            assertEquals(mockSamples, (result as DataFetchResult.Success).data)
+        }
+    }
+
+    @Test
+    fun `timeDataSamples emits Error result on API failure`() = runTest {
+        mockSessionManagerImpl.selectControllerById(0)
+        
+        // induce failure
+        mockTimeDataApiService.setMockTimeDataSamples(null)
+
+        repository.timeDataSamples.test {
+             assertTrue(awaitItem() is DataFetchResult.Loading)
+             testDispatcher.scheduler.advanceUntilIdle()
+             val result = awaitItem()
+             assertTrue(result is DataFetchResult.Error)
+        }
+    }
 }
