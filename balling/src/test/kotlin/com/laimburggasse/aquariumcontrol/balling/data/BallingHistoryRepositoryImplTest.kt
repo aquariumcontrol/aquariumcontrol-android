@@ -109,4 +109,27 @@ class BallingHistoryRepositoryImplTest {
             expectNoEvents()
         }
     }
+
+    @Test
+    fun `setHistoryTimeRange causes a new fetch`() = runTest {
+        mockSessionManagerImpl.selectControllerById(0)
+
+        repository.ballingHistoryDosingEventFlow.test {
+            // Initial Loading and Success
+            assertTrue(awaitItem() is DataFetchResult.Loading)
+            testDispatcher.scheduler.advanceUntilIdle()
+            assertTrue(awaitItem() is DataFetchResult.Success)
+
+            // Act: Change time range
+            repository.setHistoryTimeRange(true)
+
+            testDispatcher.scheduler.runCurrent()
+            assertTrue(awaitItem() is DataFetchResult.Loading)
+
+            testDispatcher.scheduler.advanceUntilIdle()
+            val result = awaitItem()
+            assertTrue(result is DataFetchResult.Success)
+            assertEquals(mockBallingHistoryLogEntries, (result as DataFetchResult.Success).data)
+        }
+    }
 }
