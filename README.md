@@ -1,4 +1,4 @@
-### Wikipedia Android app
+### AquariumControl Android app
 
 This repository contains the source code for the official [AquariumControl Android app](https://play.google.com/store/apps/details?id=com.laimburggasse.aquariumcontroller).
 
