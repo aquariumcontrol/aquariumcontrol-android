@@ -47,6 +47,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -66,20 +67,22 @@ import kotlinx.coroutines.flow.flowOf
 @Composable
 fun BallingHistoryScreen(
     ballingHistoryFlow: Flow<PagingData<BallingHistoryLogEntry>>,
+    previewData: List<BallingHistoryLogEntry>? = null
 ) {
     // This screen displays:
     // - headline
     // - list of balling events
-
     val context = LocalContext.current
     val ballingHistoryLogEntries = ballingHistoryFlow.collectAsLazyPagingItems()
 
-    LaunchedEffect(key1 = ballingHistoryLogEntries.loadState) {
-        if (ballingHistoryLogEntries.loadState.refresh is LoadState.Error) {
-            val loadState = (ballingHistoryLogEntries.loadState.refresh as LoadState.Error)
-            val errorMessage = loadState.error.message
-            Toast.makeText(context, "API error: $errorMessage", Toast.LENGTH_LONG).show()
-            errorMessage?.let { Log.d("BallingHistoryScreen", it) }
+    if (LocalInspectionMode.current) {
+        LaunchedEffect(key1 = ballingHistoryLogEntries.loadState) {
+            if (ballingHistoryLogEntries.loadState.refresh is LoadState.Error) {
+                val loadState = (ballingHistoryLogEntries.loadState.refresh as LoadState.Error)
+                val errorMessage = loadState.error.message
+                Toast.makeText(context, "API error: $errorMessage", Toast.LENGTH_LONG).show()
+                errorMessage?.let { Log.d("BallingHistoryScreen", it) }
+            }
         }
     }
 
@@ -99,8 +102,13 @@ fun BallingHistoryScreen(
                 modifier = Modifier.fillMaxSize().padding(paddingValues = innerPadding),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val isRefreshing = ballingHistoryLogEntries.loadState.mediator?.refresh is LoadState.Loading ||
-                        ballingHistoryLogEntries.loadState.refresh is LoadState.Loading
+                val isRefreshing = if (previewData == null) {
+                    ballingHistoryLogEntries.loadState.mediator?.refresh is LoadState.Loading ||
+                            ballingHistoryLogEntries.loadState.refresh is LoadState.Loading
+                }
+                else {
+                    false
+                }
 
                 PullToRefreshBox(
                     modifier = Modifier.fillMaxWidth(),
@@ -124,14 +132,18 @@ fun BallingHistoryScreen(
                         val loadState = ballingHistoryLogEntries.loadState
                         
                         when {
-                            (loadState.mediator?.refresh is LoadState.Loading || loadState.refresh is LoadState.Loading) && ballingHistoryLogEntries.itemCount == 0 -> {
+                            (loadState.mediator?.refresh is LoadState.Loading || loadState.refresh is LoadState.Loading)
+                                    && ballingHistoryLogEntries.itemCount == 0
+                                    && previewData == null -> {
                                 CircularProgressIndicator(
                                     modifier = Modifier.align(Alignment.Center).size(size = 150.dp),
                                     color = MaterialTheme.colorScheme.primary
                                 )
 
                             }
-                            loadState.refresh is LoadState.Error && ballingHistoryLogEntries.itemCount == 0 -> {
+                            loadState.refresh is LoadState.Error
+                                    && ballingHistoryLogEntries.itemCount == 0
+                                    && previewData == null -> {
                                 val error = (loadState.refresh as LoadState.Error).error
                                 Text(
                                     text = error.localizedMessage ?: "Unknown Error",
@@ -139,27 +151,45 @@ fun BallingHistoryScreen(
                                     modifier = Modifier.align(Alignment.Center)
                                 )
                             }
-                            loadState.refresh is LoadState.NotLoading && ballingHistoryLogEntries.itemCount == 0 -> {
+                            loadState.refresh is LoadState.NotLoading
+                                    && ballingHistoryLogEntries.itemCount == 0
+                                    && previewData == null -> {
                                 Text(
                                     text = stringResource(R.string.no_balling_events_found),
                                     modifier = Modifier.align(Alignment.Center)
                                 )
                             }
                             else -> {
-                                // In App Runtime: Use the performant LazyColumn
-                                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                    items(count = ballingHistoryLogEntries.itemCount) { index ->
-                                        val ballingHistoryLogEntry = ballingHistoryLogEntries[index]
-                                        if (ballingHistoryLogEntry != null) {
-                                            BallingHistoryLogEntryComposable(ballingHistoryLogEntry)
+                                if (LocalInspectionMode.current) {
+                                    // In Preview: Render a simple, static Column instead of LazyColumn
+                                    Column(modifier = Modifier.fillMaxSize()) {
+                                        previewData?.forEach { ballingHistoryLogEntry ->
+                                            BallingHistoryLogEntryComposable(
+                                                ballingHistoryLogEntry
+                                            )
                                         }
                                     }
-                                    item {
-                                        if (loadState.append is LoadState.Loading || loadState.mediator?.append is LoadState.Loading) {
-                                            CircularProgressIndicator(
-                                                modifier = Modifier.fillMaxWidth().padding(16.dp).size(size = 50.dp),
-                                                color = MaterialTheme.colorScheme.primary
-                                            )
+                                }
+                                else {
+                                    // In App Runtime: Use the performant LazyColumn
+                                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                        items(count = ballingHistoryLogEntries.itemCount) { index ->
+                                            val ballingHistoryLogEntry =
+                                                ballingHistoryLogEntries[index]
+                                            if (ballingHistoryLogEntry != null) {
+                                                BallingHistoryLogEntryComposable(
+                                                    ballingHistoryLogEntry
+                                                )
+                                            }
+                                        }
+                                        item {
+                                            if (loadState.append is LoadState.Loading || loadState.mediator?.append is LoadState.Loading) {
+                                                CircularProgressIndicator(
+                                                    modifier = Modifier.fillMaxWidth()
+                                                        .padding(16.dp).size(size = 50.dp),
+                                                    color = MaterialTheme.colorScheme.primary
+                                                )
+                                            }
                                         }
                                     }
                                 }
@@ -188,11 +218,12 @@ internal fun BallingHistoryScreenSuccessDarkPreview() {
                 ballingHistoryFlow = flowOf(PagingData.from(
                     mockBallingHistoryLogEntries,
                     sourceLoadStates = LoadStates(
-                        refresh = LoadState.NotLoading(false),
+                        refresh = LoadState.NotLoading(true),
                         prepend = LoadState.NotLoading(true),
                         append = LoadState.NotLoading(true)
                     )
-                ))
+                )),
+                previewData = mockBallingHistoryLogEntries
             )
         },
         onNavigate = {},
@@ -220,93 +251,8 @@ internal fun BallingHistoryScreenSuccessLightPreview() {
                         prepend = LoadState.NotLoading(true),
                         append = LoadState.NotLoading(true)
                     )
-                ))
-            )
-        },
-        onNavigate = {},
-        darkTheme = false
-    )
-}
-
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-internal fun BallingHistoryScreenEmptyDarkPreview() {
-    MainScaffold(
-        isControllerLoaded = true,
-        navigationRouteSource = ViewNavigationRoutes.ballingHistory,
-        screenContent = {
-            BallingHistoryScreen(
-                ballingHistoryFlow = flowOf(PagingData.from(
-                    emptyList(),
-                    sourceLoadStates = LoadStates(
-                        refresh = LoadState.NotLoading(true),
-                        prepend = LoadState.NotLoading(true),
-                        append = LoadState.NotLoading(true)
-                    )
-                ))
-            )
-        },
-        onNavigate = {},
-        darkTheme = true
-    )
-}
-
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Composable
-internal fun BallingHistoryScreenEmptyLightPreview() {
-    MainScaffold(
-        isControllerLoaded = true,
-        navigationRouteSource = ViewNavigationRoutes.ballingHistory,
-        screenContent = {
-            BallingHistoryScreen(
-                ballingHistoryFlow = flowOf(PagingData.from(
-                    emptyList(),
-                    sourceLoadStates = LoadStates(
-                        refresh = LoadState.NotLoading(true),
-                        prepend = LoadState.NotLoading(true),
-                        append = LoadState.NotLoading(true)
-                    )
-                ))
-            )
-        },
-        onNavigate = {},
-        darkTheme = false
-    )
-}
-
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-internal fun BallingHistoryScreenErrorDarkPreview() {
-    MainScaffold(
-        isControllerLoaded = true,
-        navigationRouteSource = ViewNavigationRoutes.ballingHistory,
-        screenContent = {
-            BallingHistoryScreen(
-                ballingHistoryFlow = flowOf(PagingData.from(emptyList(), LoadStates(
-                    refresh = LoadState.Error(Exception("Mock error")),
-                    prepend = LoadState.NotLoading(true),
-                    append = LoadState.NotLoading(true)
-                )))
-            )
-        },
-        onNavigate = {},
-        darkTheme = true
-    )
-}
-
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Composable
-internal fun BallingHistoryScreenErrorLightPreview() {
-    MainScaffold(
-        isControllerLoaded = true,
-        navigationRouteSource = ViewNavigationRoutes.ballingHistory,
-        screenContent = {
-            BallingHistoryScreen(
-                ballingHistoryFlow = flowOf(PagingData.from(emptyList(), LoadStates(
-                    refresh = LoadState.Error(Exception("Mock error")),
-                    prepend = LoadState.NotLoading(true),
-                    append = LoadState.NotLoading(true)
-                )))
+                )),
+                previewData = mockBallingHistoryLogEntries
             )
         },
         onNavigate = {},
@@ -326,7 +272,7 @@ internal fun BallingHistoryScreenLoadingDarkPreview() {
                     refresh = LoadState.Loading,
                     prepend = LoadState.NotLoading(true),
                     append = LoadState.NotLoading(true)
-                )))
+                ))),
             )
         },
         onNavigate = {},
@@ -346,7 +292,7 @@ internal fun BallingHistoryScreenLoadingLightPreview() {
                     refresh = LoadState.Loading,
                     prepend = LoadState.NotLoading(true),
                     append = LoadState.NotLoading(true)
-                )))
+                ))),
             )
         },
         onNavigate = {},

@@ -26,10 +26,6 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryScreenEmptyDarkPreview
-import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryScreenEmptyLightPreview
-import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryScreenErrorDarkPreview
-import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryScreenErrorLightPreview
 import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryScreenLoadingDarkPreview
 import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryScreenLoadingLightPreview
 import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryScreenSuccessDarkPreview
@@ -58,34 +54,6 @@ class BallingHistoryScreenTest {
     @Composable
     fun BallingHistoryScreenSuccessLightTest() {
         BallingHistoryScreenSuccessLightPreview()
-    }
-
-    @PreviewTest
-    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-    @Composable
-    fun BallingHistoryScreenEmptyDarkTest() {
-        BallingHistoryScreenEmptyDarkPreview()
-    }
-
-    @PreviewTest
-    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
-    @Composable
-    fun BallingHistoryScreenEmptyLightTest() {
-        BallingHistoryScreenEmptyLightPreview()
-    }
-
-    @PreviewTest
-    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-    @Composable
-    fun BallingHistoryScreenErrorTest() {
-        BallingHistoryScreenErrorDarkPreview()
-    }
-
-    @PreviewTest
-    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
-    @Composable
-    fun BallingHistoryScreenErrorLightTest() {
-        BallingHistoryScreenErrorLightPreview()
     }
 
     @PreviewTest
