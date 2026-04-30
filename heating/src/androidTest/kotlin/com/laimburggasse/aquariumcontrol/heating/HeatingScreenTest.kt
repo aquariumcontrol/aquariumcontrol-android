@@ -60,7 +60,8 @@ class HeatingScreenTest {
                         heatingSetValsValid = remember { mutableStateOf(value = true) },
                         onHeatingSetValsEvent = {},
                         heatingStatsUiState = mockHeatingStatsUiState,
-                        onHeatingStatsEvent = {}
+                        onHeatingStatsEvent = {},
+                        isDarkMode = true
                     )
                 },
                 onNavigate = {},
@@ -88,7 +89,8 @@ class HeatingScreenTest {
                         heatingSetValsValid = remember { mutableStateOf(value = true) },
                         onHeatingSetValsEvent = {},
                         heatingStatsUiState = mockHeatingStatsUiState,
-                        onHeatingStatsEvent = {}
+                        onHeatingStatsEvent = {},
+                        isDarkMode = false
                     )
                 },
                 onNavigate = {},

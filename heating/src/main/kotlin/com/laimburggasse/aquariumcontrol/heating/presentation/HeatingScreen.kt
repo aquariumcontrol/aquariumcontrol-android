@@ -23,6 +23,7 @@
 package com.laimburggasse.aquariumcontrol.heating.presentation
 
 import android.content.res.Configuration
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -62,7 +63,8 @@ fun HeatingScreen(
     heatingSetValsValid: State<Boolean?>,
     onHeatingSetValsEvent: (HeatingSetValsUiEvent) -> Unit,
     heatingStatsUiState: HeatingStatsUiState,
-    onHeatingStatsEvent: (HeatingStatsUiEvent) -> Unit
+    onHeatingStatsEvent: (HeatingStatsUiEvent) -> Unit,
+    isDarkMode: Boolean
 ) {
     // This screen displays
     // - a button to update the heating controller values
@@ -268,7 +270,8 @@ fun HeatingScreen(
                         val heatingStats: List<HeatingStatsEntry> = heatingStatsUiState.heatingStats
                         HeatingStatsComposable(
                             heatingStats = heatingStats,
-                            updateData = { onHeatingStatsEvent(HeatingStatsUiEvent.Refresh) }
+                            updateData = { onHeatingStatsEvent(HeatingStatsUiEvent.Refresh) },
+                            isDarkMode
                         )
                     }
                     is HeatingStatsUiState.Empty -> {
@@ -301,6 +304,7 @@ fun HeatingScreen(
 )
 @Composable
 fun HeatingScreenSuccessDarkPreview() {
+    val isDarkMode: Boolean = isSystemInDarkTheme()
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.heating,
@@ -310,7 +314,8 @@ fun HeatingScreenSuccessDarkPreview() {
                 onHeatingSetValsEvent = {},
                 heatingStatsUiState = mockHeatingStatsUiState,
                 onHeatingStatsEvent = {},
-                heatingSetValsValid = remember { mutableStateOf(value = true) }
+                heatingSetValsValid = remember { mutableStateOf(value = true) },
+                isDarkMode = isDarkMode
             )
         },
         onNavigate = {},
@@ -326,6 +331,7 @@ fun HeatingScreenSuccessDarkPreview() {
 )
 @Composable
 fun HeatingScreenSuccessLightPreview() {
+    val isDarkMode: Boolean = isSystemInDarkTheme()
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.heating,
@@ -335,7 +341,8 @@ fun HeatingScreenSuccessLightPreview() {
                 onHeatingSetValsEvent = {},
                 heatingStatsUiState = mockHeatingStatsUiState,
                 onHeatingStatsEvent = {},
-                heatingSetValsValid = remember { mutableStateOf(value = true) }
+                heatingSetValsValid = remember { mutableStateOf(value = true) },
+                isDarkMode = isDarkMode
             )
         },
         onNavigate = {},
@@ -346,6 +353,7 @@ fun HeatingScreenSuccessLightPreview() {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun HeatingScreenErrorDarkPreview() {
+    val isDarkMode: Boolean = isSystemInDarkTheme()
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.heating,
@@ -355,7 +363,8 @@ fun HeatingScreenErrorDarkPreview() {
                 onHeatingSetValsEvent = {},
                 heatingStatsUiState = mockHeatingStatsUiState,
                 onHeatingStatsEvent = {},
-                heatingSetValsValid = remember { mutableStateOf(value = true) }
+                heatingSetValsValid = remember { mutableStateOf(value = true) },
+                isDarkMode = isDarkMode
             )
         },
         onNavigate = {},
@@ -366,6 +375,7 @@ fun HeatingScreenErrorDarkPreview() {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 fun HeatingScreenErrorLightPreview() {
+    val isDarkMode: Boolean = isSystemInDarkTheme()
     MainScaffold(
         isControllerLoaded = true,
         navigationRouteSource = ViewNavigationRoutes.heating,
@@ -375,7 +385,8 @@ fun HeatingScreenErrorLightPreview() {
                 onHeatingSetValsEvent = {},
                 heatingStatsUiState = mockHeatingStatsUiState,
                 onHeatingStatsEvent = {},
-                heatingSetValsValid = remember { mutableStateOf(value = true) }
+                heatingSetValsValid = remember { mutableStateOf(value = true) },
+                isDarkMode = isDarkMode
             )
         },
         onNavigate = {},
