@@ -105,6 +105,8 @@ dependencies {
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.paging.common)
+    implementation(libs.androidx.paging.compose)
     implementation(libs.androidx.espresso.core)
     implementation(libs.kotlinx.serialization.json.v162)
     implementation(libs.okhttp)

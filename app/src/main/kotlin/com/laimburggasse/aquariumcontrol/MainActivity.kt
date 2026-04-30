@@ -476,14 +476,12 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(route = ViewNavigationRoutes.ballingHistory) {
                         val ballingHistoryViewModel: BallingHistoryViewModel = hiltViewModel()
-                        val ballingHistoryUiState: BallingHistoryUiState by
-                        ballingHistoryViewModel.ballingHistoryUiState.collectAsStateWithLifecycle()
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.ballingHistory,
                             screenContent = {
                                 BallingHistoryScreen(
-                                    ballingHistoryUiState,
+                                    ballingHistoryFlow = ballingHistoryViewModel.ballingHistoryFlow,
                                     onEvent = ballingHistoryViewModel::onEvent
                                 )
                             },

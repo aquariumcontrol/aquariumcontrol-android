@@ -40,20 +40,9 @@ class BallingHistoryViewModel @Inject constructor(
 ): ViewModel() {
     val ballingHistoryFlow = repository.ballingHistoryDosingEventFlow.cachedIn(viewModelScope)
 
-    val ballingHistoryUiState: StateFlow<BallingHistoryUiState> =
-        ballingHistoryFlow
-            .map { pagingData ->
-                BallingHistoryUiState.Success(pagingData)
-            }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = BallingHistoryUiState.Loading
-            )
-
     fun onEvent(event: BallingHistoryUiEvent) {
         if (event is BallingHistoryUiEvent.Refresh) {
-            // repository.triggerRefresh() // Triggering refresh through repository if needed
+            // @todo: implement refresh trigger in repository if needed
         }
     }
 }
