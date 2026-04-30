@@ -30,6 +30,7 @@ import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.laimburggasse.aquariumcontrol.balling.data.local.BallingHistoryDatabase
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
+import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import okhttp3.Credentials
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -40,16 +41,26 @@ import java.util.Locale
 class BallingHistoryRemoteMediator(
     private val ballingHistoryDatabase: BallingHistoryDatabase,
     private val ballingHistoryApiService: BallingHistoryApiService,
+    private val sessionManager: SessionManager, // Injected to access server timestamp
     private var url: String, // Made var to allow updates
 ): RemoteMediator<Int, BallingHistoryLogEntry>() {
 
     private var authHeaderValue: String = ""
 
     fun updateConfig(newUrl: String, newAuthHeader: String) {
-        Log.d("BallingHistoryRemoteMediator", "Updating url from $this.url to $newUrl")
         this.url = newUrl
-        Log.d("BallingHistoryRemoteMediator", "Updating authHeaderValue from ${this.authHeaderValue} to $newAuthHeader")
         this.authHeaderValue = newAuthHeader
+    }
+
+    private fun getCurrentDate(): String {
+        val serverTime = sessionManager.serverTimestamp.value
+        return if (serverTime != null) {
+            // Server timestamp format is "yyyy-MM-dd HH:mm:ss"
+            serverTime.substringBefore(' ')
+        } else {
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            dateFormat.format(Date())
+        }
     }
 
     override suspend fun load(
@@ -60,12 +71,12 @@ class BallingHistoryRemoteMediator(
             val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             
             val loadKey = when(loadType) {
-                LoadType.REFRESH -> dateFormat.format(Date())
+                LoadType.REFRESH -> getCurrentDate()
                 LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
                 LoadType.APPEND -> {
                     val lastItem = state.lastItemOrNull()
                     if (lastItem == null) {
-                        dateFormat.format(Date())
+                        getCurrentDate()
                     }
                     else {
                         // Calculate the next date to fetch (previous day)

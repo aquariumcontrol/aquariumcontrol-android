@@ -39,6 +39,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+
 @Module
 @InstallIn(SingletonComponent::class)
 object BallingDatabaseModule {
@@ -63,11 +65,13 @@ object BallingDatabaseModule {
     @Singleton
     fun provideBallingHistoryRemoteMediator(
         database: BallingHistoryDatabase,
-        apiService: BallingHistoryApiService
+        apiService: BallingHistoryApiService,
+        sessionManager: SessionManager
     ): BallingHistoryRemoteMediator {
         return BallingHistoryRemoteMediator(
             ballingHistoryDatabase = database,
             ballingHistoryApiService = apiService,
+            sessionManager = sessionManager,
             url = "http://placeholder.com"
         )
     }

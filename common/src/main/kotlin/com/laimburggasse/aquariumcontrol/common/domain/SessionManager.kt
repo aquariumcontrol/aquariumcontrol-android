@@ -29,12 +29,15 @@ interface SessionManager {
     val isControllerLoaded: StateFlow<Boolean>
     val defaultControllerProfileId: StateFlow<Long?>
     val isFirstLoad: StateFlow<Boolean>
+    val serverTimestamp: StateFlow<String?>
 
     suspend fun selectControllerById(id: Long): Boolean
 
     fun saveDefaultControllerProfileId(id: Long)
 
     fun updateSelectedControllerProfile(controllerProfile: ControllerProfile)
+
+    fun updateServerTimestamp(timestamp: String?)
 
     fun getControllerAddress(): String?
 
