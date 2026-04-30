@@ -50,15 +50,6 @@ object BallingNetwork {
 
     @Provides
     @Singleton
-    @BallingHistoryService
-    fun provideBallingHistoryLogApiService(
-        okHttpClient: OkHttpClient
-    ): HistoryLogApiService {
-        return createService<HistoryLogApiService>(okHttpClient)
-    }
-
-    @Provides
-    @Singleton
     fun provideBallingProfileApiService(
         okHttpClient: OkHttpClient
     ): BallingProfileApiService {
@@ -71,6 +62,8 @@ object BallingNetwork {
         val json = Json {
             ignoreUnknownKeys = true
             coerceInputValues = true
+            isLenient = true
+            allowSpecialFloatingPointValues = true
         }
 
         return Retrofit.Builder()

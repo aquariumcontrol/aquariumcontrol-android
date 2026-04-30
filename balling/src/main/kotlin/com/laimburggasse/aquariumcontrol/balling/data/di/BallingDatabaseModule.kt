@@ -59,20 +59,29 @@ object BallingDatabaseModule {
         return database.ballingHistoryDao()
     }
 
+    @Provides
+    @Singleton
+    fun provideBallingHistoryRemoteMediator(
+        database: BallingHistoryDatabase,
+        apiService: BallingHistoryApiService
+    ): BallingHistoryRemoteMediator {
+        return BallingHistoryRemoteMediator(
+            ballingHistoryDatabase = database,
+            ballingHistoryApiService = apiService,
+            url = "http://placeholder.com"
+        )
+    }
+
     @OptIn(ExperimentalPagingApi::class)
     @Provides
     @Singleton
     fun provideBallingHistoryPager(
         database: BallingHistoryDatabase,
-        apiService: BallingHistoryApiService
+        remoteMediator: BallingHistoryRemoteMediator
     ): Pager<Int, BallingHistoryLogEntry> {
         return Pager(
             config = PagingConfig(pageSize = 20),
-            remoteMediator = BallingHistoryRemoteMediator(
-                ballingHistoryDatabase = database,
-                ballingHistoryApiService = apiService,
-                url = "http://placeholder.com" // @todo: make dynamic or handle in mediator
-            ),
+            remoteMediator = remoteMediator,
             pagingSourceFactory = {
                 database.ballingHistoryDao().pagingSource()
             }

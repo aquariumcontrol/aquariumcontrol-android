@@ -23,6 +23,7 @@
 package com.laimburggasse.aquariumcontrol.balling.presentation.history
 
 import android.content.res.Configuration
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -88,6 +89,7 @@ fun BallingHistoryScreen(
             val loadState = (ballingHistoryLogEntries.loadState.refresh as LoadState.Error)
             val errorMessage = loadState.error.message
             Toast.makeText(context, "API error: $errorMessage", Toast.LENGTH_LONG).show()
+            errorMessage?.let { Log.d("BallingHistoryScreen", it) }
         }
     }
 

@@ -45,8 +45,7 @@ object WebApiUrls {
     const val FEED_SCHEDULE_DELETE_ENTRY = "${BASE_URL}delete_feed_schedule_entry"
     const val BALLING_LOAD_SET_VALS = "${BASE_URL}load_balling_set_vals"
     const val BALLING_UPDATE_SET_VALS = "${BASE_URL}update_balling_set_vals"
-    const val BALLING_LOAD_EVENTS_24H = "${BASE_URL}load_balling_log&period=24h"
-    const val BALLING_LOAD_EVENTS_7D = "${BASE_URL}load_balling_log&date=2026-04-29" // @todo: make dynamic
+    const val BALLING_LOAD_EVENTS = "${BASE_URL}load_balling_log"
     const val HEATING_LOAD_STATS = "${BASE_URL}load_heating_stats"
     const val HEATING_LOAD_SET_VALS = "${BASE_URL}load_heating_set_vals"
     const val HEATING_UPDATE_SET_VALS = "${BASE_URL}update_heating_set_vals"

@@ -22,6 +22,7 @@
 
 package com.laimburggasse.aquariumcontrol.balling.data.remote
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -30,8 +31,6 @@ import androidx.room.withTransaction
 import com.laimburggasse.aquariumcontrol.balling.data.local.BallingHistoryDatabase
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
 import okhttp3.Credentials
-import okio.IOException
-import retrofit2.HttpException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -44,8 +43,13 @@ class BallingHistoryRemoteMediator(
     private var url: String, // Made var to allow updates
 ): RemoteMediator<Int, BallingHistoryLogEntry>() {
 
-    fun updateUrl(newUrl: String) {
+    private var authHeaderValue: String = ""
+
+    fun updateConfig(newUrl: String, newAuthHeader: String) {
+        Log.d("BallingHistoryRemoteMediator", "Updating url from $this.url to $newUrl")
         this.url = newUrl
+        Log.d("BallingHistoryRemoteMediator", "Updating authHeaderValue from ${this.authHeaderValue} to $newAuthHeader")
+        this.authHeaderValue = newAuthHeader
     }
 
     override suspend fun load(
@@ -73,7 +77,6 @@ class BallingHistoryRemoteMediator(
                     }
                 }
             }
-            val authHeaderValue: String = Credentials.basic("username", "password")
 
             val ballingHistoryLogEntries = ballingHistoryApiService.getBallingHistory(
                 url,
