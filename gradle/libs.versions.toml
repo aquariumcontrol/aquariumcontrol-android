@@ -28,6 +28,9 @@ room = "2.8.4"
 aboutLibraries = "14.0.1"
 mikepenzAboutLibrariesPlugin = "14.0.1"
 turbine = "1.2.1"
+pagingCommon = "3.4.2"
+pagingCompose = "3.4.2"
+foundationLayout = "1.11.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -74,14 +77,18 @@ material = { group = "com.google.android.material", name = "material", version.r
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+androidx-room-paging = { group = "androidx.room", name = "room-paging", version.ref = "room" }
 aboutlibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutLibraries" }
 aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }      # Material 3 UI
 mikepenz-aboutlibraries = { group = "com.mikepenz", name = "aboutlibraries", version.ref = "mikepenzAboutLibrariesPlugin" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+androidx-paging-common = { group = "androidx.paging", name = "paging-common", version.ref = "pagingCommon" }
+androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "pagingCompose" }
+androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
-jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version = "2.3.20" }
+jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version = "2.3.21" }
 screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot"}
 ksp = { id = "com.google.devtools.ksp", version.ref = "symbolProcessingApi" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }

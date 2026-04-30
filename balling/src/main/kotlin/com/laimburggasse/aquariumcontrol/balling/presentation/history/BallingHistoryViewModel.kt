@@ -24,55 +24,34 @@ package com.laimburggasse.aquariumcontrol.balling.presentation.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.cachedIn
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
-import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingHistoryRepository
-import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class BallingHistoryViewModel @Inject constructor(
-    private val ballingHistoryRepository: BallingHistoryRepository<BallingHistoryLogEntry>
+    pager: Pager<Int, BallingHistoryLogEntry>
 ): ViewModel() {
+    val ballingHistoryFlow = pager.flow.cachedIn(viewModelScope)
+
     val ballingHistoryUiState: StateFlow<BallingHistoryUiState> =
-        ballingHistoryRepository.ballingHistoryDosingEventFlow
-        .map { result ->
-            when (result) {
-                is DataFetchResult.Error -> BallingHistoryUiState.Error(
-                    errorMessage = result.errorMessage
-                )
-                is DataFetchResult.Success -> {
-                    if (result.data.isEmpty()) {
-                        BallingHistoryUiState.Empty
-                    } else {
-                        BallingHistoryUiState.Success(ballingHistoryLogEntries = result.data)
-                    }
-                }
-                is DataFetchResult.Loading -> BallingHistoryUiState.Loading
+        ballingHistoryFlow
+            .map { pagingData ->
+                BallingHistoryUiState.Success(pagingData)
             }
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
-            initialValue = BallingHistoryUiState.Loading
-        )
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = BallingHistoryUiState.Loading
+            )
 
     fun onEvent(event: BallingHistoryUiEvent) {
-        when (event) {
-            is BallingHistoryUiEvent.Refresh -> {
-                viewModelScope.launch {
-                    ballingHistoryRepository.triggerRefresh()
-                }
-            }
-            is BallingHistoryUiEvent.SetRange -> {
-                viewModelScope.launch {
-                    ballingHistoryRepository.setHistoryTimeRange(fetchFullWeek = event.showFullWeek)
-                }
-            }
-        }
+        // @todo: update or delete
     }
 }

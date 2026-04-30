@@ -22,6 +22,7 @@
 
 package com.laimburggasse.aquariumcontrol.balling.testing
 
+import androidx.paging.PagingData
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.balling.presentation.edit.BallingProfileEditUiState
@@ -59,7 +60,7 @@ object BallingMockData {
         ),
     )
     val mockBallingHistoryUiStateSuccess = BallingHistoryUiState.Success(
-        ballingHistoryLogEntries = mockBallingHistoryLogEntries
+        ballingHistoryLogEntries = PagingData.from(mockBallingHistoryLogEntries)
     )
     val mockBallingHistoryUiStateEmpty = BallingHistoryUiState.Empty
     val mockBallingHistoryUiStateError = BallingHistoryUiState.Error(errorMessage = "Mock Error message")

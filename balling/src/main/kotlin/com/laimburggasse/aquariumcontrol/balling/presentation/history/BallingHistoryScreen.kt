@@ -23,16 +23,15 @@
 package com.laimburggasse.aquariumcontrol.balling.presentation.history
 
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -46,23 +45,23 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import com.laimburggasse.aquariumcontrol.balling.R
+import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.balling.preview.BallingPreviewDataImpl.mockBallingHistoryUiStateEmpty
 import com.laimburggasse.aquariumcontrol.balling.preview.BallingPreviewDataImpl.mockBallingHistoryUiStateError
 import com.laimburggasse.aquariumcontrol.balling.preview.BallingPreviewDataImpl.mockBallingHistoryUiStateLoading
 import com.laimburggasse.aquariumcontrol.balling.preview.BallingPreviewDataImpl.mockBallingHistoryUiStateSuccess
-import com.laimburggasse.aquariumcontrol.balling.R
-import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
-import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
+import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
+import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun BallingHistoryScreen(
@@ -75,9 +74,25 @@ fun BallingHistoryScreen(
     // - sub headline (last 7 days or last 24 hours)
     // - list of balling events
 
-    LaunchedEffect(key1 = Unit) {
-        onEvent(BallingHistoryUiEvent.SetRange(showFullWeek))
+    val context = LocalContext.current
+
+    val ballingHistoryLogEntries: LazyPagingItems<BallingHistoryLogEntry>? =
+        if (ballingHistoryUiState is BallingHistoryUiState.Success) {
+            remember(ballingHistoryUiState.ballingHistoryLogEntries) {
+                flowOf(ballingHistoryUiState.ballingHistoryLogEntries)
+            }.collectAsLazyPagingItems()
+        } else {
+            null
+        }
+
+    LaunchedEffect(key1 = ballingHistoryLogEntries?.loadState) {
+        if (ballingHistoryLogEntries?.loadState?.refresh is LoadState.Error) {
+            val loadState = (ballingHistoryLogEntries.loadState.refresh as LoadState.Error)
+            val errorMessage = loadState.error.message
+            Toast.makeText(context, "API error: $errorMessage", Toast.LENGTH_LONG).show()
+        }
     }
+
     Column(
         modifier = Modifier.fillMaxSize().padding(all = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -102,79 +117,54 @@ fun BallingHistoryScreen(
                 modifier = Modifier.fillMaxSize().padding(paddingValues = innerPadding),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                val isRefreshing = ballingHistoryLogEntries?.loadState?.refresh is LoadState.Loading ||
+                        ballingHistoryUiState is BallingHistoryUiState.Loading
+
                 PullToRefreshBox(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.Center,
                     state = rememberPullToRefreshState(),
-                    isRefreshing = ballingHistoryUiState is BallingHistoryUiState.Loading,
+                    isRefreshing = isRefreshing,
                     onRefresh = { onEvent(BallingHistoryUiEvent.Refresh) },
                     indicator = {
-                        if (ballingHistoryUiState is BallingHistoryUiState.Loading) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(size = 150.dp),
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(size = 150.dp),
+                            color = MaterialTheme.colorScheme.primary
+                        )
                     }
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxSize().padding(all = 16.dp),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        when (ballingHistoryUiState) {
-                            is BallingHistoryUiState.Empty -> {
-                                Text(
-                                    text = stringResource(id = R.string.no_balling_events_found),
-                                    style = TextStyle(
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Bold
-                                    ),
-                                    modifier = Modifier.weight(weight = 1f),
-                                    textAlign = TextAlign.Center
-                                )
-                            }
-
-                            is BallingHistoryUiState.Error -> {
-                                Text(
-                                    text = stringResource(R.string.error_loading_balling_data) +
-                                            ballingHistoryUiState.errorMessage,
-                                    style = TextStyle(
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Bold
-                                    ),
-                                    modifier = Modifier.weight(weight = 1f),
-                                    textAlign = TextAlign.Center
-                                )
-                            }
-
-                            is BallingHistoryUiState.Loading -> {
-                                Text(
-                                    text = stringResource(id = R.string.loading_balling_dosing_events),
-                                    style = TextStyle(
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Bold
-                                    ),
-                                    modifier = Modifier.weight(weight = 1f),
-                                    textAlign = TextAlign.Center
-                                )
-                            }
-
-                            is BallingHistoryUiState.Success -> {
-                                val ballingHistoryDosingEvents: List<BallingHistoryLogEntry> =
-                                    ballingHistoryUiState.ballingHistoryLogEntries
-                                if (LocalInspectionMode.current) {
-                                    // In Preview: Render a simple, static Column instead of LazyColumn
-                                    Column(modifier = Modifier.fillMaxSize()) {
-                                        ballingHistoryDosingEvents.forEach { ballingHistoryLogEntry ->
-                                            BallingHistoryEventComposable(ballingHistoryLogEntry = ballingHistoryLogEntry)
-                                        }
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        if (ballingHistoryUiState is BallingHistoryUiState.Loading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.align(Alignment.Center).size(size = 150.dp),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        } else if (ballingHistoryUiState is BallingHistoryUiState.Error) {
+                            Text(
+                                text = ballingHistoryUiState.errorMessage,
+                                color = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        } else if (ballingHistoryUiState is BallingHistoryUiState.Empty) {
+                            Text(
+                                text = stringResource(R.string.no_balling_events_found),
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        } else if (ballingHistoryLogEntries != null) {
+                            // In App Runtime: Use the performant LazyColumn
+                            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                items(count = ballingHistoryLogEntries.itemCount) { index ->
+                                    val ballingHistoryLogEntry = ballingHistoryLogEntries[index]
+                                    if (ballingHistoryLogEntry != null) {
+                                        BallingHistoryLogEntryComposable(ballingHistoryLogEntry)
                                     }
-                                } else {
-                                    // In App Runtime: Use the performant LazyColumn
-                                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                        items(items = ballingHistoryDosingEvents) { ballingHistoryLogEntry ->
-                                            BallingHistoryEventComposable(ballingHistoryLogEntry = ballingHistoryLogEntry)
-                                        }
+                                }
+                                item {
+                                    if (ballingHistoryLogEntries.loadState.append is LoadState.Loading) {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.fillMaxWidth().padding(16.dp).size(size = 50.dp),
+                                            color = MaterialTheme.colorScheme.primary
+                                        )
                                     }
                                 }
                             }

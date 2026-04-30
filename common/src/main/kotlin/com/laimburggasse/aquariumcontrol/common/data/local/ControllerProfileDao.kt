@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package com.laimburggasse.aquariumcontrol.common.data
+package com.laimburggasse.aquariumcontrol.common.data.local
 
 import androidx.room.Dao
 import androidx.room.Delete

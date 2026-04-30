@@ -25,7 +25,7 @@ package com.laimburggasse.aquariumcontrol.common.domain
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.laimburggasse.aquariumcontrol.common.data.ControllerProfileDatabase
+import com.laimburggasse.aquariumcontrol.common.data.local.ControllerProfileDatabase
 import java.io.Serializable
 
 @Entity(tableName = ControllerProfileDatabase.TABLE_NAME_CONTROLLER_LIST)

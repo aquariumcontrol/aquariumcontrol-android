@@ -44,7 +44,7 @@ import com.laimburggasse.aquariumcontrol.feed.R
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
 
 @Composable
-fun FeedHistoryEventComposable(
+fun FeedHistoryLogEntryComposable(
     feedHistoryLogEntry: FeedHistoryLogEntry
 ) {
     // This composable displays one feed dosing event:
@@ -86,10 +86,10 @@ fun FeedHistoryEventComposable(
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-internal fun FeedHistoryEventComposableDarkPreview() {
+internal fun FeedHistoryLogEntryComposableDarkPreview() {
     AquariumControllerTheme(darkTheme = true) {
         Surface(color = MaterialTheme.colorScheme.background) {
-            FeedHistoryEventComposable(feedHistoryLogEntry = mockEvent)
+            FeedHistoryLogEntryComposable(feedHistoryLogEntry = mockEvent)
         }
     }
 }
@@ -97,10 +97,10 @@ internal fun FeedHistoryEventComposableDarkPreview() {
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun FeedHistoryEventComposableLightPreview() {
+internal fun FeedHistoryLogEntryComposableLightPreview() {
     AquariumControllerTheme(darkTheme = false) {
         Surface(color = MaterialTheme.colorScheme.background) {
-            FeedHistoryEventComposable(feedHistoryLogEntry = mockEvent)
+            FeedHistoryLogEntryComposable(feedHistoryLogEntry = mockEvent)
         }
     }
 }

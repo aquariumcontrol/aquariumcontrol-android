@@ -23,7 +23,7 @@
 package com.laimburggasse.aquariumcontrol.controller.presentation.selection
 
 import app.cash.turbine.test
-import com.laimburggasse.aquariumcontrol.common.data.ControllerProfileDao
+import com.laimburggasse.aquariumcontrol.common.data.local.ControllerProfileDao
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.controller.testing.ControllerMockData.mockControllerProfileList

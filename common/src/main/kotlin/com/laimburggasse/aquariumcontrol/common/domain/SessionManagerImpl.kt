@@ -24,7 +24,7 @@ package com.laimburggasse.aquariumcontrol.common.domain
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import com.laimburggasse.aquariumcontrol.common.data.ControllerProfileDao
+import com.laimburggasse.aquariumcontrol.common.data.local.ControllerProfileDao
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

@@ -44,7 +44,7 @@ import com.laimburggasse.aquariumcontrol.refill.preview.RefillPreviewDataImpl.mo
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
 
 @Composable
-fun RefillEventComposable(
+fun RefillLogEntryComposable(
     refillHistoryLogEntry: RefillHistoryLogEntry
 ) {
     // This composable displays a refill event:
@@ -94,20 +94,20 @@ fun RefillEventComposable(
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-internal fun RefillEventComposableDarkPreview() {
+internal fun RefillLogEntryComposableDarkPreview() {
     AquariumControllerTheme(darkTheme = true) {
         Surface(color = MaterialTheme.colorScheme.background) {
-            RefillEventComposable(refillHistoryLogEntry = mockEvent)
+            RefillLogEntryComposable(refillHistoryLogEntry = mockEvent)
         }
     }
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-internal fun RefillEventComposableLightPreview() {
+internal fun RefillLogEntryComposableLightPreview() {
     AquariumControllerTheme(darkTheme = false) {
         Surface(color = MaterialTheme.colorScheme.background) {
-            RefillEventComposable(refillHistoryLogEntry = mockEvent)
+            RefillLogEntryComposable(refillHistoryLogEntry = mockEvent)
         }
     }
 }

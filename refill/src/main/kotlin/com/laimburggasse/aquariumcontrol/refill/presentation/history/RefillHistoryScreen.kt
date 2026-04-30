@@ -160,14 +160,14 @@ fun RefillHistoryScreen(
                                     // In Preview: Render a simple, static Column instead of LazyColumn
                                     Column(modifier = Modifier.fillMaxSize()) {
                                         refillEvents.forEach { refillEvent ->
-                                            RefillEventComposable(refillHistoryLogEntry = refillEvent)
+                                            RefillLogEntryComposable(refillHistoryLogEntry = refillEvent)
                                         }
                                     }
                                 } else {
                                     // In App Runtime: Use the performant LazyColumn
                                     LazyColumn(modifier = Modifier.fillMaxSize()) {
                                         items(items = refillEvents) { refillEvent ->
-                                            RefillEventComposable(refillHistoryLogEntry = refillEvent)
+                                            RefillLogEntryComposable(refillHistoryLogEntry = refillEvent)
                                         }
                                     }
                                 }

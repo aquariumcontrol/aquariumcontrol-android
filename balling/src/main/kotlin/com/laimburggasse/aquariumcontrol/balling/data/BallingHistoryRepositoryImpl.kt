@@ -22,6 +22,7 @@
 
 package com.laimburggasse.aquariumcontrol.balling.data
 
+import androidx.paging.Pager
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingHistoryRepository
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
@@ -43,6 +44,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
@@ -53,13 +55,13 @@ open class BallingHistoryRepositoryImpl<T> @Inject constructor(
     sessionManager: SessionManager,
     @param:BallingHistoryService private val apiService: HistoryLogApiService,
     private val json: Json,
-    @param:ApplicationScope private val repositoryScope: CoroutineScope
+    @param:ApplicationScope private val repositoryScope: CoroutineScope,
+    pager: Pager<Int, BallingHistoryLogEntry>
 ): BallingHistoryRepository<T> {
 
     // Trigger for manual refreshes (e.g., pull-to-refresh)
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
 
-    // State flow to hold the current time range choice (24h vs 7d)
     private val showFullWeek = MutableStateFlow(value = false)
 
     /**
@@ -67,7 +69,6 @@ open class BallingHistoryRepositoryImpl<T> @Inject constructor(
      * It combines three sources:
      *  - The selected controller from SessionManager.
      *  - The manual refresh trigger.
-     *  - The selected time range (24h or 7d).
      *
      * It automatically re-fetches data when any of these inputs change.
      */
@@ -77,20 +78,17 @@ open class BallingHistoryRepositoryImpl<T> @Inject constructor(
             flow = sessionManager.selectedControllerProfile,
             flow2 = refreshTrigger.onStart { emit(value = Unit) }, // Trigger on first collection
             flow3 = showFullWeek
-        ) { controller, _, isFullWeek ->
-            Triple(first = controller, second = Unit, third = isFullWeek)
+        ) { controller, _, _ ->
+            Pair(first = controller, second = Unit)
         }
         .filter { it.first != null } // Only proceed if a controller is selected
-        .flatMapLatest { (controller: ControllerProfile?, _, isFullWeek: Boolean) ->
+        .flatMapLatest { (controller: ControllerProfile?, _) ->
             flow {
                 // UI shall temporarily show loading state, while fetching data
                 emit(value = DataFetchResult.Loading)
 
-                val url: String = if (isFullWeek) {
+                val url: String =
                     "http://${controller!!.address}:${controller.port}${WebApiUrls.BALLING_LOAD_EVENTS_7D}"
-                } else {
-                    "http://${controller!!.address}:${controller.port}${WebApiUrls.BALLING_LOAD_EVENTS_24H}"
-                }
 
                 val result: DataFetchResult<List<T>> =
                     withContext(context = Dispatchers.IO) {

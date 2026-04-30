@@ -25,8 +25,8 @@ package com.laimburggasse.aquariumcontrol.common.di
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
-import com.laimburggasse.aquariumcontrol.common.data.ControllerProfileDao
-import com.laimburggasse.aquariumcontrol.common.data.ControllerProfileDatabase
+import com.laimburggasse.aquariumcontrol.common.data.local.ControllerProfileDao
+import com.laimburggasse.aquariumcontrol.common.data.local.ControllerProfileDatabase
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManagerImpl
 import dagger.Module

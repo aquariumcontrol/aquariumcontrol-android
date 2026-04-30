@@ -22,13 +22,19 @@
 
 package com.laimburggasse.aquariumcontrol.balling.domain.model
 
+import androidx.room.Entity
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import androidx.room.PrimaryKey
 
+import com.laimburggasse.aquariumcontrol.balling.data.local.BallingHistoryDatabase
+
+@Entity(tableName = BallingHistoryDatabase.TABLE_NAME_BALLING_LOG)
 @Serializable
 data class BallingHistoryLogEntry(
     // This data class represents a Balling dosing event.
+    @PrimaryKey
     @SerialName(value = WebApiParams.TIMESTAMP)
     val timestamp: String,
     @SerialName(value = WebApiParams.PUMP_ID)

@@ -160,14 +160,14 @@ fun FeedHistoryScreen(
                                     // In Preview: Render a simple, static Column instead of LazyColumn
                                     Column(modifier = Modifier.fillMaxSize()) {
                                         feedEvents.forEach { feedHistoryLogEntry ->
-                                            FeedHistoryEventComposable(feedHistoryLogEntry)
+                                            FeedHistoryLogEntryComposable(feedHistoryLogEntry)
                                         }
                                     }
                                 } else {
                                     // In App Runtime: Use the performant LazyColumn
                                     LazyColumn(modifier = Modifier.fillMaxSize()) {
                                         items(items = feedEvents) { feedHistoryLogEntry ->
-                                            FeedHistoryEventComposable(feedHistoryLogEntry)
+                                            FeedHistoryLogEntryComposable(feedHistoryLogEntry)
                                         }
                                     }
                                 }

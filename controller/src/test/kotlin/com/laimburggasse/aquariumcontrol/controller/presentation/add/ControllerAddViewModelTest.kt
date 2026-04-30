@@ -23,7 +23,7 @@
 package com.laimburggasse.aquariumcontrol.controller.presentation.add
 
 import app.cash.turbine.test
-import com.laimburggasse.aquariumcontrol.common.data.ControllerProfileDao
+import com.laimburggasse.aquariumcontrol.common.data.local.ControllerProfileDao
 import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiEvent
 import io.mockk.coVerify
 import io.mockk.mockk
