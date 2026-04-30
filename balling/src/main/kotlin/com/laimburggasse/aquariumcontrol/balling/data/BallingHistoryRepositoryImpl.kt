@@ -31,38 +31,33 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryLogEntryReade
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.common.di.BallingHistoryService
-import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
-open class BallingHistoryRepositoryImpl<T> @Inject constructor(
+open class BallingHistoryRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
     @param:BallingHistoryService private val apiService: HistoryLogApiService,
     private val json: Json,
     @param:ApplicationScope private val repositoryScope: CoroutineScope,
     pager: Pager<Int, BallingHistoryLogEntry>
-): BallingHistoryRepository<T> {
+): BallingHistoryRepository {
 
     // Trigger for manual refreshes (e.g., pull-to-refresh)
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
-
-    private val showFullWeek = MutableStateFlow(value = false)
 
     /**
      * A reactive Flow that provides the Balling History events.
@@ -73,16 +68,15 @@ open class BallingHistoryRepositoryImpl<T> @Inject constructor(
      * It automatically re-fetches data when any of these inputs change.
      */
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val ballingHistoryDosingEventFlow: Flow<DataFetchResult<List<T>>> =
+    override val ballingHistoryDosingEventFlow: Flow<DataFetchResult<List<BallingHistoryLogEntry>>> =
         combine(
             flow = sessionManager.selectedControllerProfile,
             flow2 = refreshTrigger.onStart { emit(value = Unit) }, // Trigger on first collection
-            flow3 = showFullWeek
-        ) { controller, _, _ ->
-            Pair(first = controller, second = Unit)
+        ) { controller, _ ->
+            controller
         }
-        .filter { it.first != null } // Only proceed if a controller is selected
-        .flatMapLatest { (controller: ControllerProfile?, _) ->
+        .filter { it != null } // Only proceed if a controller is selected
+        .flatMapLatest { controller ->
             flow {
                 // UI shall temporarily show loading state, while fetching data
                 emit(value = DataFetchResult.Loading)
@@ -90,7 +84,7 @@ open class BallingHistoryRepositoryImpl<T> @Inject constructor(
                 val url: String =
                     "http://${controller!!.address}:${controller.port}${WebApiUrls.BALLING_LOAD_EVENTS_7D}"
 
-                val result: DataFetchResult<List<T>> =
+                val result: DataFetchResult<List<BallingHistoryLogEntry>> =
                     withContext(context = Dispatchers.IO) {
                         val reader = HistoryLogEntryReader(
                             apiService,
@@ -99,8 +93,7 @@ open class BallingHistoryRepositoryImpl<T> @Inject constructor(
                             password = controller.password,
                             decode = { jsonString ->
                                 // specific serializer for BallingHistoryLogEntry
-                                @Suppress("UNCHECKED_CAST")
-                                json.decodeFromString<List<BallingHistoryLogEntry>>(jsonString) as List<T>
+                                json.decodeFromString<List<BallingHistoryLogEntry>>(jsonString)
                             }
                         )
                         reader.readHistoryLogEvents()
@@ -114,17 +107,6 @@ open class BallingHistoryRepositoryImpl<T> @Inject constructor(
             started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
             initialValue = DataFetchResult.Loading
         )
-
-    /**
-     * Public function to tell the repository to fetch a different time range.
-     * Setting the value will automatically trigger the flow to re-fetch the data.
-     */
-    override suspend fun setHistoryTimeRange(fetchFullWeek: Boolean) {
-        // Only emit if the value has changed to avoid unnecessary fetches.
-        if (showFullWeek.value != fetchFullWeek) {
-            showFullWeek.emit(value = fetchFullWeek)
-        }
-    }
 
     /**
      * Public function for the ViewModel to trigger a manual refresh.

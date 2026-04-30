@@ -54,8 +54,7 @@ fun MainDropDownMenuItemBallingComposable(
         },
         enabled = isControllerLoaded &&
                     navigationRouteSource != ViewNavigationRoutes.balling &&
-                    navigationRouteSource != ViewNavigationRoutes.ballingHistory24h &&
-                    navigationRouteSource != ViewNavigationRoutes.ballingHistory7d
+                    navigationRouteSource != ViewNavigationRoutes.ballingHistory
     )
 }
 

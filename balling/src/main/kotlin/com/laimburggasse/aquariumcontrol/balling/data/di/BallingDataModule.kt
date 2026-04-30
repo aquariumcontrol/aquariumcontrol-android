@@ -47,6 +47,6 @@ abstract class BallingDataModule {
     @Binds
     @Singleton
     abstract fun bindBallingHistoryRepository(
-        ballingHistoryRepositoryImpl: BallingHistoryRepositoryImpl<BallingHistoryLogEntry>
-    ): BallingHistoryRepository<BallingHistoryLogEntry>
+        ballingHistoryRepositoryImpl: BallingHistoryRepositoryImpl
+    ): BallingHistoryRepository
 }

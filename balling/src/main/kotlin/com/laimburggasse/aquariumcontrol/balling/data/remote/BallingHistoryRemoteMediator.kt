@@ -38,10 +38,10 @@ class BallingHistoryRemoteMediator(
     private val ballingHistoryDatabase: BallingHistoryDatabase,
     private val ballingHistoryApiService: BallingHistoryApiService,
     private val url: String,
-): RemoteMediator<Int, BallingHistoryLogEntry>() {
+): RemoteMediator<String, BallingHistoryLogEntry>() {
     override suspend fun load(
         loadType: LoadType,
-        state: PagingState<Int, BallingHistoryLogEntry>
+        state: PagingState<String, BallingHistoryLogEntry>
     ): MediatorResult {
         return try {
             val loadKey = when(loadType) {

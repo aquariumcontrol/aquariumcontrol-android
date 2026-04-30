@@ -32,6 +32,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -69,8 +70,7 @@ fun BallingScreen(
     onRefresh: () -> Unit
 ) {
     // This screen displays
-    // - a button for visualizing all Balling dosing events of the last 24h
-    // - a button for visualizing all Balling dosing events of the last 7 days
+    // - a button for visualizing all Balling dosing events
     // - all Balling profiles downloaded from the controller
 
     val configuration: Configuration = LocalConfiguration.current
@@ -105,10 +105,15 @@ fun BallingScreen(
                             modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
                             horizontalArrangement = Arrangement.Center
                         ) {
-                            BallingDosingHistorySelectionButtonsComposable(
+                            Button(
+                                onClick = { onNavigateFromBalling(BallingNavigationEvent.ToBallingHistory, null) },
                                 modifier = Modifier.padding(vertical = 8.dp).weight(weight = 0.5f),
-                                onNavigateFromBalling
-                            )
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.view_balling_events_24h),
+                                    fontSize = 16.sp,
+                                )
+                            }
                         }
                     }
 

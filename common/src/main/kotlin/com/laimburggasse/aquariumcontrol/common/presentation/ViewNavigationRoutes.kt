@@ -37,8 +37,7 @@ object ViewNavigationRoutes {
     var feedSchedule = "feedSchedule/{$FEED_ARG_PROFILE_ID}/{$FEED_ARG_IS_NEW_SCHEDULE_ENTRY}/{$FEED_ARG_MILLIS_SINCE_EPOCH}"
 
     var balling = "balling"
-    var ballingHistory24h = "ballingHistory24h"
-    var ballingHistory7d = "ballingHistory7d"
+    var ballingHistory = "ballingHistory"
 
     private const val BALLING_PROFILE_ARG_ID = "ballingProfileId"
     var ballingEdit = "ballingEdit/{$BALLING_PROFILE_ARG_ID}"

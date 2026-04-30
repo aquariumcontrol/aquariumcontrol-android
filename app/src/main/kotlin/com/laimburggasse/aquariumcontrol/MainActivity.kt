@@ -474,39 +474,15 @@ class MainActivity : ComponentActivity() {
                             darkTheme = isSystemInDarkTheme()
                         )
                     }
-                    composable(route = ViewNavigationRoutes.ballingHistory24h) {
+                    composable(route = ViewNavigationRoutes.ballingHistory) {
                         val ballingHistoryViewModel: BallingHistoryViewModel = hiltViewModel()
                         val ballingHistoryUiState: BallingHistoryUiState by
                         ballingHistoryViewModel.ballingHistoryUiState.collectAsStateWithLifecycle()
                         MainScaffold(
                             isControllerLoaded,
-                            navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
+                            navigationRouteSource = ViewNavigationRoutes.ballingHistory,
                             screenContent = {
                                 BallingHistoryScreen(
-                                    showFullWeek = false,
-                                    ballingHistoryUiState,
-                                    onEvent = ballingHistoryViewModel::onEvent
-                                )
-                            },
-                            onNavigate = { event ->
-                                navHostController.handleMainDropDownMenuNavigation(
-                                    event,
-                                    sessionManager
-                                )
-                            },
-                            darkTheme = isSystemInDarkTheme()
-                        )
-                    }
-                    composable(route = ViewNavigationRoutes.ballingHistory7d) {
-                        val ballingHistoryViewModel: BallingHistoryViewModel = hiltViewModel()
-                        val ballingHistoryUiState: BallingHistoryUiState by
-                        ballingHistoryViewModel.ballingHistoryUiState.collectAsStateWithLifecycle()
-                        MainScaffold(
-                            isControllerLoaded,
-                            navigationRouteSource = ViewNavigationRoutes.ballingHistory7d,
-                            screenContent = {
-                                BallingHistoryScreen(
-                                    showFullWeek = true,
                                     ballingHistoryUiState,
                                     onEvent = ballingHistoryViewModel::onEvent
                                 )

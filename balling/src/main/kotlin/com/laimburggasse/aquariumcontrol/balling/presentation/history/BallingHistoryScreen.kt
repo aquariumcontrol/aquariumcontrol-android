@@ -65,13 +65,11 @@ import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun BallingHistoryScreen(
-    showFullWeek: Boolean,
     ballingHistoryUiState: BallingHistoryUiState,
     onEvent: (BallingHistoryUiEvent) -> Unit,
 ) {
     // This screen displays:
     // - headline
-    // - sub headline (last 7 days or last 24 hours)
     // - list of balling events
 
     val context = LocalContext.current
@@ -98,14 +96,6 @@ fun BallingHistoryScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         ScreenHeadlineComposable(text = stringResource(id = R.string.balling_log))
-
-        val subHeadlineText: String =
-            if (showFullWeek) {
-                stringResource(R.string.balling_events_last_7d)
-            } else {
-                stringResource(R.string.balling_events_last_24h)
-            }
-        Text(text = subHeadlineText)
 
         Scaffold(
             topBar = {},
@@ -186,10 +176,9 @@ fun BallingHistoryScreen(
 internal fun BallingHistoryScreenSuccessDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
-        navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
+        navigationRouteSource = ViewNavigationRoutes.ballingHistory,
         screenContent = {
             BallingHistoryScreen(
-                showFullWeek = false,
                 ballingHistoryUiState = mockBallingHistoryUiStateSuccess,
                 onEvent = {}
             )
@@ -209,10 +198,9 @@ internal fun BallingHistoryScreenSuccessDarkPreview() {
 internal fun BallingHistoryScreenSuccessLightPreview() {
     MainScaffold(
         isControllerLoaded = true,
-        navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
+        navigationRouteSource = ViewNavigationRoutes.ballingHistory,
         screenContent = {
             BallingHistoryScreen(
-                showFullWeek = false,
                 ballingHistoryUiState = mockBallingHistoryUiStateSuccess,
                 onEvent = {}
             )
@@ -227,10 +215,9 @@ internal fun BallingHistoryScreenSuccessLightPreview() {
 internal fun BallingHistoryScreenEmptyDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
-        navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
+        navigationRouteSource = ViewNavigationRoutes.ballingHistory,
         screenContent = {
             BallingHistoryScreen(
-                showFullWeek = false,
                 ballingHistoryUiState = mockBallingHistoryUiStateEmpty,
                 onEvent = {}
             )
@@ -245,10 +232,9 @@ internal fun BallingHistoryScreenEmptyDarkPreview() {
 internal fun BallingHistoryScreenEmptyLightPreview() {
     MainScaffold(
         isControllerLoaded = true,
-        navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
+        navigationRouteSource = ViewNavigationRoutes.ballingHistory,
         screenContent = {
             BallingHistoryScreen(
-                showFullWeek = false,
                 ballingHistoryUiState = mockBallingHistoryUiStateEmpty,
                 onEvent = {}
             )
@@ -263,10 +249,9 @@ internal fun BallingHistoryScreenEmptyLightPreview() {
 internal fun BallingHistoryScreenErrorDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
-        navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
+        navigationRouteSource = ViewNavigationRoutes.ballingHistory,
         screenContent = {
             BallingHistoryScreen(
-                showFullWeek = false,
                 ballingHistoryUiState = mockBallingHistoryUiStateError,
                 onEvent = {}
             )
@@ -281,10 +266,9 @@ internal fun BallingHistoryScreenErrorDarkPreview() {
 internal fun BallingHistoryScreenErrorLightPreview() {
     MainScaffold(
         isControllerLoaded = true,
-        navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
+        navigationRouteSource = ViewNavigationRoutes.ballingHistory,
         screenContent = {
             BallingHistoryScreen(
-                showFullWeek = false,
                 ballingHistoryUiState = mockBallingHistoryUiStateError,
                 onEvent = {}
             )
@@ -299,10 +283,9 @@ internal fun BallingHistoryScreenErrorLightPreview() {
 internal fun BallingHistoryScreenLoadingDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
-        navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
+        navigationRouteSource = ViewNavigationRoutes.ballingHistory,
         screenContent = {
             BallingHistoryScreen(
-                showFullWeek = false,
                 ballingHistoryUiState = mockBallingHistoryUiStateLoading,
                 onEvent = {}
             )
@@ -317,10 +300,9 @@ internal fun BallingHistoryScreenLoadingDarkPreview() {
 internal fun BallingHistoryScreenLoadingLightPreview() {
     MainScaffold(
         isControllerLoaded = true,
-        navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
+        navigationRouteSource = ViewNavigationRoutes.ballingHistory,
         screenContent = {
             BallingHistoryScreen(
-                showFullWeek = false,
                 ballingHistoryUiState = mockBallingHistoryUiStateLoading,
                 onEvent = {}
             )

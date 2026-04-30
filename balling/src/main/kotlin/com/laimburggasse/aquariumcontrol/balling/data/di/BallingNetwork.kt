@@ -22,6 +22,7 @@
 
 package com.laimburggasse.aquariumcontrol.balling.data.di
 
+import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingHistoryApiService
 import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingProfileApiService
 import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryLogApiService
 import com.laimburggasse.aquariumcontrol.common.di.BallingHistoryService
@@ -39,6 +40,14 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object BallingNetwork {
+    @Provides
+    @Singleton
+    fun provideBallingHistoryApiService(
+        okHttpClient: OkHttpClient
+    ): BallingHistoryApiService {
+        return createService<BallingHistoryApiService>(okHttpClient)
+    }
+
     @Provides
     @Singleton
     @BallingHistoryService

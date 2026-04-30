@@ -56,21 +56,11 @@ fun BallingDosingHistorySelectionButtonsComposable(
     // The arrangement of the buttons follows the device orientation.
 
     Button(
-        onClick = { onNavigateFromBalling(BallingNavigationEvent.ToBallingHistory24h, null) },
+        onClick = { onNavigateFromBalling(BallingNavigationEvent.ToBallingHistory, null) },
         modifier = modifier ?: Modifier
     ) {
         Text(
             text = stringResource(id = R.string.view_balling_events_24h),
-            fontSize = 16.sp,
-        )
-    }
-    Spacer(modifier = Modifier.width(width = 10.dp))
-    Button(
-        onClick = { onNavigateFromBalling(BallingNavigationEvent.ToBallingHistory7d, null) },
-        modifier = modifier ?: Modifier,
-    ) {
-        Text(
-            text = stringResource(id = R.string.view_balling_events_7d),
             fontSize = 16.sp,
         )
     }

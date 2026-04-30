@@ -22,11 +22,11 @@
 
 package com.laimburggasse.aquariumcontrol.balling.domain.repository
 
+import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import kotlinx.coroutines.flow.Flow
 
-interface BallingHistoryRepository<T> {
-    val ballingHistoryDosingEventFlow: Flow<DataFetchResult<List<T>>>
-    suspend fun setHistoryTimeRange(fetchFullWeek: Boolean)
+interface BallingHistoryRepository {
+    val ballingHistoryDosingEventFlow: Flow<DataFetchResult<List<BallingHistoryLogEntry>>>
     suspend fun triggerRefresh()
 }
