@@ -480,8 +480,7 @@ class MainActivity : ComponentActivity() {
                             navigationRouteSource = ViewNavigationRoutes.ballingHistory,
                             screenContent = {
                                 BallingHistoryScreen(
-                                    ballingHistoryFlow = ballingHistoryViewModel.ballingHistoryFlow,
-                                    onEvent = ballingHistoryViewModel::onEvent
+                                    ballingHistoryFlow = ballingHistoryViewModel.ballingHistoryFlow
                                 )
                             },
                             onNavigate = { event ->

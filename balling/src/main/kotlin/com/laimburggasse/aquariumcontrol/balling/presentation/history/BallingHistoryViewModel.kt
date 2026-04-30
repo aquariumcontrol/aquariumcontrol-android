@@ -25,13 +25,8 @@ package com.laimburggasse.aquariumcontrol.balling.presentation.history
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
-import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingHistoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
@@ -41,8 +36,5 @@ class BallingHistoryViewModel @Inject constructor(
     val ballingHistoryFlow = repository.ballingHistoryDosingEventFlow.cachedIn(viewModelScope)
 
     fun onEvent(event: BallingHistoryUiEvent) {
-        if (event is BallingHistoryUiEvent.Refresh) {
-            // @todo: implement refresh trigger in repository if needed
-        }
     }
 }

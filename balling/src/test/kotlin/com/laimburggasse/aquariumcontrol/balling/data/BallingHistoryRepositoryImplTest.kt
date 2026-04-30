@@ -22,46 +22,45 @@
 
 package com.laimburggasse.aquariumcontrol.balling.data
 
+import androidx.paging.Pager
+import androidx.paging.PagingData
 import app.cash.turbine.test
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.crashlytics.crashlytics
+import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingHistoryRemoteMediator
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
-import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData.mockBallingHistoryLogEntries
-import com.laimburggasse.aquariumcontrol.balling.testing.MockBallingHistoryLogApiServiceImpl
-import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
 import com.laimburggasse.aquariumcontrol.common.testing.MockSessionManagerImpl
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
+import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import kotlinx.serialization.json.Json
 import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class BallingHistoryRepositoryImplTest {
 
-    private lateinit var repository: BallingHistoryRepositoryImpl<BallingHistoryLogEntry>
+    private lateinit var repository: BallingHistoryRepositoryImpl
     private val testDispatcher = StandardTestDispatcher()
-    private val testScope = TestScope(testDispatcher)
-    private val mockBallingHistoryApiService = MockBallingHistoryLogApiServiceImpl(
-        mockBallingHistoryLogEntries
-    )
+    
     private val mockSessionManagerImpl = MockSessionManagerImpl(
         controllerProfiles = mockControllerProfileList
     )
+    private val mockPager: Pager<Int, BallingHistoryLogEntry> = mockk(relaxed = true)
+    private val mockRemoteMediator: BallingHistoryRemoteMediator = mockk(relaxed = true)
+    
+    private val pagerFlow = MutableStateFlow<PagingData<BallingHistoryLogEntry>>(PagingData.empty())
 
     @Before
     fun setup() {
@@ -73,11 +72,12 @@ class BallingHistoryRepositoryImplTest {
         every { FirebaseCrashlytics.getInstance() } returns mockCrashlytics
         every { Firebase.crashlytics } returns mockCrashlytics
 
+        every { mockPager.flow } returns pagerFlow
+
         repository = BallingHistoryRepositoryImpl(
             sessionManager = mockSessionManagerImpl,
-            apiService = mockBallingHistoryApiService,
-            json = Json,
-            repositoryScope = testScope
+            pager = mockPager,
+            remoteMediator = mockRemoteMediator
         )
     }
 
@@ -88,48 +88,20 @@ class BallingHistoryRepositoryImplTest {
     }
 
     @Test
-    fun `ballingHistoryDosingEventFlow emits Loading then Success when controller is selected`() = runTest {
+    fun `ballingHistoryDosingEventFlow updates mediator config and returns pager flow when controller is selected`() = runTest {
 
         repository.ballingHistoryDosingEventFlow.test {
-            // Initial state from stateIn
-            assertEquals(DataFetchResult.Loading, awaitItem())
-
+            // Initial state: nothing emitted yet because no controller is selected (filtered out)
+            
             // Act: Select a controller
-            mockSessionManagerImpl.selectControllerById(0)
-
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            // Assert
-            val result = awaitItem()
-
-            assertTrue(result is DataFetchResult.Success)
-            assertEquals(mockBallingHistoryLogEntries, (result as DataFetchResult.Success).data)
-
-            // Ensure no further emissions (like a second refresh or an error) occur
-            expectNoEvents()
-        }
-    }
-
-    @Test
-    fun `setHistoryTimeRange causes a new fetch`() = runTest {
-        mockSessionManagerImpl.selectControllerById(0)
-
-        repository.ballingHistoryDosingEventFlow.test {
-            // Initial Loading and Success
-            assertTrue(awaitItem() is DataFetchResult.Loading)
-            testDispatcher.scheduler.advanceUntilIdle()
-            assertTrue(awaitItem() is DataFetchResult.Success)
-
-            // Act: Change time range
-            repository.setHistoryTimeRange(true)
-
+            mockSessionManagerImpl.selectControllerById(mockControllerProfileList[0].id)
             testDispatcher.scheduler.runCurrent()
-            assertTrue(awaitItem() is DataFetchResult.Loading)
 
-            testDispatcher.scheduler.advanceUntilIdle()
-            val result = awaitItem()
-            assertTrue(result is DataFetchResult.Success)
-            assertEquals(mockBallingHistoryLogEntries, (result as DataFetchResult.Success).data)
+            // Assert: Mediator is updated
+            verify { mockRemoteMediator.updateConfig(any(), any()) }
+            
+            // Assert: We received the initial item from pagerFlow
+            awaitItem()
         }
     }
 }

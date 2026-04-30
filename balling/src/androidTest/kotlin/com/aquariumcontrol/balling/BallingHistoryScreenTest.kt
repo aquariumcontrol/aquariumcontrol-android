@@ -53,8 +53,7 @@ class BallingHistoryScreenTest {
                 navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
                 screenContent = {
                     BallingHistoryScreen(
-                        ballingHistoryUiState = mockBallingHistoryUiStateEmpty,
-                        onEvent = {}
+                        ballingHistoryUiState = mockBallingHistoryUiStateEmpty
                     )
                 },
                 onNavigate = {},
@@ -79,8 +78,7 @@ class BallingHistoryScreenTest {
                 navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
                 screenContent = {
                     BallingHistoryScreen(
-                        ballingHistoryUiState = mockBallingHistoryUiStateEmpty,
-                        onEvent = {}
+                        ballingHistoryUiState = mockBallingHistoryUiStateEmpty
                     )
                 },
                 onNavigate = {},
@@ -103,8 +101,7 @@ class BallingHistoryScreenTest {
                 navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
                 screenContent = {
                     BallingHistoryScreen(
-                        ballingHistoryUiState = mockBallingHistoryUiStateSuccess,
-                        onEvent = {}
+                        ballingHistoryUiState = mockBallingHistoryUiStateSuccess
                     )
                 },
                 onNavigate = {},
@@ -128,8 +125,7 @@ class BallingHistoryScreenTest {
                 navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
                 screenContent = {
                     BallingHistoryScreen(
-                        ballingHistoryUiState = mockBallingHistoryUiStateSuccess,
-                        onEvent = {}
+                        ballingHistoryUiState = mockBallingHistoryUiStateSuccess
                     )
                 },
                 onNavigate = {},

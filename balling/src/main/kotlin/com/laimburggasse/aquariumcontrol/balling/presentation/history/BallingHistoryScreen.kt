@@ -65,7 +65,6 @@ import kotlinx.coroutines.flow.flowOf
 @Composable
 fun BallingHistoryScreen(
     ballingHistoryFlow: Flow<PagingData<BallingHistoryLogEntry>>,
-    onEvent: (BallingHistoryUiEvent) -> Unit,
 ) {
     // This screen displays:
     // - headline
@@ -186,8 +185,7 @@ internal fun BallingHistoryScreenSuccessDarkPreview() {
             BallingHistoryScreen(
                 ballingHistoryFlow = flowOf(PagingData.from(listOf(
                     BallingHistoryLogEntry("2025-01-18 12:00:00", 1, 1.5, "MockDosingUnit 1")
-                ))),
-                onEvent = {}
+                )))
             )
         },
         onNavigate = {},
@@ -210,8 +208,7 @@ internal fun BallingHistoryScreenSuccessLightPreview() {
             BallingHistoryScreen(
                 ballingHistoryFlow = flowOf(PagingData.from(listOf(
                     BallingHistoryLogEntry("2025-01-18 12:00:00", 1, 1.5, "MockDosingUnit 1")
-                ))),
-                onEvent = {}
+                )))
             )
         },
         onNavigate = {},
@@ -227,8 +224,7 @@ internal fun BallingHistoryScreenEmptyDarkPreview() {
         navigationRouteSource = ViewNavigationRoutes.ballingHistory,
         screenContent = {
             BallingHistoryScreen(
-                ballingHistoryFlow = flowOf(PagingData.empty()),
-                onEvent = {}
+                ballingHistoryFlow = flowOf(PagingData.empty())
             )
         },
         onNavigate = {},
@@ -244,8 +240,7 @@ internal fun BallingHistoryScreenEmptyLightPreview() {
         navigationRouteSource = ViewNavigationRoutes.ballingHistory,
         screenContent = {
             BallingHistoryScreen(
-                ballingHistoryFlow = flowOf(PagingData.empty()),
-                onEvent = {}
+                ballingHistoryFlow = flowOf(PagingData.empty())
             )
         },
         onNavigate = {},
@@ -261,12 +256,11 @@ internal fun BallingHistoryScreenErrorDarkPreview() {
         navigationRouteSource = ViewNavigationRoutes.ballingHistory,
         screenContent = {
             BallingHistoryScreen(
-                ballingHistoryFlow = flowOf(PagingData.from(emptyList<BallingHistoryLogEntry>(), LoadStates(
+                ballingHistoryFlow = flowOf(PagingData.from(emptyList(), LoadStates(
                     refresh = LoadState.Error(Exception("Mock error")),
                     prepend = LoadState.NotLoading(true),
                     append = LoadState.NotLoading(true)
-                ))),
-                onEvent = {}
+                )))
             )
         },
         onNavigate = {},
@@ -282,12 +276,11 @@ internal fun BallingHistoryScreenErrorLightPreview() {
         navigationRouteSource = ViewNavigationRoutes.ballingHistory,
         screenContent = {
             BallingHistoryScreen(
-                ballingHistoryFlow = flowOf(PagingData.from(emptyList<BallingHistoryLogEntry>(), LoadStates(
+                ballingHistoryFlow = flowOf(PagingData.from(emptyList(), LoadStates(
                     refresh = LoadState.Error(Exception("Mock error")),
                     prepend = LoadState.NotLoading(true),
                     append = LoadState.NotLoading(true)
-                ))),
-                onEvent = {}
+                )))
             )
         },
         onNavigate = {},
@@ -303,12 +296,11 @@ internal fun BallingHistoryScreenLoadingDarkPreview() {
         navigationRouteSource = ViewNavigationRoutes.ballingHistory,
         screenContent = {
             BallingHistoryScreen(
-                ballingHistoryFlow = flowOf(PagingData.from(emptyList<BallingHistoryLogEntry>(), LoadStates(
+                ballingHistoryFlow = flowOf(PagingData.from(emptyList(), LoadStates(
                     refresh = LoadState.Loading,
                     prepend = LoadState.NotLoading(true),
                     append = LoadState.NotLoading(true)
-                ))),
-                onEvent = {}
+                )))
             )
         },
         onNavigate = {},
@@ -324,12 +316,11 @@ internal fun BallingHistoryScreenLoadingLightPreview() {
         navigationRouteSource = ViewNavigationRoutes.ballingHistory,
         screenContent = {
             BallingHistoryScreen(
-                ballingHistoryFlow = flowOf(PagingData.from(emptyList<BallingHistoryLogEntry>(), LoadStates(
+                ballingHistoryFlow = flowOf(PagingData.from(emptyList(), LoadStates(
                     refresh = LoadState.Loading,
                     prepend = LoadState.NotLoading(true),
                     append = LoadState.NotLoading(true)
-                ))),
-                onEvent = {}
+                )))
             )
         },
         onNavigate = {},
