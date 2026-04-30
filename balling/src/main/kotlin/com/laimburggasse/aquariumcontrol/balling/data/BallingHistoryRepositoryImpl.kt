@@ -68,9 +68,9 @@ open class BallingHistoryRepositoryImpl @Inject constructor(
             // Construct the URL ensuring no double slashes if apiPath already starts with /
             val baseUrl = "http://$address:$port"
             val dynamicUrl = if (apiPath.startsWith("/")) {
-                "$baseUrl$apiPath="
+                "$baseUrl$apiPath"
             } else {
-                "$baseUrl/$apiPath="
+                "$baseUrl/$apiPath"
             }
 
             val authHeader = Credentials.basic(controller.user, controller.password)
