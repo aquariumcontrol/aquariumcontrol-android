@@ -32,28 +32,44 @@ import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogE
 import okhttp3.Credentials
 import okio.IOException
 import retrofit2.HttpException
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalPagingApi::class)
 class BallingHistoryRemoteMediator(
     private val ballingHistoryDatabase: BallingHistoryDatabase,
     private val ballingHistoryApiService: BallingHistoryApiService,
-    private val url: String,
-): RemoteMediator<String, BallingHistoryLogEntry>() {
+    private var url: String, // Made var to allow updates
+): RemoteMediator<Int, BallingHistoryLogEntry>() {
+
+    fun updateUrl(newUrl: String) {
+        this.url = newUrl
+    }
+
     override suspend fun load(
         loadType: LoadType,
-        state: PagingState<String, BallingHistoryLogEntry>
+        state: PagingState<Int, BallingHistoryLogEntry>
     ): MediatorResult {
         return try {
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            
             val loadKey = when(loadType) {
-                LoadType.REFRESH -> "2026-04-29" // @todo: make dynamic
+                LoadType.REFRESH -> dateFormat.format(Date())
                 LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
                 LoadType.APPEND -> {
                     val lastItem = state.lastItemOrNull()
                     if (lastItem == null) {
-                        "2026-04-29" // @todo: make dynamic
+                        dateFormat.format(Date())
                     }
                     else {
-                        (lastItem.timestamp) // @todo: add logic for calculating next page
+                        // Calculate the next date to fetch (previous day)
+                        val lastDateStr = lastItem.timestamp.substringBefore(' ')
+                        val calendar = Calendar.getInstance()
+                        calendar.time = dateFormat.parse(lastDateStr) ?: Date()
+                        calendar.add(Calendar.DAY_OF_YEAR, -1)
+                        dateFormat.format(calendar.time)
                     }
                 }
             }
@@ -71,10 +87,10 @@ class BallingHistoryRemoteMediator(
                 }
                 ballingHistoryDatabase.ballingHistoryDao().upsertAll(ballingHistoryLogEntries)
             }
+            // We consider it the end of pagination if we get an empty list for a specific date
+            // Note: This might need adjustment if some days have no logs but earlier days do.
             MediatorResult.Success(endOfPaginationReached = ballingHistoryLogEntries.isEmpty())
-        } catch (e: IOException) {
-            MediatorResult.Error(e)
-        } catch (e: HttpException) {
+        } catch (e: Exception) {
             MediatorResult.Error(e)
         }
     }

@@ -23,52 +23,32 @@
 package com.laimburggasse.aquariumcontrol.balling.data
 
 import androidx.paging.Pager
+import androidx.paging.PagingData
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingHistoryRepository
-import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryLogApiService
-import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryLogEntryReader
-import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
-import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
-import com.laimburggasse.aquariumcontrol.common.di.BallingHistoryService
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.withContext
-import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 open class BallingHistoryRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
-    @param:BallingHistoryService private val apiService: HistoryLogApiService,
-    private val json: Json,
-    @param:ApplicationScope private val repositoryScope: CoroutineScope,
-    pager: Pager<Int, BallingHistoryLogEntry>
+    private val pager: Pager<Int, BallingHistoryLogEntry>
 ): BallingHistoryRepository {
 
     // Trigger for manual refreshes (e.g., pull-to-refresh)
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
 
     /**
-     * A reactive Flow that provides the Balling History events.
-     * It combines three sources:
-     *  - The selected controller from SessionManager.
-     *  - The manual refresh trigger.
-     *
-     * It automatically re-fetches data when any of these inputs change.
+     * A reactive Flow that provides the Balling History events using Paging 3.
      */
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val ballingHistoryDosingEventFlow: Flow<DataFetchResult<List<BallingHistoryLogEntry>>> =
+    override val ballingHistoryDosingEventFlow: Flow<PagingData<BallingHistoryLogEntry>> =
         combine(
             flow = sessionManager.selectedControllerProfile,
             flow2 = refreshTrigger.onStart { emit(value = Unit) }, // Trigger on first collection
@@ -76,37 +56,9 @@ open class BallingHistoryRepositoryImpl @Inject constructor(
             controller
         }
         .filter { it != null } // Only proceed if a controller is selected
-        .flatMapLatest { controller ->
-            flow {
-                // UI shall temporarily show loading state, while fetching data
-                emit(value = DataFetchResult.Loading)
-
-                val url: String =
-                    "http://${controller!!.address}:${controller.port}${WebApiUrls.BALLING_LOAD_EVENTS_7D}"
-
-                val result: DataFetchResult<List<BallingHistoryLogEntry>> =
-                    withContext(context = Dispatchers.IO) {
-                        val reader = HistoryLogEntryReader(
-                            apiService,
-                            url,
-                            username = controller.user,
-                            password = controller.password,
-                            decode = { jsonString ->
-                                // specific serializer for BallingHistoryLogEntry
-                                json.decodeFromString<List<BallingHistoryLogEntry>>(jsonString)
-                            }
-                        )
-                        reader.readHistoryLogEvents()
-                    }
-
-                emit(value = result)
-            }
+        .flatMapLatest { _ ->
+            pager.flow
         }
-        .stateIn(
-            scope = repositoryScope,
-            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
-            initialValue = DataFetchResult.Loading
-        )
 
     /**
      * Public function for the ViewModel to trigger a manual refresh.
