@@ -110,7 +110,7 @@ fun BallingScreen(
                                 modifier = Modifier.padding(vertical = 8.dp).weight(weight = 0.5f),
                             ) {
                                 Text(
-                                    text = stringResource(id = R.string.view_balling_events_24h),
+                                    text = stringResource(id = R.string.view_balling_events),
                                     fontSize = 16.sp,
                                 )
                             }

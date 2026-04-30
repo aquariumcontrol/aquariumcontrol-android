@@ -41,9 +41,9 @@ class BallingScreenUITest {
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Test
-    fun tapping_24h_history_button_navigates_to_BallingHistory24h() {
+    fun tapping_history_button_navigates_to_BallingHistory() {
         var capturedEvent: BallingNavigationEvent? = null
-        val label24h = context.getString(R.string.view_balling_events_24h)
+        val label = context.getString(R.string.view_balling_events)
 
         composeTestRule.setContent {
             BallingScreen(
@@ -53,31 +53,11 @@ class BallingScreenUITest {
             )
         }
 
-        // Find the button for 24h history and click it
-        composeTestRule.onNodeWithText(label24h).performClick()
+        // Find the button for history and click it
+        composeTestRule.onNodeWithText(label).performClick()
 
         // Assert the callback was triggered with the expected enum value
-        Assert.assertEquals(BallingNavigationEvent.ToBallingHistory24h, capturedEvent)
-    }
-
-    @Test
-    fun tapping_7d_history_button_navigates_to_BallingHistory7d() {
-        var capturedEvent: BallingNavigationEvent? = null
-        val label7d = context.getString(R.string.view_balling_events_7d)
-
-        composeTestRule.setContent {
-            BallingScreen(
-                ballingProfilesUiState = mockBallingProfilesUiStateSuccess,
-                onNavigateFromBalling = { event, _ -> capturedEvent = event },
-                onRefresh = {}
-            )
-        }
-
-        // Find the button for 7d history and click it
-        composeTestRule.onNodeWithText(label7d).performClick()
-
-        // Assert the callback was triggered with the expected enum value
-        Assert.assertEquals(BallingNavigationEvent.ToBallingHistory7d, capturedEvent)
+        Assert.assertEquals(BallingNavigationEvent.ToBallingHistory, capturedEvent)
     }
 
     @Test

@@ -31,10 +31,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BallingHistoryViewModel @Inject constructor(
-    private val repository: BallingHistoryRepository
+    repository: BallingHistoryRepository
 ): ViewModel() {
     val ballingHistoryFlow = repository.ballingHistoryDosingEventFlow.cachedIn(viewModelScope)
-
-    fun onEvent(event: BallingHistoryUiEvent) {
-    }
 }

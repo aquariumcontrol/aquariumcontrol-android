@@ -56,6 +56,7 @@ import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.laimburggasse.aquariumcontrol.balling.R
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
+import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData.mockBallingHistoryLogEntries
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
@@ -128,6 +129,7 @@ fun BallingHistoryScreen(
                                     modifier = Modifier.align(Alignment.Center).size(size = 150.dp),
                                     color = MaterialTheme.colorScheme.primary
                                 )
+
                             }
                             loadState.refresh is LoadState.Error && ballingHistoryLogEntries.itemCount == 0 -> {
                                 val error = (loadState.refresh as LoadState.Error).error
@@ -183,9 +185,14 @@ internal fun BallingHistoryScreenSuccessDarkPreview() {
         navigationRouteSource = ViewNavigationRoutes.ballingHistory,
         screenContent = {
             BallingHistoryScreen(
-                ballingHistoryFlow = flowOf(PagingData.from(listOf(
-                    BallingHistoryLogEntry("2025-01-18 12:00:00", 1, 1.5, "MockDosingUnit 1")
-                )))
+                ballingHistoryFlow = flowOf(PagingData.from(
+                    mockBallingHistoryLogEntries,
+                    sourceLoadStates = LoadStates(
+                        refresh = LoadState.NotLoading(false),
+                        prepend = LoadState.NotLoading(true),
+                        append = LoadState.NotLoading(true)
+                    )
+                ))
             )
         },
         onNavigate = {},
@@ -206,9 +213,14 @@ internal fun BallingHistoryScreenSuccessLightPreview() {
         navigationRouteSource = ViewNavigationRoutes.ballingHistory,
         screenContent = {
             BallingHistoryScreen(
-                ballingHistoryFlow = flowOf(PagingData.from(listOf(
-                    BallingHistoryLogEntry("2025-01-18 12:00:00", 1, 1.5, "MockDosingUnit 1")
-                )))
+                ballingHistoryFlow = flowOf(PagingData.from(
+                    emptyList(),
+                    sourceLoadStates = LoadStates(
+                        refresh = LoadState.NotLoading(true),
+                        prepend = LoadState.NotLoading(true),
+                        append = LoadState.NotLoading(true)
+                    )
+                ))
             )
         },
         onNavigate = {},
@@ -224,7 +236,14 @@ internal fun BallingHistoryScreenEmptyDarkPreview() {
         navigationRouteSource = ViewNavigationRoutes.ballingHistory,
         screenContent = {
             BallingHistoryScreen(
-                ballingHistoryFlow = flowOf(PagingData.empty())
+                ballingHistoryFlow = flowOf(PagingData.from(
+                    emptyList(),
+                    sourceLoadStates = LoadStates(
+                        refresh = LoadState.NotLoading(true),
+                        prepend = LoadState.NotLoading(true),
+                        append = LoadState.NotLoading(true)
+                    )
+                ))
             )
         },
         onNavigate = {},
@@ -240,7 +259,14 @@ internal fun BallingHistoryScreenEmptyLightPreview() {
         navigationRouteSource = ViewNavigationRoutes.ballingHistory,
         screenContent = {
             BallingHistoryScreen(
-                ballingHistoryFlow = flowOf(PagingData.empty())
+                ballingHistoryFlow = flowOf(PagingData.from(
+                    emptyList(),
+                    sourceLoadStates = LoadStates(
+                        refresh = LoadState.NotLoading(true),
+                        prepend = LoadState.NotLoading(true),
+                        append = LoadState.NotLoading(true)
+                    )
+                ))
             )
         },
         onNavigate = {},

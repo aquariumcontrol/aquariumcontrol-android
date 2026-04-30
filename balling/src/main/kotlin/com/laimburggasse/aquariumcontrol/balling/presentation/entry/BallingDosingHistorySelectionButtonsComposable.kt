@@ -25,10 +25,8 @@ package com.laimburggasse.aquariumcontrol.balling.presentation.entry
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -60,7 +58,7 @@ fun BallingDosingHistorySelectionButtonsComposable(
         modifier = modifier ?: Modifier
     ) {
         Text(
-            text = stringResource(id = R.string.view_balling_events_24h),
+            text = stringResource(id = R.string.view_balling_events),
             fontSize = 16.sp,
         )
     }

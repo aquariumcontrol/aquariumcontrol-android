@@ -624,7 +624,8 @@ class MainActivity : ComponentActivity() {
                                         heatingSetValsValid.collectAsStateWithLifecycle(),
                                     onHeatingSetValsEvent = heatingSetValsViewModel::onHeatingSetValsEvent,
                                     heatingStatsUiState,
-                                    onHeatingStatsEvent = heatingStatsViewModel::onHeatingStatsEvent
+                                    onHeatingStatsEvent = heatingStatsViewModel::onHeatingStatsEvent,
+                                    isDarkMode = isSystemInDarkTheme()
                                 )
                             },
                             onNavigate = { event ->
