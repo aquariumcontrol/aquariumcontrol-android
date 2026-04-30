@@ -25,7 +25,6 @@ package com.laimburggasse.aquariumcontrol.common.presentation.maindropdownmenu.p
 import androidx.navigation.NavHostController
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
-import kotlinx.coroutines.flow.StateFlow
 
 fun NavHostController.handleMainDropDownMenuNavigation(
     event: MainDropDownMenuNavigationEvent,
@@ -33,9 +32,14 @@ fun NavHostController.handleMainDropDownMenuNavigation(
 ) {
     when (event) {
         MainDropDownMenuNavigationEvent.ToOverview -> {
-            val currentProfileId: StateFlow<Long?> = sessionManager.defaultControllerProfileId
-            if (currentProfileId.value != null) {
-                this.navigate(route = ViewNavigationRoutes.overView(controllerProfileId = currentProfileId.value!!))
+            val selectedProfile = sessionManager.selectedControllerProfile.value
+            if (selectedProfile != null) {
+                this.navigate(route = ViewNavigationRoutes.overView(controllerProfileId = selectedProfile.id))
+            } else {
+                val defaultProfileId = sessionManager.defaultControllerProfileId.value
+                if (defaultProfileId != null) {
+                    this.navigate(route = ViewNavigationRoutes.overView(controllerProfileId = defaultProfileId))
+                }
             }
         }
         MainDropDownMenuNavigationEvent.ToSchedule -> this.navigate(route = ViewNavigationRoutes.schedule)
