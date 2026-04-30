@@ -47,7 +47,6 @@ import com.laimburggasse.aquariumcontrol.balling.presentation.entry.BallingProfi
 import com.laimburggasse.aquariumcontrol.balling.presentation.entry.BallingProfilesViewModel
 import com.laimburggasse.aquariumcontrol.balling.presentation.entry.BallingScreen
 import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryScreen
-import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryUiState
 import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryViewModel
 import com.laimburggasse.aquariumcontrol.balling.presentation.navigation.handleBallingNavigation
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile

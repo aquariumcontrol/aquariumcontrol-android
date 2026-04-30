@@ -99,7 +99,8 @@ fun BallingHistoryScreen(
                 modifier = Modifier.fillMaxSize().padding(paddingValues = innerPadding),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val isRefreshing = ballingHistoryLogEntries.loadState.refresh is LoadState.Loading
+                val isRefreshing = ballingHistoryLogEntries.loadState.mediator?.refresh is LoadState.Loading ||
+                        ballingHistoryLogEntries.loadState.refresh is LoadState.Loading
 
                 PullToRefreshBox(
                     modifier = Modifier.fillMaxWidth(),
@@ -108,23 +109,28 @@ fun BallingHistoryScreen(
                     isRefreshing = isRefreshing,
                     onRefresh = { ballingHistoryLogEntries.refresh() },
                     indicator = {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(size = 150.dp),
-                            color = MaterialTheme.colorScheme.primary
-                        )
+                        // Custom indicator to match the requested size if needed, 
+                        // but normally PullToRefreshBox handles its own indicator.
+                        // If we use the 'indicator' slot, we must manage its visibility.
+                        if (isRefreshing) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(size = 48.dp),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
                     }
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
                         val loadState = ballingHistoryLogEntries.loadState
                         
                         when {
-                            loadState.refresh is LoadState.Loading -> {
+                            (loadState.mediator?.refresh is LoadState.Loading || loadState.refresh is LoadState.Loading) && ballingHistoryLogEntries.itemCount == 0 -> {
                                 CircularProgressIndicator(
                                     modifier = Modifier.align(Alignment.Center).size(size = 150.dp),
                                     color = MaterialTheme.colorScheme.primary
                                 )
                             }
-                            loadState.refresh is LoadState.Error -> {
+                            loadState.refresh is LoadState.Error && ballingHistoryLogEntries.itemCount == 0 -> {
                                 val error = (loadState.refresh as LoadState.Error).error
                                 Text(
                                     text = error.localizedMessage ?: "Unknown Error",
@@ -132,7 +138,7 @@ fun BallingHistoryScreen(
                                     modifier = Modifier.align(Alignment.Center)
                                 )
                             }
-                            ballingHistoryLogEntries.itemCount == 0 -> {
+                            loadState.refresh is LoadState.NotLoading && ballingHistoryLogEntries.itemCount == 0 -> {
                                 Text(
                                     text = stringResource(R.string.no_balling_events_found),
                                     modifier = Modifier.align(Alignment.Center)
@@ -148,7 +154,7 @@ fun BallingHistoryScreen(
                                         }
                                     }
                                     item {
-                                        if (loadState.append is LoadState.Loading) {
+                                        if (loadState.append is LoadState.Loading || loadState.mediator?.append is LoadState.Loading) {
                                             CircularProgressIndicator(
                                                 modifier = Modifier.fillMaxWidth().padding(16.dp).size(size = 50.dp),
                                                 color = MaterialTheme.colorScheme.primary
