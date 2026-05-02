@@ -22,12 +22,11 @@
 
 package com.laimburggasse.aquariumcontrol.refill.presentation.history
 
+import androidx.paging.PagingData
 import app.cash.turbine.test
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillHistoryRepository
 import com.laimburggasse.aquariumcontrol.refill.testing.RefillMockData.mockRefillHistoryLogEntries
-import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -38,8 +37,6 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -47,11 +44,11 @@ import org.junit.Test
 class RefillHistoryViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
-    private lateinit var repository: RefillHistoryRepository<RefillHistoryLogEntry>
+    private lateinit var repository: RefillHistoryRepository
     private lateinit var viewModel: RefillHistoryViewModel
 
-    // Flow used to push updates to the ViewModel
-    private val repositoryFlow = MutableStateFlow<DataFetchResult<List<RefillHistoryLogEntry>>>(DataFetchResult.Loading)
+    // Flow used to push PagingData updates to the ViewModel
+    private val repositoryFlow = MutableStateFlow<PagingData<RefillHistoryLogEntry>>(PagingData.empty())
 
     @Before
     fun setup() {
@@ -70,76 +67,18 @@ class RefillHistoryViewModelTest {
     }
 
     @Test
-    fun `initial state is Loading`() = runTest {
-        viewModel.refillHistoryUiState.test {
-            assertEquals(RefillHistoryUiState.Loading, awaitItem())
+    fun `viewModel correctly observes repository flow`() = runTest {
+        viewModel.refillHistoryFlow.test {
+            // Initial item from the stubbed flow
+            awaitItem()
+
+            // Act: Push new PagingData
+            val newData = PagingData.from(mockRefillHistoryLogEntries)
+            repositoryFlow.value = newData
+
+            // Verify the ViewModel flow receives the new item
+            // Note: PagingData doesn't implement equals, so we just verify receipt
+            awaitItem()
         }
-    }
-
-    @Test
-    fun `successful fetch with data updates state to Success`() = runTest {
-        viewModel.refillHistoryUiState.test {
-            assertEquals(RefillHistoryUiState.Loading, awaitItem())
-
-            // Act: Push success data
-            repositoryFlow.value = DataFetchResult.Success(mockRefillHistoryLogEntries)
-
-            val item = awaitItem()
-            assertTrue(item is RefillHistoryUiState.Success)
-            assertEquals(2, (item as RefillHistoryUiState.Success).refillHistoryLogEntries.size)
-        }
-    }
-
-    @Test
-    fun `successful fetch with empty list updates state to Empty`() = runTest {
-        viewModel.refillHistoryUiState.test {
-            awaitItem() // Skip Loading
-
-            // Act: Push empty list
-            repositoryFlow.value = DataFetchResult.Success(emptyList())
-
-            assertEquals(RefillHistoryUiState.Empty, awaitItem())
-        }
-    }
-
-    @Test
-    fun `failed fetch updates state to Error`() = runTest {
-        val errorMsg = "Network Timeout"
-        viewModel.refillHistoryUiState.test {
-            awaitItem() // Skip Loading
-
-            // Act: Push error
-            repositoryFlow.value = DataFetchResult.Error(
-                errorMessage = errorMsg,
-                exception = Exception()
-            )
-
-            val item = awaitItem()
-            assertTrue(item is RefillHistoryUiState.Error)
-            assertEquals(errorMsg, (item as RefillHistoryUiState.Error).errorMessage)
-        }
-    }
-
-    @Test
-    fun `Refresh event triggers triggerRefresh in repository`() = runTest {
-        // Act
-        viewModel.onEvent(RefillHistoryUiEvent.Refresh)
-
-        // Wait for the viewModelScope.launch to execute
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        // Assert
-        coVerify(exactly = 1) { repository.triggerRefresh() }
-    }
-
-    @Test
-    fun `SetRange event triggers setHistoryTimeRange in repository`() = runTest {
-        // Act: Request full week
-        viewModel.onEvent(RefillHistoryUiEvent.SetRange(showFullWeek = true))
-
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        // Assert
-        coVerify(exactly = 1) { repository.setHistoryTimeRange(fetchFullWeek = true) }
     }
 }

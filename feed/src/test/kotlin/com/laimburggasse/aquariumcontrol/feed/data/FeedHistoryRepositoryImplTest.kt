@@ -22,46 +22,45 @@
 
 package com.laimburggasse.aquariumcontrol.feed.data
 
+import androidx.paging.Pager
+import androidx.paging.PagingData
 import app.cash.turbine.test
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.crashlytics.crashlytics
+import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedHistoryRemoteMediator
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
-import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedHistoryLogEntries
-import com.laimburggasse.aquariumcontrol.feed.testing.MockFeedHistoryLogApiServiceImpl
-import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
 import com.laimburggasse.aquariumcontrol.common.testing.MockSessionManagerImpl
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
+import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import kotlinx.serialization.json.Json
 import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class FeedHistoryRepositoryImplTest {
 
-    private lateinit var repository: FeedHistoryRepositoryImpl<FeedHistoryLogEntry>
+    private lateinit var repository: FeedHistoryRepositoryImpl
     private val testDispatcher = StandardTestDispatcher()
-    private val testScope = TestScope(testDispatcher)
-    private val mockFeedHistoryApiService = MockFeedHistoryLogApiServiceImpl(
-        mockFeedHistoryLogEntries
-    )
+
     private val mockSessionManagerImpl = MockSessionManagerImpl(
         controllerProfiles = mockControllerProfileList
     )
+    private val mockPager: Pager<Int, FeedHistoryLogEntry> = mockk(relaxed = true)
+    private val mockRemoteMediator: FeedHistoryRemoteMediator = mockk(relaxed = true)
+
+    private val pagerFlow = MutableStateFlow<PagingData<FeedHistoryLogEntry>>(PagingData.empty())
 
     @Before
     fun setup() {
@@ -73,11 +72,12 @@ class FeedHistoryRepositoryImplTest {
         every { FirebaseCrashlytics.getInstance() } returns mockCrashlytics
         every { Firebase.crashlytics } returns mockCrashlytics
 
+        every { mockPager.flow } returns pagerFlow
+
         repository = FeedHistoryRepositoryImpl(
             sessionManager = mockSessionManagerImpl,
-            apiService = mockFeedHistoryApiService,
-            json = Json,
-            repositoryScope = testScope
+            pager = mockPager,
+            remoteMediator = mockRemoteMediator
         )
     }
 
@@ -88,48 +88,20 @@ class FeedHistoryRepositoryImplTest {
     }
 
     @Test
-    fun `feedHistoryDosingEventFlow emits Loading then Success when controller is selected`() = runTest {
+    fun `feedHistoryEventFlow updates mediator config and returns pager flow when controller is selected`() = runTest {
 
         repository.feedHistoryEventFlow.test {
-            // Initial state from stateIn
-            assertEquals(DataFetchResult.Loading, awaitItem())
+            // Initial state: nothing emitted yet because no controller is selected (filtered out)
 
             // Act: Select a controller
-            mockSessionManagerImpl.selectControllerById(0)
-
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            // Assert
-            val result = awaitItem()
-
-            assertTrue(result is DataFetchResult.Success)
-            assertEquals(mockFeedHistoryLogEntries, (result as DataFetchResult.Success).data)
-
-            // Ensure no further emissions (like a second refresh or an error) occur
-            expectNoEvents()
-        }
-    }
-
-    @Test
-    fun `setHistoryTimeRange causes a new fetch`() = runTest {
-        mockSessionManagerImpl.selectControllerById(0)
-
-        repository.feedHistoryEventFlow.test {
-            // Initial Loading and Success
-            assertTrue(awaitItem() is DataFetchResult.Loading)
-            testDispatcher.scheduler.advanceUntilIdle()
-            assertTrue(awaitItem() is DataFetchResult.Success)
-
-            // Act: Change time range
-            repository.setHistoryTimeRange(true)
-
+            mockSessionManagerImpl.selectControllerById(mockControllerProfileList[0].id)
             testDispatcher.scheduler.runCurrent()
-            assertTrue(awaitItem() is DataFetchResult.Loading)
 
-            testDispatcher.scheduler.advanceUntilIdle()
-            val result = awaitItem()
-            assertTrue(result is DataFetchResult.Success)
-            assertEquals(mockFeedHistoryLogEntries, (result as DataFetchResult.Success).data)
+            // Assert: Mediator is updated
+            verify { mockRemoteMediator.updateConfig(any(), any()) }
+
+            // Assert: We received the initial item from pagerFlow
+            awaitItem()
         }
     }
 }
