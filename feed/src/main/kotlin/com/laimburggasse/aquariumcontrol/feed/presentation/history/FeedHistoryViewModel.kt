@@ -31,9 +31,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 
 import javax.inject.Inject
 
+import com.laimburggasse.aquariumcontrol.common.presentation.HistoryViewModel
+import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
+
 @HiltViewModel
 class FeedHistoryViewModel @Inject constructor(
     feedHistoryRepository: FeedHistoryRepository
-): ViewModel() {
-    val feedHistoryFlow = feedHistoryRepository.feedHistoryEventFlow.cachedIn(viewModelScope)
+) : HistoryViewModel<FeedHistoryLogEntry>(feedHistoryRepository) {
+    val feedHistoryFlow = historyFlow
 }

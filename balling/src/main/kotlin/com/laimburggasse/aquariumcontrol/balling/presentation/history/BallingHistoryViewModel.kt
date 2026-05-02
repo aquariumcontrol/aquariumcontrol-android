@@ -22,16 +22,15 @@
 
 package com.laimburggasse.aquariumcontrol.balling.presentation.history
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import androidx.paging.cachedIn
+import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingHistoryRepository
+import com.laimburggasse.aquariumcontrol.common.presentation.HistoryViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class BallingHistoryViewModel @Inject constructor(
     repository: BallingHistoryRepository
-): ViewModel() {
-    val ballingHistoryFlow = repository.ballingHistoryDosingEventFlow.cachedIn(viewModelScope)
+) : HistoryViewModel<BallingHistoryLogEntry>(repository) {
+    val ballingHistoryFlow = historyFlow
 }

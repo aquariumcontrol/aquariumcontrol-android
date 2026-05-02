@@ -63,140 +63,22 @@ import com.laimburggasse.aquariumcontrol.refill.testing.RefillMockData.mockRefil
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
+import com.laimburggasse.aquariumcontrol.common.presentation.GenericHistoryScreen
+
 @Composable
 fun RefillHistoryScreen(
     refillHistoryFlow: Flow<PagingData<RefillHistoryLogEntry>>,
     previewData: List<RefillHistoryLogEntry>? = null
 ) {
-    // This screen displays:
-    // - headline
-    // - list of refill events
-    val context = LocalContext.current
-    val refillHistoryLogEntries = refillHistoryFlow.collectAsLazyPagingItems()
-
-    // Issue Toast when loading fails
-    if (LocalInspectionMode.current) {
-        LaunchedEffect(key1 = refillHistoryLogEntries.loadState) {
-            if (refillHistoryLogEntries.loadState.refresh is LoadState.Error) {
-                val loadState = (refillHistoryLogEntries.loadState.refresh as LoadState.Error)
-                val errorMessage = loadState.error.message
-                Toast.makeText(context, "API error: $errorMessage", Toast.LENGTH_LONG).show()
-            }
-        }
-    }
-
-    Column(
-        modifier = Modifier.fillMaxSize().padding(all = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        ScreenHeadlineComposable(text = stringResource(id = R.string.refill_log))
-
-        Scaffold(
-            topBar = {},
-            bottomBar = {},
-            floatingActionButton = {},
-            snackbarHost = { SnackbarHost(hostState = remember { SnackbarHostState() })}
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier.fillMaxSize().padding(paddingValues = innerPadding),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                val isRefreshing = if (previewData == null) {
-                    refillHistoryLogEntries.loadState.mediator?.refresh is LoadState.Loading ||
-                            refillHistoryLogEntries.loadState.refresh is LoadState.Loading
-                }
-                else {
-                    false
-                }
-
-                PullToRefreshBox(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center,
-                    state = rememberPullToRefreshState(),
-                    isRefreshing = isRefreshing,
-                    onRefresh = { refillHistoryLogEntries.refresh() },
-                    indicator = {
-                        // Custom indicator to match the requested size if needed 
-                        if (isRefreshing) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(size = 48.dp),
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    }
-                ) {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        val loadState = refillHistoryLogEntries.loadState
-
-                        when {
-                            (loadState.mediator?.refresh is LoadState.Loading || loadState.refresh is LoadState.Loading)
-                                    && refillHistoryLogEntries.itemCount == 0
-                                    && previewData == null -> {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.align(Alignment.Center).size(size = 150.dp),
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-
-                            }
-                            loadState.refresh is LoadState.Error
-                                    && refillHistoryLogEntries.itemCount == 0
-                                    && previewData == null -> {
-                                val error = (loadState.refresh as LoadState.Error).error
-                                Text(
-                                    text = error.localizedMessage ?: "Unknown Error",
-                                    color = MaterialTheme.colorScheme.error,
-                                    modifier = Modifier.align(Alignment.Center)
-                                )
-                            }
-                            loadState.refresh is LoadState.NotLoading
-                                    && refillHistoryLogEntries.itemCount == 0
-                                    && previewData == null -> {
-                                Text(
-                                    text = stringResource(R.string.no_refill_events_found),
-                                    modifier = Modifier.align(Alignment.Center)
-                                )
-                            }
-                            else -> {
-                                if (LocalInspectionMode.current) {
-                                    // In Preview: Render a simple, static Column instead of LazyColumn
-                                    Column(modifier = Modifier.fillMaxSize()) {
-                                        previewData?.forEach { refillHistoryLogEntry ->
-                                            RefillHistoryLogEntryComposable(
-                                                refillHistoryLogEntry
-                                            )
-                                        }
-                                    }
-                                }
-                                else {
-                                    // In App Runtime: Use the performant LazyColumn
-                                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                        items(count = refillHistoryLogEntries.itemCount) { index ->
-                                            val refillHistoryLogEntry =
-                                                refillHistoryLogEntries[index]
-                                            if (refillHistoryLogEntry != null) {
-                                                RefillHistoryLogEntryComposable(
-                                                    refillHistoryLogEntry
-                                                )
-                                            }
-                                        }
-                                        item {
-                                            if (loadState.append is LoadState.Loading || loadState.mediator?.append is LoadState.Loading) {
-                                                CircularProgressIndicator(
-                                                    modifier = Modifier.fillMaxWidth()
-                                                        .padding(16.dp).size(size = 50.dp),
-                                                    color = MaterialTheme.colorScheme.primary
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+    GenericHistoryScreen(
+        historyFlow = refillHistoryFlow,
+        headline = stringResource(id = R.string.refill_log),
+        noEventsMessage = stringResource(R.string.no_refill_events_found),
+        entryComposable = { refillHistoryLogEntry ->
+            RefillHistoryLogEntryComposable(refillHistoryLogEntry)
+        },
+        previewData = previewData
+    )
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)

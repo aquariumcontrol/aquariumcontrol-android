@@ -26,7 +26,8 @@ import androidx.paging.PagingData
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
 import kotlinx.coroutines.flow.Flow
 
-interface BallingHistoryRepository {
+import com.laimburggasse.aquariumcontrol.common.domain.HistoryRepository
+
+interface BallingHistoryRepository : HistoryRepository<BallingHistoryLogEntry> {
     val ballingHistoryDosingEventFlow: Flow<PagingData<BallingHistoryLogEntry>>
-    suspend fun triggerRefresh()
 }

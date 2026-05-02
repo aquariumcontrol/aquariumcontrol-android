@@ -27,10 +27,12 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.room.Room
+import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryRemoteMediator
+import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
+import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.refill.data.local.RefillHistoryDao
 import com.laimburggasse.aquariumcontrol.refill.data.local.RefillHistoryDatabase
 import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillHistoryApiService
-import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillHistoryRemoteMediator
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
 import dagger.Module
 import dagger.Provides
@@ -38,8 +40,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-
-import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -67,11 +67,14 @@ object RefillDatabaseModule {
         database: RefillHistoryDatabase,
         apiService: RefillHistoryApiService,
         sessionManager: SessionManager
-    ): RefillHistoryRemoteMediator {
-        return RefillHistoryRemoteMediator(
-            refillHistoryDatabase = database,
-            refillHistoryApiService = apiService,
+    ): HistoryRemoteMediator<RefillHistoryLogEntry> {
+        return HistoryRemoteMediator(
+            database = database,
+            dao = database.refillHistoryDao(),
+            apiService = apiService,
             sessionManager = sessionManager,
+            loadEventsUrlPath = WebApiUrls.REFILL_LOAD_EVENTS,
+            loadFirstEventUrlPath = WebApiUrls.REFILL_LOAD_FIRST_EVENT
         )
     }
 
@@ -80,10 +83,14 @@ object RefillDatabaseModule {
     @Singleton
     fun provideRefillHistoryPager(
         database: RefillHistoryDatabase,
-        remoteMediator: RefillHistoryRemoteMediator
+        remoteMediator: HistoryRemoteMediator<RefillHistoryLogEntry>
     ): Pager<Int, RefillHistoryLogEntry> {
         return Pager(
-            config = PagingConfig(pageSize = 20),
+            config = PagingConfig(
+                pageSize = 20,
+                prefetchDistance = 10,
+                initialLoadSize = 40
+            ),
             remoteMediator = remoteMediator,
             pagingSourceFactory = {
                 database.refillHistoryDao().pagingSource()

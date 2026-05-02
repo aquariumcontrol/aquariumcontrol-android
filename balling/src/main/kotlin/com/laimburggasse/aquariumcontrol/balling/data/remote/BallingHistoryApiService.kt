@@ -29,16 +29,18 @@ import retrofit2.http.Header
 import retrofit2.http.Query
 import retrofit2.http.Url
 
-interface BallingHistoryApiService {
+import com.laimburggasse.aquariumcontrol.common.data.remote.BaseHistoryApiService
+
+interface BallingHistoryApiService : BaseHistoryApiService {
     @GET
-    suspend fun getBallingHistory(
+    override suspend fun getHistory(
         @Url url: String,
         @Header("Authorization") authHeader: String,
         @Query("date") date: String,
     ): List<BallingHistoryLogEntry>
 
     @GET
-    suspend fun getBallingHistoryStart(
+    override suspend fun getHistoryStart(
         @Url url: String,
         @Header("Authorization") authHeader: String,
     ): TimestampJsonObject

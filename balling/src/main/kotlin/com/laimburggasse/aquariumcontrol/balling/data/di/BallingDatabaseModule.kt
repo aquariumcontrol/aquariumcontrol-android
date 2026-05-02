@@ -30,16 +30,16 @@ import androidx.room.Room
 import com.laimburggasse.aquariumcontrol.balling.data.local.BallingHistoryDao
 import com.laimburggasse.aquariumcontrol.balling.data.local.BallingHistoryDatabase
 import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingHistoryApiService
-import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingHistoryRemoteMediator
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
+import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryRemoteMediator
+import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
+import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-
-import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -68,11 +68,14 @@ object BallingDatabaseModule {
         database: BallingHistoryDatabase,
         apiService: BallingHistoryApiService,
         sessionManager: SessionManager
-    ): BallingHistoryRemoteMediator {
-        return BallingHistoryRemoteMediator(
-            ballingHistoryDatabase = database,
-            ballingHistoryApiService = apiService,
+    ): HistoryRemoteMediator<BallingHistoryLogEntry> {
+        return HistoryRemoteMediator(
+            database = database,
+            dao = database.ballingHistoryDao(),
+            apiService = apiService,
             sessionManager = sessionManager,
+            loadEventsUrlPath = WebApiUrls.BALLING_LOAD_EVENTS,
+            loadFirstEventUrlPath = WebApiUrls.BALLING_LOAD_FIRST_EVENT
         )
     }
 
@@ -81,10 +84,14 @@ object BallingDatabaseModule {
     @Singleton
     fun provideBallingHistoryPager(
         database: BallingHistoryDatabase,
-        remoteMediator: BallingHistoryRemoteMediator
+        remoteMediator: HistoryRemoteMediator<BallingHistoryLogEntry>
     ): Pager<Int, BallingHistoryLogEntry> {
         return Pager(
-            config = PagingConfig(pageSize = 20),
+            config = PagingConfig(
+                pageSize = 20,
+                prefetchDistance = 10,
+                initialLoadSize = 40
+            ),
             remoteMediator = remoteMediator,
             pagingSourceFactory = {
                 database.ballingHistoryDao().pagingSource()

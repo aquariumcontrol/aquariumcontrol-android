@@ -24,47 +24,17 @@ package com.laimburggasse.aquariumcontrol.balling.data
 
 import androidx.paging.Pager
 import androidx.paging.PagingData
-import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingHistoryRemoteMediator
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingHistoryRepository
+import com.laimburggasse.aquariumcontrol.common.data.HistoryRepositoryImpl
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 open class BallingHistoryRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
-    private val pager: Pager<Int, BallingHistoryLogEntry>
-): BallingHistoryRepository {
+    pager: Pager<Int, BallingHistoryLogEntry>
+) : HistoryRepositoryImpl<BallingHistoryLogEntry>(sessionManager, pager), BallingHistoryRepository {
 
-    // Trigger for manual refreshes (e.g., pull-to-refresh)
-    private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
-
-    /**
-     * A reactive Flow that provides the Balling History events using Paging 3.
-     */
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override val ballingHistoryDosingEventFlow: Flow<PagingData<BallingHistoryLogEntry>> =
-        combine(
-            flow = sessionManager.selectedControllerProfile,
-            flow2 = refreshTrigger.onStart { emit(value = Unit) }, // Trigger on first collection
-        ) { controller, _ ->
-            controller
-        }
-        .filter { it != null } // Only proceed if a controller is selected
-        .flatMapLatest { _ ->
-            pager.flow
-        }
-
-    /**
-     * Public function for the ViewModel to trigger a manual refresh.
-     */
-    override suspend fun triggerRefresh() {
-        refreshTrigger.emit(value = Unit)
-    }
+    override val ballingHistoryDosingEventFlow: Flow<PagingData<BallingHistoryLogEntry>> = historyEventFlow
 }

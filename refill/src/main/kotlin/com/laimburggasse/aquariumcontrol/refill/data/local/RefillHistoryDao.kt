@@ -28,14 +28,16 @@ import androidx.room.Query
 import androidx.room.Upsert
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
 
+import com.laimburggasse.aquariumcontrol.common.data.local.BaseHistoryDao
+
 @Dao
-interface RefillHistoryDao {
+interface RefillHistoryDao : BaseHistoryDao<RefillHistoryLogEntry> {
     @Upsert
-    suspend fun upsertAll(refillHistoryLogEntries: List<RefillHistoryLogEntry>)
+    override suspend fun upsertAll(entries: List<RefillHistoryLogEntry>)
 
     @Query(value = "SELECT * FROM ${RefillHistoryDatabase.TABLE_NAME_REFILL_LOG} ORDER BY timestamp DESC")
     fun pagingSource(): PagingSource<Int, RefillHistoryLogEntry>
 
     @Query(value = "DELETE FROM ${RefillHistoryDatabase.TABLE_NAME_REFILL_LOG}")
-    fun clearAll()
+    override suspend fun clearAll()
 }

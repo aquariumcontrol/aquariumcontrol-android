@@ -28,14 +28,16 @@ import androidx.room.Query
 import androidx.room.Upsert
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
 
+import com.laimburggasse.aquariumcontrol.common.data.local.BaseHistoryDao
+
 @Dao
-interface BallingHistoryDao {
+interface BallingHistoryDao : BaseHistoryDao<BallingHistoryLogEntry> {
     @Upsert
-    suspend fun upsertAll(ballingHistoryLogEntries: List<BallingHistoryLogEntry>)
+    override suspend fun upsertAll(entries: List<BallingHistoryLogEntry>)
 
     @Query(value = "SELECT * FROM ${BallingHistoryDatabase.TABLE_NAME_BALLING_LOG} ORDER BY timestamp DESC")
     fun pagingSource(): PagingSource<Int, BallingHistoryLogEntry>
 
     @Query(value = "DELETE FROM ${BallingHistoryDatabase.TABLE_NAME_BALLING_LOG}")
-    fun clearAll()
+    override suspend fun clearAll()
 }

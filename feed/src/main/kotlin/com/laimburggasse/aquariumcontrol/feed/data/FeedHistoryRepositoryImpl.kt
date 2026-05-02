@@ -24,46 +24,17 @@ package com.laimburggasse.aquariumcontrol.feed.data
 
 import androidx.paging.Pager
 import androidx.paging.PagingData
+import com.laimburggasse.aquariumcontrol.common.data.HistoryRepositoryImpl
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedHistoryRepository
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 open class FeedHistoryRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
-    private val pager: Pager<Int, FeedHistoryLogEntry>
-): FeedHistoryRepository {
+    pager: Pager<Int, FeedHistoryLogEntry>
+) : HistoryRepositoryImpl<FeedHistoryLogEntry>(sessionManager, pager), FeedHistoryRepository {
 
-    // Trigger for manual refreshes (e.g., pull-to-refresh)
-    private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
-
-    /**
-     * A reactive Flow that provides the Feed History events using Paging 3.
-     */
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override val feedHistoryEventFlow: Flow<PagingData<FeedHistoryLogEntry>> =
-        combine(
-            flow = sessionManager.selectedControllerProfile,
-            flow2 = refreshTrigger.onStart { emit(value = Unit) }, // Trigger on first collection
-        ) { controller, _ ->
-            controller
-        }
-            .filter { it != null } // Only proceed if a controller is selected
-            .flatMapLatest { _ ->
-                pager.flow
-            }
-
-    /**
-     * Public function for the ViewModel to trigger a manual refresh.
-     */
-    override suspend fun triggerRefresh() {
-        refreshTrigger.emit(value = Unit)
-    }
+    override val feedHistoryEventFlow: Flow<PagingData<FeedHistoryLogEntry>> = historyEventFlow
 }

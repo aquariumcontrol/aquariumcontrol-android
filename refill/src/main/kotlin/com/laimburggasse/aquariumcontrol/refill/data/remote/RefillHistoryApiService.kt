@@ -29,16 +29,18 @@ import retrofit2.http.Header
 import retrofit2.http.Query
 import retrofit2.http.Url
 
-interface RefillHistoryApiService {
+import com.laimburggasse.aquariumcontrol.common.data.remote.BaseHistoryApiService
+
+interface RefillHistoryApiService : BaseHistoryApiService {
     @GET
-    suspend fun getRefillHistory(
+    override suspend fun getHistory(
         @Url url: String,
         @Header("Authorization") authHeader: String,
         @Query("date") date: String,
     ): List<RefillHistoryLogEntry>
 
     @GET
-    suspend fun getRefillHistoryStart(
+    override suspend fun getHistoryStart(
         @Url url: String,
         @Header("Authorization") authHeader: String,
     ): TimestampJsonObject

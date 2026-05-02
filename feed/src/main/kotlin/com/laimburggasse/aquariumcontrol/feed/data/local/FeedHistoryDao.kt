@@ -28,14 +28,16 @@ import androidx.room.Query
 import androidx.room.Upsert
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
 
+import com.laimburggasse.aquariumcontrol.common.data.local.BaseHistoryDao
+
 @Dao
-interface FeedHistoryDao {
+interface FeedHistoryDao : BaseHistoryDao<FeedHistoryLogEntry> {
     @Upsert
-    suspend fun upsertAll(feedHistoryLogEntries: List<FeedHistoryLogEntry>)
+    override suspend fun upsertAll(entries: List<FeedHistoryLogEntry>)
 
     @Query(value = "SELECT * FROM ${FeedHistoryDatabase.TABLE_NAME_FEED_LOG} ORDER BY timestamp DESC")
     fun pagingSource(): PagingSource<Int, FeedHistoryLogEntry>
 
     @Query(value = "DELETE FROM ${FeedHistoryDatabase.TABLE_NAME_FEED_LOG}")
-    fun clearAll()
+    override suspend fun clearAll()
 }

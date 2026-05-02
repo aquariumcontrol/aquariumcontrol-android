@@ -29,15 +29,17 @@ import com.laimburggasse.aquariumcontrol.refill.data.local.RefillHistoryDatabase
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+import com.laimburggasse.aquariumcontrol.common.domain.BaseHistoryLogEntry
+
 @Entity(tableName = RefillHistoryDatabase.TABLE_NAME_REFILL_LOG)
 @Serializable
 data class RefillHistoryLogEntry(
     // This data class represents a refill event.
     @PrimaryKey
     @SerialName(value = WebApiParams.TIMESTAMP)
-    val timestamp: String,
+    override val timestamp: String,
     @SerialName(value = WebApiParams.REFILL_DURATION)
     val duration: Double,
     @SerialName(value = WebApiParams.REFILL_VOLUME)
     val volume: Double
-)
+) : BaseHistoryLogEntry

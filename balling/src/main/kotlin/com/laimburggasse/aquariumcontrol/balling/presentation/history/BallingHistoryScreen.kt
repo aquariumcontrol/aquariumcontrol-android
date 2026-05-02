@@ -63,140 +63,22 @@ import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoute
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
+import com.laimburggasse.aquariumcontrol.common.presentation.GenericHistoryScreen
+
 @Composable
 fun BallingHistoryScreen(
     ballingHistoryFlow: Flow<PagingData<BallingHistoryLogEntry>>,
     previewData: List<BallingHistoryLogEntry>? = null
 ) {
-    // This screen displays:
-    // - headline
-    // - list of balling events
-    val context = LocalContext.current
-    val ballingHistoryLogEntries = ballingHistoryFlow.collectAsLazyPagingItems()
-
-    // Issue Toast when loading fails
-    if (LocalInspectionMode.current) {
-        LaunchedEffect(key1 = ballingHistoryLogEntries.loadState) {
-            if (ballingHistoryLogEntries.loadState.refresh is LoadState.Error) {
-                val loadState = (ballingHistoryLogEntries.loadState.refresh as LoadState.Error)
-                val errorMessage = loadState.error.message
-                Toast.makeText(context, "API error: $errorMessage", Toast.LENGTH_LONG).show()
-            }
-        }
-    }
-
-    Column(
-        modifier = Modifier.fillMaxSize().padding(all = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        ScreenHeadlineComposable(text = stringResource(id = R.string.balling_log))
-
-        Scaffold(
-            topBar = {},
-            bottomBar = {},
-            floatingActionButton = {},
-            snackbarHost = { SnackbarHost(hostState = remember { SnackbarHostState() })}
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier.fillMaxSize().padding(paddingValues = innerPadding),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                val isRefreshing = if (previewData == null) {
-                    ballingHistoryLogEntries.loadState.mediator?.refresh is LoadState.Loading ||
-                            ballingHistoryLogEntries.loadState.refresh is LoadState.Loading
-                }
-                else {
-                    false
-                }
-
-                PullToRefreshBox(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center,
-                    state = rememberPullToRefreshState(),
-                    isRefreshing = isRefreshing,
-                    onRefresh = { ballingHistoryLogEntries.refresh() },
-                    indicator = {
-                        // Custom indicator to match the requested size if needed
-                        if (isRefreshing) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(size = 48.dp),
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    }
-                ) {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        val loadState = ballingHistoryLogEntries.loadState
-                        
-                        when {
-                            (loadState.mediator?.refresh is LoadState.Loading || loadState.refresh is LoadState.Loading)
-                                    && ballingHistoryLogEntries.itemCount == 0
-                                    && previewData == null -> {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.align(Alignment.Center).size(size = 150.dp),
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-
-                            }
-                            loadState.refresh is LoadState.Error
-                                    && ballingHistoryLogEntries.itemCount == 0
-                                    && previewData == null -> {
-                                val error = (loadState.refresh as LoadState.Error).error
-                                Text(
-                                    text = error.localizedMessage ?: "Unknown Error",
-                                    color = MaterialTheme.colorScheme.error,
-                                    modifier = Modifier.align(Alignment.Center)
-                                )
-                            }
-                            loadState.refresh is LoadState.NotLoading
-                                    && ballingHistoryLogEntries.itemCount == 0
-                                    && previewData == null -> {
-                                Text(
-                                    text = stringResource(R.string.no_balling_events_found),
-                                    modifier = Modifier.align(Alignment.Center)
-                                )
-                            }
-                            else -> {
-                                if (LocalInspectionMode.current) {
-                                    // In Preview: Render a simple, static Column instead of LazyColumn
-                                    Column(modifier = Modifier.fillMaxSize()) {
-                                        previewData?.forEach { ballingHistoryLogEntry ->
-                                            BallingHistoryLogEntryComposable(
-                                                ballingHistoryLogEntry
-                                            )
-                                        }
-                                    }
-                                }
-                                else {
-                                    // In App Runtime: Use the performant LazyColumn
-                                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                        items(count = ballingHistoryLogEntries.itemCount) { index ->
-                                            val ballingHistoryLogEntry =
-                                                ballingHistoryLogEntries[index]
-                                            if (ballingHistoryLogEntry != null) {
-                                                BallingHistoryLogEntryComposable(
-                                                    ballingHistoryLogEntry
-                                                )
-                                            }
-                                        }
-                                        item {
-                                            if (loadState.append is LoadState.Loading || loadState.mediator?.append is LoadState.Loading) {
-                                                CircularProgressIndicator(
-                                                    modifier = Modifier.fillMaxWidth()
-                                                        .padding(16.dp).size(size = 50.dp),
-                                                    color = MaterialTheme.colorScheme.primary
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+    GenericHistoryScreen(
+        historyFlow = ballingHistoryFlow,
+        headline = stringResource(id = R.string.balling_log),
+        noEventsMessage = stringResource(R.string.no_balling_events_found),
+        entryComposable = { ballingHistoryLogEntry ->
+            BallingHistoryLogEntryComposable(ballingHistoryLogEntry)
+        },
+        previewData = previewData
+    )
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)

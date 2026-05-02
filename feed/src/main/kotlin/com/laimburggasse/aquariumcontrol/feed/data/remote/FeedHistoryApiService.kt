@@ -29,16 +29,18 @@ import retrofit2.http.Header
 import retrofit2.http.Query
 import retrofit2.http.Url
 
-interface FeedHistoryApiService {
+import com.laimburggasse.aquariumcontrol.common.data.remote.BaseHistoryApiService
+
+interface FeedHistoryApiService : BaseHistoryApiService {
     @GET
-    suspend fun getFeedHistory(
+    override suspend fun getHistory(
         @Url url: String,
         @Header("Authorization") authHeader: String,
         @Query("date") date: String,
     ): List<FeedHistoryLogEntry>
 
     @GET
-    suspend fun getFeedHistoryStart(
+    override suspend fun getHistoryStart(
         @Url url: String,
         @Header("Authorization") authHeader: String,
     ): TimestampJsonObject

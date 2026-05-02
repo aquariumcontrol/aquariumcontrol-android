@@ -63,140 +63,22 @@ import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedHisto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
+import com.laimburggasse.aquariumcontrol.common.presentation.GenericHistoryScreen
+
 @Composable
 fun FeedHistoryScreen(
     feedHistoryFlow: Flow<PagingData<FeedHistoryLogEntry>>,
     previewData: List<FeedHistoryLogEntry>? = null
 ) {
-    // This screen displays:
-    // - headline
-    // - list of feed events
-    val context = LocalContext.current
-    val feedHistoryLogEntries = feedHistoryFlow.collectAsLazyPagingItems()
-
-    // Issue Toast when loading fails
-    if (LocalInspectionMode.current) {
-        LaunchedEffect(key1 = feedHistoryLogEntries.loadState) {
-            if (feedHistoryLogEntries.loadState.refresh is LoadState.Error) {
-                val loadState = (feedHistoryLogEntries.loadState.refresh as LoadState.Error)
-                val errorMessage = loadState.error.message
-                Toast.makeText(context, "API error: $errorMessage", Toast.LENGTH_LONG).show()
-            }
-        }
-    }
-
-    Column(
-        modifier = Modifier.fillMaxSize().padding(all = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        ScreenHeadlineComposable(text = stringResource(id = R.string.feed_log))
-
-        Scaffold(
-            topBar = {},
-            bottomBar = {},
-            floatingActionButton = {},
-            snackbarHost = { SnackbarHost(hostState = remember { SnackbarHostState() })}
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier.fillMaxSize().padding(paddingValues = innerPadding),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                val isRefreshing = if (previewData == null) {
-                    feedHistoryLogEntries.loadState.mediator?.refresh is LoadState.Loading ||
-                            feedHistoryLogEntries.loadState.refresh is LoadState.Loading
-                }
-                else {
-                    false
-                }
-
-                PullToRefreshBox(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center,
-                    state = rememberPullToRefreshState(),
-                    isRefreshing = isRefreshing,
-                    onRefresh = { feedHistoryLogEntries.refresh() },
-                    indicator = {
-                        // Custom indicator to match the requested size if needed 
-                        if (isRefreshing) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(size = 48.dp),
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    }
-                ) {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        val loadState = feedHistoryLogEntries.loadState
-
-                        when {
-                            (loadState.mediator?.refresh is LoadState.Loading || loadState.refresh is LoadState.Loading)
-                                    && feedHistoryLogEntries.itemCount == 0
-                                    && previewData == null -> {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.align(Alignment.Center).size(size = 150.dp),
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-
-                            }
-                            loadState.refresh is LoadState.Error
-                                    && feedHistoryLogEntries.itemCount == 0
-                                    && previewData == null -> {
-                                val error = (loadState.refresh as LoadState.Error).error
-                                Text(
-                                    text = error.localizedMessage ?: "Unknown Error",
-                                    color = MaterialTheme.colorScheme.error,
-                                    modifier = Modifier.align(Alignment.Center)
-                                )
-                            }
-                            loadState.refresh is LoadState.NotLoading
-                                    && feedHistoryLogEntries.itemCount == 0
-                                    && previewData == null -> {
-                                Text(
-                                    text = stringResource(R.string.no_feed_events_found),
-                                    modifier = Modifier.align(Alignment.Center)
-                                )
-                            }
-                            else -> {
-                                if (LocalInspectionMode.current) {
-                                    // In Preview: Render a simple, static Column instead of LazyColumn
-                                    Column(modifier = Modifier.fillMaxSize()) {
-                                        previewData?.forEach { feedHistoryLogEntry ->
-                                            FeedHistoryLogEntryComposable(
-                                                feedHistoryLogEntry
-                                            )
-                                        }
-                                    }
-                                }
-                                else {
-                                    // In App Runtime: Use the performant LazyColumn
-                                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                        items(count = feedHistoryLogEntries.itemCount) { index ->
-                                            val feedHistoryLogEntry =
-                                                feedHistoryLogEntries[index]
-                                            if (feedHistoryLogEntry != null) {
-                                                FeedHistoryLogEntryComposable(
-                                                    feedHistoryLogEntry
-                                                )
-                                            }
-                                        }
-                                        item {
-                                            if (loadState.append is LoadState.Loading || loadState.mediator?.append is LoadState.Loading) {
-                                                CircularProgressIndicator(
-                                                    modifier = Modifier.fillMaxWidth()
-                                                        .padding(16.dp).size(size = 50.dp),
-                                                    color = MaterialTheme.colorScheme.primary
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+    GenericHistoryScreen(
+        historyFlow = feedHistoryFlow,
+        headline = stringResource(id = R.string.feed_log),
+        noEventsMessage = stringResource(R.string.no_feed_events_found),
+        entryComposable = { feedHistoryLogEntry ->
+            FeedHistoryLogEntryComposable(feedHistoryLogEntry)
+        },
+        previewData = previewData
+    )
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)

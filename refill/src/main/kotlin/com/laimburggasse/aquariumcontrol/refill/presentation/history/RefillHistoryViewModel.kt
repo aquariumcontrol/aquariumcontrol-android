@@ -22,9 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.refill.presentation.history
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import androidx.paging.cachedIn
+import com.laimburggasse.aquariumcontrol.common.presentation.HistoryViewModel
+import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillHistoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -32,6 +31,6 @@ import javax.inject.Inject
 @HiltViewModel
 class RefillHistoryViewModel @Inject constructor(
     repository: RefillHistoryRepository
-): ViewModel() {
-    val refillHistoryFlow = repository.refillHistoryEventFlow.cachedIn(viewModelScope)
+) : HistoryViewModel<RefillHistoryLogEntry>(repository) {
+    val refillHistoryFlow = historyFlow
 }

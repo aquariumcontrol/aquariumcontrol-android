@@ -27,10 +27,12 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.room.Room
+import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryRemoteMediator
+import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
+import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.feed.data.local.FeedHistoryDao
 import com.laimburggasse.aquariumcontrol.feed.data.local.FeedHistoryDatabase
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedHistoryApiService
-import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedHistoryRemoteMediator
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
 import dagger.Module
 import dagger.Provides
@@ -38,8 +40,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-
-import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -67,11 +67,14 @@ object FeedDatabaseModule {
         database: FeedHistoryDatabase,
         apiService: FeedHistoryApiService,
         sessionManager: SessionManager
-    ): FeedHistoryRemoteMediator {
-        return FeedHistoryRemoteMediator(
-            feedHistoryDatabase = database,
-            feedHistoryApiService = apiService,
+    ): HistoryRemoteMediator<FeedHistoryLogEntry> {
+        return HistoryRemoteMediator(
+            database = database,
+            dao = database.feedHistoryDao(),
+            apiService = apiService,
             sessionManager = sessionManager,
+            loadEventsUrlPath = WebApiUrls.FEED_LOAD_EVENTS,
+            loadFirstEventUrlPath = WebApiUrls.FEED_LOAD_FIRST_EVENT
         )
     }
 
@@ -80,10 +83,14 @@ object FeedDatabaseModule {
     @Singleton
     fun provideFeedHistoryPager(
         database: FeedHistoryDatabase,
-        remoteMediator: FeedHistoryRemoteMediator
+        remoteMediator: HistoryRemoteMediator<FeedHistoryLogEntry>
     ): Pager<Int, FeedHistoryLogEntry> {
         return Pager(
-            config = PagingConfig(pageSize = 20),
+            config = PagingConfig(
+                pageSize = 20,
+                prefetchDistance = 10,
+                initialLoadSize = 40
+            ),
             remoteMediator = remoteMediator,
             pagingSourceFactory = {
                 database.feedHistoryDao().pagingSource()

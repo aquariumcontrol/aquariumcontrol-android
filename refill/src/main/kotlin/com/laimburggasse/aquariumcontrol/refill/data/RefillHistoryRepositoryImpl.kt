@@ -24,46 +24,17 @@ package com.laimburggasse.aquariumcontrol.refill.data
 
 import androidx.paging.Pager
 import androidx.paging.PagingData
+import com.laimburggasse.aquariumcontrol.common.data.HistoryRepositoryImpl
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillHistoryRepository
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 open class RefillHistoryRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
-    private val pager: Pager<Int, RefillHistoryLogEntry>
-): RefillHistoryRepository {
+    pager: Pager<Int, RefillHistoryLogEntry>
+) : HistoryRepositoryImpl<RefillHistoryLogEntry>(sessionManager, pager), RefillHistoryRepository {
 
-    // Trigger for manual refreshes (e.g., pull-to-refresh)
-    private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
-
-    /**
-     * A reactive Flow that provides the Refill History events using Paging 3.
-     */
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override val refillHistoryEventFlow: Flow<PagingData<RefillHistoryLogEntry>> =
-        combine(
-            flow = sessionManager.selectedControllerProfile,
-            flow2 = refreshTrigger.onStart { emit(value = Unit) }, // Trigger on first collection
-        ) { controller, _ ->
-            controller
-        }
-            .filter { it != null } // Only proceed if a controller is selected
-            .flatMapLatest { _ ->
-                pager.flow
-            }
-
-    /**
-     * Public function for the ViewModel to trigger a manual refresh.
-     */
-    override suspend fun triggerRefresh() {
-        refreshTrigger.emit(value = Unit)
-    }
+    override val refillHistoryEventFlow: Flow<PagingData<RefillHistoryLogEntry>> = historyEventFlow
 }

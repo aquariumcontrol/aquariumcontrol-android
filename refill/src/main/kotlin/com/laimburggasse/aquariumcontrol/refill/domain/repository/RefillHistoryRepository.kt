@@ -26,7 +26,8 @@ import androidx.paging.PagingData
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
 import kotlinx.coroutines.flow.Flow
 
-interface RefillHistoryRepository {
+import com.laimburggasse.aquariumcontrol.common.domain.HistoryRepository
+
+interface RefillHistoryRepository : HistoryRepository<RefillHistoryLogEntry> {
     val refillHistoryEventFlow: Flow<PagingData<RefillHistoryLogEntry>>
-    suspend fun triggerRefresh()
 }
