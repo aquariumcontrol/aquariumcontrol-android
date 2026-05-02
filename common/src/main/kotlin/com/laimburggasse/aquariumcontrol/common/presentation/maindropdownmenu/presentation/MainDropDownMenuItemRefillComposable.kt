@@ -54,8 +54,7 @@ fun MainDropDownMenuItemRefillComposable(
         },
         enabled = isControllerLoaded &&
                     navigationRouteSource != ViewNavigationRoutes.refill &&
-                    navigationRouteSource != ViewNavigationRoutes.refillHistory24h &&
-                    navigationRouteSource != ViewNavigationRoutes.refillHistory7d
+                    navigationRouteSource != ViewNavigationRoutes.refillHistory
     )
 }
 

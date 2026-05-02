@@ -76,7 +76,6 @@ import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScheduleSel
 import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScheduleViewModel
 import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScreen
 import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryScreen
-import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryUiState
 import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryViewModel
 import com.laimburggasse.aquariumcontrol.feed.presentation.navigation.handleFeedNavigation
 import com.laimburggasse.aquariumcontrol.feed.presentation.schedule.FeedProfileScheduleScreen
@@ -94,7 +93,6 @@ import com.laimburggasse.aquariumcontrol.refill.presentation.entry.RefillScreenE
 import com.laimburggasse.aquariumcontrol.refill.presentation.entry.RefillStateUiState
 import com.laimburggasse.aquariumcontrol.refill.presentation.entry.RefillViewModel
 import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryScreen
-import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryUiState
 import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryViewModel
 import com.laimburggasse.aquariumcontrol.refill.presentation.navigation.handleRefillNavigation
 import com.laimburggasse.aquariumcontrol.schedule.presentation.ScheduleScreen
@@ -289,41 +287,14 @@ class MainActivity : ComponentActivity() {
                             darkTheme = isSystemInDarkTheme()
                         )
                     }
-                    composable(route = ViewNavigationRoutes.feedHistory24h) {
+                    composable(route = ViewNavigationRoutes.feedHistory) {
                         val feedHistoryViewModel: FeedHistoryViewModel = hiltViewModel()
-                        val feedHistoryUiState: FeedHistoryUiState by
-                        feedHistoryViewModel.feedHistoryUiState.collectAsStateWithLifecycle()
                         MainScaffold(
                             isControllerLoaded,
-                            navigationRouteSource = ViewNavigationRoutes.feedHistory24h,
+                            navigationRouteSource = ViewNavigationRoutes.feedHistory,
                             screenContent = {
                                 FeedHistoryScreen(
-                                    showFullWeek = false,
-                                    feedHistoryUiState,
-                                    onFeedHistoryEvent = feedHistoryViewModel::onEvent
-                                )
-                            },
-                            onNavigate = { event ->
-                                navHostController.handleMainDropDownMenuNavigation(
-                                    event,
-                                    sessionManager
-                                )
-                            },
-                            darkTheme = isSystemInDarkTheme()
-                        )
-                    }
-                    composable(route = ViewNavigationRoutes.feedHistory7d) {
-                        val feedHistoryViewModel: FeedHistoryViewModel = hiltViewModel()
-                        val feedHistoryUiState: FeedHistoryUiState by
-                        feedHistoryViewModel.feedHistoryUiState.collectAsStateWithLifecycle()
-                        MainScaffold(
-                            isControllerLoaded,
-                            navigationRouteSource = ViewNavigationRoutes.feedHistory7d,
-                            screenContent = {
-                                FeedHistoryScreen(
-                                    showFullWeek = true,
-                                    feedHistoryUiState,
-                                    onFeedHistoryEvent = feedHistoryViewModel::onEvent
+                                    feedHistoryViewModel.feedHistoryFlow
                                 )
                             },
                             onNavigate = { event ->
@@ -561,41 +532,14 @@ class MainActivity : ComponentActivity() {
                             darkTheme = isSystemInDarkTheme()
                         )
                     }
-                    composable(route = ViewNavigationRoutes.refillHistory24h) {
+                    composable(route = ViewNavigationRoutes.refillHistory) {
                         val refillHistoryViewModel: RefillHistoryViewModel = hiltViewModel()
-                        val refillHistoryUiState: RefillHistoryUiState by
-                            refillHistoryViewModel.refillHistoryUiState.collectAsStateWithLifecycle()
                         MainScaffold(
                             isControllerLoaded,
-                            navigationRouteSource = ViewNavigationRoutes.refillHistory24h,
+                            navigationRouteSource = ViewNavigationRoutes.refillHistory,
                             screenContent = {
                                 RefillHistoryScreen(
-                                    showFullWeek = false,
-                                    refillHistoryUiState,
-                                    onRefillHistoryEvent = refillHistoryViewModel::onEvent
-                                )
-                            },
-                            onNavigate = { event ->
-                                navHostController.handleMainDropDownMenuNavigation(
-                                    event,
-                                    sessionManager
-                                )
-                            },
-                            darkTheme = isSystemInDarkTheme()
-                        )
-                    }
-                    composable(route = ViewNavigationRoutes.refillHistory7d) {
-                        val refillHistoryViewModel: RefillHistoryViewModel = hiltViewModel()
-                        val refillHistoryUiState: RefillHistoryUiState by
-                            refillHistoryViewModel.refillHistoryUiState.collectAsStateWithLifecycle()
-                        MainScaffold(
-                            isControllerLoaded,
-                            navigationRouteSource = ViewNavigationRoutes.refillHistory7d,
-                            screenContent = {
-                                RefillHistoryScreen(
-                                    showFullWeek = true,
-                                    refillHistoryUiState,
-                                    onRefillHistoryEvent = refillHistoryViewModel::onEvent,
+                                    refillHistoryViewModel.refillHistoryFlow
                                 )
                             },
                             onNavigate = { event ->

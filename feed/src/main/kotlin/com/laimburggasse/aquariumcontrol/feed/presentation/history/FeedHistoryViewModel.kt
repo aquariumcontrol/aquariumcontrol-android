@@ -24,6 +24,7 @@ package com.laimburggasse.aquariumcontrol.feed.presentation.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedHistoryRepository
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
@@ -37,39 +38,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FeedHistoryViewModel @Inject constructor(
-    private val feedHistoryRepository: FeedHistoryRepository<FeedHistoryLogEntry>
+    feedHistoryRepository: FeedHistoryRepository
 ): ViewModel() {
-    val feedHistoryUiState: StateFlow<FeedHistoryUiState> = feedHistoryRepository.feedHistoryEventFlow
-        .map { result ->
-            when (result) {
-                is DataFetchResult.Error -> FeedHistoryUiState.Error(errorMessage = result.errorMessage)
-                is DataFetchResult.Success -> {
-                    if (result.data.isEmpty()) {
-                        FeedHistoryUiState.Empty
-                    } else {
-                        FeedHistoryUiState.Success(feedHistoryLogEntries = result.data)
-                    }
-                }
-                DataFetchResult.Loading -> FeedHistoryUiState.Loading
-            }
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Eagerly,
-            initialValue = FeedHistoryUiState.Loading
-        )
-
-    fun onEvent(event: FeedHistoryUiEvent) {
-        when (event) {
-            is FeedHistoryUiEvent.Refresh -> {
-                viewModelScope.launch {
-                    feedHistoryRepository.triggerRefresh()
-                }
-            }
-            is FeedHistoryUiEvent.SetRange -> {
-                viewModelScope.launch {
-                    feedHistoryRepository.setHistoryTimeRange(fetchFullWeek = event.showFullWeek)
-                }
-            }
-        }
-    }
+    val feedHistoryFlow = feedHistoryRepository.feedHistoryEventFlow.cachedIn(viewModelScope)
 }

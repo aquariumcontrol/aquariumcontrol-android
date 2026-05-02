@@ -81,6 +81,8 @@ object WebApiParams {
 
     const val IS_ACTIVE = "isActive"
 
+    const val FEEDER_ON_TIME = "feederOnTime"
+
     const val WATER_TEMPERATURE = "waterTemperature"
 
     const val FILTERED_WATER_TEMPERATURE = "filteredWaterTemperature"

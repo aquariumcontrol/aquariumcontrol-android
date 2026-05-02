@@ -42,10 +42,6 @@ object FeedPreviewDataImpl: FeedPreviewData {
     override val mockFeedScheduleSelectionUiStateError = FeedMockData.mockFeedScheduleSelectionUiStateError
     override val mockEvent = FeedMockData.mockEvent
     override val mockFeedHistoryLogEntries = FeedMockData.mockFeedHistoryLogEntries
-    override val mockFeedHistoryUiStateSuccess = FeedMockData.mockFeedHistoryUiStateSuccess
-    override val mockFeedHistoryUiStateError = FeedMockData.mockFeedHistoryUiStateError
-    override val mockFeedHistoryUiStateEmpty = FeedMockData.mockFeedHistoryUiStateEmpty
-    override val mockFeedHistoryUiStateLoading = FeedMockData.mockFeedHistoryUiStateLoading
     override val mockFeedProfileImportForScheduleScreen = FeedMockData.mockFeedProfileImportForScheduleScreen
     override val mockFeedProfileForScheduleScreen = FeedMockData.mockFeedProfileForScheduleScreen
     override val mockFeedScheduleEntryImport = FeedMockData.mockFeedScheduleEntryImport

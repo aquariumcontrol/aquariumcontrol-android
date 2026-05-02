@@ -23,7 +23,6 @@
 package com.laimburggasse.aquariumcontrol.balling.presentation.history
 
 import android.content.res.Configuration
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -75,13 +74,13 @@ fun BallingHistoryScreen(
     val context = LocalContext.current
     val ballingHistoryLogEntries = ballingHistoryFlow.collectAsLazyPagingItems()
 
+    // Issue Toast when loading fails
     if (LocalInspectionMode.current) {
         LaunchedEffect(key1 = ballingHistoryLogEntries.loadState) {
             if (ballingHistoryLogEntries.loadState.refresh is LoadState.Error) {
                 val loadState = (ballingHistoryLogEntries.loadState.refresh as LoadState.Error)
                 val errorMessage = loadState.error.message
                 Toast.makeText(context, "API error: $errorMessage", Toast.LENGTH_LONG).show()
-                errorMessage?.let { Log.d("BallingHistoryScreen", it) }
             }
         }
     }
@@ -117,9 +116,7 @@ fun BallingHistoryScreen(
                     isRefreshing = isRefreshing,
                     onRefresh = { ballingHistoryLogEntries.refresh() },
                     indicator = {
-                        // Custom indicator to match the requested size if needed, 
-                        // but normally PullToRefreshBox handles its own indicator.
-                        // If we use the 'indicator' slot, we must manage its visibility.
+                        // Custom indicator to match the requested size if needed
                         if (isRefreshing) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(size = 48.dp),

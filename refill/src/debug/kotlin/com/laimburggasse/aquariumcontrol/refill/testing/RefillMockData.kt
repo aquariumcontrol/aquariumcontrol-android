@@ -24,38 +24,27 @@ package com.laimburggasse.aquariumcontrol.refill.testing
 
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillState
-import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryUiState
 import java.sql.Timestamp
 
 object RefillMockData {
     val mockFixedTimestamp = Timestamp(0L)
     val mockEvent = RefillHistoryLogEntry(
-        timestamp = mockFixedTimestamp,
+        timestamp = mockFixedTimestamp.toString(),
         duration = 60.0,
         volume = 10.0
     )
     val mockRefillHistoryLogEntries = listOf(
         RefillHistoryLogEntry(
-            timestamp = Timestamp(0L),
+            timestamp = Timestamp(0L).toString(),
             duration = 60.0,
             volume = 10.0
         ),
         RefillHistoryLogEntry(
-            timestamp = Timestamp(1000L),
+            timestamp = Timestamp(1000L).toString(),
             duration = 30.0,
             volume = 5.0
         )
     )
-    val mockRefillHistoryUiStateSuccess = RefillHistoryUiState.Success(
-        refillHistoryLogEntries = mockRefillHistoryLogEntries
-    )
-    val mockRefillHistoryUiStateEmpty = RefillHistoryUiState.Empty
-    val mockRefillHistoryUiStateError = RefillHistoryUiState.Error(
-        errorMessage = "Mock Error message"
-    )
 
     val mockRefillStateActive = RefillState.ACTIVE
-    val mockRefillStateError = RefillState.ERROR
-    val mockRefillStateStopped = RefillState.STOPPED
-    val mockRefillStateUnknown = RefillState.UNKNOWN
 }

@@ -36,9 +36,5 @@ object BallingPreviewDataImpl: BallingPreviewData {
     override val mockBallingProfilesUiStateLoading = BallingMockData.mockBallingProfilesUiStateLoading
     override val mockBallingProfilesUiStateEmpty = BallingMockData.mockBallingProfilesUiStateEmpty
     override val mockBallingHistoryLogEntries = BallingMockData.mockBallingHistoryLogEntries
-    override val mockBallingHistoryUiStateSuccess = BallingMockData.mockBallingHistoryUiStateSuccess
-    override val mockBallingHistoryUiStateEmpty = BallingMockData.mockBallingHistoryUiStateEmpty
-    override val mockBallingHistoryUiStateError = BallingMockData.mockBallingHistoryUiStateError
-    override val mockBallingHistoryUiStateLoading = BallingMockData.mockBallingHistoryUiStateLoading
     override val mockBallingEvent = BallingMockData.mockBallingEvent
 }

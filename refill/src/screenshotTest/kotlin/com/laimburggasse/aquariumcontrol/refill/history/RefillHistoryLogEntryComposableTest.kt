@@ -26,22 +26,22 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillLogEntryComposableDarkPreview
-import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillLogEntryComposableLightPreview
+import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryLogEntryComposableDarkPreview
+import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryLogEntryComposableLightPreview
 
 class RefillHistoryLogEntryComposableTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Composable
     fun RefillEventComposableDarkTest() {
-        RefillLogEntryComposableDarkPreview()
+        RefillHistoryLogEntryComposableDarkPreview()
     }
 
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
     fun RefillEventComposableLightTest() {
-        RefillLogEntryComposableLightPreview()
+        RefillHistoryLogEntryComposableLightPreview()
     }
 
 }

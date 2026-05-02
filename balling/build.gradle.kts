@@ -72,8 +72,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.paging.common)
-    implementation(libs.androidx.paging.compose)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
@@ -130,7 +128,11 @@ dependencies {
     implementation(libs.symbol.processing.api)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
+
+    // Paging
     implementation(libs.androidx.room.paging)
+    implementation(libs.androidx.paging.common)
+    implementation(libs.androidx.paging.compose)
 }
 
 // configuration of code coverage reports

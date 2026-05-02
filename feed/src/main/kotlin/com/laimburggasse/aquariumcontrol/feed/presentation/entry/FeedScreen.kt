@@ -28,9 +28,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +41,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
@@ -58,8 +62,7 @@ fun FeedScreen(
 ) {
     // This screen displays
     // - headline
-    // - a button for visualizing all feed events of the last 24h
-    // - a button for visualizing all feed events of the last 7 days
+    // - a button for navigating to history screen
     // - subhead line for feed profiles
     // - feed profiles
     // - subhead line for feed schedule
@@ -74,7 +77,15 @@ fun FeedScreen(
         when (configuration.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> {
                 Row {
-                    FeedHistorySelectionButtonsComposable(onNavigateFromFeed = onNavigateFromFeed)
+                    Button(
+                        modifier = Modifier.padding(horizontal = 8.dp).fillMaxWidth(),
+                        onClick = { onNavigateFromFeed(FeedNavigationEvent.ToFeedHistory, null, null, null) },
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.view_feed_events),
+                            fontSize = 16.sp
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.height(height = 16.dp))
                 if (feedProfilesUiState is FeedProfilesUiState.Loading
@@ -110,10 +121,15 @@ fun FeedScreen(
                 }
             }
             else -> {
-                FeedHistorySelectionButtonsComposable(
-                    modifier = Modifier.fillMaxWidth(),
-                    onNavigateFromFeed
-                )
+                Button(
+                    modifier = Modifier.padding(horizontal = 8.dp).fillMaxWidth(),
+                    onClick = { onNavigateFromFeed(FeedNavigationEvent.ToFeedHistory, null, null, null) },
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.view_feed_events),
+                        fontSize = 16.sp
+                    )
+                }
                 Spacer(modifier = Modifier.height(height = 16.dp))
                 if (feedProfilesUiState is FeedProfilesUiState.Loading
                     || feedScheduleSelectionUiState is FeedScheduleSelectionUiState.Loading) {

@@ -70,7 +70,7 @@ fun BallingScreen(
     onRefresh: () -> Unit
 ) {
     // This screen displays
-    // - a button for visualizing all Balling dosing events
+    // - a button for navigating to history screen
     // - all Balling profiles downloaded from the controller
 
     val configuration: Configuration = LocalConfiguration.current

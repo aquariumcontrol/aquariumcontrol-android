@@ -24,8 +24,6 @@ package com.laimburggasse.aquariumcontrol.balling.data.di
 
 import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingHistoryApiService
 import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingProfileApiService
-import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryLogApiService
-import com.laimburggasse.aquariumcontrol.common.di.BallingHistoryService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

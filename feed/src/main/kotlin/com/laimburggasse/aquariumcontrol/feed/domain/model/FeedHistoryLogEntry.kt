@@ -22,18 +22,24 @@
 
 package com.laimburggasse.aquariumcontrol.feed.domain.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
+import com.laimburggasse.aquariumcontrol.feed.data.local.FeedHistoryDatabase
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+@Entity(tableName = FeedHistoryDatabase.TABLE_NAME_FEED_LOG)
 @Serializable
 data class FeedHistoryLogEntry(
     // This data class represents a feed event.
-    @SerialName("timestamp")
+    @PrimaryKey
+    @SerialName(value = WebApiParams.TIMESTAMP)
     val timestamp: String,
-    @SerialName("feederOnTime")
+    @SerialName(value = WebApiParams.FEEDER_ON_TIME)
     val feederOnTime: Int,
-    @SerialName("profileName")
+    @SerialName(value = WebApiParams.PROFILE_NAME)
     val profileName: String,
-    @SerialName("profileId")
+    @SerialName(WebApiParams.PROFILE_ID)
     val idx: Int
 )

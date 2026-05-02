@@ -32,7 +32,6 @@ import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileEditM
 import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileEditUiState
 import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedProfilesUiState
 import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScheduleSelectionUiState
-import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryUiState
 
 interface FeedPreviewData {
     val mockFeedProfileForSimpleDisplayComposable: FeedProfile
@@ -51,10 +50,6 @@ interface FeedPreviewData {
     val mockFeedScheduleSelectionUiStateError: FeedScheduleSelectionUiState.Error
     val mockEvent: FeedHistoryLogEntry
     val mockFeedHistoryLogEntries: List<FeedHistoryLogEntry>
-    val mockFeedHistoryUiStateSuccess: FeedHistoryUiState.Success
-    val mockFeedHistoryUiStateError: FeedHistoryUiState.Error
-    val mockFeedHistoryUiStateEmpty: FeedHistoryUiState.Empty
-    val mockFeedHistoryUiStateLoading: FeedHistoryUiState.Loading
     val mockFeedProfileImportForScheduleScreen: FeedProfileImport
     val mockFeedProfileForScheduleScreen: FeedProfile
     val mockFeedScheduleEntryImport: FeedScheduleEntryImport

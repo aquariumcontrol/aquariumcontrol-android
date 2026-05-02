@@ -24,6 +24,7 @@ package com.laimburggasse.aquariumcontrol.refill.presentation.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillHistoryRepository
@@ -37,41 +38,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RefillHistoryViewModel @Inject constructor(
-    private val refillHistoryRepository: RefillHistoryRepository<RefillHistoryLogEntry>
+    repository: RefillHistoryRepository
 ): ViewModel() {
-    
-    val refillHistoryUiState: StateFlow<RefillHistoryUiState> = refillHistoryRepository.refillHistoryEventFlow
-        .map { result ->
-            when (result) {
-                is DataFetchResult.Error -> RefillHistoryUiState.Error(errorMessage = result.errorMessage)
-                is DataFetchResult.Success -> {
-                    if (result.data.isEmpty()) {
-                        RefillHistoryUiState.Empty
-                    } else {
-                        RefillHistoryUiState.Success(refillHistoryLogEntries = result.data)
-                    }
-                }
-                DataFetchResult.Loading -> RefillHistoryUiState.Loading
-            }
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Eagerly,
-            initialValue = RefillHistoryUiState.Loading
-        )
-
-    fun onEvent(event: RefillHistoryUiEvent) {
-        when (event) {
-            is RefillHistoryUiEvent.Refresh -> {
-                viewModelScope.launch {
-                    refillHistoryRepository.triggerRefresh()
-                }
-            }
-            is RefillHistoryUiEvent.SetRange -> {
-                viewModelScope.launch {
-                    refillHistoryRepository.setHistoryTimeRange(fetchFullWeek = event.showFullWeek)
-                }
-            }
-        }
-    }
-
+    val refillHistoryFlow = repository.refillHistoryEventFlow.cachedIn(viewModelScope)
 }

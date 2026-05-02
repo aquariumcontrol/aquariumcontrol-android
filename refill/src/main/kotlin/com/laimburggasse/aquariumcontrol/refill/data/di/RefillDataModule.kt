@@ -47,6 +47,6 @@ abstract class RefillDataModule {
     @Binds
     @Singleton
     abstract fun bindRefillHistoryRepository(
-        refillHistoryRepositoryImpl: RefillHistoryRepositoryImpl<RefillHistoryLogEntry>
-    ): RefillHistoryRepository<RefillHistoryLogEntry>
+        refillHistoryRepositoryImpl: RefillHistoryRepositoryImpl
+    ): RefillHistoryRepository
 }

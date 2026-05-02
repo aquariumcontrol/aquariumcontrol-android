@@ -51,7 +51,7 @@ class RefillHistoryScreenTest {
         composeTestRule.setContent {
             MainScaffold(
                 isControllerLoaded = true,
-                navigationRouteSource = ViewNavigationRoutes.refillHistory24h,
+                navigationRouteSource = ViewNavigationRoutes.refillHistory,
                 screenContent = {
                     RefillHistoryScreen(
                         showFullWeek = true,
@@ -77,7 +77,7 @@ class RefillHistoryScreenTest {
         composeTestRule.setContent {
             MainScaffold(
                 isControllerLoaded = true,
-                navigationRouteSource = ViewNavigationRoutes.refillHistory24h,
+                navigationRouteSource = ViewNavigationRoutes.refillHistory,
                 screenContent = {
                     RefillHistoryScreen(
                         showFullWeek = true,
@@ -102,7 +102,7 @@ class RefillHistoryScreenTest {
         composeTestRule.setContent {
             MainScaffold(
                 isControllerLoaded = true,
-                navigationRouteSource = ViewNavigationRoutes.refillHistory24h,
+                navigationRouteSource = ViewNavigationRoutes.refillHistory,
                 screenContent = {
                     RefillHistoryScreen(
                         showFullWeek = true,
@@ -128,7 +128,7 @@ class RefillHistoryScreenTest {
         composeTestRule.setContent {
             MainScaffold(
                 isControllerLoaded = true,
-                navigationRouteSource = ViewNavigationRoutes.refillHistory24h,
+                navigationRouteSource = ViewNavigationRoutes.refillHistory,
                 screenContent = {
                     RefillHistoryScreen(
                         showFullWeek = true,

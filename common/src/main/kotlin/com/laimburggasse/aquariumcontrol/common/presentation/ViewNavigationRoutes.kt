@@ -25,8 +25,6 @@ package com.laimburggasse.aquariumcontrol.common.presentation
 object ViewNavigationRoutes {
     var feed = "feed"
     var feedHistory = "feedHistory"
-    var feedHistory24h = "feedHistory24h"
-    var feedHistory7d = "feedHistory7d"
 
     const val FEED_ARG_PROFILE_ID = "feedProfileId"
     const val FEED_ARG_IS_NEW_SCHEDULE_ENTRY = "isNewScheduleEntry"
@@ -43,8 +41,7 @@ object ViewNavigationRoutes {
     var ballingEdit = "ballingEdit/{$BALLING_PROFILE_ARG_ID}"
 
     var refill = "refill"
-    var refillHistory24h = "refillHistory24h"
-    var refillHistory7d = "refillHistory7d"
+    var refillHistory = "refillHistory"
     var ventilation = "ventilation"
     var heating = "heating"
     var schedule = "schedule"

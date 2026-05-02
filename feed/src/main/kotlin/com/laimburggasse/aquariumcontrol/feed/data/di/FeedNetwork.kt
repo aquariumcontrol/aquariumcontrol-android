@@ -22,8 +22,7 @@
 
 package com.laimburggasse.aquariumcontrol.feed.data.di
 
-import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryLogApiService
-import com.laimburggasse.aquariumcontrol.common.di.FeedHistoryService
+import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedHistoryApiService
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedProfileApiService
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedScheduleEntryApiService
 import dagger.Module
@@ -43,13 +42,10 @@ import javax.inject.Singleton
 object FeedNetwork {
     @Provides
     @Singleton
-    @FeedHistoryService
     fun provideFeedHistoryLogApiService(
         okHttpClient: OkHttpClient
-    ): HistoryLogApiService {
-        return createService<HistoryLogApiService>(
-            okHttpClient
-        )
+    ): FeedHistoryApiService {
+        return createService< FeedHistoryApiService>(okHttpClient)
     }
 
     @Provides

@@ -22,7 +22,6 @@
 
 package com.laimburggasse.aquariumcontrol.balling.data.remote
 
-import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -31,7 +30,6 @@ import androidx.room.withTransaction
 import com.laimburggasse.aquariumcontrol.balling.data.local.BallingHistoryDatabase
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
-import okhttp3.Credentials
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -101,8 +99,7 @@ class BallingHistoryRemoteMediator(
                 }
                 ballingHistoryDatabase.ballingHistoryDao().upsertAll(ballingHistoryLogEntries)
             }
-            // We consider it the end of pagination if we get an empty list for a specific date
-            // Note: This might need adjustment if some days have no logs but earlier days do.
+            // @todo: Extend end of pagination - currently ending with first empty entry
             MediatorResult.Success(endOfPaginationReached = ballingHistoryLogEntries.isEmpty())
         } catch (e: Exception) {
             MediatorResult.Error(e)
