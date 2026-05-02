@@ -40,7 +40,7 @@ class FeedHistoryRemoteMediator(
     private val feedHistoryDatabase: FeedHistoryDatabase,
     private val feedHistoryApiService: FeedHistoryApiService,
     private val sessionManager: SessionManager, // Injected to access server timestamp
-    private var url: String, // Made var to allow updates
+    private var url: String, // var to allow updates
 ): RemoteMediator<Int, FeedHistoryLogEntry>() {
 
     private var authHeaderValue: String = ""

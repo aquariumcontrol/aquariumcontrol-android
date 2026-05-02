@@ -26,14 +26,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedHistoryRepository
-import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
+
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
+
 import javax.inject.Inject
 
 @HiltViewModel
