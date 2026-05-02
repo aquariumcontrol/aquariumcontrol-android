@@ -23,15 +23,18 @@
 package com.laimburggasse.aquariumcontrol.refill
 
 import androidx.compose.ui.test.captureToImage
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onRoot
+import androidx.paging.LoadState
+import androidx.paging.LoadStates
+import androidx.paging.PagingData
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.ScreenshotTestHelper
+import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryScreen
-import com.laimburggasse.aquariumcontrol.refill.testing.RefillMockData.mockRefillHistoryUiStateEmpty
-import com.laimburggasse.aquariumcontrol.refill.testing.RefillMockData.mockRefillHistoryUiStateSuccess
+import com.laimburggasse.aquariumcontrol.refill.testing.RefillMockData.mockRefillHistoryLogEntries
+import kotlinx.coroutines.flow.flowOf
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -54,9 +57,14 @@ class RefillHistoryScreenTest {
                 navigationRouteSource = ViewNavigationRoutes.refillHistory,
                 screenContent = {
                     RefillHistoryScreen(
-                        showFullWeek = true,
-                        refillHistoryUiState = mockRefillHistoryUiStateEmpty,
-                        onRefillHistoryEvent = {}
+                        refillHistoryFlow = flowOf(PagingData.from(
+                            emptyList(),
+                            sourceLoadStates = LoadStates(
+                                refresh = LoadState.NotLoading(true),
+                                prepend = LoadState.NotLoading(true),
+                                append = LoadState.NotLoading(true)
+                            )
+                        ))
                     )
                 },
                 onNavigate = {},
@@ -80,9 +88,14 @@ class RefillHistoryScreenTest {
                 navigationRouteSource = ViewNavigationRoutes.refillHistory,
                 screenContent = {
                     RefillHistoryScreen(
-                        showFullWeek = true,
-                        refillHistoryUiState = mockRefillHistoryUiStateEmpty,
-                        onRefillHistoryEvent = {}
+                        refillHistoryFlow = flowOf(PagingData.from(
+                            emptyList(),
+                            sourceLoadStates = LoadStates(
+                                refresh = LoadState.NotLoading(true),
+                                prepend = LoadState.NotLoading(true),
+                                append = LoadState.NotLoading(true)
+                            )
+                        ))
                     )
                 },
                 onNavigate = {},
@@ -105,9 +118,14 @@ class RefillHistoryScreenTest {
                 navigationRouteSource = ViewNavigationRoutes.refillHistory,
                 screenContent = {
                     RefillHistoryScreen(
-                        showFullWeek = true,
-                        refillHistoryUiState = mockRefillHistoryUiStateSuccess,
-                        onRefillHistoryEvent = {}
+                        refillHistoryFlow = flowOf(PagingData.from(
+                            mockRefillHistoryLogEntries,
+                            sourceLoadStates = LoadStates(
+                                refresh = LoadState.NotLoading(true),
+                                prepend = LoadState.NotLoading(true),
+                                append = LoadState.NotLoading(true)
+                            )
+                        ))
                     )
                 },
                 onNavigate = {},
@@ -131,9 +149,14 @@ class RefillHistoryScreenTest {
                 navigationRouteSource = ViewNavigationRoutes.refillHistory,
                 screenContent = {
                     RefillHistoryScreen(
-                        showFullWeek = true,
-                        refillHistoryUiState = mockRefillHistoryUiStateSuccess,
-                        onRefillHistoryEvent = {}
+                        refillHistoryFlow = flowOf(PagingData.from(
+                            mockRefillHistoryLogEntries,
+                            sourceLoadStates = LoadStates(
+                                refresh = LoadState.NotLoading(true),
+                                prepend = LoadState.NotLoading(true),
+                                append = LoadState.NotLoading(true)
+                            )
+                        ))
                     )
                 },
                 onNavigate = {},
@@ -148,5 +171,4 @@ class RefillHistoryScreenTest {
             imageBitmap = composeTestRule.onRoot().captureToImage()
         )
     }
-
 }

@@ -23,7 +23,7 @@
 package com.laimburggasse.aquariumcontrol.refill
 
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -47,7 +47,7 @@ class RefillScreenUITest {
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Test
-    fun tapping_24h_history_button_navigates_to_RefillHistory24h() {
+    fun tapping_history_button_navigates_to_RefillHistory() {
         var capturedEvent: RefillNavigationEvent? = null
 
         composeTestRule.setContent {
@@ -66,42 +66,13 @@ class RefillScreenUITest {
         }
         composeTestRule.waitForIdle()
 
-        val label24h = context.getString(R.string.view_refill_events_24h)
+        val label24h = context.getString(R.string.view_refill_events)
 
         // check if the state is displayed
         composeTestRule.onNodeWithText(label24h).performClick()
 
         // Assert the callback was triggered with the expected enum value
-        Assert.assertEquals(RefillNavigationEvent.ToRefillHistory24h, capturedEvent)
-    }
-
-    @Test
-    fun tapping_7d_history_button_navigates_to_RefillHistory7d() {
-        var capturedEvent: RefillNavigationEvent? = null
-
-        composeTestRule.setContent {
-            MainScaffold(
-                isControllerLoaded = true,
-                navigationRouteSource = ViewNavigationRoutes.refill,
-                screenContent = {
-                    RefillScreen(
-                        refillStateUiState = RefillStateUiState.Success(RefillState.ACTIVE),
-                        onNavigateFromRefill = { event -> capturedEvent = event}
-                    ) { _ -> }
-                },
-                onNavigate = {},
-                darkTheme = true
-            )
-        }
-        composeTestRule.waitForIdle()
-
-        val label7d = context.getString(R.string.view_refill_events_7d)
-
-        // check if the state is displayed
-        composeTestRule.onNodeWithText(label7d).performClick()
-
-        // Assert the callback was triggered with the expected enum value
-        Assert.assertEquals(RefillNavigationEvent.ToRefillHistory7d, capturedEvent)
+        Assert.assertEquals(RefillNavigationEvent.ToRefillHistory, capturedEvent)
     }
 
     @Test

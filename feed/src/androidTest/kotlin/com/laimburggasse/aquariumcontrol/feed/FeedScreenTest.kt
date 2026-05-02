@@ -23,9 +23,9 @@
 package com.laimburggasse.aquariumcontrol.feed
 
 import androidx.compose.ui.test.captureToImage
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import com.laimburggasse.aquariumcontrol.common.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes

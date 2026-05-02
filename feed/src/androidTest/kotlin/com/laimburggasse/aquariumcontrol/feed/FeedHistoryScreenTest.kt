@@ -23,15 +23,18 @@
 package com.laimburggasse.aquariumcontrol.feed
 
 import androidx.compose.ui.test.captureToImage
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onRoot
+import androidx.paging.LoadState
+import androidx.paging.LoadStates
+import androidx.paging.PagingData
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.laimburggasse.aquariumcontrol.common.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryScreen
-import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedHistoryUiStateEmpty
-import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedHistoryUiStateSuccess
+import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedHistoryLogEntries
+import kotlinx.coroutines.flow.flowOf
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -51,12 +54,17 @@ class FeedHistoryScreenTest {
         composeTestRule.setContent {
             MainScaffold(
                 isControllerLoaded = true,
-                navigationRouteSource = ViewNavigationRoutes.feedHistory24h,
+                navigationRouteSource = ViewNavigationRoutes.feedHistory,
                 screenContent = {
                     FeedHistoryScreen(
-                        showFullWeek = false,
-                        feedHistoryUiState = mockFeedHistoryUiStateEmpty,
-                        onFeedHistoryEvent = {}
+                        feedHistoryFlow = flowOf(PagingData.from(
+                            emptyList(),
+                            sourceLoadStates = LoadStates(
+                                refresh = LoadState.NotLoading(true),
+                                prepend = LoadState.NotLoading(true),
+                                append = LoadState.NotLoading(true)
+                            )
+                        ))
                     )
                 },
                 onNavigate = {},
@@ -77,12 +85,17 @@ class FeedHistoryScreenTest {
         composeTestRule.setContent {
             MainScaffold(
                 isControllerLoaded = true,
-                navigationRouteSource = ViewNavigationRoutes.feedHistory24h,
+                navigationRouteSource = ViewNavigationRoutes.feedHistory,
                 screenContent = {
                     FeedHistoryScreen(
-                        showFullWeek = false,
-                        feedHistoryUiState = mockFeedHistoryUiStateEmpty,
-                        onFeedHistoryEvent = {}
+                        feedHistoryFlow = flowOf(PagingData.from(
+                            emptyList(),
+                            sourceLoadStates = LoadStates(
+                                refresh = LoadState.NotLoading(true),
+                                prepend = LoadState.NotLoading(true),
+                                append = LoadState.NotLoading(true)
+                            )
+                        ))
                     )
                 },
                 onNavigate = {},
@@ -102,12 +115,17 @@ class FeedHistoryScreenTest {
         composeTestRule.setContent {
             MainScaffold(
                 isControllerLoaded = true,
-                navigationRouteSource = ViewNavigationRoutes.feedHistory24h,
+                navigationRouteSource = ViewNavigationRoutes.feedHistory,
                 screenContent = {
                     FeedHistoryScreen(
-                        showFullWeek = false,
-                        feedHistoryUiState = mockFeedHistoryUiStateSuccess,
-                        onFeedHistoryEvent = {}
+                        feedHistoryFlow = flowOf(PagingData.from(
+                            mockFeedHistoryLogEntries,
+                            sourceLoadStates = LoadStates(
+                                refresh = LoadState.NotLoading(true),
+                                prepend = LoadState.NotLoading(true),
+                                append = LoadState.NotLoading(true)
+                            )
+                        ))
                     )
                 },
                 onNavigate = {},
@@ -128,12 +146,17 @@ class FeedHistoryScreenTest {
         composeTestRule.setContent {
             MainScaffold(
                 isControllerLoaded = true,
-                navigationRouteSource = ViewNavigationRoutes.feedHistory24h,
+                navigationRouteSource = ViewNavigationRoutes.feedHistory,
                 screenContent = {
                     FeedHistoryScreen(
-                        showFullWeek = false,
-                        feedHistoryUiState = mockFeedHistoryUiStateSuccess,
-                        onFeedHistoryEvent = {}
+                        feedHistoryFlow = flowOf(PagingData.from(
+                            mockFeedHistoryLogEntries,
+                            sourceLoadStates = LoadStates(
+                                refresh = LoadState.NotLoading(true),
+                                prepend = LoadState.NotLoading(true),
+                                append = LoadState.NotLoading(true)
+                            )
+                        ))
                     )
                 },
                 onNavigate = {},
