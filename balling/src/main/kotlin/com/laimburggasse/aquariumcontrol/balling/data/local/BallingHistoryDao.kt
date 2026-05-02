@@ -33,7 +33,7 @@ interface BallingHistoryDao {
     @Upsert
     suspend fun upsertAll(ballingHistoryLogEntries: List<BallingHistoryLogEntry>)
 
-    @Query(value = "SELECT * FROM ${BallingHistoryDatabase.TABLE_NAME_BALLING_LOG}")
+    @Query(value = "SELECT * FROM ${BallingHistoryDatabase.TABLE_NAME_BALLING_LOG} ORDER BY timestamp DESC")
     fun pagingSource(): PagingSource<Int, BallingHistoryLogEntry>
 
     @Query(value = "DELETE FROM ${BallingHistoryDatabase.TABLE_NAME_BALLING_LOG}")

@@ -33,7 +33,7 @@ interface FeedHistoryDao {
     @Upsert
     suspend fun upsertAll(feedHistoryLogEntries: List<FeedHistoryLogEntry>)
 
-    @Query(value = "SELECT * FROM ${FeedHistoryDatabase.TABLE_NAME_FEED_LOG}")
+    @Query(value = "SELECT * FROM ${FeedHistoryDatabase.TABLE_NAME_FEED_LOG} ORDER BY timestamp DESC")
     fun pagingSource(): PagingSource<Int, FeedHistoryLogEntry>
 
     @Query(value = "DELETE FROM ${FeedHistoryDatabase.TABLE_NAME_FEED_LOG}")

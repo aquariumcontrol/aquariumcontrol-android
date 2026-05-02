@@ -23,6 +23,7 @@
 package com.laimburggasse.aquariumcontrol.balling.data.remote
 
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
+import com.laimburggasse.aquariumcontrol.common.data.remote.dto.TimestampJsonObject
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Query
@@ -35,4 +36,10 @@ interface BallingHistoryApiService {
         @Header("Authorization") authHeader: String,
         @Query("date") date: String,
     ): List<BallingHistoryLogEntry>
+
+    @GET
+    suspend fun getBallingHistoryStart(
+        @Url url: String,
+        @Header("Authorization") authHeader: String,
+    ): TimestampJsonObject
 }

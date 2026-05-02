@@ -22,6 +22,7 @@
 
 package com.laimburggasse.aquariumcontrol.feed.data.remote
 
+import com.laimburggasse.aquariumcontrol.common.data.remote.dto.TimestampJsonObject
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -35,4 +36,10 @@ interface FeedHistoryApiService {
         @Header("Authorization") authHeader: String,
         @Query("date") date: String,
     ): List<FeedHistoryLogEntry>
+
+    @GET
+    suspend fun getFeedHistoryStart(
+        @Url url: String,
+        @Header("Authorization") authHeader: String,
+    ): TimestampJsonObject
 }

@@ -22,6 +22,7 @@
 
 package com.laimburggasse.aquariumcontrol.refill.data.remote
 
+import com.laimburggasse.aquariumcontrol.common.data.remote.dto.TimestampJsonObject
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -35,4 +36,10 @@ interface RefillHistoryApiService {
         @Header("Authorization") authHeader: String,
         @Query("date") date: String,
     ): List<RefillHistoryLogEntry>
+
+    @GET
+    suspend fun getRefillHistoryStart(
+        @Url url: String,
+        @Header("Authorization") authHeader: String,
+    ): TimestampJsonObject
 }

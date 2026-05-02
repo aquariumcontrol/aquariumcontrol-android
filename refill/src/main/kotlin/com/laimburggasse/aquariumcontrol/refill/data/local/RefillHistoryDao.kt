@@ -33,7 +33,7 @@ interface RefillHistoryDao {
     @Upsert
     suspend fun upsertAll(refillHistoryLogEntries: List<RefillHistoryLogEntry>)
 
-    @Query(value = "SELECT * FROM ${RefillHistoryDatabase.TABLE_NAME_REFILL_LOG}")
+    @Query(value = "SELECT * FROM ${RefillHistoryDatabase.TABLE_NAME_REFILL_LOG} ORDER BY timestamp DESC")
     fun pagingSource(): PagingSource<Int, RefillHistoryLogEntry>
 
     @Query(value = "DELETE FROM ${RefillHistoryDatabase.TABLE_NAME_REFILL_LOG}")

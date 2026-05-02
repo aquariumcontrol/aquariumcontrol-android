@@ -52,7 +52,7 @@ object RefillDatabaseModule {
             context,
             RefillHistoryDatabase::class.java,
             "refill_history.db"
-        ).build()
+        ).fallbackToDestructiveMigration(dropAllTables = true).build()
     }
 
     @Provides
@@ -72,7 +72,6 @@ object RefillDatabaseModule {
             refillHistoryDatabase = database,
             refillHistoryApiService = apiService,
             sessionManager = sessionManager,
-            url = "http://placeholder.com"
         )
     }
 

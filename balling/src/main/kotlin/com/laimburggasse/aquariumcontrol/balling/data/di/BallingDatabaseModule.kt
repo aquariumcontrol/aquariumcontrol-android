@@ -52,7 +52,8 @@ object BallingDatabaseModule {
             context,
             BallingHistoryDatabase::class.java,
             "balling_history.db"
-        ).build()
+        ).fallbackToDestructiveMigration(dropAllTables = true).build()
+
     }
 
     @Provides
@@ -72,7 +73,6 @@ object BallingDatabaseModule {
             ballingHistoryDatabase = database,
             ballingHistoryApiService = apiService,
             sessionManager = sessionManager,
-            url = "http://placeholder.com"
         )
     }
 

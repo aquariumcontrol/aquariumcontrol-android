@@ -24,11 +24,9 @@ package com.laimburggasse.aquariumcontrol.feed.data
 
 import androidx.paging.Pager
 import androidx.paging.PagingData
-import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedHistoryRemoteMediator
+import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedHistoryRepository
-import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
-import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -36,13 +34,11 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onStart
-import okhttp3.Credentials
 import javax.inject.Inject
 
 open class FeedHistoryRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
-    private val pager: Pager<Int, FeedHistoryLogEntry>,
-    private val remoteMediator: FeedHistoryRemoteMediator
+    private val pager: Pager<Int, FeedHistoryLogEntry>
 ): FeedHistoryRepository {
 
     // Trigger for manual refreshes (e.g., pull-to-refresh)
@@ -60,21 +56,7 @@ open class FeedHistoryRepositoryImpl @Inject constructor(
             controller
         }
             .filter { it != null } // Only proceed if a controller is selected
-            .flatMapLatest { controller ->
-                val address = controller!!.address
-                val port = controller.port
-                val apiPath = WebApiUrls.FEED_LOAD_EVENTS
-
-                // Construct the URL ensuring no double slashes if apiPath already starts with /
-                val baseUrl = "http://$address:$port"
-                val dynamicUrl = if (apiPath.startsWith("/")) {
-                    "$baseUrl$apiPath"
-                } else {
-                    "$baseUrl/$apiPath"
-                }
-
-                val authHeader = Credentials.basic(controller.user, controller.password)
-                remoteMediator.updateConfig(dynamicUrl, authHeader)
+            .flatMapLatest { _ ->
                 pager.flow
             }
 

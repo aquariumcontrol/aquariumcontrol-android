@@ -22,6 +22,7 @@
 
 package com.laimburggasse.aquariumcontrol.feed.data.remote
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -29,7 +30,11 @@ import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.laimburggasse.aquariumcontrol.feed.data.local.FeedHistoryDatabase
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
+import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
+import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+import okhttp3.Credentials
+import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -40,16 +45,9 @@ class FeedHistoryRemoteMediator(
     private val feedHistoryDatabase: FeedHistoryDatabase,
     private val feedHistoryApiService: FeedHistoryApiService,
     private val sessionManager: SessionManager, // Injected to access server timestamp
-    private var url: String, // var to allow updates
 ): RemoteMediator<Int, FeedHistoryLogEntry>() {
-
-    private var authHeaderValue: String = ""
-
-    fun updateConfig(newUrl: String, newAuthHeader: String) {
-        this.url = newUrl
-        this.authHeaderValue = newAuthHeader
-    }
-
+    private var feedLogStart: Timestamp? = null
+    private var serverUsed: ControllerProfile? = null
     private fun getCurrentDate(): String {
         val serverTime = sessionManager.serverTimestamp.value
         return if (serverTime != null) {
@@ -65,10 +63,40 @@ class FeedHistoryRemoteMediator(
         loadType: LoadType,
         state: PagingState<Int, FeedHistoryLogEntry>
     ): MediatorResult {
+        // Logic to recognize that server has changed and log start needs to be recalculated
+        if (serverUsed == null || serverUsed != sessionManager.selectedControllerProfile.value) {
+            feedLogStart = null
+        }
         return try {
+            // load the timestamp of the earliest entry in the database
+            if (feedLogStart == null) {
+                val apiPath = WebApiUrls.FEED_LOAD_FIRST_EVENT
+
+                val user = sessionManager.getControllerUser()
+                val password = sessionManager.getControllerPassword()
+                val address = sessionManager.getControllerAddress()
+                val port = sessionManager.getControllerPort()
+                if (user != null && password != null && address != null && port != null) {
+                    // Construct the URL ensuring no double slashes if apiPath already starts with /
+                    val baseUrl = "http://$address:$port"
+                    val dynamicUrl = if (apiPath.startsWith("/")) {
+                        "$baseUrl$apiPath"
+                    } else {
+                        "$baseUrl/$apiPath"
+                    }
+                    val authHeader = Credentials.basic(user, password)
+                    feedLogStart =
+                        feedHistoryApiService.getFeedHistoryStart(
+                            dynamicUrl,
+                            authHeader
+                        ).transformToTimestamp()
+                    serverUsed = sessionManager.selectedControllerProfile.value
+                }
+            }
+
             val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            
-            val loadKey = when(loadType) {
+
+            var currentLoadKey = when(loadType) {
                 LoadType.REFRESH -> getCurrentDate()
                 LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
                 LoadType.APPEND -> {
@@ -87,20 +115,70 @@ class FeedHistoryRemoteMediator(
                 }
             }
 
-            val feedHistoryLogEntries = feedHistoryApiService.getFeedHistory(
-                url,
-                authHeader = authHeaderValue,
-                date = loadKey
-            )
+            val user = sessionManager.getControllerUser()
+            val password = sessionManager.getControllerPassword()
+            val address = sessionManager.getControllerAddress()
+            val port = sessionManager.getControllerPort()
 
-            feedHistoryDatabase.withTransaction {
-                if (loadType == LoadType.REFRESH) {
-                    feedHistoryDatabase.feedHistoryDao().clearAll()
+            if (user != null && password != null && address != null && port != null) {
+                val apiPath = WebApiUrls.FEED_LOAD_EVENTS
+                val baseUrl = "http://$address:$port"
+                val dynamicUrl = if (apiPath.startsWith("/")) {
+                    "$baseUrl$apiPath"
+                } else {
+                    "$baseUrl/$apiPath"
                 }
-                feedHistoryDatabase.feedHistoryDao().upsertAll(feedHistoryLogEntries)
+                val authHeader = Credentials.basic(user, password)
+
+                val allEntries = mutableListOf<FeedHistoryLogEntry>()
+                var reachedAbsoluteStart: Boolean
+
+                // Loop until we find at least one entry, or we reach the absolute start of the log
+                while (true) {
+                    val feedHistoryLogEntries =
+                        feedHistoryApiService.getFeedHistory(
+                            dynamicUrl,
+                            authHeader,
+                            date = currentLoadKey
+                        )
+                    allEntries.addAll(feedHistoryLogEntries)
+
+                    reachedAbsoluteStart = if (feedLogStart != null) {
+                        try {
+                            val startOfLoadDay = Timestamp.valueOf("$currentLoadKey 00:00:00")
+                            val reached = startOfLoadDay.before(feedLogStart) || startOfLoadDay == feedLogStart
+                            reached
+                        } catch (_: Exception) {
+                            false
+                        }
+                    } else {
+                        val reached = feedHistoryLogEntries.isEmpty()
+                        reached
+                    }
+
+                    if (allEntries.isNotEmpty() || reachedAbsoluteStart) {
+                        break
+                    }
+
+                    // No entries found for this day, try the previous day
+                    val calendar = Calendar.getInstance()
+                    calendar.time = dateFormat.parse(currentLoadKey) ?: Date()
+                    calendar.add(Calendar.DAY_OF_YEAR, -1)
+                    currentLoadKey = dateFormat.format(calendar.time)
+                }
+
+                feedHistoryDatabase.withTransaction {
+                    if (loadType == LoadType.REFRESH) {
+                        feedHistoryDatabase.feedHistoryDao().clearAll()
+                    }
+                    feedHistoryDatabase.feedHistoryDao().upsertAll(allEntries)
+                }
+
+                MediatorResult.Success(endOfPaginationReached = reachedAbsoluteStart)
             }
-            // @todo: Extend end of pagination - currently ending with first empty entry
-            MediatorResult.Success(endOfPaginationReached = feedHistoryLogEntries.isEmpty())
+            else {
+                MediatorResult.Success(endOfPaginationReached = true)
+            }
         } catch (e: Exception) {
             MediatorResult.Error(e)
         }

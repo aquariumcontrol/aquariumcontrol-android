@@ -37,7 +37,7 @@ data class FeedHistoryLogEntry(
     @SerialName(value = WebApiParams.TIMESTAMP)
     val timestamp: String,
     @SerialName(value = WebApiParams.FEEDER_ON_TIME)
-    val feederOnTime: Int,
+    val feederOnTime: Double,
     @SerialName(value = WebApiParams.PROFILE_NAME)
     val profileName: String,
     @SerialName(WebApiParams.PROFILE_ID)

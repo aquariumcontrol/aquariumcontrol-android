@@ -52,7 +52,7 @@ object FeedDatabaseModule {
             context,
             FeedHistoryDatabase::class.java,
             "feed_history.db"
-        ).build()
+        ).fallbackToDestructiveMigration(dropAllTables = true).build()
     }
 
     @Provides
@@ -72,7 +72,6 @@ object FeedDatabaseModule {
             feedHistoryDatabase = database,
             feedHistoryApiService = apiService,
             sessionManager = sessionManager,
-            url = "http://placeholder.com"
         )
     }
 

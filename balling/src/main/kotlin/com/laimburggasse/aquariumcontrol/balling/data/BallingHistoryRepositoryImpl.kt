@@ -27,7 +27,6 @@ import androidx.paging.PagingData
 import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingHistoryRemoteMediator
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingHistoryRepository
-import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -36,13 +35,11 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onStart
-import okhttp3.Credentials
 import javax.inject.Inject
 
 open class BallingHistoryRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
-    private val pager: Pager<Int, BallingHistoryLogEntry>,
-    private val remoteMediator: BallingHistoryRemoteMediator
+    private val pager: Pager<Int, BallingHistoryLogEntry>
 ): BallingHistoryRepository {
 
     // Trigger for manual refreshes (e.g., pull-to-refresh)
@@ -60,21 +57,7 @@ open class BallingHistoryRepositoryImpl @Inject constructor(
             controller
         }
         .filter { it != null } // Only proceed if a controller is selected
-        .flatMapLatest { controller ->
-            val address = controller!!.address
-            val port = controller.port
-            val apiPath = WebApiUrls.BALLING_LOAD_EVENTS
-            
-            // Construct the URL ensuring no double slashes if apiPath already starts with /
-            val baseUrl = "http://$address:$port"
-            val dynamicUrl = if (apiPath.startsWith("/")) {
-                "$baseUrl$apiPath"
-            } else {
-                "$baseUrl/$apiPath"
-            }
-
-            val authHeader = Credentials.basic(controller.user, controller.password)
-            remoteMediator.updateConfig(dynamicUrl, authHeader)
+        .flatMapLatest { _ ->
             pager.flow
         }
 
