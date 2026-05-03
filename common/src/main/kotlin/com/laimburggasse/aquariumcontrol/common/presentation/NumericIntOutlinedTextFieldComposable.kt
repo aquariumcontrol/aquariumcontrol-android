@@ -29,11 +29,13 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,18 +43,29 @@ import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumContr
 
 @Composable
 fun NumericIntOutlinedTextFieldComposable(
-    value: Int,
+    value: String,
     onValueChange: (String) -> Unit,
     label: String,
     modifier: Modifier = Modifier
 ) {
-    var textFieldValueState: TextFieldValue by remember {
-        mutableStateOf(value = TextFieldValue(text = value.toString()))
+    var textFieldValueState by remember {
+        mutableStateOf(value = TextFieldValue(text = value, selection = TextRange(value.length)))
+    }
+
+    // Keep internal state in sync with external value changes (e.g. when loading profile)
+    LaunchedEffect(value) {
+        if (value != textFieldValueState.text) {
+            textFieldValueState = textFieldValueState.copy(text = value)
+        }
     }
 
     OutlinedTextField(
         value = textFieldValueState,
         onValueChange = { newTextFieldValue ->
+            // Update internal state first to maintain cursor position/selection
+            textFieldValueState = newTextFieldValue
+            
+            // Filter digits and notify parent
             val newValue: String = newTextFieldValue.text.filter { it.isDigit() }
             onValueChange(newValue)
         },
@@ -65,7 +78,7 @@ fun NumericIntOutlinedTextFieldComposable(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 internal fun NumericIntOutlinedTextFieldComposableDarkPreview() {
-    val testValue = 5
+    val testValue = "5"
     AquariumControllerTheme(darkTheme = true) {
         Surface(color = MaterialTheme.colorScheme.background) {
             NumericIntOutlinedTextFieldComposable(
@@ -81,7 +94,7 @@ internal fun NumericIntOutlinedTextFieldComposableDarkPreview() {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 internal fun NumericIntOutlinedTextFieldComposableLightPreview() {
-    val testValue = 5
+    val testValue = "5"
     AquariumControllerTheme(darkTheme = false) {
         Surface(color = MaterialTheme.colorScheme.background) {
             NumericIntOutlinedTextFieldComposable(

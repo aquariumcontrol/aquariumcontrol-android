@@ -29,7 +29,6 @@ import com.laimburggasse.aquariumcontrol.controller.presentation.components.Cont
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.data.local.ControllerProfileDao
 import com.laimburggasse.aquariumcontrol.controller.domain.isHostName
-import com.laimburggasse.aquariumcontrol.controller.domain.isValidPortNumber
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -53,7 +52,7 @@ class ControllerAddViewModel @Inject constructor(
                     val controllerProfile = ControllerProfile(
                         name = state.value.controllerProfileName,
                         address = state.value.controllerProfileAddress,
-                        port = state.value.controllerProfilePort,
+                        port = state.value.controllerProfilePort.toIntOrNull() ?: 80,
                         user = state.value.controllerProfileUser,
                         password = state.value.controllerProfilePassword,
                     )
@@ -87,11 +86,7 @@ class ControllerAddViewModel @Inject constructor(
             }
 
             is ControllerAddEditUiEvent.SetControllerPort -> {
-                if (event.controllerPort.isNotEmpty()) {
-                    if (isValidPortNumber(port = event.controllerPort.toInt())) {
-                        _state.update { it.copy(controllerProfilePort = event.controllerPort.toInt()) }
-                    }
-                }
+                _state.update { it.copy(controllerProfilePort = event.controllerPort) }
             }
 
             is ControllerAddEditUiEvent.SetControllerUser -> {

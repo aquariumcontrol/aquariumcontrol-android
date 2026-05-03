@@ -52,7 +52,7 @@ class ControllerAddScreenUITest {
             controllerProfileId = 0,
             controllerProfileName = "Dummy",
             controllerProfileAddress = "127.0.0.1",
-            controllerProfilePort = 80,
+            controllerProfilePort = "80",
             controllerProfileUser = "dummy",
             controllerProfilePassword = "dummy",
             validControllerAddress = true

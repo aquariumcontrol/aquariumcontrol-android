@@ -49,6 +49,7 @@ import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.controller.R
+import com.laimburggasse.aquariumcontrol.controller.domain.isValidPortNumber
 import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditHostnamePortnumberComposable
 import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiEvent
 import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiState
@@ -159,7 +160,9 @@ fun ControllerEditScreen(
                 onEvent(ControllerAddEditUiEvent.UpdateControllerProfile)
                 onNavigateFromController(ControllerNavigationEvent.ToControllerMain, null)
             },
-            enabled = state.controllerProfileName.isNotBlank() && state.validControllerAddress,
+            enabled = state.controllerProfileName.isNotBlank() &&
+                      state.validControllerAddress &&
+                      (state.controllerProfilePort.toIntOrNull()?.let { isValidPortNumber(it) } ?: false),
             modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
         ) {
             Text(text = stringResource(id = R.string.update_controller_profile))
@@ -183,7 +186,7 @@ internal fun ControllerEditScreenDarkPreview() {
                 state = mockControllerEditState,
                 onEvent = {},
                 isDefaultProfileInitialValue = true,
-                onNavigateFromController = {event, id -> }
+                onNavigateFromController = { _, _ -> }
             )
         },
         onNavigate = {},
@@ -207,7 +210,7 @@ internal fun ControllerEditScreenLightPreview() {
                 state = mockControllerEditState,
                 onEvent = {},
                 isDefaultProfileInitialValue = true,
-                onNavigateFromController = {event, id -> }
+                onNavigateFromController = { _, _ -> }
             )
         },
         onNavigate = {},

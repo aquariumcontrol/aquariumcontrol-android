@@ -28,13 +28,13 @@ import com.laimburggasse.aquariumcontrol.controller.presentation.components.Cont
 object ControllerMockData {
     val mockControllerState = ControllerAddEditUiState(
         controllerProfileAddress = "mock.hostname.com",
-        controllerProfilePort = 80,
+        controllerProfilePort = "80",
     )
 
     val mockControllerEditState = ControllerAddEditUiState(
         controllerProfileName = "Controller",
         controllerProfileAddress = "192.168.1.1",
-        controllerProfilePort = 80,
+        controllerProfilePort = "80",
         controllerProfileUser = "user",
         controllerProfilePassword = "password",
     )

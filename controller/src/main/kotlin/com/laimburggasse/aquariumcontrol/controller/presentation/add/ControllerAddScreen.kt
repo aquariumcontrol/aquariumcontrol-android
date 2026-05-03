@@ -44,6 +44,7 @@ import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.controller.R
+import com.laimburggasse.aquariumcontrol.controller.domain.isValidPortNumber
 import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditHostnamePortnumberComposable
 import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiEvent
 import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiState
@@ -111,7 +112,9 @@ fun ControllerAddScreen(
 
         Button(
             onClick = { onAddEvent(ControllerAddEditUiEvent.AddControllerProfile) },
-            enabled = state.validControllerAddress,
+            enabled = state.controllerProfileName.isNotBlank() &&
+                      state.validControllerAddress &&
+                      (state.controllerProfilePort.toIntOrNull()?.let { isValidPortNumber(it) } ?: false),
             modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
         ) {
             Text(text = stringResource(id = R.string.create_profile))

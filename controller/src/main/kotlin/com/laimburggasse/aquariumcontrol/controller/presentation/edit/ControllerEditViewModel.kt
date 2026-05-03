@@ -31,7 +31,6 @@ import com.laimburggasse.aquariumcontrol.controller.presentation.components.Cont
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.data.local.ControllerProfileDao
 import com.laimburggasse.aquariumcontrol.controller.domain.isHostName
-import com.laimburggasse.aquariumcontrol.controller.domain.isValidPortNumber
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -72,9 +71,10 @@ class ControllerEditViewModel @Inject constructor(
                             controllerProfileId = profile.id,
                             controllerProfileName = profile.name,
                             controllerProfileAddress = profile.address,
-                            controllerProfilePort = profile.port,
+                            controllerProfilePort = profile.port.toString(),
                             controllerProfileUser = profile.user,
-                            controllerProfilePassword = profile.password
+                            controllerProfilePassword = profile.password,
+                            validControllerAddress = isHostName(profile.address)
                         )
                     }
                 }
@@ -90,7 +90,7 @@ class ControllerEditViewModel @Inject constructor(
                         id = _state.value.controllerProfileId,
                         name = _state.value.controllerProfileName,
                         address = _state.value.controllerProfileAddress,
-                        port = _state.value.controllerProfilePort,
+                        port = _state.value.controllerProfilePort.toIntOrNull() ?: 80,
                         user = _state.value.controllerProfileUser,
                         password = _state.value.controllerProfilePassword
                     )
@@ -113,14 +113,10 @@ class ControllerEditViewModel @Inject constructor(
                 }
             }
             is ControllerAddEditUiEvent.SetControllerPassword -> {
-                _state.update { it.copy( controllerProfilePassword = event.controllerPassword) }
+                _state.update { it.copy(controllerProfilePassword = event.controllerPassword) }
             }
             is ControllerAddEditUiEvent.SetControllerPort -> {
-                if (event.controllerPort.isNotEmpty()) {
-                    if (isValidPortNumber(port = event.controllerPort.toInt())) {
-                        _state.update { it.copy(controllerProfilePort = event.controllerPort.toInt()) }
-                    }
-                }
+                _state.update { it.copy(controllerProfilePort = event.controllerPort) }
             }
             is ControllerAddEditUiEvent.SetControllerUser -> {
                 _state.update { it.copy(controllerProfileUser = event.controllerUser) }
