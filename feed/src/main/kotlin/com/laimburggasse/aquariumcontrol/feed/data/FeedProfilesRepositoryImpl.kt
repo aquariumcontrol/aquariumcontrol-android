@@ -28,6 +28,7 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
@@ -36,8 +37,8 @@ import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedProfileReader
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedProfileImport
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedProfilesRepository
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -61,7 +62,8 @@ import javax.inject.Singleton
 open class FeedProfilesRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     private val apiService: FeedProfileApiService,
-    @param:ApplicationScope private val repositoryScope: CoroutineScope
+    @param:ApplicationScope private val repositoryScope: CoroutineScope,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ): FeedProfilesRepository {
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
 
@@ -97,7 +99,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
                 emit(value = DataFetchResult.Loading)
 
                 val networkResult: DataFetchResult<List<FeedProfileImport>> =
-                    withContext(context = Dispatchers.IO) {
+                    withContext(context = ioDispatcher) {
                         val url = "http://${controller.address}:${controller.port}${WebApiUrls.FEED_LOAD_PROFILES}"
                         val profileReader = FeedProfileReader(
                             apiService, url, username = controller.user, password = controller.password
@@ -160,7 +162,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
         }
 
         // Perform the actual network request in the background.
-        repositoryScope.launch(context = Dispatchers.IO) {
+        repositoryScope.launch(context = ioDispatcher) {
             val requestSuccess = try {
                 val response = apiService.deleteFeedProfile(
                     url,
@@ -204,7 +206,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
 
         val authHeader = Credentials.basic(user, password)
 
-        repositoryScope.launch(context = Dispatchers.IO) {
+        repositoryScope.launch(context = ioDispatcher) {
             val requestSuccess = try {
                 val response = apiService.addFeedProfile(
                     url,
@@ -273,7 +275,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
             )
         }
 
-        repositoryScope.launch(context = Dispatchers.IO) {
+        repositoryScope.launch(context = ioDispatcher) {
             // Make the Retrofit call
             val requestSuccess = try {
                 val response = apiService.updateFeedProfile(
