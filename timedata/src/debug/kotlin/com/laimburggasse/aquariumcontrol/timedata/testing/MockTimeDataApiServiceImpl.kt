@@ -34,10 +34,6 @@ class MockTimeDataApiServiceImpl(
 ): TimeDataApiService {
     private var forceError: Boolean = false
 
-    fun setForceError(force: Boolean) {
-        this.forceError = force
-    }
-
     fun setMockTimeDataSamples(samples: List<TimeDataSample>?) {
         this.mockTimeDataSamples = samples
     }

@@ -32,7 +32,6 @@ import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Response
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
-import kotlin.collections.plus
 
 class MockFeedScheduleEntryApiServiceImpl(
     private var mockFeedScheduleEntryImports: List<FeedScheduleEntryImport>?,
@@ -94,27 +93,12 @@ class MockFeedScheduleEntryApiServiceImpl(
         }
     }
 
-    fun addMockFeedScheduleEntry(additionalFeedScheduleEntry: FeedScheduleEntry) {
-        mockFeedScheduleEntries = (mockFeedScheduleEntries ?: emptyList()) + additionalFeedScheduleEntry
-        mockFeedScheduleEntryImports = (mockFeedScheduleEntryImports ?:
-            emptyList()) + additionalFeedScheduleEntry.toFeedScheduleEntryImport()
-    }
-
     override suspend fun addFeedScheduleEntry(
         url: String,
         authHeader: String,
         params: Map<String, String>
     ): Response<ResponseBody> {
         return Response.success("OK".toResponseBody())
-    }
-
-    fun deleteMockFeedScheduleEntry(toBeDeletedFeedScheduleEntry: FeedScheduleEntry) {
-        mockFeedScheduleEntries = mockFeedScheduleEntries?.filter {
-            it.timestamp != toBeDeletedFeedScheduleEntry.timestamp
-        }
-        mockFeedScheduleEntryImports = mockFeedScheduleEntryImports?.filter {
-            it.timestampString != toBeDeletedFeedScheduleEntry.timestamp.toString()
-        }
     }
 
     override suspend fun deleteFeedScheduleEntry(
@@ -132,10 +116,4 @@ class MockFeedScheduleEntryApiServiceImpl(
         }
     }
 
-    fun setMockFeedScheduleEntries(mockFeedScheduleEntries: List<FeedScheduleEntry>?) {
-        this.mockFeedScheduleEntries = mockFeedScheduleEntries
-        this.mockFeedScheduleEntryImports = mockFeedScheduleEntries?.map {
-            it.toFeedScheduleEntryImport()
-        }
-    }
 }

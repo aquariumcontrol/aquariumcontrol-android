@@ -22,14 +22,12 @@
 
 package com.laimburggasse.aquariumcontrol.common.data.remote.dto
 
-import android.util.Log
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Locale
-
-import kotlinx.serialization.Serializable
 
 @Serializable
 data class TimestampJsonObject(

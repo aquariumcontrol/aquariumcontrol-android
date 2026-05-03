@@ -22,17 +22,11 @@
 
 package com.laimburggasse.aquariumcontrol.feed.presentation.history
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import androidx.paging.cachedIn
-import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedHistoryRepository
-
-import dagger.hilt.android.lifecycle.HiltViewModel
-
-import javax.inject.Inject
-
 import com.laimburggasse.aquariumcontrol.common.presentation.HistoryViewModel
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
+import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedHistoryRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 @HiltViewModel
 class FeedHistoryViewModel @Inject constructor(

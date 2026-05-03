@@ -157,7 +157,7 @@ val jacocoTestReport by tasks.registering(JacocoReport::class) {
         "**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*",
         "**/*_Hilt*.class", "**/Hilt_*.class", "**/*_Factory.class",
         "**/*_MembersInjector.class", "**/*Module_*Factory.class",
-        "**/*\$Serializer.*", "**/DataBinderMapperImpl.*"
+        $$"**/*$Serializer.*", "**/DataBinderMapperImpl.*"
     )
 
     val debugTree = fileTree("${project.layout.buildDirectory.get()}/tmp/kotlin-classes/debug") {
