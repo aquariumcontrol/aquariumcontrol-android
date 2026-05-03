@@ -103,7 +103,7 @@ class ControllerAddViewModelTest {
 
             // Act: Set a valid port
             viewModel.onEvent(ControllerAddEditUiEvent.SetControllerPort("8080"))
-            assertEquals(8080, awaitItem().controllerProfilePort)
+            assertEquals("8080", awaitItem().controllerProfilePort)
 
             // Act: Set an invalid port (assuming isValidPortNumber checks 1-65535)
             viewModel.onEvent(ControllerAddEditUiEvent.SetControllerPort("999999"))

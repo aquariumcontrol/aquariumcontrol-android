@@ -31,6 +31,7 @@ import com.laimburggasse.aquariumcontrol.controller.presentation.components.Cont
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.data.local.ControllerProfileDao
 import com.laimburggasse.aquariumcontrol.controller.domain.isHostName
+import com.laimburggasse.aquariumcontrol.controller.domain.isValidPortNumber
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -116,7 +117,10 @@ class ControllerEditViewModel @Inject constructor(
                 _state.update { it.copy(controllerProfilePassword = event.controllerPassword) }
             }
             is ControllerAddEditUiEvent.SetControllerPort -> {
-                _state.update { it.copy(controllerProfilePort = event.controllerPort) }
+                val port = event.controllerPort.toIntOrNull()
+                if (event.controllerPort.isEmpty() || (port != null && isValidPortNumber(port))) {
+                    _state.update { it.copy(controllerProfilePort = event.controllerPort) }
+                }
             }
             is ControllerAddEditUiEvent.SetControllerUser -> {
                 _state.update { it.copy(controllerProfileUser = event.controllerUser) }
