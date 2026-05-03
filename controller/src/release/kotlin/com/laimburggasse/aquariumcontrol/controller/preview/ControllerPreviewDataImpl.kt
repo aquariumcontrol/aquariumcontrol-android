@@ -29,13 +29,13 @@ import com.laimburggasse.aquariumcontrol.controller.presentation.components.Cont
 object ControllerPreviewDataImpl: ControllerPreviewData {
     override val mockControllerState = ControllerAddEditUiState(
         controllerProfileAddress = "Release build",
-        controllerProfilePort = 0,
+        controllerProfilePort = "0",
     )
 
     override val mockControllerEditState = ControllerAddEditUiState(
         controllerProfileName = "Release build",
         controllerProfileAddress = "0.0.0.0",
-        controllerProfilePort = 0,
+        controllerProfilePort = "0",
         controllerProfileUser = "dummy",
         controllerProfilePassword = "dummy",
     )

@@ -27,7 +27,6 @@ import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.balling.presentation.components.BallingPreviewData
 import com.laimburggasse.aquariumcontrol.balling.presentation.edit.BallingProfileEditUiState
 import com.laimburggasse.aquariumcontrol.balling.presentation.entry.BallingProfilesUiState
-import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryUiState
 
 object BallingPreviewDataImpl: BallingPreviewData {
     override val mockBallingProfile = BallingProfile(
@@ -46,10 +45,6 @@ object BallingPreviewDataImpl: BallingPreviewData {
     override val mockBallingProfilesUiStateEmpty = BallingProfilesUiState.Empty
 
     override val mockBallingHistoryLogEntries = emptyList<BallingHistoryLogEntry>()
-    override val mockBallingHistoryUiStateSuccess = BallingHistoryUiState.Success(mockBallingHistoryLogEntries)
-    override val mockBallingHistoryUiStateEmpty = BallingHistoryUiState.Empty
-    override val mockBallingHistoryUiStateError = BallingHistoryUiState.Error(errorMessage = "Release build")
-    override val mockBallingHistoryUiStateLoading = BallingHistoryUiState.Loading
     override val mockBallingEvent = BallingHistoryLogEntry(
         timestamp = "2525",
         pumpId = 0,

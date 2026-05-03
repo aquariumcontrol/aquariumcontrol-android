@@ -24,15 +24,11 @@ package com.laimburggasse.aquariumcontrol.refill.preview
 
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.refill.presentation.components.RefillPreviewData
-import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryUiState
 import java.sql.Timestamp
 
 object RefillPreviewDataImpl: RefillPreviewData {
     override val mockFixedTimestamp = Timestamp(0)
     override val mockEvent =
-        RefillHistoryLogEntry(timestamp = mockFixedTimestamp, duration = 0.0, volume = 0.0)
+        RefillHistoryLogEntry(timestamp = mockFixedTimestamp.toString(), duration = 0.0, volume = 0.0)
     override val mockRefillHistoryLogEntries = emptyList<RefillHistoryLogEntry>()
-    override val mockRefillHistoryUiStateSuccess = RefillHistoryUiState.Success(mockRefillHistoryLogEntries)
-    override val mockRefillHistoryUiStateEmpty = RefillHistoryUiState.Empty
-    override val mockRefillHistoryUiStateError = RefillHistoryUiState.Error(errorMessage = "Release build")
 }

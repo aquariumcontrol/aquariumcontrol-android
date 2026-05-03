@@ -35,7 +35,6 @@ import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileEditT
 import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileEditUiState
 import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedProfilesUiState
 import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScheduleSelectionUiState
-import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryUiState
 
 object FeedPreviewDataImpl: FeedPreviewData {
     override val mockFeedProfileForSimpleDisplayComposable: FeedProfile = FeedProfile().apply {
@@ -51,7 +50,7 @@ object FeedPreviewDataImpl: FeedPreviewData {
     override val mockFeedProfileEditNumericMenuItem = FeedProfileEditMenuItem(
         id = 0,
         level = 0,
-        text = "Relase build",
+        text = "Release build",
         isToggleButton = true,
         children = emptyList(),
         phaseType = FeedProfileEditPhaseType.FEED,
@@ -77,21 +76,13 @@ object FeedPreviewDataImpl: FeedPreviewData {
     override val mockFeedScheduleSelectionUiStateError = FeedScheduleSelectionUiState.Error(errorMessage = "Release build")
     override val mockEvent = FeedHistoryLogEntry(
         timestamp = "2525-01-18 12:00:00",
-        feederOnTime = 0,
+        feederOnTime = 0.0,
         profileName = "Mock feed profile 1",
         idx = 0
     )
     override val mockFeedHistoryLogEntries = emptyList<FeedHistoryLogEntry>()
-    override val mockFeedHistoryUiStateSuccess = FeedHistoryUiState.Success(
-        feedHistoryLogEntries = mockFeedHistoryLogEntries
-    )
-    override val mockFeedHistoryUiStateError = FeedHistoryUiState.Error(
-        errorMessage = "Release build"
-    )
-    override val mockFeedHistoryUiStateEmpty = FeedHistoryUiState.Empty
-    override val mockFeedHistoryUiStateLoading = FeedHistoryUiState.Loading
     override val mockFeedProfileImportForScheduleScreen = FeedProfileImport()
-    override val mockFeedProfileForScheduleScreen: FeedProfile = FeedProfile.Companion.fromFeedProfileImportUpdateIdName(
+    override val mockFeedProfileForScheduleScreen: FeedProfile = FeedProfile.fromFeedProfileImportUpdateIdName(
         feedProfileImport = mockFeedProfileImportForScheduleScreen,
         profileId = 0,
         profileName = "Release build"
