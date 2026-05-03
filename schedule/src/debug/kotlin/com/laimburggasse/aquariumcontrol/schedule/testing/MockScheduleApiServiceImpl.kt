@@ -29,7 +29,6 @@ import kotlinx.coroutines.delay
 import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Response
-import kotlin.collections.indexOfFirst
 
 class MockScheduleApiServiceImpl(
     private var mockScheduleStringEntries: List<ScheduleStringEntry>?,
@@ -53,18 +52,6 @@ class MockScheduleApiServiceImpl(
         }
         else {
             Response.success(mockScheduleStringEntries)
-        }
-    }
-
-    fun updateMockScheduleData(mockScheduleEntry: ScheduleEntry) {
-        mockScheduleEntries = mockScheduleEntries?.toMutableList()?.apply {
-            val index = indexOfFirst { it.scheduleType == mockScheduleEntry.scheduleType }
-            if (index != -1) {
-                set(index, mockScheduleEntry)
-            }
-        }
-        mockScheduleStringEntries = mockScheduleEntries?.map {
-            it.toScheduleStringEntry()
         }
     }
 

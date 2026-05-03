@@ -518,6 +518,5 @@ class FeedProfileImport {
         )
 
         sb.append("--- $tag Content End ---")
-        //Log.d(tag, sb.toString())
     }
 }

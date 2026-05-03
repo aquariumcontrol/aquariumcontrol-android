@@ -23,161 +23,36 @@
 package com.laimburggasse.aquariumcontrol.feed.presentation.history
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.paging.LoadState
+import androidx.paging.LoadStates
+import androidx.paging.PagingData
+import com.laimburggasse.aquariumcontrol.common.presentation.GenericHistoryScreen
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
-import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.R
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
-import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedHistoryUiStateEmpty
-import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedHistoryUiStateError
-import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedHistoryUiStateLoading
-import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedHistoryUiStateSuccess
+import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedHistoryLogEntries
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun FeedHistoryScreen(
-    showFullWeek: Boolean,
-    feedHistoryUiState: FeedHistoryUiState,
-    onFeedHistoryEvent: (FeedHistoryUiEvent) -> Unit
+    feedHistoryFlow: Flow<PagingData<FeedHistoryLogEntry>>,
+    previewData: List<FeedHistoryLogEntry>? = null
 ) {
-    // This screen displays:
-    // - headline
-    // - sub headline (last 7 days or last 24 hours)
-    // - list of feed events
-
-    LaunchedEffect(key1 = Unit) {
-        onFeedHistoryEvent(FeedHistoryUiEvent.SetRange(showFullWeek))
-    }
-    Column(
-        modifier = Modifier.fillMaxSize().padding(all = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        ScreenHeadlineComposable(text = stringResource(R.string.feed_log))
-
-        val subHeadlineText: String =
-            if (showFullWeek) {
-                stringResource(R.string.feed_events_last_7d)
-            } else {
-                stringResource(R.string.feed_events_last_24h)
-            }
-        Text(text = subHeadlineText)
-
-        Scaffold(
-            topBar = {},
-            bottomBar = {},
-            floatingActionButton = {},
-            snackbarHost = { SnackbarHost(hostState = remember { SnackbarHostState() })}
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier.fillMaxSize().padding(paddingValues = innerPadding),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                PullToRefreshBox(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center,
-                    state = rememberPullToRefreshState(),
-                    isRefreshing = feedHistoryUiState is FeedHistoryUiState.Loading,
-                    onRefresh = { onFeedHistoryEvent(FeedHistoryUiEvent.Refresh)},
-                    indicator = {
-                        if (feedHistoryUiState is FeedHistoryUiState.Loading) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(size = 150.dp),
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    }
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxSize().padding(all = 16.dp),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        when (feedHistoryUiState) {
-                            is FeedHistoryUiState.Empty -> {
-                                Text(
-                                    text = stringResource(R.string.no_feed_events_found),
-                                    style = TextStyle(
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                )
-                            }
-
-                            is FeedHistoryUiState.Error -> {
-                                Text(
-                                    text = stringResource(id = R.string.error_loading_feed_data) +
-                                            feedHistoryUiState.errorMessage,
-                                    style = TextStyle(
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Bold
-                                    ),
-                                    modifier = Modifier.weight(weight = 1f),
-                                    textAlign = TextAlign.Center
-                                )
-                            }
-
-                            is FeedHistoryUiState.Loading -> {
-                                Text(
-                                    text = stringResource(R.string.loading_feed_events),
-                                    style = TextStyle(
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                )
-                            }
-
-                            is FeedHistoryUiState.Success -> {
-                                val feedEvents: List<FeedHistoryLogEntry> = feedHistoryUiState.feedHistoryLogEntries
-                                if (LocalInspectionMode.current) {
-                                    // In Preview: Render a simple, static Column instead of LazyColumn
-                                    Column(modifier = Modifier.fillMaxSize()) {
-                                        feedEvents.forEach { feedHistoryLogEntry ->
-                                            FeedHistoryEventComposable(feedHistoryLogEntry)
-                                        }
-                                    }
-                                } else {
-                                    // In App Runtime: Use the performant LazyColumn
-                                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                        items(items = feedEvents) { feedHistoryLogEntry ->
-                                            FeedHistoryEventComposable(feedHistoryLogEntry)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+    GenericHistoryScreen(
+        historyFlow = feedHistoryFlow,
+        headline = stringResource(id = R.string.feed_log),
+        noEventsMessage = stringResource(R.string.no_feed_events_found),
+        entryComposable = { feedHistoryLogEntry ->
+            FeedHistoryLogEntryComposable(feedHistoryLogEntry)
+        },
+        previewData = previewData
+    )
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
@@ -190,16 +65,22 @@ fun FeedHistoryScreen(
 internal fun FeedHistoryScreenSuccessDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
-        navigationRouteSource = ViewNavigationRoutes.feedHistory24h,
+        navigationRouteSource = ViewNavigationRoutes.feedHistory,
         screenContent = {
             FeedHistoryScreen(
-                showFullWeek = false,
-                feedHistoryUiState = mockFeedHistoryUiStateSuccess,
-                onFeedHistoryEvent = {}
+                feedHistoryFlow = flowOf(PagingData.from(
+                    mockFeedHistoryLogEntries,
+                    sourceLoadStates = LoadStates(
+                        refresh = LoadState.NotLoading(true),
+                        prepend = LoadState.NotLoading(true),
+                        append = LoadState.NotLoading(true)
+                    )
+                )),
+                previewData = mockFeedHistoryLogEntries
             )
         },
         onNavigate = {},
-        darkTheme = true
+        darkTheme = isSystemInDarkTheme()
     )
 }
 
@@ -213,84 +94,18 @@ internal fun FeedHistoryScreenSuccessDarkPreview() {
 internal fun FeedHistoryScreenSuccessLightPreview() {
     MainScaffold(
         isControllerLoaded = true,
-        navigationRouteSource = ViewNavigationRoutes.feedHistory24h,
+        navigationRouteSource = ViewNavigationRoutes.feedHistory,
         screenContent = {
             FeedHistoryScreen(
-                showFullWeek = false,
-                feedHistoryUiState = mockFeedHistoryUiStateSuccess,
-                onFeedHistoryEvent = {}
-            )
-        },
-        onNavigate = {},
-        darkTheme = false
-    )
-}
-
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-internal fun FeedHistoryScreenErrorDarkPreview() {
-    MainScaffold(
-        isControllerLoaded = true,
-        navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
-        screenContent = {
-            FeedHistoryScreen(
-                showFullWeek = false,
-                feedHistoryUiState = mockFeedHistoryUiStateError,
-                onFeedHistoryEvent = {}
-            )
-        },
-        onNavigate = {},
-        darkTheme = true
-    )
-}
-
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Composable
-internal fun FeedHistoryScreenErrorLightPreview() {
-    MainScaffold(
-        isControllerLoaded = true,
-        navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
-        screenContent = {
-            FeedHistoryScreen(
-                showFullWeek = false,
-                feedHistoryUiState = mockFeedHistoryUiStateError,
-                onFeedHistoryEvent = {}
-            )
-        },
-        onNavigate = {},
-        darkTheme = false
-    )
-}
-
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-internal fun FeedHistoryScreenEmptyDarkPreview() {
-    MainScaffold(
-        isControllerLoaded = true,
-        navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
-        screenContent = {
-            FeedHistoryScreen(
-                showFullWeek = false,
-                feedHistoryUiState = mockFeedHistoryUiStateEmpty,
-                onFeedHistoryEvent = {}
-            )
-        },
-        onNavigate = {},
-        darkTheme = true
-    )
-}
-
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Composable
-internal fun FeedHistoryScreenEmptyLightPreview() {
-    MainScaffold(
-        isControllerLoaded = true,
-        navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
-        screenContent = {
-            FeedHistoryScreen(
-                showFullWeek = false,
-                feedHistoryUiState = mockFeedHistoryUiStateEmpty,
-                onFeedHistoryEvent = {}
+                feedHistoryFlow = flowOf(PagingData.from(
+                    emptyList(),
+                    sourceLoadStates = LoadStates(
+                        refresh = LoadState.NotLoading(true),
+                        prepend = LoadState.NotLoading(true),
+                        append = LoadState.NotLoading(true)
+                    )
+                )),
+                previewData = mockFeedHistoryLogEntries
             )
         },
         onNavigate = {},
@@ -303,12 +118,14 @@ internal fun FeedHistoryScreenEmptyLightPreview() {
 internal fun FeedHistoryScreenLoadingDarkPreview() {
     MainScaffold(
         isControllerLoaded = true,
-        navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
+        navigationRouteSource = ViewNavigationRoutes.feedHistory,
         screenContent = {
             FeedHistoryScreen(
-                showFullWeek = false,
-                feedHistoryUiState = mockFeedHistoryUiStateLoading,
-                onFeedHistoryEvent = {}
+                feedHistoryFlow = flowOf(PagingData.from(emptyList(), LoadStates(
+                    refresh = LoadState.Loading,
+                    prepend = LoadState.NotLoading(true),
+                    append = LoadState.NotLoading(true)
+                ))),
             )
         },
         onNavigate = {},
@@ -321,12 +138,14 @@ internal fun FeedHistoryScreenLoadingDarkPreview() {
 internal fun FeedHistoryScreenLoadingLightPreview() {
     MainScaffold(
         isControllerLoaded = true,
-        navigationRouteSource = ViewNavigationRoutes.feedAddProfile,
+        navigationRouteSource = ViewNavigationRoutes.feedHistory,
         screenContent = {
             FeedHistoryScreen(
-                showFullWeek = false,
-                feedHistoryUiState = mockFeedHistoryUiStateLoading,
-                onFeedHistoryEvent = {}
+                feedHistoryFlow = flowOf(PagingData.from(emptyList(), LoadStates(
+                    refresh = LoadState.Loading,
+                    prepend = LoadState.NotLoading(true),
+                    append = LoadState.NotLoading(true)
+                ))),
             )
         },
         onNavigate = {},

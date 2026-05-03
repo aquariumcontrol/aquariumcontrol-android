@@ -26,7 +26,6 @@ import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogE
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.balling.presentation.edit.BallingProfileEditUiState
 import com.laimburggasse.aquariumcontrol.balling.presentation.entry.BallingProfilesUiState
-import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryUiState
 
 interface BallingPreviewData {
     val mockBallingProfile: BallingProfile
@@ -39,9 +38,5 @@ interface BallingPreviewData {
     val mockBallingProfilesUiStateLoading: BallingProfilesUiState.Loading
     val mockBallingProfilesUiStateEmpty: BallingProfilesUiState.Empty
     val mockBallingHistoryLogEntries: List<BallingHistoryLogEntry>
-    val mockBallingHistoryUiStateSuccess: BallingHistoryUiState.Success
-    val mockBallingHistoryUiStateEmpty: BallingHistoryUiState.Empty
-    val mockBallingHistoryUiStateError: BallingHistoryUiState.Error
-    val mockBallingHistoryUiStateLoading: BallingHistoryUiState.Loading
     val mockBallingEvent: BallingHistoryLogEntry
 }

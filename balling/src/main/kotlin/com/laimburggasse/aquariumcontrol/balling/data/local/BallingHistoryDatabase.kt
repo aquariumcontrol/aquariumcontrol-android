@@ -20,24 +20,19 @@
  * SOFTWARE.
  */
 
-package com.laimburggasse.aquariumcontrol.feed.testing
+package com.laimburggasse.aquariumcontrol.balling.data.local
 
-import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
-import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryLogApiService
-import kotlinx.serialization.json.Json
-import okhttp3.ResponseBody
-import okhttp3.ResponseBody.Companion.toResponseBody
-import retrofit2.Response
+import androidx.room.Database
+import androidx.room.RoomDatabase
+import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
 
-class MockFeedHistoryLogApiServiceImpl(
-    private val mockFeedHistoryLogEvents: List<FeedHistoryLogEntry>? = null
-): HistoryLogApiService {
-    override suspend fun getHistoryLogEvents(
-        url: String,
-        authHeader: String
-    ): Response<ResponseBody> {
-        val responseJsonString = Json.encodeToString(mockFeedHistoryLogEvents)
-        val responseBody = responseJsonString.toResponseBody()
-        return Response.success(responseBody)
+@Database(entities = [BallingHistoryLogEntry::class], version = 4, exportSchema = false)
+abstract class BallingHistoryDatabase : RoomDatabase() {
+    // This class defines the database for the Balling History Log.
+
+    abstract fun ballingHistoryDao(): BallingHistoryDao
+
+    companion object {
+        const val TABLE_NAME_BALLING_LOG = "BALLING_LOG"
     }
 }

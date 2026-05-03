@@ -24,7 +24,7 @@ package com.laimburggasse.aquariumcontrol.controller.presentation.edit
 
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
-import com.laimburggasse.aquariumcontrol.common.data.ControllerProfileDao
+import com.laimburggasse.aquariumcontrol.common.data.local.ControllerProfileDao
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiEvent
 import com.laimburggasse.aquariumcontrol.controller.testing.ControllerMockData.mockControllerProfile1

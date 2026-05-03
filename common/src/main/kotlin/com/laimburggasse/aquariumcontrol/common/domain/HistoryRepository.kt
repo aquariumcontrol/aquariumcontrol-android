@@ -1,5 +1,5 @@
 /*
- *  Copyright 2025 Uwe Martin
+ *  Copyright 2026 Uwe Martin
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -20,18 +20,12 @@
  * SOFTWARE.
  */
 
-package com.laimburggasse.aquariumcontrol.common.data.remote
+package com.laimburggasse.aquariumcontrol.common.domain
 
-import okhttp3.ResponseBody
-import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Url
+import androidx.paging.PagingData
+import kotlinx.coroutines.flow.Flow
 
-interface HistoryLogApiService {
-    @GET
-    suspend fun getHistoryLogEvents(
-        @Url url: String,
-        @Header("Authorization") authHeader: String
-    ): Response<ResponseBody>
+interface HistoryRepository<T : Any> {
+    val historyEventFlow: Flow<PagingData<T>>
+    suspend fun triggerRefresh()
 }

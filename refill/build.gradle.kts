@@ -120,8 +120,6 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     testImplementation(libs.junit)
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.okhttp)
@@ -140,6 +138,17 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.google.firebase.crashlytics)
     implementation(libs.google.firebase.analytics)
+
+    //Room
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.symbol.processing.api)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+
+    // Paging
+    implementation(libs.androidx.room.paging)
+    implementation(libs.androidx.paging.common)
+    implementation(libs.androidx.paging.compose)
 }
 
 // configuration of code coverage reports
@@ -156,7 +165,7 @@ val jacocoTestReport by tasks.registering(JacocoReport::class) {
         "**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*",
         "**/*_Hilt*.class", "**/Hilt_*.class", "**/*_Factory.class",
         "**/*_MembersInjector.class", "**/*Module_*Factory.class",
-        "**/*\$Serializer.*", "**/DataBinderMapperImpl.*"
+        $$"**/*$Serializer.*", "**/DataBinderMapperImpl.*"
     )
 
     val debugTree = fileTree("${project.layout.buildDirectory.get()}/tmp/kotlin-classes/debug") {

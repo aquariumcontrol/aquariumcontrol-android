@@ -29,7 +29,4 @@ object RefillPreviewDataImpl: RefillPreviewData {
     override val mockFixedTimestamp = RefillMockData.mockFixedTimestamp
     override val mockEvent = RefillMockData.mockEvent
     override val mockRefillHistoryLogEntries = RefillMockData.mockRefillHistoryLogEntries
-    override val mockRefillHistoryUiStateSuccess = RefillMockData.mockRefillHistoryUiStateSuccess
-    override val mockRefillHistoryUiStateEmpty = RefillMockData.mockRefillHistoryUiStateEmpty
-    override val mockRefillHistoryUiStateError = RefillMockData.mockRefillHistoryUiStateError
 }

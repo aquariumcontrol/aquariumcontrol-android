@@ -33,7 +33,7 @@ class MockSessionManagerImpl(
     private val _selectedControllerProfile = MutableStateFlow<ControllerProfile?>(value = null)
     override val selectedControllerProfile: StateFlow<ControllerProfile?> = _selectedControllerProfile
 
-    private val _isControllerLoaded = MutableStateFlow<Boolean>(value = false)
+    private val _isControllerLoaded = MutableStateFlow(value = false)
     override val isControllerLoaded: StateFlow<Boolean> = _isControllerLoaded
 
     private val _defaultControllerProfileId = MutableStateFlow<Long?>(value = null)
@@ -42,11 +42,10 @@ class MockSessionManagerImpl(
     private val _isFirstLoad = MutableStateFlow(value = true)
     override val isFirstLoad: StateFlow<Boolean> = _isFirstLoad
 
-    private var previousControllerProfileId: Long? = null
+    private val _serverTimestamp = MutableStateFlow<String?>(value = null)
+    override val serverTimestamp: StateFlow<String?> = _serverTimestamp
 
-    fun setMockControllerList(list: List<ControllerProfile>) {
-        controllerProfiles = list
-    }
+    private var previousControllerProfileId: Long? = null
 
     override suspend fun selectControllerById(id: Long): Boolean {
         previousControllerProfileId = _defaultControllerProfileId.value
@@ -65,6 +64,10 @@ class MockSessionManagerImpl(
 
     override fun updateSelectedControllerProfile(controllerProfile: ControllerProfile) {
         _selectedControllerProfile.value = controllerProfile
+    }
+
+    override fun updateServerTimestamp(timestamp: String?) {
+        _serverTimestamp.value = timestamp
     }
 
     override fun getControllerAddress(): String? {

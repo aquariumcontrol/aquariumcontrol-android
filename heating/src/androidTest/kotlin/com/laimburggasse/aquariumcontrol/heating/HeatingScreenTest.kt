@@ -25,7 +25,7 @@ package com.laimburggasse.aquariumcontrol.heating
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.captureToImage
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.laimburggasse.aquariumcontrol.common.ScreenshotTestHelper
@@ -60,7 +60,8 @@ class HeatingScreenTest {
                         heatingSetValsValid = remember { mutableStateOf(value = true) },
                         onHeatingSetValsEvent = {},
                         heatingStatsUiState = mockHeatingStatsUiState,
-                        onHeatingStatsEvent = {}
+                        onHeatingStatsEvent = {},
+                        isDarkMode = true
                     )
                 },
                 onNavigate = {},
@@ -88,7 +89,8 @@ class HeatingScreenTest {
                         heatingSetValsValid = remember { mutableStateOf(value = true) },
                         onHeatingSetValsEvent = {},
                         heatingStatsUiState = mockHeatingStatsUiState,
-                        onHeatingStatsEvent = {}
+                        onHeatingStatsEvent = {},
+                        isDarkMode = false
                     )
                 },
                 onNavigate = {},

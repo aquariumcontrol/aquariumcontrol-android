@@ -25,7 +25,6 @@ package com.laimburggasse.aquariumcontrol.feed.data.di
 import com.laimburggasse.aquariumcontrol.feed.data.FeedHistoryRepositoryImpl
 import com.laimburggasse.aquariumcontrol.feed.data.FeedProfilesRepositoryImpl
 import com.laimburggasse.aquariumcontrol.feed.data.FeedScheduleRepositoryImpl
-import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedHistoryRepository
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedProfilesRepository
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedScheduleRepository
@@ -49,8 +48,8 @@ abstract class FeedDataModule {
     @Binds
     @Singleton
     abstract fun bindFeedHistoryRepository(
-        feedHistoryRepositoryImpl: FeedHistoryRepositoryImpl<FeedHistoryLogEntry>
-    ): FeedHistoryRepository<FeedHistoryLogEntry>
+        feedHistoryRepositoryImpl: FeedHistoryRepositoryImpl
+    ): FeedHistoryRepository
 
     @Binds
     @Singleton

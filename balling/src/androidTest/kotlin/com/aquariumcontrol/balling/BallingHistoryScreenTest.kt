@@ -23,15 +23,18 @@
 package com.aquariumcontrol.balling
 
 import androidx.compose.ui.test.captureToImage
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onRoot
+import androidx.paging.LoadState
+import androidx.paging.LoadStates
+import androidx.paging.PagingData
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryScreen
+import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData.mockBallingHistoryLogEntries
+import com.laimburggasse.aquariumcontrol.common.ScreenshotTestHelper
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
-import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryScreen
-import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData.mockBallingHistoryUiStateEmpty
-import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData.mockBallingHistoryUiStateSuccess
-import com.laimburggasse.aquariumcontrol.common.ScreenshotTestHelper
+import kotlinx.coroutines.flow.flowOf
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -50,12 +53,17 @@ class BallingHistoryScreenTest {
     fun ballingHistoryScreenDarkEmptyTest() {
         composeTestRule.setContent {
             MainScaffold(
-                navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
+                navigationRouteSource = ViewNavigationRoutes.ballingHistory,
                 screenContent = {
                     BallingHistoryScreen(
-                        showFullWeek = false,
-                        ballingHistoryUiState = mockBallingHistoryUiStateEmpty,
-                        onEvent = {}
+                        ballingHistoryFlow = flowOf(PagingData.from(
+                            emptyList(),
+                            sourceLoadStates = LoadStates(
+                                refresh = LoadState.NotLoading(true),
+                                prepend = LoadState.NotLoading(true),
+                                append = LoadState.NotLoading(true)
+                            )
+                        ))
                     )
                 },
                 onNavigate = {},
@@ -77,12 +85,17 @@ class BallingHistoryScreenTest {
         composeTestRule.setContent {
             MainScaffold(
                 isControllerLoaded = true,
-                navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
+                navigationRouteSource = ViewNavigationRoutes.ballingHistory,
                 screenContent = {
                     BallingHistoryScreen(
-                        showFullWeek = false,
-                        ballingHistoryUiState = mockBallingHistoryUiStateEmpty,
-                        onEvent = {}
+                        ballingHistoryFlow = flowOf(PagingData.from(
+                            emptyList(),
+                            sourceLoadStates = LoadStates(
+                                refresh = LoadState.NotLoading(true),
+                                prepend = LoadState.NotLoading(true),
+                                append = LoadState.NotLoading(true)
+                            )
+                        ))
                     )
                 },
                 onNavigate = {},
@@ -102,12 +115,17 @@ class BallingHistoryScreenTest {
         composeTestRule.setContent {
             MainScaffold(
                 isControllerLoaded = true,
-                navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
+                navigationRouteSource = ViewNavigationRoutes.ballingHistory,
                 screenContent = {
                     BallingHistoryScreen(
-                        showFullWeek = false,
-                        ballingHistoryUiState = mockBallingHistoryUiStateSuccess,
-                        onEvent = {}
+                        ballingHistoryFlow = flowOf(PagingData.from(
+                            mockBallingHistoryLogEntries,
+                            sourceLoadStates = LoadStates(
+                                refresh = LoadState.NotLoading(true),
+                                prepend = LoadState.NotLoading(true),
+                                append = LoadState.NotLoading(true)
+                            )
+                        ))
                     )
                 },
                 onNavigate = {},
@@ -128,12 +146,17 @@ class BallingHistoryScreenTest {
         composeTestRule.setContent {
             MainScaffold(
                 isControllerLoaded = true,
-                navigationRouteSource = ViewNavigationRoutes.ballingHistory24h,
+                navigationRouteSource = ViewNavigationRoutes.ballingHistory,
                 screenContent = {
                     BallingHistoryScreen(
-                        showFullWeek = false,
-                        ballingHistoryUiState = mockBallingHistoryUiStateSuccess,
-                        onEvent = {}
+                        ballingHistoryFlow = flowOf(PagingData.from(
+                            mockBallingHistoryLogEntries,
+                            sourceLoadStates = LoadStates(
+                                refresh = LoadState.NotLoading(true),
+                                prepend = LoadState.NotLoading(true),
+                                append = LoadState.NotLoading(true)
+                            )
+                        ))
                     )
                 },
                 onNavigate = {},

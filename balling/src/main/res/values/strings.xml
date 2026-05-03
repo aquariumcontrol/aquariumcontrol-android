@@ -1,9 +1,7 @@
 <resources>
     <string name="balling_log">Balling Log</string>
-    <string name="balling_events_last_7d">Balling dosing events of last 7 days</string>
-    <string name="balling_events_last_24h">Balling dosing events of last 24h</string>
-    <string name="view_balling_events_24h">View balling dosing events of last 24h</string>
-    <string name="view_balling_events_7d">View balling dosing events of last 7 days</string>
+    <string name="balling_events">Balling dosing events</string>
+    <string name="view_balling_events">View balling dosing events</string>
     <string name="balling_dosing">Balling Dosing</string>
     <string name="loading_balling_dosing_events">Loading Balling dosing events.</string>
     <string name="no_balling_events_found">No Balling events found.</string>

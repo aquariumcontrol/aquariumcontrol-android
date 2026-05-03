@@ -22,11 +22,12 @@
 
 package com.laimburggasse.aquariumcontrol.feed.domain.repository
 
-import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import androidx.paging.PagingData
+import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
 import kotlinx.coroutines.flow.Flow
 
-interface FeedHistoryRepository<T> {
-    val feedHistoryEventFlow: Flow<DataFetchResult<List<T>>>
-    suspend fun setHistoryTimeRange(fetchFullWeek: Boolean)
-    suspend fun triggerRefresh()
+import com.laimburggasse.aquariumcontrol.common.domain.HistoryRepository
+
+interface FeedHistoryRepository : HistoryRepository<FeedHistoryLogEntry> {
+    val feedHistoryEventFlow: Flow<PagingData<FeedHistoryLogEntry>>
 }

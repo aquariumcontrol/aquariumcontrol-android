@@ -22,24 +22,24 @@
 
 package com.laimburggasse.aquariumcontrol.refill.domain.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
+import com.laimburggasse.aquariumcontrol.refill.data.local.RefillHistoryDatabase
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.sql.Timestamp
 
+import com.laimburggasse.aquariumcontrol.common.domain.BaseHistoryLogEntry
+
+@Entity(tableName = RefillHistoryDatabase.TABLE_NAME_REFILL_LOG)
 @Serializable
 data class RefillHistoryLogEntry(
+    // This data class represents a refill event.
+    @PrimaryKey
     @SerialName(value = WebApiParams.TIMESTAMP)
-    val timestamp: String,
+    override val timestamp: String,
     @SerialName(value = WebApiParams.REFILL_DURATION)
     val duration: Double,
     @SerialName(value = WebApiParams.REFILL_VOLUME)
     val volume: Double
-) {
-    // This class is used to represent a refill event.
-    constructor(timestamp: Timestamp, duration: Double, volume: Double) : this(
-        timestamp.toString(),
-        duration,
-        volume
-    )
-}
+) : BaseHistoryLogEntry

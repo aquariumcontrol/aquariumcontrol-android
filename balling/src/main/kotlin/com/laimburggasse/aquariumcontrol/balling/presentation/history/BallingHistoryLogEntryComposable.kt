@@ -44,7 +44,7 @@ import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogE
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
 
 @Composable
-fun BallingHistoryEventComposable(ballingHistoryLogEntry: BallingHistoryLogEntry) {
+fun BallingHistoryLogEntryComposable(ballingHistoryLogEntry: BallingHistoryLogEntry) {
     // This screen displays one Balling dosing event with the following information:
     // - timestamp
     // - pump id
@@ -56,6 +56,7 @@ fun BallingHistoryEventComposable(ballingHistoryLogEntry: BallingHistoryLogEntry
         )
         .padding(all = 8.dp)
     ) {
+        // @todo: use Card
         Column(modifier = Modifier.weight(weight = 1f)) {
             Text(text = stringResource(R.string.timestamp), fontSize = 12.sp)
             Text(text = ballingHistoryLogEntry.timestamp, fontSize = 12.sp)
@@ -81,7 +82,7 @@ fun BallingHistoryEventComposable(ballingHistoryLogEntry: BallingHistoryLogEntry
 internal fun BallingHistoryEventComposableDarkPreview() {
     AquariumControllerTheme(darkTheme = true) {
         Surface(color = MaterialTheme.colorScheme.background) {
-            BallingHistoryEventComposable(ballingHistoryLogEntry = mockBallingEvent)
+            BallingHistoryLogEntryComposable(ballingHistoryLogEntry = mockBallingEvent)
         }
     }
 }
@@ -91,7 +92,7 @@ internal fun BallingHistoryEventComposableDarkPreview() {
 internal fun BallingHistoryEventComposableLightPreview() {
     AquariumControllerTheme(darkTheme = false) {
         Surface(color = MaterialTheme.colorScheme.background) {
-            BallingHistoryEventComposable(ballingHistoryLogEntry = mockBallingEvent)
+            BallingHistoryLogEntryComposable(ballingHistoryLogEntry = mockBallingEvent)
         }
     }
 }

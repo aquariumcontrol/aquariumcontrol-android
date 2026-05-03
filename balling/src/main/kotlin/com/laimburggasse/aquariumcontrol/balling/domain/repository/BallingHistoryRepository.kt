@@ -22,11 +22,12 @@
 
 package com.laimburggasse.aquariumcontrol.balling.domain.repository
 
-import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import androidx.paging.PagingData
+import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
 import kotlinx.coroutines.flow.Flow
 
-interface BallingHistoryRepository<T> {
-    val ballingHistoryDosingEventFlow: Flow<DataFetchResult<List<T>>>
-    suspend fun setHistoryTimeRange(fetchFullWeek: Boolean)
-    suspend fun triggerRefresh()
+import com.laimburggasse.aquariumcontrol.common.domain.HistoryRepository
+
+interface BallingHistoryRepository : HistoryRepository<BallingHistoryLogEntry> {
+    val ballingHistoryDosingEventFlow: Flow<PagingData<BallingHistoryLogEntry>>
 }

@@ -161,8 +161,8 @@ internal fun FeedProfileSelectionComposableDarkPreview() {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 FeedProfileSelectionComposable(
                     feedProfilesUiState = mockFeedProfilesUiStateSuccess,
-                    onNavigateFromFeed = { event, id, isNew, millis -> },
-                    onFeedProfilesUiEvent = { event -> }
+                    onNavigateFromFeed = { _, _, _, _ -> },
+                    onFeedProfilesUiEvent = { _ -> }
                 )
             }
         }
@@ -183,8 +183,8 @@ internal fun FeedProfileSelectionComposableLightPreview() {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 FeedProfileSelectionComposable(
                     feedProfilesUiState = mockFeedProfilesUiStateSuccess,
-                    onNavigateFromFeed = { event, id, isNew, millis -> },
-                    onFeedProfilesUiEvent = { event -> }
+                    onNavigateFromFeed = { _, _, _, _ -> },
+                    onFeedProfilesUiEvent = { _ -> }
                 )
             }
         }

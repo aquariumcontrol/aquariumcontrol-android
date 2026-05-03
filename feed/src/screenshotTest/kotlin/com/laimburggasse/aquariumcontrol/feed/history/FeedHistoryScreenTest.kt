@@ -26,17 +26,13 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryScreenEmptyDarkPreview
-import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryScreenEmptyLightPreview
-import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryScreenErrorDarkPreview
-import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryScreenErrorLightPreview
 import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryScreenLoadingDarkPreview
 import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryScreenLoadingLightPreview
 import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryScreenSuccessDarkPreview
 import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryScreenSuccessLightPreview
 
 class FeedHistoryScreenTest {
-    //@PreviewTest
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(
         showBackground = true,
@@ -48,7 +44,7 @@ class FeedHistoryScreenTest {
         FeedHistoryScreenSuccessDarkPreview()
     }
 
-    //@PreviewTest
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
@@ -60,55 +56,7 @@ class FeedHistoryScreenTest {
         FeedHistoryScreenSuccessLightPreview()
     }
 
-    //@PreviewTest
-    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-    @Preview(
-        showBackground = true,
-        uiMode = Configuration.UI_MODE_NIGHT_YES,
-        device = "spec:width=600dp,height=400dp,orientation=landscape"
-    )
-    @Composable
-    fun FeedHistoryScreenErrorDarkTest() {
-        FeedHistoryScreenErrorDarkPreview()
-    }
-
-    //@PreviewTest
-    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
-    @Preview(
-        showBackground = true,
-        uiMode = Configuration.UI_MODE_NIGHT_NO,
-        device = "spec:width=600dp,height=400dp,orientation=landscape"
-    )
-    @Composable
-    fun FeedHistoryScreenErrorLightTest() {
-        FeedHistoryScreenErrorLightPreview()
-    }
-
-    //@PreviewTest
-    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-    @Preview(
-        showBackground = true,
-        uiMode = Configuration.UI_MODE_NIGHT_YES,
-        device = "spec:width=600dp,height=400dp,orientation=landscape"
-    )
-    @Composable
-    fun FeedHistoryScreenEmptyDarkTest() {
-        FeedHistoryScreenEmptyDarkPreview()
-    }
-
-    //@PreviewTest
-    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
-    @Preview(
-        showBackground = true,
-        uiMode = Configuration.UI_MODE_NIGHT_NO,
-        device = "spec:width=600dp,height=400dp,orientation=landscape"
-    )
-    @Composable
-    fun FeedHistoryScreenEmptyLightTest() {
-        FeedHistoryScreenEmptyLightPreview()
-    }
-
-    //@PreviewTest
+    @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Preview(
         showBackground = true,
@@ -121,7 +69,7 @@ class FeedHistoryScreenTest {
     }
 
     @PreviewTest
-    //@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Preview(
         showBackground = true,
         uiMode = Configuration.UI_MODE_NIGHT_NO,

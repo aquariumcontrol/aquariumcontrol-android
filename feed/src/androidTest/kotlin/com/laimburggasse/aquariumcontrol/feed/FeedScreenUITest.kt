@@ -22,7 +22,7 @@
 
 package com.laimburggasse.aquariumcontrol.feed
 
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -42,9 +42,9 @@ class FeedScreenUITest {
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Test
-    fun tapping_24h_history_button_navigates_to_FeedHistory24h() {
+    fun tapping_history_button_navigates_to_FeedHistory() {
         var capturedEvent: FeedNavigationEvent? = null
-        val label24h = context.getString(R.string.view_feed_events_24h)
+        val label24h = context.getString(R.string.view_feed_events)
 
         composeTestRule.setContent {
             FeedScreen(
@@ -60,29 +60,7 @@ class FeedScreenUITest {
         composeTestRule.onNodeWithText(label24h).performClick()
 
         // Assert the callback was triggered with the expected enum value
-        Assert.assertEquals(FeedNavigationEvent.ToFeedHistory24h, capturedEvent)
-    }
-
-    @Test
-    fun tapping_7d_history_button_navigates_to_FeedHistory7d() {
-        var capturedEvent: FeedNavigationEvent? = null
-        val label7d = context.getString(R.string.view_feed_events_7d)
-
-        composeTestRule.setContent {
-            FeedScreen(
-                feedProfilesUiState = mockFeedProfilesUiStateSuccess,
-                feedScheduleSelectionUiState = mockFeedScheduleSelectionUiStateSuccess,
-                onNavigateFromFeed = { event, _, _, _ -> capturedEvent = event },
-                onFeedProfilesUiEvent = {},
-                onFeedSchedulesUiEvent = { _ -> return@FeedScreen null }
-            )
-        }
-
-        // Find the button for 7d history and click it
-        composeTestRule.onNodeWithText(label7d).performClick()
-
-        // Assert the callback was triggered with the expected enum value
-        Assert.assertEquals(FeedNavigationEvent.ToFeedHistory7d, capturedEvent)
+        Assert.assertEquals(FeedNavigationEvent.ToFeedHistory, capturedEvent)
     }
 
     @Test

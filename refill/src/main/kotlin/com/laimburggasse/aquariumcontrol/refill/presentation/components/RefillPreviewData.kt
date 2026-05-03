@@ -23,14 +23,10 @@
 package com.laimburggasse.aquariumcontrol.refill.presentation.components
 
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
-import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryUiState
 import java.sql.Timestamp
 
 interface RefillPreviewData {
     val mockFixedTimestamp: Timestamp
     val mockEvent: RefillHistoryLogEntry
     val mockRefillHistoryLogEntries: List<RefillHistoryLogEntry>
-    val mockRefillHistoryUiStateSuccess: RefillHistoryUiState.Success
-    val mockRefillHistoryUiStateEmpty: RefillHistoryUiState.Empty
-    val mockRefillHistoryUiStateError: RefillHistoryUiState.Error
 }

@@ -20,24 +20,28 @@
  * SOFTWARE.
  */
 
-package com.laimburggasse.aquariumcontrol.balling.testing
+package com.laimburggasse.aquariumcontrol.balling.data.remote
 
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
-import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryLogApiService
-import kotlinx.serialization.json.Json
-import okhttp3.ResponseBody
-import okhttp3.ResponseBody.Companion.toResponseBody
-import retrofit2.Response
+import com.laimburggasse.aquariumcontrol.common.data.remote.dto.TimestampJsonObject
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Query
+import retrofit2.http.Url
 
-class MockBallingHistoryLogApiServiceImpl(
-    private val mockBallingHistoryLogEvents: List<BallingHistoryLogEntry>? = null
-): HistoryLogApiService {
-    override suspend fun getHistoryLogEvents(
-        url: String,
-        authHeader: String
-    ): Response<ResponseBody> {
-        val responseJsonString = Json.encodeToString(mockBallingHistoryLogEvents)
-        val responseBody = responseJsonString.toResponseBody()
-        return Response.success(responseBody)
-    }
+import com.laimburggasse.aquariumcontrol.common.data.remote.BaseHistoryApiService
+
+interface BallingHistoryApiService : BaseHistoryApiService {
+    @GET
+    override suspend fun getHistory(
+        @Url url: String,
+        @Header("Authorization") authHeader: String,
+        @Query("date") date: String,
+    ): List<BallingHistoryLogEntry>
+
+    @GET
+    override suspend fun getHistoryStart(
+        @Url url: String,
+        @Header("Authorization") authHeader: String,
+    ): TimestampJsonObject
 }

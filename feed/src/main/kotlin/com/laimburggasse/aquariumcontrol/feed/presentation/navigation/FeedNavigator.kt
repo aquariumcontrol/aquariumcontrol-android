@@ -32,8 +32,7 @@ fun NavHostController.handleFeedNavigation(
     millisSinceEpoch: Long? = null
 ) {
     when (event) {
-        FeedNavigationEvent.ToFeedHistory7d -> this.navigate(route = ViewNavigationRoutes.feedHistory7d)
-        FeedNavigationEvent.ToFeedHistory24h -> this.navigate(route = ViewNavigationRoutes.feedHistory24h)
+        FeedNavigationEvent.ToFeedHistory -> this.navigate(route = ViewNavigationRoutes.feedHistory)
         FeedNavigationEvent.ToFeedScheduling -> {
             if (feedProfileId != null && isNewScheduleEntry != null && millisSinceEpoch != null) {
                 this.navigate(

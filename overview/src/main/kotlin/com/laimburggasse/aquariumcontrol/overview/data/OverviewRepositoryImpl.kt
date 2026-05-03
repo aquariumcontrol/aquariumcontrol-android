@@ -44,11 +44,12 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @OptIn(DelicateCoroutinesApi::class)
 open class OverviewRepositoryImpl @Inject constructor(
-    sessionManager: SessionManager,
+    private val sessionManager: SessionManager,
     private val apiService: OverviewDataApiService,
     @param:ApplicationScope private val repositoryScope: CoroutineScope,
     @param:IoDispatcher private val context: CoroutineDispatcher
@@ -89,6 +90,11 @@ open class OverviewRepositoryImpl @Inject constructor(
                 }
 
                 emit(value = result)
+            }
+        }
+        .onEach { result ->
+            if (result is DataFetchResult.Success) {
+                sessionManager.updateServerTimestamp(result.data.timestamp)
             }
         }
         .stateIn(

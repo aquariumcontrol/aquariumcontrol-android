@@ -62,7 +62,10 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: () -> Unit) {
+fun HeatingStatsComposable(
+    heatingStats: List<HeatingStatsEntry>, updateData: () -> Unit,
+    isDarkMode: Boolean
+) {
     // This composable is only displaying time data charts without any user interaction.
     // Therefore, this composable does not use a view model.
     val labelHeatingStatsEnergyWh = stringResource(R.string.heating_stats_energy_wh)
@@ -70,7 +73,6 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: ()
     val labelWaterTemperatureC = stringResource(R.string.water_temperature_c)
     val labelNoDataAvailable = stringResource(R.string.no_data_available)
 
-    val isDarkMode: Boolean = isSystemInDarkTheme()
     val textColor: Int = if (isDarkMode) Color.WHITE else Color.BLACK
 
     Column(horizontalAlignment = CenterHorizontally) {
@@ -215,9 +217,10 @@ fun HeatingStatsComposable(heatingStats: List<HeatingStatsEntry>, updateData: ()
 )
 @Composable
 internal fun HeatingStatsComposableDarkPreview() {
+    val isDarkMode: Boolean = isSystemInDarkTheme()
     AquariumControllerTheme(darkTheme = true) {
         Surface(color = MaterialTheme.colorScheme.background) {
-            HeatingStatsComposable(heatingStats = mockHeatingStatsData, updateData = {})
+            HeatingStatsComposable(heatingStats = mockHeatingStatsData, updateData = {}, isDarkMode)
         }
     }
 }
@@ -230,9 +233,10 @@ internal fun HeatingStatsComposableDarkPreview() {
 )
 @Composable
 internal fun HeatingStatsComposableLightPreview() {
+    val isDarkMode: Boolean = isSystemInDarkTheme()
     AquariumControllerTheme(darkTheme = false) {
         Surface(color = MaterialTheme.colorScheme.background) {
-            HeatingStatsComposable(heatingStats = mockHeatingStatsData, updateData = {})
+            HeatingStatsComposable(heatingStats = mockHeatingStatsData, updateData = {}, isDarkMode)
         }
     }
 }

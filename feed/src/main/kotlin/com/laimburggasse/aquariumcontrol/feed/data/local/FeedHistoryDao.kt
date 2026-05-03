@@ -20,34 +20,24 @@
  * SOFTWARE.
  */
 
-package com.laimburggasse.aquariumcontrol.refill.testing
+package com.laimburggasse.aquariumcontrol.feed.data.local
 
-import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
-import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryLogApiService
-import kotlinx.serialization.json.Json
-import okhttp3.ResponseBody
-import okhttp3.ResponseBody.Companion.toResponseBody
-import retrofit2.Response
+import androidx.paging.PagingSource
+import androidx.room.Dao
+import androidx.room.Query
+import androidx.room.Upsert
+import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
 
-class MockRefillHistoryLogApiServiceImpl(
-    private var mockRefillHistoryLogEvents: List<RefillHistoryLogEntry>? = null
-): HistoryLogApiService {
-    private var forceError: Boolean = false
+import com.laimburggasse.aquariumcontrol.common.data.local.BaseHistoryDao
 
-    fun setForceError(force: Boolean) {
-        this.forceError = force
-    }
+@Dao
+interface FeedHistoryDao : BaseHistoryDao<FeedHistoryLogEntry> {
+    @Upsert
+    override suspend fun upsertAll(entries: List<FeedHistoryLogEntry>)
 
-    override suspend fun getHistoryLogEvents(
-        url: String,
-        authHeader: String
-    ): Response<ResponseBody> {
-        return if (forceError) {
-            Response.error(500, "API ERROR".toResponseBody())
-        } else {
-            val responseJsonString = Json.encodeToString(mockRefillHistoryLogEvents)
-            val responseBody = responseJsonString.toResponseBody()
-            Response.success(responseBody)
-        }
-    }
+    @Query(value = "SELECT * FROM ${FeedHistoryDatabase.TABLE_NAME_FEED_LOG} ORDER BY timestamp DESC")
+    fun pagingSource(): PagingSource<Int, FeedHistoryLogEntry>
+
+    @Query(value = "DELETE FROM ${FeedHistoryDatabase.TABLE_NAME_FEED_LOG}")
+    override suspend fun clearAll()
 }

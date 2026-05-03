@@ -22,8 +22,7 @@
 
 package com.laimburggasse.aquariumcontrol.refill.data.di
 
-import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryLogApiService
-import com.laimburggasse.aquariumcontrol.common.di.RefillHistoryService
+import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillHistoryApiService
 import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillStateApiService
 import dagger.Module
 import dagger.Provides
@@ -42,13 +41,10 @@ import javax.inject.Singleton
 object RefillNetwork {
     @Provides
     @Singleton
-    @RefillHistoryService
-    fun provideRefillHistoryLogApiService(
+    fun provideRefillHistoryApiService(
         okHttpClient: OkHttpClient
-    ): HistoryLogApiService {
-        return createService<HistoryLogApiService>(
-            okHttpClient
-        )
+    ): RefillHistoryApiService {
+        return createService<RefillHistoryApiService>(okHttpClient)
     }
 
     @Provides

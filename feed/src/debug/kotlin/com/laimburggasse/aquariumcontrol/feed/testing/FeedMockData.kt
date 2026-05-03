@@ -35,7 +35,6 @@ import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileEditT
 import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileEditUiState
 import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedProfilesUiState
 import com.laimburggasse.aquariumcontrol.feed.presentation.entry.FeedScheduleSelectionUiState
-import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryUiState
 
 fun createMockFeedProfile(): FeedProfile {
     val mockFeedProfileImport = FeedProfileImport()
@@ -288,32 +287,24 @@ object FeedMockData {
     val mockFeedScheduleSelectionUiStateError = FeedScheduleSelectionUiState.Error(errorMessage = "Mock Error")
     val mockEvent = FeedHistoryLogEntry(
         timestamp = "2025-01-18 12:00:00",
-        feederOnTime = 20000,
+        feederOnTime = 20000.0,
         profileName = "Mock feed profile 1",
         idx = 1
     )
     val mockFeedHistoryLogEntries = listOf(
         FeedHistoryLogEntry(
             timestamp = "2025-01-18 12:00:00",
-            feederOnTime = 20000,
+            feederOnTime = 20000.0,
             profileName = "Mock feed profile 1",
             idx = 1
         ),
         FeedHistoryLogEntry(
             timestamp = "2025-01-18 12:00:00",
-            feederOnTime = 10000,
+            feederOnTime = 10000.0,
             profileName = "Mock feed profile 2",
             idx = 2
         ),
     )
-    val mockFeedHistoryUiStateSuccess = FeedHistoryUiState.Success(
-        feedHistoryLogEntries = mockFeedHistoryLogEntries
-    )
-    val mockFeedHistoryUiStateError = FeedHistoryUiState.Error(
-        errorMessage = "Mock Error message"
-    )
-    val mockFeedHistoryUiStateEmpty = FeedHistoryUiState.Empty
-    val mockFeedHistoryUiStateLoading = FeedHistoryUiState.Loading
     val mockFeedProfileImportForScheduleScreen = FeedProfileImport()
     val mockFeedProfileForScheduleScreen: FeedProfile = FeedProfile.fromFeedProfileImportUpdateIdName(
         feedProfileImport = mockFeedProfileImportForScheduleScreen,

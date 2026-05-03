@@ -75,24 +75,12 @@ class MockFeedProfileApiServiceImpl(
         }
     }
 
-    fun addMockFeedProfile(additionalFeedProfile: FeedProfile) {
-        mockFeedProfiles = (mockFeedProfiles ?: emptyList()) + additionalFeedProfile
-        mockFeedProfileImports = (mockFeedProfileImports ?: emptyList()) + additionalFeedProfile.toFeedProfileImport()
-    }
-    
     override suspend fun addFeedProfile(
         url: String,
         authHeader: String,
         params: Map<String, String>
     ): Response<ResponseBody> {
         return Response.success("OK".toResponseBody())
-    }
-
-    fun deleteMockFeedProfile(toBeDeletedFeedProfile: FeedProfile) {
-        mockFeedProfiles = mockFeedProfiles?.filter { it.profileID != toBeDeletedFeedProfile.profileID }
-        mockFeedProfileImports = mockFeedProfileImports?.filter {
-            it.profileId != toBeDeletedFeedProfile.profileID 
-        }
     }
 
     override suspend fun deleteFeedProfile(
@@ -103,13 +91,6 @@ class MockFeedProfileApiServiceImpl(
             Response.error(500, "API error".toResponseBody())
         } else {
             Response.success("OK".toResponseBody())
-        }
-    }
-
-    fun setMockFeedProfileImports(mockFeedProfileImports: List<FeedProfileImport>?) {
-        this.mockFeedProfileImports = mockFeedProfileImports
-        this.mockFeedProfiles = mockFeedProfileImports?.map {
-            FeedProfile.fromFeedProfileImport(it)
         }
     }
 

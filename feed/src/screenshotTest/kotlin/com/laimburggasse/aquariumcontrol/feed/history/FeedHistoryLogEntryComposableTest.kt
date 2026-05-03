@@ -26,21 +26,21 @@ import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryEventComposableDarkPreview
-import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryEventComposableLightPreview
+import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryLogEntryComposableDarkPreview
+import com.laimburggasse.aquariumcontrol.feed.presentation.history.FeedHistoryLogEntryComposableLightPreview
 
 class FeedHistoryLogEntryComposableTest {
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Composable
     fun FeedHistoryEventComposableDarkTest() {
-        FeedHistoryEventComposableDarkPreview()
+        FeedHistoryLogEntryComposableDarkPreview()
     }
 
     @PreviewTest
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
     @Composable
     fun FeedHistoryEventComposableLightTest() {
-        FeedHistoryEventComposableLightPreview()
+        FeedHistoryLogEntryComposableLightPreview()
     }
 }

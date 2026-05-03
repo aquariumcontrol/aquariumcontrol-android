@@ -26,7 +26,6 @@ import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogE
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.balling.presentation.edit.BallingProfileEditUiState
 import com.laimburggasse.aquariumcontrol.balling.presentation.entry.BallingProfilesUiState
-import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryUiState
 
 object BallingMockData {
     val mockBallingProfile = BallingProfile(
@@ -58,12 +57,6 @@ object BallingMockData {
             label = "MockDosingUnit 2"
         ),
     )
-    val mockBallingHistoryUiStateSuccess = BallingHistoryUiState.Success(
-        ballingHistoryLogEntries = mockBallingHistoryLogEntries
-    )
-    val mockBallingHistoryUiStateEmpty = BallingHistoryUiState.Empty
-    val mockBallingHistoryUiStateError = BallingHistoryUiState.Error(errorMessage = "Mock Error message")
-    val mockBallingHistoryUiStateLoading = BallingHistoryUiState.Loading
     val mockBallingEvent = BallingHistoryLogEntry(
         timestamp = "2025-01-18 12:00:00",
         pumpId = 1,

@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="refill_control">Refill Control</string>
-    <string name="view_refill_events_24h">View refill events of last 24h</string>
-    <string name="view_refill_events_7d">View refill events of last 7 days</string>
+    <string name="view_refill_events">View refill events</string>
     <string name="start_refill_control">Start refill control</string>
     <string name="stop_refill_control">Stop refill control</string>
     <string name="reset_errors">Reset all errors</string>
-    <string name="refill_events_last_7d">Refill events of last 7 days</string>
-    <string name="refill_events_last_24h">Refill events of last 24h</string>
+    <string name="refill_events_last">Refill events</string>
     <string name="loading_refill_events">Loading refill events.</string>
     <string name="no_refill_events_found">No refill events found.</string>
     <string name="sent_request_to_controller_for_starting_refill_control">Sent request to controller for starting refill control</string>

@@ -22,9 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.balling.data.di
 
+import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingHistoryApiService
 import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingProfileApiService
-import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryLogApiService
-import com.laimburggasse.aquariumcontrol.common.di.BallingHistoryService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -41,11 +40,10 @@ import javax.inject.Singleton
 object BallingNetwork {
     @Provides
     @Singleton
-    @BallingHistoryService
-    fun provideBallingHistoryLogApiService(
+    fun provideBallingHistoryApiService(
         okHttpClient: OkHttpClient
-    ): HistoryLogApiService {
-        return createService<HistoryLogApiService>(okHttpClient)
+    ): BallingHistoryApiService {
+        return createService<BallingHistoryApiService>(okHttpClient)
     }
 
     @Provides
@@ -62,6 +60,8 @@ object BallingNetwork {
         val json = Json {
             ignoreUnknownKeys = true
             coerceInputValues = true
+            isLenient = true
+            allowSpecialFloatingPointValues = true
         }
 
         return Retrofit.Builder()

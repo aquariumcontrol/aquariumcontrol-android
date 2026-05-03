@@ -70,8 +70,7 @@ fun RefillScreen(
 ) {
     // This screen displays
     // - the state of the refill control (ACTIVE, STOPPED, ERROR)
-    // - a button for visualizing all refill events of the last 24h
-    // - a button for visualizing all refill events of the last 7 days
+    // - a button for navigating to history screen
     // - a button for starting the refill controller
     // - a button for stopping the refill controller
     // - a button for resetting errors of the refill controller
@@ -151,21 +150,10 @@ fun RefillScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(horizontal = 8.dp),
-                                onClick = { onNavigateFromRefill(RefillNavigationEvent.ToRefillHistory24h) },
+                                onClick = { onNavigateFromRefill(RefillNavigationEvent.ToRefillHistory) },
                             ) {
                                 Text(
-                                    text = stringResource(id = R.string.view_refill_events_24h),
-                                    fontSize = 16.sp
-                                )
-                            }
-                            Button(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 8.dp),
-                                onClick = { onNavigateFromRefill(RefillNavigationEvent.ToRefillHistory7d) },
-                            ) {
-                                Text(
-                                    text = stringResource(id = R.string.view_refill_events_7d),
+                                    text = stringResource(id = R.string.view_refill_events),
                                     fontSize = 16.sp
                                 )
                             }
