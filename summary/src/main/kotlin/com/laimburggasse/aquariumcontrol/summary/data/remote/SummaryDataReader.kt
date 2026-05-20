@@ -22,13 +22,16 @@
 
 package com.laimburggasse.aquariumcontrol.summary.data.remote
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.crashlytics
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.summary.domain.model.SummaryData
-import okhttp3.Credentials
+import java.util.Base64
 
+@RequiresApi(Build.VERSION_CODES.O)
 class SummaryDataReader(
     private val apiService: SummaryDataApiService,
     private val url: String,
@@ -36,28 +39,17 @@ class SummaryDataReader(
     password: String
 ) {
     // This class reads the overview data from the server using a GET request.
-    private val authHeaderValue: String = Credentials.basic(username, password)
+    private val authHeaderValue: String = "Basic " + Base64.getEncoder().encodeToString("$username:$password".toByteArray())
 
     suspend fun readSummaryData(): DataFetchResult<SummaryData> {
-        try {
-            val response = apiService.getSummaryData(
+        return try {
+            val decodedData = apiService.getSummaryData(
                 url = url, authHeader = authHeaderValue
             )
-            if (response.isSuccessful) {
-                val decodedData = response.body() ?: return DataFetchResult.Error(
-                    exception = null,
-                    errorMessage = GlobalConstants.ERR_MSG_EMPTY_RESPONSE
-                )
-                return DataFetchResult.Success(decodedData)
-            } else {
-                return DataFetchResult.Error(
-                    exception = null,
-                    errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_ERR_CODE + response.code()
-                )
-            }
+            DataFetchResult.Success(decodedData)
         } catch (e: Exception) { // recording exception in crashlytics
             Firebase.crashlytics.recordException(e)
-            return DataFetchResult.Error(
+            DataFetchResult.Error(
                 exception = e,
                 errorMessage = GlobalConstants.ERR_MSG_UNEXPECTED_ERR_DURING_PREP + e.message
             )

@@ -23,15 +23,10 @@
 package com.laimburggasse.aquariumcontrol.summary.data.remote
 
 import com.laimburggasse.aquariumcontrol.summary.domain.model.SummaryData
-import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Url
 
 interface SummaryDataApiService {
-    @GET
     suspend fun getSummaryData(
-        @Url url: String,
-        @Header("Authorization") authHeader: String
-    ): Response<SummaryData>
+        url: String,
+        authHeader: String
+    ): SummaryData
 }

@@ -25,9 +25,6 @@ package com.laimburggasse.aquariumcontrol.ventilation.testing
 import com.laimburggasse.aquariumcontrol.ventilation.data.remote.VentilationSetValsApiService
 import com.laimburggasse.aquariumcontrol.ventilation.domain.model.VentilationSetVals
 import kotlinx.coroutines.delay
-import okhttp3.ResponseBody
-import okhttp3.ResponseBody.Companion.toResponseBody
-import retrofit2.Response
 
 class MockVentilationSetValsApiServiceImpl(
     private var mockVentilationSetVals: VentilationSetVals?
@@ -42,14 +39,13 @@ class MockVentilationSetValsApiServiceImpl(
     override suspend fun getVentilationSetVals(
         url: String,
         authHeader: String
-    ): Response<List<VentilationSetVals>> {
+    ): List<VentilationSetVals> {
         delay(10) // Small virtual delay to avoid conflation in flow
         return if (mockVentilationSetVals == null || forceError) {
-            Response.error(500, "API error".toResponseBody())
+            throw Exception("API error")
         }
         else {
-            val outputList = listOf(mockVentilationSetVals!!.copy())
-            Response.success(outputList)
+            listOf(mockVentilationSetVals!!.copy())
         }
     }
 
@@ -61,11 +57,11 @@ class MockVentilationSetValsApiServiceImpl(
         url: String,
         authHeader: String,
         params: Map<String, String>
-    ): Response<ResponseBody> {
+    ): Boolean {
         return if (forceError) {
-            Response.error(500, "API error".toResponseBody())
+            false
         } else {
-            Response.success("OK".toResponseBody())
+            true
         }
     }
 }

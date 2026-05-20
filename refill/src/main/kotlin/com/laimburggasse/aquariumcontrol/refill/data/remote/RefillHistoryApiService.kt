@@ -24,24 +24,17 @@ package com.laimburggasse.aquariumcontrol.refill.data.remote
 
 import com.laimburggasse.aquariumcontrol.common.data.remote.dto.TimestampJsonObject
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Query
-import retrofit2.http.Url
-
 import com.laimburggasse.aquariumcontrol.common.data.remote.BaseHistoryApiService
 
 interface RefillHistoryApiService : BaseHistoryApiService {
-    @GET
     override suspend fun getHistory(
-        @Url url: String,
-        @Header("Authorization") authHeader: String,
-        @Query("date") date: String,
+        url: String,
+        authHeader: String,
+        date: String,
     ): List<RefillHistoryLogEntry>
 
-    @GET
     override suspend fun getHistoryStart(
-        @Url url: String,
-        @Header("Authorization") authHeader: String,
+        url: String,
+        authHeader: String,
     ): TimestampJsonObject
 }

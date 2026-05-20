@@ -22,6 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.balling.data
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.crashlytics
 import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingProfileApiService
@@ -51,9 +53,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.Credentials
 import javax.inject.Inject
 
+@RequiresApi(Build.VERSION_CODES.O)
 open class BallingProfilesRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     private val apiService: BallingProfileApiService,
@@ -159,17 +161,16 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
             val port = sessionManager.getControllerPort()
 
             val url = "http://$controllerAddress:$port${WebApiUrls.BALLING_UPDATE_SET_VALS}"
-            val authHeader = Credentials.basic(user, password)
+            val authHeader = "Basic " + java.util.Base64.getEncoder().encodeToString("$user:$password".toByteArray())
 
             val postParams = mapOf(
                 WebApiParams.PUMP_ID to ballingProfile.pumpId.toString(),
                 WebApiParams.DOSING_VOLUME to ballingProfile.volume.toString()
             )
 
-            // Make the Retrofit call
+            // Make the Ktor call
             val requestSuccess = try {
-                val response = apiService.updateBallingProfile(url, authHeader, postParams)
-                response.isSuccessful
+                apiService.updateBallingProfile(url, authHeader, postParams)
             } catch (e: Exception) { // recording exception in crashlytics
                 Firebase.crashlytics.recordException(e)
                 false // Catch network timeouts or connection errors

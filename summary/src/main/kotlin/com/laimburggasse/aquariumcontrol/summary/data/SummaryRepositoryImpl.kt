@@ -22,6 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.summary.data
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
@@ -48,6 +50,7 @@ import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @OptIn(DelicateCoroutinesApi::class)
+@RequiresApi(Build.VERSION_CODES.O)
 open class SummaryRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     private val apiService: SummaryDataApiService,

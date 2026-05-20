@@ -22,6 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.feed.data
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.crashlytics
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
@@ -37,6 +39,7 @@ import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedScheduleEntryI
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedScheduleRepository
 import com.laimburggasse.aquariumcontrol.feed.presentation.schedule.toFeedScheduleEntryList
+import io.ktor.util.encodeBase64
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -53,13 +56,13 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.Credentials
 import java.sql.Timestamp
 import java.util.Calendar
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
+@RequiresApi(Build.VERSION_CODES.O)
 open class FeedScheduleRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     private val apiService: FeedScheduleEntryApiService,
@@ -207,8 +210,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
         }
         val url = "http://$controllerAddress:$port${WebApiUrls.FEED_SCHEDULE_DELETE_ENTRY}"
 
-        val authHeader = Credentials.basic(user, password)
-
+        val authHeader = "Basic " + "$user:$password".toByteArray(Charsets.ISO_8859_1).encodeBase64()
         val postParams = feedScheduleEntry.getApiParameters()
 
         // In both cases, trigger the network request, because the add operation
@@ -220,7 +222,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
                     authHeader,
                     postParams
                 )
-                response.isSuccessful
+                response
             } catch (e: Exception) { // recording exception in crashlytics
                 Firebase.crashlytics.recordException(e)
                 false
@@ -275,8 +277,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
         }
         val url = "http://$controllerAddress:$port${WebApiUrls.FEED_PROFILE_SCHEDULE_NEW}"
 
-        val authHeader = Credentials.basic(user, password)
-
+        val authHeader = "Basic " + "$user:$password".toByteArray(Charsets.ISO_8859_1).encodeBase64()
         val apiParams: Map<String, String> = tempEntry.getApiParameters()
 
         repositoryScope.launch(context) {
@@ -286,7 +287,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
                     authHeader,
                     apiParams
                 )
-                response.isSuccessful
+                response
             } catch (e: Exception) { // recording exception in crashlytics
                 Firebase.crashlytics.recordException(e)
                 false
@@ -339,19 +340,18 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
             return
         }
         val url = "http://$controllerAddress:$port${WebApiUrls.FEED_UPDATE_SCHEDULE}"
-        val authHeader = Credentials.basic(user, password)
+        val authHeader = "Basic " + java.util.Base64.getEncoder().encodeToString("$user:$password".toByteArray())
         val timestampOld = Timestamp(millisSinceEpoch)
         val postParams = modifiedEntry.getApiParametersForUpdating(timestampOld)
 
         // Launch the background network request.
         repositoryScope.launch(context) {
             val requestSuccess = try {
-                val response = apiService.updateFeedScheduleEntry(
+                apiService.updateFeedScheduleEntry(
                     url,
                     authHeader,
                     postParams
                 )
-                response.isSuccessful
             } catch (e: Exception) { // recording exception in crashlytics
                 Firebase.crashlytics.recordException(e)
                 false

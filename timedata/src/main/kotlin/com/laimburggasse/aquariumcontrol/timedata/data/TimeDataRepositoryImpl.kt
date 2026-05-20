@@ -22,6 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.timedata.data
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
@@ -48,6 +50,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+@RequiresApi(Build.VERSION_CODES.O)
 open class TimeDataRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     private val apiService: TimeDataApiService,

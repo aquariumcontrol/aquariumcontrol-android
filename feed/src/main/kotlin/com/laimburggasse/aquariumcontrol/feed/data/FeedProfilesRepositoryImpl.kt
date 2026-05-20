@@ -22,6 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.feed.data
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.crashlytics
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
@@ -37,6 +39,7 @@ import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedProfileReader
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedProfileImport
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedProfilesRepository
+import io.ktor.util.encodeBase64
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -54,11 +57,11 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.Credentials
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
+@RequiresApi(Build.VERSION_CODES.O)
 open class FeedProfilesRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     private val apiService: FeedProfileApiService,
@@ -151,7 +154,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
         }
         val url = "http://$controllerAddress:$port${WebApiUrls.FEED_DELETE_PROFILE}" + feedProfile.profileID
 
-        val authHeader = Credentials.basic(user, password)
+        val authHeader = "Basic " + "$user:$password".toByteArray(Charsets.ISO_8859_1).encodeBase64()
 
         // Optimistic Update: Immediately add the ID to the pending deletions list.
         // The UI will react to this instantly.
@@ -168,7 +171,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
                     url,
                     authHeader
                 )
-                response.isSuccessful
+                response
             } catch (e: Exception) { // recording exception in crashlytics
                 Firebase.crashlytics.recordException(e)
                 false
@@ -204,8 +207,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
 
         val url = "http://$controllerAddress:$port${WebApiUrls.FEED_PROFILE_CREATE}"
 
-        val authHeader = Credentials.basic(user, password)
-
+        val authHeader = "Basic " + "$user:$password".toByteArray(Charsets.ISO_8859_1).encodeBase64()
         repositoryScope.launch(context = ioDispatcher) {
             val requestSuccess = try {
                 val response = apiService.addFeedProfile(
@@ -213,7 +215,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
                     authHeader,
                     params = mapOf(WebApiParams.PROFILE_NAME to feedProfileName)
                 )
-                response.isSuccessful
+                response
             } catch (e: Exception) { // recording exception in crashlytics
                 Firebase.crashlytics.recordException(e)
                 false // Catch network timeouts or connection errors
@@ -266,7 +268,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
 
         val apiCallParameters: Map<String, String> = modifiedFeedProfile.getFeedProfileApiCallParameters()
 
-        val authHeader = Credentials.basic(user, password)
+        val authHeader = "Basic " + java.util.Base64.getEncoder().encodeToString("$user:$password".toByteArray())
 
         // Optimistic Update
         localState.update { currentState ->
@@ -276,14 +278,13 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
         }
 
         repositoryScope.launch(context = ioDispatcher) {
-            // Make the Retrofit call
+            // Make the Ktor call
             val requestSuccess = try {
-                val response = apiService.updateFeedProfile(
+                apiService.updateFeedProfile(
                     url,
                     authHeader,
                     apiCallParameters
                 )
-                response.isSuccessful
             } catch (e: Exception) { // recording exception in crashlytics
                 Firebase.crashlytics.recordException(e)
                 false // Catch network timeouts or connection errors

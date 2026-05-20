@@ -26,16 +26,40 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import okhttp3.OkHttpClient
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-
 object Network {
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder().build()
+    fun provideHttpClient(): HttpClient {
+        return HttpClient(OkHttp) {
+            install(ContentNegotiation) {
+                json(Json {
+                    ignoreUnknownKeys = true
+                    coerceInputValues = true
+                    isLenient = true
+                    allowSpecialFloatingPointValues = true
+                })
+            }
+            install(Logging) {
+                level = LogLevel.INFO
+            }
+            install(Auth) {
+                // We'll use basic auth but we'll need to handle dynamic credentials
+                // For now, we keep it simple and provide them in the request if needed, 
+                // or use a custom provider that pulls from SessionManager.
+                // However, the current code passes them manually to every call.
+            }
+        }
     }
 }

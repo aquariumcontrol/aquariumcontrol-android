@@ -22,6 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.refill.data
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
@@ -47,9 +49,9 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.Credentials
 import javax.inject.Inject
 
+@RequiresApi(Build.VERSION_CODES.O)
 open class RefillRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     private val apiService: RefillStateApiService,
@@ -127,12 +129,12 @@ open class RefillRepositoryImpl @Inject constructor(
         }
         val controllerPort = sessionManager.getControllerPort()
         val url = "http://${controllerAddress}:${controllerPort}${apiUrl}"
-        val authHeader = Credentials.basic(user, password)
+        val authHeader = "Basic " + java.util.Base64.getEncoder().encodeToString("$user:$password".toByteArray())
 
         repositoryScope.launch(context) {
             val requestSuccess = apiService.resetRefillErrors(
                 url, authHeader
-            ).isSuccessful
+            )
             if (!requestSuccess) {
                 _errorEvents.emit(value = "Request failed. Please check connection and server configuration and try again.")
             }

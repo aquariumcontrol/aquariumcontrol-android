@@ -24,55 +24,27 @@ package com.laimburggasse.aquariumcontrol.heating.data.di
 
 import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingSetValsApiService
 import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingStatsApiService
-import retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.laimburggasse.aquariumcontrol.heating.data.remote.KtorHeatingSetValsApiService
+import com.laimburggasse.aquariumcontrol.heating.data.remote.KtorHeatingStatsApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
+import io.ktor.client.HttpClient
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-
 object HeatingNetwork {
     @Provides
     @Singleton
-    fun provideHeatingSetValsApiService(okHttpClient: OkHttpClient): HeatingSetValsApiService {
-        val contentType = "application/json".toMediaType()
-        val json = Json {
-            ignoreUnknownKeys = true
-            coerceInputValues = true
-        }
-
-        return Retrofit.Builder()
-            // The project uses @Url (which overrides this).
-            .baseUrl("https://placeholder.com/")
-            .client(okHttpClient)
-            .addConverterFactory(json.asConverterFactory(contentType))
-            .build()
-            .create(HeatingSetValsApiService::class.java)
+    fun provideHeatingSetValsApiService(httpClient: HttpClient): HeatingSetValsApiService {
+        return KtorHeatingSetValsApiService(httpClient)
     }
 
     @Provides
     @Singleton
-    fun provideHeatingStatsApiService(okHttpClient: OkHttpClient): HeatingStatsApiService {
-        val contentType = "application/json".toMediaType()
-        val json = Json {
-            ignoreUnknownKeys = true
-            coerceInputValues = true
-        }
-
-        return Retrofit.Builder()
-            // The project uses @Url (which overrides this).
-            .baseUrl("https://placeholder.com/")
-            .client(okHttpClient)
-            .addConverterFactory(json.asConverterFactory(contentType))
-            .build()
-            .create(HeatingStatsApiService::class.java)
+    fun provideHeatingStatsApiService(httpClient: HttpClient): HeatingStatsApiService {
+        return KtorHeatingStatsApiService(httpClient)
     }
-
 }

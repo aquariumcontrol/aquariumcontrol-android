@@ -22,13 +22,16 @@
 
 package com.laimburggasse.aquariumcontrol.feed.data.remote
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.crashlytics
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedScheduleEntryImport
-import okhttp3.Credentials
+import java.util.Base64
 
+@RequiresApi(Build.VERSION_CODES.O)
 class FeedScheduleEntryReader(
     private val apiService: FeedScheduleEntryApiService,
     private val url: String,
@@ -37,38 +40,28 @@ class FeedScheduleEntryReader(
 ) {
     // This class reads the Feed schedule entries from the server using a GET request.
     // The data is read using class FeedScheduleEntryImport which needs to be converted to FeedScheduleEntry
-    private val authHeaderValue: String = Credentials.basic(username, password)
+    private val authHeaderValue: String = "Basic " + Base64.getEncoder().encodeToString("$username:$password".toByteArray())
 
     suspend fun readFeedScheduleEntries(): DataFetchResult<List<FeedScheduleEntryImport>> {
         return try {
-            val response = apiService.getFeedScheduleEntries(
+            val decodedData = apiService.getFeedScheduleEntries(
                 url = url, authHeader = authHeaderValue
             )
-            if (response.isSuccessful) {
-                val decodedData = response.body()
 
-                if (decodedData.isNullOrEmpty()) {
-                    return DataFetchResult.Success(data = emptyList())
-                }
-
-                if (decodedData.size > GlobalConstants.MAX_SCHEDULE_ENTRIES) {
-                    return DataFetchResult.Error(
-                        exception = null,
-                        errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_TOO_MANY_ENTRIES
-                    )
-                }
-
-                DataFetchResult.Success(decodedData)
-            } else {
-                return DataFetchResult.Error(
+            if (decodedData.isEmpty()) {
+                DataFetchResult.Success(data = emptyList())
+            } else if (decodedData.size > GlobalConstants.MAX_SCHEDULE_ENTRIES) {
+                DataFetchResult.Error(
                     exception = null,
-                    errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_ERR_CODE + response.code()
+                    errorMessage = GlobalConstants.ERR_MSG_SERVER_RESPONDED_TOO_MANY_ENTRIES
                 )
+            } else {
+                DataFetchResult.Success(decodedData)
             }
         } catch (e: Exception) { // recording exception in crashlytics
             Firebase.crashlytics.recordException(e)
             // Retrofit routes JSON mapping errors and network timeouts here
-            return DataFetchResult.Error(
+            DataFetchResult.Error(
                 exception = e,
                 errorMessage = GlobalConstants.ERR_MSG_UNEXPECTED_ERR_DURING_PREP
             )

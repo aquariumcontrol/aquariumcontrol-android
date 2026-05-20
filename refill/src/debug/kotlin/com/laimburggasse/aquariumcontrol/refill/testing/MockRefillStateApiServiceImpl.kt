@@ -26,8 +26,6 @@ import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillStateApiServic
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillState
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillStateResponse
 import kotlinx.coroutines.delay
-import okhttp3.ResponseBody.Companion.toResponseBody
-import retrofit2.Response
 
 class MockRefillStateApiServiceImpl(
     private var refillState: RefillState?
@@ -55,12 +53,12 @@ class MockRefillStateApiServiceImpl(
     override suspend fun resetRefillErrors(
         url: String,
         authHeader: String
-    ): Response<Unit> {
+    ): Boolean {
         return if (forceError) {
-            Response.error(500, "API ERROR".toResponseBody())
+            false
         } else {
             refillState = RefillState.ACTIVE
-            Response.success(Unit)
+            true
         }
     }
 }

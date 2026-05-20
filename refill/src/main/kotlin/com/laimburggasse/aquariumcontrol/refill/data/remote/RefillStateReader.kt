@@ -22,20 +22,23 @@
 
 package com.laimburggasse.aquariumcontrol.refill.data.remote
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.crashlytics
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillState
-import okhttp3.Credentials
+import java.util.Base64
 
+@RequiresApi(Build.VERSION_CODES.O)
 class RefillStateReader(
     private val apiService: RefillStateApiService,
     private val url: String,
     username: String,
     password: String
 ) {
-    private val authHeaderValue: String = Credentials.basic(username, password)
+    private val authHeaderValue: String = "Basic " + Base64.getEncoder().encodeToString("$username:$password".toByteArray())
 
     suspend fun readRefillState(): DataFetchResult<RefillState> {
         return try {

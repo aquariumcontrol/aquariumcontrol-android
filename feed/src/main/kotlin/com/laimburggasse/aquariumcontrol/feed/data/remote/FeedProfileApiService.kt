@@ -23,38 +23,27 @@
 package com.laimburggasse.aquariumcontrol.feed.data.remote
 
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedProfileImport
-import okhttp3.ResponseBody
-import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.POST
-import retrofit2.http.Url
 
 interface FeedProfileApiService {
-    @GET
     suspend fun getFeedProfiles(
-        @Url url: String,
-        @Header("Authorization") authHeader: String
-    ): Response<List<FeedProfileImport>>
+        url: String,
+        authHeader: String
+    ): List<FeedProfileImport>
 
-    @POST
     suspend fun updateFeedProfile(
-        @Url url: String,
-        @Header("Authorization") authHeader: String,
-        @Body params: Map<String, String>
-    ): Response<ResponseBody>
+        url: String,
+        authHeader: String,
+        params: Map<String, String>
+    ): Boolean
 
-    @POST
     suspend fun addFeedProfile(
-        @Url url: String,
-        @Header("Authorization") authHeader: String,
-        @Body params: Map<String, String>
-    ): Response<ResponseBody>
+        url: String,
+        authHeader: String,
+        params: Map<String, String>
+    ): Boolean
 
-    @POST
     suspend fun deleteFeedProfile(
-        @Url url: String,
-        @Header("Authorization") authHeader: String,
-    ): Response<ResponseBody>
+        url: String,
+        authHeader: String,
+    ): Boolean
 }

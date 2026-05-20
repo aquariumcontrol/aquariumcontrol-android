@@ -26,9 +26,6 @@ import com.laimburggasse.aquariumcontrol.schedule.data.remote.ScheduleApiService
 import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleEntry
 import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleStringEntry
 import kotlinx.coroutines.delay
-import okhttp3.ResponseBody
-import okhttp3.ResponseBody.Companion.toResponseBody
-import retrofit2.Response
 
 class MockScheduleApiServiceImpl(
     private var mockScheduleStringEntries: List<ScheduleStringEntry>?,
@@ -45,13 +42,13 @@ class MockScheduleApiServiceImpl(
     override suspend fun getScheduleData(
         url: String,
         authHeader: String
-    ): Response<List<ScheduleStringEntry>> {
+    ): List<ScheduleStringEntry> {
         delay(10) // Small virtual delay to avoid conflation in flow
         return if (mockScheduleStringEntries == null || forceError) {
-            Response.error(500, "API ERROR".toResponseBody())
+            throw Exception("API ERROR")
         }
         else {
-            Response.success(mockScheduleStringEntries)
+            mockScheduleStringEntries!!
         }
     }
 
@@ -59,12 +56,7 @@ class MockScheduleApiServiceImpl(
         url: String,
         authHeader: String,
         params: Map<String, String>
-    ): Response<ResponseBody> {
-        return if (mockScheduleEntries == null) {
-            Response.error(500, "API ERROR".toResponseBody())
-        }
-        else {
-            Response.success("OK".toResponseBody())
-        }
+    ): Boolean {
+        return mockScheduleEntries != null
     }
 }

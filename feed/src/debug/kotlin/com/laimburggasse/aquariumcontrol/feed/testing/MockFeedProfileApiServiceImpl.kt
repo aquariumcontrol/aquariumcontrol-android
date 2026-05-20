@@ -25,9 +25,6 @@ package com.laimburggasse.aquariumcontrol.feed.testing
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedProfileApiService
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedProfileImport
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
-import okhttp3.ResponseBody
-import okhttp3.ResponseBody.Companion.toResponseBody
-import retrofit2.Response
 
 class MockFeedProfileApiServiceImpl(
     private var mockFeedProfileImports: List<FeedProfileImport>?,
@@ -38,13 +35,8 @@ class MockFeedProfileApiServiceImpl(
     override suspend fun getFeedProfiles(
         url: String,
         authHeader: String
-    ): Response<List<FeedProfileImport>> {
-        return if (mockFeedProfileImports == null) {
-            Response.error(500, "API error".toResponseBody())
-        }
-        else {
-            Response.success(mockFeedProfileImports)
-        }
+    ): List<FeedProfileImport> {
+        return mockFeedProfileImports ?: throw Exception("API error")
     }
 
     fun updateMockFeedProfile(updatedFeedProfile: FeedProfile) {
@@ -67,31 +59,23 @@ class MockFeedProfileApiServiceImpl(
         url: String,
         authHeader: String,
         params: Map<String, String>
-    ): Response<ResponseBody> {
-        return if (mockFeedProfileImports == null) {
-            Response.error(500, "API error".toResponseBody())
-        } else {
-            Response.success("OK".toResponseBody())
-        }
+    ): Boolean {
+        return mockFeedProfileImports != null
     }
 
     override suspend fun addFeedProfile(
         url: String,
         authHeader: String,
         params: Map<String, String>
-    ): Response<ResponseBody> {
-        return Response.success("OK".toResponseBody())
+    ): Boolean {
+        return true
     }
 
     override suspend fun deleteFeedProfile(
         url: String,
         authHeader: String
-    ): Response<ResponseBody> {
-        return if (mockFeedProfileImports == null) {
-            Response.error(500, "API error".toResponseBody())
-        } else {
-            Response.success("OK".toResponseBody())
-        }
+    ): Boolean {
+        return mockFeedProfileImports != null
     }
 
     fun setMockFeedProfiles(mockFeedProfiles: List<FeedProfile>?) {

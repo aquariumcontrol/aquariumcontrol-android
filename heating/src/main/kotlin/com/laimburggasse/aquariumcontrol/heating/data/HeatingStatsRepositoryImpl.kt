@@ -22,6 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.heating.data
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
@@ -50,6 +52,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
+@RequiresApi(Build.VERSION_CODES.O)
 open class HeatingStatsRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
     private val apiService: HeatingStatsApiService,

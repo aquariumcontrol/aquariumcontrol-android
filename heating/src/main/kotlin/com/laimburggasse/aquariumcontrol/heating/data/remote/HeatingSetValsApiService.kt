@@ -23,25 +23,16 @@
 package com.laimburggasse.aquariumcontrol.heating.data.remote
 
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
-import okhttp3.ResponseBody
-import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.POST
-import retrofit2.http.Url
 
 interface HeatingSetValsApiService {
-    @GET
     suspend fun getHeatingSetVals(
-        @Url url: String,
-        @Header("Authorization") authHeader: String
-    ): Response<List<HeatingSetVals>>
+        url: String,
+        authHeader: String
+    ): List<HeatingSetVals>
 
-    @POST
     suspend fun updateHeatingSetVals(
-        @Url url: String,
-        @Header("Authorization") authHeader: String,
-        @Body params: Map<String, String>
-    ): Response<ResponseBody>
+        url: String,
+        authHeader: String,
+        params: Map<String, String>
+    ): Boolean
 }

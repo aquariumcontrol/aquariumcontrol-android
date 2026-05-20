@@ -26,8 +26,6 @@ import com.laimburggasse.aquariumcontrol.timedata.data.remote.TimeDataApiService
 import com.laimburggasse.aquariumcontrol.timedata.data.remote.dto.TimeDataStringSample
 import com.laimburggasse.aquariumcontrol.timedata.domain.model.TimeDataSample
 import kotlinx.coroutines.delay
-import okhttp3.ResponseBody.Companion.toResponseBody
-import retrofit2.Response
 
 class MockTimeDataApiServiceImpl(
     private var mockTimeDataSamples: List<TimeDataSample>?
@@ -41,13 +39,13 @@ class MockTimeDataApiServiceImpl(
     override suspend fun getTimeData(
         url: String,
         authHeader: String
-    ): Response<List<TimeDataStringSample>> {
+    ): List<TimeDataStringSample> {
         delay(10) // Small virtual delay to avoid conflation in flow
         return if (mockTimeDataSamples == null || forceError) {
-            Response.error(500, "API ERROR".toResponseBody())
+            throw Exception("API ERROR")
         }
         else {
-            Response.success(mockTimeDataSamples!!.map { it.toTimeDataStringSample() })
+            mockTimeDataSamples!!.map { it.toTimeDataStringSample() }
         }
     }
 }

@@ -22,6 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.ventilation.data
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.crashlytics
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
@@ -38,6 +40,7 @@ import com.laimburggasse.aquariumcontrol.ventilation.data.remote.VentilationSetV
 import com.laimburggasse.aquariumcontrol.ventilation.domain.model.VentilationSetVals
 import com.laimburggasse.aquariumcontrol.ventilation.domain.repository.VentilationSetValsRepository
 import com.laimburggasse.aquariumcontrol.ventilation.domain.ventilationSetValsSanityCheck
+import io.ktor.util.encodeBase64
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -53,12 +56,12 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.Credentials
 import javax.inject.Inject
 import javax.inject.Singleton
 
 
 @Singleton
+@RequiresApi(Build.VERSION_CODES.O)
 open class VentilationSetValsRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     private val apiService: VentilationSetValsApiService,
@@ -200,8 +203,7 @@ open class VentilationSetValsRepositoryImpl @Inject constructor(
                 val port = sessionManager.getControllerPort()
 
                 val url = "http://$controllerAddress:$port${WebApiUrls.VENTILATION_UPDATE_SET_VALS}"
-                val authHeader = Credentials.basic(user, password)
-
+                val authHeader = "Basic " + "$user:$password".toByteArray(Charsets.ISO_8859_1).encodeBase64()
                 val postParams = mapOf(
                     WebApiParams.VENTILATION_SWITCH_ON_TEMPERATURE to currentValues.ventilationSwitchOnTemp.toString(),
                     WebApiParams.VENTILATION_SWITCH_OFF_TEMPERATURE to currentValues.ventilationSwitchOffTemp.toString()
@@ -210,7 +212,7 @@ open class VentilationSetValsRepositoryImpl @Inject constructor(
                 // Make the Retrofit call
                 val requestSuccess = try {
                     val response = apiService.updateVentilationSetVals(url, authHeader, postParams)
-                    response.isSuccessful
+                    response
                 } catch (e: Exception) { // recording exception in crashlytics
                     Firebase.crashlytics.recordException(e)
                     false // Catch network timeouts or connection errors

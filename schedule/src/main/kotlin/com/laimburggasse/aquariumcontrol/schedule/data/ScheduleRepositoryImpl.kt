@@ -22,6 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.schedule.data
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
@@ -36,6 +38,7 @@ import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleString
 import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntries
 import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntriesFactory
 import com.laimburggasse.aquariumcontrol.schedule.domain.repository.ScheduleRepository
+import io.ktor.util.encodeBase64
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -51,11 +54,11 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.Credentials
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
+@RequiresApi(Build.VERSION_CODES.O)
 open class ScheduleRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     private val apiService: ScheduleApiService,
@@ -147,8 +150,7 @@ open class ScheduleRepositoryImpl @Inject constructor(
             val port = sessionManager.getControllerPort()
 
             val url = "http://$controllerAddress:$port${WebApiUrls.ACTUATOR_SCHEDULE_UPDATE}"
-            val authHeader = Credentials.basic(user, password)
-
+            val authHeader = "Basic " + "$user:$password".toByteArray(Charsets.ISO_8859_1).encodeBase64()
             val scheduleEntries: ScheduleEntries =
                 (scheduleFlow.value as DataFetchResult.Success).data
 

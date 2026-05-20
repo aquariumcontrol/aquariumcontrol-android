@@ -25,8 +25,6 @@ package com.laimburggasse.aquariumcontrol.heating.testing
 import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingStatsApiService
 import com.laimburggasse.aquariumcontrol.heating.data.remote.dto.HeatingStatsStringEntry
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
-import okhttp3.ResponseBody.Companion.toResponseBody
-import retrofit2.Response
 
 class MockHeatingStatsApiServiceImpl(
     private var mockHeatingStats: List<HeatingStatsEntry>?
@@ -34,11 +32,11 @@ class MockHeatingStatsApiServiceImpl(
     override suspend fun getHeatingStats(
         url: String,
         authHeader: String
-    ): Response<List<HeatingStatsStringEntry>> {
+    ): List<HeatingStatsStringEntry> {
         return if (mockHeatingStats == null) {
-            Response.error(500, "API ERROR".toResponseBody())
+            throw Exception("API ERROR")
         } else {
-            Response.success( mockHeatingStats!!.map { it.toHeatingStatsStringEntry() })
+            mockHeatingStats!!.map { it.toHeatingStatsStringEntry() }
         }
     }
 

@@ -109,7 +109,6 @@ dependencies {
     implementation(libs.androidx.paging.compose)
     implementation(libs.androidx.espresso.core)
     implementation(libs.kotlinx.serialization.json.v162)
-    implementation(libs.okhttp)
     implementation(libs.kotlin.stdlib.jdk8.v1922)
     implementation(libs.androidx.tracing.perfetto.handshake)
     implementation(libs.androidx.junit.ktx)

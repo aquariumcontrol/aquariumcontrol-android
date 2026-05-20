@@ -24,15 +24,13 @@ package com.laimburggasse.aquariumcontrol.balling.data.di
 
 import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingHistoryApiService
 import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingProfileApiService
+import com.laimburggasse.aquariumcontrol.balling.data.remote.KtorBallingHistoryApiService
+import com.laimburggasse.aquariumcontrol.balling.data.remote.KtorBallingProfileApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.kotlinx.serialization.asConverterFactory
+import io.ktor.client.HttpClient
 import javax.inject.Singleton
 
 @Module
@@ -41,34 +39,16 @@ object BallingNetwork {
     @Provides
     @Singleton
     fun provideBallingHistoryApiService(
-        okHttpClient: OkHttpClient
+        httpClient: HttpClient
     ): BallingHistoryApiService {
-        return createService<BallingHistoryApiService>(okHttpClient)
+        return KtorBallingHistoryApiService(httpClient)
     }
 
     @Provides
     @Singleton
     fun provideBallingProfileApiService(
-        okHttpClient: OkHttpClient
+        httpClient: HttpClient
     ): BallingProfileApiService {
-        return createService(okHttpClient)
-    }
-
-    // A generic internal helper function to create a Retrofit service
-    private inline fun <reified T: Any> createService(okHttpClient: OkHttpClient): T {
-        val contentType = "application/json".toMediaType()
-        val json = Json {
-            ignoreUnknownKeys = true
-            coerceInputValues = true
-            isLenient = true
-            allowSpecialFloatingPointValues = true
-        }
-
-        return Retrofit.Builder()
-            .baseUrl("https://placeholder.com/")
-            .client(okHttpClient)
-            .addConverterFactory(json.asConverterFactory(contentType))
-            .build()
-            .create(T::class.java)
+        return KtorBallingProfileApiService(httpClient)
     }
 }

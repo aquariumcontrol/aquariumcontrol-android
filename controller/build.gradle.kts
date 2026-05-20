@@ -97,7 +97,6 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.espresso.core)
     implementation(libs.kotlinx.serialization.json.v162)
-    implementation(libs.okhttp)
     implementation(libs.kotlin.stdlib.jdk8.v1922)
     implementation(libs.androidx.tracing.perfetto.handshake)
     implementation(libs.androidx.junit.ktx)
@@ -123,12 +122,12 @@ dependencies {
     implementation(libs.material)
     testImplementation(libs.junit)
     implementation(libs.hilt.android)
+    implementation(project(":common"))
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.okhttp)
 
-    implementation(project(":common"))
+    implementation(platform(libs.firebase.bom))
     androidTestImplementation(testFixtures(notation = project(":common")))
     androidTestImplementation(libs.androidx.junit)
 

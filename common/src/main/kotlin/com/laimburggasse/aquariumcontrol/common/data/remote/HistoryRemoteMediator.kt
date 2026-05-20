@@ -32,7 +32,8 @@ import com.laimburggasse.aquariumcontrol.common.data.local.BaseHistoryDao
 import com.laimburggasse.aquariumcontrol.common.domain.BaseHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
-import okhttp3.Credentials
+import io.ktor.util.encodeBase64
+import io.ktor.utils.io.core.toByteArray
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -79,7 +80,7 @@ class HistoryRemoteMediator<T : BaseHistoryLogEntry>(
                 return MediatorResult.Success(endOfPaginationReached = true)
             }
 
-            val authHeader = Credentials.basic(user, password)
+            val authHeader = "Basic " + "$user:$password".toByteArray(Charsets.ISO_8859_1).encodeBase64()
             val baseUrl = "http://$address:$port"
 
             if (historyLogStart == null) {

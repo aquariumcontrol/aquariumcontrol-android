@@ -23,15 +23,10 @@
 package com.laimburggasse.aquariumcontrol.timedata.data.remote
 
 import com.laimburggasse.aquariumcontrol.timedata.data.remote.dto.TimeDataStringSample
-import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Url
 
 interface TimeDataApiService {
-    @GET
     suspend fun getTimeData(
-        @Url url: String,
-        @Header("Authorization") authHeader: String
-    ): Response<List<TimeDataStringSample>>
+        url: String,
+        authHeader: String
+    ): List<TimeDataStringSample>
 }

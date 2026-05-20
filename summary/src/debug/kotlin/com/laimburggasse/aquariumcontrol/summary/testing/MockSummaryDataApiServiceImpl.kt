@@ -25,8 +25,6 @@ package com.laimburggasse.aquariumcontrol.summary.testing
 import com.laimburggasse.aquariumcontrol.summary.data.remote.SummaryDataApiService
 import com.laimburggasse.aquariumcontrol.summary.domain.model.SummaryData
 import kotlinx.coroutines.delay
-import okhttp3.ResponseBody.Companion.toResponseBody
-import retrofit2.Response
 
 class MockSummaryDataApiServiceImpl(
     private var summaryData: SummaryData?
@@ -34,14 +32,9 @@ class MockSummaryDataApiServiceImpl(
     override suspend fun getSummaryData(
         url: String,
         authHeader: String
-    ): Response<SummaryData> {
+    ): SummaryData {
         delay(10) // Small virtual delay to avoid conflation in flow
-        return if (summaryData == null) {
-            Response.error(500, "API ERROR".toResponseBody())
-        }
-        else {
-            Response.success(summaryData)
-        }
+        return summaryData ?: throw Exception("API ERROR")
     }
 
     fun setSummaryData(newSummaryData: SummaryData?) {

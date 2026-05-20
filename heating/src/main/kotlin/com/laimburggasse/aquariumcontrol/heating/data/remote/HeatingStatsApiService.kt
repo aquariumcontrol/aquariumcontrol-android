@@ -23,15 +23,10 @@
 package com.laimburggasse.aquariumcontrol.heating.data.remote
 
 import com.laimburggasse.aquariumcontrol.heating.data.remote.dto.HeatingStatsStringEntry
-import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Url
 
 interface HeatingStatsApiService {
-    @GET
     suspend fun getHeatingStats(
-        @Url url: String,
-        @Header("Authorization") authHeader: String
-    ): Response<List<HeatingStatsStringEntry>>
+        url: String,
+        authHeader: String
+    ): List<HeatingStatsStringEntry>
 }

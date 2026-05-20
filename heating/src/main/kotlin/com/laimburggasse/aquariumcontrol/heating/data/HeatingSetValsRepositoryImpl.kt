@@ -22,6 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.heating.data
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.crashlytics
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
@@ -53,12 +55,12 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.Credentials
 import javax.inject.Inject
 import javax.inject.Singleton
 
 
 @Singleton
+@RequiresApi(Build.VERSION_CODES.O)
 open class HeatingSetValsRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     private val apiService: HeatingSetValsApiService,
@@ -199,17 +201,16 @@ open class HeatingSetValsRepositoryImpl @Inject constructor(
                 val port = sessionManager.getControllerPort()
 
                 val url = "http://$controllerAddress:$port${WebApiUrls.HEATING_UPDATE_SET_VALS}"
-                val authHeader = Credentials.basic(user, password)
+                val authHeader = "Basic " + java.util.Base64.getEncoder().encodeToString("$user:$password".toByteArray())
 
                 val postParams = mapOf(
                     WebApiParams.HEATING_SWITCH_ON_TEMPERATURE to currentValues.heatingSwitchOnTemp.toString(),
                     WebApiParams.HEATING_SWITCH_OFF_TEMPERATURE to currentValues.heatingSwitchOffTemp.toString()
                 )
 
-                // Make the Retrofit call
+                // Make the Ktor call
                 val requestSuccess = try {
-                    val response = apiService.updateHeatingSetVals(url, authHeader, postParams)
-                    response.isSuccessful
+                    apiService.updateHeatingSetVals(url, authHeader, postParams)
                 } catch (e: Exception) { // recording exception in crashlytics
                     Firebase.crashlytics.recordException(e)
                     false // Catch network timeouts or connection errors

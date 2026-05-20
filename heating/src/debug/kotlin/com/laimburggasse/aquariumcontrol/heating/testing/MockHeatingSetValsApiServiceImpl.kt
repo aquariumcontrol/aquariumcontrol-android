@@ -25,9 +25,6 @@ package com.laimburggasse.aquariumcontrol.heating.testing
 import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingSetValsApiService
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
 import kotlinx.coroutines.delay
-import okhttp3.ResponseBody
-import okhttp3.ResponseBody.Companion.toResponseBody
-import retrofit2.Response
 
 class MockHeatingSetValsApiServiceImpl(
     private var mockHeatingSetVals: HeatingSetVals?
@@ -42,14 +39,13 @@ class MockHeatingSetValsApiServiceImpl(
     override suspend fun getHeatingSetVals(
         url: String,
         authHeader: String
-    ): Response<List<HeatingSetVals>> {
+    ): List<HeatingSetVals> {
         delay(10)
-        return if (mockHeatingSetVals == null || forceError) {
-            Response.error(500, "API error".toResponseBody())
+        if (mockHeatingSetVals == null || forceError) {
+            throw Exception("API error")
         }
         else {
-            val outputList = listOf(mockHeatingSetVals!!.copy())
-            Response.success(outputList)
+            return listOf(mockHeatingSetVals!!.copy())
         }
     }
 
@@ -61,11 +57,7 @@ class MockHeatingSetValsApiServiceImpl(
         url: String,
         authHeader: String,
         params: Map<String, String>
-    ): Response<ResponseBody> {
-        return if (forceError) {
-            Response.error(500, "API error".toResponseBody())
-        } else {
-            Response.success("OK".toResponseBody())
-        }
+    ): Boolean {
+        return !forceError
     }
 }

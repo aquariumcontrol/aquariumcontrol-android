@@ -22,16 +22,13 @@
 
 package com.laimburggasse.aquariumcontrol.schedule.data.di
 
+import com.laimburggasse.aquariumcontrol.schedule.data.remote.KtorScheduleApiService
 import com.laimburggasse.aquariumcontrol.schedule.data.remote.ScheduleApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.kotlinx.serialization.asConverterFactory
+import io.ktor.client.HttpClient
 import javax.inject.Singleton
 
 @Module
@@ -39,19 +36,9 @@ import javax.inject.Singleton
 object ScheduleNetwork {
     @Provides
     @Singleton
-    fun provideScheduleDataApiService(okHttpClient: OkHttpClient): ScheduleApiService {
-        val contentType = "application/json".toMediaType()
-        val json = Json {
-            ignoreUnknownKeys = true
-            coerceInputValues = true
-        }
-
-        return Retrofit.Builder()
-            // The project uses @Url (which overrides this).
-            .baseUrl("https://placeholder.com/")
-            .client(okHttpClient)
-            .addConverterFactory(json.asConverterFactory(contentType))
-            .build()
-            .create(ScheduleApiService::class.java)
+    fun provideScheduleApiService(
+        httpClient: HttpClient
+    ): ScheduleApiService {
+        return KtorScheduleApiService(httpClient)
     }
 }

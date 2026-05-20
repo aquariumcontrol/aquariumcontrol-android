@@ -27,9 +27,6 @@ import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedScheduleEntryApiSe
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedScheduleEntryImport
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 import kotlinx.coroutines.delay
-import okhttp3.ResponseBody
-import okhttp3.ResponseBody.Companion.toResponseBody
-import retrofit2.Response
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
 
@@ -42,14 +39,9 @@ class MockFeedScheduleEntryApiServiceImpl(
     override suspend fun getFeedScheduleEntries(
         url: String,
         authHeader: String
-    ): Response<List<FeedScheduleEntryImport>> {
+    ): List<FeedScheduleEntryImport> {
         delay(10) // Small virtual delay to avoid conflation in flow
-        return if (mockFeedScheduleEntryImports == null) {
-            Response.error(500, "API error".toResponseBody())
-        }
-        else {
-            Response.success(mockFeedScheduleEntryImports)
-        }
+        return mockFeedScheduleEntryImports ?: throw Exception("API error")
     }
 
     fun updateMockFeedScheduleEntry(oldTimestamp: Long, updatedFeedScheduleEntry: FeedScheduleEntry) {
@@ -84,29 +76,24 @@ class MockFeedScheduleEntryApiServiceImpl(
         url: String,
         authHeader: String,
         params: Map<String, String>
-    ): Response<ResponseBody> {
-        return if (mockFeedScheduleEntryImports == null) {
-            Response.error(500, "API ERROR".toResponseBody())
-        }
-        else {
-            Response.success("OK".toResponseBody())
-        }
+    ): Boolean {
+        return mockFeedScheduleEntryImports != null
     }
 
     override suspend fun addFeedScheduleEntry(
         url: String,
         authHeader: String,
         params: Map<String, String>
-    ): Response<ResponseBody> {
-        return Response.success("OK".toResponseBody())
+    ): Boolean {
+        return true
     }
 
     override suspend fun deleteFeedScheduleEntry(
         url: String,
         authHeader: String,
         params: Map<String, String>
-    ): Response<ResponseBody> {
-        return Response.success("OK".toResponseBody())
+    ): Boolean {
+        return true
     }
 
     fun setMockFeedScheduleEntryImports(mockFeedScheduleEntryImports: List<FeedScheduleEntryImport>?) {

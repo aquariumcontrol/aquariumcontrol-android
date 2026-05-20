@@ -23,25 +23,16 @@
 package com.laimburggasse.aquariumcontrol.ventilation.data.remote
 
 import com.laimburggasse.aquariumcontrol.ventilation.domain.model.VentilationSetVals
-import okhttp3.ResponseBody
-import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.POST
-import retrofit2.http.Url
 
 interface VentilationSetValsApiService {
-    @GET
     suspend fun getVentilationSetVals(
-        @Url url: String,
-        @Header("Authorization") authHeader: String
-    ): Response<List<VentilationSetVals>>
+        url: String,
+        authHeader: String
+    ): List<VentilationSetVals>
 
-    @POST
     suspend fun updateVentilationSetVals(
-        @Url url: String,
-        @Header("Authorization") authHeader: String,
-        @Body params: Map<String, String>
-    ): Response<ResponseBody>
+        url: String,
+        authHeader: String,
+        params: Map<String, String>
+    ): Boolean
 }

@@ -24,9 +24,6 @@ package com.laimburggasse.aquariumcontrol.balling.testing
 
 import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingProfileApiService
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
-import okhttp3.ResponseBody
-import okhttp3.ResponseBody.Companion.toResponseBody
-import retrofit2.Response
 
 class MockBallingProfileApiServiceImpl(
     private var mockBallingProfiles: List<BallingProfile>? = null
@@ -35,25 +32,16 @@ class MockBallingProfileApiServiceImpl(
     override suspend fun getBallingProfiles(
         url: String,
         authHeader: String
-    ): Response<List<BallingProfile>> {
-        return if (mockBallingProfiles == null) {
-            Response.error(500, "API error".toResponseBody())
-        }
-        else {
-            Response.success(mockBallingProfiles)
-        }
+    ): List<BallingProfile> {
+        return mockBallingProfiles ?: throw Exception("API error")
     }
 
     override suspend fun updateBallingProfile(
         url: String,
         authHeader: String,
         params: Map<String, String>
-    ): Response<ResponseBody> {
-        return if (mockBallingProfiles == null) {
-            Response.error(500, "API error".toResponseBody())
-        } else {
-            Response.success(null)
-        }
+    ): Boolean {
+        return mockBallingProfiles != null
     }
 
     fun updateMockBallingProfile(updatedBallingProfile: BallingProfile?) {
