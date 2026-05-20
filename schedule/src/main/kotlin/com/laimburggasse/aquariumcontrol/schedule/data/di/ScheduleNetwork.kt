@@ -24,18 +24,13 @@ package com.laimburggasse.aquariumcontrol.schedule.data.di
 
 import com.laimburggasse.aquariumcontrol.schedule.data.remote.KtorScheduleApiService
 import com.laimburggasse.aquariumcontrol.schedule.data.remote.ScheduleApiService
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import me.tatarka.inject.annotations.Provides
 import io.ktor.client.HttpClient
-import javax.inject.Singleton
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 
-@Module
-@InstallIn(SingletonComponent::class)
-object ScheduleNetwork {
+interface ScheduleNetwork {
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideScheduleApiService(
         httpClient: HttpClient
     ): ScheduleApiService {

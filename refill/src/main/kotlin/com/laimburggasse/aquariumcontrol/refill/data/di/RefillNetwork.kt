@@ -26,18 +26,13 @@ import com.laimburggasse.aquariumcontrol.refill.data.remote.KtorRefillHistoryApi
 import com.laimburggasse.aquariumcontrol.refill.data.remote.KtorRefillStateApiService
 import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillHistoryApiService
 import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillStateApiService
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import me.tatarka.inject.annotations.Provides
 import io.ktor.client.HttpClient
-import javax.inject.Singleton
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 
-@Module
-@InstallIn(SingletonComponent::class)
-object RefillNetwork {
+interface RefillNetwork {
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideRefillHistoryApiService(
         httpClient: HttpClient
     ): RefillHistoryApiService {
@@ -45,7 +40,7 @@ object RefillNetwork {
     }
 
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideRefillStateApiService(
         httpClient: HttpClient
     ): RefillStateApiService {

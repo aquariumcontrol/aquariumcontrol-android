@@ -26,24 +26,19 @@ import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingSetValsApiSe
 import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingStatsApiService
 import com.laimburggasse.aquariumcontrol.heating.data.remote.KtorHeatingSetValsApiService
 import com.laimburggasse.aquariumcontrol.heating.data.remote.KtorHeatingStatsApiService
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import me.tatarka.inject.annotations.Provides
 import io.ktor.client.HttpClient
-import javax.inject.Singleton
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 
-@Module
-@InstallIn(SingletonComponent::class)
-object HeatingNetwork {
+interface HeatingNetwork {
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideHeatingSetValsApiService(httpClient: HttpClient): HeatingSetValsApiService {
         return KtorHeatingSetValsApiService(httpClient)
     }
 
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideHeatingStatsApiService(httpClient: HttpClient): HeatingStatsApiService {
         return KtorHeatingStatsApiService(httpClient)
     }

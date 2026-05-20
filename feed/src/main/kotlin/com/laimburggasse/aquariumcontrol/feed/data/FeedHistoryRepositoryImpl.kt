@@ -29,7 +29,7 @@ import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedHistoryRepository
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 open class FeedHistoryRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,

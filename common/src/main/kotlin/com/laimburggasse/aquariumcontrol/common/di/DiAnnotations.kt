@@ -22,20 +22,20 @@
 
 package com.laimburggasse.aquariumcontrol.common.di
 
-import javax.inject.Qualifier
+import me.tatarka.inject.annotations.*
 
-@Retention(value = AnnotationRetention.BINARY)
-@Qualifier
+@Scope
+@Retention(value = AnnotationRetention.RUNTIME)
 annotation class ApplicationScope
 
-@Qualifier
+@Target(AnnotationTarget.TYPE, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.BINARY)
 annotation class BallingHistoryService
 
-@Qualifier
+@Target(AnnotationTarget.TYPE, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.BINARY)
 annotation class FeedHistoryService
 
-@Qualifier
+@Target(AnnotationTarget.TYPE, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.BINARY)
 annotation class RefillHistoryService

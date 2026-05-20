@@ -29,34 +29,36 @@ import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingProfilesRepository
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 class BallingProfileEditViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
     private val ballingProfilesRepository: BallingProfilesRepository,
 ): ViewModel() {
     // This class will allow the user to edit the Balling dosing profile.
+
+    private val _ballingProfileId = MutableStateFlow<Int?>(null)
+
+    fun setProfileId(id: Int) {
+        _ballingProfileId.value = id
+    }
 
     val unconfirmedProfile = MutableStateFlow<BallingProfile?>(value = null)
 
     var ballingProfileEditUiState: StateFlow<BallingProfileEditUiState> =
         combine(
             flow = ballingProfilesRepository.ballingProfiles,
-            flow2 = unconfirmedProfile
-        ) { result, unconfirmedProfile ->
-            // Get the ID from navigation arguments.
-            val ballingProfileId: Int = savedStateHandle["ballingProfileId"]
-                ?: return@combine BallingProfileEditUiState.Error(
-                    errorMessage = GlobalConstants.ERR_MSG_PROFILE_ID_NOT_PROVIDED
-                )
+            flow2 = unconfirmedProfile,
+            flow3 = _ballingProfileId
+        ) { result, unconfirmedProfile, ballingProfileId ->
+            if (ballingProfileId == null) {
+                return@combine BallingProfileEditUiState.Loading
+            }
 
             when (result) {
                 is DataFetchResult.Success -> {

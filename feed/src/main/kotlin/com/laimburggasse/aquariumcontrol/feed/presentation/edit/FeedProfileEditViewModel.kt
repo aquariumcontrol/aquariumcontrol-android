@@ -28,7 +28,6 @@ import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfilePhase
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedProfilesRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -36,11 +35,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 class FeedProfileEditViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
     private val feedProfilesRepository: FeedProfilesRepository,
 ) : ViewModel() {
     private var originalFeedProfile: FeedProfile = FeedProfile()
@@ -75,24 +72,17 @@ class FeedProfileEditViewModel @Inject constructor(
         initialValue = FeedProfileEditUiState() // Start with a default, empty state
     )
 
-    init {
+    fun setProfileId(profileId: Int) {
         viewModelScope.launch {
-            // Get the profileId from navigation arguments via SavedStateHandle.
-            val profileId: Int? = savedStateHandle["feedProfileId"]
+            // Fetch the initial FeedProfile from the repository.
+            val profile: FeedProfile? = feedProfilesRepository.findProfileById(profileId)
 
-            if (profileId != null) {
-                // Fetch the initial FeedProfile from the repository.
-                val profile: FeedProfile? = feedProfilesRepository.findProfileById(profileId)
+            if (profile != null) {
+                // Store the fetched profile as the "original" for the reset functionality.
+                originalFeedProfile = profile
 
-                if (profile != null) {
-                    // Store the fetched profile as the "original" for the reset functionality.
-                    originalFeedProfile = profile
-
-                    // Update the state flow for the feed profile, which will trigger the 'combine' operator.
-                    _feedProfileState.value = profile
-                } else {
-                    _feedProfileState.value = null // triggers UiState error
-                }
+                // Update the state flow for the feed profile, which will trigger the 'combine' operator.
+                _feedProfileState.value = profile
             } else {
                 _feedProfileState.value = null // triggers UiState error
             }

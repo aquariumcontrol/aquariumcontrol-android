@@ -34,20 +34,14 @@ import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogE
 import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryRemoteMediator
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Provides
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 
-@Module
-@InstallIn(SingletonComponent::class)
-object BallingDatabaseModule {
+interface BallingDatabaseModule {
 
     @Provides
-    @Singleton
-    fun provideBallingHistoryDatabase(@ApplicationContext context: Context): BallingHistoryDatabase {
+    @ApplicationScope
+    fun provideBallingHistoryDatabase(context: Context): BallingHistoryDatabase {
         return Room.databaseBuilder(
             context,
             BallingHistoryDatabase::class.java,
@@ -57,13 +51,13 @@ object BallingDatabaseModule {
     }
 
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideBallingHistoryDao(database: BallingHistoryDatabase): BallingHistoryDao {
         return database.ballingHistoryDao()
     }
 
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideBallingHistoryRemoteMediator(
         database: BallingHistoryDatabase,
         apiService: BallingHistoryApiService,
@@ -81,7 +75,7 @@ object BallingDatabaseModule {
 
     @OptIn(ExperimentalPagingApi::class)
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideBallingHistoryPager(
         database: BallingHistoryDatabase,
         remoteMediator: HistoryRemoteMediator<BallingHistoryLogEntry>

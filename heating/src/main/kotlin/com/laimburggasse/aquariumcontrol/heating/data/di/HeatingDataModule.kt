@@ -26,26 +26,21 @@ import com.laimburggasse.aquariumcontrol.heating.data.HeatingSetValsRepositoryIm
 import com.laimburggasse.aquariumcontrol.heating.data.HeatingStatsRepositoryImpl
 import com.laimburggasse.aquariumcontrol.heating.domain.repository.HeatingSetValsRepository
 import com.laimburggasse.aquariumcontrol.heating.domain.repository.HeatingStatsRepository
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Provides
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 
 @Suppress("unused", "kotlin:S1144")
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class HeatingDataModule {
+interface HeatingDataModule {
 
-    @Binds
-    @Singleton
-    abstract fun bindHeatingSetValsRepository(
+    @Provides
+    @ApplicationScope
+    fun bindHeatingSetValsRepository(
         heatingSetValsRepositoryImpl: HeatingSetValsRepositoryImpl
-    ): HeatingSetValsRepository
+    ): HeatingSetValsRepository = heatingSetValsRepositoryImpl
 
-    @Binds
-    @Singleton
-    abstract fun bindHeatingStatsRepository(
+    @Provides
+    @ApplicationScope
+    fun bindHeatingStatsRepository(
         heatingStatsRepositoryImpl: HeatingStatsRepositoryImpl
-    ): HeatingStatsRepository
+    ): HeatingStatsRepository = heatingStatsRepositoryImpl
 }

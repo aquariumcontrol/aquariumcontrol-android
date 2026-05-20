@@ -40,7 +40,6 @@ import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingSetValsReade
 import com.laimburggasse.aquariumcontrol.heating.domain.heatingSetValsSanityCheck
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
 import com.laimburggasse.aquariumcontrol.heating.domain.repository.HeatingSetValsRepository
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -55,17 +54,16 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Inject
 
 
-@Singleton
+@ApplicationScope
 @RequiresApi(Build.VERSION_CODES.O)
 open class HeatingSetValsRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     private val apiService: HeatingSetValsApiService,
-    @param:ApplicationScope private val repositoryScope: CoroutineScope,
-    @param:IoDispatcher private val context: CoroutineDispatcher
+    private val repositoryScope: CoroutineScope,
+    private val context: IoDispatcher
 ): HeatingSetValsRepository {
     // Triggers for manual refreshes and optimistic updates.
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
@@ -104,7 +102,7 @@ open class HeatingSetValsRepositoryImpl @Inject constructor(
             // If there is no failure, and we have a controller, proceed with loading.
             emit(value = DataFetchResult.Loading)
 
-            val networkResult: DataFetchResult<HeatingSetVals> = withContext(context) {
+            val networkResult: DataFetchResult<HeatingSetVals> = withContext(context.dispatcher) {
                 val url = "http://${controller.address}:${controller.port}${WebApiUrls.HEATING_LOAD_SET_VALS}"
                 val heatingSetValsReader = HeatingSetValsReader(
                     apiService, url, username = controller.user, password = controller.password
@@ -195,7 +193,7 @@ open class HeatingSetValsRepositoryImpl @Inject constructor(
         }
 
         if (currentValues != null) {
-            repositoryScope.launch(context) {
+            repositoryScope.launch(context.dispatcher) {
                 val user = sessionManager.getControllerUser() ?: ""
                 val password = sessionManager.getControllerPassword() ?: ""
                 val port = sessionManager.getControllerPort()

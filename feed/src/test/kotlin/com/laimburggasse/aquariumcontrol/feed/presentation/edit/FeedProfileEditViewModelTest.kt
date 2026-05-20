@@ -90,7 +90,7 @@ class FeedProfileEditViewModelTest {
         coEvery { repository.findProfileById(10) } returns mockProfile
 
         // 7. Instantiate ViewModel LAST
-        viewModel = FeedProfileEditViewModel(savedStateHandle, repository)
+        viewModel = FeedProfileEditViewModel(repository)
     }
 
     @After

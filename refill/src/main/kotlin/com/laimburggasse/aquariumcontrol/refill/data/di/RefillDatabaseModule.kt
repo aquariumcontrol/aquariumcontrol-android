@@ -34,20 +34,14 @@ import com.laimburggasse.aquariumcontrol.refill.data.local.RefillHistoryDao
 import com.laimburggasse.aquariumcontrol.refill.data.local.RefillHistoryDatabase
 import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillHistoryApiService
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Provides
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 
-@Module
-@InstallIn(SingletonComponent::class)
-object RefillDatabaseModule {
+interface RefillDatabaseModule {
 
     @Provides
-    @Singleton
-    fun provideRefillHistoryDatabase(@ApplicationContext context: Context): RefillHistoryDatabase {
+    @ApplicationScope
+    fun provideRefillHistoryDatabase(context: Context): RefillHistoryDatabase {
         return Room.databaseBuilder(
             context,
             RefillHistoryDatabase::class.java,
@@ -56,13 +50,13 @@ object RefillDatabaseModule {
     }
 
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideRefillHistoryDao(database: RefillHistoryDatabase): RefillHistoryDao {
         return database.refillHistoryDao()
     }
 
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideRefillHistoryRemoteMediator(
         database: RefillHistoryDatabase,
         apiService: RefillHistoryApiService,
@@ -80,7 +74,7 @@ object RefillDatabaseModule {
 
     @OptIn(ExperimentalPagingApi::class)
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideRefillHistoryPager(
         database: RefillHistoryDatabase,
         remoteMediator: HistoryRemoteMediator<RefillHistoryLogEntry>

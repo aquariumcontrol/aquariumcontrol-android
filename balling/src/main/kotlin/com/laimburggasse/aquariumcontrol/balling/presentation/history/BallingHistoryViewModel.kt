@@ -25,10 +25,8 @@ package com.laimburggasse.aquariumcontrol.balling.presentation.history
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingHistoryRepository
 import com.laimburggasse.aquariumcontrol.common.presentation.HistoryViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 class BallingHistoryViewModel @Inject constructor(
     repository: BallingHistoryRepository
 ) : HistoryViewModel<BallingHistoryLogEntry>(repository) {

@@ -33,7 +33,6 @@ import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingProfil
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
-import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
@@ -53,13 +52,13 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @RequiresApi(Build.VERSION_CODES.O)
 open class BallingProfilesRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     private val apiService: BallingProfileApiService,
-    @param:ApplicationScope private val repositoryScope: CoroutineScope
+    private val repositoryScope: CoroutineScope
 ): BallingProfilesRepository {
 
     // For triggering manual refreshes

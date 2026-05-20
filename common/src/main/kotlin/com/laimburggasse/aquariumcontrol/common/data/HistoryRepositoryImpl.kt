@@ -33,7 +33,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onStart
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 open class HistoryRepositoryImpl<T : Any> @Inject constructor(
     sessionManager: SessionManager,

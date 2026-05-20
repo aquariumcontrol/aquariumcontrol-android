@@ -26,7 +26,6 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
-import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.timedata.data.remote.TimeDataReader
 import com.laimburggasse.aquariumcontrol.timedata.data.remote.dto.TimeDataStringSample
@@ -35,7 +34,6 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.timedata.data.remote.TimeDataApiService
 import com.laimburggasse.aquariumcontrol.timedata.domain.repository.TimeDataRepository
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -48,14 +46,14 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @RequiresApi(Build.VERSION_CODES.O)
 open class TimeDataRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     private val apiService: TimeDataApiService,
-    @param:ApplicationScope private val repositoryScope: CoroutineScope,
-    @param:IoDispatcher private val context: CoroutineDispatcher
+    private val repositoryScope: CoroutineScope,
+    private val context: IoDispatcher
 ): TimeDataRepository {
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
 
@@ -73,7 +71,7 @@ open class TimeDataRepositoryImpl @Inject constructor(
 
                 // Perform the network request on a background thread.
                 val readResult: DataFetchResult<List<TimeDataStringSample>> =
-                    withContext(context) {
+                    withContext(context.dispatcher) {
                         val url: String =
                             "http://" + sessionManager.getControllerAddress() + ":" +
                             sessionManager.getControllerPort() + WebApiUrls.LOAD_TIME_DATA

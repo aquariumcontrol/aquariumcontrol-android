@@ -28,7 +28,6 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose") version "2.3.21"
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp") version "2.3.7"
-    id("com.google.dagger.hilt.android")
 
     // Required for Firebase Crashlytics:
     // Google services Gradle plugin
@@ -113,10 +112,17 @@ dependencies {
     implementation(libs.androidx.tracing.perfetto.handshake)
     implementation(libs.androidx.junit.ktx)
 
-    // for Dagger/Hilt
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
-    implementation(libs.androidx.hilt.navigation.compose)
+    // Ktor
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.auth)
+
+    // for kotlin-inject
+    implementation(libs.kotlin.inject.runtime)
+    ksp(libs.kotlin.inject.compiler.ksp)
 
     implementation(project(":balling"))
     implementation(project(":common"))

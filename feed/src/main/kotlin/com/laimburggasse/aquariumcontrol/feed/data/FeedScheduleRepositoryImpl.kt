@@ -40,7 +40,6 @@ import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedScheduleRepository
 import com.laimburggasse.aquariumcontrol.feed.presentation.schedule.toFeedScheduleEntryList
 import io.ktor.util.encodeBase64
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -58,16 +57,15 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.sql.Timestamp
 import java.util.Calendar
-import javax.inject.Inject
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Inject
 
-@Singleton
+@ApplicationScope
 @RequiresApi(Build.VERSION_CODES.O)
 open class FeedScheduleRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     private val apiService: FeedScheduleEntryApiService,
-    @param:ApplicationScope private val repositoryScope: CoroutineScope,
-    @param:IoDispatcher private val context: CoroutineDispatcher
+    private val repositoryScope: CoroutineScope,
+    private val context: IoDispatcher
 ): FeedScheduleRepository {
     // Triggers and holders for optimistic updates
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
@@ -109,7 +107,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
             emit(value = DataFetchResult.Loading)
 
             val networkResult: DataFetchResult<List<FeedScheduleEntry>> =
-                withContext(context) {
+                withContext(context.dispatcher) {
                     val url = "http://${controller.address}:${controller.port}${WebApiUrls.FEED_LOAD_SCHEDULE}"
                     val scheduleReader = FeedScheduleEntryReader(
                         apiService, url, username = controller.user, password = controller.password
@@ -215,7 +213,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
 
         // In both cases, trigger the network request, because the add operation
         // may have committed to the server meanwhile.
-        repositoryScope.launch(context) {
+        repositoryScope.launch(context.dispatcher) {
             val requestSuccess = try {
                 val response = apiService.deleteFeedScheduleEntry(
                     url,
@@ -280,7 +278,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
         val authHeader = "Basic " + "$user:$password".toByteArray(Charsets.ISO_8859_1).encodeBase64()
         val apiParams: Map<String, String> = tempEntry.getApiParameters()
 
-        repositoryScope.launch(context) {
+        repositoryScope.launch(context.dispatcher) {
             val requestSuccess = try {
                 val response = apiService.addFeedScheduleEntry(
                     url,
@@ -345,7 +343,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
         val postParams = modifiedEntry.getApiParametersForUpdating(timestampOld)
 
         // Launch the background network request.
-        repositoryScope.launch(context) {
+        repositoryScope.launch(context.dispatcher) {
             val requestSuccess = try {
                 apiService.updateFeedScheduleEntry(
                     url,

@@ -24,18 +24,13 @@ package com.laimburggasse.aquariumcontrol.timedata.data.di
 
 import com.laimburggasse.aquariumcontrol.timedata.data.remote.KtorTimeDataApiService
 import com.laimburggasse.aquariumcontrol.timedata.data.remote.TimeDataApiService
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import me.tatarka.inject.annotations.Provides
 import io.ktor.client.HttpClient
-import javax.inject.Singleton
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 
-@Module
-@InstallIn(SingletonComponent::class)
-object TimeDataNetwork {
+interface TimeDataNetwork {
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideTimeDataApiService(
         httpClient: HttpClient
     ): TimeDataApiService {

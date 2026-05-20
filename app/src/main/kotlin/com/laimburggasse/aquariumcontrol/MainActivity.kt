@@ -32,7 +32,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.laimburggasse.aquariumcontrol.common.presentation.injectedViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -104,14 +104,10 @@ import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataViewModel
 import com.laimburggasse.aquariumcontrol.ventilation.presentation.VentilationScreen
 import com.laimburggasse.aquariumcontrol.ventilation.presentation.VentilationSetValsUiState
 import com.laimburggasse.aquariumcontrol.ventilation.presentation.VentilationSetValsViewModel
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @Suppress("UNCHECKED_CAST")
-@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @Inject
     lateinit var sessionManager: SessionManager
 
     override fun onPause() {
@@ -133,8 +129,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sessionManager = (application as AquariumControlApplication).appComponent.sessionManager
 
         setContent {
+            val appComponent = (LocalContext.current.applicationContext as AquariumControlApplication).appComponent
             val navHostController: NavHostController = rememberNavController()
             val selectedControllerProfile: ControllerProfile? by
                 sessionManager.selectedControllerProfile.collectAsStateWithLifecycle()
@@ -147,7 +145,7 @@ class MainActivity : ComponentActivity() {
                 builder = {
                     composable(route = ViewNavigationRoutes.controllerSelection) {
                         val controllerSelectionViewModel: ControllerSelectionViewModel =
-                            hiltViewModel()
+                            injectedViewModel { appComponent.controllerSelectionViewModel }
                         val controllerProfileList: List<ControllerProfile> by
                             controllerSelectionViewModel.controllerProfiles.collectAsStateWithLifecycle()
                         MainScaffold(
@@ -182,7 +180,8 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(route = ViewNavigationRoutes.controllerAdd)
                     {
-                        val controllerAddViewModel: ControllerAddViewModel = hiltViewModel()
+                        val controllerAddViewModel: ControllerAddViewModel =
+                            injectedViewModel { appComponent.controllerAddViewModel }
                         val state: ControllerAddEditUiState by
                             controllerAddViewModel.state.collectAsStateWithLifecycle()
                         MainScaffold(
@@ -221,7 +220,10 @@ class MainActivity : ComponentActivity() {
                     { backStackEntry ->
                         val controllerProfileId: Long =
                             backStackEntry.arguments?.getLong("controllerProfileId") ?: -1L
-                        val controllerEditViewModel: ControllerEditViewModel = hiltViewModel()
+                        val controllerEditViewModel: ControllerEditViewModel =
+                            injectedViewModel {
+                                appComponent.controllerEditViewModel.apply { setControllerProfileId(controllerProfileId) }
+                            }
                         val editState: ControllerAddEditUiState by
                             controllerEditViewModel.state.collectAsStateWithLifecycle()
 
@@ -252,8 +254,10 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(route = ViewNavigationRoutes.feed) {
-                        val feedProfilesViewModel: FeedProfilesViewModel = hiltViewModel()
-                        val feedScheduleViewModel: FeedScheduleViewModel = hiltViewModel()
+                        val feedProfilesViewModel: FeedProfilesViewModel =
+                            injectedViewModel { appComponent.feedProfilesViewModel }
+                        val feedScheduleViewModel: FeedScheduleViewModel =
+                            injectedViewModel { appComponent.feedScheduleViewModel }
                         val feedProfilesUiState: FeedProfilesUiState by
                             feedProfilesViewModel.feedProfilesUiState.collectAsStateWithLifecycle()
                         val feedScheduleSelectionUiState: FeedScheduleSelectionUiState by
@@ -288,7 +292,8 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(route = ViewNavigationRoutes.feedHistory) {
-                        val feedHistoryViewModel: FeedHistoryViewModel = hiltViewModel()
+                        val feedHistoryViewModel: FeedHistoryViewModel =
+                            injectedViewModel { appComponent.feedHistoryViewModel }
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.feedHistory,
@@ -311,8 +316,12 @@ class MainActivity : ComponentActivity() {
                         arguments = listOf(
                             navArgument(name = "feedProfileId") { type = NavType.IntType }
                         )
-                    ) { _ ->
-                        val feedProfileEditViewModel: FeedProfileEditViewModel = hiltViewModel()
+                    ) { backStackEntry ->
+                        val feedProfileId: Int = backStackEntry.arguments?.getInt("feedProfileId") ?: -1
+                        val feedProfileEditViewModel: FeedProfileEditViewModel =
+                            injectedViewModel {
+                                appComponent.feedProfileEditViewModel.apply { setProfileId(feedProfileId) }
+                            }
                         val uiState: FeedProfileEditUiState by
                             feedProfileEditViewModel.uiState.collectAsStateWithLifecycle()
                         MainScaffold(
@@ -334,7 +343,8 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(route = ViewNavigationRoutes.feedAddProfile) {
-                        val feedProfileAddViewModel: FeedProfileAddViewModel = hiltViewModel()
+                        val feedProfileAddViewModel: FeedProfileAddViewModel =
+                            injectedViewModel { appComponent.feedProfileAddViewModel }
                         val feedProfileName: String by
                             feedProfileAddViewModel.feedProfileName.collectAsStateWithLifecycle()
                         val feedProfileNameExists: Boolean by
@@ -383,8 +393,14 @@ class MainActivity : ComponentActivity() {
                                 type = NavType.LongType
                             }
                         )
-                    ) { _ ->
-                        val feedScheduleViewModel: FeedScheduleViewModel = hiltViewModel()
+                    ) { backStackEntry ->
+                        val profileId = backStackEntry.arguments?.getInt(ViewNavigationRoutes.FEED_ARG_PROFILE_ID)
+                        val isNewEntry = backStackEntry.arguments?.getBoolean(ViewNavigationRoutes.FEED_ARG_IS_NEW_SCHEDULE_ENTRY) ?: false
+                        val millis = backStackEntry.arguments?.getLong(ViewNavigationRoutes.FEED_ARG_MILLIS_SINCE_EPOCH) ?: 0L
+                        val feedScheduleViewModel: FeedScheduleViewModel =
+                            injectedViewModel {
+                                appComponent.feedScheduleViewModel.apply { setScheduleParams(profileId, isNewEntry, millis) }
+                            }
                         val feedProfile: FeedProfile? by
                             feedScheduleViewModel.feedProfile.collectAsStateWithLifecycle()
                         val isNewScheduleEntry: Boolean by
@@ -419,7 +435,8 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(route = ViewNavigationRoutes.balling) {
-                        val ballingViewModel: BallingProfilesViewModel = hiltViewModel()
+                        val ballingViewModel: BallingProfilesViewModel =
+                            injectedViewModel { appComponent.ballingProfilesViewModel }
                         val ballingProfilesUiState: BallingProfilesUiState by
                         ballingViewModel.ballingProfilesUiState.collectAsStateWithLifecycle()
 
@@ -445,7 +462,8 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(route = ViewNavigationRoutes.ballingHistory) {
-                        val ballingHistoryViewModel: BallingHistoryViewModel = hiltViewModel()
+                        val ballingHistoryViewModel: BallingHistoryViewModel =
+                            injectedViewModel { appComponent.ballingHistoryViewModel }
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.ballingHistory,
@@ -468,10 +486,13 @@ class MainActivity : ComponentActivity() {
                         arguments = listOf(
                             navArgument(name = "ballingProfileId") { type = NavType.IntType }
                         )
-                    ) { _ ->
+                    ) { backStackEntry ->
+                        val ballingProfileId: Int = backStackEntry.arguments?.getInt("ballingProfileId") ?: -1
                         // view model needs to be created with dedicated balling profile
                         val ballingProfileEditViewModel: BallingProfileEditViewModel =
-                            hiltViewModel()
+                            injectedViewModel {
+                                appComponent.ballingProfileEditViewModel.apply { setProfileId(ballingProfileId) }
+                            }
                         val ballingProfileEditUiState: BallingProfileEditUiState by
                         ballingProfileEditViewModel.ballingProfileEditUiState.collectAsStateWithLifecycle()
                         MainScaffold(
@@ -493,7 +514,8 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(route = ViewNavigationRoutes.refill) {
-                        val refillViewModel: RefillViewModel = hiltViewModel()
+                        val refillViewModel: RefillViewModel =
+                            injectedViewModel { appComponent.refillViewModel }
                         val refillStateUiState: RefillStateUiState by
                                 refillViewModel.refillStateUiState.collectAsStateWithLifecycle()
                         val context: Context = LocalContext.current
@@ -533,7 +555,8 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(route = ViewNavigationRoutes.refillHistory) {
-                        val refillHistoryViewModel: RefillHistoryViewModel = hiltViewModel()
+                        val refillHistoryViewModel: RefillHistoryViewModel =
+                            injectedViewModel { appComponent.refillHistoryViewModel }
                         MainScaffold(
                             isControllerLoaded,
                             navigationRouteSource = ViewNavigationRoutes.refillHistory,
@@ -552,8 +575,10 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(route = ViewNavigationRoutes.heating) {
-                        val heatingSetValsViewModel: HeatingSetValsViewModel = hiltViewModel()
-                        val heatingStatsViewModel: HeatingStatsViewModel = hiltViewModel()
+                        val heatingSetValsViewModel: HeatingSetValsViewModel =
+                            injectedViewModel { appComponent.heatingSetValsViewModel }
+                        val heatingStatsViewModel: HeatingStatsViewModel =
+                            injectedViewModel { appComponent.heatingStatsViewModel }
                         val heatingSetValsUiState: HeatingSetValsUiState by
                         heatingSetValsViewModel.heatingSetValsUiState.collectAsStateWithLifecycle()
                         val heatingStatsUiState: HeatingStatsUiState by
@@ -583,7 +608,7 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(route = ViewNavigationRoutes.ventilation) {
                         val ventilationSetValsViewModel: VentilationSetValsViewModel =
-                            hiltViewModel()
+                            injectedViewModel { appComponent.ventilationSetValsViewModel }
                         val ventilationSetValsUiState: VentilationSetValsUiState by
                             ventilationSetValsViewModel.ventilationSetValsUiState.collectAsStateWithLifecycle()
 
@@ -608,7 +633,8 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(route = ViewNavigationRoutes.timeData) {
-                        val timeDataViewModel: TimeDataViewModel = hiltViewModel()
+                        val timeDataViewModel: TimeDataViewModel =
+                            injectedViewModel { appComponent.timeDataViewModel }
                         val timeDataUiState: TimeDataUiState by
                             timeDataViewModel.timeDataUiState.collectAsStateWithLifecycle()
 
@@ -632,7 +658,8 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(route = ViewNavigationRoutes.schedule) {
-                        val scheduleViewModel: ScheduleViewModel = hiltViewModel()
+                        val scheduleViewModel: ScheduleViewModel =
+                            injectedViewModel { appComponent.scheduleViewModel }
                         val scheduleUiState: ScheduleUiState by
                             scheduleViewModel.scheduleUiState.collectAsStateWithLifecycle()
                         MainScaffold(
@@ -685,7 +712,8 @@ class MainActivity : ComponentActivity() {
                                     sessionManager.suppressAutoNavigation() // Controller selection may navigate here without user interaction
                                 }
                             }
-                            val summaryViewModel: SummaryViewModel = hiltViewModel()
+                            val summaryViewModel: SummaryViewModel =
+                                injectedViewModel { appComponent.summaryViewModel }
                             val summaryUiState: SummaryUiState by
                                 summaryViewModel.summaryUiState.collectAsStateWithLifecycle()
                             MainScaffold(

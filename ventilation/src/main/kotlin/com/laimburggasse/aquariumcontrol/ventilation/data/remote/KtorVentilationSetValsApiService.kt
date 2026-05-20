@@ -10,7 +10,7 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class KtorVentilationSetValsApiService @Inject constructor(
     private val client: HttpClient

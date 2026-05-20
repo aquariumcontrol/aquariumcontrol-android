@@ -26,26 +26,21 @@ import com.laimburggasse.aquariumcontrol.refill.data.RefillHistoryRepositoryImpl
 import com.laimburggasse.aquariumcontrol.refill.data.RefillRepositoryImpl
 import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillHistoryRepository
 import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillRepository
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Provides
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 
 @Suppress("unused", "kotlin:S1144")
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class RefillDataModule {
+interface RefillDataModule {
 
-    @Binds
-    @Singleton
-    abstract fun bindRefillRepository(
+    @Provides
+    @ApplicationScope
+    fun bindRefillRepository(
         refillRepositoryImpl: RefillRepositoryImpl
-    ): RefillRepository
+    ): RefillRepository = refillRepositoryImpl
 
-    @Binds
-    @Singleton
-    abstract fun bindRefillHistoryRepository(
+    @Provides
+    @ApplicationScope
+    fun bindRefillHistoryRepository(
         refillHistoryRepositoryImpl: RefillHistoryRepositoryImpl
-    ): RefillHistoryRepository
+    ): RefillHistoryRepository = refillHistoryRepositoryImpl
 }

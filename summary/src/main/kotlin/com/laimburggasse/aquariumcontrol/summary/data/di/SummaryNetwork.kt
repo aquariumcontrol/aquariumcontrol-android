@@ -24,18 +24,13 @@ package com.laimburggasse.aquariumcontrol.summary.data.di
 
 import com.laimburggasse.aquariumcontrol.summary.data.remote.KtorSummaryDataApiService
 import com.laimburggasse.aquariumcontrol.summary.data.remote.SummaryDataApiService
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import me.tatarka.inject.annotations.Provides
 import io.ktor.client.HttpClient
-import javax.inject.Singleton
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 
-@Module
-@InstallIn(SingletonComponent::class)
-object SummaryNetwork {
+interface SummaryNetwork {
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideSummaryDataApiService(
         httpClient: HttpClient
     ): SummaryDataApiService {

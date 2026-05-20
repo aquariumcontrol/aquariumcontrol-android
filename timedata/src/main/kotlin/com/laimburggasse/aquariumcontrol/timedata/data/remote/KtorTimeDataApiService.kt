@@ -5,7 +5,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.header
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class KtorTimeDataApiService @Inject constructor(
     private val client: HttpClient

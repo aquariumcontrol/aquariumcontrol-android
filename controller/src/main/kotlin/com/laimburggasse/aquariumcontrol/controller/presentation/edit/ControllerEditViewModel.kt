@@ -32,27 +32,20 @@ import com.laimburggasse.aquariumcontrol.controller.presentation.components.Cont
 import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiState
 import com.laimburggasse.aquariumcontrol.controller.domain.isHostName
 import com.laimburggasse.aquariumcontrol.controller.domain.isValidPortNumber
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 class ControllerEditViewModel @Inject constructor(
     private val dao: ControllerProfileDao,
-    private val sessionManager: SessionManager,
-    savedStateHandle: SavedStateHandle
+    private val sessionManager: SessionManager
 ) : ViewModel() {
     // This class represents the view model for the controller edit screen.
 
-    // Get the ID directly from the navigation arguments
-    private val controllerProfileId: Long? = savedStateHandle.get<Long>("controllerProfileId")?.let {
-        if (it == -1L) null else it
-    }
     private val _state = MutableStateFlow(value = ControllerAddEditUiState())
     val state: StateFlow<ControllerAddEditUiState> = _state
         .stateIn(
@@ -61,23 +54,20 @@ class ControllerEditViewModel @Inject constructor(
             initialValue = ControllerAddEditUiState()
         )
 
-    init {
-        // In the init block, load the profile from the database using the provided ID.
-        // This populates the ViewModel's state as soon as it's created.
-        if ((controllerProfileId != null) && (controllerProfileId != -1L)) {
-            viewModelScope.launch {
-                dao.getControllerProfileById(id = controllerProfileId)?.let { profile ->
-                    _state.update {
-                        it.copy(
-                            controllerProfileId = profile.id,
-                            controllerProfileName = profile.name,
-                            controllerProfileAddress = profile.address,
-                            controllerProfilePort = profile.port.toString(),
-                            controllerProfileUser = profile.user,
-                            controllerProfilePassword = profile.password,
-                            validControllerAddress = isHostName(profile.address)
-                        )
-                    }
+    fun setControllerProfileId(id: Long) {
+        if (id == -1L) return
+        viewModelScope.launch {
+            dao.getControllerProfileById(id = id)?.let { profile ->
+                _state.update {
+                    it.copy(
+                        controllerProfileId = profile.id,
+                        controllerProfileName = profile.name,
+                        controllerProfileAddress = profile.address,
+                        controllerProfilePort = profile.port.toString(),
+                        controllerProfileUser = profile.user,
+                        controllerProfilePassword = profile.password,
+                        validControllerAddress = isHostName(profile.address)
+                    )
                 }
             }
         }

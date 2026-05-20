@@ -28,33 +28,28 @@ import com.laimburggasse.aquariumcontrol.feed.data.FeedScheduleRepositoryImpl
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedHistoryRepository
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedProfilesRepository
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedScheduleRepository
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Provides
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 
 @Suppress("unused", "kotlin:S1144")
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class FeedDataModule {
+interface FeedDataModule {
 
-    @Binds
-    @Singleton
-    abstract fun bindFeedProfilesRepository(
+    @Provides
+    @ApplicationScope
+    fun bindFeedProfilesRepository(
         feedProfilesRepositoryImpl: FeedProfilesRepositoryImpl
-    ): FeedProfilesRepository
+    ): FeedProfilesRepository = feedProfilesRepositoryImpl
 
-    @Binds
-    @Singleton
-    abstract fun bindFeedHistoryRepository(
+    @Provides
+    @ApplicationScope
+    fun bindFeedHistoryRepository(
         feedHistoryRepositoryImpl: FeedHistoryRepositoryImpl
-    ): FeedHistoryRepository
+    ): FeedHistoryRepository = feedHistoryRepositoryImpl
 
-    @Binds
-    @Singleton
-    abstract fun bindFeedScheduleRepository(
+    @Provides
+    @ApplicationScope
+    fun bindFeedScheduleRepository(
         feedScheduleRepositoryImpl: FeedScheduleRepositoryImpl
-    ): FeedScheduleRepository
+    ): FeedScheduleRepository = feedScheduleRepositoryImpl
 
 }

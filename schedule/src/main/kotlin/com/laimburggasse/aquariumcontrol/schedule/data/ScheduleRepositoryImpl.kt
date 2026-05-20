@@ -39,7 +39,6 @@ import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntries
 import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntriesFactory
 import com.laimburggasse.aquariumcontrol.schedule.domain.repository.ScheduleRepository
 import io.ktor.util.encodeBase64
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -54,16 +53,15 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Inject
 
-@Singleton
+@ApplicationScope
 @RequiresApi(Build.VERSION_CODES.O)
 open class ScheduleRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     private val apiService: ScheduleApiService,
-    @param:ApplicationScope private val repositoryScope: CoroutineScope,
-    @param:IoDispatcher private val context: CoroutineDispatcher
+    private val repositoryScope: CoroutineScope,
+    private val context: IoDispatcher
 ): ScheduleRepository {
     // Triggers for manual refreshes and a holder for optimistic local updates.
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
@@ -156,7 +154,7 @@ open class ScheduleRepositoryImpl @Inject constructor(
 
             val postParams = scheduleEntries.getApiParams()
 
-            repositoryScope.launch(context) {
+            repositoryScope.launch(context.dispatcher) {
                 apiService.updateScheduleData(url, authHeader, postParams)
             }
         }
@@ -172,7 +170,7 @@ open class ScheduleRepositoryImpl @Inject constructor(
 
     // helper function for the flow
     open suspend fun fetchScheduleSetVals(username: String, password: String): DataFetchResult<ScheduleEntries> {
-        return withContext(context) {
+        return withContext(context.dispatcher) {
             val url: String =
                 "http://" + sessionManager.getControllerAddress() + ":" +
                 sessionManager.getControllerPort() + WebApiUrls.ACTUATOR_SCHEDULE_LOAD

@@ -25,10 +25,8 @@ package com.laimburggasse.aquariumcontrol.feed.presentation.history
 import com.laimburggasse.aquariumcontrol.common.presentation.HistoryViewModel
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedHistoryRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 class FeedHistoryViewModel @Inject constructor(
     feedHistoryRepository: FeedHistoryRepository
 ) : HistoryViewModel<FeedHistoryLogEntry>(feedHistoryRepository) {

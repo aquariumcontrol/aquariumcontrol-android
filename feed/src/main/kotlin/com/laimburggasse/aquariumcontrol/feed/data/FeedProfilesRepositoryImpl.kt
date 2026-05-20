@@ -57,16 +57,15 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Inject
 
-@Singleton
+@ApplicationScope
 @RequiresApi(Build.VERSION_CODES.O)
 open class FeedProfilesRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     private val apiService: FeedProfileApiService,
-    @param:ApplicationScope private val repositoryScope: CoroutineScope,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    private val repositoryScope: CoroutineScope,
+    private val ioDispatcher: IoDispatcher
 ): FeedProfilesRepository {
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
 
@@ -102,7 +101,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
                 emit(value = DataFetchResult.Loading)
 
                 val networkResult: DataFetchResult<List<FeedProfileImport>> =
-                    withContext(context = ioDispatcher) {
+                    withContext(context = ioDispatcher.dispatcher) {
                         val url = "http://${controller.address}:${controller.port}${WebApiUrls.FEED_LOAD_PROFILES}"
                         val profileReader = FeedProfileReader(
                             apiService, url, username = controller.user, password = controller.password
@@ -165,7 +164,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
         }
 
         // Perform the actual network request in the background.
-        repositoryScope.launch(context = ioDispatcher) {
+        repositoryScope.launch(context = ioDispatcher.dispatcher) {
             val requestSuccess = try {
                 val response = apiService.deleteFeedProfile(
                     url,
@@ -208,7 +207,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
         val url = "http://$controllerAddress:$port${WebApiUrls.FEED_PROFILE_CREATE}"
 
         val authHeader = "Basic " + "$user:$password".toByteArray(Charsets.ISO_8859_1).encodeBase64()
-        repositoryScope.launch(context = ioDispatcher) {
+        repositoryScope.launch(context = ioDispatcher.dispatcher) {
             val requestSuccess = try {
                 val response = apiService.addFeedProfile(
                     url,
@@ -277,7 +276,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
             )
         }
 
-        repositoryScope.launch(context = ioDispatcher) {
+        repositoryScope.launch(context = ioDispatcher.dispatcher) {
             // Make the Ktor call
             val requestSuccess = try {
                 apiService.updateFeedProfile(

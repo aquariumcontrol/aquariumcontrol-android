@@ -7,7 +7,7 @@ import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class KtorBallingHistoryApiService @Inject constructor(
     private val client: HttpClient

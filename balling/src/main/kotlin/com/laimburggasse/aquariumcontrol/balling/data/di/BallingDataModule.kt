@@ -26,26 +26,21 @@ import com.laimburggasse.aquariumcontrol.balling.data.BallingHistoryRepositoryIm
 import com.laimburggasse.aquariumcontrol.balling.data.BallingProfilesRepositoryImpl
 import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingHistoryRepository
 import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingProfilesRepository
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Provides
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 
 @Suppress("unused", "kotlin:S1144")
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class BallingDataModule {
+interface BallingDataModule {
 
-    @Binds
-    @Singleton
-    abstract fun bindBallingProfilesRepository(
+    @Provides
+    @ApplicationScope
+    fun bindBallingProfilesRepository(
         ballingProfilesRepositoryImpl: BallingProfilesRepositoryImpl
-    ): BallingProfilesRepository
+    ): BallingProfilesRepository = ballingProfilesRepositoryImpl
 
-    @Binds
-    @Singleton
-    abstract fun bindBallingHistoryRepository(
+    @Provides
+    @ApplicationScope
+    fun bindBallingHistoryRepository(
         ballingHistoryRepositoryImpl: BallingHistoryRepositoryImpl
-    ): BallingHistoryRepository
+    ): BallingHistoryRepository = ballingHistoryRepositoryImpl
 }

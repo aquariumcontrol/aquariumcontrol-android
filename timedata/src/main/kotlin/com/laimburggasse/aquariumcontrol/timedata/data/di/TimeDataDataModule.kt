@@ -24,20 +24,15 @@ package com.laimburggasse.aquariumcontrol.timedata.data.di
 
 import com.laimburggasse.aquariumcontrol.timedata.data.TimeDataRepositoryImpl
 import com.laimburggasse.aquariumcontrol.timedata.domain.repository.TimeDataRepository
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Provides
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 
 @Suppress("unused", "kotlin:S1144")
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class TimeDataDataModule {
+interface TimeDataDataModule {
 
-    @Binds
-    @Singleton
-    abstract fun bindTimeDataRepository(
+    @Provides
+    @ApplicationScope
+    fun bindTimeDataRepository(
         timeDataRepositoryImpl: TimeDataRepositoryImpl
-    ): TimeDataRepository
+    ): TimeDataRepository = timeDataRepositoryImpl
 }

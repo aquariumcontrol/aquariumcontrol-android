@@ -29,22 +29,15 @@ import com.laimburggasse.aquariumcontrol.common.data.local.ControllerProfileDao
 import com.laimburggasse.aquariumcontrol.common.data.local.ControllerProfileDatabase
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManagerImpl
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
+import me.tatarka.inject.annotations.Provides
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import javax.inject.Singleton
 
-@Module
-@InstallIn(SingletonComponent::class)
-object AppModule {
+interface AppModule {
     @Provides
-    @Singleton
-    fun provideAppDatabase(@ApplicationContext context: Context): ControllerProfileDatabase {
+    @ApplicationScope
+    fun provideAppDatabase(context: Context): ControllerProfileDatabase {
         return Room.databaseBuilder(
             context,
             klass = ControllerProfileDatabase::class.java,
@@ -53,30 +46,29 @@ object AppModule {
     }
 
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideControllerProfileDao(db: ControllerProfileDatabase): ControllerProfileDao {
         return db.controllerProfileDao()
     }
 
     @Provides
-    @Singleton
-    fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
+    @ApplicationScope
+    fun provideSharedPreferences(context: Context): SharedPreferences {
         return context.getSharedPreferences("aquarium_control_prefs", Context.MODE_PRIVATE)
     }
 
     @Provides
-    @Singleton
     @ApplicationScope
     fun provideApplicationScope(): CoroutineScope {
         return CoroutineScope(context = SupervisorJob() + Dispatchers.Default)
     }
 
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideSessionManager(
         sharedPreferences: SharedPreferences,
         dao: ControllerProfileDao,
-        @ApplicationScope externalScope: CoroutineScope // Hilt gets this from the provider above
+        externalScope: CoroutineScope // kotlin-inject doesn't need qualifier here if it matches type/return
     ): SessionManager {
         return SessionManagerImpl(sharedPreferences, dao, externalScope)
     }

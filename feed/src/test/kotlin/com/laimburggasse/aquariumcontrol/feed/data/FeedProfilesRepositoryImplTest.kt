@@ -27,6 +27,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.crashlytics.crashlytics
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
 import com.laimburggasse.aquariumcontrol.common.testing.MockSessionManagerImpl
 import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedProfiles
@@ -75,7 +76,7 @@ class FeedProfilesRepositoryImplTest {
             sessionManager = mockSessionManagerImpl,
             apiService = mockFeedProfileApiService,
             repositoryScope = testScope,
-            ioDispatcher = testDispatcher
+            ioDispatcher = IoDispatcher(testDispatcher)
         )
     }
 

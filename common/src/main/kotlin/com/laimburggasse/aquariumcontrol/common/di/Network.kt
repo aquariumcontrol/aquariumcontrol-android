@@ -22,10 +22,7 @@
 
 package com.laimburggasse.aquariumcontrol.common.di
 
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import me.tatarka.inject.annotations.Provides
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.auth.Auth
@@ -34,13 +31,10 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import javax.inject.Singleton
 
-@Module
-@InstallIn(SingletonComponent::class)
-object Network {
+interface Network {
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideHttpClient(): HttpClient {
         return HttpClient(OkHttp) {
             install(ContentNegotiation) {

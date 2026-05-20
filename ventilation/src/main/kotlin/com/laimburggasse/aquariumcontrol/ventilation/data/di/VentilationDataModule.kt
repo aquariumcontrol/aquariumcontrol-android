@@ -24,20 +24,15 @@ package com.laimburggasse.aquariumcontrol.ventilation.data.di
 
 import com.laimburggasse.aquariumcontrol.ventilation.data.VentilationSetValsRepositoryImpl
 import com.laimburggasse.aquariumcontrol.ventilation.domain.repository.VentilationSetValsRepository
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Provides
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 
 @Suppress("unused", "kotlin:S1144")
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class VentilationDataModule {
+interface VentilationDataModule {
 
-    @Binds
-    @Singleton
-    abstract fun bindVentilationSetValsRepository(
+    @Provides
+    @ApplicationScope
+    fun bindVentilationSetValsRepository(
         ventilationSetValsRepositoryImpl: VentilationSetValsRepositoryImpl
-    ): VentilationSetValsRepository
+    ): VentilationSetValsRepository = ventilationSetValsRepositoryImpl
 }

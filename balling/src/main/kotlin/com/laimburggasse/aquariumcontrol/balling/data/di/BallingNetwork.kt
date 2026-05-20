@@ -26,18 +26,13 @@ import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingHistoryApiSe
 import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingProfileApiService
 import com.laimburggasse.aquariumcontrol.balling.data.remote.KtorBallingHistoryApiService
 import com.laimburggasse.aquariumcontrol.balling.data.remote.KtorBallingProfileApiService
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import me.tatarka.inject.annotations.Provides
 import io.ktor.client.HttpClient
-import javax.inject.Singleton
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 
-@Module
-@InstallIn(SingletonComponent::class)
-object BallingNetwork {
+interface BallingNetwork {
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideBallingHistoryApiService(
         httpClient: HttpClient
     ): BallingHistoryApiService {
@@ -45,7 +40,7 @@ object BallingNetwork {
     }
 
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideBallingProfileApiService(
         httpClient: HttpClient
     ): BallingProfileApiService {

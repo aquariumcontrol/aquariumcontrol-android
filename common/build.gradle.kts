@@ -26,7 +26,6 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose") version "2.3.21"
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp") version "2.3.7"
-    id("com.google.dagger.hilt.android")
 }
 
 kotlin {
@@ -113,10 +112,9 @@ dependencies {
     screenshotTestImplementation(libs.screenshot.validation.api)
     screenshotTestImplementation(libs.androidx.ui.tooling)
 
-    // for Dagger/Hilt
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
-    implementation(libs.androidx.hilt.navigation.compose)
+    // for kotlin-inject
+    implementation(libs.kotlin.inject.runtime)
+    ksp(libs.kotlin.inject.compiler.ksp)
 
     // Paging
     implementation(libs.androidx.paging.common)

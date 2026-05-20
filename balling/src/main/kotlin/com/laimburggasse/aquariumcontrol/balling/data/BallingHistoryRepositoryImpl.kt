@@ -29,7 +29,7 @@ import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingHistor
 import com.laimburggasse.aquariumcontrol.common.data.HistoryRepositoryImpl
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 open class BallingHistoryRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,

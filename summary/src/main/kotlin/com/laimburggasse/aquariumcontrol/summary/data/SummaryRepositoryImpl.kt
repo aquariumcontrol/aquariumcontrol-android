@@ -25,7 +25,6 @@ package com.laimburggasse.aquariumcontrol.summary.data
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
-import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.summary.data.remote.SummaryDataReader
 import com.laimburggasse.aquariumcontrol.summary.domain.model.SummaryData
@@ -33,7 +32,6 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.summary.data.remote.SummaryDataApiService
 import com.laimburggasse.aquariumcontrol.summary.domain.repository.SummaryRepository
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -47,15 +45,15 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @OptIn(DelicateCoroutinesApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 open class SummaryRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     private val apiService: SummaryDataApiService,
-    @param:ApplicationScope private val repositoryScope: CoroutineScope,
-    @param:IoDispatcher private val context: CoroutineDispatcher
+    private val repositoryScope: CoroutineScope,
+    private val context: IoDispatcher
 ): SummaryRepository {
     // This SharedFlow doesn't hold state; it just emits a signal when we call emit().
     // We use replay=1 so it emits the last signal to new subscribers if needed.
@@ -84,7 +82,7 @@ open class SummaryRepositoryImpl @Inject constructor(
                 // UI shall temporarily show loading state, while fetching data
                 emit(value = DataFetchResult.Loading)
 
-                val result: DataFetchResult<SummaryData> = withContext(context) {
+                val result: DataFetchResult<SummaryData> = withContext(context.dispatcher) {
                     val url = "http://${controller.address}:${controller.port}${WebApiUrls.OVERVIEW_GET_DATA}"
                     val reader = SummaryDataReader(
                         apiService, url, username = controller.user, password = controller.password

@@ -24,20 +24,15 @@ package com.laimburggasse.aquariumcontrol.summary.data.di
 
 import com.laimburggasse.aquariumcontrol.summary.data.SummaryRepositoryImpl
 import com.laimburggasse.aquariumcontrol.summary.domain.repository.SummaryRepository
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Provides
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 
 @Suppress("unused", "kotlin:S1144")
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class SummaryDataModule {
+interface SummaryDataModule {
 
-    @Binds
-    @Singleton
-    abstract fun bindSummaryRepository(
+    @Provides
+    @ApplicationScope
+    fun bindSummaryRepository(
         overviewRepositoryImpl: SummaryRepositoryImpl
-    ): SummaryRepository
+    ): SummaryRepository = overviewRepositoryImpl
 }

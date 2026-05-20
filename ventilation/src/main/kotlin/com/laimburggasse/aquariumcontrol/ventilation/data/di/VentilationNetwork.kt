@@ -24,18 +24,13 @@ package com.laimburggasse.aquariumcontrol.ventilation.data.di
 
 import com.laimburggasse.aquariumcontrol.ventilation.data.remote.KtorVentilationSetValsApiService
 import com.laimburggasse.aquariumcontrol.ventilation.data.remote.VentilationSetValsApiService
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import me.tatarka.inject.annotations.Provides
 import io.ktor.client.HttpClient
-import javax.inject.Singleton
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 
-@Module
-@InstallIn(SingletonComponent::class)
-object VentilationNetwork {
+interface VentilationNetwork {
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideVentilationSetValsApiService(
         httpClient: HttpClient
     ): VentilationSetValsApiService {

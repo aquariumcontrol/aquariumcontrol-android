@@ -78,7 +78,7 @@ class ControllerEditViewModelTest {
 
     @Test
     fun `initial state is populated from DAO`() = runTest {
-        viewModel = ControllerEditViewModel(dao, sessionManager, savedStateHandle)
+        viewModel = ControllerEditViewModel(dao, sessionManager)
 
         // Wait for the init block's LaunchedEffect to finish loading from DAO
         testDispatcher.scheduler.advanceUntilIdle()
@@ -94,7 +94,7 @@ class ControllerEditViewModelTest {
 
     @Test
     fun `SetControllerProfileName updates state correctly`() = runTest {
-        viewModel = ControllerEditViewModel(dao, sessionManager, savedStateHandle)
+        viewModel = ControllerEditViewModel(dao, sessionManager)
 
         // Wait for the init block's LaunchedEffect to finish loading from DAO
         testDispatcher.scheduler.advanceUntilIdle()
@@ -111,7 +111,7 @@ class ControllerEditViewModelTest {
 
     @Test
     fun `updateControllerProfile triggers DAO upsert with correct ID`() = runTest {
-        viewModel = ControllerEditViewModel(dao, sessionManager, savedStateHandle)
+        viewModel = ControllerEditViewModel(dao, sessionManager)
 
         // Wait for the init block's LaunchedEffect to finish loading from DAO
         testDispatcher.scheduler.advanceUntilIdle()
@@ -136,7 +136,7 @@ class ControllerEditViewModelTest {
     fun `missing ID in savedStateHandle results in default state`() = runTest {
         every { savedStateHandle.get<Int>("controllerProfileId") } returns null
 
-        viewModel = ControllerEditViewModel(dao, sessionManager, savedStateHandle)
+        viewModel = ControllerEditViewModel(dao, sessionManager)
 
         // Wait for the init block's LaunchedEffect to finish loading from DAO
         testDispatcher.scheduler.advanceUntilIdle()

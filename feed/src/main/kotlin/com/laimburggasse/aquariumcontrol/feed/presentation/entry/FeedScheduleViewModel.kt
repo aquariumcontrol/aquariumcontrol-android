@@ -32,7 +32,6 @@ import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedProfilesRepo
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedScheduleRepository
 import com.laimburggasse.aquariumcontrol.feed.presentation.schedule.FeedScheduleEntryUiEvent
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -40,11 +39,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Calendar
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 class FeedScheduleViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
     val feedScheduleRepository: FeedScheduleRepository,
     val feedProfilesRepository: FeedProfilesRepository
 ) : ViewModel() {
@@ -77,24 +74,19 @@ class FeedScheduleViewModel @Inject constructor(
     private val _millisSinceEpoch = MutableStateFlow(value = 0L)
     val millisSinceEpoch: StateFlow<Long> = _millisSinceEpoch
 
-    private fun loadDataForProfile(profileId: Int) {
-        viewModelScope.launch {
-            _feedProfile.value = feedProfilesRepository.findProfileById(profileId)
-        }
-    }
-
-    init {
-        // Get the initial values from navigation arguments
-        _isNewScheduleEntry.value = savedStateHandle[ViewNavigationRoutes.FEED_ARG_IS_NEW_SCHEDULE_ENTRY]
-            ?: false
-        _millisSinceEpoch.value = savedStateHandle[ViewNavigationRoutes.FEED_ARG_MILLIS_SINCE_EPOCH]
-            ?: 0L
-        val profileId: Int? = savedStateHandle[ViewNavigationRoutes.FEED_ARG_PROFILE_ID]
-
+    fun setScheduleParams(profileId: Int?, isNewEntry: Boolean, millis: Long) {
+        _isNewScheduleEntry.value = isNewEntry
+        _millisSinceEpoch.value = millis
         if (profileId != null) {
             loadDataForProfile(profileId)
         } else {
             _feedProfile.value = null
+        }
+    }
+
+    private fun loadDataForProfile(profileId: Int) {
+        viewModelScope.launch {
+            _feedProfile.value = feedProfilesRepository.findProfileById(profileId)
         }
     }
 

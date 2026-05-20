@@ -26,18 +26,13 @@ import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedScheduleEntryApiSe
 import com.laimburggasse.aquariumcontrol.feed.data.remote.KtorFeedHistoryApiService
 import com.laimburggasse.aquariumcontrol.feed.data.remote.KtorFeedProfileApiService
 import com.laimburggasse.aquariumcontrol.feed.data.remote.KtorFeedScheduleEntryApiService
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import me.tatarka.inject.annotations.Provides
 import io.ktor.client.HttpClient
-import javax.inject.Singleton
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 
-@Module
-@InstallIn(SingletonComponent::class)
-object FeedNetwork {
+interface FeedNetwork {
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideFeedHistoryApiService(
         httpClient: HttpClient
     ): FeedHistoryApiService {
@@ -45,7 +40,7 @@ object FeedNetwork {
     }
 
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideFeedProfileApiService(
         httpClient: HttpClient
     ): FeedProfileApiService {
@@ -53,7 +48,7 @@ object FeedNetwork {
     }
 
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideFeedScheduleEntryApiService(
         httpClient: HttpClient
     ): FeedScheduleEntryApiService {

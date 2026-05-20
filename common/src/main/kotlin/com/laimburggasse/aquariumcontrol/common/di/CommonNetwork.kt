@@ -22,18 +22,12 @@
 
 package com.laimburggasse.aquariumcontrol.common.di
 
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import me.tatarka.inject.annotations.Provides
 import kotlinx.serialization.json.Json
-import javax.inject.Singleton
 
-@Module
-@InstallIn(SingletonComponent::class)
-object CommonNetwork {
+interface CommonNetwork {
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideJson(): Json = Json {
         ignoreUnknownKeys = true
         coerceInputValues = true

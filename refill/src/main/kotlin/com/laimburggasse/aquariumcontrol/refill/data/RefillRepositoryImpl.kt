@@ -26,7 +26,6 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
-import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
@@ -34,7 +33,6 @@ import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillStateApiServic
 import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillStateReader
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillState
 import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillRepository
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -49,14 +47,14 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @RequiresApi(Build.VERSION_CODES.O)
 open class RefillRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     private val apiService: RefillStateApiService,
-    @param:ApplicationScope private val repositoryScope: CoroutineScope,
-    @param:IoDispatcher private val context: CoroutineDispatcher
+    private val repositoryScope: CoroutineScope,
+    private val context: IoDispatcher
 ): RefillRepository {
     // Trigger for manual refreshes (e.g., pull-to-refresh)
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
@@ -88,7 +86,7 @@ open class RefillRepositoryImpl @Inject constructor(
                     val url = "http://${controller!!.address}:${controller.port}${WebApiUrls.REFILL_LOAD_STATE}"
 
                     val result: DataFetchResult<RefillState> =
-                        withContext(context) {
+                        withContext(context.dispatcher) {
                             val reader = RefillStateReader(
                                 apiService,
                                 url,
@@ -131,7 +129,7 @@ open class RefillRepositoryImpl @Inject constructor(
         val url = "http://${controllerAddress}:${controllerPort}${apiUrl}"
         val authHeader = "Basic " + java.util.Base64.getEncoder().encodeToString("$user:$password".toByteArray())
 
-        repositoryScope.launch(context) {
+        repositoryScope.launch(context.dispatcher) {
             val requestSuccess = apiService.resetRefillErrors(
                 url, authHeader
             )

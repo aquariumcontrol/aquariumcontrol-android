@@ -73,7 +73,7 @@ class BallingProfileEditViewModelTest {
         // savedStatHandle is used to transfer information about which Balling profile to edit.
         every { savedStateHandle.get<Int>("ballingProfileId") } returns 1
 
-        viewModel = BallingProfileEditViewModel(savedStateHandle, repository)
+        viewModel = BallingProfileEditViewModel(repository)
 
         viewModel.ballingProfileEditUiState.test {
             assertEquals(BallingProfileEditUiState.Loading, awaitItem())
@@ -86,7 +86,7 @@ class BallingProfileEditViewModelTest {
         repositoryFlow.value = DataFetchResult.Success(mockBallingProfiles)
         val mockBallingProfile = mockBallingProfiles.first()
 
-        viewModel = BallingProfileEditViewModel(savedStateHandle, repository)
+        viewModel = BallingProfileEditViewModel(repository)
 
         viewModel.ballingProfileEditUiState.test {
             // First item is always Loading
@@ -116,7 +116,7 @@ class BallingProfileEditViewModelTest {
         every { savedStateHandle.get<Int>("ballingProfileId") } returns 1
         repositoryFlow.value = DataFetchResult.Success(mockBallingProfiles)
 
-        viewModel = BallingProfileEditViewModel(savedStateHandle, repository)
+        viewModel = BallingProfileEditViewModel(repository)
 
         viewModel.ballingProfileEditUiState.test {
             // First item is always Loading
@@ -146,7 +146,7 @@ class BallingProfileEditViewModelTest {
         every { savedStateHandle.get<Int>("ballingProfileId") } returns 1
         repositoryFlow.value = DataFetchResult.Success(mockBallingProfiles)
 
-        viewModel = BallingProfileEditViewModel(savedStateHandle, repository)
+        viewModel = BallingProfileEditViewModel(repository)
 
         val newDosingValue = 5.5
 
@@ -174,7 +174,7 @@ class BallingProfileEditViewModelTest {
     fun `missing navigation ID results in Error state`() = runTest {
         every { savedStateHandle.get<Int>("ballingProfileId") } returns null
 
-        viewModel = BallingProfileEditViewModel(savedStateHandle, repository)
+        viewModel = BallingProfileEditViewModel(repository)
 
         viewModel.ballingProfileEditUiState.test {
             // First item is always Loading
@@ -190,7 +190,7 @@ class BallingProfileEditViewModelTest {
         every { savedStateHandle.get<Int>("ballingProfileId") } returns 999 // Non-existent ID
         repositoryFlow.value = DataFetchResult.Success(mockBallingProfiles)
 
-        viewModel = BallingProfileEditViewModel(savedStateHandle, repository)
+        viewModel = BallingProfileEditViewModel( repository)
 
         viewModel.ballingProfileEditUiState.test {
             // First item is always Loading

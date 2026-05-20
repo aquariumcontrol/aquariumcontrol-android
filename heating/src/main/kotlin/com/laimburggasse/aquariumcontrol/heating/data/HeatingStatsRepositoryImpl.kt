@@ -28,6 +28,7 @@ import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
+import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
 import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingStatsReader
 import com.laimburggasse.aquariumcontrol.heating.data.remote.dto.HeatingStatsStringEntry
@@ -36,7 +37,6 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingStatsApiService
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -48,15 +48,16 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Inject
 
-@Singleton
+
+@ApplicationScope
 @RequiresApi(Build.VERSION_CODES.O)
 open class HeatingStatsRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
     private val apiService: HeatingStatsApiService,
-    @param:ApplicationScope private val repositoryScope: CoroutineScope
+    private val repositoryScope: CoroutineScope,
+    private val ioDispatcher: IoDispatcher
 ): HeatingStatsRepository {
     // for triggering manual refreshes
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
@@ -75,7 +76,7 @@ open class HeatingStatsRepositoryImpl @Inject constructor(
             emit(value = DataFetchResult.Loading)
 
             val result: DataFetchResult<List<HeatingStatsEntry>> =
-                withContext(context = Dispatchers.IO) {
+                withContext(context = ioDispatcher.dispatcher) {
                     val url = "http://${controller.address}:${controller.port}${WebApiUrls.HEATING_LOAD_STATS}"
                     val heatingStatsReader = HeatingStatsReader(
                         apiService, url, username = controller.user, password = controller.password

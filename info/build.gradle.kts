@@ -26,7 +26,6 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose") version "2.3.21"
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp") version "2.3.7"
-    id("com.google.dagger.hilt.android")
 }
 
 kotlin {
@@ -85,9 +84,8 @@ dependencies {
     implementation(libs.androidx.tracing.perfetto.handshake)
     implementation(libs.androidx.junit.ktx)
 
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
-    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.kotlin.inject.runtime)
+    ksp(libs.kotlin.inject.compiler.ksp)
 
     implementation(libs.aboutlibraries.core)
     implementation(libs.aboutlibraries.compose.m3)

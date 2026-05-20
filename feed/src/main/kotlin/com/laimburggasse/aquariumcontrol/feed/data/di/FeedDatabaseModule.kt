@@ -34,20 +34,14 @@ import com.laimburggasse.aquariumcontrol.feed.data.local.FeedHistoryDao
 import com.laimburggasse.aquariumcontrol.feed.data.local.FeedHistoryDatabase
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedHistoryApiService
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Provides
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 
-@Module
-@InstallIn(SingletonComponent::class)
-object FeedDatabaseModule {
+interface FeedDatabaseModule {
 
     @Provides
-    @Singleton
-    fun provideFeedHistoryDatabase(@ApplicationContext context: Context): FeedHistoryDatabase {
+    @ApplicationScope
+    fun provideFeedHistoryDatabase(context: Context): FeedHistoryDatabase {
         return Room.databaseBuilder(
             context,
             FeedHistoryDatabase::class.java,
@@ -56,13 +50,13 @@ object FeedDatabaseModule {
     }
 
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideFeedHistoryDao(database: FeedHistoryDatabase): FeedHistoryDao {
         return database.feedHistoryDao()
     }
 
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideFeedHistoryRemoteMediator(
         database: FeedHistoryDatabase,
         apiService: FeedHistoryApiService,
@@ -80,7 +74,7 @@ object FeedDatabaseModule {
 
     @OptIn(ExperimentalPagingApi::class)
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideFeedHistoryPager(
         database: FeedHistoryDatabase,
         remoteMediator: HistoryRemoteMediator<FeedHistoryLogEntry>

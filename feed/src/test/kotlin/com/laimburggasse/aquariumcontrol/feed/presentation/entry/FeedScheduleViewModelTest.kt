@@ -81,7 +81,6 @@ class FeedScheduleViewModelTest {
         coEvery { profilesRepository.findProfileById(5) } returns mockFeedProfile
 
         viewModel = FeedScheduleViewModel(
-            savedStateHandle,
             scheduleRepository,
             profilesRepository
         )

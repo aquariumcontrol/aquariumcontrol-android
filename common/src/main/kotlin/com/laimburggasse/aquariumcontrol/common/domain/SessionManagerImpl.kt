@@ -25,7 +25,6 @@ package com.laimburggasse.aquariumcontrol.common.domain
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.laimburggasse.aquariumcontrol.common.data.local.ControllerProfileDao
-import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,7 +39,7 @@ import kotlinx.coroutines.withContext
 open class SessionManagerImpl(
     private val sharedPreferences: SharedPreferences? = null,
     private val dao: ControllerProfileDao,
-    @param:ApplicationScope private val externalScope: CoroutineScope
+    private val externalScope: CoroutineScope
 ): SessionManager {
     private val _selectedControllerProfile = MutableStateFlow<ControllerProfile?>(value = null)
     override val selectedControllerProfile: StateFlow<ControllerProfile?> = _selectedControllerProfile.asStateFlow()
