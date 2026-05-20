@@ -34,11 +34,11 @@ fun NavHostController.handleMainDropDownMenuNavigation(
         MainDropDownMenuNavigationEvent.ToOverview -> {
             val selectedProfile = sessionManager.selectedControllerProfile.value
             if (selectedProfile != null) {
-                this.navigate(route = ViewNavigationRoutes.overView(controllerProfileId = selectedProfile.id))
+                this.navigate(route = ViewNavigationRoutes.summary(controllerProfileId = selectedProfile.id))
             } else {
                 val defaultProfileId = sessionManager.defaultControllerProfileId.value
                 if (defaultProfileId != null) {
-                    this.navigate(route = ViewNavigationRoutes.overView(controllerProfileId = defaultProfileId))
+                    this.navigate(route = ViewNavigationRoutes.summary(controllerProfileId = defaultProfileId))
                 }
             }
         }

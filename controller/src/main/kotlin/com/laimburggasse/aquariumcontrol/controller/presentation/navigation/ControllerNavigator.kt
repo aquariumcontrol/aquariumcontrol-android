@@ -33,9 +33,9 @@ fun NavHostController.handleControllerNavigation(event: ControllerNavigationEven
             }
         }
         ControllerNavigationEvent.ToControllerAdd -> this.navigate(route = ViewNavigationRoutes.controllerAdd)
-        ControllerNavigationEvent.ToOverview -> {
+        ControllerNavigationEvent.ToSummary -> {
             if (profileId != null) {
-                this.navigate(route = ViewNavigationRoutes.overView(controllerProfileId = profileId))
+                this.navigate(route = ViewNavigationRoutes.summary(controllerProfileId = profileId))
             }
         }
         ControllerNavigationEvent.ToControllerMain -> {

@@ -24,6 +24,8 @@ package com.laimburggasse.aquariumcontrol.timedata.presentation
 
 import android.content.res.Configuration
 import android.graphics.Color
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Surface
@@ -37,6 +39,10 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.LineData
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.timedata.preview.TimeDataPreviewDataImpl.mockTimeDataSets
+
+const val chartHeight = 200
+const val axisGranularityOnOff = 1.0f
+const val axisGranularityTime = 14400f
 
 @Composable
 fun TimeDataTankLevelChartComposable(
@@ -71,6 +77,7 @@ fun TimeDataTankLevelChartComposable(
         })
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, heightDp = 450, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 internal fun TimeDataTankLevelChartComposableDarkPreview() {
@@ -85,6 +92,7 @@ internal fun TimeDataTankLevelChartComposableDarkPreview() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, heightDp = 450, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun TimeDataTankLevelChartComposableLightPreview() {

@@ -85,9 +85,9 @@ import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingSetValsView
 import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingStatsUiState
 import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingStatsViewModel
 import com.laimburggasse.aquariumcontrol.info.presentation.InfoScreen
-import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewScreen
-import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewUiState
-import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewViewModel
+import com.laimburggasse.aquariumcontrol.summary.presentation.SummaryScreen
+import com.laimburggasse.aquariumcontrol.summary.presentation.SummaryUiState
+import com.laimburggasse.aquariumcontrol.summary.presentation.SummaryViewModel
 import com.laimburggasse.aquariumcontrol.refill.presentation.entry.RefillScreen
 import com.laimburggasse.aquariumcontrol.refill.presentation.entry.RefillScreenEvent
 import com.laimburggasse.aquariumcontrol.refill.presentation.entry.RefillStateUiState
@@ -668,7 +668,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(
-                        route = ViewNavigationRoutes.overView,
+                        route = ViewNavigationRoutes.summary,
                         arguments = listOf(
                             navArgument(name = "controllerProfileId") {
                                 type = NavType.LongType
@@ -685,17 +685,17 @@ class MainActivity : ComponentActivity() {
                                     sessionManager.suppressAutoNavigation() // Controller selection may navigate here without user interaction
                                 }
                             }
-                            val overviewViewModel: OverviewViewModel = hiltViewModel()
-                            val overviewUiState: OverviewUiState by
-                                overviewViewModel.overviewUiState.collectAsStateWithLifecycle()
+                            val summaryViewModel: SummaryViewModel = hiltViewModel()
+                            val summaryUiState: SummaryUiState by
+                                summaryViewModel.summaryUiState.collectAsStateWithLifecycle()
                             MainScaffold(
                                 isControllerLoaded,
-                                navigationRouteSource = ViewNavigationRoutes.overView,
+                                navigationRouteSource = ViewNavigationRoutes.summary,
                                 screenContent = {
-                                    OverviewScreen(
+                                    SummaryScreen(
                                         selectedControllerProfile,
-                                        overviewUiState,
-                                        onOverviewEvent = overviewViewModel::onOverviewEvent,
+                                        summaryUiState,
+                                        onSummaryEvent = summaryViewModel::onSummaryEvent,
                                     )
                                 },
                                 onNavigate = { event ->

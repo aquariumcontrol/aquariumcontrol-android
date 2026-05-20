@@ -24,6 +24,8 @@ package com.laimburggasse.aquariumcontrol.timedata.presentation
 
 import android.content.res.Configuration
 import android.graphics.Color
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Surface
@@ -70,6 +72,7 @@ fun TimeDataConductivityChartComposable(
         })
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, heightDp = 450, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 internal fun TimeDataConductivityChartComposableDarkPreview() {
@@ -84,6 +87,7 @@ internal fun TimeDataConductivityChartComposableDarkPreview() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, heightDp = 450, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun TimeDataConductivityChartComposableLightPreview() {

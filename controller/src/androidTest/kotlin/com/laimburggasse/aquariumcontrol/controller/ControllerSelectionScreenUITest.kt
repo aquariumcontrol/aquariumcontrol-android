@@ -47,7 +47,7 @@ class ControllerSelectionScreenUITest {
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Test
-    fun tapping_ControllerProfileSummary_navigates_to_OverviewScreen() {
+    fun tapping_ControllerProfileSummary_navigates_to_SummaryScreen() {
         var capturedEvent: ControllerNavigationEvent? = null
 
         val targetProfile = mockControllerProfileList.first()
@@ -67,7 +67,7 @@ class ControllerSelectionScreenUITest {
         composeTestRule.onNodeWithText(targetProfile.name).performClick()
 
         // Assert navigation to ControllerEditScreen occurred with the correct ID
-        Assert.assertEquals(ControllerNavigationEvent.ToOverview, capturedEvent)
+        Assert.assertEquals(ControllerNavigationEvent.ToSummary, capturedEvent)
     }
 
     @Test

@@ -81,7 +81,7 @@ fun ControllerSelectionScreen(
         // Time has passed without user interaction, navigate to the default profile
         if (isWaitFinished && defaultProfileId.value != null) {
             withContext(context = Dispatchers.Main) { // Switch to the main thread
-                onNavigateFromController(ControllerNavigationEvent.ToOverview, defaultProfileId.value)
+                onNavigateFromController(ControllerNavigationEvent.ToSummary, defaultProfileId.value)
             }
         }
     }

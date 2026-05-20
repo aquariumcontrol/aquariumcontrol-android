@@ -24,7 +24,7 @@ package com.laimburggasse.aquariumcontrol
 
 import android.app.Application
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
-import com.laimburggasse.aquariumcontrol.overview.domain.repository.OverviewRepository
+import com.laimburggasse.aquariumcontrol.summary.domain.repository.SummaryRepository
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -40,19 +40,19 @@ class AquariumControlApplication : Application() {
     lateinit var applicationScope: CoroutineScope
 
     @Inject
-    lateinit var overviewRepository: OverviewRepository
+    lateinit var summaryRepository: SummaryRepository
 
     override fun onCreate() {
         super.onCreate()
-        startOverviewSyncTask()
+        startSummarySyncTask()
     }
 
-    private fun startOverviewSyncTask() {
+    private fun startSummarySyncTask() {
         applicationScope.launch {
             while (isActive) {
                 try {
-                    overviewRepository.fetchOverviewData()
-                } catch (e: Exception) {
+                    summaryRepository.fetchSummaryData()
+                } catch (_: Exception) {
                     // Log error if necessary
                 }
                 delay(5 * 60 * 1000) // 5 minutes

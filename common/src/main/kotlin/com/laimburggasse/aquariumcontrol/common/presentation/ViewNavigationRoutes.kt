@@ -52,7 +52,7 @@ object ViewNavigationRoutes {
     var info = "info"
     var controllerAdd = "controllerAdd"
     var controllerEdit = "controllerEdit/{$CONTROLLER_ARG_ID}"
-    var overView = "overView/{$CONTROLLER_ARG_ID}"
+    var summary = "summary/{$CONTROLLER_ARG_ID}"
 
     fun feedSchedule(feedProfileId: Int, isNewScheduleEntry: Boolean, millisSinceEpoch: Long): String {
         return "feedSchedule/$feedProfileId/$isNewScheduleEntry/$millisSinceEpoch"
@@ -74,7 +74,7 @@ object ViewNavigationRoutes {
         return "controllerSelection/$controllerProfileId"
     }
 
-    fun overView(controllerProfileId: Long): String {
-        return "overView/$controllerProfileId"
+    fun summary(controllerProfileId: Long): String {
+        return "summary/$controllerProfileId"
     }
 }

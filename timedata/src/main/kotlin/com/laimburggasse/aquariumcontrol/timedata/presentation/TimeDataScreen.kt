@@ -24,6 +24,8 @@ package com.laimburggasse.aquariumcontrol.timedata.presentation
 
 import android.content.res.Configuration
 import android.graphics.Color
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -55,10 +57,7 @@ import com.laimburggasse.aquariumcontrol.timedata.preview.TimeDataPreviewDataImp
 import com.laimburggasse.aquariumcontrol.timedata.preview.TimeDataPreviewDataImpl.mockTimeDataUiStateError
 import com.laimburggasse.aquariumcontrol.timedata.preview.TimeDataPreviewDataImpl.mockTimeDataUiStateSuccess
 
-const val chartHeight = 200
-const val axisGranularityOnOff = 1.0f
-const val axisGranularityTime = 14400f
-
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TimeDataScreen(
     timeDataUiState: TimeDataUiState,
@@ -180,6 +179,7 @@ fun TimeDataScreen(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, heightDp = 1250, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(
     showBackground = true,
@@ -203,6 +203,7 @@ internal fun TimeDataScreenSuccessDarkPreview() {
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, heightDp = 1250, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
@@ -226,6 +227,7 @@ internal fun TimeDataScreenSuccessLightPreview() {
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(
     showBackground = true,
@@ -247,6 +249,7 @@ internal fun TimeDataScreenErrorDarkPreview() {
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,
@@ -268,6 +271,7 @@ internal fun TimeDataScreenErrorLightPreview() {
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(
     showBackground = true,
@@ -291,6 +295,7 @@ internal fun TimeDataScreenEmptyDarkPreview() {
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, heightDp = 250, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(
     showBackground = true,

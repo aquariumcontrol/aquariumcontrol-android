@@ -90,7 +90,7 @@ fun ControllerProfileComposable(
                 .clickable {
                     onEvent(ControllerSelectionUiEvent.SelectControllerProfile(controllerProfile))
                     onNavigateFromController(
-                        ControllerNavigationEvent.ToOverview,
+                        ControllerNavigationEvent.ToSummary,
                         controllerProfile.id
                     )
                 }

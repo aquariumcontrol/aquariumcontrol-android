@@ -63,6 +63,7 @@ import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFe
 import java.sql.Timestamp
 import java.util.Calendar
 import java.util.Locale
+import androidx.compose.ui.platform.LocalLocale
 
 @Composable
 fun FeedProfileScheduleScreen(
@@ -103,7 +104,7 @@ fun FeedProfileScheduleScreen(
         isDaily = repeatDaily
     )
     // Get the initial date and time from the timestamp
-    val initialCalendar = Calendar.getInstance(Locale.getDefault()).apply {
+    val initialCalendar = Calendar.getInstance(LocalLocale.current.platformLocale).apply {
         timeInMillis = feedScheduleEntry.timestamp.time
     }
     // Initialize state variables with values from the Calendar
@@ -171,7 +172,7 @@ fun FeedProfileScheduleScreen(
                     Spacer(modifier = Modifier.height(height = 16.dp))
                     Text(
                         text = String.format(
-                            Locale.getDefault(),
+                            LocalLocale.current.platformLocale,
                             "%02d:%02d",
                             selectedHour,
                             selectedMinute

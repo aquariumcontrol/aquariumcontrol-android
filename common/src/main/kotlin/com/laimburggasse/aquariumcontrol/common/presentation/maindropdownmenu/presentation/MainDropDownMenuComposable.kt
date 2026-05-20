@@ -68,7 +68,7 @@ fun MainDropdownMenuComposable(
             expanded = expanded,
             onDismissRequest = { expanded = false },
         ) {
-            MainDropDownMenuItemOverviewComposable(
+            MainDropDownMenuItemSummaryComposable(
                 isControllerLoaded = isControllerLoaded,
                 navigationRouteSource = navigationRouteSource,
                 onNavigate
@@ -129,7 +129,7 @@ internal fun MainDropdownMenuComposableDarkPreview() {
     AquariumControllerTheme(darkTheme = true) {
         Surface(color = MaterialTheme.colorScheme.background) {
             Column {
-                MainDropDownMenuItemOverviewComposable(isControllerLoaded = true,onNavigate = {})
+                MainDropDownMenuItemSummaryComposable(isControllerLoaded = true,onNavigate = {})
                 MainDropDownMenuItemDisplayDataComposable(isControllerLoaded = true, onNavigate = {})
                 MainDropDownMenuItemBallingComposable(isControllerLoaded = true, onNavigate = {})
                 MainDropDownMenuItemRefillComposable(isControllerLoaded = true, onNavigate = {})
@@ -152,7 +152,7 @@ internal fun MainDropdownMenuComposableLightPreview() {
     AquariumControllerTheme(darkTheme = false) {
         Surface(color = MaterialTheme.colorScheme.background) {
             Column {
-                MainDropDownMenuItemOverviewComposable(isControllerLoaded = true,onNavigate = {})
+                MainDropDownMenuItemSummaryComposable(isControllerLoaded = true,onNavigate = {})
                 MainDropDownMenuItemDisplayDataComposable(isControllerLoaded = true, onNavigate = {})
                 MainDropDownMenuItemBallingComposable(isControllerLoaded = true, onNavigate = {})
                 MainDropDownMenuItemRefillComposable(isControllerLoaded = true, onNavigate = {})

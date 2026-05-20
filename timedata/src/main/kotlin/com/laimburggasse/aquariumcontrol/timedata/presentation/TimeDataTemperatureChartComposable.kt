@@ -24,6 +24,8 @@ package com.laimburggasse.aquariumcontrol.timedata.presentation
 
 import android.content.res.Configuration
 import android.graphics.Color
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Surface
@@ -38,6 +40,7 @@ import com.github.mikephil.charting.data.LineData
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.timedata.preview.TimeDataPreviewDataImpl.mockTimeDataSets
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TimeDataTemperatureChartComposable(
     temperatureDataSet: LineData,
@@ -74,6 +77,7 @@ fun TimeDataTemperatureChartComposable(
         })
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, heightDp = 450, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 internal fun TimeDataTemperatureChartComposableDarkPreview() {
@@ -88,6 +92,7 @@ internal fun TimeDataTemperatureChartComposableDarkPreview() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, heightDp = 450, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 internal fun TimeDataTemperatureChartComposableLightPreview() {

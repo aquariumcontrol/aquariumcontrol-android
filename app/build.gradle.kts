@@ -131,7 +131,7 @@ dependencies {
     implementation(project(":feed"))
     implementation(project(":heating"))
     implementation(project(":info"))
-    implementation(project(":overview"))
+    implementation(project(":summary"))
     implementation(project(":refill"))
     implementation(project(":schedule"))
     implementation(project(":timedata"))
