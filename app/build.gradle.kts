@@ -112,12 +112,6 @@ dependencies {
     implementation(libs.kotlin.stdlib.jdk8.v1922)
     implementation(libs.androidx.tracing.perfetto.handshake)
     implementation(libs.androidx.junit.ktx)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
 
     // for Dagger/Hilt
     implementation(libs.hilt.android)
@@ -138,7 +132,15 @@ dependencies {
 
     // BoM for the Firebase platform
     implementation(platform(libs.firebase.bom))
-
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.analytics)
+
+    testImplementation(libs.junit)
+
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 }
