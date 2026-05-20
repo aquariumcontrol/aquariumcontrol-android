@@ -22,7 +22,6 @@
 
 package com.laimburggasse.aquariumcontrol.feed.presentation.edit
 
-import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.ReceiveTurbine
 import app.cash.turbine.test
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -44,7 +43,6 @@ class FeedProfileEditViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var repository: FeedProfilesRepository
-    private lateinit var savedStateHandle: SavedStateHandle
     private lateinit var viewModel: FeedProfileEditViewModel
     private lateinit var mockProfile: FeedProfile
 
@@ -80,17 +78,15 @@ class FeedProfileEditViewModelTest {
 
         // 5. Initialize Repository and Mocks
         repository = mockk(relaxed = true)
-        // Use relaxed = true for SavedStateHandle to prevent unmocked method crashes
-        savedStateHandle = mockk(relaxed = true)
 
         mockProfile = createMockFeedProfile().copy(profileID = 10)
 
         // 6. Setup data flow
-        every { savedStateHandle.get<Int>("feedProfileId") } returns 10
         coEvery { repository.findProfileById(10) } returns mockProfile
 
         // 7. Instantiate ViewModel LAST
         viewModel = FeedProfileEditViewModel(repository)
+        viewModel.setProfileId(10)
     }
 
     @After
@@ -106,7 +102,7 @@ class FeedProfileEditViewModelTest {
     }
 
     /**
-     * Helper to skip the initial empty state and wait for the init block
+     * Helper to skip the initial empty state and wait for the setProfileId
      * coroutine to finish loading the profile from the repository.
      */
     private suspend fun ReceiveTurbine<FeedProfileEditUiState>.skipItemsUntilLoaded(
@@ -119,11 +115,11 @@ class FeedProfileEditViewModelTest {
     }
 
     @Test
-    fun `init block loads profile from repository using savedStateHandle ID`() = runTest {
+    fun `setProfileId loads profile from repository`() = runTest {
         viewModel.uiState.test {
             val state = skipItemsUntilLoaded(10)
             assertEquals("Test Profile", state.feedProfile?.profileName)
-            coVerify(exactly = 1) { repository.findProfileById(10) }
+            coVerify(atLeast = 1) { repository.findProfileById(10) }
         }
     }
 

@@ -27,6 +27,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.crashlytics.crashlytics
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
 import com.laimburggasse.aquariumcontrol.common.testing.MockSessionManagerImpl
 import com.laimburggasse.aquariumcontrol.ventilation.testing.VentilationMockData.mockVentilationSetVals
@@ -76,7 +77,7 @@ class VentilationSetValsRepositoryImplTest {
             sessionManager = mockSessionManagerImpl,
             apiService = mockVentilationSetValsApiService,
             repositoryScope = testScope,
-            testDispatcher
+            context = IoDispatcher(testDispatcher)
         )
     }
 

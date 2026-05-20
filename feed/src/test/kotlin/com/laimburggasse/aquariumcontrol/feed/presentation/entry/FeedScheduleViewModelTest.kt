@@ -22,10 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.feed.presentation.entry
 
-import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedProfilesRepository
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedScheduleRepository
@@ -56,7 +54,6 @@ class FeedScheduleViewModelTest {
 
     private lateinit var scheduleRepository: FeedScheduleRepository
     private lateinit var profilesRepository: FeedProfilesRepository
-    private lateinit var savedStateHandle: SavedStateHandle
     private lateinit var viewModel: FeedScheduleViewModel
 
     private val scheduleFlow = MutableStateFlow<DataFetchResult<List<FeedScheduleEntry>>>(DataFetchResult.Loading)
@@ -71,19 +68,13 @@ class FeedScheduleViewModelTest {
         // Mock the schedule flow from repository
         every { scheduleRepository.scheduleFlow } returns scheduleFlow
 
-        // Default SavedStateHandle behavior
-        savedStateHandle = SavedStateHandle(mapOf(
-            ViewNavigationRoutes.FEED_ARG_IS_NEW_SCHEDULE_ENTRY to true,
-            ViewNavigationRoutes.FEED_ARG_MILLIS_SINCE_EPOCH to 123456L,
-            ViewNavigationRoutes.FEED_ARG_PROFILE_ID to 5
-        ))
-
         coEvery { profilesRepository.findProfileById(5) } returns mockFeedProfile
 
         viewModel = FeedScheduleViewModel(
             scheduleRepository,
             profilesRepository
         )
+        viewModel.setScheduleParams(profileId = 5, isNewEntry = true, millis = 123456L)
     }
 
     @After
@@ -92,13 +83,13 @@ class FeedScheduleViewModelTest {
     }
 
     @Test
-    fun `init block correctly sets state from SavedStateHandle`() = runTest {
-        // Assert initial values from init
+    fun `setScheduleParams correctly sets state`() = runTest {
+        // Wait for setScheduleParams and loadDataForProfile(5) to finish
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Assert values
         assertEquals(true, viewModel.isNewScheduleEntry.value)
         assertEquals(123456L, viewModel.millisSinceEpoch.value)
-
-        // Wait for loadDataForProfile(5) to finish
-        testDispatcher.scheduler.advanceUntilIdle()
         assertEquals(mockFeedProfile, viewModel.feedProfile.value)
     }
 

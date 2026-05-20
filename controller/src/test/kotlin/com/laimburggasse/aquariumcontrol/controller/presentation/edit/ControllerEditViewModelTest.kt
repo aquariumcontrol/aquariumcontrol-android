@@ -22,7 +22,6 @@
 
 package com.laimburggasse.aquariumcontrol.controller.presentation.edit
 
-import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.laimburggasse.aquariumcontrol.common.data.local.ControllerProfileDao
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
@@ -51,7 +50,6 @@ class ControllerEditViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var dao: ControllerProfileDao
     private lateinit var sessionManager: SessionManager
-    private lateinit var savedStateHandle: SavedStateHandle
     private lateinit var viewModel: ControllerEditViewModel
 
     @Before
@@ -59,16 +57,12 @@ class ControllerEditViewModelTest {
         Dispatchers.setMain(testDispatcher)
         dao = mockk(relaxed = true)
         sessionManager = mockk(relaxed = true)
-        savedStateHandle = mockk()
-
-        // Mock the navigation argument
-        every { savedStateHandle.get<Long>("controllerProfileId") } returns 1L
 
         // Mock SessionManager flow to avoid null pointer issues
         every { sessionManager.selectedControllerProfile } returns MutableStateFlow(null)
 
         // Mock the DAO to return our profile
-        coEvery { dao.getControllerProfileById(1) } returns mockControllerProfile1
+        coEvery { dao.getControllerProfileById(1L) } returns mockControllerProfile1
     }
 
     @After
@@ -77,11 +71,8 @@ class ControllerEditViewModelTest {
     }
 
     @Test
-    fun `initial state is populated from DAO`() = runTest {
+    fun `initial state is empty before setControllerProfileId`() = runTest {
         viewModel = ControllerEditViewModel(dao, sessionManager)
-
-        // Wait for the init block's LaunchedEffect to finish loading from DAO
-        testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.state.test {
             val state = awaitItem()
@@ -93,14 +84,30 @@ class ControllerEditViewModelTest {
     }
 
     @Test
-    fun `SetControllerProfileName updates state correctly`() = runTest {
+    fun `setControllerProfileId populates state from DAO`() = runTest {
         viewModel = ControllerEditViewModel(dao, sessionManager)
 
-        // Wait for the init block's LaunchedEffect to finish loading from DAO
+        viewModel.state.test {
+            awaitItem() // Initial empty state
+
+            viewModel.setControllerProfileId(1L)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            val state = awaitItem()
+            assertEquals(mockControllerProfile1.name, state.controllerProfileName)
+            assertEquals(mockControllerProfile1.address, state.controllerProfileAddress)
+            assertEquals(1L, state.controllerProfileId)
+        }
+    }
+
+    @Test
+    fun `SetControllerProfileName updates state correctly`() = runTest {
+        viewModel = ControllerEditViewModel(dao, sessionManager)
+        viewModel.setControllerProfileId(1L)
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.state.test {
-            awaitItem() // Initial state from DAO
+            awaitItem() // State from DAO
 
             viewModel.onEvent(ControllerAddEditUiEvent.SetControllerProfileName("New Name"))
 
@@ -112,8 +119,7 @@ class ControllerEditViewModelTest {
     @Test
     fun `updateControllerProfile triggers DAO upsert with correct ID`() = runTest {
         viewModel = ControllerEditViewModel(dao, sessionManager)
-
-        // Wait for the init block's LaunchedEffect to finish loading from DAO
+        viewModel.setControllerProfileId(1L)
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Act: Update name and trigger save
@@ -129,22 +135,6 @@ class ControllerEditViewModelTest {
             dao.upsertControllerProfile(match {
                 it.id == 1L && it.name == "Updated Tank"
             })
-        }
-    }
-
-    @Test
-    fun `missing ID in savedStateHandle results in default state`() = runTest {
-        every { savedStateHandle.get<Int>("controllerProfileId") } returns null
-
-        viewModel = ControllerEditViewModel(dao, sessionManager)
-
-        // Wait for the init block's LaunchedEffect to finish loading from DAO
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        viewModel.state.test {
-            val state = awaitItem()
-            assertEquals(0, state.controllerProfileId)
-            assertEquals("", state.controllerProfileName)
         }
     }
 }

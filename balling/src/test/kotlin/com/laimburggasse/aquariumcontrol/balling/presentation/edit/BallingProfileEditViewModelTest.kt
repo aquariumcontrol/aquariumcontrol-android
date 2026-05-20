@@ -22,7 +22,6 @@
 
 package com.laimburggasse.aquariumcontrol.balling.presentation.edit
 
-import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingProfilesRepository
@@ -48,7 +47,6 @@ import org.junit.Test
 class BallingProfileEditViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var repository: BallingProfilesRepository
-    private lateinit var savedStateHandle: SavedStateHandle
     private lateinit var viewModel: BallingProfileEditViewModel
 
     private val repositoryFlow = MutableStateFlow<DataFetchResult<List<BallingProfile>>>(DataFetchResult.Loading)
@@ -57,7 +55,6 @@ class BallingProfileEditViewModelTest {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         repository = mockk(relaxed = true)
-        savedStateHandle = mockk()
 
         // Default behavior: return the repository flow
         every { repository.ballingProfiles } returns repositoryFlow
@@ -70,10 +67,8 @@ class BallingProfileEditViewModelTest {
 
     @Test
     fun `initial state is Loading`() = runTest {
-        // savedStatHandle is used to transfer information about which Balling profile to edit.
-        every { savedStateHandle.get<Int>("ballingProfileId") } returns 1
-
         viewModel = BallingProfileEditViewModel(repository)
+        // Profile ID not set yet
 
         viewModel.ballingProfileEditUiState.test {
             assertEquals(BallingProfileEditUiState.Loading, awaitItem())
@@ -82,11 +77,11 @@ class BallingProfileEditViewModelTest {
 
     @Test
     fun `successful repository fetch updates UI state to Success`() = runTest {
-        every { savedStateHandle.get<Int>("ballingProfileId") } returns 1
         repositoryFlow.value = DataFetchResult.Success(mockBallingProfiles)
         val mockBallingProfile = mockBallingProfiles.first()
 
         viewModel = BallingProfileEditViewModel(repository)
+        viewModel.setProfileId(mockBallingProfile.pumpId)
 
         viewModel.ballingProfileEditUiState.test {
             // First item is always Loading
@@ -113,10 +108,10 @@ class BallingProfileEditViewModelTest {
 
     @Test
     fun `onVolumeChange updates unconfirmed edits without affecting repository`() = runTest {
-        every { savedStateHandle.get<Int>("ballingProfileId") } returns 1
         repositoryFlow.value = DataFetchResult.Success(mockBallingProfiles)
 
         viewModel = BallingProfileEditViewModel(repository)
+        viewModel.setProfileId(1)
 
         viewModel.ballingProfileEditUiState.test {
             // First item is always Loading
@@ -143,10 +138,10 @@ class BallingProfileEditViewModelTest {
 
     @Test
     fun `onConfirmDosing triggers repository update`() = runTest {
-        every { savedStateHandle.get<Int>("ballingProfileId") } returns 1
         repositoryFlow.value = DataFetchResult.Success(mockBallingProfiles)
 
         viewModel = BallingProfileEditViewModel(repository)
+        viewModel.setProfileId(1)
 
         val newDosingValue = 5.5
 
@@ -160,7 +155,6 @@ class BallingProfileEditViewModelTest {
 
             // Give the ViewModel coroutine a chance to execute
             testDispatcher.scheduler.advanceUntilIdle()
-
         }
 
         coVerify(exactly = 1) {
@@ -171,26 +165,11 @@ class BallingProfileEditViewModelTest {
     }
 
     @Test
-    fun `missing navigation ID results in Error state`() = runTest {
-        every { savedStateHandle.get<Int>("ballingProfileId") } returns null
-
-        viewModel = BallingProfileEditViewModel(repository)
-
-        viewModel.ballingProfileEditUiState.test {
-            // First item is always Loading
-            assertTrue(awaitItem() is BallingProfileEditUiState.Loading)
-
-            val item = awaitItem()
-            assertTrue(item is BallingProfileEditUiState.Error)
-        }
-    }
-
-    @Test
     fun `profile not found in list results in NotFound state`() = runTest {
-        every { savedStateHandle.get<Int>("ballingProfileId") } returns 999 // Non-existent ID
         repositoryFlow.value = DataFetchResult.Success(mockBallingProfiles)
 
-        viewModel = BallingProfileEditViewModel( repository)
+        viewModel = BallingProfileEditViewModel(repository)
+        viewModel.setProfileId(999) // Non-existent ID
 
         viewModel.ballingProfileEditUiState.test {
             // First item is always Loading
