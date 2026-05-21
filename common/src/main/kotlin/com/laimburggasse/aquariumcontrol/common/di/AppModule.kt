@@ -23,7 +23,10 @@
 package com.laimburggasse.aquariumcontrol.common.di
 
 import android.content.Context
-import android.content.SharedPreferences
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import com.laimburggasse.aquariumcontrol.common.data.local.ControllerProfileDao
 import com.laimburggasse.aquariumcontrol.common.data.local.ControllerProfileDatabase
@@ -53,8 +56,10 @@ interface AppModule {
 
     @Provides
     @ApplicationScope
-    fun provideSharedPreferences(context: Context): SharedPreferences {
-        return context.getSharedPreferences("aquarium_control_prefs", Context.MODE_PRIVATE)
+    fun provideDataStore(context: Context): DataStore<Preferences> {
+        return PreferenceDataStoreFactory.create(
+            produceFile = { context.preferencesDataStoreFile("aquarium_control_prefs") }
+        )
     }
 
     @Provides
@@ -66,10 +71,10 @@ interface AppModule {
     @Provides
     @ApplicationScope
     fun provideSessionManager(
-        sharedPreferences: SharedPreferences,
+        dataStore: DataStore<Preferences>,
         dao: ControllerProfileDao,
-        externalScope: CoroutineScope // kotlin-inject doesn't need qualifier here if it matches type/return
+        externalScope: CoroutineScope
     ): SessionManager {
-        return SessionManagerImpl(sharedPreferences, dao, externalScope)
+        return SessionManagerImpl(dataStore, dao, externalScope)
     }
 }

@@ -22,8 +22,10 @@
 
 package com.laimburggasse.aquariumcontrol.common.domain
 
-import android.content.SharedPreferences
-import androidx.core.content.edit
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import com.laimburggasse.aquariumcontrol.common.data.local.ControllerProfileDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,13 +33,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 open class SessionManagerImpl(
-    private val sharedPreferences: SharedPreferences? = null,
+    private val dataStore: DataStore<Preferences>,
     private val dao: ControllerProfileDao,
     private val externalScope: CoroutineScope
 ): SessionManager {
@@ -51,6 +54,8 @@ open class SessionManagerImpl(
         )
     private var previousControllerProfileId: Long? = null
 
+    private val DEFAULT_PROFILE_ID_KEY = longPreferencesKey(GlobalConstants.KEY_DEFAULT_PROFILE_ID)
+
     // Initialize with null. The value will be loaded asynchronously.
     private val _defaultControllerProfileId = MutableStateFlow<Long?>(value = null)
     override val defaultControllerProfileId: StateFlow<Long?> = _defaultControllerProfileId.asStateFlow()
@@ -63,13 +68,9 @@ open class SessionManagerImpl(
 
     init {
         externalScope.launch {
-            val defaultId: Long? =
-                withContext(context = Dispatchers.IO) { // Use Dispatchers.IO for file access
-                    sharedPreferences?.getLong(
-                        GlobalConstants.KEY_DEFAULT_PROFILE_ID,
-                        GlobalConstants.NO_DEFAULT_ID
-                    )
-                }
+            val prefs = dataStore.data.first()
+            val defaultId = prefs[DEFAULT_PROFILE_ID_KEY] ?: GlobalConstants.NO_DEFAULT_ID
+            
             if (defaultId != GlobalConstants.NO_DEFAULT_ID) {
                 // Emit the loaded value. This will trigger the 'combine' in the ViewModel.
                 _defaultControllerProfileId.value = defaultId
@@ -91,9 +92,11 @@ open class SessionManagerImpl(
     }
 
     override fun saveDefaultControllerProfileId(id: Long) {
-        sharedPreferences?.edit {
-            putLong(GlobalConstants.KEY_DEFAULT_PROFILE_ID, id)
-        } // .apply() writes asynchronously in the background.
+        externalScope.launch {
+            dataStore.edit { settings ->
+                settings[DEFAULT_PROFILE_ID_KEY] = id
+            }
+        }
         _defaultControllerProfileId.value = id
     }
 

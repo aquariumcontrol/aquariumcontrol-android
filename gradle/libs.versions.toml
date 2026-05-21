@@ -30,8 +30,10 @@ turbine = "1.2.1"
 pagingCommon = "3.5.0"
 pagingCompose = "3.5.0"
 foundationLayout = "1.11.2"
+datastore = "1.1.2"
 
 [libraries]
+androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleRuntimeCompose" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
