@@ -24,10 +24,14 @@ package com.laimburggasse.aquariumcontrol.feed.testing
 
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedScheduleEntryImport
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 fun FeedScheduleEntry.toFeedScheduleEntryImport(): FeedScheduleEntryImport {
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
     return FeedScheduleEntryImport(
-        timestampString = getTimestampString(timestamp),
+        timestampString = dateFormat.format(Date(timestamp)),
         profileId = profileId,
         profileName = profileName,
         isDaily = if (isDaily) 1 else 0,

@@ -52,6 +52,9 @@ import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumContr
 import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.R
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun FeedScheduleEntryComposable(
@@ -64,6 +67,9 @@ fun FeedScheduleEntryComposable(
     // - timestamp of schedule
     // - information if the feed profile execution should be repeated daily
 
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
+    val timestampString = dateFormat.format(Date(feedScheduleEntry.timestamp))
+
     Row(modifier = Modifier.fillMaxWidth()
             .border(border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.onSurface))
             .padding(all = 8.dp)
@@ -74,9 +80,7 @@ fun FeedScheduleEntryComposable(
                 fontSize = 12.sp
             )
             Text(
-                text = stringResource(id = R.string.scheduled_for) + feedScheduleEntry.getTimestampString(
-                    timestampToBeFormatted = feedScheduleEntry.timestamp
-                ),
+                text = stringResource(id = R.string.scheduled_for) + timestampString,
                 fontSize = 12.sp
             )
             Text(

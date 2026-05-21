@@ -26,7 +26,6 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -50,8 +49,13 @@ data class FeedScheduleEntryImport (
     fun transformToFeedScheduleEntry(): FeedScheduleEntry {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
         val parsedTimestamp = dateFormat.parse(timestampString)
-        val timestamp = Timestamp(parsedTimestamp!!.time)
+        val timestampMillis = parsedTimestamp?.time ?: 0L
 
-        return (FeedScheduleEntry(timestamp, profileId, profileName, isDaily = isDaily == 1))
+        return FeedScheduleEntry(
+            timestamp = timestampMillis,
+            profileId = profileId,
+            profileName = profileName,
+            isDaily = isDaily == 1
+        )
     }
 }

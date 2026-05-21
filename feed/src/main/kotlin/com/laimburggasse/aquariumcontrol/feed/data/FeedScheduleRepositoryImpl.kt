@@ -55,9 +55,10 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.sql.Timestamp
-import java.util.Calendar
 import me.tatarka.inject.annotations.Inject
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 @ApplicationScope
 @RequiresApi(Build.VERSION_CODES.O)
@@ -158,7 +159,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
                         deletions.contains(
                             FeedScheduleEntryKey(
                                 profileId = entry.profileId,
-                                timestamp = entry.timestamp.time
+                                timestamp = entry.timestamp
                             )
                         )
                     }
@@ -167,7 +168,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
                     profiles = profiles.map { entry ->
                         val key = FeedScheduleEntryKey(
                             profileId = entry.profileId,
-                            timestamp = entry.timestamp.time
+                            timestamp = entry.timestamp
                         )
                         // If a pending update exists for this key, use it, otherwise use the original.
                         updates[key] ?: entry
@@ -184,10 +185,15 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
         initialValue = DataFetchResult.Loading
     )
 
+    private fun formatTimestamp(millis: Long): String {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
+        return dateFormat.format(java.util.Date(millis))
+    }
+
     override suspend fun deleteFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry) {
         val keyToDelete = FeedScheduleEntryKey(
             profileId = feedScheduleEntry.profileId,
-            timestamp = feedScheduleEntry.timestamp.time
+            timestamp = feedScheduleEntry.timestamp
         )
 
         // Avoid creating duplicates in the pending deletions
@@ -209,7 +215,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
         val url = "http://$controllerAddress:$port${WebApiUrls.FEED_SCHEDULE_DELETE_ENTRY}"
 
         val authHeader = "Basic " + "$user:$password".toByteArray(Charsets.ISO_8859_1).encodeBase64()
-        val postParams = feedScheduleEntry.getApiParameters()
+        val postParams = feedScheduleEntry.getApiParameters(formatTimestamp(feedScheduleEntry.timestamp))
 
         // In both cases, trigger the network request, because the add operation
         // may have committed to the server meanwhile.
@@ -246,8 +252,8 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
         repeatDaily: Boolean,
         selectedCalendar: Calendar
     ) {
-        val timestamp = Timestamp(selectedCalendar.timeInMillis)
-        val keyToFind = FeedScheduleEntryKey(feedProfileId, timestamp.time)
+        val timestampMillis = selectedCalendar.timeInMillis
+        val keyToFind = FeedScheduleEntryKey(feedProfileId, timestampMillis)
 
         // Entry has been added before and not yet gone through network update
         // Undelete it, but still run the network request
@@ -256,7 +262,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
         }
 
         val tempEntry = FeedScheduleEntry(
-            timestamp = timestamp,
+            timestamp = timestampMillis,
             profileId = feedProfileId,
             profileName = feedProfileName,
             isDaily = repeatDaily
@@ -276,7 +282,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
         val url = "http://$controllerAddress:$port${WebApiUrls.FEED_PROFILE_SCHEDULE_NEW}"
 
         val authHeader = "Basic " + "$user:$password".toByteArray(Charsets.ISO_8859_1).encodeBase64()
-        val apiParams: Map<String, String> = tempEntry.getApiParameters()
+        val apiParams: Map<String, String> = tempEntry.getApiParameters(formatTimestamp(timestampMillis))
 
         repositoryScope.launch(context.dispatcher) {
             val requestSuccess = try {
@@ -316,7 +322,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
 
         // Create the NEW entry object with the modified data.
         val modifiedEntry = FeedScheduleEntry(
-            timestamp = Timestamp(selectedCalendar.timeInMillis),
+            timestamp = selectedCalendar.timeInMillis,
             profileId = feedProfileId,
             profileName = feedProfileName,
             isDaily = repeatDaily
@@ -339,8 +345,10 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
         }
         val url = "http://$controllerAddress:$port${WebApiUrls.FEED_UPDATE_SCHEDULE}"
         val authHeader = "Basic " + java.util.Base64.getEncoder().encodeToString("$user:$password".toByteArray())
-        val timestampOld = Timestamp(millisSinceEpoch)
-        val postParams = modifiedEntry.getApiParametersForUpdating(timestampOld)
+        val postParams = modifiedEntry.getApiParametersForUpdating(
+            timestampOldString = formatTimestamp(millisSinceEpoch),
+            timestampNewString = formatTimestamp(modifiedEntry.timestamp)
+        )
 
         // Launch the background network request.
         repositoryScope.launch(context.dispatcher) {

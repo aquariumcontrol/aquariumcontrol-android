@@ -48,7 +48,7 @@ class MockFeedScheduleEntryApiServiceImpl(
         // 1. Update the domain model list
         mockFeedScheduleEntries = mockFeedScheduleEntries?.toMutableList()?.apply {
             val index = indexOfFirst {
-                it.profileId == updatedFeedScheduleEntry.profileId && it.timestamp.time == oldTimestamp
+                it.profileId == updatedFeedScheduleEntry.profileId && it.timestamp == oldTimestamp
             }
             if (index != -1) {
                 set(index, updatedFeedScheduleEntry)
@@ -62,7 +62,7 @@ class MockFeedScheduleEntryApiServiceImpl(
                 "yyyy-MM-dd HH:mm:ss",
                 Locale.US
             )
-            val oldTimestampString = dateFormat.format(Timestamp(oldTimestamp))
+            val oldTimestampString = dateFormat.format(java.util.Date(oldTimestamp))
             val index = indexOfFirst {
                 it.profileId == updatedFeedScheduleEntry.profileId && it.timestampString == oldTimestampString
             }

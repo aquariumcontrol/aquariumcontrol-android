@@ -38,6 +38,7 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkAll
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.resetMain
@@ -48,7 +49,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import java.sql.Timestamp
 import java.util.Calendar
 
 class FeedScheduleRepositoryImplTest {
@@ -119,7 +119,7 @@ class FeedScheduleRepositoryImplTest {
     @Test
     fun `updateFeedSchedule performs optimistic update then refreshes`() = runTest {
         mockSessionManagerImpl.selectControllerById(0)
-        val updatedTimestamp = Timestamp(mockFeedScheduleEntries[0].timestamp.time + 1000L)
+        val updatedTimestamp = mockFeedScheduleEntries[0].timestamp + 1000L
         val updatedMockFeedSchedule = mockFeedScheduleEntries[0].copy(timestamp = updatedTimestamp)
         repository.scheduleFlow.test {
             assertEquals(DataFetchResult.Loading, awaitItem())
@@ -128,7 +128,7 @@ class FeedScheduleRepositoryImplTest {
 
             // Act
             // In FeedScheduleRepositoryImplTest.kt
-            val oldTimestamp = mockFeedScheduleEntries[0].timestamp.time
+            val oldTimestamp = mockFeedScheduleEntries[0].timestamp
             mockFeedScheduleApiService.updateMockFeedScheduleEntry(
                 oldTimestamp, updatedMockFeedSchedule
             )
@@ -137,9 +137,9 @@ class FeedScheduleRepositoryImplTest {
                 feedProfileName = updatedMockFeedSchedule.profileName,
                 repeatDaily = updatedMockFeedSchedule.isDaily,
                 selectedCalendar = Calendar.getInstance().apply {
-                    timeInMillis = updatedMockFeedSchedule.timestamp.time
+                    timeInMillis = updatedMockFeedSchedule.timestamp
                 },
-                millisSinceEpoch = mockFeedScheduleEntries[0].timestamp.time
+                millisSinceEpoch = mockFeedScheduleEntries[0].timestamp
             )
 
             testDispatcher.scheduler.advanceUntilIdle()
@@ -185,9 +185,9 @@ class FeedScheduleRepositoryImplTest {
                 feedProfileName = updatedMockFeedSchedule.profileName,
                 repeatDaily = updatedMockFeedSchedule.isDaily,
                 selectedCalendar = Calendar.getInstance().apply {
-                    timeInMillis = updatedMockFeedSchedule.timestamp.time
+                    timeInMillis = updatedMockFeedSchedule.timestamp
                 },
-                millisSinceEpoch = mockFeedScheduleEntries[0].timestamp.time
+                millisSinceEpoch = mockFeedScheduleEntries[0].timestamp
             )
 
             testDispatcher.scheduler.advanceUntilIdle()

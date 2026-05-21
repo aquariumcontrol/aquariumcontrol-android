@@ -107,7 +107,7 @@ fun FeedScheduleSelectionComposable(
                                         FeedNavigationEvent.ToFeedScheduling,
                                         feedScheduleEntry.profileId,
                                         false,
-                                        feedScheduleEntry.timestamp.time
+                                        feedScheduleEntry.timestamp
                                     )
                                 },
                                 onDeleteClick = {

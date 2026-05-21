@@ -11,11 +11,12 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
 
+    // Configure the framework for iOS integration
     val iosTargets = listOf(iosX64(), iosArm64(), iosSimulatorArm64())
     iosTargets.forEach { target ->
         target.binaries.framework {
-            baseName = "SharedAquariumControl" // name of the import in Swift
-            isStatic = true // simpler linking
+            baseName = "SharedAquariumControl"
+            isStatic = true
         }
     }
 

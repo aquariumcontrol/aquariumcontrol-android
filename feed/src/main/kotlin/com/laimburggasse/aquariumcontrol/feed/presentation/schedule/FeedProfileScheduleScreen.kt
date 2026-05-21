@@ -60,7 +60,6 @@ import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.presentation.navigation.FeedNavigationEvent
 import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedProfileForScheduleScreen
-import java.sql.Timestamp
 import java.util.Calendar
 import java.util.Locale
 import androidx.compose.ui.platform.LocalLocale
@@ -89,13 +88,13 @@ fun FeedProfileScheduleScreen(
 
     var repeatDaily: Boolean by remember { mutableStateOf(value = false) }
 
-    val timestamp: Timestamp = if (isNewScheduleEntry) {
+    val timestamp: Long = if (isNewScheduleEntry) {
         // use current time if no millisSinceEpoch is provided
-        Timestamp(System.currentTimeMillis())
+        System.currentTimeMillis()
     }
     else {
         // use millisSinceEpoch if provided (from existing feed schedule entry)
-        Timestamp(millisSinceEpoch)
+        millisSinceEpoch
     }
     val feedScheduleEntry = FeedScheduleEntry(
         timestamp,
@@ -105,7 +104,7 @@ fun FeedProfileScheduleScreen(
     )
     // Get the initial date and time from the timestamp
     val initialCalendar = Calendar.getInstance(LocalLocale.current.platformLocale).apply {
-        timeInMillis = feedScheduleEntry.timestamp.time
+        timeInMillis = feedScheduleEntry.timestamp
     }
     // Initialize state variables with values from the Calendar
     var selectedYear: Int by remember {mutableIntStateOf(value = initialCalendar.get(Calendar.YEAR))}
@@ -206,8 +205,7 @@ fun FeedProfileScheduleScreen(
                             selectedHour,
                             selectedMinute
                         )
-                        feedScheduleEntry.timestamp =
-                            Timestamp(selectedCalendar.timeInMillis)
+                        feedScheduleEntry.timestamp = selectedCalendar.timeInMillis
                         onFeedScheduleEntryUiEvent(
                             FeedScheduleEntryUiEvent.UpdateFeedScheduleEntry(
                                 feedProfile,
