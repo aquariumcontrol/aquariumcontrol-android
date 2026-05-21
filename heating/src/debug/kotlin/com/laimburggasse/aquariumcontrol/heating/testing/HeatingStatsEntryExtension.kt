@@ -25,12 +25,12 @@ package com.laimburggasse.aquariumcontrol.heating.testing
 import com.laimburggasse.aquariumcontrol.heating.data.remote.dto.HeatingStatsStringEntry
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 fun HeatingStatsEntry.toHeatingStatsStringEntry(): HeatingStatsStringEntry {
-    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
     return HeatingStatsStringEntry(
-        dateString = dateFormat.format(date),
+        dateString = date,
         energy = energy,
         ambientTemperatureAverage = ambientTemperatureAverage,
         waterTemperatureAverage = waterTemperatureAverage,

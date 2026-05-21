@@ -26,6 +26,7 @@ import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedProfileImport
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedScheduleEntryImport
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
+import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfileMapper
 import com.laimburggasse.aquariumcontrol.feed.presentation.components.FeedPreviewData
 import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileChartDataBundle
 import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileChartDataFactory
@@ -82,7 +83,7 @@ object FeedPreviewDataImpl: FeedPreviewData {
     )
     override val mockFeedHistoryLogEntries = emptyList<FeedHistoryLogEntry>()
     override val mockFeedProfileImportForScheduleScreen = FeedProfileImport()
-    override val mockFeedProfileForScheduleScreen: FeedProfile = FeedProfile.fromFeedProfileImportUpdateIdName(
+    override val mockFeedProfileForScheduleScreen: FeedProfile = FeedProfileMapper.fromFeedProfileImportUpdateIdName(
         feedProfileImport = mockFeedProfileImportForScheduleScreen,
         profileId = 0,
         profileName = "Release build"

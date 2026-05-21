@@ -96,14 +96,17 @@ fun HeatingStatsComposable(
                     xAxis.granularity = 1f // One day per label
                     xAxis.textColor = textColor
                     xAxis.valueFormatter = object : ValueFormatter() {
-                        private val dateFormat =
-                            SimpleDateFormat("dd.MM", Locale.US) //Format to Day and month.
+                        private val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+                        private val outputFormat = SimpleDateFormat("dd.MM", Locale.US)
 
                         override fun getFormattedValue(value: Float): String {
-                            // Convert the float value (which represents days) back to a Date object.
-                            val date: Date? = heatingStats.getOrNull(index = value.toInt())?.date
-                            return date?.let { dateFormat.format(it) }
-                                ?: "" // Return formatted date or empty
+                            // Convert the date string back to a Date object for formatting.
+                            val dateString: String? = heatingStats.getOrNull(index = value.toInt())?.date
+                            return try {
+                                dateString?.let { inputFormat.parse(it) }?.let { outputFormat.format(it) } ?: ""
+                            } catch (e: Exception) {
+                                ""
+                            }
                         }
                     }
                     xAxis.setDrawGridLines(false)

@@ -27,7 +27,6 @@ import androidx.annotation.RequiresApi
 import com.laimburggasse.aquariumcontrol.timedata.domain.model.TimeDataSample
 import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataSets
 import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataUiState
-import java.sql.Timestamp
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import kotlin.math.sin
@@ -66,7 +65,7 @@ fun generateMockTimeData(): List<TimeDataSample> {
     for (i: Int in 0 until 24 * 60) { // 24 hours * 60 minutes
         val currentTime = startTime.plusMinutes(i.toLong())
         val secondsOfDay: Long = currentTime.toEpochSecond(ZoneOffset.UTC)
-        val timestamp = Timestamp(secondsOfDay * 1000)
+        val timestampMillis = secondsOfDay * 1000
 
         // Sinus profiles with noise
         val temperature: Double = 26.0 + sin(x = 2 * Math.PI * i / (24 * 60)) + addNoise(value = 0.0, max = 27.0)
@@ -93,7 +92,7 @@ fun generateMockTimeData(): List<TimeDataSample> {
         val heater: Int = if (i in 9 * 60 until 20 * 60) 0 else 1 // 9:00 to 20:00
 
         val timeDataSample = TimeDataSample(
-            timestamp = timestamp,
+            timestamp = timestampMillis,
             temperature = temperature,
             temperatureFiltered = temperature,
             pH = pH,

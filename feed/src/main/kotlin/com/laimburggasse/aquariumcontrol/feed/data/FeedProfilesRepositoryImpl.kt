@@ -38,6 +38,7 @@ import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedProfileApiService
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedProfileReader
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedProfileImport
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
+import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfileMapper
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedProfilesRepository
 import io.ktor.util.encodeBase64
 import kotlinx.coroutines.CoroutineDispatcher
@@ -113,7 +114,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
                 val finalResult: DataFetchResult<List<FeedProfile>> = when (networkResult) {
                     is DataFetchResult.Success -> {
                         var profiles: List<FeedProfile> = networkResult.data.map {
-                            FeedProfile.fromFeedProfileImport(feedProfileImport = it)
+                            FeedProfileMapper.fromFeedProfileImport(feedProfileImport = it)
                         }
                         // Apply pending deletions to the fetched list
                         if (localState.pendingDeletions.isNotEmpty()) {

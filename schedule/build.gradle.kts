@@ -76,6 +76,7 @@ jacoco {
 
 dependencies {
     implementation(project(":common"))
+    implementation(project(":shared"))
     androidTestImplementation(testFixtures(notation = project(":common")))
 
     implementation(libs.androidx.core.ktx)

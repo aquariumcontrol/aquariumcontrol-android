@@ -126,6 +126,7 @@ dependencies {
 
     implementation(project(":balling"))
     implementation(project(":common"))
+    implementation(project(":shared"))
     implementation(project(":controller"))
     implementation(project(":feed"))
     implementation(project(":heating"))

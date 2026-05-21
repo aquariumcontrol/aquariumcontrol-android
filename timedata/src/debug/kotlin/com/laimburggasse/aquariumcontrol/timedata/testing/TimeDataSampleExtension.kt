@@ -25,12 +25,13 @@ package com.laimburggasse.aquariumcontrol.timedata.testing
 import com.laimburggasse.aquariumcontrol.timedata.data.remote.dto.TimeDataStringSample
 import com.laimburggasse.aquariumcontrol.timedata.domain.model.TimeDataSample
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 fun TimeDataSample.toTimeDataStringSample(): TimeDataStringSample {
     val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
     return TimeDataStringSample(
-        timestamp = dateFormat.format(timestamp),
+        timestamp = dateFormat.format(Date(timestamp)),
         temperature = temperature,
         temperatureFiltered = temperatureFiltered,
         pH = pH,

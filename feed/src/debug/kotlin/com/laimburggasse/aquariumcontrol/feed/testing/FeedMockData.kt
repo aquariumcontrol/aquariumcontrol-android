@@ -26,6 +26,7 @@ import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedProfileImport
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedScheduleEntryImport
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
+import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfileMapper
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileChartDataBundle
 import com.laimburggasse.aquariumcontrol.feed.presentation.edit.FeedProfileChartDataFactory
@@ -163,7 +164,7 @@ fun createMockFeedProfile(): FeedProfile {
     mockFeedProfileImport.feed09AuxPump2 = 0
     mockFeedProfileImport.feed10AuxPump2 = 0
 
-    return FeedProfile.fromFeedProfileImport(mockFeedProfileImport)
+    return FeedProfileMapper.fromFeedProfileImport(mockFeedProfileImport)
 }
 
 fun createMockFeedProfiles(): List<FeedProfile> {
@@ -175,8 +176,8 @@ fun createMockFeedProfiles(): List<FeedProfile> {
     mockFeedProfileImport2.profileId = 2
     mockFeedProfileImport2.profileName = "Test Profile 2"
 
-    val mockFeedProfile1: FeedProfile = FeedProfile.fromFeedProfileImport(feedProfileImport = mockFeedProfileImport1)
-    val mockFeedProfile2: FeedProfile = FeedProfile.fromFeedProfileImport(feedProfileImport = mockFeedProfileImport2)
+    val mockFeedProfile1: FeedProfile = FeedProfileMapper.fromFeedProfileImport(feedProfileImport = mockFeedProfileImport1)
+    val mockFeedProfile2: FeedProfile = FeedProfileMapper.fromFeedProfileImport(feedProfileImport = mockFeedProfileImport2)
 
     return listOf(mockFeedProfile1, mockFeedProfile2)
 }
@@ -306,7 +307,7 @@ object FeedMockData {
         ),
     )
     val mockFeedProfileImportForScheduleScreen = FeedProfileImport()
-    val mockFeedProfileForScheduleScreen: FeedProfile = FeedProfile.fromFeedProfileImportUpdateIdName(
+    val mockFeedProfileForScheduleScreen: FeedProfile = FeedProfileMapper.fromFeedProfileImportUpdateIdName(
         feedProfileImport = mockFeedProfileImportForScheduleScreen,
         profileId = 1,
         profileName = "Test Profile 1"

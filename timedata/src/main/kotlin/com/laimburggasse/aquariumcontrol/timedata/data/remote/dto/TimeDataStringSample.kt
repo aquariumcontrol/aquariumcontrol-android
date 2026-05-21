@@ -4,7 +4,6 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import com.laimburggasse.aquariumcontrol.timedata.domain.model.TimeDataSample
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -59,10 +58,10 @@ data class TimeDataStringSample(
     fun transformToTimeDataSample(): TimeDataSample {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
         val parsedTimestamp = dateFormat.parse(timestamp)
-        val timestamp = Timestamp(parsedTimestamp!!.time)
+        val timestampMillis = parsedTimestamp?.time ?: 0L
 
         return TimeDataSample(
-            timestamp = timestamp,
+            timestamp = timestampMillis,
             temperature = temperature,
             temperatureFiltered = temperatureFiltered,
             pH = pH,

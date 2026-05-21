@@ -4,9 +4,6 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.sql.Date
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 @Serializable
 data class HeatingStatsStringEntry(
@@ -26,16 +23,12 @@ data class HeatingStatsStringEntry(
     val heatingControlRuntime: Int
 ) {
     fun transformToHeatingStatsEntry(): HeatingStatsEntry {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-        val parsedTimestamp = dateFormat.parse(dateString)
-        val date = Date(parsedTimestamp!!.time)
-
         return HeatingStatsEntry(
-            date,
-            energy,
-            ambientTemperatureAverage,
-            waterTemperatureAverage,
-            heatingControlRuntime
+            date = dateString,
+            energy = energy,
+            ambientTemperatureAverage = ambientTemperatureAverage,
+            waterTemperatureAverage = waterTemperatureAverage,
+            heatingControlRuntime = heatingControlRuntime
         )
     }
 }

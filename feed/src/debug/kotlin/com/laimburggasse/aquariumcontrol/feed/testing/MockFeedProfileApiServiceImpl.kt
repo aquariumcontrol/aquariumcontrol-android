@@ -25,11 +25,12 @@ package com.laimburggasse.aquariumcontrol.feed.testing
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedProfileApiService
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedProfileImport
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
+import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfileMapper
 
 class MockFeedProfileApiServiceImpl(
     private var mockFeedProfileImports: List<FeedProfileImport>?,
     private var mockFeedProfiles: List<FeedProfile>? = mockFeedProfileImports?.map {
-        FeedProfile.fromFeedProfileImport(it)
+        FeedProfileMapper.fromFeedProfileImport(it)
     }
 ): FeedProfileApiService {
     override suspend fun getFeedProfiles(
