@@ -22,11 +22,11 @@
 
 package com.laimburggasse.aquariumcontrol.summary.data.remote
 
-import com.laimburggasse.aquariumcontrol.summary.domain.model.SummaryData
+import com.laimburggasse.aquariumcontrol.summary.data.remote.dto.SummaryDataDto
 
 interface SummaryDataApiService {
     suspend fun getSummaryData(
         url: String,
         authHeader: String
-    ): SummaryData
+    ): SummaryDataDto
 }

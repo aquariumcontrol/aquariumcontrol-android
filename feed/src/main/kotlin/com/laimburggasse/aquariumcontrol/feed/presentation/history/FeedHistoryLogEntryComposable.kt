@@ -42,6 +42,9 @@ import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumContr
 import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockEvent
 import com.laimburggasse.aquariumcontrol.feed.R
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun FeedHistoryLogEntryComposable(
@@ -66,8 +69,9 @@ fun FeedHistoryLogEntryComposable(
                 text = stringResource(id = R.string.timestamp),
                 fontSize = 12.sp
             )
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
             Text(
-                text = feedHistoryLogEntry.timestamp,
+                text = dateFormat.format(Date(feedHistoryLogEntry.timestamp)),
                 fontSize = 12.sp
             )
         }

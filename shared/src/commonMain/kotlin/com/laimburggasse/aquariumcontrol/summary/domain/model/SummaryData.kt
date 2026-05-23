@@ -27,7 +27,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SummaryData(
     // This class represents the data that is displayed on the overview screen.
-    val timestamp: String,
+    val timestamp: Long,
     val waterTemperature: Double,
     val filteredWaterTemperature: Double,
     val phValue: Double,

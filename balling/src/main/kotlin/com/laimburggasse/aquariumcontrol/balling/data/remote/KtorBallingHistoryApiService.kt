@@ -1,5 +1,6 @@
 package com.laimburggasse.aquariumcontrol.balling.data.remote
 
+import com.laimburggasse.aquariumcontrol.balling.data.remote.dto.BallingHistoryLogEntryDto
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.common.data.remote.dto.TimestampJsonObject
 import io.ktor.client.HttpClient
@@ -17,10 +18,11 @@ class KtorBallingHistoryApiService @Inject constructor(
         authHeader: String,
         date: String
     ): List<BallingHistoryLogEntry> {
-        return client.get(url) {
+        val dtos: List<BallingHistoryLogEntryDto> = client.get(url) {
             header("Authorization", authHeader)
             parameter("date", date)
         }.body()
+        return dtos.map { it.toBallingHistoryLogEntry() }
     }
 
     override suspend fun getHistoryStart(

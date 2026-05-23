@@ -42,6 +42,9 @@ import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumContr
 import com.laimburggasse.aquariumcontrol.refill.R
 import com.laimburggasse.aquariumcontrol.refill.preview.RefillPreviewDataImpl.mockEvent
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun RefillHistoryLogEntryComposable(
@@ -68,8 +71,9 @@ fun RefillHistoryLogEntryComposable(
                 text = stringResource(id = R.string.timestamp),
                 fontSize = 12.sp
             )
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
             Text(
-                text = refillHistoryLogEntry.timestamp,
+                text = dateFormat.format(Date(refillHistoryLogEntry.timestamp)),
                 fontSize = 12.sp
             )
         }
@@ -78,13 +82,13 @@ fun RefillHistoryLogEntryComposable(
         ) {
             Text(
                 text = stringResource(id = R.string.duration) +
-                        "%.1f".format(refillHistoryLogEntry.duration) +
+                        "%.1f".format(Locale.US, refillHistoryLogEntry.duration) +
                         stringResource(id = R.string.seconds),
                 fontSize = 12.sp
             )
             Text(
                 text = stringResource(id = R.string.volume) +
-                        "%.2f".format(refillHistoryLogEntry.volume) +
+                        "%.2f".format(Locale.US, refillHistoryLogEntry.volume) +
                         stringResource(id = R.string.liters),
                 fontSize = 12.sp
             )

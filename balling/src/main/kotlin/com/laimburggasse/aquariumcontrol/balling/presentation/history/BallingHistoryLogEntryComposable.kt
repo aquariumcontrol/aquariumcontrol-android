@@ -41,10 +41,14 @@ import androidx.compose.ui.unit.sp
 import com.laimburggasse.aquariumcontrol.balling.preview.BallingPreviewDataImpl.mockBallingEvent
 import com.laimburggasse.aquariumcontrol.balling.R
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
 
 @Composable
 fun BallingHistoryLogEntryComposable(ballingHistoryLogEntry: BallingHistoryLogEntry) {
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
     // This screen displays one Balling dosing event with the following information:
     // - timestamp
     // - pump id
@@ -59,7 +63,7 @@ fun BallingHistoryLogEntryComposable(ballingHistoryLogEntry: BallingHistoryLogEn
         // @todo: use Card
         Column(modifier = Modifier.weight(weight = 1f)) {
             Text(text = stringResource(R.string.timestamp), fontSize = 12.sp)
-            Text(text = ballingHistoryLogEntry.timestamp, fontSize = 12.sp)
+            Text(text = dateFormat.format(Date(ballingHistoryLogEntry.timestamp)), fontSize = 12.sp)
         }
         Column(modifier = Modifier.weight(weight = 1f)) {
             Text(

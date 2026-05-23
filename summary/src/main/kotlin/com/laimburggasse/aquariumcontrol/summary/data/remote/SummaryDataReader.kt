@@ -46,7 +46,7 @@ class SummaryDataReader(
             val decodedData = apiService.getSummaryData(
                 url = url, authHeader = authHeaderValue
             )
-            DataFetchResult.Success(decodedData)
+            DataFetchResult.Success(decodedData.toSummaryData())
         } catch (e: Exception) { // recording exception in crashlytics
             Firebase.crashlytics.recordException(e)
             DataFetchResult.Error(

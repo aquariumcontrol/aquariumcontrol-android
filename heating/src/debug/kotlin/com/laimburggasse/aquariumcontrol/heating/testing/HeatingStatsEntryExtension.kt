@@ -29,8 +29,9 @@ import java.util.Date
 import java.util.Locale
 
 fun HeatingStatsEntry.toHeatingStatsStringEntry(): HeatingStatsStringEntry {
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
     return HeatingStatsStringEntry(
-        dateString = date,
+        dateString = dateFormat.format(Date(timestamp)),
         energy = energy,
         ambientTemperatureAverage = ambientTemperatureAverage,
         waterTemperatureAverage = waterTemperatureAverage,

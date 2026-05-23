@@ -35,7 +35,7 @@ data class RefillHistoryLogEntry(
     // This data class represents a refill event.
     @PrimaryKey
     @SerialName(value = WebApiParams.TIMESTAMP)
-    override val timestamp: String,
+    override val timestamp: Long,
     @SerialName(value = WebApiParams.REFILL_DURATION)
     val duration: Double,
     @SerialName(value = WebApiParams.REFILL_VOLUME)

@@ -63,8 +63,8 @@ open class SessionManagerImpl(
     private val _isFirstLoad = MutableStateFlow(value = true)
     override val isFirstLoad: StateFlow<Boolean> = _isFirstLoad.asStateFlow()
 
-    private val _serverTimestamp = MutableStateFlow<String?>(value = null)
-    override val serverTimestamp: StateFlow<String?> = _serverTimestamp.asStateFlow()
+    private val _serverTimestamp = MutableStateFlow<Long?>(value = null)
+    override val serverTimestamp: StateFlow<Long?> = _serverTimestamp.asStateFlow()
 
     init {
         externalScope.launch {
@@ -104,7 +104,7 @@ open class SessionManagerImpl(
         _selectedControllerProfile.value = controllerProfile
     }
 
-    override fun updateServerTimestamp(timestamp: String?) {
+    override fun updateServerTimestamp(timestamp: Long?) {
         _serverTimestamp.value = timestamp
     }
 

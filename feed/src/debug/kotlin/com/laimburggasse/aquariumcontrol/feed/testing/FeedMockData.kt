@@ -287,20 +287,20 @@ object FeedMockData {
     )
     val mockFeedScheduleSelectionUiStateError = FeedScheduleSelectionUiState.Error(errorMessage = "Mock Error")
     val mockEvent = FeedHistoryLogEntry(
-        timestamp = "2025-01-18 12:00:00",
+        timestamp = 1737198000000L,
         feederOnTime = 20000.0,
         profileName = "Mock feed profile 1",
         idx = 1
     )
     val mockFeedHistoryLogEntries = listOf(
         FeedHistoryLogEntry(
-            timestamp = "2025-01-18 12:00:00",
+            timestamp = 1737198000000L,
             feederOnTime = 20000.0,
             profileName = "Mock feed profile 1",
             idx = 1
         ),
         FeedHistoryLogEntry(
-            timestamp = "2025-01-18 12:00:00",
+            timestamp = 1737198000000L,
             feederOnTime = 10000.0,
             profileName = "Mock feed profile 2",
             idx = 2

@@ -40,11 +40,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.summary.R
 import com.laimburggasse.aquariumcontrol.summary.domain.model.SummaryData
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.summary.preview.SummaryPreviewDataImpl.mockSummaryData
 
 @Composable
 fun SummaryTimestampComposable(summaryData: SummaryData) {
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
     Column(
         modifier = Modifier
             .border(
@@ -63,7 +67,7 @@ fun SummaryTimestampComposable(summaryData: SummaryData) {
             }
             Column(modifier = Modifier.weight(weight = 1f)) {
                 Row(modifier = Modifier.align(Alignment.End)) {
-                    Text(text = summaryData.timestamp)
+                    Text(text = dateFormat.format(Date(summaryData.timestamp)))
                 }
             }
         }

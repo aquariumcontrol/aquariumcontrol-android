@@ -35,7 +35,7 @@ data class FeedHistoryLogEntry(
     // This data class represents a feed event.
     @PrimaryKey
     @SerialName(value = WebApiParams.TIMESTAMP)
-    override val timestamp: String,
+    override val timestamp: Long,
     @SerialName(value = WebApiParams.FEEDER_ON_TIME)
     val feederOnTime: Double,
     @SerialName(value = WebApiParams.PROFILE_NAME)

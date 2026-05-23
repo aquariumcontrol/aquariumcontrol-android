@@ -54,8 +54,9 @@ class HistoryRemoteMediator<T : BaseHistoryLogEntry>(
 
     private fun getCurrentDate(): String {
         val serverTime = sessionManager.serverTimestamp.value
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         return if (serverTime != null) {
-            serverTime.substringBefore(' ')
+            dateFormat.format(Date(serverTime))
         } else {
             val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             dateFormat.format(Date())
@@ -103,9 +104,8 @@ class HistoryRemoteMediator<T : BaseHistoryLogEntry>(
                     if (lastItem == null) {
                         getCurrentDate()
                     } else {
-                        val lastDateStr = lastItem.timestamp.substringBefore(' ')
                         val calendar = Calendar.getInstance()
-                        calendar.time = dateFormat.parse(lastDateStr) ?: Date()
+                        calendar.time = Date(lastItem.timestamp)
                         calendar.add(Calendar.DAY_OF_YEAR, -1)
                         dateFormat.format(calendar.time)
                     }

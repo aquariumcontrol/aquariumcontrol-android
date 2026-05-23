@@ -45,20 +45,20 @@ object BallingMockData {
     val mockBallingProfilesUiStateEmpty = BallingProfilesUiState.Empty
     val mockBallingHistoryLogEntries = listOf(
         BallingHistoryLogEntry(
-            timestamp = "2025-01-18 12:00:00",
+            timestamp = 1737198000000L,
             pumpId = 1,
             volume = 1.5,
             label = "MockDosingUnit 1"
         ),
         BallingHistoryLogEntry(
-            timestamp = "2025-01-18 12:00:00",
+            timestamp = 1737198000000L,
             pumpId = 2,
             volume = 2.5,
             label = "MockDosingUnit 2"
         ),
     )
     val mockBallingEvent = BallingHistoryLogEntry(
-        timestamp = "2025-01-18 12:00:00",
+        timestamp = 1737198000000L,
         pumpId = 1,
         volume = 1.5,
         label = "MockDosingUnit 1"

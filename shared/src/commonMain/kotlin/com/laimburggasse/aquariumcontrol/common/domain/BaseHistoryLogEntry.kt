@@ -23,5 +23,5 @@
 package com.laimburggasse.aquariumcontrol.common.domain
 
 interface BaseHistoryLogEntry {
-    val timestamp: String
+    val timestamp: Long
 }

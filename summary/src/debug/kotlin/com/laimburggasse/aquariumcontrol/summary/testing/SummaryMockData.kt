@@ -28,7 +28,7 @@ import com.laimburggasse.aquariumcontrol.summary.presentation.SummaryUiState
 
 object SummaryMockData {
     val mockSummaryData = SummaryData(
-        timestamp = "2023-05-01 12:00:00",
+        timestamp = 1682942400000L,
         waterTemperature = 25.0,
         filteredWaterTemperature = 25.5,
         phValue = 7.0,

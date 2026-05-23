@@ -24,6 +24,10 @@ package com.laimburggasse.aquariumcontrol.summary.testing
 
 import com.laimburggasse.aquariumcontrol.summary.data.remote.SummaryDataApiService
 import com.laimburggasse.aquariumcontrol.summary.domain.model.SummaryData
+import com.laimburggasse.aquariumcontrol.summary.data.remote.dto.SummaryDataDto
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlinx.coroutines.delay
 
 class MockSummaryDataApiServiceImpl(
@@ -32,9 +36,24 @@ class MockSummaryDataApiServiceImpl(
     override suspend fun getSummaryData(
         url: String,
         authHeader: String
-    ): SummaryData {
+    ): SummaryDataDto {
         delay(10) // Small virtual delay to avoid conflation in flow
-        return summaryData ?: throw Exception("API ERROR")
+        val data = summaryData ?: throw Exception("API ERROR")
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
+        return SummaryDataDto(
+            timestamp = dateFormat.format(Date(data.timestamp)),
+            waterTemperature = data.waterTemperature,
+            filteredWaterTemperature = data.filteredWaterTemperature,
+            phValue = data.phValue,
+            filteredPhValue = data.filteredPhValue,
+            conductivity = data.conductivity,
+            filteredConductivity = data.filteredConductivity,
+            tankLevelSwitchPosition = data.tankLevelSwitchPosition,
+            surfaceVentilationStatus = data.surfaceVentilationStatus,
+            ambientTemperature = data.ambientTemperature,
+            ambientHumidity = data.ambientHumidity,
+            heatingStatus = data.heatingStatus
+        )
     }
 
     fun setSummaryData(newSummaryData: SummaryData?) {

@@ -35,7 +35,7 @@ data class BallingHistoryLogEntry(
     // This data class represents a Balling dosing event.
     @PrimaryKey
     @SerialName(value = WebApiParams.TIMESTAMP)
-    override val timestamp: String,
+    override val timestamp: Long,
     @SerialName(value = WebApiParams.PUMP_ID)
     val pumpId: Int,
     @SerialName(value = WebApiParams.DOSING_VOLUME)

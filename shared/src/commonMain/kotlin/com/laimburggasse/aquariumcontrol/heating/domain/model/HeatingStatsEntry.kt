@@ -23,7 +23,7 @@
 package com.laimburggasse.aquariumcontrol.heating.domain.model
 
 data class HeatingStatsEntry(
-    val date: String,
+    val timestamp: Long,
     val energy: Double,
     val ambientTemperatureAverage: Double,
     val waterTemperatureAverage: Double,
