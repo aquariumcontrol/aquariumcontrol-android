@@ -23,12 +23,10 @@
 package com.laimburggasse.aquariumcontrol.feed.data.remote.dto
 
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
+import com.laimburggasse.aquariumcontrol.common.util.DateTimeUtil
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import com.laimburggasse.aquariumcontrol.common.util.DateTimeUtil
-import kotlinx.datetime.*
-
 
 @Serializable
 data class FeedScheduleEntryImport (
@@ -48,12 +46,9 @@ data class FeedScheduleEntryImport (
     val isDaily: Int = 0,
 ) {
     fun transformToFeedScheduleEntry(): FeedScheduleEntry {
-        
-        val parsedTimestamp = DateTimeUtil.parseApiTimestamp(timestampString)
-        val timestampMillis = parsedTimestamp ?: 0L
 
         return FeedScheduleEntry(
-            timestamp = timestampMillis,
+            timestamp = DateTimeUtil.parseApiTimestamp(timestampString),
             profileId = profileId,
             profileName = profileName,
             isDaily = isDaily == 1

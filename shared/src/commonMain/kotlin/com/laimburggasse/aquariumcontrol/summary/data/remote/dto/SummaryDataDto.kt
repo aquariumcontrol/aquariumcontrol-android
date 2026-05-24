@@ -1,10 +1,8 @@
 package com.laimburggasse.aquariumcontrol.summary.data.remote.dto
 
+import com.laimburggasse.aquariumcontrol.common.util.DateTimeUtil
 import com.laimburggasse.aquariumcontrol.summary.domain.model.SummaryData
 import kotlinx.serialization.Serializable
-import com.laimburggasse.aquariumcontrol.common.util.DateTimeUtil
-import kotlinx.datetime.*
-
 
 @Serializable
 data class SummaryDataDto(
@@ -24,8 +22,8 @@ data class SummaryDataDto(
     fun toSummaryData(): SummaryData {
         
         val parsedTimestamp = try {
-            DateTimeUtil.parseApiTimestamp(timestamp) ?: 0L
-        } catch (e: Exception) {
+            DateTimeUtil.parseApiTimestamp(timestamp)
+        } catch (_: Exception) {
             0L
         }
 

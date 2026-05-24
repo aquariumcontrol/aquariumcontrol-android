@@ -1,10 +1,8 @@
 package com.laimburggasse.aquariumcontrol.heating.data.remote.dto
 
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
-import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
 import com.laimburggasse.aquariumcontrol.common.util.DateTimeUtil
-import kotlinx.datetime.*
-
+import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -28,8 +26,8 @@ data class HeatingStatsStringEntry(
     fun transformToHeatingStatsEntry(): HeatingStatsEntry {
         
         val timestampMillis = try {
-            DateTimeUtil.parseApiTimestamp(dateString) ?: 0L
-        } catch (e: Exception) {
+            DateTimeUtil.parseApiTimestamp(dateString)
+        } catch (_: Exception) {
             0L
         }
         return HeatingStatsEntry(

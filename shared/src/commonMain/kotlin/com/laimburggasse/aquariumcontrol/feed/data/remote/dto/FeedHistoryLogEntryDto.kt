@@ -1,12 +1,10 @@
 package com.laimburggasse.aquariumcontrol.feed.data.remote.dto
 
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
+import com.laimburggasse.aquariumcontrol.common.util.DateTimeUtil
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import com.laimburggasse.aquariumcontrol.common.util.DateTimeUtil
-import kotlinx.datetime.*
-
 
 @Serializable
 data class FeedHistoryLogEntryDto(
@@ -22,8 +20,8 @@ data class FeedHistoryLogEntryDto(
     fun toFeedHistoryLogEntry(): FeedHistoryLogEntry {
         
         val timestampMillis = try {
-            DateTimeUtil.parseApiTimestamp(timestamp) ?: 0L
-        } catch (e: Exception) {
+            DateTimeUtil.parseApiTimestamp(timestamp)
+        } catch (_: Exception) {
             0L
         }
         return FeedHistoryLogEntry(

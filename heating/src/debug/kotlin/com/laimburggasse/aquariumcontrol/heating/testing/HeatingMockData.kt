@@ -31,14 +31,14 @@ import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingStatsUiStat
 fun createMockStatsData(): List<HeatingStatsEntry> {
     val mockHeatingStatsStringEntries: List<HeatingStatsStringEntry> = listOf(
         HeatingStatsStringEntry(
-            dateString = "2025-1-12",
+            dateString = "2025-01-12 00:00:00",
             energy = 1988.17,
             ambientTemperatureAverage = 22.6869,
             waterTemperatureAverage = 25.4176,
             heatingControlRuntime = 36235
         ),
         HeatingStatsStringEntry(
-            dateString = "2025-1-25",
+            dateString = "2025-01-25 00:00:00",
             energy = 18.7222,
             ambientTemperatureAverage = 18.9717,
             waterTemperatureAverage = 25.4007,

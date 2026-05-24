@@ -1,12 +1,10 @@
 package com.laimburggasse.aquariumcontrol.timedata.data.remote.dto
 
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
+import com.laimburggasse.aquariumcontrol.common.util.DateTimeUtil
 import com.laimburggasse.aquariumcontrol.timedata.domain.model.TimeDataSample
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import com.laimburggasse.aquariumcontrol.common.util.DateTimeUtil
-import kotlinx.datetime.*
-
 
 @Serializable
 data class TimeDataStringSample(
@@ -58,11 +56,8 @@ data class TimeDataStringSample(
 ) {
     fun transformToTimeDataSample(): TimeDataSample {
         
-        val parsedTimestamp = DateTimeUtil.parseApiTimestamp(timestamp)
-        val timestampMillis = parsedTimestamp ?: 0L
-
         return TimeDataSample(
-            timestamp = timestampMillis,
+            timestamp = DateTimeUtil.parseApiTimestamp(timestamp),
             temperature = temperature,
             temperatureFiltered = temperatureFiltered,
             pH = pH,

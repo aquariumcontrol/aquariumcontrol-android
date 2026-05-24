@@ -1,12 +1,10 @@
 package com.laimburggasse.aquariumcontrol.balling.data.remote.dto
 
-import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
+import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
+import com.laimburggasse.aquariumcontrol.common.util.DateTimeUtil
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import com.laimburggasse.aquariumcontrol.common.util.DateTimeUtil
-import kotlinx.datetime.*
-
 
 @Serializable
 data class BallingHistoryLogEntryDto(
@@ -22,8 +20,8 @@ data class BallingHistoryLogEntryDto(
     fun toBallingHistoryLogEntry(): BallingHistoryLogEntry {
         
         val timestampMillis = try {
-            DateTimeUtil.parseApiTimestamp(timestamp) ?: 0L
-        } catch (e: Exception) {
+            DateTimeUtil.parseApiTimestamp(timestamp)
+        } catch (_: Exception) {
             0L
         }
         return BallingHistoryLogEntry(

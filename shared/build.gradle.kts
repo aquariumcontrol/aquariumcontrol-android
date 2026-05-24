@@ -27,6 +27,11 @@ kotlin {
         }
     }
 
+    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
+
     sourceSets {
         commonMain.dependencies {
             implementation(libs.androidx.datastore.preferences)
@@ -64,8 +69,7 @@ room {
 
 dependencies {
     add("kspCommonMainMetadata", libs.kotlin.inject.compiler.ksp)
-    // // add("kspCommonMainMetadata", libs.androidx.room.compiler)
-    
+
     add("kspAndroid", libs.kotlin.inject.compiler.ksp)
     add("kspAndroid", libs.androidx.room.compiler)
     
@@ -78,7 +82,6 @@ dependencies {
     add("kspIosSimulatorArm64", libs.kotlin.inject.compiler.ksp)
     add("kspIosSimulatorArm64", libs.androidx.room.compiler)
 }
-
 
 ksp {
     arg("room.generateKotlin", "true")
