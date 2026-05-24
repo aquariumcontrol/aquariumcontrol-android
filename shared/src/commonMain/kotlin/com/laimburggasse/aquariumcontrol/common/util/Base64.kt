@@ -1,0 +1,56 @@
+package com.laimburggasse.aquariumcontrol.common.util
+
+object Base64 {
+    private const val ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+
+    fun decode(input: String): ByteArray {
+        val cleaned = input.filter { it in ALPHABET || it == "=" }
+        val bytes = mutableListOf<Byte>()
+        var i = 0
+        while (i + 3 < cleaned.length) {
+            val b1 = ALPHABET.indexOf(cleaned[i++])
+            val b2 = ALPHABET.indexOf(cleaned[i++])
+            val b3Char = cleaned[i++]
+            val b4Char = cleaned[i++]
+
+            bytes.add(((b1 shl 2) or (b2 shr 4)).toByte())
+            
+            if (b3Char != "=") {
+                val b3 = ALPHABET.indexOf(b3Char)
+                bytes.add(((b2 shl 4) or (b3 shr 2)).toByte())
+                if (b4Char != "=") {
+                    val b4 = ALPHABET.indexOf(b4Char)
+                    bytes.add(((b3 shl 6) or b4).toByte())
+                }
+            }
+        }
+        return bytes.toByteArray()
+    }
+
+    fun decodeToString(input: String): String = decode(input).decodeToString()
+
+    fun encode(input: ByteArray): String {
+        val result = StringBuilder()
+        var i = 0
+        while (i < input.size) {
+            val b1 = input[i++].toInt() and 0xFF
+            result.append(ALPHABET[b1 shr 2])
+            if (i < input.size) {
+                val b2 = input[i++].toInt() and 0xFF
+                result.append(ALPHABET[((b1 and 0x03) shl 4) or (b2 shr 4)])
+                if (i < input.size) {
+                    val b3 = input[i++].toInt() and 0xFF
+                    result.append(ALPHABET[((b2 and 0x0F) shl 2) or (b3 shr 6)])
+                    result.append(ALPHABET[b3 and 0x3F])
+                } else {
+                    result.append(ALPHABET[(b2 and 0x0F) shl 2])
+                    result.append("=")
+                }
+            } else {
+                result.append(ALPHABET[(b1 and 0x03) shl 4])
+                result.append("==")
+            }
+        }
+        return result.toString()
+    }
+}
