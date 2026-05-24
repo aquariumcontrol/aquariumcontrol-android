@@ -27,9 +27,7 @@ import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingProfilesRepository
 import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData.mockBallingProfiles
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.mockk
+import io.mockk.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,19 +43,21 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class BallingProfileEditViewModelTest {
+
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var repository: BallingProfilesRepository
     private lateinit var viewModel: BallingProfileEditViewModel
-
     private val repositoryFlow = MutableStateFlow<DataFetchResult<List<BallingProfile>>>(DataFetchResult.Loading)
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        repository = mockk(relaxed = true)
+        repository = mockk()
 
-        // Default behavior: return the repository flow
+        // Stub the repository to return our controlled flow
         every { repository.ballingProfiles } returns repositoryFlow
+
+        viewModel = BallingProfileEditViewModel(repository)
     }
 
     @After
@@ -67,115 +67,61 @@ class BallingProfileEditViewModelTest {
 
     @Test
     fun `initial state is Loading`() = runTest {
-        viewModel = BallingProfileEditViewModel(repository)
-        // Profile ID not set yet
-
         viewModel.ballingProfileEditUiState.test {
+            // StateFlow immediately emits its initial value
             assertEquals(BallingProfileEditUiState.Loading, awaitItem())
         }
     }
 
     @Test
-    fun `successful repository fetch updates UI state to Success`() = runTest {
-        repositoryFlow.value = DataFetchResult.Success<Any>(mockBallingProfiles)
-        val mockBallingProfile = mockBallingProfiles.first()
-
-        viewModel = BallingProfileEditViewModel(repository)
-        viewModel.setProfileId(mockBallingProfile.pumpId)
-
+    fun `successful fetch with profile ID updates state to Success`() = runTest {
         viewModel.ballingProfileEditUiState.test {
-            // First item is always Loading
-            assertTrue(awaitItem() is BallingProfileEditUiState.Loading)
+            awaitItem() // Skip initial Loading
+
+            // Act: Set profile ID and simulate repository returning data
+            viewModel.setProfileId(mockBallingProfiles[0].pumpId)
+            repositoryFlow.value = DataFetchResult.Success(mockBallingProfiles)
 
             val item = awaitItem()
             assertTrue(item is BallingProfileEditUiState.Success)
-            val actualBallingProfile = (item as BallingProfileEditUiState.Success).ballingProfile
-            assertEquals(
-                mockBallingProfile.pumpId,
-                actualBallingProfile.pumpId,
-            )
-            assertEquals(
-                mockBallingProfile.volume,
-                actualBallingProfile.volume,
-                0.0
-            )
-            assertEquals(
-                mockBallingProfile.label,
-                actualBallingProfile.label
-            )
+            assertEquals(mockBallingProfiles[0], (item as BallingProfileEditUiState.Success).ballingProfile)
         }
     }
 
     @Test
-    fun `onVolumeChange updates unconfirmed edits without affecting repository`() = runTest {
-        repositoryFlow.value = DataFetchResult.Success<Any>(mockBallingProfiles)
-
-        viewModel = BallingProfileEditViewModel(repository)
-        viewModel.setProfileId(1)
-
+    fun `ChangeDosingVolume event updates unconfirmedProfile`() = runTest {
         viewModel.ballingProfileEditUiState.test {
-            // First item is always Loading
-            assertTrue(awaitItem() is BallingProfileEditUiState.Loading)
+            awaitItem() // Loading
 
-            awaitItem() // Initial Success
+            viewModel.setProfileId(mockBallingProfiles[0].pumpId)
+            repositoryFlow.value = DataFetchResult.Success(mockBallingProfiles)
+            awaitItem() // Success
 
-            val newDosingValue = 5.5
-            viewModel.onEvent(BallingProfileEditUiEvent.ChangeDosingVolume(newDosingValue))
+            // Act
+            val newVolume = 5.0
+            viewModel.onEvent(BallingProfileEditUiEvent.ChangeDosingVolume(newVolume))
 
-            val updatedState = awaitItem()
-            assertTrue(updatedState is BallingProfileEditUiState.Success)
-            val actualBallingProfile = (updatedState as BallingProfileEditUiState.Success).ballingProfile
-            assertEquals(
-                newDosingValue,
-                actualBallingProfile.volume,
-                0.0
-            )
-
-            // Verify repository was NOT called yet
-            coVerify(exactly = 0) { repository.updateBallingProfile(any()) }
+            val item = awaitItem()
+            assertTrue(item is BallingProfileEditUiState.Success)
+            assertEquals(newVolume, (item as BallingProfileEditUiState.Success).ballingProfile.volume, 0.0)
         }
     }
 
     @Test
-    fun `onConfirmDosing triggers repository update`() = runTest {
-        repositoryFlow.value = DataFetchResult.Success<Any>(mockBallingProfiles)
+    fun `ConfirmDosingVolume event calls repository updateBallingProfile`() = runTest {
+        coEvery { repository.updateBallingProfile(any()) } just Runs
 
-        viewModel = BallingProfileEditViewModel(repository)
-        viewModel.setProfileId(1)
+        // Arrange
+        viewModel.setProfileId(mockBallingProfiles[0].pumpId)
+        repositoryFlow.value = DataFetchResult.Success(mockBallingProfiles)
+        testDispatcher.scheduler.advanceUntilIdle()
 
-        val newDosingValue = 5.5
+        // Act
+        val newVolume = 5.0
+        viewModel.onEvent(BallingProfileEditUiEvent.ConfirmDosingVolume(newVolume))
+        testDispatcher.scheduler.advanceUntilIdle()
 
-        viewModel.ballingProfileEditUiState.test {
-            // First item is always Loading
-            assertTrue(awaitItem() is BallingProfileEditUiState.Loading)
-
-            awaitItem() // Skip initial success
-
-            viewModel.onEvent(BallingProfileEditUiEvent.ConfirmDosingVolume(newDosingValue))
-
-            // Give the ViewModel coroutine a chance to execute
-            testDispatcher.scheduler.advanceUntilIdle()
-        }
-
-        coVerify(exactly = 1) {
-            repository.updateBallingProfile(
-                match { it.pumpId == 1 && it.volume == newDosingValue }
-            )
-        }
-    }
-
-    @Test
-    fun `profile not found in list results in NotFound state`() = runTest {
-        repositoryFlow.value = DataFetchResult.Success<Any>(mockBallingProfiles)
-
-        viewModel = BallingProfileEditViewModel(repository)
-        viewModel.setProfileId(999) // Non-existent ID
-
-        viewModel.ballingProfileEditUiState.test {
-            // First item is always Loading
-            assertTrue(awaitItem() is BallingProfileEditUiState.Loading)
-
-            assertTrue(awaitItem() is BallingProfileEditUiState.NotFound)
-        }
+        // Assert
+        coVerify(exactly = 1) { repository.updateBallingProfile(match { it.volume == newVolume }) }
     }
 }

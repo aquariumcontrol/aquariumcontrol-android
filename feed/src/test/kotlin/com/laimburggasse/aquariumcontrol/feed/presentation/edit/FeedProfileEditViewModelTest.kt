@@ -22,13 +22,34 @@
 
 package com.laimburggasse.aquariumcontrol.feed.presentation.edit
 
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
+import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
+import com.laimburggasse.aquariumcontrol.common.testing.MockSessionManagerImpl
+import com.laimburggasse.aquariumcontrol.common.util.Logger
+import com.laimburggasse.aquariumcontrol.feed.data.repository.FeedProfilesRepositoryImpl
+import com.laimburggasse.aquariumcontrol.feed.data.repository.FeedScheduleRepositoryImpl
+import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
+import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
+import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedProfilesRepository
+import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedScheduleRepository
+import com.laimburggasse.aquariumcontrol.feed.testing.*
+import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedProfile
+import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedProfiles
+import io.mockk.*
+import java.util.Calendar
+
+
+
+
+
+
+
+
 import app.cash.turbine.ReceiveTurbine
 import app.cash.turbine.test
 
-import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
-import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedProfilesRepository
-import com.laimburggasse.aquariumcontrol.feed.testing.createMockFeedProfile
-import io.mockk.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.*
@@ -37,6 +58,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import android.os.Process
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class FeedProfileEditViewModelTest {

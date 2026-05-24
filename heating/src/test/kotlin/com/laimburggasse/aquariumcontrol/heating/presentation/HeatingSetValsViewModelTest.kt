@@ -22,15 +22,15 @@
 
 package com.laimburggasse.aquariumcontrol.heating.presentation
 
-import app.cash.turbine.test
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
-import com.laimburggasse.aquariumcontrol.heating.domain.repository.HeatingSetValsRepository
-import com.laimburggasse.aquariumcontrol.heating.testing.HeatingMockData.mockHeatingSetVals
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
+
+
+
+
+
+
+import app.cash.turbine.test
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,6 +44,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HeatingSetValsViewModelTest {
@@ -84,7 +85,7 @@ class HeatingSetValsViewModelTest {
             awaitItem() // Loading
 
             // Act
-            repositoryFlow.value = DataFetchResult.Success<Any>(mockHeatingSetVals)
+            repositoryFlow.value = DataFetchResult.Success(mockHeatingSetVals)
 
             val state = awaitItem()
 
@@ -115,7 +116,7 @@ class HeatingSetValsViewModelTest {
             awaitItem() // Loading
 
             // Act
-            repositoryFlow.value = DataFetchResult.Success<Any>(invalidVals)
+            repositoryFlow.value = DataFetchResult.Success(invalidVals)
             awaitItem()
 
             // Assert
@@ -141,7 +142,7 @@ class HeatingSetValsViewModelTest {
     @Test
     fun `ChangeLowerValue event updates local repository using current state`() = runTest {
         // Arrange: Start with success
-        repositoryFlow.value = DataFetchResult.Success<Any>(mockHeatingSetVals)
+        repositoryFlow.value = DataFetchResult.Success(mockHeatingSetVals)
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Act
@@ -156,7 +157,7 @@ class HeatingSetValsViewModelTest {
     @Test
     fun `ChangeHigherValue event updates local repository using current state`() = runTest {
         // Arrange: Start with success
-        repositoryFlow.value = DataFetchResult.Success<Any>(mockHeatingSetVals)
+        repositoryFlow.value = DataFetchResult.Success(mockHeatingSetVals)
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Act

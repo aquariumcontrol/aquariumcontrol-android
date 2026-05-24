@@ -22,17 +22,16 @@
 
 package com.laimburggasse.aquariumcontrol.schedule.presentation
 
-import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleType
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import io.mockk.*
+
+
+
+
+
+
 
 import app.cash.turbine.test
-import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntries
-import com.laimburggasse.aquariumcontrol.schedule.domain.repository.ScheduleRepository
-import com.laimburggasse.aquariumcontrol.schedule.testing.ScheduleMockData.mockScheduleEntries
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -85,7 +84,7 @@ class ScheduleViewModelTest {
             assertEquals(ScheduleUiState.Loading, awaitItem())
 
             // Act: Push success data into the repository flow
-            repositoryFlow.value = DataFetchResult.Success<Any>(mockScheduleEntries)
+            repositoryFlow.value = DataFetchResult.Success(mockScheduleEntries)
 
             val state = awaitItem()
             assertTrue(state is ScheduleUiState.Success)
@@ -114,7 +113,7 @@ class ScheduleViewModelTest {
     @Test
     fun `ChangeTime event triggers repository update with copied values`() = runTest {
         // Arrange: Start with success state
-        repositoryFlow.value = DataFetchResult.Success<Any>(mockScheduleEntries)
+        repositoryFlow.value = DataFetchResult.Success(mockScheduleEntries)
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Act: User changes Balling Start Time to 09:30 (9.5f)

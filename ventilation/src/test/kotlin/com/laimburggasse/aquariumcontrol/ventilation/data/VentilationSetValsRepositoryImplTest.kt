@@ -1,4 +1,6 @@
 /*
+// import.AquariumControl.domain.repository.VentilationSetValsRepository
+// import.AquariumControl.data.repository.VentilationSetValsRepositoryImpl
  *  Copyright 2026 Uwe Martin
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,20 +24,24 @@
 
 package com.laimburggasse.aquariumcontrol.ventilation.data
 
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
+import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
+import com.laimburggasse.aquariumcontrol.common.testing.MockSessionManagerImpl
+import com.laimburggasse.aquariumcontrol.common.util.Logger
+import io.mockk.*
+import java.util.Calendar
+
+
 import app.cash.turbine.test
 
 
 
-import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
-import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
-import com.laimburggasse.aquariumcontrol.common.testing.MockSessionManagerImpl
-import com.laimburggasse.aquariumcontrol.ventilation.testing.VentilationMockData.mockVentilationSetVals
-import com.laimburggasse.aquariumcontrol.ventilation.testing.MockVentilationSetValsApiServiceImpl
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.mockkStatic
-import io.mockk.unmockkAll
+
+
+
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -66,14 +72,8 @@ class VentilationSetValsRepositoryImplTest {
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-
-        // Mock Firebase Crashlytics statics
-        
-        
-        
-        
-
         repository = VentilationSetValsRepositoryImpl(
+            logger = mockk(relaxed = true),
             sessionManager = mockSessionManagerImpl,
             apiService = mockVentilationSetValsApiService,
             repositoryScope = testScope,
@@ -105,7 +105,7 @@ class VentilationSetValsRepositoryImplTest {
 
             assertTrue(result is DataFetchResult.Success)
             assertEquals(
-                mockVentilationSetVals, (result as DataFetchResult.Success<*>).data
+                mockVentilationSetVals, (result as DataFetchResult.Success).data
             )
 
             // Ensure no further emissions occur
@@ -130,7 +130,7 @@ class VentilationSetValsRepositoryImplTest {
             // Assert: Optimistic update should be emitted immediately
             val result = awaitItem()
             assertTrue(result is DataFetchResult.Success)
-            assertEquals(updatedSetVals, (result as DataFetchResult.Success<*>).data)
+            assertEquals(updatedSetVals, (result as DataFetchResult.Success).data)
 
             expectNoEvents()
         }
@@ -227,7 +227,7 @@ class VentilationSetValsRepositoryImplTest {
             val result = awaitItem()
             assertTrue(result is DataFetchResult.Success)
             assertEquals(
-                mockVentilationSetVals, (result as DataFetchResult.Success<*>).data
+                mockVentilationSetVals, (result as DataFetchResult.Success).data
             )
         }
     }

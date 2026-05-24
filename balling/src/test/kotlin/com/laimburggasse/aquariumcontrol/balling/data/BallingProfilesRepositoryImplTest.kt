@@ -23,18 +23,18 @@
 package com.laimburggasse.aquariumcontrol.balling.data
 
 import app.cash.turbine.test
-
-
-
+import com.laimburggasse.aquariumcontrol.balling.data.repository.BallingProfilesRepositoryImpl
+import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
+import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingProfilesRepository
 import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData.mockBallingProfiles
 import com.laimburggasse.aquariumcontrol.balling.testing.MockBallingProfileApiServiceImpl
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
+import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
 import com.laimburggasse.aquariumcontrol.common.testing.MockSessionManagerImpl
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.mockkStatic
-import io.mockk.unmockkAll
+import com.laimburggasse.aquariumcontrol.common.util.Logger
+import io.mockk.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -60,20 +60,16 @@ class BallingProfilesRepositoryImplTest {
     private val mockSessionManagerImpl = MockSessionManagerImpl(
         controllerProfiles = mockControllerProfileList
     )
+
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-
-        // Mock Firebase Crashlytics statics
-        
-        
-        
-        
-
         repository = BallingProfilesRepositoryImpl(
+            logger = mockk(relaxed = true),
             sessionManager = mockSessionManagerImpl,
             apiService = mockBallingProfileApiService,
-            repositoryScope = testScope
+            repositoryScope = testScope,
+            ioDispatcher = IoDispatcher(testDispatcher)
         )
     }
 
@@ -99,7 +95,7 @@ class BallingProfilesRepositoryImplTest {
             val result = awaitItem()
 
             assertTrue(result is DataFetchResult.Success)
-            assertEquals(mockBallingProfiles, (result as DataFetchResult.Success<*>).data)
+            assertEquals(mockBallingProfiles, (result as DataFetchResult.Success).data)
 
             // Ensure no further emissions (like a second refresh or an error) occur
             expectNoEvents()
@@ -125,8 +121,8 @@ class BallingProfilesRepositoryImplTest {
             val optimisticResult2 = awaitItem()
             assertTrue(optimisticResult2 is DataFetchResult.Success)
 
-            val updatedBallingProfile = (optimisticResult2 as DataFetchResult.Success).data.first()
-            assertEquals(updatedVolume, updatedBallingProfile.volume, 0.0)
+            val updatedBallingProfileData = (optimisticResult2 as DataFetchResult.Success).data.first()
+            assertEquals(updatedVolume, updatedBallingProfileData.volume, 0.0)
 
             // Ensure no further emissions (like a second refresh or an error) occur
             expectNoEvents()

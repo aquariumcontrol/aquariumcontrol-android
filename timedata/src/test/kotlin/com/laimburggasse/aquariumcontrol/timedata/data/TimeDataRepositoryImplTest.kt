@@ -1,4 +1,6 @@
 /*
+// import.AquariumControl.domain.repository.TimeDataRepository
+// import.AquariumControl.data.repository.TimeDataRepositoryImpl
  *  Copyright 2026 Uwe Martin
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,20 +24,24 @@
 
 package com.laimburggasse.aquariumcontrol.timedata.data
 
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
+import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
+import com.laimburggasse.aquariumcontrol.common.testing.MockSessionManagerImpl
+import com.laimburggasse.aquariumcontrol.common.util.Logger
+import io.mockk.*
+import java.util.Calendar
+
+
 import app.cash.turbine.test
 
 
 
-import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
-import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
-import com.laimburggasse.aquariumcontrol.common.testing.MockSessionManagerImpl
-import com.laimburggasse.aquariumcontrol.timedata.testing.MockTimeDataApiServiceImpl
-import com.laimburggasse.aquariumcontrol.timedata.testing.generateMockTimeData
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.mockkStatic
-import io.mockk.unmockkAll
+
+
+
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -66,14 +72,8 @@ class TimeDataRepositoryImplTest {
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-
-        // Mock Firebase Crashlytics statics
-        
-        
-        
-        
-
         repository = TimeDataRepositoryImpl(
+            logger = mockk(relaxed = true),
             sessionManager = mockSessionManagerImpl,
             apiService = mockTimeDataApiService,
             repositoryScope = testScope,
@@ -102,7 +102,7 @@ class TimeDataRepositoryImplTest {
             // Then it emits the Success result
             val result = awaitItem()
             assertTrue(result is DataFetchResult.Success)
-            assertEquals(mockSamples, (result as DataFetchResult.Success<*>).data)
+            assertEquals(mockSamples, (result as DataFetchResult.Success).data)
 
             // Ensure no further emissions occur
             expectNoEvents()
@@ -130,7 +130,7 @@ class TimeDataRepositoryImplTest {
             testDispatcher.scheduler.advanceUntilIdle()
             val result = awaitItem()
             assertTrue(result is DataFetchResult.Success)
-            assertEquals(mockSamples, (result as DataFetchResult.Success<*>).data)
+            assertEquals(mockSamples, (result as DataFetchResult.Success).data)
         }
     }
 

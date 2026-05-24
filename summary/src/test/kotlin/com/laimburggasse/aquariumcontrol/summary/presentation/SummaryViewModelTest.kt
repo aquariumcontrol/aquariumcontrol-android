@@ -22,14 +22,15 @@
 
 package com.laimburggasse.aquariumcontrol.summary.presentation
 
-import app.cash.turbine.test
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import com.laimburggasse.aquariumcontrol.summary.domain.model.SummaryData
-import com.laimburggasse.aquariumcontrol.summary.domain.repository.SummaryRepository
-import com.laimburggasse.aquariumcontrol.summary.testing.SummaryMockData.mockSummaryData
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.mockk
+import io.mockk.*
+
+
+
+
+
+
+import app.cash.turbine.test
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -83,7 +84,7 @@ class SummaryViewModelTest {
             assertEquals(SummaryUiState.Loading, awaitItem())
 
             // Act: Emit success from repository
-            repositoryFlow.value = DataFetchResult.Success<Any>(mockSummaryData)
+            repositoryFlow.value = DataFetchResult.Success(mockSummaryData)
 
             val state = awaitItem()
             assertTrue(state is SummaryUiState.Success)

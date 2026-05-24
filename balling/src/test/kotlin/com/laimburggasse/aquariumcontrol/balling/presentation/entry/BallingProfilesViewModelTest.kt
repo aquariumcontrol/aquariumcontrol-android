@@ -27,9 +27,7 @@ import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingProfilesRepository
 import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData.mockBallingProfiles
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.mockk
+import io.mockk.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -49,14 +47,12 @@ class BallingProfilesViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var repository: BallingProfilesRepository
     private lateinit var viewModel: BallingProfilesViewModel
-
-    // Controlled flow to simulate repository updates
     private val repositoryFlow = MutableStateFlow<DataFetchResult<List<BallingProfile>>>(DataFetchResult.Loading)
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        repository = mockk(relaxed = true)
+        repository = mockk()
 
         // Stub the repository to return our controlled flow
         every { repository.ballingProfiles } returns repositoryFlow
@@ -80,10 +76,10 @@ class BallingProfilesViewModelTest {
     @Test
     fun `successful fetch with data updates state to Success`() = runTest {
         viewModel.ballingProfilesUiState.test {
-            assertEquals(BallingProfilesUiState.Loading, awaitItem())
+            awaitItem() // Skip Loading
 
             // Act: Simulate repository returning data
-            repositoryFlow.value = DataFetchResult.Success<Any>(mockBallingProfiles)
+            repositoryFlow.value = DataFetchResult.Success(mockBallingProfiles)
 
             val item = awaitItem()
             assertTrue(item is BallingProfilesUiState.Success)
@@ -97,32 +93,31 @@ class BallingProfilesViewModelTest {
             awaitItem() // Skip Loading
 
             // Act: Simulate repository returning an empty list
-            repositoryFlow.value = DataFetchResult.Success<Any>(emptyList())
+            repositoryFlow.value = DataFetchResult.Success(emptyList())
 
             assertEquals(BallingProfilesUiState.Empty, awaitItem())
         }
     }
 
     @Test
-    fun `failed fetch updates state to Error`() = runTest {
-        val errorMsg = "Server Unreachable"
+    fun `error fetch updates state to Error`() = runTest {
         viewModel.ballingProfilesUiState.test {
             awaitItem() // Skip Loading
 
             // Act: Simulate repository returning an error
-            repositoryFlow.value = DataFetchResult.Error(
-                errorMessage = errorMsg,
-                exception = Exception()
-            )
+            val errorMessage = "Network Error"
+            repositoryFlow.value = DataFetchResult.Error(Exception(errorMessage), errorMessage)
 
             val item = awaitItem()
             assertTrue(item is BallingProfilesUiState.Error)
-            assertEquals(errorMsg, (item as BallingProfilesUiState.Error).errorMessage)
+            assertEquals(errorMessage, (item as BallingProfilesUiState.Error).errorMessage)
         }
     }
 
     @Test
-    fun `onRefresh event calls triggerRefresh on repository`() = runTest {
+    fun `onRefresh calls repository triggerRefresh`() = runTest {
+        coEvery { repository.triggerRefresh() } just Runs
+
         // Act
         viewModel.onRefresh()
 

@@ -1,4 +1,6 @@
 /*
+// import.AquariumControl.domain.repository.HeatingStatsRepository
+// import.AquariumControl.data.repository.HeatingStatsRepositoryImpl
  *  Copyright 2026 Uwe Martin
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,20 +24,24 @@
 
 package com.laimburggasse.aquariumcontrol.heating.data
 
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
+import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
+import com.laimburggasse.aquariumcontrol.common.testing.MockSessionManagerImpl
+import com.laimburggasse.aquariumcontrol.common.util.Logger
+import io.mockk.*
+import java.util.Calendar
+
+
 import app.cash.turbine.test
 
 
 
-import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
-import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
-import com.laimburggasse.aquariumcontrol.common.testing.MockSessionManagerImpl
-import com.laimburggasse.aquariumcontrol.heating.testing.HeatingMockData.mockHeatingStatsData
-import com.laimburggasse.aquariumcontrol.heating.testing.MockHeatingStatsApiServiceImpl
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.mockkStatic
-import io.mockk.unmockkAll
+
+
+
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -48,6 +54,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HeatingStatsRepositoryImplTest {
@@ -65,18 +72,12 @@ class HeatingStatsRepositoryImplTest {
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-
-        // Mock Firebase Crashlytics statics
-        
-        
-        
-        
-
         repository = HeatingStatsRepositoryImpl(
+            logger = mockk(relaxed = true),
             sessionManager = mockSessionManagerImpl,
             apiService = mockHeatingStatsApiService,
             repositoryScope = testScope,
-            ioDispatcher = IoDispatcher(testDispatcher)
+            context = IoDispatcher(testDispatcher)
         )
     }
 
@@ -100,7 +101,7 @@ class HeatingStatsRepositoryImplTest {
             // Assert
             val result = awaitItem()
             assertTrue(result is DataFetchResult.Success)
-            assertEquals(mockHeatingStatsData, (result as DataFetchResult.Success<*>).data)
+            assertEquals(mockHeatingStatsData, (result as DataFetchResult.Success).data)
 
             // Ensure no further emissions occur
             expectNoEvents()
@@ -125,7 +126,7 @@ class HeatingStatsRepositoryImplTest {
             assertTrue(awaitItem() is DataFetchResult.Loading)
             val result = awaitItem()
             assertTrue(result is DataFetchResult.Success)
-            assertEquals(mockHeatingStatsData, (result as DataFetchResult.Success<*>).data)
+            assertEquals(mockHeatingStatsData, (result as DataFetchResult.Success).data)
         }
     }
 

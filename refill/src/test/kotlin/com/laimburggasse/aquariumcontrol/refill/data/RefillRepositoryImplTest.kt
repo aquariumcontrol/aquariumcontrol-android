@@ -1,4 +1,6 @@
 /*
+// import.AquariumControl.domain.repository.RefillRepository
+// import.AquariumControl.data.repository.RefillRepositoryImpl
  *  Copyright 2026 Uwe Martin
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,20 +24,24 @@
 
 package com.laimburggasse.aquariumcontrol.refill.data
 
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
+import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
+import com.laimburggasse.aquariumcontrol.common.testing.MockSessionManagerImpl
+import com.laimburggasse.aquariumcontrol.common.util.Logger
+import io.mockk.*
+import java.util.Calendar
+
+
 import app.cash.turbine.test
 
 
 
-import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
-import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
-import com.laimburggasse.aquariumcontrol.common.testing.MockSessionManagerImpl
-import com.laimburggasse.aquariumcontrol.refill.testing.MockRefillStateApiServiceImpl
-import com.laimburggasse.aquariumcontrol.refill.testing.RefillMockData.mockRefillStateActive
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.mockkStatic
-import io.mockk.unmockkAll
+
+
+
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -65,16 +71,10 @@ class RefillRepositoryImplTest {
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-
-        // Mock Firebase Crashlytics statics
-        
-        
-        
-        
-
         repository = RefillRepositoryImpl(
+            logger = mockk(relaxed = true),
             sessionManager = mockSessionManagerImpl,
-            apiService = mockRefillApiService,
+            apiService = mockRefillStateApiService,
             repositoryScope = testScope,
             context = IoDispatcher(testDispatcher)
         )
@@ -101,7 +101,7 @@ class RefillRepositoryImplTest {
             // Then it emits the Success result
             val result = awaitItem()
             assertTrue(result is DataFetchResult.Success)
-            assertEquals(mockRefillStateActive, (result as DataFetchResult.Success<*>).data)
+            assertEquals(mockRefillStateActive, (result as DataFetchResult.Success).data)
 
             // Ensure no further emissions occur
             expectNoEvents()
@@ -129,7 +129,7 @@ class RefillRepositoryImplTest {
             testDispatcher.scheduler.advanceUntilIdle()
             val result = awaitItem()
             assertTrue(result is DataFetchResult.Success)
-            assertEquals(mockRefillStateActive, (result as DataFetchResult.Success<*>).data)
+            assertEquals(mockRefillStateActive, (result as DataFetchResult.Success).data)
         }
     }
 

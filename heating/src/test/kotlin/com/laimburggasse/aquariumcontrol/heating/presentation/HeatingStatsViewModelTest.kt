@@ -22,15 +22,15 @@
 
 package com.laimburggasse.aquariumcontrol.heating.presentation
 
-import app.cash.turbine.test
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
-import com.laimburggasse.aquariumcontrol.heating.domain.repository.HeatingStatsRepository
-import com.laimburggasse.aquariumcontrol.heating.testing.HeatingMockData.mockHeatingStatsData
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.unmockkStatic
+import io.mockk.*
+
+
+
+
+
+
+import app.cash.turbine.test
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,6 +43,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HeatingStatsViewModelTest {
@@ -83,7 +84,7 @@ class HeatingStatsViewModelTest {
             assertEquals(HeatingStatsUiState.Loading, awaitItem())
 
             // Act: Emit success
-            repositoryFlow.value = DataFetchResult.Success<Any>(mockHeatingStatsData)
+            repositoryFlow.value = DataFetchResult.Success(mockHeatingStatsData)
 
             val state = awaitItem()
             assertTrue("Expected Success but got $state", state is HeatingStatsUiState.Success)

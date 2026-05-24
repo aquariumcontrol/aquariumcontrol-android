@@ -22,15 +22,15 @@
 
 package com.laimburggasse.aquariumcontrol.ventilation.presentation
 
-import app.cash.turbine.test
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import com.laimburggasse.aquariumcontrol.ventilation.domain.model.VentilationSetVals
-import com.laimburggasse.aquariumcontrol.ventilation.domain.repository.VentilationSetValsRepository
-import com.laimburggasse.aquariumcontrol.ventilation.testing.VentilationMockData.mockVentilationSetVals
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
+
+
+
+
+
+
+import app.cash.turbine.test
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -84,7 +84,7 @@ class VentilationSetValsViewModelTest {
             awaitItem() // Loading
 
             // Act
-            repositoryFlow.value = DataFetchResult.Success<Any>(mockVentilationSetVals)
+            repositoryFlow.value = DataFetchResult.Success(mockVentilationSetVals)
 
             val state = awaitItem()
             assertTrue(state is VentilationSetValsUiState.Success)
@@ -111,7 +111,7 @@ class VentilationSetValsViewModelTest {
             awaitItem() // Loading
 
             // Act
-            repositoryFlow.value = DataFetchResult.Success<Any>(invalidVals)
+            repositoryFlow.value = DataFetchResult.Success(invalidVals)
             awaitItem()
 
             // Assert
@@ -137,7 +137,7 @@ class VentilationSetValsViewModelTest {
     @Test
     fun `ChangeLowerValue event updates local repository using current state`() = runTest {
         // Arrange: Start with success
-        repositoryFlow.value = DataFetchResult.Success<Any>(mockVentilationSetVals)
+        repositoryFlow.value = DataFetchResult.Success(mockVentilationSetVals)
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Act
@@ -152,7 +152,7 @@ class VentilationSetValsViewModelTest {
     @Test
     fun `ChangeHigherValue event updates local repository using current state`() = runTest {
         // Arrange: Start with success
-        repositoryFlow.value = DataFetchResult.Success<Any>(mockVentilationSetVals)
+        repositoryFlow.value = DataFetchResult.Success(mockVentilationSetVals)
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Act

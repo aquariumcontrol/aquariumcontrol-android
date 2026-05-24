@@ -22,14 +22,15 @@
 
 package com.laimburggasse.aquariumcontrol.refill.presentation.entry
 
-import app.cash.turbine.test
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillState
-import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillRepository
-import com.laimburggasse.aquariumcontrol.refill.testing.RefillMockData.mockRefillStateActive
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.mockk
+import io.mockk.*
+
+
+
+
+
+
+import app.cash.turbine.test
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -85,7 +86,7 @@ class RefillViewModelTest {
             assertEquals(RefillStateUiState.Loading, awaitItem()) // Initial
 
             // Act
-            refillStateFlow.value = DataFetchResult.Success<Any>(mockRefillStateActive)
+            refillStateFlow.value = DataFetchResult.Success(mockRefillStateActive)
 
             val state = awaitItem()
             assertTrue(state is RefillStateUiState.Success)

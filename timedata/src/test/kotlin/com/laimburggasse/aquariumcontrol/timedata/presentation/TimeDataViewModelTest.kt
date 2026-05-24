@@ -22,16 +22,15 @@
 
 package com.laimburggasse.aquariumcontrol.timedata.presentation
 
-import app.cash.turbine.test
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import com.laimburggasse.aquariumcontrol.timedata.domain.model.TimeDataSample
-import com.laimburggasse.aquariumcontrol.timedata.domain.repository.TimeDataRepository
-import com.laimburggasse.aquariumcontrol.timedata.testing.generateMockTimeData
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.mockkStatic
-import io.mockk.unmockkStatic
+import io.mockk.*
+
+
+
+
+
+
+import app.cash.turbine.test
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -95,7 +94,7 @@ class TimeDataViewModelTest {
 
             val mockData = generateMockTimeData()
             // Act: Emit success with data
-            repositoryFlow.value = DataFetchResult.Success<Any>(mockData)
+            repositoryFlow.value = DataFetchResult.Success(mockData)
 
             val state = awaitItem()
             assertTrue(state is TimeDataUiState.Success)
@@ -108,7 +107,7 @@ class TimeDataViewModelTest {
             awaitItem() // Skip loading
 
             // Act: Emit success with empty list
-            repositoryFlow.value = DataFetchResult.Success<Any>(emptyList())
+            repositoryFlow.value = DataFetchResult.Success(emptyList())
 
             val state = awaitItem()
             assertTrue(state is TimeDataUiState.Empty)

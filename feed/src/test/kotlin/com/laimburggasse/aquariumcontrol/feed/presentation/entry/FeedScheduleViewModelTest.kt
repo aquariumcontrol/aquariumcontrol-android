@@ -22,17 +22,34 @@
 
 package com.laimburggasse.aquariumcontrol.feed.presentation.entry
 
-import app.cash.turbine.test
+import com.laimburggasse.aquariumcontrol.feed.presentation.schedule.FeedScheduleEntryUiEvent
+
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
+import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
+import com.laimburggasse.aquariumcontrol.common.testing.MockSessionManagerImpl
+import com.laimburggasse.aquariumcontrol.common.util.Logger
+import com.laimburggasse.aquariumcontrol.feed.data.repository.FeedProfilesRepositoryImpl
+import com.laimburggasse.aquariumcontrol.feed.data.repository.FeedScheduleRepositoryImpl
+import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedProfilesRepository
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedScheduleRepository
-import com.laimburggasse.aquariumcontrol.feed.presentation.schedule.FeedScheduleEntryUiEvent
+import com.laimburggasse.aquariumcontrol.feed.testing.*
 import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedProfile
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.mockk
+import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedProfiles
+import io.mockk.*
+import java.util.Calendar
+
+
+
+
+
+
+
+
+import app.cash.turbine.test
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,7 +62,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import java.util.Calendar
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class FeedScheduleViewModelTest {
@@ -101,7 +118,7 @@ class FeedScheduleViewModelTest {
 
             // Act: Emit data
             val mockEntries = listOf(mockk<FeedScheduleEntry>())
-            scheduleFlow.value = DataFetchResult.Success<Any>(mockEntries)
+            scheduleFlow.value = DataFetchResult.Success(mockEntries)
 
             val state = awaitItem()
             assertTrue(state is FeedScheduleSelectionUiState.Success)
@@ -115,7 +132,7 @@ class FeedScheduleViewModelTest {
             awaitItem() // Skip loading
 
             // Act: Emit empty
-            scheduleFlow.value = DataFetchResult.Success<Any>(emptyList())
+            scheduleFlow.value = DataFetchResult.Success(emptyList())
 
             assertEquals(FeedScheduleSelectionUiState.Empty, awaitItem())
         }
@@ -126,7 +143,7 @@ class FeedScheduleViewModelTest {
         val entry = mockk<FeedScheduleEntry>()
 
         // Act
-        viewModel.onFeedScheduleEntryUiEvent(FeedScheduleUiEvent.DeleteFeedScheduleEntry(entry))
+        viewModel.onFeedScheduleUiEvent(FeedScheduleUiEvent.DeleteFeedScheduleEntry(entry))
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Assert
@@ -154,7 +171,7 @@ class FeedScheduleViewModelTest {
                 mockFeedProfile.profileID,
                 mockFeedProfile.profileName,
                 true,
-                calendar
+                calendar.timeInMillis
             )
         }
     }
@@ -180,7 +197,7 @@ class FeedScheduleViewModelTest {
                 mockFeedProfile.profileID,
                 mockFeedProfile.profileName,
                 false,
-                calendar,
+                calendar.timeInMillis,
                 999L
             )
         }
@@ -193,7 +210,7 @@ class FeedScheduleViewModelTest {
         every { profilesRepository.findProfileByName(name) } returns mockFeedProfile
 
         // Act
-        val result = viewModel.onFeedScheduleEntryUiEvent(
+        val result = viewModel.onFeedScheduleUiEvent(
             FeedScheduleUiEvent.GetFeedProfileIdByName(name)
         )
 
