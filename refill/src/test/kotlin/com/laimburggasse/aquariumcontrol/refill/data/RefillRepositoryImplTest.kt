@@ -24,14 +24,23 @@
 
 package com.laimburggasse.aquariumcontrol.refill.data
 
+import com.laimburggasse.aquariumcontrol.refill.testing.RefillMockData.mockRefillStateActive
+
+import app.cash.turbine.test
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
 import com.laimburggasse.aquariumcontrol.common.testing.MockSessionManagerImpl
 import com.laimburggasse.aquariumcontrol.common.util.Logger
+import com.laimburggasse.aquariumcontrol.refill.data.repository.RefillRepositoryImpl
+import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillState
+import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillRepository
+import com.laimburggasse.aquariumcontrol.refill.testing.*
 import io.mockk.*
 import java.util.Calendar
+
+
 
 
 import app.cash.turbine.test
@@ -61,7 +70,7 @@ class RefillRepositoryImplTest {
     private lateinit var repository: RefillRepositoryImpl
     private val testDispatcher = StandardTestDispatcher()
     private val testScope = TestScope(testDispatcher)
-    private val mockRefillApiService = MockRefillStateApiServiceImpl(
+    private val mockRefillStateApiService = MockRefillStateApiServiceImpl(
         mockRefillStateActive
     )
     private val mockSessionManagerImpl = MockSessionManagerImpl(
@@ -144,7 +153,7 @@ class RefillRepositoryImplTest {
              assertTrue(awaitItem() is DataFetchResult.Success)
 
              // 2. induce failure and trigger refresh
-             mockRefillApiService.setForceError(force = true)
+             mockRefillStateApiService.setForceError(force = true)
              repository.triggerRefresh()
              
              // 3. Observe the sequence

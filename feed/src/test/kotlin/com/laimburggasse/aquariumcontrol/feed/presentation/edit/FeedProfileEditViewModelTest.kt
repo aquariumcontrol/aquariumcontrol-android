@@ -22,34 +22,13 @@
 
 package com.laimburggasse.aquariumcontrol.feed.presentation.edit
 
-import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
-import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
-import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
-import com.laimburggasse.aquariumcontrol.common.testing.MockSessionManagerImpl
-import com.laimburggasse.aquariumcontrol.common.util.Logger
-import com.laimburggasse.aquariumcontrol.feed.data.repository.FeedProfilesRepositoryImpl
-import com.laimburggasse.aquariumcontrol.feed.data.repository.FeedScheduleRepositoryImpl
-import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
-import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
-import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedProfilesRepository
-import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedScheduleRepository
-import com.laimburggasse.aquariumcontrol.feed.testing.*
-import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedProfile
-import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData.mockFeedProfiles
-import io.mockk.*
-import java.util.Calendar
-
-
-
-
-
-
-
-
+import android.os.Process
 import app.cash.turbine.ReceiveTurbine
 import app.cash.turbine.test
-
+import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
+import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedProfilesRepository
+import com.laimburggasse.aquariumcontrol.feed.testing.*
+import io.mockk.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.*
@@ -57,8 +36,6 @@ import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
-import android.os.Process
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class FeedProfileEditViewModelTest {
@@ -72,41 +49,23 @@ class FeedProfileEditViewModelTest {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
 
-        // 1. Mock Statics (Ensure Log is mocked BEFORE Utils)
         mockkStatic(android.util.Log::class)
         mockkStatic(android.graphics.Color::class)
         mockkStatic(Process::class)
-        
-        // Corrected: Use mockkStatic for Java classes, not mockkObject
         mockkStatic(com.github.mikephil.charting.utils.Utils::class)
 
-        // 2. Stub Log first to swallow library warnings during recording
         every { android.util.Log.e(any(), any()) } returns 0
         every { android.util.Log.e(any(), any(), any()) } returns 0
         every { android.util.Log.d(any(), any()) } returns 0
-
-        // 3. Stub Framework requirements
         every { Process.myPid() } returns 1
-        
-        
         every { android.graphics.Color.rgb(any<Int>(), any(), any()) } returns 0
-
-        // 4. Stub MPAndroidChart Utils
-        // Stub INIT FIRST to satisfy internal library checks
         every { com.github.mikephil.charting.utils.Utils.init(any<android.content.Context>()) } just runs
-        // Use a simple stub for convertDpToPixel without the complex firstArg matcher
-        // to minimize logic during MockK's recording phase
-        every { com.github.mikephil.charting.utils.Utils.convertDpToPixel(any<Float>()) } answers { 10f }
+        every { com.github.mikephil.charting.utils.Utils.convertDpToPixel(any<Float>()) } returns 10f
 
-        // 5. Initialize Repository and Mocks
         repository = mockk(relaxed = true)
-
         mockProfile = createMockFeedProfile().copy(profileID = 10)
-
-        // 6. Setup data flow
         coEvery { repository.findProfileById(10) } returns mockProfile
 
-        // 7. Instantiate ViewModel LAST
         viewModel = FeedProfileEditViewModel(repository)
         viewModel.setProfileId(10)
     }
@@ -114,19 +73,9 @@ class FeedProfileEditViewModelTest {
     @After
     fun tearDown() {
         Dispatchers.resetMain()
-        unmockkStatic(
-            android.graphics.Color::class,
-            android.util.Log::class,
-            Process::class,
-            FirebaseCrashlytics::class,
-            com.github.mikephil.charting.utils.Utils::class
-        )
+        unmockkAll()
     }
 
-    /**
-     * Helper to skip the initial empty state and wait for the setProfileId
-     * coroutine to finish loading the profile from the repository.
-     */
     private suspend fun ReceiveTurbine<FeedProfileEditUiState>.skipItemsUntilLoaded(
         expectedId: Int
     ): FeedProfileEditUiState {
@@ -151,12 +100,10 @@ class FeedProfileEditViewModelTest {
             skipItemsUntilLoaded(10)
             val menuItemId = mapIndexToMenuItemId(3, FeedProfileEditPhaseType.PAUSE, 0)
 
-            // Act: Change phase 0 duration (maps to menuItemId 0 in current implementation)
             viewModel.onFeedProfileEditUiEvent(
                 FeedProfileEditUiEvent.DurationChange(menuItemId, newDuration = 99.0)
             )
 
-            // Yield to allow the ViewModel's internal flows to process the change
             testDispatcher.scheduler.advanceUntilIdle()
 
             val state = awaitItem()
@@ -171,17 +118,27 @@ class FeedProfileEditViewModelTest {
 
             val menuItemId = mapIndexToMenuItemId(3, FeedProfileEditPhaseType.PAUSE, 0)
 
-            // Act: Toggle Skimmer in phase 1
+            // Act: Toggle Skimmer in phase 0 to FALSE (it starts as TRUE in mock data)
             viewModel.onFeedProfileEditUiEvent(
                 FeedProfileEditUiEvent.SwitchToggle(
                     menuItemId,
                     toggleButtonType = FeedProfileEditToggleButtonType.Skimmer,
-                    isChecked = true
+                    isChecked = false
                 )
             )
+            
+            testDispatcher.scheduler.advanceUntilIdle()
 
-            val state = awaitItem()
-            assertTrue(state.feedProfile?.feedProfilePhases?.get(0)?.skimmer == true)
+            // Skip until we see the change
+            var found = false
+            for (i in 0..10) {
+                val state = awaitItem()
+                if (state.feedProfile?.feedProfilePhases?.get(0)?.skimmer == false) {
+                    found = true
+                    break
+                }
+            }
+            assertTrue("Skimmer toggle not reflected in state", found)
         }
     }
 
@@ -202,19 +159,17 @@ class FeedProfileEditViewModelTest {
             viewModel.onFeedProfileEditUiEvent(FeedProfileEditUiEvent.Reset)
 
             val state = awaitItem()
-            // Should be back to original mock value (10.0 from createMockFeedProfile)
+            // Should be back to original mock value (1.0 in createMockFeedProfile for pause01Duration)
             assertEquals(1.0, state.feedProfile?.feedProfilePhases?.get(0)?.duration)
         }
     }
 
     @Test
     fun `Update event calls repository updateFeedProfile`() = runTest {
-        // Act
         testDispatcher.scheduler.advanceUntilIdle() // Ensure init finished
         viewModel.onFeedProfileEditUiEvent(FeedProfileEditUiEvent.Update)
         testDispatcher.scheduler.advanceUntilIdle()
 
-        // Assert
         coVerify(exactly = 1) { repository.updateFeedProfile(any()) }
     }
 

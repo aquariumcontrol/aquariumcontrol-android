@@ -1,6 +1,4 @@
 /*
-// import.AquariumControl.domain.repository.HeatingStatsRepository
-// import.AquariumControl.data.repository.HeatingStatsRepositoryImpl
  *  Copyright 2026 Uwe Martin
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,24 +22,19 @@
 
 package com.laimburggasse.aquariumcontrol.heating.data
 
+import app.cash.turbine.test
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
 import com.laimburggasse.aquariumcontrol.common.testing.MockSessionManagerImpl
 import com.laimburggasse.aquariumcontrol.common.util.Logger
+import com.laimburggasse.aquariumcontrol.heating.data.repository.HeatingStatsRepositoryImpl
+import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
+import com.laimburggasse.aquariumcontrol.heating.domain.repository.HeatingStatsRepository
+import com.laimburggasse.aquariumcontrol.heating.testing.HeatingMockData
+import com.laimburggasse.aquariumcontrol.heating.testing.MockHeatingStatsApiServiceImpl
 import io.mockk.*
-import java.util.Calendar
-
-
-import app.cash.turbine.test
-
-
-
-
-
-
-
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -54,7 +47,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HeatingStatsRepositoryImplTest {
@@ -63,7 +55,7 @@ class HeatingStatsRepositoryImplTest {
     private val testDispatcher = StandardTestDispatcher()
     private val testScope = TestScope(testDispatcher)
     private val mockHeatingStatsApiService = MockHeatingStatsApiServiceImpl(
-        mockHeatingStatsData
+        HeatingMockData.mockHeatingStatsData
     )
     private val mockSessionManagerImpl = MockSessionManagerImpl(
         controllerProfiles = mockControllerProfileList
@@ -77,7 +69,7 @@ class HeatingStatsRepositoryImplTest {
             sessionManager = mockSessionManagerImpl,
             apiService = mockHeatingStatsApiService,
             repositoryScope = testScope,
-            context = IoDispatcher(testDispatcher)
+            ioDispatcher = IoDispatcher(testDispatcher)
         )
     }
 
@@ -88,7 +80,8 @@ class HeatingStatsRepositoryImplTest {
     }
 
     @Test
-    fun `heatingStatsFlow emits Loading then Success when controller is selected`() = runTest {
+    fun `heatingStats emits Loading then Success when controller is selected`() = runTest {
+
         repository.heatingStatsFlow.test {
             // Initial state from stateIn
             assertEquals(DataFetchResult.Loading, awaitItem())
@@ -100,49 +93,55 @@ class HeatingStatsRepositoryImplTest {
 
             // Assert
             val result = awaitItem()
-            assertTrue(result is DataFetchResult.Success)
-            assertEquals(mockHeatingStatsData, (result as DataFetchResult.Success).data)
 
-            // Ensure no further emissions occur
+            assertTrue(result is DataFetchResult.Success)
+            assertEquals(HeatingMockData.mockHeatingStatsData, (result as DataFetchResult.Success).data)
+
+            // Ensure no further emissions (like a second refresh or an error) occur
             expectNoEvents()
         }
     }
 
     @Test
-    fun `triggerRefresh causes a new fetch`() = runTest {
+    fun `triggerRefresh from success state emits refreshTrigger`() = runTest {
         mockSessionManagerImpl.selectControllerById(0)
 
         repository.heatingStatsFlow.test {
-            // Initial states
             assertTrue(awaitItem() is DataFetchResult.Loading)
-            testDispatcher.scheduler.advanceUntilIdle()
             assertTrue(awaitItem() is DataFetchResult.Success)
 
-            // Act: Trigger refresh
+            // Act: Refresh
             repository.triggerRefresh()
-            testDispatcher.scheduler.advanceUntilIdle()
 
-            // Assert: Should see Loading and then Success again
             assertTrue(awaitItem() is DataFetchResult.Loading)
-            val result = awaitItem()
-            assertTrue(result is DataFetchResult.Success)
-            assertEquals(mockHeatingStatsData, (result as DataFetchResult.Success).data)
+            assertTrue(awaitItem() is DataFetchResult.Success)
+
+            // Ensure no further emissions (like a second refresh or an error) occur
+            expectNoEvents()
         }
     }
 
     @Test
-    fun `heatingStatsFlow emits Error result on API failure`() = runTest {
+    fun `fetch failure emits Error result`() = runTest {
         mockSessionManagerImpl.selectControllerById(0)
-        
-        // induce failure
-        mockHeatingStatsApiService.setMockHeatingStats(null)
 
         repository.heatingStatsFlow.test {
-             assertTrue(awaitItem() is DataFetchResult.Loading)
-             testDispatcher.scheduler.advanceUntilIdle()
-             
-             val result = awaitItem()
-             assertTrue(result is DataFetchResult.Error)
+            assertTrue(awaitItem() is DataFetchResult.Loading)
+            assertTrue(awaitItem() is DataFetchResult.Success)
+
+            // Act: induce error with next API call
+            mockHeatingStatsApiService.setMockHeatingStats(null)
+
+            repository.triggerRefresh()
+
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            assertTrue(awaitItem() is DataFetchResult.Loading)
+            val result = awaitItem()
+            assertTrue(result is DataFetchResult.Error)
+
+            // Ensure no further emissions (like a second refresh or an error) occur
+            expectNoEvents()
         }
     }
 }

@@ -25,9 +25,12 @@ package com.laimburggasse.aquariumcontrol.balling.presentation.entry
 import app.cash.turbine.test
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingProfilesRepository
-import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData.mockBallingProfiles
+import com.laimburggasse.aquariumcontrol.balling.testing.*
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import io.mockk.*
+
+
+import app.cash.turbine.test
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -79,7 +82,7 @@ class BallingProfilesViewModelTest {
             awaitItem() // Skip Loading
 
             // Act: Simulate repository returning data
-            repositoryFlow.value = DataFetchResult.Success(mockBallingProfiles)
+            repositoryFlow.value = DataFetchResult.Success(BallingMockData.mockBallingProfiles)
 
             val item = awaitItem()
             assertTrue(item is BallingProfilesUiState.Success)

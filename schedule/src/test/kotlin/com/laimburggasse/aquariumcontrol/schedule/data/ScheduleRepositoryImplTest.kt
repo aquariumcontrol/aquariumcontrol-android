@@ -24,14 +24,22 @@
 
 package com.laimburggasse.aquariumcontrol.schedule.data
 
+import app.cash.turbine.test
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
 import com.laimburggasse.aquariumcontrol.common.testing.MockSessionManagerImpl
 import com.laimburggasse.aquariumcontrol.common.util.Logger
+import com.laimburggasse.aquariumcontrol.schedule.data.repository.ScheduleRepositoryImpl
+import com.laimburggasse.aquariumcontrol.schedule.domain.model.*
+import com.laimburggasse.aquariumcontrol.schedule.domain.repository.ScheduleRepository
+import com.laimburggasse.aquariumcontrol.schedule.testing.ScheduleMockData.mockScheduleEntries
+import com.laimburggasse.aquariumcontrol.schedule.testing.MockScheduleApiServiceImpl
 import io.mockk.*
 import java.util.Calendar
+
+
 
 
 import app.cash.turbine.test
@@ -63,10 +71,10 @@ class ScheduleRepositoryImplTest {
     private val testScope = TestScope(testDispatcher)
     
     private val mockScheduleStringEntries = listOf(
-        ScheduleStringEntry(ScheduleType.BALLING.key, "02:00:00", "22:00:00", 0),
-        ScheduleStringEntry(ScheduleType.REFILL.key, "03:00:00", "21:00:00", 1),
-        ScheduleStringEntry(ScheduleType.VENTILATION.key, "04:00:00", "20:00:00", 0),
-        ScheduleStringEntry(ScheduleType.HEATING.key, "05:00:00", "19:00:00", 1)
+        com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleStringEntry(ScheduleType.BALLING.key, "02:00:00", "22:00:00", 0),
+        com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleStringEntry(ScheduleType.REFILL.key, "03:00:00", "21:00:00", 1),
+        com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleStringEntry(ScheduleType.VENTILATION.key, "04:00:00", "20:00:00", 0),
+        com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleStringEntry(ScheduleType.HEATING.key, "05:00:00", "19:00:00", 1)
     )
     
     private val mockScheduleApiService = MockScheduleApiServiceImpl(

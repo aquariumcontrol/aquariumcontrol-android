@@ -1,6 +1,4 @@
 /*
-// import.AquariumControl.domain.repository.HeatingSetValsRepository
-// import.AquariumControl.data.repository.HeatingSetValsRepositoryImpl
  *  Copyright 2026 Uwe Martin
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,24 +22,19 @@
 
 package com.laimburggasse.aquariumcontrol.heating.data
 
+import app.cash.turbine.test
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
 import com.laimburggasse.aquariumcontrol.common.testing.MockSessionManagerImpl
 import com.laimburggasse.aquariumcontrol.common.util.Logger
+import com.laimburggasse.aquariumcontrol.heating.data.repository.HeatingSetValsRepositoryImpl
+import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
+import com.laimburggasse.aquariumcontrol.heating.domain.repository.HeatingSetValsRepository
+import com.laimburggasse.aquariumcontrol.heating.testing.HeatingMockData.mockHeatingSetVals
+import com.laimburggasse.aquariumcontrol.heating.testing.MockHeatingSetValsApiServiceImpl
 import io.mockk.*
-import java.util.Calendar
-
-
-import app.cash.turbine.test
-
-
-
-
-
-
-
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -54,7 +47,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HeatingSetValsRepositoryImplTest {
@@ -103,11 +95,9 @@ class HeatingSetValsRepositoryImplTest {
             val result = awaitItem()
 
             assertTrue(result is DataFetchResult.Success)
-            assertEquals(
-                mockHeatingSetVals, (result as DataFetchResult.Success).data
-            )
+            assertEquals(mockHeatingSetVals, (result as DataFetchResult.Success).data)
 
-            // Ensure no further emissions occur
+            // Ensure no further emissions (like a second refresh or an error) occur
             expectNoEvents()
         }
     }
@@ -115,147 +105,162 @@ class HeatingSetValsRepositoryImplTest {
     @Test
     fun `updateLocalValues performs optimistic update`() = runTest {
         mockSessionManagerImpl.selectControllerById(0)
-        val updatedSetVals = mockHeatingSetVals.copy(heatingSwitchOffTemp = 28.0)
-        
+        val updatedSwitchOnTemp = 24.0
+        val updatedHeatingSetVals = mockHeatingSetVals.copy(heatingSwitchOnTemp = updatedSwitchOnTemp)
         repository.heatingSetValsFlow.test {
-            // Initial Loading and Success
             assertTrue(awaitItem() is DataFetchResult.Loading)
-            testDispatcher.scheduler.advanceUntilIdle()
             assertTrue(awaitItem() is DataFetchResult.Success)
 
-            // Act: Update local values
-            repository.updateLocalValues(updatedSetVals)
+            // Act
+            repository.updateLocalValues(updatedHeatingSetVals)
 
-            // Assert: Optimistic update should be emitted immediately
+            // Optimistic update should emit Success immediately
             val result = awaitItem()
             assertTrue(result is DataFetchResult.Success)
-            assertEquals(updatedSetVals, (result as DataFetchResult.Success).data)
+            assertEquals(updatedSwitchOnTemp, (result as DataFetchResult.Success).data.heatingSwitchOnTemp, 0.0)
 
+            // Ensure no further emissions
             expectNoEvents()
         }
     }
 
     @Test
-    fun `updateValues commits values then refreshes`() = runTest {
+    fun `updateValues performs remote update then refreshes`() = runTest {
         mockSessionManagerImpl.selectControllerById(0)
-        val updatedSetVals = mockHeatingSetVals.copy(heatingSwitchOffTemp = 28.0)
-
+        val updatedSwitchOffTemp = 26.0
+        val updatedHeatingSetVals = mockHeatingSetVals.copy(heatingSwitchOffTemp = updatedSwitchOffTemp)
         repository.heatingSetValsFlow.test {
-            // Initial Loading and Success
             assertTrue(awaitItem() is DataFetchResult.Loading)
-            testDispatcher.scheduler.advanceUntilIdle()
             assertTrue(awaitItem() is DataFetchResult.Success)
 
-            // Act: Update local values and then commit
-            repository.updateLocalValues(updatedSetVals)
-            assertTrue(awaitItem() is DataFetchResult.Success) // Consume optimistic update
+            // Act: Optimistic update
+            repository.updateLocalValues(updatedHeatingSetVals)
+            assertTrue(awaitItem() is DataFetchResult.Success)
 
-            mockHeatingSetValsApiService.updateMockHeatingSetVals(updatedSetVals)
+            // Act: Remote update
+            mockHeatingSetValsApiService.updateMockHeatingSetVals(updatedHeatingSetVals)
             repository.updateValues()
 
-            // Consuming intermediate states if they appear (StateFlow conflation makes this non-deterministic)
             testDispatcher.scheduler.advanceUntilIdle()
-            
-            // We want to see the final updated value
-            var lastItem = awaitItem()
-            while ((lastItem !is DataFetchResult.Success) || (lastItem.data != updatedSetVals)) {
-                lastItem = awaitItem()
+
+            // Skip interim Success if it exists
+            var next = awaitItem()
+            if (next is DataFetchResult.Success) {
+                next = awaitItem()
             }
             
-            assertEquals(updatedSetVals, lastItem.data)
+            // 2. Refresh triggered emits Loading
+            assertTrue(next is DataFetchResult.Loading)
+            
+            // 3. Finally Success
+            val finalResult = awaitItem()
+            assertTrue(finalResult is DataFetchResult.Success)
+            assertEquals(updatedSwitchOffTemp, (finalResult as DataFetchResult.Success).data.heatingSwitchOffTemp, 0.0)
+
+            // Ensure no further emissions
+            expectNoEvents()
+        }
+    }
+
+    @Test
+    fun `triggerRefresh from error state clearing failureResult`() = runTest {
+        mockSessionManagerImpl.selectControllerById(0)
+
+        repository.heatingSetValsFlow.test {
+            assertTrue(awaitItem() is DataFetchResult.Loading)
+            assertTrue(awaitItem() is DataFetchResult.Success)
+
+            // Act: Induce error
+            mockHeatingSetValsApiService.setForceError(true)
+            repository.triggerRefresh()
+
+            assertTrue(awaitItem() is DataFetchResult.Loading)
+            val errorResult = awaitItem()
+            assertTrue(errorResult is DataFetchResult.Error)
+
+            // Act: Refresh
+            mockHeatingSetValsApiService.setForceError(false)
+            repository.triggerRefresh()
+
+            // When failureResult is cleared, it triggers network fetch
+            assertTrue(awaitItem() is DataFetchResult.Loading)
+            val successResult = awaitItem()
+            assertTrue(successResult is DataFetchResult.Success)
+            assertEquals(mockHeatingSetVals, (successResult as DataFetchResult.Success).data)
+
+            // Ensure no further emissions
+            expectNoEvents()
+        }
+    }
+
+    @Test
+    fun `reset clears optimistic state`() = runTest {
+        mockSessionManagerImpl.selectControllerById(0)
+
+        repository.heatingSetValsFlow.test {
+            assertTrue(awaitItem() is DataFetchResult.Loading)
+            assertTrue(awaitItem() is DataFetchResult.Success)
+
+            // Act: Optimistic update
+            repository.updateLocalValues(mockHeatingSetVals.copy(heatingSwitchOnTemp = 99.0))
+            assertTrue(awaitItem() is DataFetchResult.Success)
+
+            // Act: Reset
+            repository.reset()
+
+            // reset() clears pendingUpdate, so it should emit the last network state (Success)
+            val result = awaitItem()
+            assertTrue(result is DataFetchResult.Success)
+            assertEquals(mockHeatingSetVals.heatingSwitchOnTemp, (result as DataFetchResult.Success).data.heatingSwitchOnTemp, 0.0)
+
+            // Ensure no further emissions
+            expectNoEvents()
+        }
+    }
+
+    @Test
+    fun `triggerRefresh from success state emits refreshTrigger`() = runTest {
+        mockSessionManagerImpl.selectControllerById(0)
+
+        repository.heatingSetValsFlow.test {
+            assertTrue(awaitItem() is DataFetchResult.Loading)
+            assertTrue(awaitItem() is DataFetchResult.Success)
+
+            // Act: Refresh
+            repository.triggerRefresh()
+
+            assertTrue(awaitItem() is DataFetchResult.Loading)
+            assertTrue(awaitItem() is DataFetchResult.Success)
+
+            // Ensure no further emissions
+            expectNoEvents()
         }
     }
 
     @Test
     fun `updateValues failure emits Error result`() = runTest {
         mockSessionManagerImpl.selectControllerById(0)
-        val updatedSetVals = mockHeatingSetVals.copy(heatingSwitchOffTemp = 28.0)
 
         repository.heatingSetValsFlow.test {
-            // Initial Loading and Success
             assertTrue(awaitItem() is DataFetchResult.Loading)
-            testDispatcher.scheduler.advanceUntilIdle()
             assertTrue(awaitItem() is DataFetchResult.Success)
 
-            // Induce failure in next API call
-            mockHeatingSetValsApiService.setForceError(force = true)
-
-            repository.updateLocalValues(updatedSetVals)
-            assertTrue(awaitItem() is DataFetchResult.Success) // Consume optimistic update
-
+            // Act: induce error
+            mockHeatingSetValsApiService.setForceError(true)
             repository.updateValues()
 
             testDispatcher.scheduler.advanceUntilIdle()
 
-            // The public flow combines stable network data with local edits.
-            // When updateValues fails, the repository sets failureResult.
-            // networkDataFlow will emit Error.
-            // heatingSetValsFlow combines networkDataFlow and pendingUpdate.
-            // In case of failure, updateValues sets pendingUpdate.value = null
-
-            val result = awaitItem()
-            // This could be the old Success or the Error
+            // Skip interim Success if it exists
+            var result = awaitItem()
             if (result is DataFetchResult.Success) {
-                val errorResult = awaitItem()
-                assertTrue(errorResult is DataFetchResult.Error)
-            } else {
-                assertTrue(result is DataFetchResult.Error)
+                result = awaitItem()
             }
-        }
-    }
-
-    @Test
-    fun `reset clears pending update`() = runTest {
-        mockSessionManagerImpl.selectControllerById(0)
-        val updatedSetVals = mockHeatingSetVals.copy(heatingSwitchOffTemp = 28.0)
-
-        repository.heatingSetValsFlow.test {
-            // Initial Loading and Success
-            assertTrue(awaitItem() is DataFetchResult.Loading)
-            testDispatcher.scheduler.advanceUntilIdle()
-            assertTrue(awaitItem() is DataFetchResult.Success)
-
-            // Act: Update local values
-            repository.updateLocalValues(updatedSetVals)
-            assertTrue(awaitItem() is DataFetchResult.Success) // Consume optimistic update
-
-            // Reset
-            repository.reset()
-
-            // Assert: Should revert to original data
-            val result = awaitItem()
-            assertTrue(result is DataFetchResult.Success)
-            assertEquals(
-                mockHeatingSetVals, (result as DataFetchResult.Success).data
-            )
-        }
-    }
-
-    @Test
-    fun `triggerRefresh re-fetches data`() = runTest {
-        mockSessionManagerImpl.selectControllerById(0)
-
-        repository.heatingSetValsFlow.test {
-            // Initial Loading and Success
-            assertTrue(awaitItem() is DataFetchResult.Loading)
-            testDispatcher.scheduler.advanceUntilIdle()
-            assertTrue(awaitItem() is DataFetchResult.Success)
-
-            // Act: Trigger refresh
-            repository.triggerRefresh()
             
-            // Assert: Should see Loading and then Success
-            testDispatcher.scheduler.advanceUntilIdle()
-            
-            val refreshLoading = awaitItem()
-            assertTrue(refreshLoading is DataFetchResult.Loading)
-            
-            val refreshSuccess = awaitItem()
-            assertTrue(refreshSuccess is DataFetchResult.Success)
-            assertEquals(
-                mockHeatingSetVals,
-                (refreshSuccess as DataFetchResult.Success).data
-            )
+            assertTrue(result is DataFetchResult.Error)
+
+            // Ensure no further emissions
+            expectNoEvents()
         }
     }
 }

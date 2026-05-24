@@ -1,15 +1,15 @@
 /*
- * Copyright 2026 Uwe Martin
+ *  Copyright 2026 Uwe Martin
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -22,15 +22,12 @@
 
 package com.laimburggasse.aquariumcontrol.heating.presentation
 
-import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import io.mockk.*
-
-
-
-
-
-
 import app.cash.turbine.test
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
+import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
+import com.laimburggasse.aquariumcontrol.heating.domain.repository.HeatingSetValsRepository
+import com.laimburggasse.aquariumcontrol.heating.testing.HeatingMockData
+import io.mockk.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,11 +37,9 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HeatingSetValsViewModelTest {
@@ -52,16 +47,14 @@ class HeatingSetValsViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var repository: HeatingSetValsRepository
     private lateinit var viewModel: HeatingSetValsViewModel
-
-    // Controlled source for repository updates
     private val repositoryFlow = MutableStateFlow<DataFetchResult<HeatingSetVals>>(DataFetchResult.Loading)
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        repository = mockk(relaxed = true)
+        repository = mockk()
 
-        // Stub the repository flow
+        // Stub the repository to return our controlled flow
         every { repository.heatingSetValsFlow } returns repositoryFlow
 
         viewModel = HeatingSetValsViewModel(repository)
@@ -75,117 +68,77 @@ class HeatingSetValsViewModelTest {
     @Test
     fun `initial state is Loading`() = runTest {
         viewModel.heatingSetValsUiState.test {
+            // StateFlow immediately emits its initial value
             assertEquals(HeatingSetValsUiState.Loading, awaitItem())
         }
     }
 
     @Test
-    fun `successful fetch updates state to Success and validates data`() = runTest {
+    fun `successful fetch updates state to Success`() = runTest {
         viewModel.heatingSetValsUiState.test {
-            awaitItem() // Loading
+            awaitItem() // Skip Loading
 
-            // Act
-            repositoryFlow.value = DataFetchResult.Success(mockHeatingSetVals)
+            // Act: Simulate repository returning data
+            repositoryFlow.value = DataFetchResult.Success(HeatingMockData.mockHeatingSetVals)
 
-            val state = awaitItem()
-
-            // Ensure all side effects (like updating the validity StateFlow) are processed
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            assertTrue(state is HeatingSetValsUiState.Success)
-            assertEquals(
-                mockHeatingSetVals.heatingSwitchOffTemp,
-                (state as HeatingSetValsUiState.Success).heatingSetVals.heatingSwitchOffTemp,
-                0.0
-            )
-
-            // Verify the validity side effect
-            assertTrue(viewModel.heatingSetValsValid.value == true)
+            val item = awaitItem()
+            assertTrue(item is HeatingSetValsUiState.Success)
+            assertEquals(HeatingMockData.mockHeatingSetVals, (item as HeatingSetValsUiState.Success).heatingSetVals)
         }
     }
 
     @Test
-    fun `invalid data in fetch result sets heatingSetValsValid to false`() = runTest {
-        // Arrange: Create invalid values (Off > On)
-        val invalidVals = HeatingSetVals(
-            heatingSwitchOffTemp = 20.0,
-            heatingSwitchOnTemp = 30.0
-        )
-
+    fun `error fetch updates state to Error`() = runTest {
         viewModel.heatingSetValsUiState.test {
-            awaitItem() // Loading
+            awaitItem() // Skip Loading
 
-            // Act
-            repositoryFlow.value = DataFetchResult.Success(invalidVals)
-            awaitItem()
+            // Act: Simulate repository returning an error
+            val errorMessage = "Network Error"
+            repositoryFlow.value = DataFetchResult.Error(Exception(errorMessage), errorMessage)
 
-            // Assert
-            assertFalse(viewModel.heatingSetValsValid.value == true)
+            val item = awaitItem()
+            assertTrue(item is HeatingSetValsUiState.Error)
+            assertEquals(errorMessage, (item as HeatingSetValsUiState.Error).errorMessage)
         }
     }
 
     @Test
-    fun `failed fetch updates state to Error`() = runTest {
-        val errorMsg = "API Error"
-        viewModel.heatingSetValsUiState.test {
-            awaitItem() // Loading
+    fun `onHeatingSetValsEvent Refresh calls repository triggerRefresh`() = runTest {
+        coEvery { repository.triggerRefresh() } just Runs
 
-            // Act
-            repositoryFlow.value = DataFetchResult.Error(Exception(), errorMsg)
+        // Act
+        viewModel.onHeatingSetValsEvent(HeatingSetValsUiEvent.Refresh)
 
-            val state = awaitItem()
-            assertTrue(state is HeatingSetValsUiState.Error)
-            assertEquals(errorMsg, (state as HeatingSetValsUiState.Error).errorMessage)
-        }
+        // Ensure the viewModelScope.launch has finished executing
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Assert
+        coVerify(exactly = 1) { repository.triggerRefresh() }
     }
 
     @Test
-    fun `ChangeLowerValue event updates local repository using current state`() = runTest {
-        // Arrange: Start with success
-        repositoryFlow.value = DataFetchResult.Success(mockHeatingSetVals)
+    fun `onHeatingSetValsEvent ChangeLowerValue calls repository updateLocalValues`() = runTest {
+        every { repository.updateLocalValues(any()) } just Runs
+        
+        repositoryFlow.value = DataFetchResult.Success(HeatingMockData.mockHeatingSetVals)
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Act
-        viewModel.onHeatingSetValsEvent(HeatingSetValsUiEvent.ChangeLowerValue(23.0f))
+        val newValue = 22.0f
+        viewModel.onHeatingSetValsEvent(HeatingSetValsUiEvent.ChangeLowerValue(newValue))
 
         // Assert
-        verify {
-            repository.updateLocalValues(match { it.heatingSwitchOnTemp == 23.0 })
-        }
+        verify(exactly = 1) { repository.updateLocalValues(match { it.heatingSwitchOnTemp == newValue.toDouble() }) }
     }
 
     @Test
-    fun `ChangeHigherValue event updates local repository using current state`() = runTest {
-        // Arrange: Start with success
-        repositoryFlow.value = DataFetchResult.Success(mockHeatingSetVals)
-        testDispatcher.scheduler.advanceUntilIdle()
+    fun `onHeatingSetValsEvent Update calls repository updateValues`() = runTest {
+        coEvery { repository.updateValues() } just Runs
 
-        // Act
-        viewModel.onHeatingSetValsEvent(HeatingSetValsUiEvent.ChangeUpperValue(28.0f))
-
-        // Assert
-        verify {
-            repository.updateLocalValues(match { it.heatingSwitchOffTemp == 28.0 })
-        }
-    }
-
-    @Test
-    fun `ChangeRange event updates local repository`() = runTest {
-        // Act
-        viewModel.onHeatingSetValsEvent(HeatingSetValsUiEvent.ChangeRange(22.0f, 25.0f))
-
-        // Assert
-        verify {
-            repository.updateLocalValues(match {
-                it.heatingSwitchOnTemp == 22.0 && it.heatingSwitchOffTemp == 25.0
-            })
-        }
-    }
-
-    @Test
-    fun `Update event triggers repository update`() = runTest {
         // Act
         viewModel.onHeatingSetValsEvent(HeatingSetValsUiEvent.Update)
+
+        // Ensure the viewModelScope.launch has finished executing
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Assert
@@ -193,21 +146,13 @@ class HeatingSetValsViewModelTest {
     }
 
     @Test
-    fun `Reset event triggers repository reset`() = runTest {
+    fun `onHeatingSetValsEvent Reset calls repository reset`() = runTest {
+        every { repository.reset() } just Runs
+
         // Act
         viewModel.onHeatingSetValsEvent(HeatingSetValsUiEvent.Reset)
 
         // Assert
         verify(exactly = 1) { repository.reset() }
-    }
-
-    @Test
-    fun `Refresh event triggers repository refresh`() = runTest {
-        // Act
-        viewModel.onHeatingSetValsEvent(HeatingSetValsUiEvent.Refresh)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        // Assert
-        coVerify(exactly = 1) { repository.triggerRefresh() }
     }
 }

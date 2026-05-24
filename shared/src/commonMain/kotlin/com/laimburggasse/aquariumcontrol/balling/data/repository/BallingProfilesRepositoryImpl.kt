@@ -96,6 +96,7 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
         }.stateIn(scope = repositoryScope, started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), initialValue = DataFetchResult.Loading)
 
     override fun updateBallingProfile(ballingProfile: BallingProfile) {
+        localState.update { it.copy(pendingUpdate = ballingProfile) }
         val controllerAddress = sessionManager.getControllerAddress()
         if (controllerAddress.isNullOrBlank()) {
             localState.update { it.copy(pendingUpdate = null, failureResult = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_INVALID_CONTROLLER_ADDRESS)) }

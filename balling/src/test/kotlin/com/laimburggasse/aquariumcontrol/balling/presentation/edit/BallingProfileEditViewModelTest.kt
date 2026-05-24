@@ -25,7 +25,7 @@ package com.laimburggasse.aquariumcontrol.balling.presentation.edit
 import app.cash.turbine.test
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingProfilesRepository
-import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData.mockBallingProfiles
+import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import io.mockk.*
 import kotlinx.coroutines.Dispatchers
@@ -76,26 +76,26 @@ class BallingProfileEditViewModelTest {
     @Test
     fun `successful fetch with profile ID updates state to Success`() = runTest {
         viewModel.ballingProfileEditUiState.test {
-            awaitItem() // Skip initial Loading
+            assertEquals(BallingProfileEditUiState.Loading, awaitItem())
 
             // Act: Set profile ID and simulate repository returning data
-            viewModel.setProfileId(mockBallingProfiles[0].pumpId)
-            repositoryFlow.value = DataFetchResult.Success(mockBallingProfiles)
+            viewModel.setProfileId(BallingMockData.mockBallingProfiles[0].pumpId)
+            repositoryFlow.value = DataFetchResult.Success(BallingMockData.mockBallingProfiles)
 
             val item = awaitItem()
             assertTrue(item is BallingProfileEditUiState.Success)
-            assertEquals(mockBallingProfiles[0], (item as BallingProfileEditUiState.Success).ballingProfile)
+            assertEquals(BallingMockData.mockBallingProfiles[0], (item as BallingProfileEditUiState.Success).ballingProfile)
         }
     }
 
     @Test
     fun `ChangeDosingVolume event updates unconfirmedProfile`() = runTest {
         viewModel.ballingProfileEditUiState.test {
-            awaitItem() // Loading
+            assertEquals(BallingProfileEditUiState.Loading, awaitItem())
 
-            viewModel.setProfileId(mockBallingProfiles[0].pumpId)
-            repositoryFlow.value = DataFetchResult.Success(mockBallingProfiles)
-            awaitItem() // Success
+            viewModel.setProfileId(BallingMockData.mockBallingProfiles[0].pumpId)
+            repositoryFlow.value = DataFetchResult.Success(BallingMockData.mockBallingProfiles)
+            assertTrue(awaitItem() is BallingProfileEditUiState.Success)
 
             // Act
             val newVolume = 5.0
@@ -109,19 +109,26 @@ class BallingProfileEditViewModelTest {
 
     @Test
     fun `ConfirmDosingVolume event calls repository updateBallingProfile`() = runTest {
-        coEvery { repository.updateBallingProfile(any()) } just Runs
+        every { repository.updateBallingProfile(any()) } just Runs
 
-        // Arrange
-        viewModel.setProfileId(mockBallingProfiles[0].pumpId)
-        repositoryFlow.value = DataFetchResult.Success(mockBallingProfiles)
-        testDispatcher.scheduler.advanceUntilIdle()
+        // Act & Assert within subscription
+        viewModel.ballingProfileEditUiState.test {
+            assertEquals(BallingProfileEditUiState.Loading, awaitItem())
+            
+            // Arrange
+            viewModel.setProfileId(BallingMockData.mockBallingProfiles[0].pumpId)
+            repositoryFlow.value = DataFetchResult.Success(BallingMockData.mockBallingProfiles)
+            
+            assertTrue(awaitItem() is BallingProfileEditUiState.Success)
 
-        // Act
-        val newVolume = 5.0
-        viewModel.onEvent(BallingProfileEditUiEvent.ConfirmDosingVolume(newVolume))
-        testDispatcher.scheduler.advanceUntilIdle()
+            // Act
+            val newVolume = 5.0
+            viewModel.onEvent(BallingProfileEditUiEvent.ConfirmDosingVolume(newVolume))
+            
+            testDispatcher.scheduler.advanceUntilIdle()
 
-        // Assert
-        coVerify(exactly = 1) { repository.updateBallingProfile(match { it.volume == newVolume }) }
+            // Assert
+            verify(exactly = 1) { repository.updateBallingProfile(match { it.volume == newVolume }) }
+        }
     }
 }
