@@ -30,7 +30,7 @@ interface RefillHistoryApiService : BaseHistoryApiService {
     override suspend fun getHistory(
         url: String,
         authHeader: String,
-        date: String,
+        date: Long,
     ): List<RefillHistoryLogEntry>
 
     override suspend fun getHistoryStart(

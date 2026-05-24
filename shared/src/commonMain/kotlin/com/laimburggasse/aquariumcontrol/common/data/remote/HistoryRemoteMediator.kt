@@ -33,10 +33,7 @@ import com.laimburggasse.aquariumcontrol.common.domain.BaseHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.common.util.Base64
-import io.ktor.utils.io.charsets.Charsets
-import io.ktor.utils.io.core.toByteArray
 import kotlinx.datetime.*
-import kotlin.time.Clock
 
 @OptIn(ExperimentalPagingApi::class)
 class HistoryRemoteMediator<T : BaseHistoryLogEntry>(
@@ -51,14 +48,6 @@ class HistoryRemoteMediator<T : BaseHistoryLogEntry>(
     private var serverUsed: ControllerProfile? = null
     private val msInDay = 86_400_000L // milliseconds in one day
 
-    fun dateToTimestamp(date: LocalDate): Long {
-        // Converts the date to an Instant at 00:00:00 in the system default timezone
-        val instant = date.atStartOfDayIn(TimeZone.currentSystemDefault())
-
-        // Convert to milliseconds
-        return instant.toEpochMilliseconds()
-    }
-
     private fun getCurrentDate(): Long {
         val serverTime = sessionManager.serverTimestamp.value
 
@@ -67,12 +56,12 @@ class HistoryRemoteMediator<T : BaseHistoryLogEntry>(
         } else {
             // use local time as backup
             val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-            dateToTimestamp(today)
+            today.atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds()
         }
     }
 
-    private fun getYesterdaysDate(): Long {
-        return getCurrentDate() - msInDay
+    private fun getYesterdaysDate(current: Long): Long {
+        return current - msInDay
     }
 
     override suspend fun load(
@@ -93,7 +82,7 @@ class HistoryRemoteMediator<T : BaseHistoryLogEntry>(
                 return MediatorResult.Success(endOfPaginationReached = true)
             }
 
-            val authHeader = "Basic " + Base64.encode("$user:$password".toByteArray(Charsets.ISO_8859_1))
+            val authHeader = "Basic " + Base64.encode("$user:$password".encodeToByteArray())
             val baseUrl = "http://$address:$port"
 
             if (historyLogStart == null) {
@@ -106,7 +95,7 @@ class HistoryRemoteMediator<T : BaseHistoryLogEntry>(
                 serverUsed = sessionManager.selectedControllerProfile.value
             }
 
-            var currentLoadKey = when (loadType) {
+            var currentLoadKey: Long = when (loadType) {
                 LoadType.REFRESH -> getCurrentDate()
                 LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
                 LoadType.APPEND -> {
@@ -114,7 +103,7 @@ class HistoryRemoteMediator<T : BaseHistoryLogEntry>(
                     if (lastItem == null) {
                         getCurrentDate()
                     } else {
-                        getYesterdaysDate()
+                        getYesterdaysDate(lastItem.timestamp)
                     }
                 }
             }
@@ -134,12 +123,7 @@ class HistoryRemoteMediator<T : BaseHistoryLogEntry>(
                 allEntries.addAll(entries as List<T>)
 
                 reachedAbsoluteStart = if (historyLogStart != null) {
-                    try {
-                        // compiler still thinks historyLogStart could be null at this point
-                        currentLoadKey <= (historyLogStart ?: currentLoadKey)
-                    } catch (_: Exception) {
-                        false
-                    }
+                    currentLoadKey <= (historyLogStart!!)
                 } else {
                     entries.isEmpty()
                 }

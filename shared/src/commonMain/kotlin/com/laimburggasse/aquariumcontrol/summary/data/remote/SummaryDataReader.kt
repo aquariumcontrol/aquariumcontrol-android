@@ -40,7 +40,7 @@ class SummaryDataReader (
     password: String
 ) {
     // This class reads the overview data from the server using a GET request.
-    private val authHeaderValue: String = "Basic " + Base64.encode("$username:$password".toByteArray())
+    private val authHeaderValue: String = "Basic " + Base64.encode("$username:$password".encodeToByteArray())
 
     suspend fun readSummaryData(): DataFetchResult<SummaryData> {
         return try {

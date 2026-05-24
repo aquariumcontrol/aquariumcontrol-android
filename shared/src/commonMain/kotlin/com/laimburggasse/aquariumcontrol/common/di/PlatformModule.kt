@@ -7,7 +7,7 @@ import com.laimburggasse.aquariumcontrol.common.util.Logger
 import io.ktor.client.engine.HttpClientEngine
 
 interface PlatformModule {
-    val logger: Logger
+    fun provideLogger(): Logger
     fun provideHttpClientEngine(): HttpClientEngine
     fun provideDataStore(): DataStore<Preferences>
     fun provideAquariumDatabase(): AquariumDatabase

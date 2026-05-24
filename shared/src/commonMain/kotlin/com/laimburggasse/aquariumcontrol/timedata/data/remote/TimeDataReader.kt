@@ -40,7 +40,7 @@ class TimeDataReader (
     password: String
 ) {
     // This class reads the time series from the server using a GET request.
-    private val authHeaderValue: String = "Basic " + Base64.encode("$username:$password".toByteArray())
+    private val authHeaderValue: String = "Basic " + Base64.encode("$username:$password".encodeToByteArray())
 
     suspend fun readTimeDataSeries(): DataFetchResult<List<TimeDataStringSample>> {
         return try {

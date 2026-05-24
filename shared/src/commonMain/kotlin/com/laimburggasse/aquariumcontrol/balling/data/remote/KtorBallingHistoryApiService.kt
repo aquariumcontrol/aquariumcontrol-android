@@ -20,7 +20,7 @@ class KtorBallingHistoryApiService @Inject constructor(
     ): List<BallingHistoryLogEntry> {
         val dtos: List<BallingHistoryLogEntryDto> = client.get(url) {
             header("Authorization", authHeader)
-            parameter("date", date)
+            parameter("date", date.toString())
         }.body()
         return dtos.map { it.toBallingHistoryLogEntry() }
     }

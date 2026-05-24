@@ -20,27 +20,10 @@
  * SOFTWARE.
  */
 
-package com.laimburggasse.aquariumcontrol.common.data.local
+package com.laimburggasse.aquariumcontrol.feed.domain.model
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Query
-import androidx.room.Upsert
-import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
-import kotlinx.coroutines.flow.Flow
-
-@Dao
-interface ControllerProfileDao {
-    // This interface defines the data access object for the controller profile database.
-    @Upsert
-    suspend fun upsertControllerProfile(controllerProfile: ControllerProfile): Long
-
-    @Query(value = "SELECT * FROM ${ControllerProfileDatabase.TABLE_NAME_CONTROLLER_LIST}")
-    fun getAllControllerProfiles(): Flow<List<ControllerProfile>>
-
-    @Query(value = "SELECT * FROM ${ControllerProfileDatabase.TABLE_NAME_CONTROLLER_LIST} WHERE id = :id")
-    suspend fun getControllerProfileById(id: Long): ControllerProfile?
-
-    @Delete
-    suspend fun deleteControllerProfile(controllerProfile: ControllerProfile)
-}
+/**
+ * A data class to act as a stable, unique identifier for a schedule entry.
+ * It combines the profile ID and the exact timestamp.
+ */
+data class FeedScheduleEntryKey(val profileId: Int, val timestamp: Long)

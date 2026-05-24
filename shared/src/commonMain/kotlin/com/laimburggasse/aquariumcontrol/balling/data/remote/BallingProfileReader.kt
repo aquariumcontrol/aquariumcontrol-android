@@ -22,15 +22,11 @@
 
 package com.laimburggasse.aquariumcontrol.balling.data.remote
 
-
-
 import com.laimburggasse.aquariumcontrol.common.util.Logger
-
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.util.Base64
-
 
 class BallingProfileReader (
     private val logger: Logger,
@@ -40,7 +36,7 @@ class BallingProfileReader (
     password: String
 ) {
     // This class reads the Balling profiles from the server using a GET request.
-    private val authHeaderValue: String = "Basic " + Base64.encode("$username:$password".toByteArray())
+    private val authHeaderValue: String = "Basic " + Base64.encode("$username:$password".encodeToByteArray())
 
     suspend fun readBallingProfiles(): DataFetchResult<List<BallingProfile>> {
         return try {

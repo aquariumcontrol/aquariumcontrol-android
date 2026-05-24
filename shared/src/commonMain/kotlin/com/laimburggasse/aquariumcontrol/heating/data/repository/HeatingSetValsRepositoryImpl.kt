@@ -201,7 +201,7 @@ open class HeatingSetValsRepositoryImpl @Inject constructor(
                 val port = sessionManager.getControllerPort()
 
                 val url = "http://$controllerAddress:$port${WebApiUrls.HEATING_UPDATE_SET_VALS}"
-                val authHeader = "Basic " + Base64.encode("$user:$password".toByteArray())
+                val authHeader = "Basic " + Base64.encode("$user:$password".encodeToByteArray())
 
                 val postParams = mapOf(
                     WebApiParams.HEATING_SWITCH_ON_TEMPERATURE to currentValues.heatingSwitchOnTemp.toString(),

@@ -22,6 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.schedule.presentation
 
+import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleType
+
 sealed interface ScheduleUiEvent {
     object Update: ScheduleUiEvent
     object Reset: ScheduleUiEvent

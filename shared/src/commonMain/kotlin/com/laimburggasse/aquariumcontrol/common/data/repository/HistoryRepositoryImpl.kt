@@ -22,17 +22,12 @@
 
 package com.laimburggasse.aquariumcontrol.common.data.repository
 
-import androidx.paging.*
-
+import androidx.paging.Pager
+import androidx.paging.PagingData
 import com.laimburggasse.aquariumcontrol.common.domain.HistoryRepository
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.*
 import me.tatarka.inject.annotations.Inject
 
 open class HistoryRepositoryImpl<T : Any> @Inject constructor(
@@ -40,28 +35,21 @@ open class HistoryRepositoryImpl<T : Any> @Inject constructor(
     private val pager: Pager<Int, T>
 ) : HistoryRepository<T> {
 
-    // Trigger for manual refreshes (e.g., pull-to-refresh)
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
 
-    /**
-     * A reactive Flow that provides the history events using Paging 3.
-     */
     @OptIn(ExperimentalCoroutinesApi::class)
     override val historyEventFlow: Flow<PagingData<T>> =
         combine(
             flow = sessionManager.selectedControllerProfile,
-            flow2 = refreshTrigger.onStart { emit(value = Unit) }, // Trigger on first collection
+            flow2 = refreshTrigger.onStart { emit(value = Unit) },
         ) { controller, _ ->
             controller
         }
-            .filter { it != null } // Only proceed if a controller is selected
-            .flatMapLatest { _ ->
-                pager.flow
-            }
+        .filter { it != null }
+        .flatMapLatest { _ ->
+            pager.flow
+        }
 
-    /**
-     * Public function for the ViewModel to trigger a manual refresh.
-     */
     override suspend fun triggerRefresh() {
         refreshTrigger.emit(value = Unit)
     }

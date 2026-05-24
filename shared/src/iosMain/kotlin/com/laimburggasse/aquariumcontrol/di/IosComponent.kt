@@ -36,7 +36,5 @@ abstract class IosComponent : SharedModule, IosPlatformModule {
     abstract val timeDataRepository: TimeDataRepository
     abstract val ventilationSetValsRepository: VentilationSetValsRepository
 
-    companion object {
-        fun create(): IosComponent = IosComponent::class.create()
-    }
+    companion object
 }

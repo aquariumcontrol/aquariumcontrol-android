@@ -34,13 +34,13 @@ interface FeedScheduleRepository {
         feedProfileId: Int,
         feedProfileName: String,
         repeatDaily: Boolean,
-        selectedCalendar: Calendar
+        timestampMillis: Long
     )
     fun updateFeedScheduleEntry(
         feedProfileId: Int,
         feedProfileName: String,
         repeatDaily: Boolean,
-        selectedCalendar: Calendar,
+        timestampMillis: Long,
         millisSinceEpoch: Long
     )
     suspend fun triggerRefresh()

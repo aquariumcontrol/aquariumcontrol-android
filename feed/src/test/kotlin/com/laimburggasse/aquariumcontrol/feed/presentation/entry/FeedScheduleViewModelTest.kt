@@ -126,7 +126,7 @@ class FeedScheduleViewModelTest {
         val entry = mockk<FeedScheduleEntry>()
 
         // Act
-        viewModel.onFeedSchedulesUiEvent(FeedScheduleUiEvent.DeleteFeedScheduleEntry(entry))
+        viewModel.onFeedScheduleEntryUiEvent(FeedScheduleUiEvent.DeleteFeedScheduleEntry(entry))
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Assert
@@ -193,7 +193,7 @@ class FeedScheduleViewModelTest {
         every { profilesRepository.findProfileByName(name) } returns mockFeedProfile
 
         // Act
-        val result = viewModel.onFeedSchedulesUiEvent(
+        val result = viewModel.onFeedScheduleEntryUiEvent(
             FeedScheduleUiEvent.GetFeedProfileIdByName(name)
         )
 

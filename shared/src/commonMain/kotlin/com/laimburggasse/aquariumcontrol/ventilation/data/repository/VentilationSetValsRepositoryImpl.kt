@@ -22,6 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.ventilation.data.repository
 
+import com.laimburggasse.aquariumcontrol.common.util.Base64
+
 
 
 import com.laimburggasse.aquariumcontrol.common.util.Logger
@@ -202,7 +204,7 @@ open class VentilationSetValsRepositoryImpl @Inject constructor(
                 val port = sessionManager.getControllerPort()
 
                 val url = "http://$controllerAddress:$port${WebApiUrls.VENTILATION_UPDATE_SET_VALS}"
-                val authHeader = "Basic " + "$user:$password".toByteArray(Charsets.ISO_8859_1).encodeBase64()
+                val authHeader = "Basic " + "$user:$password".encodeToByteArray().let { Base64.encode(it) }
                 val postParams = mapOf(
                     WebApiParams.VENTILATION_SWITCH_ON_TEMPERATURE to currentValues.ventilationSwitchOnTemp.toString(),
                     WebApiParams.VENTILATION_SWITCH_OFF_TEMPERATURE to currentValues.ventilationSwitchOffTemp.toString()

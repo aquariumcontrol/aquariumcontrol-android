@@ -26,7 +26,11 @@ object Base64 {
                 }
             }
         }
-        return bytes.toByteArray()
+        val result = ByteArray(bytes.size)
+        for (index in bytes.indices) {
+            result[index] = bytes[index]
+        }
+        return result
     }
 
     fun decodeToString(input: String): String = decode(input).decodeToString()

@@ -3,6 +3,7 @@ package com.laimburggasse.aquariumcontrol.common.data.local
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.RoomDatabaseConstructor
 
 fun getDatabaseBuilder(ctx: Context): RoomDatabase.Builder<AquariumDatabase> {
     val appContext = ctx.applicationContext
@@ -12,3 +13,4 @@ fun getDatabaseBuilder(ctx: Context): RoomDatabase.Builder<AquariumDatabase> {
         name = dbFile.absolutePath
     )
 }
+

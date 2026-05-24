@@ -15,11 +15,12 @@ import okio.Path.Companion.toPath
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
+import kotlinx.cinterop.ExperimentalForeignApi
 
 interface IosPlatformModule : PlatformModule {
-    @get:Provides
+    @Provides
     @ApplicationScope
-    override val logger: Logger get() = IosLogger()
+    override fun provideLogger(): Logger = IosLogger()
 
     @Provides
     @ApplicationScope
@@ -28,7 +29,7 @@ interface IosPlatformModule : PlatformModule {
     @Provides
     @ApplicationScope
     override fun provideDataStore(): DataStore<Preferences> {
-        return PreferenceDataStoreFactory.create(
+        return PreferenceDataStoreFactory.createWithPath(
             produceFile = { (documentDirectory() + "/aquarium_control_prefs.preferences_pb").toPath() }
         )
     }
@@ -39,6 +40,7 @@ interface IosPlatformModule : PlatformModule {
         return getRoomDatabase(getDatabaseBuilder())
     }
 
+    @OptIn(ExperimentalForeignApi::class)
     private fun documentDirectory(): String {
         val documentDirectory = NSFileManager.defaultManager.URLForDirectory(
             directory = NSDocumentDirectory,

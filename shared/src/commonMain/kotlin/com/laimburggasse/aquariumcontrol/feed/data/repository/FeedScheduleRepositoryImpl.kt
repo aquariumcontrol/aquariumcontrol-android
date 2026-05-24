@@ -22,12 +22,7 @@
 
 package com.laimburggasse.aquariumcontrol.feed.data.repository
 
-import kotlin.time.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
-
 import com.laimburggasse.aquariumcontrol.common.util.Logger
-
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
@@ -36,53 +31,38 @@ import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.common.util.Base64
+
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedScheduleEntryApiService
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedScheduleEntryReader
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedScheduleEntryImport
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
+import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntryKey
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedScheduleRepository
 import com.laimburggasse.aquariumcontrol.feed.data.remote.toFeedScheduleEntryList
-import io.ktor.util.encodeBase64
+import com.laimburggasse.aquariumcontrol.common.util.DateTimeUtil
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Inject
-import com.laimburggasse.aquariumcontrol.common.util.DateTimeUtil
-import io.ktor.utils.io.core.toByteArray
-import kotlinx.datetime.*
 
 @ApplicationScope
-
 open class FeedScheduleRepositoryImpl @Inject constructor(
     private val logger: Logger,
     private val sessionManager: SessionManager,
     private val apiService: FeedScheduleEntryApiService,
     private val repositoryScope: CoroutineScope,
-    private val context: IoDispatcher
+    private val ioDispatcher: IoDispatcher
 ): FeedScheduleRepository {
-    // Triggers and holders for optimistic updates
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
     private val pendingDeletions = MutableStateFlow<Set<FeedScheduleEntryKey>>(value = emptySet())
-    private val pendingUpdates =
-        MutableStateFlow<Map<FeedScheduleEntryKey, FeedScheduleEntry>>(value = emptyMap())
-
-    // A flow to hold the failure value
+    private val pendingUpdates = MutableStateFlow<Map<FeedScheduleEntryKey, FeedScheduleEntry>>(value = emptyMap())
     private val failureResult = MutableStateFlow<DataFetchResult.Error?>(value = null)
 
-    // Private flow that ONLY handles fetching data from the network.
-    // It is only triggered by controller changes or manual refreshes.
     @OptIn(ExperimentalCoroutinesApi::class)
     private val networkFlow: StateFlow<DataFetchResult<List<FeedScheduleEntry>>> = combine(
         flow = sessionManager.selectedControllerProfile,
@@ -99,153 +79,88 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
                 return@flow
             }
             if (controller == null) {
-                emit(
-                    value = DataFetchResult.Error(
-                        exception = null,
-                        errorMessage = GlobalConstants.ERR_MSG_NO_CONTROLLER_SELECTED
-                    )
-                )
+                emit(value = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_NO_CONTROLLER_SELECTED))
                 return@flow
             }
-
-            // If there is no failure, and we have a controller, proceed with loading.
             emit(value = DataFetchResult.Loading)
 
-            val networkResult: DataFetchResult<List<FeedScheduleEntry>> =
-                withContext(context.dispatcher) {
-                    val url = "http://${controller.address}:${controller.port}${WebApiUrls.FEED_LOAD_SCHEDULE}"
-                    val scheduleReader = FeedScheduleEntryReader(
-                        logger, apiService, url, username = controller.user, password = controller.password
-                    )
-                    val importResult: DataFetchResult<List<FeedScheduleEntryImport>> =
-                        scheduleReader.readFeedScheduleEntries()
-                    when (importResult) {
-                        is DataFetchResult.Success -> DataFetchResult.Success(
-                            data = importResult.data.toFeedScheduleEntryList()
-                        )
-
-                        is DataFetchResult.Error -> importResult
-                        is DataFetchResult.Loading -> DataFetchResult.Error(
-                            exception = null,
-                            errorMessage = GlobalConstants.ERR_MSG_LOADING_FEED_SCHEDULE_ENTRIES_FAILED
-                        )
-                    }
+            val networkResult: DataFetchResult<List<FeedScheduleEntry>> = withContext(ioDispatcher.dispatcher) {
+                val url = "http://${controller.address}:${controller.port}${WebApiUrls.FEED_LOAD_SCHEDULE}"
+                val scheduleReader = FeedScheduleEntryReader(
+                    logger, apiService, url, username = controller.user, password = controller.password
+                )
+                val importResult = scheduleReader.readFeedScheduleEntries()
+                when (importResult) {
+                    is DataFetchResult.Success -> DataFetchResult.Success(data = importResult.data.toFeedScheduleEntryList())
+                    is DataFetchResult.Error -> importResult
+                    is DataFetchResult.Loading -> DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_LOADING_FEED_SCHEDULE_ENTRIES_FAILED)
                 }
-            // After a successful network fetch, we know the ground truth has been updated.
-            // This is the ONLY place where we should clear the pending states.
+            }
             if (networkResult is DataFetchResult.Success) {
                 pendingDeletions.value = emptySet()
                 pendingUpdates.value = emptyMap()
             }
             emit(value = networkResult)
         }
-    }.stateIn(
-        scope = repositoryScope,
-        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
-        initialValue = DataFetchResult.Loading
-    )
+    }.stateIn(scope = repositoryScope, started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L), initialValue = DataFetchResult.Loading)
 
-    // The PUBLIC flow combines the stable network data with fast-changing local updates.
-    // This flow will NOT trigger a network fetch when local data changes.
-    @OptIn(ExperimentalCoroutinesApi::class)
     override val scheduleFlow: StateFlow<DataFetchResult<List<FeedScheduleEntry>>> = combine(
-        flow = networkFlow, // The "slow but truthful" source
+        flow = networkFlow,
         flow2 = pendingDeletions,
         flow3 = pendingUpdates
     ) { networkResult, deletions, updates ->
-        // This transformation logic runs whenever the network data OR any pending update changes.
         when (networkResult) {
             is DataFetchResult.Success -> {
-                var profiles: List<FeedScheduleEntry> = networkResult.data
-                // Apply optimistic updates on top of the latest network data
+                var profiles = networkResult.data
                 if (deletions.isNotEmpty()) {
                     profiles = profiles.filterNot { entry ->
-                        deletions.contains(
-                            FeedScheduleEntryKey(
-                                profileId = entry.profileId,
-                                timestamp = entry.timestamp
-                            )
-                        )
+                        deletions.contains(FeedScheduleEntryKey(profileId = entry.profileId, timestamp = entry.timestamp))
                     }
                 }
                 if (updates.isNotEmpty()) {
                     profiles = profiles.map { entry ->
-                        val key = FeedScheduleEntryKey(
-                            profileId = entry.profileId,
-                            timestamp = entry.timestamp
-                        )
-                        // If a pending update exists for this key, use it, otherwise use the original.
+                        val key = FeedScheduleEntryKey(profileId = entry.profileId, timestamp = entry.timestamp)
                         updates[key] ?: entry
                     }
                 }
-                DataFetchResult.Success(data = profiles) // Emit the final, merged list
+                DataFetchResult.Success(data = profiles)
             }
-            // If the network is loading or has an error, just pass that state through.
             else -> networkResult
         }
-    }.stateIn(
-        scope = repositoryScope,
-        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
-        initialValue = DataFetchResult.Loading
-    )
+    }.stateIn(scope = repositoryScope, started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L), initialValue = DataFetchResult.Loading)
 
-    private fun formatTimestamp(millis: Long): String {
-        
-        return DateTimeUtil.formatToApiTimestamp(millis)
-    }
+    private fun formatTimestamp(millis: Long): String = DateTimeUtil.formatToApiTimestamp(millis)
 
     override suspend fun deleteFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry) {
-        val keyToDelete = FeedScheduleEntryKey(
-            profileId = feedScheduleEntry.profileId,
-            timestamp = feedScheduleEntry.timestamp
-        )
-
-        // Avoid creating duplicates in the pending deletions
+        val keyToDelete = FeedScheduleEntryKey(profileId = feedScheduleEntry.profileId, timestamp = feedScheduleEntry.timestamp)
         if (pendingDeletions.value.contains(keyToDelete)) return
-
         pendingDeletions.value += keyToDelete
 
         val user = sessionManager.getControllerUser() ?: ""
         val password = sessionManager.getControllerPassword() ?: ""
         val port = sessionManager.getControllerPort()
-        val controllerAddress: String? = sessionManager.getControllerAddress()
+        val controllerAddress = sessionManager.getControllerAddress()
         if (controllerAddress.isNullOrBlank()) {
-            failureResult.value = DataFetchResult.Error(
-                exception = null,
-                errorMessage = GlobalConstants.ERR_MSG_INVALID_CONTROLLER_ADDRESS
-            )
+            failureResult.value = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_INVALID_CONTROLLER_ADDRESS)
             return
         }
         val url = "http://$controllerAddress:$port${WebApiUrls.FEED_SCHEDULE_DELETE_ENTRY}"
-
-        val authHeader = "Basic " + "$user:$password".toByteArray(Charsets.ISO_8859_1).encodeBase64()
+        val authHeader = "Basic " + Base64.encode("$user:$password".encodeToByteArray())
         val postParams = feedScheduleEntry.getApiParameters(formatTimestamp(feedScheduleEntry.timestamp))
 
-        // In both cases, trigger the network request, because the add operation
-        // may have committed to the server meanwhile.
-        repositoryScope.launch(context.dispatcher) {
+        repositoryScope.launch(ioDispatcher.dispatcher) {
             val requestSuccess = try {
-                val response = apiService.deleteFeedScheduleEntry(
-                    url,
-                    authHeader,
-                    postParams
-                )
-                response
-            } catch (e: Exception) { // recording exception in crashlytics
+                apiService.deleteFeedScheduleEntry(url, authHeader, postParams)
+            } catch (e: Exception) {
                 logger.recordException(e)
                 false
             }
             if (requestSuccess) {
                 delay(timeMillis = 3000L)
                 triggerRefresh()
-            }
-            else {
-                // On failure, remove the pending deletion to revert the UI change.
+            } else {
                 pendingDeletions.value -= keyToDelete
-                failureResult.value = DataFetchResult.Error(
-                    exception = null,
-                    errorMessage = GlobalConstants.ERR_MSG_DELETING_FEED_SCHEDULE_ENTRY_FAILED
-                )
+                failureResult.value = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_DELETING_FEED_SCHEDULE_ENTRY_FAILED)
             }
         }
     }
@@ -254,62 +169,38 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
         feedProfileId: Int,
         feedProfileName: String,
         repeatDaily: Boolean,
-        selectedCalendar: Calendar
+        timestampMillis: Long
     ) {
-        val timestampMillis = Clock.System.now().toEpochMilliseconds()
         val keyToFind = FeedScheduleEntryKey(feedProfileId, timestampMillis)
-
-        // Entry has been added before and not yet gone through network update
-        // Undelete it, but still run the network request
         if (pendingDeletions.value.contains(keyToFind)) {
             pendingDeletions.value -= keyToFind
         }
 
-        val tempEntry = FeedScheduleEntry(
-            timestamp = timestampMillis,
-            profileId = feedProfileId,
-            profileName = feedProfileName,
-            isDaily = repeatDaily
-        )
-
+        val tempEntry = FeedScheduleEntry(timestamp = timestampMillis, profileId = feedProfileId, profileName = feedProfileName, isDaily = repeatDaily)
         val user = sessionManager.getControllerUser() ?: ""
         val password = sessionManager.getControllerPassword() ?: ""
         val port = sessionManager.getControllerPort()
-        val controllerAddress: String? = sessionManager.getControllerAddress()
+        val controllerAddress = sessionManager.getControllerAddress()
         if (controllerAddress.isNullOrBlank()) {
-            failureResult.value = DataFetchResult.Error(
-                exception = null,
-                errorMessage = GlobalConstants.ERR_MSG_INVALID_CONTROLLER_ADDRESS
-            )
+            failureResult.value = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_INVALID_CONTROLLER_ADDRESS)
             return
         }
         val url = "http://$controllerAddress:$port${WebApiUrls.FEED_PROFILE_SCHEDULE_NEW}"
+        val authHeader = "Basic " + Base64.encode("$user:$password".encodeToByteArray())
+        val apiParams = tempEntry.getApiParameters(formatTimestamp(timestampMillis))
 
-        val authHeader = "Basic " + "$user:$password".toByteArray(Charsets.ISO_8859_1).encodeBase64()
-        val apiParams: Map<String, String> = tempEntry.getApiParameters(formatTimestamp(timestampMillis))
-
-        repositoryScope.launch(context.dispatcher) {
+        repositoryScope.launch(ioDispatcher.dispatcher) {
             val requestSuccess = try {
-                val response = apiService.addFeedScheduleEntry(
-                    url,
-                    authHeader,
-                    apiParams
-                )
-                response
-            } catch (e: Exception) { // recording exception in crashlytics
+                apiService.addFeedScheduleEntry(url, authHeader, apiParams)
+            } catch (e: Exception) {
                 logger.recordException(e)
                 false
             }
-
             if (requestSuccess) {
                 delay(timeMillis = 3000L)
                 triggerRefresh()
-            }
-            else {
-                failureResult.value = DataFetchResult.Error(
-                    exception = null,
-                    errorMessage = GlobalConstants.ERR_MSG_ADDING_FEED_SCHEDULE_ENTRY_FAILED
-                )
+            } else {
+                failureResult.value = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_ADDING_FEED_SCHEDULE_ENTRY_FAILED)
             }
         }
     }
@@ -318,77 +209,49 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
         feedProfileId: Int,
         feedProfileName: String,
         repeatDaily: Boolean,
-        selectedCalendar: Calendar,
-        millisSinceEpoch: Long // data from old entry
+        timestampMillis: Long,
+        millisSinceEpoch: Long
     ) {
-        // Create the key for the ORIGINAL entry that is being modified.
         val originalKey = FeedScheduleEntryKey(feedProfileId, timestamp = millisSinceEpoch)
-
-        // Create the NEW entry object with the modified data.
-        val modifiedEntry = FeedScheduleEntry(
-            timestamp = Clock.System.now().toEpochMilliseconds(),
-            profileId = feedProfileId,
-            profileName = feedProfileName,
-            isDaily = repeatDaily
-        )
-
-        // Optimistic Update: Add the change to the pendingUpdates map.
-        // The key is the original entry, the value is the new optimistic entry.
+        val modifiedEntry = FeedScheduleEntry(timestamp = timestampMillis, profileId = feedProfileId, profileName = feedProfileName, isDaily = repeatDaily)
         pendingUpdates.value += (originalKey to modifiedEntry.copy(profileName = "$feedProfileName (Saving...)"))
 
         val user = sessionManager.getControllerUser() ?: ""
         val password = sessionManager.getControllerPassword() ?: ""
         val port = sessionManager.getControllerPort()
-        val controllerAddress: String? = sessionManager.getControllerAddress()
+        val controllerAddress = sessionManager.getControllerAddress()
         if (controllerAddress.isNullOrBlank()) {
-            failureResult.value = DataFetchResult.Error(
-                exception = null,
-                errorMessage = GlobalConstants.ERR_MSG_INVALID_CONTROLLER_ADDRESS
-            )
+            failureResult.value = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_INVALID_CONTROLLER_ADDRESS)
             return
         }
         val url = "http://$controllerAddress:$port${WebApiUrls.FEED_UPDATE_SCHEDULE}"
-        val authHeader = "Basic " + Base64.encode("$user:$password".toByteArray())
+        val authHeader = "Basic " + Base64.encode("$user:$password".encodeToByteArray())
         val postParams = modifiedEntry.getApiParametersForUpdating(
             timestampOldString = formatTimestamp(millisSinceEpoch),
-            timestampNewString = formatTimestamp(modifiedEntry.timestamp)
+            timestampNewString = formatTimestamp(timestampMillis)
         )
 
-        // Launch the background network request.
-        repositoryScope.launch(context.dispatcher) {
+        repositoryScope.launch(ioDispatcher.dispatcher) {
             val requestSuccess = try {
-                apiService.updateFeedScheduleEntry(
-                    url,
-                    authHeader,
-                    postParams
-                )
-            } catch (e: Exception) { // recording exception in crashlytics
+                apiService.updateFeedScheduleEntry(url, authHeader, postParams)
+            } catch (e: Exception) {
                 logger.recordException(e)
                 false
             }
             if (requestSuccess) {
                 delay(timeMillis = 3000L)
                 triggerRefresh()
-            }
-            else {
-                // On failure, remove the pending update to revert the UI change.
+            } else {
                 pendingUpdates.value -= originalKey
-                failureResult.value = DataFetchResult.Error(
-                    exception = null,
-                    errorMessage = GlobalConstants.ERR_MSG_UPDATING_FEED_SCHEDULE_ENTRY_FAILED
-                )
+                failureResult.value = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_UPDATING_FEED_SCHEDULE_ENTRY_FAILED)
             }
         }
     }
 
     override suspend fun triggerRefresh() {
-        // Check if the current state is a failure.
         if (failureResult.value != null) {
-            // If it is, setting it to null is sufficient to trigger the combine/flatMapLatest chain again.
             failureResult.value = null
         } else {
-            // If the system is NOT in a failure state, then we must emit the refreshTrigger
-            // to force a new fetch, as nothing else has changed.
             refreshTrigger.emit(value = Unit)
         }
     }

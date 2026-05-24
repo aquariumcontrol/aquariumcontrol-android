@@ -11,19 +11,19 @@ import com.laimburggasse.aquariumcontrol.common.data.local.getRoomDatabase
 import com.laimburggasse.aquariumcontrol.common.util.AndroidLogger
 import com.laimburggasse.aquariumcontrol.common.util.Logger
 import io.ktor.client.engine.HttpClientEngine
-import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.engine.android.Android
 import me.tatarka.inject.annotations.Provides
 
 interface AndroidPlatformModule : PlatformModule {
     val context: Context
 
-    @get:Provides
+    @Provides
     @ApplicationScope
-    override val logger: Logger get() = AndroidLogger()
+    override fun provideLogger(): Logger = AndroidLogger()
 
     @Provides
     @ApplicationScope
-    override fun provideHttpClientEngine(): HttpClientEngine = OkHttp.create()
+    override fun provideHttpClientEngine(): HttpClientEngine = Android.create()
 
     @Provides
     @ApplicationScope

@@ -1,5 +1,7 @@
 package com.laimburggasse.aquariumcontrol.common.data.local
 
+import com.laimburggasse.aquariumcontrol.common.util.DispatcherIO
+
 import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
@@ -11,6 +13,8 @@ import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.refill.data.local.RefillHistoryDao
 import com.laimburggasse.aquariumcontrol.balling.data.local.BallingHistoryDao
 import com.laimburggasse.aquariumcontrol.feed.data.local.FeedHistoryDao
+
+import kotlinx.coroutines.Dispatchers
 
 @Database(
     entities = [
@@ -36,9 +40,10 @@ fun getRoomDatabase(
 ): AquariumDatabase {
     return builder
         .setDriver(androidx.sqlite.driver.bundled.BundledSQLiteDriver())
-        .setQueryCoroutineContext(kotlinx.coroutines.Dispatchers.IO)
+        .setQueryCoroutineContext(DispatcherIO)
         .build()
 }
 
-@Suppress("NO_ACTUAL_FOR_EXPECT")
-expect object AquariumDatabaseConstructor : RoomDatabaseConstructor<AquariumDatabase>
+expect object AquariumDatabaseConstructor : RoomDatabaseConstructor<AquariumDatabase> {
+    override fun initialize(): AquariumDatabase
+}

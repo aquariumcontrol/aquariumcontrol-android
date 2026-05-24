@@ -22,6 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.schedule.data.repository
 
+import com.laimburggasse.aquariumcontrol.common.util.Base64
+
 
 
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
@@ -150,7 +152,7 @@ open class ScheduleRepositoryImpl @Inject constructor(
             val port = sessionManager.getControllerPort()
 
             val url = "http://$controllerAddress:$port${WebApiUrls.ACTUATOR_SCHEDULE_UPDATE}"
-            val authHeader = "Basic " + "$user:$password".toByteArray(Charsets.ISO_8859_1).encodeBase64()
+            val authHeader = "Basic " + "$user:$password".encodeToByteArray().let { Base64.encode(it) }
             val scheduleEntries: ScheduleEntries =
                 (scheduleFlow.value as DataFetchResult.Success).data
 

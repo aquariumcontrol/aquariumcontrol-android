@@ -22,8 +22,11 @@
 
 package com.laimburggasse.aquariumcontrol.common.di
 
+import com.laimburggasse.aquariumcontrol.common.util.DispatcherIO
+
 import me.tatarka.inject.annotations.Provides
 import kotlinx.coroutines.Dispatchers
+
 
 interface DispatchersModule {
 
@@ -33,7 +36,7 @@ interface DispatchersModule {
 
     @Provides
     @ApplicationScope
-    fun providesIoDispatcher(): IoDispatcher = IoDispatcher(Dispatchers.IO)
+    fun providesIoDispatcher(): IoDispatcher = IoDispatcher(DispatcherIO)
 
     @Provides
     @ApplicationScope

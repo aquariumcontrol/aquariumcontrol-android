@@ -22,6 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.common.domain
 
+import com.laimburggasse.aquariumcontrol.common.util.DispatcherIO
+
 import me.tatarka.inject.annotations.Inject
 
 import androidx.datastore.core.DataStore
@@ -31,6 +33,7 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import com.laimburggasse.aquariumcontrol.common.data.local.ControllerProfileDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -83,7 +86,7 @@ open class SessionManagerImpl(
 
     override suspend fun selectControllerById(id: Long): Boolean {
         previousControllerProfileId = _defaultControllerProfileId.value
-        return withContext(context = Dispatchers.IO) {
+        return withContext(context = DispatcherIO) {
             val profile: ControllerProfile? = dao.getControllerProfileById(id)
             if (profile != null) {
                 _selectedControllerProfile.value = profile

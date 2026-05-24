@@ -31,7 +31,7 @@ import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
 import com.laimburggasse.aquariumcontrol.common.testing.MockSessionManagerImpl
 import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleStringEntry
-import com.laimburggasse.aquariumcontrol.schedule.presentation.ScheduleType
+import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleType
 import com.laimburggasse.aquariumcontrol.schedule.testing.MockScheduleApiServiceImpl
 import com.laimburggasse.aquariumcontrol.schedule.testing.ScheduleMockData.mockScheduleEntries
 import io.mockk.every

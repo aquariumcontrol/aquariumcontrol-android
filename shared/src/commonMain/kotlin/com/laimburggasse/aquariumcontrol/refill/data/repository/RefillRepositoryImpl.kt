@@ -22,6 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.refill.data.repository
 
+import com.laimburggasse.aquariumcontrol.common.util.Base64
+
 
 
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
@@ -130,7 +132,7 @@ open class RefillRepositoryImpl @Inject constructor(
         }
         val controllerPort = sessionManager.getControllerPort()
         val url = "http://${controllerAddress}:${controllerPort}${apiUrl}"
-        val authHeader = "Basic " + java.util.Base64.encode("$user:$password".toByteArray())
+        val authHeader = "Basic " + Base64.encode("$user:$password".encodeToByteArray())
 
         repositoryScope.launch(context.dispatcher) {
             val requestSuccess = apiService.resetRefillErrors(

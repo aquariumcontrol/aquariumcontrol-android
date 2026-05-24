@@ -41,7 +41,7 @@ class ScheduleEntryReader (
 ) {
     // This class reads the schedule set values from the server using a GET request
     // These are later converted into one instance of ScheduleSetVals
-    private val authHeaderValue: String = "Basic " + Base64.encode("$username:$password".toByteArray())
+    private val authHeaderValue: String = "Basic " + Base64.encode("$username:$password".encodeToByteArray())
     suspend fun readScheduleEntryList(): DataFetchResult<List<ScheduleStringEntry>> {
         return try {
             val decodedData = apiService.getScheduleData(

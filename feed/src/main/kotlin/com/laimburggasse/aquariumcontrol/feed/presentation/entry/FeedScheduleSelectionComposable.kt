@@ -55,7 +55,7 @@ import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFe
 fun FeedScheduleSelectionComposable(
     feedScheduleSelectionUiState: FeedScheduleSelectionUiState,
     onNavigateFromFeed: (FeedNavigationEvent, Int?, Boolean?, Long?) -> Unit,
-    onFeedSchedulesUiEvent: (FeedScheduleUiEvent) -> Int?,
+    onFeedScheduleEntryUiEvent: (FeedScheduleUiEvent) -> Int?,
 ) {
     // This composable displays a label "Feed Schedule"
     // and a list of feed schedule entries
@@ -67,7 +67,7 @@ fun FeedScheduleSelectionComposable(
         state = rememberPullToRefreshState(),
         isRefreshing = feedScheduleSelectionUiState == FeedProfilesUiState.Loading,
         contentAlignment = Alignment.Center,
-        onRefresh = { onFeedSchedulesUiEvent(FeedScheduleUiEvent.Refresh) },
+        onRefresh = { onFeedScheduleEntryUiEvent(FeedScheduleUiEvent.Refresh) },
         indicator = {
             if (feedScheduleSelectionUiState == FeedProfilesUiState.Loading) {
                 CircularProgressIndicator(
@@ -111,7 +111,7 @@ fun FeedScheduleSelectionComposable(
                                     )
                                 },
                                 onDeleteClick = {
-                                    onFeedSchedulesUiEvent(
+                                    onFeedScheduleEntryUiEvent(
                                         FeedScheduleUiEvent.DeleteFeedScheduleEntry(
                                             feedScheduleEntry
                                         )
@@ -151,7 +151,7 @@ internal fun FeedScheduleSelectionComposableSuccessDarkPreview() {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 FeedScheduleSelectionComposable(
                     feedScheduleSelectionUiState = mockFeedScheduleSelectionUiStateSuccess,
-                    onFeedSchedulesUiEvent = { _: FeedScheduleUiEvent -> return@FeedScheduleSelectionComposable null },
+                    onFeedScheduleEntryUiEvent = { _: FeedScheduleUiEvent -> return@FeedScheduleSelectionComposable null },
                     onNavigateFromFeed = { _, _, _, _ -> },
                 )
             }
@@ -172,7 +172,7 @@ internal fun FeedScheduleSelectionComposableSuccessLightPreview() {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 FeedScheduleSelectionComposable(
                     feedScheduleSelectionUiState = mockFeedScheduleSelectionUiStateSuccess,
-                    onFeedSchedulesUiEvent = { _: FeedScheduleUiEvent -> return@FeedScheduleSelectionComposable null },
+                    onFeedScheduleEntryUiEvent = { _: FeedScheduleUiEvent -> return@FeedScheduleSelectionComposable null },
                     onNavigateFromFeed = { _, _, _, _ -> },
                 )
             }
@@ -188,7 +188,7 @@ internal fun FeedScheduleSelectionComposableEmptyDarkPreview() {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 FeedScheduleSelectionComposable(
                     feedScheduleSelectionUiState = mockFeedScheduleSelectionUiStateEmpty,
-                    onFeedSchedulesUiEvent = { _: FeedScheduleUiEvent -> return@FeedScheduleSelectionComposable null },
+                    onFeedScheduleEntryUiEvent = { _: FeedScheduleUiEvent -> return@FeedScheduleSelectionComposable null },
                     onNavigateFromFeed = { _, _, _, _ -> },
                 )
             }
@@ -204,7 +204,7 @@ internal fun FeedScheduleSelectionComposableEmptyLightPreview() {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 FeedScheduleSelectionComposable(
                     feedScheduleSelectionUiState = mockFeedScheduleSelectionUiStateEmpty,
-                    onFeedSchedulesUiEvent = { _: FeedScheduleUiEvent -> return@FeedScheduleSelectionComposable null },
+                    onFeedScheduleEntryUiEvent = { _: FeedScheduleUiEvent -> return@FeedScheduleSelectionComposable null },
                     onNavigateFromFeed = { _, _, _, _ -> },
                 )
             }

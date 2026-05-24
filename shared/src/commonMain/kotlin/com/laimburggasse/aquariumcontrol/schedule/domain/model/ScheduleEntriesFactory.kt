@@ -23,7 +23,7 @@
 package com.laimburggasse.aquariumcontrol.schedule.domain.model
 
 import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleEntry
-import com.laimburggasse.aquariumcontrol.schedule.presentation.ScheduleType
+import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleType
 
 class ScheduleEntriesFactory (
     private val scheduleEntryList: List<ScheduleEntry>

@@ -5,15 +5,16 @@ import androidx.room.RoomDatabase
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
+import kotlinx.cinterop.ExperimentalForeignApi
 
 fun getDatabaseBuilder(): RoomDatabase.Builder<AquariumDatabase> {
     val dbFilePath = documentDirectory() + "/aquarium.db"
     return Room.databaseBuilder<AquariumDatabase>(
-        name = dbFilePath,
-        factory = { AquariumDatabase_Impl() }
+        name = dbFilePath
     )
 }
 
+@OptIn(ExperimentalForeignApi::class)
 private fun documentDirectory(): String {
     val documentDirectory = NSFileManager.defaultManager.URLForDirectory(
         directory = NSDocumentDirectory,

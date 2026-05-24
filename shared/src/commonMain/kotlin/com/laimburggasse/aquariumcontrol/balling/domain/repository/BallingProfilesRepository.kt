@@ -24,10 +24,10 @@ package com.laimburggasse.aquariumcontrol.balling.domain.repository
 
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 interface BallingProfilesRepository {
-    val ballingProfiles: Flow<DataFetchResult<List<BallingProfile>>>
+    val ballingProfiles: StateFlow<DataFetchResult<List<BallingProfile>>>
     fun updateBallingProfile(ballingProfile: BallingProfile)
     suspend fun triggerRefresh()
 }

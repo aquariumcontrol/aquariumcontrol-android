@@ -32,6 +32,7 @@ kotlin {
             implementation(libs.androidx.datastore.preferences)
             implementation(libs.kotlinx.serialization.json.v162)
             implementation(libs.androidx.room.runtime)
+            
             implementation(libs.androidx.room.paging)
             implementation(libs.androidx.sqlite.bundled)
             implementation(libs.ktor.client.core)
@@ -48,7 +49,7 @@ kotlin {
             implementation(libs.kotlin.test)
         }
         androidMain.dependencies {
-            implementation(libs.ktor.client.okhttp)
+            implementation(libs.ktor.client.android)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)

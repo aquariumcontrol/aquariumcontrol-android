@@ -22,6 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.schedule.presentation
 
+import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleType
+
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

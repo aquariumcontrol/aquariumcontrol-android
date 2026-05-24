@@ -40,7 +40,7 @@ class VentilationSetValsReader (
     password: String
 ) {
     // This class reads the ventilation set values from the server using a GET request.
-    private val authHeaderValue: String = "Basic " + Base64.encode("$username:$password".toByteArray())
+    private val authHeaderValue: String = "Basic " + Base64.encode("$username:$password".encodeToByteArray())
 
     suspend fun readVentilationSetVals(): DataFetchResult<List<VentilationSetVals>> {
         return try {

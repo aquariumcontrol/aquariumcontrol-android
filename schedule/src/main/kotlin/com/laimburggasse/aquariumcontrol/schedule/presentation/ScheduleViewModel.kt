@@ -22,6 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.schedule.presentation
 
+import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleType
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult

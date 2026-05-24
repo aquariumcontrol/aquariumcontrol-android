@@ -13,10 +13,10 @@ import me.tatarka.inject.annotations.Inject
 class KtorRefillHistoryApiService @Inject constructor(
     private val client: HttpClient
 ) : RefillHistoryApiService {
-    override suspend fun getHistory(url: String, authHeader: String, date: String): List<RefillHistoryLogEntry> {
+    override suspend fun getHistory(url: String, authHeader: String, date: Long): List<RefillHistoryLogEntry> {
         val dtos: List<RefillHistoryLogEntryDto> = client.get(url) {
             header("Authorization", authHeader)
-            parameter("date", date)
+            parameter("date", date.toString())
         }.body()
         return dtos.map { it.toRefillHistoryLogEntry() }
     }

@@ -14,6 +14,6 @@ import com.laimburggasse.aquariumcontrol.summary.data.di.SummaryDataModule
 import com.laimburggasse.aquariumcontrol.timedata.data.di.TimeDataDataModule
 import com.laimburggasse.aquariumcontrol.ventilation.data.di.VentilationDataModule
 
-interface SharedModule : PlatformModule, AppModule, CommonNetwork, Network, DispatchersModule,
+interface SharedModule : AppModule, CommonNetwork, Network, DispatchersModule,
     BallingDataModule, FeedDataModule, HeatingDataModule, RefillDataModule,
     ScheduleDataModule, SummaryDataModule, TimeDataDataModule, VentilationDataModule

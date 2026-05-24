@@ -35,8 +35,8 @@ import kotlinx.serialization.json.Json
 interface Network {
     @Provides
     @ApplicationScope
-    fun provideHttpClient(): HttpClient {
-        return HttpClient(OkHttp) {
+    fun provideHttpClient(engine: HttpClientEngine): HttpClient {
+        return HttpClient(engine) {
             install(ContentNegotiation) {
                 json(Json {
                     ignoreUnknownKeys = true

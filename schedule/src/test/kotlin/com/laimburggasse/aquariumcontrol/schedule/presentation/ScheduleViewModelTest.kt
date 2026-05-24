@@ -22,6 +22,8 @@
 
 package com.laimburggasse.aquariumcontrol.schedule.presentation
 
+import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleType
+
 import app.cash.turbine.test
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntries

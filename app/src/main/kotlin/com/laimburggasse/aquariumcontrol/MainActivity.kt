@@ -279,7 +279,7 @@ class MainActivity : ComponentActivity() {
                                         )
                                     },
                                     onFeedProfilesUiEvent = feedProfilesViewModel::onFeedProfilesUiEvent,
-                                    onFeedSchedulesUiEvent = feedScheduleViewModel::onFeedSchedulesUiEvent,
+                                    onFeedScheduleEntryUiEvent = feedScheduleViewModel::onFeedScheduleUiEvent,
                                 )
                             },
                             onNavigate = { event ->

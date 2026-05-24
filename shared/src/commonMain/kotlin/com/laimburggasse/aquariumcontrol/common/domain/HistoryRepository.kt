@@ -22,7 +22,7 @@
 
 package com.laimburggasse.aquariumcontrol.common.domain
 
-
+import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 
 interface HistoryRepository<T : Any> {

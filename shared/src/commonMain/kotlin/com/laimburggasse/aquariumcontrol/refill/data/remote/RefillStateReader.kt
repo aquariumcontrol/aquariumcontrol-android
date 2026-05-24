@@ -39,7 +39,7 @@ class RefillStateReader (
     username: String,
     password: String
 ) {
-    private val authHeaderValue: String = "Basic " + Base64.encode("$username:$password".toByteArray())
+    private val authHeaderValue: String = "Basic " + Base64.encode("$username:$password".encodeToByteArray())
 
     suspend fun readRefillState(): DataFetchResult<RefillState> {
         return try {

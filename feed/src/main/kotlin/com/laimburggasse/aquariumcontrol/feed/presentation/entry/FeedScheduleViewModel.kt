@@ -22,29 +22,32 @@
 
 package com.laimburggasse.aquariumcontrol.feed.presentation.entry
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
+import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedProfilesRepository
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedScheduleRepository
 import com.laimburggasse.aquariumcontrol.feed.presentation.schedule.FeedScheduleEntryUiEvent
-import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.util.Calendar
 import me.tatarka.inject.annotations.Inject
 
-class FeedScheduleViewModel @Inject constructor(
-    val feedScheduleRepository: FeedScheduleRepository,
-    val feedProfilesRepository: FeedProfilesRepository
+@Inject
+class FeedScheduleViewModel(
+    private val feedScheduleRepository: FeedScheduleRepository,
+    private val feedProfilesRepository: FeedProfilesRepository
 ) : ViewModel() {
+
+    private val _feedProfile = MutableStateFlow<FeedProfile?>(value = null)
+    val feedProfile: StateFlow<FeedProfile?> = _feedProfile.asStateFlow()
+
+    private val _isNewScheduleEntry = MutableStateFlow(value = false)
+    val isNewScheduleEntry: StateFlow<Boolean> = _isNewScheduleEntry.asStateFlow()
+
+    private val _millisSinceEpoch = MutableStateFlow(value = 0L)
+    val millisSinceEpoch: StateFlow<Long> = _millisSinceEpoch.asStateFlow()
 
     val feedScheduleSelectionUiState: StateFlow<FeedScheduleSelectionUiState> = feedScheduleRepository.scheduleFlow
         .map { result ->
@@ -61,32 +64,21 @@ class FeedScheduleViewModel @Inject constructor(
             }
         }.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.Eagerly,
-            initialValue = FeedScheduleSelectionUiState.Loading // The UI starts in a loading state
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
+            initialValue = FeedScheduleSelectionUiState.Loading
         )
-
-    private val _feedProfile = MutableStateFlow<FeedProfile?>(value = FeedProfile())
-    val feedProfile: StateFlow<FeedProfile?> = _feedProfile
-
-    private val _isNewScheduleEntry = MutableStateFlow(value = false)
-    val isNewScheduleEntry: StateFlow<Boolean> = _isNewScheduleEntry
-
-    private val _millisSinceEpoch = MutableStateFlow(value = 0L)
-    val millisSinceEpoch: StateFlow<Long> = _millisSinceEpoch
 
     fun setScheduleParams(profileId: Int?, isNewEntry: Boolean, millis: Long) {
         _isNewScheduleEntry.value = isNewEntry
         _millisSinceEpoch.value = millis
         if (profileId != null) {
-            loadDataForProfile(profileId)
-        } else {
-            _feedProfile.value = null
+            loadDataForProfile(profileId = profileId)
         }
     }
 
     private fun loadDataForProfile(profileId: Int) {
         viewModelScope.launch {
-            _feedProfile.value = feedProfilesRepository.findProfileById(profileId)
+            _feedProfile.value = feedProfilesRepository.findProfileById(profileId = profileId)
         }
     }
 
@@ -99,14 +91,14 @@ class FeedScheduleViewModel @Inject constructor(
     fun addFeedScheduleEntry(
         feedProfile: FeedProfile,
         repeatDaily: Boolean,
-        selectedCalendar: Calendar
+        timestampMillis: Long
     ) {
         viewModelScope.launch {
             feedScheduleRepository.addFeedScheduleEntry(
                 feedProfileId = feedProfile.profileID,
                 feedProfileName = feedProfile.profileName,
-                repeatDaily,
-                selectedCalendar
+                repeatDaily = repeatDaily,
+                timestampMillis = timestampMillis
             )
         }
     }
@@ -114,44 +106,40 @@ class FeedScheduleViewModel @Inject constructor(
     fun updateFeedScheduleEntry(
         feedProfile: FeedProfile,
         repeatDaily: Boolean,
-        selectedCalendar: Calendar,
+        timestampMillis: Long,
         millisSinceEpoch: Long // data from old entry
     ) {
         viewModelScope.launch {
             feedScheduleRepository.updateFeedScheduleEntry(
                 feedProfileId = feedProfile.profileID,
                 feedProfileName = feedProfile.profileName,
-                repeatDaily,
-                selectedCalendar,
-                millisSinceEpoch
+                repeatDaily = repeatDaily,
+                timestampMillis = timestampMillis,
+                millisSinceEpoch = millisSinceEpoch
             )
         }
     }
 
-    fun getFeedProfileIdByName(name: String): Int? {
-        val feedProfile: FeedProfile? = feedProfilesRepository.findProfileByName(profileName = name)
-        return feedProfile?.profileID
-    }
-
-    fun loadData() {
+    fun triggerRefresh() {
         viewModelScope.launch {
             feedScheduleRepository.triggerRefresh()
         }
     }
 
-    fun onFeedSchedulesUiEvent(event: FeedScheduleUiEvent): Int? {
-        when (event) {
-            is FeedScheduleUiEvent.GetFeedProfileIdByName -> {
-                return getFeedProfileIdByName(event.feedProfileName)
-            }
+    fun onFeedScheduleUiEvent(event: FeedScheduleUiEvent): Int? {
+        return when (event) {
             is FeedScheduleUiEvent.DeleteFeedScheduleEntry -> {
                 deleteFeedScheduleEntry(feedScheduleEntry = event.feedScheduleEntry)
+                null
             }
             is FeedScheduleUiEvent.Refresh -> {
-                loadData()
+                triggerRefresh()
+                null
+            }
+            is FeedScheduleUiEvent.GetFeedProfileIdByName -> {
+                feedProfilesRepository.findProfileByName(profileName = event.feedProfileName)?.profileID
             }
         }
-        return null
     }
 
     fun onFeedScheduleEntryUiEvent(event: FeedScheduleEntryUiEvent) {
@@ -161,14 +149,14 @@ class FeedScheduleViewModel @Inject constructor(
                     addFeedScheduleEntry(
                         feedProfile = event.feedProfile,
                         repeatDaily = event.feedScheduleEntry.isDaily,
-                        selectedCalendar = event.selectedCalendar
+                        timestampMillis = event.selectedCalendar.timeInMillis
                     )
                 }
                 else {
                     updateFeedScheduleEntry(
                         feedProfile = event.feedProfile,
                         repeatDaily = event.feedScheduleEntry.isDaily,
-                        selectedCalendar = event.selectedCalendar,
+                        timestampMillis = event.selectedCalendar.timeInMillis,
                         millisSinceEpoch = event.millisSinceEpoch
                     )
                 }

@@ -57,7 +57,7 @@ fun FeedScreen(
     feedProfilesUiState: FeedProfilesUiState,
     feedScheduleSelectionUiState: FeedScheduleSelectionUiState,
     onFeedProfilesUiEvent: (FeedProfilesUiEvent) -> Unit,
-    onFeedSchedulesUiEvent: (FeedScheduleUiEvent) -> Int?,
+    onFeedScheduleEntryUiEvent: (FeedScheduleUiEvent) -> Int?,
     onNavigateFromFeed: (FeedNavigationEvent, Int?, Boolean?, Long?) -> Unit
 ) {
     // This screen displays
@@ -114,7 +114,7 @@ fun FeedScreen(
                             FeedScheduleSelectionComposable(
                                 feedScheduleSelectionUiState,
                                 onNavigateFromFeed,
-                                onFeedSchedulesUiEvent
+                                onFeedScheduleEntryUiEvent
                             )
                         }
                     }
@@ -147,7 +147,7 @@ fun FeedScreen(
                     FeedScheduleSelectionComposable(
                         feedScheduleSelectionUiState,
                         onNavigateFromFeed,
-                        onFeedSchedulesUiEvent
+                        onFeedScheduleEntryUiEvent
                     )
                 }
             }
@@ -173,7 +173,7 @@ fun FeedScreenSuccessDarkPreview() {
                 feedScheduleSelectionUiState = mockFeedScheduleSelectionUiStateSuccess,
                 onNavigateFromFeed = { _, _, _, _ -> },
                 onFeedProfilesUiEvent = {},
-                onFeedSchedulesUiEvent = { _ -> return@FeedScreen null }
+                onFeedScheduleEntryUiEvent = { _ -> return@FeedScreen null }
             )
         },
         onNavigate = {},
@@ -198,7 +198,7 @@ fun FeedScreenSuccessLightPreview() {
                 feedScheduleSelectionUiState = mockFeedScheduleSelectionUiStateSuccess,
                 onNavigateFromFeed = { _, _, _, _ -> },
                 onFeedProfilesUiEvent = {},
-                onFeedSchedulesUiEvent = { _ -> return@FeedScreen null }
+                onFeedScheduleEntryUiEvent = { _ -> return@FeedScreen null }
             )
         },
         onNavigate = {},
@@ -223,7 +223,7 @@ fun FeedScreenErrorDarkPreview() {
                 feedScheduleSelectionUiState = mockFeedScheduleSelectionUiStateError,
                 onNavigateFromFeed = { _, _, _, _ -> },
                 onFeedProfilesUiEvent = {},
-                onFeedSchedulesUiEvent = { _ -> return@FeedScreen null }
+                onFeedScheduleEntryUiEvent = { _ -> return@FeedScreen null }
             )
         },
         onNavigate = {},
@@ -248,7 +248,7 @@ fun FeedScreenErrorLightPreview() {
                 feedScheduleSelectionUiState = mockFeedScheduleSelectionUiStateError,
                 onNavigateFromFeed = { _, _, _, _ -> },
                 onFeedProfilesUiEvent = {},
-                onFeedSchedulesUiEvent = { _ -> return@FeedScreen null }
+                onFeedScheduleEntryUiEvent = { _ -> return@FeedScreen null }
             )
         },
         onNavigate = {},

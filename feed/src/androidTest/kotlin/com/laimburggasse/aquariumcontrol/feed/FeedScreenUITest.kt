@@ -52,7 +52,7 @@ class FeedScreenUITest {
                 feedScheduleSelectionUiState = mockFeedScheduleSelectionUiStateSuccess,
                 onNavigateFromFeed = { event, _, _, _ -> capturedEvent = event },
                 onFeedProfilesUiEvent = {},
-                onFeedSchedulesUiEvent = { _ -> return@FeedScreen null }
+                onFeedScheduleEntryUiEvent = { _ -> return@FeedScreen null }
             )
         }
 
@@ -75,7 +75,7 @@ class FeedScreenUITest {
                 feedScheduleSelectionUiState = mockFeedScheduleSelectionUiStateSuccess,
                 onNavigateFromFeed = { event, _, _, _ -> capturedEvent = event },
                 onFeedProfilesUiEvent = {},
-                onFeedSchedulesUiEvent = { _ -> return@FeedScreen null }
+                onFeedScheduleEntryUiEvent = { _ -> return@FeedScreen null }
             )
         }
 
@@ -98,7 +98,7 @@ class FeedScreenUITest {
                 feedScheduleSelectionUiState = mockFeedScheduleSelectionUiStateSuccess,
                 onNavigateFromFeed = { event, _, _, _ -> capturedEvent = event },
                 onFeedProfilesUiEvent = {},
-                onFeedSchedulesUiEvent = { _ -> return@FeedScreen null }
+                onFeedScheduleEntryUiEvent = { _ -> return@FeedScreen null }
             )
         }
 
@@ -121,7 +121,7 @@ class FeedScreenUITest {
                 feedScheduleSelectionUiState = mockFeedScheduleSelectionUiStateSuccess,
                 onNavigateFromFeed = { event, _, _, _ -> capturedEvent = event },
                 onFeedProfilesUiEvent = {},
-                onFeedSchedulesUiEvent = { _ -> return@FeedScreen null }
+                onFeedScheduleEntryUiEvent = { _ -> return@FeedScreen null }
             )
         }
 

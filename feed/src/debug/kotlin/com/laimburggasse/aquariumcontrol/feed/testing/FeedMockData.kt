@@ -176,8 +176,8 @@ fun createMockFeedProfiles(): List<FeedProfile> {
     mockFeedProfileImport2.profileId = 2
     mockFeedProfileImport2.profileName = "Test Profile 2"
 
-    val mockFeedProfile1: FeedProfile = FeedProfileMapper.fromFeedProfileImport(feedProfileImport = mockFeedProfileImport1)
-    val mockFeedProfile2: FeedProfile = FeedProfileMapper.fromFeedProfileImport(feedProfileImport = mockFeedProfileImport2)
+    val mockFeedProfile1: FeedProfile = FeedProfileMapper.fromFeedProfileImport(imp = mockFeedProfileImport1)
+    val mockFeedProfile2: FeedProfile = FeedProfileMapper.fromFeedProfileImport(imp = mockFeedProfileImport2)
 
     return listOf(mockFeedProfile1, mockFeedProfile2)
 }

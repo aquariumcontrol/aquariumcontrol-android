@@ -22,8 +22,6 @@
 
 package com.laimburggasse.aquariumcontrol.feed.data.repository
 
-
-
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
@@ -33,6 +31,7 @@ import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.common.util.Logger
+import com.laimburggasse.aquariumcontrol.common.util.Base64
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedProfileApiService
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedProfileReader
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedProfileImport
@@ -40,27 +39,15 @@ import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfileMapper
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfilesState
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedProfilesRepository
-import io.ktor.util.encodeBase64
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @ApplicationScope
-
 open class FeedProfilesRepositoryImpl @Inject constructor(
     private val logger: Logger,
     private val sessionManager: SessionManager,
@@ -69,36 +56,28 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
     private val ioDispatcher: IoDispatcher
 ): FeedProfilesRepository {
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
-
-    // A flow to hold the (potential) pending deletions and the (potential) failure value
-    // This way we avoid race conditions when updating both in sequence.
     private val localState = MutableStateFlow(FeedProfilesState())
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override val profilesFlow: StateFlow<DataFetchResult<List<FeedProfile>>> =
-        combine(
+        combine<ControllerProfile?, Unit, FeedProfilesState, Pair<ControllerProfile?, FeedProfilesState>>(
             flow = sessionManager.selectedControllerProfile,
             flow2 = refreshTrigger.onStart { emit(value = Unit) },
             flow3 = localState,
-        ) { controller, _, localState ->
-            Pair(first = controller, second = localState)
+        ) { controller, _, state ->
+            Pair(first = controller, second = state)
         }
         .filter{ it.first != null }
-        .flatMapLatest { (controller: ControllerProfile?, localState: FeedProfilesState) ->
+        .flatMapLatest<Pair<ControllerProfile?, FeedProfilesState>, DataFetchResult<List<FeedProfile>>> { (controller, state) ->
             flow {
-                if (localState.failureResult != null) {
-                    emit(value = localState.failureResult)
+                if (state.failureResult != null) {
+                    emit(value = state.failureResult)
                     return@flow
                 }
                 if (controller == null) {
-                    emit(value = DataFetchResult.Error(
-                        exception = null,
-                        errorMessage = GlobalConstants.ERR_MSG_NO_CONTROLLER_SELECTED
-                    ))
+                    emit(value = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_NO_CONTROLLER_SELECTED))
                     return@flow
                 }
-
-                // If there is no failure, and we have a controller, proceed with loading.
                 emit(value = DataFetchResult.Loading)
 
                 val networkResult: DataFetchResult<List<FeedProfileImport>> =
@@ -110,86 +89,57 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
                         profileReader.readFeedProfiles()
                     }
 
-                // Merge optimistic updates with network result
                 val finalResult: DataFetchResult<List<FeedProfile>> = when (networkResult) {
                     is DataFetchResult.Success -> {
-                        var profiles: List<FeedProfile> = networkResult.data.map {
-                            FeedProfileMapper.fromFeedProfileImport(feedProfileImport = it)
+                        var profiles = networkResult.data.map {
+                            FeedProfileMapper.fromFeedProfileImport(it)
                         }
-                        // Apply pending deletions to the fetched list
-                        if (localState.pendingDeletions.isNotEmpty()) {
-                            profiles = profiles.filterNot { localState.pendingDeletions.contains(it.profileID) }
+                        if (state.pendingDeletions.isNotEmpty()) {
+                            profiles = profiles.filterNot { state.pendingDeletions.contains(it.profileID) }
                         }
-                        // Apply pending updates to the fetched list
-                        if (localState.pendingUpdates.isNotEmpty()) {
+                        if (state.pendingUpdates.isNotEmpty()) {
                             profiles = profiles.map { profile ->
-                                localState.pendingUpdates[profile.profileID] ?: profile
+                                state.pendingUpdates[profile.profileID] ?: profile
                             }
                         }
-
                         DataFetchResult.Success(data = profiles)
                     }
-                    is DataFetchResult.Error -> networkResult // Pass through errors
-                    is DataFetchResult.Loading -> DataFetchResult.Error(
-                        exception = null,
-                        errorMessage = GlobalConstants.ERR_MSG_LOADING_FEED_PROFILES_FAILED
-                    )
+                    is DataFetchResult.Error -> networkResult
+                    is DataFetchResult.Loading -> DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_LOADING_FEED_PROFILES_FAILED)
                 }
                 emit(value = finalResult)
             }
-        }.stateIn(
-            scope = repositoryScope,
-            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
-            initialValue = DataFetchResult.Loading
-        )
+        }.stateIn(scope = repositoryScope, started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L), initialValue = DataFetchResult.Loading)
 
     override suspend fun deleteFeedProfile(feedProfile: FeedProfile) {
         val user = sessionManager.getControllerUser() ?: ""
         val password = sessionManager.getControllerPassword() ?: ""
         val port = sessionManager.getControllerPort()
-        val controllerAddress: String? = sessionManager.getControllerAddress()
+        val controllerAddress = sessionManager.getControllerAddress()
         if (controllerAddress.isNullOrBlank()) {
             reportInvalidControllerAddress()
             return
         }
         val url = "http://$controllerAddress:$port${WebApiUrls.FEED_DELETE_PROFILE}" + feedProfile.profileID
+        val authHeader = "Basic " + Base64.encode("$user:$password".encodeToByteArray())
 
-        val authHeader = "Basic " + "$user:$password".toByteArray(Charsets.ISO_8859_1).encodeBase64()
+        localState.update { it.copy(pendingDeletions = it.pendingDeletions + feedProfile.profileID) }
 
-        // Optimistic Update: Immediately add the ID to the pending deletions list.
-        // The UI will react to this instantly.
-        localState.update { currentState ->
-            currentState.copy(
-                pendingDeletions = currentState.pendingDeletions + feedProfile.profileID
-            )
-        }
-
-        // Perform the actual network request in the background.
-        repositoryScope.launch(context = ioDispatcher.dispatcher) {
+        repositoryScope.launch(ioDispatcher.dispatcher) {
             val requestSuccess = try {
-                val response = apiService.deleteFeedProfile(
-                    url,
-                    authHeader
-                )
-                response
-            } catch (e: Exception) { // recording exception in crashlytics
+                apiService.deleteFeedProfile(url, authHeader)
+            } catch (e: Exception) {
                 logger.recordException(e)
                 false
             }
 
             if (!requestSuccess) {
-                localState.update { currentState -> currentState.copy(
-                        pendingDeletions = currentState.pendingDeletions - feedProfile.profileID,
-                        failureResult = DataFetchResult.Error(
-                            exception = null,
-                            errorMessage = GlobalConstants.ERR_MSG_COULD_NOT_DELETE_FEED_PROFILE
-                        )
+                localState.update { it.copy(
+                        pendingDeletions = it.pendingDeletions - feedProfile.profileID,
+                        failureResult = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_COULD_NOT_DELETE_FEED_PROFILE)
                     )
                 }
             } else {
-                // On success, we keep it in pendingDeletions until the next refresh
-                // Actually, triggerRefresh() will clear it if we implement it that way,
-                // but let's just trigger a refresh for now.
                 triggerRefresh()
             }
         }
@@ -199,147 +149,84 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
         val user = sessionManager.getControllerUser() ?: ""
         val password = sessionManager.getControllerPassword() ?: ""
         val port = sessionManager.getControllerPort()
-        val controllerAddress: String? = sessionManager.getControllerAddress()
+        val controllerAddress = sessionManager.getControllerAddress()
         if (controllerAddress.isNullOrBlank()) {
             reportInvalidControllerAddress()
             return
         }
-
         val url = "http://$controllerAddress:$port${WebApiUrls.FEED_PROFILE_CREATE}"
+        val authHeader = "Basic " + Base64.encode("$user:$password".encodeToByteArray())
 
-        val authHeader = "Basic " + "$user:$password".toByteArray(Charsets.ISO_8859_1).encodeBase64()
-        repositoryScope.launch(context = ioDispatcher.dispatcher) {
+        repositoryScope.launch(ioDispatcher.dispatcher) {
             val requestSuccess = try {
-                val response = apiService.addFeedProfile(
-                    url,
-                    authHeader,
-                    params = mapOf(WebApiParams.PROFILE_NAME to feedProfileName)
-                )
-                response
-            } catch (e: Exception) { // recording exception in crashlytics
+                apiService.addFeedProfile(url, authHeader, params = mapOf(WebApiParams.PROFILE_NAME to feedProfileName))
+            } catch (e: Exception) {
                 logger.recordException(e)
-                false // Catch network timeouts or connection errors
+                false
             }
             if (requestSuccess) {
                 delay(timeMillis = 3000L)
                 triggerRefresh()
             } else {
-                localState.update { currentState -> currentState.copy(
-                        failureResult = DataFetchResult.Error(
-                            exception = null,
-                            errorMessage = GlobalConstants.ERR_MSG_COULD_NOT_ADD_FEED_PROFILE
-                        )
-                    )
-                }
+                localState.update { it.copy(failureResult = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_COULD_NOT_ADD_FEED_PROFILE)) }
             }
         }
     }
 
     override fun findProfileById(profileId: Int): FeedProfile? {
-        val currentData: DataFetchResult<List<FeedProfile>> = profilesFlow.value
-        return if (currentData is DataFetchResult.Success) {
-            currentData.data.find { it.profileID == profileId }
-        } else {
-            null
-        }
+        val currentData = profilesFlow.value
+        return if (currentData is DataFetchResult.Success) currentData.data.find { it.profileID == profileId } else null
     }
 
     override fun findProfileByName(profileName: String): FeedProfile? {
-        val currentData: DataFetchResult<List<FeedProfile>> = profilesFlow.value
-        return if (currentData is DataFetchResult.Success) {
-            currentData.data.find { it.profileName == profileName }
-        } else {
-            null
-        }
+        val currentData = profilesFlow.value
+        return if (currentData is DataFetchResult.Success) currentData.data.find { it.profileName == profileName } else null
     }
 
     override fun updateFeedProfile(modifiedFeedProfile: FeedProfile) {
-        // Retrieve credentials and construct the dynamic URL
         val user = sessionManager.getControllerUser() ?: ""
         val password = sessionManager.getControllerPassword() ?: ""
         val port = sessionManager.getControllerPort()
-        val controllerAddress: String? = sessionManager.getControllerAddress()
+        val controllerAddress = sessionManager.getControllerAddress()
         if (controllerAddress.isNullOrBlank()) {
             reportInvalidControllerAddress()
             return
         }
-
         val url = "http://$controllerAddress:$port${WebApiUrls.FEED_PROFILE_UPDATE}"
+        val apiCallParameters = modifiedFeedProfile.getFeedProfileApiCallParameters()
+        val authHeader = "Basic " + Base64.encode("$user:$password".encodeToByteArray())
 
-        val apiCallParameters: Map<String, String> = modifiedFeedProfile.getFeedProfileApiCallParameters()
+        localState.update { it.copy(pendingUpdates = it.pendingUpdates + (modifiedFeedProfile.profileID to modifiedFeedProfile)) }
 
-        val authHeader = "Basic " + java.util.Base64.encode("$user:$password".toByteArray())
-
-        // Optimistic Update
-        localState.update { currentState ->
-            currentState.copy(
-                pendingUpdates = currentState.pendingUpdates + (modifiedFeedProfile.profileID to modifiedFeedProfile)
-            )
-        }
-
-        repositoryScope.launch(context = ioDispatcher.dispatcher) {
-            // Make the Ktor call
+        repositoryScope.launch(ioDispatcher.dispatcher) {
             val requestSuccess = try {
-                apiService.updateFeedProfile(
-                    url,
-                    authHeader,
-                    apiCallParameters
-                )
-            } catch (e: Exception) { // recording exception in crashlytics
+                apiService.updateFeedProfile(url, authHeader, apiCallParameters)
+            } catch (e: Exception) {
                 logger.recordException(e)
-                false // Catch network timeouts or connection errors
+                false
             }
 
             if (!requestSuccess) {
-                localState.update { currentState -> currentState.copy(
-                        pendingUpdates = currentState.pendingUpdates - modifiedFeedProfile.profileID,
-                        failureResult = DataFetchResult.Error(
-                            exception = null,
-                            errorMessage = GlobalConstants.ERR_MSG_UPDATING_FEED_PROFILE_FAILED
-                        )
+                localState.update { it.copy(
+                        pendingUpdates = it.pendingUpdates - modifiedFeedProfile.profileID,
+                        failureResult = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_UPDATING_FEED_PROFILE_FAILED)
                     )
                 }
             } else {
-                // On success, we can clear the optimistic update.
-                // The subsequent triggerRefresh() will ensure we have the latest data from server.
-                localState.update { currentState ->
-                    currentState.copy(
-                        pendingUpdates = currentState.pendingUpdates - modifiedFeedProfile.profileID
-                    )
-                }
-                // The test expects ONE refresh cycle after updateFeedProfile.
-                // Since updating localState ALREADY triggered a refresh (via combine),
-                // calling triggerRefresh() might be redundant or even cause extra emissions.
-                // But for good practice, we'd normally call it. 
-                // Given the test uses expectNoEvents(), let's see if it passes without extra refresh.
+                localState.update { it.copy(pendingUpdates = it.pendingUpdates - modifiedFeedProfile.profileID) }
             }
         }
     }
 
-    /**
-     * Public function to allow the ViewModel to trigger a manual refresh (e.g., for pull-to-refresh).
-     */
     override suspend fun triggerRefresh() {
-        // Check if the current state is a failure.
         if (localState.value.failureResult != null) {
-            // If it is, setting it to null is sufficient to trigger the combine/flatMapLatest chain again.
-            localState.update { currentState ->
-                currentState.copy(failureResult = null)
-            }
+            localState.update { it.copy(failureResult = null) }
         } else {
-            // If the system is NOT in a failure state, then we must emit the refreshTrigger
-            // to force a new fetch, as nothing else has changed.
             refreshTrigger.emit(value = Unit)
         }
     }
 
-    fun reportInvalidControllerAddress() {
-            localState.update { currentState -> currentState.copy(
-                failureResult = DataFetchResult.Error(
-                    exception = null,
-                    errorMessage = GlobalConstants.ERR_MSG_INVALID_CONTROLLER_ADDRESS
-                )
-            )
-        }
+    private fun reportInvalidControllerAddress() {
+        localState.update { it.copy(failureResult = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_INVALID_CONTROLLER_ADDRESS)) }
     }
 }
