@@ -24,8 +24,6 @@ package com.laimburggasse.aquariumcontrol.feed.data.repository
 
 
 
-import com.laimburggasse.aquariumcontrol.common.util.Logger
-
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
@@ -34,15 +32,15 @@ import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+import com.laimburggasse.aquariumcontrol.common.util.Logger
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedProfileApiService
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedProfileReader
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedProfileImport
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
-import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfilesState
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfileMapper
+import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfilesState
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedProfilesRepository
 import io.ktor.util.encodeBase64
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -107,7 +105,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
                     withContext(context = ioDispatcher.dispatcher) {
                         val url = "http://${controller.address}:${controller.port}${WebApiUrls.FEED_LOAD_PROFILES}"
                         val profileReader = FeedProfileReader(
-                            apiService, url, username = controller.user, password = controller.password
+                            logger, apiService, url, username = controller.user, password = controller.password
                         )
                         profileReader.readFeedProfiles()
                     }

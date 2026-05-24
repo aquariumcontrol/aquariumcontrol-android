@@ -31,6 +31,7 @@ import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+import com.laimburggasse.aquariumcontrol.common.util.Logger
 import com.laimburggasse.aquariumcontrol.schedule.data.remote.ScheduleApiService
 import com.laimburggasse.aquariumcontrol.schedule.data.remote.ScheduleEntryReader
 import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleEntry
@@ -58,6 +59,7 @@ import me.tatarka.inject.annotations.Inject
 @ApplicationScope
 
 open class ScheduleRepositoryImpl @Inject constructor(
+    private val logger: Logger,
     private val sessionManager: SessionManager,
     private val apiService: ScheduleApiService,
     private val repositoryScope: CoroutineScope,
@@ -174,7 +176,7 @@ open class ScheduleRepositoryImpl @Inject constructor(
             val url: String =
                 "http://" + sessionManager.getControllerAddress() + ":" +
                 sessionManager.getControllerPort() + WebApiUrls.ACTUATOR_SCHEDULE_LOAD
-            val scheduleEntryReader = ScheduleEntryReader(apiService, url, username, password)
+            val scheduleEntryReader = ScheduleEntryReader(logger, apiService, url, username, password)
             val result: DataFetchResult<List<ScheduleStringEntry>> =
                 scheduleEntryReader.readScheduleEntryList()
             val processedResult: DataFetchResult<ScheduleEntries> = when (result) {

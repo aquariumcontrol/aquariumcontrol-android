@@ -57,14 +57,12 @@ interface FeedDataModule {
     @Provides
     @ApplicationScope
     fun provideFeedHistoryRemoteMediator(
-            logger = logger,
         logger: com.laimburggasse.aquariumcontrol.common.util.Logger,
         database: AquariumDatabase,
         apiService: FeedHistoryApiService,
         sessionManager: SessionManager
     ): HistoryRemoteMediator<FeedHistoryLogEntry> {
         return HistoryRemoteMediator(
-            logger = logger,
             database = database,
             dao = database.feedHistoryDao(),
             apiService = apiService,

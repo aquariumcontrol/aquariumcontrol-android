@@ -35,6 +35,7 @@ import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.common.domain.model.SetValsSanityCheckResult
+import com.laimburggasse.aquariumcontrol.common.util.Base64
 import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingSetValsApiService
 import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingSetValsReader
 import com.laimburggasse.aquariumcontrol.heating.domain.heatingSetValsSanityCheck
@@ -106,7 +107,7 @@ open class HeatingSetValsRepositoryImpl @Inject constructor(
             val networkResult: DataFetchResult<HeatingSetVals> = withContext(context.dispatcher) {
                 val url = "http://${controller.address}:${controller.port}${WebApiUrls.HEATING_LOAD_SET_VALS}"
                 val heatingSetValsReader = HeatingSetValsReader(
-                    apiService, url, username = controller.user, password = controller.password
+                    logger, apiService, url, username = controller.user, password = controller.password
                 )
                 when (val setValsList: DataFetchResult<List<HeatingSetVals>> =
                     heatingSetValsReader.readHeatingSetVals()) {
@@ -200,7 +201,7 @@ open class HeatingSetValsRepositoryImpl @Inject constructor(
                 val port = sessionManager.getControllerPort()
 
                 val url = "http://$controllerAddress:$port${WebApiUrls.HEATING_UPDATE_SET_VALS}"
-                val authHeader = "Basic " + java.util.Base64.encode("$user:$password".toByteArray())
+                val authHeader = "Basic " + Base64.encode("$user:$password".toByteArray())
 
                 val postParams = mapOf(
                     WebApiParams.HEATING_SWITCH_ON_TEMPERATURE to currentValues.heatingSwitchOnTemp.toString(),

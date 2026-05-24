@@ -16,7 +16,7 @@ class KtorBallingHistoryApiService @Inject constructor(
     override suspend fun getHistory(
         url: String,
         authHeader: String,
-        date: String
+        date: Long
     ): List<BallingHistoryLogEntry> {
         val dtos: List<BallingHistoryLogEntryDto> = client.get(url) {
             header("Authorization", authHeader)

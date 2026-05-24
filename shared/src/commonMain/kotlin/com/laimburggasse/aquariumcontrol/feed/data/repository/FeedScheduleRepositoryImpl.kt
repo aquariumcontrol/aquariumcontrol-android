@@ -22,11 +22,9 @@
 
 package com.laimburggasse.aquariumcontrol.feed.data.repository
 
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-
-
 
 import com.laimburggasse.aquariumcontrol.common.util.Logger
 
@@ -37,6 +35,7 @@ import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+import com.laimburggasse.aquariumcontrol.common.util.Base64
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedScheduleEntryApiService
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedScheduleEntryReader
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedScheduleEntryImport
@@ -61,9 +60,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import com.laimburggasse.aquariumcontrol.common.util.DateTimeUtil
+import io.ktor.utils.io.core.toByteArray
 import kotlinx.datetime.*
-
-
 
 @ApplicationScope
 
@@ -117,7 +115,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
                 withContext(context.dispatcher) {
                     val url = "http://${controller.address}:${controller.port}${WebApiUrls.FEED_LOAD_SCHEDULE}"
                     val scheduleReader = FeedScheduleEntryReader(
-                        apiService, url, username = controller.user, password = controller.password
+                        logger, apiService, url, username = controller.user, password = controller.password
                     )
                     val importResult: DataFetchResult<List<FeedScheduleEntryImport>> =
                         scheduleReader.readFeedScheduleEntries()
@@ -193,7 +191,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
 
     private fun formatTimestamp(millis: Long): String {
         
-        return DateTimeUtil.formatToApiTimestamp(java.util.Date(millis))
+        return DateTimeUtil.formatToApiTimestamp(millis)
     }
 
     override suspend fun deleteFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry) {
@@ -350,7 +348,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
             return
         }
         val url = "http://$controllerAddress:$port${WebApiUrls.FEED_UPDATE_SCHEDULE}"
-        val authHeader = "Basic " + java.util.Base64.encode("$user:$password".toByteArray())
+        val authHeader = "Basic " + Base64.encode("$user:$password".toByteArray())
         val postParams = modifiedEntry.getApiParametersForUpdating(
             timestampOldString = formatTimestamp(millisSinceEpoch),
             timestampNewString = formatTimestamp(modifiedEntry.timestamp)

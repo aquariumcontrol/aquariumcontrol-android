@@ -32,6 +32,7 @@ import com.laimburggasse.aquariumcontrol.timedata.data.remote.dto.TimeDataString
 import com.laimburggasse.aquariumcontrol.timedata.domain.model.TimeDataSample
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
+import com.laimburggasse.aquariumcontrol.common.util.Logger
 import com.laimburggasse.aquariumcontrol.timedata.data.remote.TimeDataApiService
 import com.laimburggasse.aquariumcontrol.timedata.domain.repository.TimeDataRepository
 import kotlinx.coroutines.CoroutineScope
@@ -50,6 +51,7 @@ import me.tatarka.inject.annotations.Inject
 
 
 open class TimeDataRepositoryImpl @Inject constructor(
+    private val logger: Logger,
     private val sessionManager: SessionManager,
     private val apiService: TimeDataApiService,
     private val repositoryScope: CoroutineScope,
@@ -76,7 +78,7 @@ open class TimeDataRepositoryImpl @Inject constructor(
                             "http://" + sessionManager.getControllerAddress() + ":" +
                             sessionManager.getControllerPort() + WebApiUrls.LOAD_TIME_DATA
                         val reader = TimeDataReader(
-                            apiService, url, username = controller.user, password = controller.password
+                            logger, apiService, url, username = controller.user, password = controller.password
                         )
                         reader.readTimeDataSeries()
                     }

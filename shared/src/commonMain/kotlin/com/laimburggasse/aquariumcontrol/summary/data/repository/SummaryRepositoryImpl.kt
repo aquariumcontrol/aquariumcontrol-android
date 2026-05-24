@@ -30,6 +30,7 @@ import com.laimburggasse.aquariumcontrol.summary.data.remote.SummaryDataReader
 import com.laimburggasse.aquariumcontrol.summary.domain.model.SummaryData
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
+import com.laimburggasse.aquariumcontrol.common.util.Logger
 import com.laimburggasse.aquariumcontrol.summary.data.remote.SummaryDataApiService
 import com.laimburggasse.aquariumcontrol.summary.domain.repository.SummaryRepository
 import kotlinx.coroutines.CoroutineScope
@@ -50,6 +51,7 @@ import me.tatarka.inject.annotations.Inject
 @OptIn(DelicateCoroutinesApi::class)
 
 open class SummaryRepositoryImpl @Inject constructor(
+    private val logger: Logger,
     private val sessionManager: SessionManager,
     private val apiService: SummaryDataApiService,
     private val repositoryScope: CoroutineScope,
@@ -85,7 +87,7 @@ open class SummaryRepositoryImpl @Inject constructor(
                 val result: DataFetchResult<SummaryData> = withContext(context.dispatcher) {
                     val url = "http://${controller.address}:${controller.port}${WebApiUrls.OVERVIEW_GET_DATA}"
                     val reader = SummaryDataReader(
-                        apiService, url, username = controller.user, password = controller.password
+                        logger, apiService, url, username = controller.user, password = controller.password
                     )
                     reader.readSummaryData()
                 }

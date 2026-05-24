@@ -18,6 +18,7 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryRemoteMediato
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+import com.laimburggasse.aquariumcontrol.common.util.Logger
 import io.ktor.client.HttpClient
 import me.tatarka.inject.annotations.Provides
 
@@ -45,14 +46,12 @@ interface BallingDataModule {
     @Provides
     @ApplicationScope
     fun provideBallingHistoryRemoteMediator(
-            logger = logger,
-        logger: com.laimburggasse.aquariumcontrol.common.util.Logger,
+        logger: Logger,
         database: AquariumDatabase,
         apiService: BallingHistoryApiService,
         sessionManager: SessionManager
     ): HistoryRemoteMediator<BallingHistoryLogEntry> {
         return HistoryRemoteMediator(
-            logger = logger,
             database = database,
             dao = database.ballingHistoryDao(),
             apiService = apiService,

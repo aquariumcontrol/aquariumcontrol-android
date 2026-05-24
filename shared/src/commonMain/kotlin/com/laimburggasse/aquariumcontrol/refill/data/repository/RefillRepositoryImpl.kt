@@ -29,6 +29,7 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+import com.laimburggasse.aquariumcontrol.common.util.Logger
 import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillStateApiService
 import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillStateReader
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillState
@@ -51,6 +52,7 @@ import me.tatarka.inject.annotations.Inject
 
 
 open class RefillRepositoryImpl @Inject constructor(
+    private val logger: Logger,
     private val sessionManager: SessionManager,
     private val apiService: RefillStateApiService,
     private val repositoryScope: CoroutineScope,
@@ -88,6 +90,7 @@ open class RefillRepositoryImpl @Inject constructor(
                     val result: DataFetchResult<RefillState> =
                         withContext(context.dispatcher) {
                             val reader = RefillStateReader(
+                                logger,
                                 apiService,
                                 url,
                                 username = controller.user,

@@ -26,6 +26,6 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.dto.TimestampJsonObj
 import com.laimburggasse.aquariumcontrol.common.domain.BaseHistoryLogEntry
 
 interface BaseHistoryApiService {
-    suspend fun getHistory(url: String, authHeader: String, date: String): List<BaseHistoryLogEntry>
+    suspend fun getHistory(url: String, authHeader: String, date: Long): List<BaseHistoryLogEntry>
     suspend fun getHistoryStart(url: String, authHeader: String): TimestampJsonObject
 }

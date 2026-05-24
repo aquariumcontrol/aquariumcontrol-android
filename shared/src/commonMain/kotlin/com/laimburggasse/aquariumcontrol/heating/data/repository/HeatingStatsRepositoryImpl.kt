@@ -35,6 +35,7 @@ import com.laimburggasse.aquariumcontrol.heating.data.remote.dto.HeatingStatsStr
 import com.laimburggasse.aquariumcontrol.heating.domain.repository.HeatingStatsRepository
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
+import com.laimburggasse.aquariumcontrol.common.util.Logger
 import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingStatsApiService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -54,6 +55,7 @@ import me.tatarka.inject.annotations.Inject
 @ApplicationScope
 
 open class HeatingStatsRepositoryImpl @Inject constructor(
+    logger: Logger,
     sessionManager: SessionManager,
     private val apiService: HeatingStatsApiService,
     private val repositoryScope: CoroutineScope,
@@ -79,7 +81,7 @@ open class HeatingStatsRepositoryImpl @Inject constructor(
                 withContext(context = ioDispatcher.dispatcher) {
                     val url = "http://${controller.address}:${controller.port}${WebApiUrls.HEATING_LOAD_STATS}"
                     val heatingStatsReader = HeatingStatsReader(
-                        apiService, url, username = controller.user, password = controller.password
+                        logger, apiService, url, username = controller.user, password = controller.password
                     )
                     val stringResult: DataFetchResult<List<HeatingStatsStringEntry>> =
                         heatingStatsReader.readStatsEntry()

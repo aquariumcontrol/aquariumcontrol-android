@@ -30,7 +30,7 @@ interface FeedHistoryApiService : BaseHistoryApiService {
     override suspend fun getHistory(
         url: String,
         authHeader: String,
-        date: String,
+        date: Long,
     ): List<FeedHistoryLogEntry>
 
     override suspend fun getHistoryStart(

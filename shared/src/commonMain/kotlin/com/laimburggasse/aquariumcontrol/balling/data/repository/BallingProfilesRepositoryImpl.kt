@@ -37,9 +37,11 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+import com.laimburggasse.aquariumcontrol.common.util.Base64
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -54,7 +56,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
-
 
 open class BallingProfilesRepositoryImpl @Inject constructor(
     private val logger: Logger,
@@ -106,7 +107,7 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
 
                 val url = "http://${controller.address}:${controller.port}${WebApiUrls.BALLING_LOAD_SET_VALS}"
                 val reader = BallingProfileReader(
-                    apiService, url, username = controller.user, password = controller.password
+                    logger, apiService, url, username = controller.user, password = controller.password
                 )
                 // Perform the network request on a background thread.
                 val networkResult: DataFetchResult<List<BallingProfile>> =
@@ -162,9 +163,9 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
             val port = sessionManager.getControllerPort()
 
             val url = "http://$controllerAddress:$port${WebApiUrls.BALLING_UPDATE_SET_VALS}"
-            val authHeader = "Basic " + java.util.Base64.encode("$user:$password".toByteArray())
+            val authHeader = "Basic " + Base64.encode("$user:$password".encodeToByteArray())
 
-            val postParams = mapOf(
+                val postParams = mapOf(
                 WebApiParams.PUMP_ID to ballingProfile.pumpId.toString(),
                 WebApiParams.DOSING_VOLUME to ballingProfile.volume.toString()
             )

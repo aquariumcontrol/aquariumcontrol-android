@@ -3,8 +3,10 @@ package com.laimburggasse.aquariumcontrol.common.util
 object Base64 {
     private const val ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 
+    private const val EQUALCHAR = '='
+
     fun decode(input: String): ByteArray {
-        val cleaned = input.filter { it in ALPHABET || it == "=" }
+        val cleaned = input.filter { it in ALPHABET || it == EQUALCHAR }
         val bytes = mutableListOf<Byte>()
         var i = 0
         while (i + 3 < cleaned.length) {
@@ -15,10 +17,10 @@ object Base64 {
 
             bytes.add(((b1 shl 2) or (b2 shr 4)).toByte())
             
-            if (b3Char != "=") {
+            if (b3Char != EQUALCHAR) {
                 val b3 = ALPHABET.indexOf(b3Char)
                 bytes.add(((b2 shl 4) or (b3 shr 2)).toByte())
-                if (b4Char != "=") {
+                if (b4Char != EQUALCHAR) {
                     val b4 = ALPHABET.indexOf(b4Char)
                     bytes.add(((b3 shl 6) or b4).toByte())
                 }

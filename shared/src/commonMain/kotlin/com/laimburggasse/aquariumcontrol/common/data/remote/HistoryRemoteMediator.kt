@@ -27,19 +27,16 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.RoomDatabase
-import androidx.room.withTransaction
+import androidx.room.useWriterConnection
 import com.laimburggasse.aquariumcontrol.common.data.local.BaseHistoryDao
 import com.laimburggasse.aquariumcontrol.common.domain.BaseHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
-import io.ktor.util.encodeBase64
+import com.laimburggasse.aquariumcontrol.common.util.Base64
+import io.ktor.utils.io.charsets.Charsets
 import io.ktor.utils.io.core.toByteArray
-import java.sql.Timestamp
-import com.laimburggasse.aquariumcontrol.common.util.DateTimeUtil
 import kotlinx.datetime.*
-
-
-
+import kotlin.time.Clock
 
 @OptIn(ExperimentalPagingApi::class)
 class HistoryRemoteMediator<T : BaseHistoryLogEntry>(
@@ -50,18 +47,32 @@ class HistoryRemoteMediator<T : BaseHistoryLogEntry>(
     private val loadEventsUrlPath: String,
     private val loadFirstEventUrlPath: String
 ) : RemoteMediator<Int, T>() {
-    private var historyLogStart: Timestamp? = null
+    private var historyLogStart: Long? = null
     private var serverUsed: ControllerProfile? = null
+    private val msInDay = 86_400_000L // milliseconds in one day
 
-    private fun getCurrentDate(): String {
+    fun dateToTimestamp(date: LocalDate): Long {
+        // Converts the date to an Instant at 00:00:00 in the system default timezone
+        val instant = date.atStartOfDayIn(TimeZone.currentSystemDefault())
+
+        // Convert to milliseconds
+        return instant.toEpochMilliseconds()
+    }
+
+    private fun getCurrentDate(): Long {
         val serverTime = sessionManager.serverTimestamp.value
-        )
+
         return if (serverTime != null) {
-            DateTimeUtil.formatToApiTimestamp(Date(serverTime))
+            serverTime - serverTime % msInDay
         } else {
-            )
-            DateTimeUtil.formatToApiTimestamp(Date())
+            // use local time as backup
+            val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+            dateToTimestamp(today)
         }
+    }
+
+    private fun getYesterdaysDate(): Long {
+        return getCurrentDate() - msInDay
     }
 
     override suspend fun load(
@@ -82,7 +93,7 @@ class HistoryRemoteMediator<T : BaseHistoryLogEntry>(
                 return MediatorResult.Success(endOfPaginationReached = true)
             }
 
-            val authHeader = "Basic " + "$user:$password".toByteArray(Charsets.ISO_8859_1).encodeBase64()
+            val authHeader = "Basic " + Base64.encode("$user:$password".toByteArray(Charsets.ISO_8859_1))
             val baseUrl = "http://$address:$port"
 
             if (historyLogStart == null) {
@@ -95,8 +106,6 @@ class HistoryRemoteMediator<T : BaseHistoryLogEntry>(
                 serverUsed = sessionManager.selectedControllerProfile.value
             }
 
-            )
-
             var currentLoadKey = when (loadType) {
                 LoadType.REFRESH -> getCurrentDate()
                 LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
@@ -105,10 +114,7 @@ class HistoryRemoteMediator<T : BaseHistoryLogEntry>(
                     if (lastItem == null) {
                         getCurrentDate()
                     } else {
-
-
-                        calendar.add(Calendar.DAY_OF_YEAR, -1)
-                        DateTimeUtil.formatToApiTimestamp(calendar.time)
+                        getYesterdaysDate()
                     }
                 }
             }
@@ -129,8 +135,8 @@ class HistoryRemoteMediator<T : BaseHistoryLogEntry>(
 
                 reachedAbsoluteStart = if (historyLogStart != null) {
                     try {
-                        val startOfLoadDay = Timestamp.valueOf("$currentLoadKey 00:00:00")
-                        startOfLoadDay.before(historyLogStart) || startOfLoadDay == historyLogStart
+                        // compiler still thinks historyLogStart could be null at this point
+                        currentLoadKey <= (historyLogStart ?: currentLoadKey)
                     } catch (_: Exception) {
                         false
                     }
@@ -142,13 +148,10 @@ class HistoryRemoteMediator<T : BaseHistoryLogEntry>(
                     break
                 }
 
-                
-                
-                calendar.add(Calendar.DAY_OF_YEAR, -1)
-                currentLoadKey = DateTimeUtil.formatToApiTimestamp(calendar.time)
+                currentLoadKey -= msInDay
             }
 
-            database.withTransaction {
+            database.useWriterConnection {
                 if (loadType == LoadType.REFRESH) {
                     dao.clearAll()
                 }

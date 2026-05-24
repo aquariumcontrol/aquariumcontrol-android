@@ -30,7 +30,7 @@ interface BallingHistoryApiService : BaseHistoryApiService {
     override suspend fun getHistory(
         url: String,
         authHeader: String,
-        date: String,
+        date: Long,
     ): List<BallingHistoryLogEntry>
 
     override suspend fun getHistoryStart(

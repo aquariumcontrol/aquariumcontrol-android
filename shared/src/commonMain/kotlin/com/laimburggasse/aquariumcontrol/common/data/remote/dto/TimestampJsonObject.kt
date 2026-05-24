@@ -25,21 +25,15 @@ package com.laimburggasse.aquariumcontrol.common.data.remote.dto
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.sql.Timestamp
 import com.laimburggasse.aquariumcontrol.common.util.DateTimeUtil
-import kotlinx.datetime.*
-
 
 @Serializable
 data class TimestampJsonObject(
     @SerialName(value = WebApiParams.TIMESTAMP)
     val timestampString: String = ""
 ) {
-    fun transformToTimestamp(): Timestamp {
+    fun transformToTimestamp(): Long {
         
-        val parsedTimestamp = DateTimeUtil.parseApiTimestamp(timestampString)
-        val timestamp = Timestamp(parsedTimestamp!!.time)
-
-        return (timestamp)
+        return DateTimeUtil.parseApiTimestamp(timestampString)
     }
 }

@@ -10,17 +10,16 @@ kotlin {
     android {
         namespace = "com.laimburggasse.aquariumcontrol.shared"
         compileSdk = 37
-        minSdk = 31
+        minSdk = 26
     }
 
     jvmToolchain(21)
     
     jvm()
-    iosX64()
     iosArm64()
     iosSimulatorArm64()
 
-    val iosTargets = listOf(iosX64(), iosArm64(), iosSimulatorArm64())
+    val iosTargets = listOf(iosArm64(), iosSimulatorArm64())
     iosTargets.forEach { target ->
         target.binaries.framework {
             baseName = "SharedAquariumControl"
@@ -43,6 +42,7 @@ kotlin {
             implementation(libs.kotlin.inject.runtime)
             implementation(libs.androidx.paging.common)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.io.core)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -70,10 +70,7 @@ dependencies {
     
     add("kspJvm", libs.kotlin.inject.compiler.ksp)
     add("kspJvm", libs.androidx.room.compiler)
-    
-    add("kspIosX64", libs.kotlin.inject.compiler.ksp)
-    add("kspIosX64", libs.androidx.room.compiler)
-    
+
     add("kspIosArm64", libs.kotlin.inject.compiler.ksp)
     add("kspIosArm64", libs.androidx.room.compiler)
     
