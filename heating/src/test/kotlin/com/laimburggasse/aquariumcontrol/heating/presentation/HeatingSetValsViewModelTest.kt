@@ -84,7 +84,7 @@ class HeatingSetValsViewModelTest {
             awaitItem() // Loading
 
             // Act
-            repositoryFlow.value = DataFetchResult.Success(mockHeatingSetVals)
+            repositoryFlow.value = DataFetchResult.Success<Any>(mockHeatingSetVals)
 
             val state = awaitItem()
 
@@ -115,7 +115,7 @@ class HeatingSetValsViewModelTest {
             awaitItem() // Loading
 
             // Act
-            repositoryFlow.value = DataFetchResult.Success(invalidVals)
+            repositoryFlow.value = DataFetchResult.Success<Any>(invalidVals)
             awaitItem()
 
             // Assert
@@ -141,7 +141,7 @@ class HeatingSetValsViewModelTest {
     @Test
     fun `ChangeLowerValue event updates local repository using current state`() = runTest {
         // Arrange: Start with success
-        repositoryFlow.value = DataFetchResult.Success(mockHeatingSetVals)
+        repositoryFlow.value = DataFetchResult.Success<Any>(mockHeatingSetVals)
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Act
@@ -156,7 +156,7 @@ class HeatingSetValsViewModelTest {
     @Test
     fun `ChangeHigherValue event updates local repository using current state`() = runTest {
         // Arrange: Start with success
-        repositoryFlow.value = DataFetchResult.Success(mockHeatingSetVals)
+        repositoryFlow.value = DataFetchResult.Success<Any>(mockHeatingSetVals)
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Act

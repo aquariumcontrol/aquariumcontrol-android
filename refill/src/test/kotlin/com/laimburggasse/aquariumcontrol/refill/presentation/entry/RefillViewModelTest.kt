@@ -85,7 +85,7 @@ class RefillViewModelTest {
             assertEquals(RefillStateUiState.Loading, awaitItem()) // Initial
 
             // Act
-            refillStateFlow.value = DataFetchResult.Success(mockRefillStateActive)
+            refillStateFlow.value = DataFetchResult.Success<Any>(mockRefillStateActive)
 
             val state = awaitItem()
             assertTrue(state is RefillStateUiState.Success)

@@ -24,7 +24,7 @@ package com.laimburggasse.aquariumcontrol.feed.presentation.edit
 
 import app.cash.turbine.ReceiveTurbine
 import app.cash.turbine.test
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedProfilesRepository
 import com.laimburggasse.aquariumcontrol.feed.testing.createMockFeedProfile
@@ -54,7 +54,7 @@ class FeedProfileEditViewModelTest {
         mockkStatic(android.util.Log::class)
         mockkStatic(android.graphics.Color::class)
         mockkStatic(Process::class)
-        mockkStatic(FirebaseCrashlytics::class)
+        
         // Corrected: Use mockkStatic for Java classes, not mockkObject
         mockkStatic(com.github.mikephil.charting.utils.Utils::class)
 
@@ -65,8 +65,8 @@ class FeedProfileEditViewModelTest {
 
         // 3. Stub Framework requirements
         every { Process.myPid() } returns 1
-        val mockCrashlytics = mockk<FirebaseCrashlytics>(relaxed = true)
-        every { FirebaseCrashlytics.getInstance() } returns mockCrashlytics
+        
+        
         every { android.graphics.Color.rgb(any<Int>(), any(), any()) } returns 0
 
         // 4. Stub MPAndroidChart Utils

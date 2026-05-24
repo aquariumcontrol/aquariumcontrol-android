@@ -23,9 +23,9 @@
 package com.laimburggasse.aquariumcontrol.heating.data
 
 import app.cash.turbine.test
-import com.google.firebase.Firebase
-import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.firebase.crashlytics.crashlytics
+
+
+
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
@@ -67,10 +67,10 @@ class HeatingSetValsRepositoryImplTest {
         Dispatchers.setMain(testDispatcher)
 
         // Mock Firebase Crashlytics statics
-        mockkStatic(FirebaseCrashlytics::class)
-        val mockCrashlytics = mockk<FirebaseCrashlytics>(relaxed = true)
-        every { FirebaseCrashlytics.getInstance() } returns mockCrashlytics
-        every { Firebase.crashlytics } returns mockCrashlytics
+        
+        
+        
+        
 
         repository = HeatingSetValsRepositoryImpl(
             sessionManager = mockSessionManagerImpl,
@@ -103,7 +103,7 @@ class HeatingSetValsRepositoryImplTest {
 
             assertTrue(result is DataFetchResult.Success)
             assertEquals(
-                mockHeatingSetVals, (result as DataFetchResult.Success).data
+                mockHeatingSetVals, (result as DataFetchResult.Success<*>).data
             )
 
             // Ensure no further emissions occur
@@ -128,7 +128,7 @@ class HeatingSetValsRepositoryImplTest {
             // Assert: Optimistic update should be emitted immediately
             val result = awaitItem()
             assertTrue(result is DataFetchResult.Success)
-            assertEquals(updatedSetVals, (result as DataFetchResult.Success).data)
+            assertEquals(updatedSetVals, (result as DataFetchResult.Success<*>).data)
 
             expectNoEvents()
         }
@@ -225,7 +225,7 @@ class HeatingSetValsRepositoryImplTest {
             val result = awaitItem()
             assertTrue(result is DataFetchResult.Success)
             assertEquals(
-                mockHeatingSetVals, (result as DataFetchResult.Success).data
+                mockHeatingSetVals, (result as DataFetchResult.Success<*>).data
             )
         }
     }

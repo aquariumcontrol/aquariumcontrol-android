@@ -23,9 +23,9 @@
 package com.laimburggasse.aquariumcontrol.summary.data
 
 import app.cash.turbine.test
-import com.google.firebase.Firebase
-import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.firebase.crashlytics.crashlytics
+
+
+
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
@@ -67,10 +67,10 @@ class SummaryRepositoryImplTest {
         Dispatchers.setMain(testDispatcher)
 
         // Mock Firebase Crashlytics statics
-        mockkStatic(FirebaseCrashlytics::class)
-        val mockCrashlytics = mockk<FirebaseCrashlytics>(relaxed = true)
-        every { FirebaseCrashlytics.getInstance() } returns mockCrashlytics
-        every { Firebase.crashlytics } returns mockCrashlytics
+        
+        
+        
+        
 
         repository = SummaryRepositoryImpl(
             sessionManager = mockSessionManagerImpl,
@@ -103,7 +103,7 @@ class SummaryRepositoryImplTest {
             // Since it was already Loading, it won't emit Loading again.
             val result = awaitItem()
             assertTrue(result is DataFetchResult.Success)
-            assertEquals(mockSummaryData, (result as DataFetchResult.Success).data)
+            assertEquals(mockSummaryData, (result as DataFetchResult.Success<*>).data)
 
             // Ensure no further emissions occur
             expectNoEvents()
@@ -132,7 +132,7 @@ class SummaryRepositoryImplTest {
             testDispatcher.scheduler.advanceUntilIdle()
             val result = awaitItem()
             assertTrue(result is DataFetchResult.Success)
-            assertEquals(mockSummaryData, (result as DataFetchResult.Success).data)
+            assertEquals(mockSummaryData, (result as DataFetchResult.Success<*>).data)
         }
     }
 

@@ -77,7 +77,7 @@ class BallingProfileEditViewModelTest {
 
     @Test
     fun `successful repository fetch updates UI state to Success`() = runTest {
-        repositoryFlow.value = DataFetchResult.Success(mockBallingProfiles)
+        repositoryFlow.value = DataFetchResult.Success<Any>(mockBallingProfiles)
         val mockBallingProfile = mockBallingProfiles.first()
 
         viewModel = BallingProfileEditViewModel(repository)
@@ -108,7 +108,7 @@ class BallingProfileEditViewModelTest {
 
     @Test
     fun `onVolumeChange updates unconfirmed edits without affecting repository`() = runTest {
-        repositoryFlow.value = DataFetchResult.Success(mockBallingProfiles)
+        repositoryFlow.value = DataFetchResult.Success<Any>(mockBallingProfiles)
 
         viewModel = BallingProfileEditViewModel(repository)
         viewModel.setProfileId(1)
@@ -138,7 +138,7 @@ class BallingProfileEditViewModelTest {
 
     @Test
     fun `onConfirmDosing triggers repository update`() = runTest {
-        repositoryFlow.value = DataFetchResult.Success(mockBallingProfiles)
+        repositoryFlow.value = DataFetchResult.Success<Any>(mockBallingProfiles)
 
         viewModel = BallingProfileEditViewModel(repository)
         viewModel.setProfileId(1)
@@ -166,7 +166,7 @@ class BallingProfileEditViewModelTest {
 
     @Test
     fun `profile not found in list results in NotFound state`() = runTest {
-        repositoryFlow.value = DataFetchResult.Success(mockBallingProfiles)
+        repositoryFlow.value = DataFetchResult.Success<Any>(mockBallingProfiles)
 
         viewModel = BallingProfileEditViewModel(repository)
         viewModel.setProfileId(999) // Non-existent ID

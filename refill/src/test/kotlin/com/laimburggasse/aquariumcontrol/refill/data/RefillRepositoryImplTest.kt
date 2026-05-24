@@ -23,9 +23,9 @@
 package com.laimburggasse.aquariumcontrol.refill.data
 
 import app.cash.turbine.test
-import com.google.firebase.Firebase
-import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.firebase.crashlytics.crashlytics
+
+
+
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
@@ -67,10 +67,10 @@ class RefillRepositoryImplTest {
         Dispatchers.setMain(testDispatcher)
 
         // Mock Firebase Crashlytics statics
-        mockkStatic(FirebaseCrashlytics::class)
-        val mockCrashlytics = mockk<FirebaseCrashlytics>(relaxed = true)
-        every { FirebaseCrashlytics.getInstance() } returns mockCrashlytics
-        every { Firebase.crashlytics } returns mockCrashlytics
+        
+        
+        
+        
 
         repository = RefillRepositoryImpl(
             sessionManager = mockSessionManagerImpl,
@@ -101,7 +101,7 @@ class RefillRepositoryImplTest {
             // Then it emits the Success result
             val result = awaitItem()
             assertTrue(result is DataFetchResult.Success)
-            assertEquals(mockRefillStateActive, (result as DataFetchResult.Success).data)
+            assertEquals(mockRefillStateActive, (result as DataFetchResult.Success<*>).data)
 
             // Ensure no further emissions occur
             expectNoEvents()
@@ -129,7 +129,7 @@ class RefillRepositoryImplTest {
             testDispatcher.scheduler.advanceUntilIdle()
             val result = awaitItem()
             assertTrue(result is DataFetchResult.Success)
-            assertEquals(mockRefillStateActive, (result as DataFetchResult.Success).data)
+            assertEquals(mockRefillStateActive, (result as DataFetchResult.Success<*>).data)
         }
     }
 

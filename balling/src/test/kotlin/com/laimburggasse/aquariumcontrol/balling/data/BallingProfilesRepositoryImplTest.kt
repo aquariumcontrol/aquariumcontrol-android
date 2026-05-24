@@ -23,9 +23,9 @@
 package com.laimburggasse.aquariumcontrol.balling.data
 
 import app.cash.turbine.test
-import com.google.firebase.Firebase
-import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.firebase.crashlytics.crashlytics
+
+
+
 import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData.mockBallingProfiles
 import com.laimburggasse.aquariumcontrol.balling.testing.MockBallingProfileApiServiceImpl
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
@@ -65,10 +65,10 @@ class BallingProfilesRepositoryImplTest {
         Dispatchers.setMain(testDispatcher)
 
         // Mock Firebase Crashlytics statics
-        mockkStatic(FirebaseCrashlytics::class)
-        val mockCrashlytics = mockk<FirebaseCrashlytics>(relaxed = true)
-        every { FirebaseCrashlytics.getInstance() } returns mockCrashlytics
-        every { Firebase.crashlytics } returns mockCrashlytics
+        
+        
+        
+        
 
         repository = BallingProfilesRepositoryImpl(
             sessionManager = mockSessionManagerImpl,
@@ -99,7 +99,7 @@ class BallingProfilesRepositoryImplTest {
             val result = awaitItem()
 
             assertTrue(result is DataFetchResult.Success)
-            assertEquals(mockBallingProfiles, (result as DataFetchResult.Success).data)
+            assertEquals(mockBallingProfiles, (result as DataFetchResult.Success<*>).data)
 
             // Ensure no further emissions (like a second refresh or an error) occur
             expectNoEvents()

@@ -78,7 +78,7 @@ class FeedProfilesViewModelTest {
             assertEquals(FeedProfilesUiState.Loading, awaitItem())
 
             // Act: Emit data
-            repositoryFlow.value = DataFetchResult.Success(mockProfiles)
+            repositoryFlow.value = DataFetchResult.Success<Any>(mockProfiles)
 
             val state = awaitItem()
             assertTrue(state is FeedProfilesUiState.Success)
@@ -92,7 +92,7 @@ class FeedProfilesViewModelTest {
             assertEquals(FeedProfilesUiState.Loading, awaitItem())
 
             // Act: Emit empty list
-            repositoryFlow.value = DataFetchResult.Success(emptyList())
+            repositoryFlow.value = DataFetchResult.Success<Any>(emptyList())
 
             assertEquals(FeedProfilesUiState.Empty, awaitItem())
         }

@@ -95,7 +95,7 @@ class TimeDataViewModelTest {
 
             val mockData = generateMockTimeData()
             // Act: Emit success with data
-            repositoryFlow.value = DataFetchResult.Success(mockData)
+            repositoryFlow.value = DataFetchResult.Success<Any>(mockData)
 
             val state = awaitItem()
             assertTrue(state is TimeDataUiState.Success)
@@ -108,7 +108,7 @@ class TimeDataViewModelTest {
             awaitItem() // Skip loading
 
             // Act: Emit success with empty list
-            repositoryFlow.value = DataFetchResult.Success(emptyList())
+            repositoryFlow.value = DataFetchResult.Success<Any>(emptyList())
 
             val state = awaitItem()
             assertTrue(state is TimeDataUiState.Empty)

@@ -83,7 +83,7 @@ class BallingProfilesViewModelTest {
             assertEquals(BallingProfilesUiState.Loading, awaitItem())
 
             // Act: Simulate repository returning data
-            repositoryFlow.value = DataFetchResult.Success(mockBallingProfiles)
+            repositoryFlow.value = DataFetchResult.Success<Any>(mockBallingProfiles)
 
             val item = awaitItem()
             assertTrue(item is BallingProfilesUiState.Success)
@@ -97,7 +97,7 @@ class BallingProfilesViewModelTest {
             awaitItem() // Skip Loading
 
             // Act: Simulate repository returning an empty list
-            repositoryFlow.value = DataFetchResult.Success(emptyList())
+            repositoryFlow.value = DataFetchResult.Success<Any>(emptyList())
 
             assertEquals(BallingProfilesUiState.Empty, awaitItem())
         }

@@ -23,9 +23,9 @@
 package com.laimburggasse.aquariumcontrol.timedata.data
 
 import app.cash.turbine.test
-import com.google.firebase.Firebase
-import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.firebase.crashlytics.crashlytics
+
+
+
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
@@ -68,10 +68,10 @@ class TimeDataRepositoryImplTest {
         Dispatchers.setMain(testDispatcher)
 
         // Mock Firebase Crashlytics statics
-        mockkStatic(FirebaseCrashlytics::class)
-        val mockCrashlytics = mockk<FirebaseCrashlytics>(relaxed = true)
-        every { FirebaseCrashlytics.getInstance() } returns mockCrashlytics
-        every { Firebase.crashlytics } returns mockCrashlytics
+        
+        
+        
+        
 
         repository = TimeDataRepositoryImpl(
             sessionManager = mockSessionManagerImpl,
@@ -102,7 +102,7 @@ class TimeDataRepositoryImplTest {
             // Then it emits the Success result
             val result = awaitItem()
             assertTrue(result is DataFetchResult.Success)
-            assertEquals(mockSamples, (result as DataFetchResult.Success).data)
+            assertEquals(mockSamples, (result as DataFetchResult.Success<*>).data)
 
             // Ensure no further emissions occur
             expectNoEvents()
@@ -130,7 +130,7 @@ class TimeDataRepositoryImplTest {
             testDispatcher.scheduler.advanceUntilIdle()
             val result = awaitItem()
             assertTrue(result is DataFetchResult.Success)
-            assertEquals(mockSamples, (result as DataFetchResult.Success).data)
+            assertEquals(mockSamples, (result as DataFetchResult.Success<*>).data)
         }
     }
 

@@ -23,9 +23,9 @@
 package com.laimburggasse.aquariumcontrol.feed.data
 
 import app.cash.turbine.test
-import com.google.firebase.Firebase
-import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.firebase.crashlytics.crashlytics
+
+
+
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
@@ -72,10 +72,10 @@ class FeedScheduleRepositoryImplTest {
         Dispatchers.setMain(testDispatcher)
 
         // Mock Firebase Crashlytics statics
-        mockkStatic(FirebaseCrashlytics::class)
-        val mockCrashlytics = mockk<FirebaseCrashlytics>(relaxed = true)
-        every { FirebaseCrashlytics.getInstance() } returns mockCrashlytics
-        every { Firebase.crashlytics } returns mockCrashlytics
+        
+        
+        
+        
 
         repository = FeedScheduleRepositoryImpl(
             sessionManager = mockSessionManagerImpl,
@@ -108,7 +108,7 @@ class FeedScheduleRepositoryImplTest {
             val result = awaitItem()
 
             assertTrue(result is DataFetchResult.Success)
-            assertEquals(mockFeedScheduleEntries, (result as DataFetchResult.Success).data)
+            assertEquals(mockFeedScheduleEntries, (result as DataFetchResult.Success<*>).data)
 
             // Ensure no further emissions (like a second refresh or an error) occur
             expectNoEvents()

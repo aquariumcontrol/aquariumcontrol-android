@@ -84,7 +84,7 @@ class VentilationSetValsViewModelTest {
             awaitItem() // Loading
 
             // Act
-            repositoryFlow.value = DataFetchResult.Success(mockVentilationSetVals)
+            repositoryFlow.value = DataFetchResult.Success<Any>(mockVentilationSetVals)
 
             val state = awaitItem()
             assertTrue(state is VentilationSetValsUiState.Success)
@@ -111,7 +111,7 @@ class VentilationSetValsViewModelTest {
             awaitItem() // Loading
 
             // Act
-            repositoryFlow.value = DataFetchResult.Success(invalidVals)
+            repositoryFlow.value = DataFetchResult.Success<Any>(invalidVals)
             awaitItem()
 
             // Assert
@@ -137,7 +137,7 @@ class VentilationSetValsViewModelTest {
     @Test
     fun `ChangeLowerValue event updates local repository using current state`() = runTest {
         // Arrange: Start with success
-        repositoryFlow.value = DataFetchResult.Success(mockVentilationSetVals)
+        repositoryFlow.value = DataFetchResult.Success<Any>(mockVentilationSetVals)
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Act
@@ -152,7 +152,7 @@ class VentilationSetValsViewModelTest {
     @Test
     fun `ChangeHigherValue event updates local repository using current state`() = runTest {
         // Arrange: Start with success
-        repositoryFlow.value = DataFetchResult.Success(mockVentilationSetVals)
+        repositoryFlow.value = DataFetchResult.Success<Any>(mockVentilationSetVals)
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Act

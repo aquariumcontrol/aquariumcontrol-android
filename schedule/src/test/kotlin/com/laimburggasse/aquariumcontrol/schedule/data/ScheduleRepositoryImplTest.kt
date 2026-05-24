@@ -23,9 +23,9 @@
 package com.laimburggasse.aquariumcontrol.schedule.data
 
 import app.cash.turbine.test
-import com.google.firebase.Firebase
-import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.firebase.crashlytics.crashlytics
+
+
+
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockControllerProfileList
@@ -77,10 +77,10 @@ class ScheduleRepositoryImplTest {
         Dispatchers.setMain(testDispatcher)
 
         // Mock Firebase Crashlytics statics
-        mockkStatic(FirebaseCrashlytics::class)
-        val mockCrashlytics = mockk<FirebaseCrashlytics>(relaxed = true)
-        every { FirebaseCrashlytics.getInstance() } returns mockCrashlytics
-        every { Firebase.crashlytics } returns mockCrashlytics
+        
+        
+        
+        
 
         repository = ScheduleRepositoryImpl(
             sessionManager = mockSessionManagerImpl,
@@ -109,7 +109,7 @@ class ScheduleRepositoryImplTest {
 
             val result = awaitItem()
             assertTrue(result is DataFetchResult.Success)
-            assertEquals(mockScheduleEntries, (result as DataFetchResult.Success).data)
+            assertEquals(mockScheduleEntries, (result as DataFetchResult.Success<*>).data)
 
             // Ensure no further emissions occur
             expectNoEvents()
@@ -133,7 +133,7 @@ class ScheduleRepositoryImplTest {
             // Assert: Optimistic update should be emitted immediately
             val result = awaitItem()
             assertTrue(result is DataFetchResult.Success)
-            assertEquals(updatedEntries, (result as DataFetchResult.Success).data)
+            assertEquals(updatedEntries, (result as DataFetchResult.Success<*>).data)
 
             expectNoEvents()
         }
@@ -160,7 +160,7 @@ class ScheduleRepositoryImplTest {
             // Assert: Should revert to original data
             val result = awaitItem()
             assertTrue(result is DataFetchResult.Success)
-            assertEquals(mockScheduleEntries, (result as DataFetchResult.Success).data)
+            assertEquals(mockScheduleEntries, (result as DataFetchResult.Success<*>).data)
         }
     }
 
@@ -184,7 +184,7 @@ class ScheduleRepositoryImplTest {
             testDispatcher.scheduler.advanceUntilIdle()
             val result = awaitItem()
             assertTrue(result is DataFetchResult.Success)
-            assertEquals(mockScheduleEntries, (result as DataFetchResult.Success).data)
+            assertEquals(mockScheduleEntries, (result as DataFetchResult.Success<*>).data)
         }
     }
 

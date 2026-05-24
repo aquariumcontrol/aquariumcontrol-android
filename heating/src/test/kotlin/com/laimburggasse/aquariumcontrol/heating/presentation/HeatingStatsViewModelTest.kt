@@ -83,7 +83,7 @@ class HeatingStatsViewModelTest {
             assertEquals(HeatingStatsUiState.Loading, awaitItem())
 
             // Act: Emit success
-            repositoryFlow.value = DataFetchResult.Success(mockHeatingStatsData)
+            repositoryFlow.value = DataFetchResult.Success<Any>(mockHeatingStatsData)
 
             val state = awaitItem()
             assertTrue("Expected Success but got $state", state is HeatingStatsUiState.Success)

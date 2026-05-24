@@ -101,7 +101,7 @@ class FeedScheduleViewModelTest {
 
             // Act: Emit data
             val mockEntries = listOf(mockk<FeedScheduleEntry>())
-            scheduleFlow.value = DataFetchResult.Success(mockEntries)
+            scheduleFlow.value = DataFetchResult.Success<Any>(mockEntries)
 
             val state = awaitItem()
             assertTrue(state is FeedScheduleSelectionUiState.Success)
@@ -115,7 +115,7 @@ class FeedScheduleViewModelTest {
             awaitItem() // Skip loading
 
             // Act: Emit empty
-            scheduleFlow.value = DataFetchResult.Success(emptyList())
+            scheduleFlow.value = DataFetchResult.Success<Any>(emptyList())
 
             assertEquals(FeedScheduleSelectionUiState.Empty, awaitItem())
         }

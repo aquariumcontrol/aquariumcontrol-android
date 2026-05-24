@@ -83,7 +83,7 @@ class SummaryViewModelTest {
             assertEquals(SummaryUiState.Loading, awaitItem())
 
             // Act: Emit success from repository
-            repositoryFlow.value = DataFetchResult.Success(mockSummaryData)
+            repositoryFlow.value = DataFetchResult.Success<Any>(mockSummaryData)
 
             val state = awaitItem()
             assertTrue(state is SummaryUiState.Success)

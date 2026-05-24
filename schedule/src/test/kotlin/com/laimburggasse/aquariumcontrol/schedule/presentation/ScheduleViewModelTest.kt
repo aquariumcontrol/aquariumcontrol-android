@@ -85,7 +85,7 @@ class ScheduleViewModelTest {
             assertEquals(ScheduleUiState.Loading, awaitItem())
 
             // Act: Push success data into the repository flow
-            repositoryFlow.value = DataFetchResult.Success(mockScheduleEntries)
+            repositoryFlow.value = DataFetchResult.Success<Any>(mockScheduleEntries)
 
             val state = awaitItem()
             assertTrue(state is ScheduleUiState.Success)
@@ -114,7 +114,7 @@ class ScheduleViewModelTest {
     @Test
     fun `ChangeTime event triggers repository update with copied values`() = runTest {
         // Arrange: Start with success state
-        repositoryFlow.value = DataFetchResult.Success(mockScheduleEntries)
+        repositoryFlow.value = DataFetchResult.Success<Any>(mockScheduleEntries)
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Act: User changes Balling Start Time to 09:30 (9.5f)
