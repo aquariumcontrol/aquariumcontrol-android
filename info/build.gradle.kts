@@ -26,11 +26,9 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose") version "2.3.21"
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp") version "2.3.7"
-}
+    }
 
-kotlin {
-    jvmToolchain(jdkVersion = 21)
-}
+
 
 android {
     namespace = "com.laimburggasse.aquariumcontrol.info"
@@ -58,6 +56,10 @@ android {
         kotlinCompilerExtensionVersion = "1.5.3"
     }
     experimentalProperties["android.experimental.enableScreenshotTest"] = true
+
+    kotlin {
+        jvmToolchain(21)
+    }
 }
 
 dependencies {

@@ -27,11 +27,9 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp") version "2.3.7"
     id("jacoco")
-}
+    }
 
-kotlin {
-    jvmToolchain(jdkVersion = 21)
-}
+
 
 android {
     namespace = "com.laimburggasse.aquariumcontrol.timedata"
@@ -70,6 +68,12 @@ android {
         kotlinCompilerExtensionVersion = "1.5.15"
     }
     experimentalProperties["android.experimental.enableScreenshotTest"] = true
+    compileOptions {
+    }
+
+    kotlin {
+        jvmToolchain(21)
+    }
 }
 
 jacoco {

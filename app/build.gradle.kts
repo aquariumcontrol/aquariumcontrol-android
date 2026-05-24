@@ -28,20 +28,14 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose") version "2.3.21"
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp") version "2.3.7"
-
     // Required for Firebase Crashlytics:
     // Google services Gradle plugin
     id("com.google.gms.google-services")
     // Crashlytics Gradle plugin
     id("com.google.firebase.crashlytics")
-}
-
-kotlin {
-    jvmToolchain(jdkVersion = 21)
-    compilerOptions {
-        freeCompilerArgs.add("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
     }
-}
+
+
 
 android {
     namespace = "com.laimburggasse.aquariumcontrol"
@@ -89,6 +83,10 @@ android {
     }
     @Suppress("UnstableApiUsage")
     experimentalProperties["android.experimental.enableScreenshotTest"] = true
+
+    kotlin {
+        jvmToolchain(21)
+    }
 }
 
 dependencies {

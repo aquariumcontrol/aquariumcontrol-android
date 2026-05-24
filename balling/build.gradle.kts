@@ -5,13 +5,12 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp") version "2.3.7"
     id("jacoco")
-}
+    }
 
-kotlin {
-    jvmToolchain(jdkVersion = 21)
-}
+
 
 android {
+    
     namespace = "com.laimburggasse.aquariumcontrol.balling"
     compileSdk = 37
     defaultConfig {
@@ -51,7 +50,14 @@ android {
     @Suppress("UnstableApiUsage")
     testFixtures.enable = true
     experimentalProperties["android.experimental.enableScreenshotTest"] = true
+        compileOptions {
+    }
+
+    kotlin {
+        jvmToolchain(21)
+    }
 }
+    
 
 jacoco {
     toolVersion = "0.8.12"

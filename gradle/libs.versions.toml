@@ -27,12 +27,16 @@ room = "2.8.4"
 aboutLibraries = "14.2.0"
 mikepenzAboutLibrariesPlugin = "14.2.0"
 turbine = "1.2.1"
-pagingCommon = "3.5.0"
+pagingCommon = "3.3.0"
 pagingCompose = "3.5.0"
 foundationLayout = "1.11.2"
 datastore = "1.1.2"
+kotlinx-datetime = "0.6.1"
 
 [libraries]
+androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version = "2.5.0-alpha11" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlinStdlibJdk8Version" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleRuntimeCompose" }
@@ -89,8 +93,10 @@ turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 androidx-paging-common = { group = "androidx.paging", name = "paging-common", version.ref = "pagingCommon" }
 androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "pagingCompose" }
 androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 
 [plugins]
+androidx-room = { id = "androidx.room", version.ref = "room" }
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version = "2.3.21" }
 screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot"}
