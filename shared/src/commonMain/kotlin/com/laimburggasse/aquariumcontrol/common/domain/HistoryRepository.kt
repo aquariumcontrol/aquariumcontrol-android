@@ -28,4 +28,5 @@ import kotlinx.coroutines.flow.Flow
 interface HistoryRepository<T : Any> {
     val historyEventFlow: Flow<PagingData<T>>
     suspend fun triggerRefresh()
+    suspend fun getHistory(date: Long): List<T>
 }

@@ -98,9 +98,11 @@ open class ScheduleRepositoryImpl @Inject constructor(
             }
 
             // If there is no failure, and we have a controller, proceed with loading.
+            println("ScheduleRepositoryImpl: flatMapLatest - start loading")
             emit(value = DataFetchResult.Loading)
 
             // A controller is present, so start fetching
+            println("ScheduleRepositoryImpl: flatMapLatest - calling fetchScheduleSetVals")
             val networkResult: DataFetchResult<ScheduleEntries> = fetchScheduleSetVals(
                 username = controller.user, password = controller.password
             )
@@ -174,6 +176,7 @@ open class ScheduleRepositoryImpl @Inject constructor(
 
     // helper function for the flow
     open suspend fun fetchScheduleSetVals(username: String, password: String): DataFetchResult<ScheduleEntries> {
+        println("ScheduleRepositoryImpl: fetchScheduleSetVals - username: ")
         return withContext(context.dispatcher) {
             val url: String =
                 "http://" + sessionManager.getControllerAddress() + ":" +

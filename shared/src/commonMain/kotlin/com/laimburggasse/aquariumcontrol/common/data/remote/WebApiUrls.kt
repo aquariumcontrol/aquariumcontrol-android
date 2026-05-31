@@ -36,6 +36,7 @@ object WebApiUrls {
     const val FEED_LOAD_PROFILES = "${BASE_URL}load_feed_profiles"
     const val FEED_LOAD_EVENTS = "${BASE_URL}load_feed_log"
     const val FEED_LOAD_FIRST_EVENT = "${BASE_URL}load_feed_log_start"
+    const val FEED_EXECUTE_PROFILE = "${BASE_URL}execute_feed_profile&profileId="
     const val FEED_DELETE_PROFILE = "${BASE_URL}delete_feed_profile&profileId="
     const val FEED_PROFILE_UPDATE = "${BASE_URL}update_feed_profile"
     const val FEED_PROFILE_CREATE = "${BASE_URL}create_feed_profile"

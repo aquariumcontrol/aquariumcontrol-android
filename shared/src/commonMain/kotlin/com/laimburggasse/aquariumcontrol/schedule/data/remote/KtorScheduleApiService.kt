@@ -16,6 +16,7 @@ class KtorScheduleApiService @Inject constructor(
     private val client: HttpClient
 ) : ScheduleApiService {
     override suspend fun getScheduleData(url: String, authHeader: String): List<ScheduleStringEntry> {
+        println("KtorScheduleApiService: getScheduleData - url: ")
         return client.get(url) {
             header("Authorization", authHeader)
         }.body()

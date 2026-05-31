@@ -109,7 +109,7 @@ class BallingProfileEditViewModelTest {
 
     @Test
     fun `ConfirmDosingVolume event calls repository updateBallingProfile`() = runTest {
-        every { repository.updateBallingProfile(any()) } just Runs
+        coEvery { repository.updateBallingProfile(any()) } just Runs
 
         // Act & Assert within subscription
         viewModel.ballingProfileEditUiState.test {

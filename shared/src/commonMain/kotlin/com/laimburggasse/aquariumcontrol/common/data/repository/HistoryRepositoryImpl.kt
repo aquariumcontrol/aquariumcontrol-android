@@ -50,6 +50,8 @@ open class HistoryRepositoryImpl<T : Any> @Inject constructor(
             pager.flow
         }
 
+    override suspend fun getHistory(date: Long): List<T> = emptyList()
+
     override suspend fun triggerRefresh() {
         refreshTrigger.emit(value = Unit)
     }

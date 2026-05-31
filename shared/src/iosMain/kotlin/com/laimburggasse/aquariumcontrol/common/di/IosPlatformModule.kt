@@ -40,15 +40,14 @@ interface IosPlatformModule : PlatformModule {
         return getRoomDatabase(getDatabaseBuilder())
     }
 
-    @OptIn(ExperimentalForeignApi::class)
+        @OptIn(ExperimentalForeignApi::class)
     private fun documentDirectory(): String {
-        val documentDirectory = NSFileManager.defaultManager.URLForDirectory(
+        val documentDirectory = NSFileManager.defaultManager.URLsForDirectory(
             directory = NSDocumentDirectory,
-            inDomain = NSUserDomainMask,
-            appropriateForURL = null,
-            create = false,
-            error = null,
-        )
-        return documentDirectory?.path ?: ""
+            inDomains = NSUserDomainMask,
+        ).firstOrNull() as? platform.Foundation.NSURL
+        val pathStr = documentDirectory?.path ?: ""
+        println("DEBUG: IosPlatformModule: Document Directory: ")
+        return pathStr
     }
 }

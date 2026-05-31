@@ -28,6 +28,6 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface BallingProfilesRepository {
     val ballingProfiles: StateFlow<DataFetchResult<List<BallingProfile>>>
-    fun updateBallingProfile(ballingProfile: BallingProfile)
+    suspend fun updateBallingProfile(ballingProfile: BallingProfile)
     suspend fun triggerRefresh()
 }

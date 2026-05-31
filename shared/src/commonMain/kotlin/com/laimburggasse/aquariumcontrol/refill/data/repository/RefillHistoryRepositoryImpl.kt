@@ -37,4 +37,6 @@ open class RefillHistoryRepositoryImpl @Inject constructor(
 ) : HistoryRepositoryImpl<RefillHistoryLogEntry>(sessionManager, pager), RefillHistoryRepository {
 
     override val refillHistoryEventFlow: Flow<PagingData<RefillHistoryLogEntry>> = historyEventFlow
+
+    override suspend fun getHistory(date: Long): List<RefillHistoryLogEntry> = emptyList()
 }

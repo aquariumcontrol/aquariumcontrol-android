@@ -3,6 +3,7 @@ package com.laimburggasse.aquariumcontrol.di
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.common.di.IosPlatformModule
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+import com.laimburggasse.aquariumcontrol.common.domain.repository.ServerProfileRepository
 import com.laimburggasse.aquariumcontrol.summary.domain.repository.SummaryRepository
 import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillRepository
 import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillHistoryRepository
@@ -22,6 +23,7 @@ import me.tatarka.inject.annotations.Component
 @ApplicationScope
 abstract class IosComponent : SharedModule, IosPlatformModule {
     abstract val sessionManager: SessionManager
+    abstract val serverProfileRepository: ServerProfileRepository
     abstract val summaryRepository: SummaryRepository
     abstract val refillRepository: RefillRepository
     abstract val refillHistoryRepository: RefillHistoryRepository

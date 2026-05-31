@@ -85,7 +85,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
             emit(value = DataFetchResult.Loading)
 
             val networkResult: DataFetchResult<List<FeedScheduleEntry>> = withContext(ioDispatcher.dispatcher) {
-                val url = "http://${controller.address}:${controller.port}${WebApiUrls.FEED_LOAD_SCHEDULE}"
+                val url = "http://" + controller.address + ":" + controller.port + WebApiUrls.FEED_LOAD_SCHEDULE
                 val scheduleReader = FeedScheduleEntryReader(
                     logger, apiService, url, username = controller.user, password = controller.password
                 )
@@ -144,28 +144,28 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
             failureResult.value = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_INVALID_CONTROLLER_ADDRESS)
             return
         }
-        val url = "http://$controllerAddress:$port${WebApiUrls.FEED_SCHEDULE_DELETE_ENTRY}"
-        val authHeader = "Basic " + Base64.encode("$user:$password".encodeToByteArray())
+        val url = "http://" + controllerAddress + ":" + port + WebApiUrls.FEED_SCHEDULE_DELETE_ENTRY
+        val authHeader = "Basic " + Base64.encode((user + ":" + password).encodeToByteArray())
         val postParams = feedScheduleEntry.getApiParameters(formatTimestamp(feedScheduleEntry.timestamp))
 
-        repositoryScope.launch(ioDispatcher.dispatcher) {
-            val requestSuccess = try {
+        val requestSuccess = withContext(ioDispatcher.dispatcher) {
+            try {
                 apiService.deleteFeedScheduleEntry(url, authHeader, postParams)
             } catch (e: Exception) {
                 logger.recordException(e)
                 false
             }
-            if (requestSuccess) {
-                delay(timeMillis = 3000L)
-                triggerRefresh()
-            } else {
-                pendingDeletions.value -= keyToDelete
-                failureResult.value = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_DELETING_FEED_SCHEDULE_ENTRY_FAILED)
-            }
+        }
+        if (requestSuccess) {
+            delay(timeMillis = 3000L)
+            triggerRefresh()
+        } else {
+            pendingDeletions.value -= keyToDelete
+            failureResult.value = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_DELETING_FEED_SCHEDULE_ENTRY_FAILED)
         }
     }
 
-    override fun addFeedScheduleEntry(
+    override suspend fun addFeedScheduleEntry(
         feedProfileId: Int,
         feedProfileName: String,
         repeatDaily: Boolean,
@@ -185,27 +185,27 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
             failureResult.value = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_INVALID_CONTROLLER_ADDRESS)
             return
         }
-        val url = "http://$controllerAddress:$port${WebApiUrls.FEED_PROFILE_SCHEDULE_NEW}"
-        val authHeader = "Basic " + Base64.encode("$user:$password".encodeToByteArray())
+        val url = "http://" + controllerAddress + ":" + port + WebApiUrls.FEED_PROFILE_SCHEDULE_NEW
+        val authHeader = "Basic " + Base64.encode((user + ":" + password).encodeToByteArray())
         val apiParams = tempEntry.getApiParameters(formatTimestamp(timestampMillis))
 
-        repositoryScope.launch(ioDispatcher.dispatcher) {
-            val requestSuccess = try {
+        val requestSuccess = withContext(ioDispatcher.dispatcher) {
+            try {
                 apiService.addFeedScheduleEntry(url, authHeader, apiParams)
             } catch (e: Exception) {
                 logger.recordException(e)
                 false
             }
-            if (requestSuccess) {
-                delay(timeMillis = 3000L)
-                triggerRefresh()
-            } else {
-                failureResult.value = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_ADDING_FEED_SCHEDULE_ENTRY_FAILED)
-            }
+        }
+        if (requestSuccess) {
+            delay(timeMillis = 3000L)
+            triggerRefresh()
+        } else {
+            failureResult.value = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_ADDING_FEED_SCHEDULE_ENTRY_FAILED)
         }
     }
 
-    override fun updateFeedScheduleEntry(
+    override suspend fun updateFeedScheduleEntry(
         feedProfileId: Int,
         feedProfileName: String,
         repeatDaily: Boolean,
@@ -214,7 +214,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
     ) {
         val originalKey = FeedScheduleEntryKey(feedProfileId, timestamp = millisSinceEpoch)
         val modifiedEntry = FeedScheduleEntry(timestamp = timestampMillis, profileId = feedProfileId, profileName = feedProfileName, isDaily = repeatDaily)
-        pendingUpdates.value += (originalKey to modifiedEntry.copy(profileName = "$feedProfileName (Saving...)"))
+        pendingUpdates.value += (originalKey to modifiedEntry.copy(profileName = " (Saving...)"))
 
         val user = sessionManager.getControllerUser() ?: ""
         val password = sessionManager.getControllerPassword() ?: ""
@@ -224,27 +224,27 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
             failureResult.value = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_INVALID_CONTROLLER_ADDRESS)
             return
         }
-        val url = "http://$controllerAddress:$port${WebApiUrls.FEED_UPDATE_SCHEDULE}"
-        val authHeader = "Basic " + Base64.encode("$user:$password".encodeToByteArray())
+        val url = "http://" + controllerAddress + ":" + port + WebApiUrls.FEED_UPDATE_SCHEDULE
+        val authHeader = "Basic " + Base64.encode((user + ":" + password).encodeToByteArray())
         val postParams = modifiedEntry.getApiParametersForUpdating(
             timestampOldString = formatTimestamp(millisSinceEpoch),
             timestampNewString = formatTimestamp(timestampMillis)
         )
 
-        repositoryScope.launch(ioDispatcher.dispatcher) {
-            val requestSuccess = try {
+        val requestSuccess = withContext(ioDispatcher.dispatcher) {
+            try {
                 apiService.updateFeedScheduleEntry(url, authHeader, postParams)
             } catch (e: Exception) {
                 logger.recordException(e)
                 false
             }
-            if (requestSuccess) {
-                delay(timeMillis = 3000L)
-                triggerRefresh()
-            } else {
-                pendingUpdates.value -= originalKey
-                failureResult.value = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_UPDATING_FEED_SCHEDULE_ENTRY_FAILED)
-            }
+        }
+        if (requestSuccess) {
+            delay(timeMillis = 3000L)
+            triggerRefresh()
+        } else {
+            pendingUpdates.value -= originalKey
+            failureResult.value = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_UPDATING_FEED_SCHEDULE_ENTRY_FAILED)
         }
     }
 

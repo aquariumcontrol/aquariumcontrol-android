@@ -72,6 +72,13 @@ class MockFeedProfileApiServiceImpl(
         return true
     }
 
+        override suspend fun executeFeedProfile(
+        url: String,
+        authHeader: String
+    ): Boolean {
+        return mockFeedProfileImports != null
+    }
+
     override suspend fun deleteFeedProfile(
         url: String,
         authHeader: String

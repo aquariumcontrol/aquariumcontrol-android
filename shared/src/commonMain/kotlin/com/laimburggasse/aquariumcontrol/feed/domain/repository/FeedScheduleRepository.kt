@@ -30,13 +30,13 @@ import kotlinx.coroutines.flow.StateFlow
 interface FeedScheduleRepository {
     val scheduleFlow: StateFlow<DataFetchResult<List<FeedScheduleEntry>>>
     suspend fun deleteFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry)
-    fun addFeedScheduleEntry(
+    suspend fun addFeedScheduleEntry(
         feedProfileId: Int,
         feedProfileName: String,
         repeatDaily: Boolean,
         timestampMillis: Long
     )
-    fun updateFeedScheduleEntry(
+    suspend fun updateFeedScheduleEntry(
         feedProfileId: Int,
         feedProfileName: String,
         repeatDaily: Boolean,

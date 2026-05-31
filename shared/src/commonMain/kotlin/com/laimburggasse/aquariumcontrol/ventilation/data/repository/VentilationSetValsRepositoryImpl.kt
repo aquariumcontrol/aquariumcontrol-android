@@ -23,11 +23,7 @@
 package com.laimburggasse.aquariumcontrol.ventilation.data.repository
 
 import com.laimburggasse.aquariumcontrol.common.util.Base64
-
-
-
 import com.laimburggasse.aquariumcontrol.common.util.Logger
-
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
@@ -42,7 +38,6 @@ import com.laimburggasse.aquariumcontrol.ventilation.data.remote.VentilationSetV
 import com.laimburggasse.aquariumcontrol.ventilation.domain.model.VentilationSetVals
 import com.laimburggasse.aquariumcontrol.ventilation.domain.repository.VentilationSetValsRepository
 import com.laimburggasse.aquariumcontrol.ventilation.domain.ventilationSetValsSanityCheck
-import io.ktor.util.encodeBase64
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -60,7 +55,6 @@ import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @ApplicationScope
-
 open class VentilationSetValsRepositoryImpl @Inject constructor(
     private val logger: Logger,
     private val sessionManager: SessionManager,
@@ -68,21 +62,15 @@ open class VentilationSetValsRepositoryImpl @Inject constructor(
     private val repositoryScope: CoroutineScope,
     private val context: IoDispatcher
 ): VentilationSetValsRepository {
-    // Triggers for manual refreshes and optimistic updates.
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
     private val pendingUpdate = MutableStateFlow<VentilationSetVals?>(value = null)
-
-    // Holds the last successfully fetched data from the server, used for the 'reset' function.
     private var ventilationSetValsBackup: VentilationSetVals? = null
-
-    // A flow to hold the failure value
     private val failureResult = MutableStateFlow<DataFetchResult.Error?>(value = null)
 
-    // The private flow only fetches data from the network.
     @OptIn(ExperimentalCoroutinesApi::class)
     private val networkDataFlow: StateFlow<DataFetchResult<VentilationSetVals>> = combine(
         flow = sessionManager.selectedControllerProfile,
-        flow2 = refreshTrigger.onStart { emit(value = Unit) }, // Initial trigger
+        flow2 = refreshTrigger.onStart { emit(value = Unit) },
         flow3 = failureResult
     ) { controller, _, failure ->
         Pair(first = controller, second = failure)
@@ -102,16 +90,12 @@ open class VentilationSetValsRepositoryImpl @Inject constructor(
                 return@flow
             }
 
-            // UI shall temporarily show loading state, while fetching data
             emit(value = DataFetchResult.Loading)
 
             val networkResult: DataFetchResult<VentilationSetVals> = withContext(context.dispatcher) {
-                val url = "http://${controller.address}:${controller.port}${WebApiUrls.VENTILATION_LOAD_SET_VALS}"
+                val url = "http://" + controller.address + ":" + controller.port + WebApiUrls.VENTILATION_LOAD_SET_VALS
                 val ventilationSetValsReader = VentilationSetValsReader(
-                    logger,
-                    apiService,
-                    url,
-                    username = controller.user, password = controller.password
+                    logger, apiService, url, username = controller.user, password = controller.password
                 )
                 when (val setValsList: DataFetchResult<List<VentilationSetVals>> =
                     ventilationSetValsReader.readVentilationSetVals()) {
@@ -127,7 +111,7 @@ open class VentilationSetValsRepositoryImpl @Inject constructor(
                                     )
                                 }
                                 is SetValsSanityCheckResult.Success<*> -> {
-                                    ventilationSetValsBackup = firstItem // Update the backup
+                                    ventilationSetValsBackup = firstItem
                                     DataFetchResult.Success(data = firstItem)
                                 }
                             }
@@ -153,16 +137,13 @@ open class VentilationSetValsRepositoryImpl @Inject constructor(
         initialValue = DataFetchResult.Loading
     )
 
-    // The public flow now combines the stable network data with the fast-changing local edits.
     override val ventilationSetValsFlow: StateFlow<DataFetchResult<VentilationSetVals>> = combine(
         flow = networkDataFlow,
         flow2 = pendingUpdate
     ) { networkResult, pending ->
         if (pending != null) {
-            // Use local data when the user has modified something.
             DataFetchResult.Success(data = pending)
         } else {
-            // Otherwise, show the latest result from the network.
             networkResult
         }
     }.stateIn(
@@ -171,19 +152,11 @@ open class VentilationSetValsRepositoryImpl @Inject constructor(
         initialValue = DataFetchResult.Loading
     )
 
-    /**
-     * Applies an optimistic update to the local state without committing to the server.
-     * The UI will show this change instantly.
-     */
     override fun updateLocalValues(ventilationSetVals: VentilationSetVals) {
         pendingUpdate.value = ventilationSetVals
     }
 
-    /**
-     * Commits the current (potentially local) values to the server.
-     */
     override suspend fun updateValues() {
-        // Get the most recent values, either from the pending update or the last fetched state
         val currentValues: VentilationSetVals? = pendingUpdate.value ?:
         (ventilationSetValsFlow.value as? DataFetchResult.Success)?.data
 
@@ -198,61 +171,49 @@ open class VentilationSetValsRepositoryImpl @Inject constructor(
         }
 
         if (currentValues != null) {
-            repositoryScope.launch(context.dispatcher) {
-                val user = sessionManager.getControllerUser() ?: ""
-                val password = sessionManager.getControllerPassword() ?: ""
-                val port = sessionManager.getControllerPort()
+            val user = sessionManager.getControllerUser() ?: ""
+            val password = sessionManager.getControllerPassword() ?: ""
+            val port = sessionManager.getControllerPort()
 
-                val url = "http://$controllerAddress:$port${WebApiUrls.VENTILATION_UPDATE_SET_VALS}"
-                val authHeader = "Basic " + "$user:$password".encodeToByteArray().let { Base64.encode(it) }
-                val postParams = mapOf(
-                    WebApiParams.VENTILATION_SWITCH_ON_TEMPERATURE to currentValues.ventilationSwitchOnTemp.toString(),
-                    WebApiParams.VENTILATION_SWITCH_OFF_TEMPERATURE to currentValues.ventilationSwitchOffTemp.toString()
-                )
+            val url = "http://" + controllerAddress + ":" + port + WebApiUrls.VENTILATION_UPDATE_SET_VALS
+            val authHeader = "Basic " + Base64.encode((user + ":" + password).encodeToByteArray())
+            val postParams = mapOf(
+                WebApiParams.VENTILATION_SWITCH_ON_TEMPERATURE to currentValues.ventilationSwitchOnTemp.toString(),
+                WebApiParams.VENTILATION_SWITCH_OFF_TEMPERATURE to currentValues.ventilationSwitchOffTemp.toString()
+            )
 
-                // Make the Retrofit call
-                val requestSuccess = try {
-                    val response = apiService.updateVentilationSetVals(url, authHeader, postParams)
-                    response
-                } catch (e: Exception) { // recording exception in crashlytics
+            val requestSuccess = withContext(context.dispatcher) {
+                try {
+                    apiService.updateVentilationSetVals(url, authHeader, postParams)
+                } catch (e: Exception) {
                     logger.recordException(e)
-                    false // Catch network timeouts or connection errors
+                    false
                 }
+            }
 
-                if (requestSuccess) {
-                    pendingUpdate.value = null
-                    failureResult.value = null
-                    refreshTrigger.emit(value = Unit) // This will cause the `profilesFlow` to re-fetch.
-                } else {
-                    pendingUpdate.value = null
-                    failureResult.value = DataFetchResult.Error(
-                        exception = null,
-                        errorMessage = GlobalConstants.ERR_MSG_UPDATING_SET_VALS_FAILED
-                    )
-                }
+            if (requestSuccess) {
+                failureResult.value = null
+                refreshTrigger.emit(value = Unit)
+                kotlinx.coroutines.delay(500)
+                pendingUpdate.value = null
+            } else {
+                pendingUpdate.value = null
+                failureResult.value = DataFetchResult.Error(
+                    exception = null,
+                    errorMessage = GlobalConstants.ERR_MSG_UPDATING_SET_VALS_FAILED
+                )
             }
         }
     }
 
-    /**
-     * Reverts any uncommitted local changes by clearing the pending update.
-     * The flow will automatically revert to the last successfully fetched state.
-     */
     override fun reset() {
         pendingUpdate.value = null
     }
 
-    /**
-     * Triggers a manual refresh of the heating setpoints.
-     */
     override suspend fun triggerRefresh() {
-        // Check if the current state is a failure.
         if (failureResult.value != null) {
-            // If it is, setting it to null is sufficient to trigger the combine/flatMapLatest chain again.
             failureResult.value = null
         } else {
-            // If the system is NOT in a failure state, then we must emit the refreshTrigger
-            // to force a new fetch, as nothing else has changed.
             refreshTrigger.emit(value = Unit)
         }
     }

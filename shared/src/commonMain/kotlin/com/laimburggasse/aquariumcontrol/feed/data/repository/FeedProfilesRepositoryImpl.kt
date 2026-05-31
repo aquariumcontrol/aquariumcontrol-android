@@ -82,7 +82,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
 
                 val networkResult: DataFetchResult<List<FeedProfileImport>> =
                     withContext(context = ioDispatcher.dispatcher) {
-                        val url = "http://${controller.address}:${controller.port}${WebApiUrls.FEED_LOAD_PROFILES}"
+                        val url = "http://" + controller.address + ":" + controller.port + WebApiUrls.FEED_LOAD_PROFILES
                         val profileReader = FeedProfileReader(
                             logger, apiService, url, username = controller.user, password = controller.password
                         )
@@ -120,28 +120,29 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
             reportInvalidControllerAddress()
             return
         }
-        val url = "http://$controllerAddress:$port${WebApiUrls.FEED_DELETE_PROFILE}" + feedProfile.profileID
-        val authHeader = "Basic " + Base64.encode("$user:$password".encodeToByteArray())
+        val url = "http://" + controllerAddress + ":" + port + WebApiUrls.FEED_DELETE_PROFILE + feedProfile.profileID
+        val authHeader = "Basic " + Base64.encode((user + ":" + password).encodeToByteArray())
 
         localState.update { it.copy(pendingDeletions = it.pendingDeletions + feedProfile.profileID) }
 
-        repositoryScope.launch(ioDispatcher.dispatcher) {
-            val requestSuccess = try {
+        val requestSuccess = withContext(ioDispatcher.dispatcher) {
+            try {
                 apiService.deleteFeedProfile(url, authHeader)
             } catch (e: Exception) {
                 logger.recordException(e)
                 false
             }
+        }
 
-            if (!requestSuccess) {
-                localState.update { it.copy(
-                        pendingDeletions = it.pendingDeletions - feedProfile.profileID,
-                        failureResult = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_COULD_NOT_DELETE_FEED_PROFILE)
-                    )
-                }
-            } else {
-                triggerRefresh()
+        if (!requestSuccess) {
+            localState.update { it.copy(
+                    pendingDeletions = it.pendingDeletions - feedProfile.profileID,
+                    failureResult = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_COULD_NOT_DELETE_FEED_PROFILE)
+                )
             }
+        } else {
+            localState.update { it.copy(pendingDeletions = it.pendingDeletions - feedProfile.profileID) }
+            triggerRefresh()
         }
     }
 
@@ -154,22 +155,22 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
             reportInvalidControllerAddress()
             return
         }
-        val url = "http://$controllerAddress:$port${WebApiUrls.FEED_PROFILE_CREATE}"
-        val authHeader = "Basic " + Base64.encode("$user:$password".encodeToByteArray())
+        val url = "http://" + controllerAddress + ":" + port + WebApiUrls.FEED_PROFILE_CREATE
+        val authHeader = "Basic " + Base64.encode((user + ":" + password).encodeToByteArray())
 
-        repositoryScope.launch(ioDispatcher.dispatcher) {
-            val requestSuccess = try {
+        val requestSuccess = withContext(ioDispatcher.dispatcher) {
+            try {
                 apiService.addFeedProfile(url, authHeader, params = mapOf(WebApiParams.PROFILE_NAME to feedProfileName))
             } catch (e: Exception) {
                 logger.recordException(e)
                 false
             }
-            if (requestSuccess) {
-                delay(timeMillis = 3000L)
-                triggerRefresh()
-            } else {
-                localState.update { it.copy(failureResult = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_COULD_NOT_ADD_FEED_PROFILE)) }
-            }
+        }
+        if (requestSuccess) {
+            delay(timeMillis = 3000L)
+            triggerRefresh()
+        } else {
+            localState.update { it.copy(failureResult = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_COULD_NOT_ADD_FEED_PROFILE)) }
         }
     }
 
@@ -183,7 +184,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
         return if (currentData is DataFetchResult.Success) currentData.data.find { it.profileName == profileName } else null
     }
 
-    override fun updateFeedProfile(modifiedFeedProfile: FeedProfile) {
+    override suspend fun updateFeedProfile(modifiedFeedProfile: FeedProfile) {
         val user = sessionManager.getControllerUser() ?: ""
         val password = sessionManager.getControllerPassword() ?: ""
         val port = sessionManager.getControllerPort()
@@ -192,28 +193,51 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
             reportInvalidControllerAddress()
             return
         }
-        val url = "http://$controllerAddress:$port${WebApiUrls.FEED_PROFILE_UPDATE}"
+        val url = "http://" + controllerAddress + ":" + port + WebApiUrls.FEED_PROFILE_UPDATE
         val apiCallParameters = modifiedFeedProfile.getFeedProfileApiCallParameters()
-        val authHeader = "Basic " + Base64.encode("$user:$password".encodeToByteArray())
+        val authHeader = "Basic " + Base64.encode((user + ":" + password).encodeToByteArray())
 
         localState.update { it.copy(pendingUpdates = it.pendingUpdates + (modifiedFeedProfile.profileID to modifiedFeedProfile)) }
 
-        repositoryScope.launch(ioDispatcher.dispatcher) {
-            val requestSuccess = try {
+        val requestSuccess = withContext(ioDispatcher.dispatcher) {
+            try {
                 apiService.updateFeedProfile(url, authHeader, apiCallParameters)
             } catch (e: Exception) {
                 logger.recordException(e)
                 false
             }
+        }
 
-            if (!requestSuccess) {
-                localState.update { it.copy(
-                        pendingUpdates = it.pendingUpdates - modifiedFeedProfile.profileID,
-                        failureResult = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_UPDATING_FEED_PROFILE_FAILED)
-                    )
-                }
-            } else {
-                localState.update { it.copy(pendingUpdates = it.pendingUpdates - modifiedFeedProfile.profileID) }
+        if (!requestSuccess) {
+            localState.update { it.copy(
+                    pendingUpdates = it.pendingUpdates - modifiedFeedProfile.profileID,
+                    failureResult = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_UPDATING_FEED_PROFILE_FAILED)
+                )
+            }
+        } else {
+            localState.update { it.copy(pendingUpdates = it.pendingUpdates - modifiedFeedProfile.profileID) }
+            triggerRefresh()
+        }
+    }
+
+        override suspend fun executeFeedProfile(profileId: Int) {
+        val user = sessionManager.getControllerUser() ?: ""
+        val password = sessionManager.getControllerPassword() ?: ""
+        val port = sessionManager.getControllerPort()
+        val controllerAddress = sessionManager.getControllerAddress()
+        if (controllerAddress.isNullOrBlank()) {
+            reportInvalidControllerAddress()
+            return
+        }
+        val url = "http://" + controllerAddress + ":" + port + WebApiUrls.FEED_EXECUTE_PROFILE + profileId
+        val authHeader = "Basic " + Base64.encode((user + ":" + password).encodeToByteArray())
+
+        withContext(ioDispatcher.dispatcher) {
+            try {
+                apiService.executeFeedProfile(url, authHeader)
+            } catch (e: Exception) {
+                logger.recordException(e)
+                false
             }
         }
     }

@@ -42,6 +42,11 @@ interface FeedProfileApiService {
         params: Map<String, String>
     ): Boolean
 
+    suspend fun executeFeedProfile(
+        url: String,
+        authHeader: String,
+    ): Boolean
+
     suspend fun deleteFeedProfile(
         url: String,
         authHeader: String,

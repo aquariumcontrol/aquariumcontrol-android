@@ -16,12 +16,11 @@ fun getDatabaseBuilder(): RoomDatabase.Builder<AquariumDatabase> {
 
 @OptIn(ExperimentalForeignApi::class)
 private fun documentDirectory(): String {
-    val documentDirectory = NSFileManager.defaultManager.URLForDirectory(
+    val documentDirectory = NSFileManager.defaultManager.URLsForDirectory(
         directory = NSDocumentDirectory,
-        inDomain = NSUserDomainMask,
-        appropriateForURL = null,
-        create = false,
-        error = null,
-    )
-    return documentDirectory?.path ?: ""
+        inDomains = NSUserDomainMask,
+    ).firstOrNull() as? platform.Foundation.NSURL
+    val pathStr = documentDirectory?.path ?: ""
+    println("DEBUG: AquariumDatabase: Document Directory: ")
+    return pathStr
 }

@@ -37,11 +37,9 @@ import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.common.util.Logger
 import com.laimburggasse.aquariumcontrol.common.util.Base64
-import com.laimburggasse.aquariumcontrol.common.util.DispatcherIO
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
@@ -78,7 +76,7 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
                 }
                 emit(value = DataFetchResult.Loading)
 
-                val url = "http://${controller.address}:${controller.port}${WebApiUrls.BALLING_LOAD_SET_VALS}"
+                val url = "http://" + controller.address + ":" + controller.port + WebApiUrls.BALLING_LOAD_SET_VALS
                 val reader = BallingProfileReader(logger, apiService, url, username = controller.user, password = controller.password)
                 val networkResult = withContext(ioDispatcher.dispatcher) {
                     reader.readBallingProfiles()
@@ -95,7 +93,7 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
             }
         }.stateIn(scope = repositoryScope, started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), initialValue = DataFetchResult.Loading)
 
-    override fun updateBallingProfile(ballingProfile: BallingProfile) {
+    override suspend fun updateBallingProfile(ballingProfile: BallingProfile) {
         localState.update { it.copy(pendingUpdate = ballingProfile) }
         val controllerAddress = sessionManager.getControllerAddress()
         if (controllerAddress.isNullOrBlank()) {
@@ -103,27 +101,27 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
             return
         }
 
-        repositoryScope.launch(ioDispatcher.dispatcher) {
-            val user = sessionManager.getControllerUser() ?: ""
-            val password = sessionManager.getControllerPassword() ?: ""
-            val port = sessionManager.getControllerPort()
-            val url = "http://$controllerAddress:$port${WebApiUrls.BALLING_UPDATE_SET_VALS}"
-            val authHeader = "Basic " + Base64.encode("$user:$password".encodeToByteArray())
-            val postParams = mapOf(WebApiParams.PUMP_ID to ballingProfile.pumpId.toString(), WebApiParams.DOSING_VOLUME to ballingProfile.volume.toString())
+        val user = sessionManager.getControllerUser() ?: ""
+        val password = sessionManager.getControllerPassword() ?: ""
+        val port = sessionManager.getControllerPort()
+        val url = "http://" + controllerAddress + ":" + port + WebApiUrls.BALLING_UPDATE_SET_VALS
+        val authHeader = "Basic " + Base64.encode((user + ":" + password).encodeToByteArray())
+        val postParams = mapOf(WebApiParams.PUMP_ID to ballingProfile.pumpId.toString(), WebApiParams.DOSING_VOLUME to ballingProfile.volume.toString())
 
-            val requestSuccess = try {
+        val requestSuccess = withContext(ioDispatcher.dispatcher) {
+            try {
                 apiService.updateBallingProfile(url, authHeader, postParams)
             } catch (e: Exception) {
                 logger.recordException(e)
                 false
             }
+        }
 
-            if (requestSuccess) {
-                localState.update { it.copy(pendingUpdate = null, failureResult = null) }
-                triggerRefresh()
-            } else {
-                localState.update { it.copy(pendingUpdate = null, failureResult = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_UPDATING_BALLING_PROFILE_FAILED)) }
-            }
+        if (requestSuccess) {
+            localState.update { it.copy(pendingUpdate = null, failureResult = null) }
+            triggerRefresh()
+        } else {
+            localState.update { it.copy(pendingUpdate = null, failureResult = DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_UPDATING_BALLING_PROFILE_FAILED)) }
         }
     }
 

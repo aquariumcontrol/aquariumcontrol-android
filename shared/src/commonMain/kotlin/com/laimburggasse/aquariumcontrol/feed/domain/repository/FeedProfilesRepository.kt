@@ -32,6 +32,7 @@ interface FeedProfilesRepository {
     suspend fun deleteFeedProfile(feedProfile: FeedProfile)
     fun findProfileById(profileId: Int): FeedProfile?
     fun findProfileByName(profileName: String): FeedProfile?
-    fun updateFeedProfile(modifiedFeedProfile: FeedProfile)
+    suspend fun updateFeedProfile(modifiedFeedProfile: FeedProfile)
     suspend fun triggerRefresh()
+    suspend fun executeFeedProfile(profileId: Int)
 }

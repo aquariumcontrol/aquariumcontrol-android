@@ -74,12 +74,16 @@ open class SessionManagerImpl(
 
     init {
         externalScope.launch {
+            println("DEBUG: SessionManager: Starting init load")
             val prefs = dataStore.data.first()
             val defaultId = prefs[DEFAULT_PROFILE_ID_KEY] ?: GlobalConstants.NO_DEFAULT_ID
+            println("DEBUG: SessionManager: Loaded defaultId: ")
             
             if (defaultId != GlobalConstants.NO_DEFAULT_ID) {
-                // Emit the loaded value. This will trigger the 'combine' in the ViewModel.
                 _defaultControllerProfileId.value = defaultId
+                // Automatically select the default profile on startup
+                val success = selectControllerById(defaultId)
+                println("DEBUG: SessionManager: Initial selection success: ")
             }
         }
     }
@@ -99,7 +103,9 @@ open class SessionManagerImpl(
 
     override fun saveDefaultControllerProfileId(id: Long) {
         externalScope.launch {
+            println("DEBUG: SessionManager: Starting init load")
             dataStore.edit { settings ->
+                println("DEBUG: SessionManager: Saving defaultId: ")
                 settings[DEFAULT_PROFILE_ID_KEY] = id
             }
         }

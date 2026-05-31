@@ -86,16 +86,19 @@ open class HeatingStatsRepositoryImpl @Inject constructor(
                     val stringResult: DataFetchResult<List<HeatingStatsStringEntry>> =
                         heatingStatsReader.readStatsEntry()
 
-                    // Transform the result before returning it from the background thread
-                    when (stringResult) {
+                                        // Transform the result before returning it from the background thread
+                    val finalResult: DataFetchResult<List<HeatingStatsEntry>> = when (stringResult) {
                         is DataFetchResult.Success -> {
-                            val heatingStats: List<HeatingStatsEntry> = stringResult.data.map {
+                            // Slice to last 30 entries for performance if list is large
+                            val rawList = stringResult.data
+                            val processedList = if (rawList.size > 30) rawList.takeLast(30) else rawList
+                            
+                            val heatingStats = processedList.map {
                                 it.transformToHeatingStatsEntry()
                             }
                             DataFetchResult.Success(data = heatingStats)
                         }
                         is DataFetchResult.Error -> {
-                            // Propagate the error result
                             DataFetchResult.Error(
                                 exception = stringResult.exception,
                                 errorMessage = stringResult.errorMessage
@@ -106,6 +109,7 @@ open class HeatingStatsRepositoryImpl @Inject constructor(
                             errorMessage = GlobalConstants.ERR_MSG_LOADING_HEATING_STATS_FAILED
                         )
                     }
+                    finalResult
                 }
             emit(value = result)
         }

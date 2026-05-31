@@ -37,4 +37,6 @@ open class BallingHistoryRepositoryImpl @Inject constructor(
 ) : HistoryRepositoryImpl<BallingHistoryLogEntry>(sessionManager, pager), BallingHistoryRepository {
 
     override val ballingHistoryDosingEventFlow: Flow<PagingData<BallingHistoryLogEntry>> = historyEventFlow
+
+    override suspend fun getHistory(date: Long): List<BallingHistoryLogEntry> = emptyList()
 }

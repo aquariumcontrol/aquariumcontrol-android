@@ -37,4 +37,6 @@ open class FeedHistoryRepositoryImpl @Inject constructor(
 ) : HistoryRepositoryImpl<FeedHistoryLogEntry>(sessionManager, pager), FeedHistoryRepository {
 
     override val feedHistoryEventFlow: Flow<PagingData<FeedHistoryLogEntry>> = historyEventFlow
+
+    override suspend fun getHistory(date: Long): List<FeedHistoryLogEntry> = emptyList()
 }

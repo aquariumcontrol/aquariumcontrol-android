@@ -37,6 +37,12 @@ class KtorFeedProfileApiService @Inject constructor(
         }.status.isSuccess()
     }
 
+        override suspend fun executeFeedProfile(url: String, authHeader: String): Boolean {
+        return client.post(url) {
+            header("Authorization", authHeader)
+        }.status.isSuccess()
+    }
+
     override suspend fun deleteFeedProfile(url: String, authHeader: String): Boolean {
         return client.post(url) {
             header("Authorization", authHeader)
