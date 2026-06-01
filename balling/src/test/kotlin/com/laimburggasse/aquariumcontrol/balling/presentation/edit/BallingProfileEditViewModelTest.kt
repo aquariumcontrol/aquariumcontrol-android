@@ -128,7 +128,7 @@ class BallingProfileEditViewModelTest {
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Assert
-            verify(exactly = 1) { repository.updateBallingProfile(match { it.volume == newVolume }) }
+            coVerify(exactly = 1) { repository.updateBallingProfile(match { it.volume == newVolume }) }
         }
     }
 }

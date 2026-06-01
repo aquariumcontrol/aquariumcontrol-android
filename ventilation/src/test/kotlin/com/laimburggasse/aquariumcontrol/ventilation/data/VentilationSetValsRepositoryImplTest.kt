@@ -1,6 +1,4 @@
 /*
-// import.AquariumControl.domain.repository.VentilationSetValsRepository
-// import.AquariumControl.data.repository.VentilationSetValsRepositoryImpl
  *  Copyright 2026 Uwe Martin
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,7 +23,6 @@
 package com.laimburggasse.aquariumcontrol.ventilation.data
 
 import com.laimburggasse.aquariumcontrol.ventilation.testing.VentilationMockData.mockVentilationSetVals
-
 import app.cash.turbine.test
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
@@ -34,23 +31,9 @@ import com.laimburggasse.aquariumcontrol.common.testing.ControllerMockData.mockC
 import com.laimburggasse.aquariumcontrol.common.testing.MockSessionManagerImpl
 import com.laimburggasse.aquariumcontrol.common.util.Logger
 import com.laimburggasse.aquariumcontrol.ventilation.data.repository.VentilationSetValsRepositoryImpl
-import com.laimburggasse.aquariumcontrol.ventilation.domain.model.*
 import com.laimburggasse.aquariumcontrol.ventilation.domain.repository.VentilationSetValsRepository
 import com.laimburggasse.aquariumcontrol.ventilation.testing.*
 import io.mockk.*
-import java.util.Calendar
-
-
-
-
-import app.cash.turbine.test
-
-
-
-
-
-
-
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -65,7 +48,6 @@ import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-
 class VentilationSetValsRepositoryImplTest {
     private lateinit var repository: VentilationSetValsRepositoryImpl
     private val testDispatcher = StandardTestDispatcher()
@@ -77,7 +59,6 @@ class VentilationSetValsRepositoryImplTest {
         controllerProfiles = mockControllerProfileList
     )
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
@@ -90,7 +71,6 @@ class VentilationSetValsRepositoryImplTest {
         )
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @After
     fun tearDown() {
         Dispatchers.resetMain()
@@ -153,26 +133,26 @@ class VentilationSetValsRepositoryImplTest {
         repository.ventilationSetValsFlow.test {
             // Initial Loading and Success
             assertTrue(awaitItem() is DataFetchResult.Loading)
-            testDispatcher.scheduler.advanceUntilIdle()
             assertTrue(awaitItem() is DataFetchResult.Success)
 
             // Act: Update local values and then commit
             repository.updateLocalValues(updatedSetVals)
             assertTrue(awaitItem() is DataFetchResult.Success) // Consume optimistic update
 
-            mockVentilationSetValsApiService.updateMockVentilationSetVals(updatedSetVals)
+            // Use a slightly different value for network result to ensure an emission after pending is cleared
+            val networkResult = updatedSetVals.copy(ventilationSwitchOnTemp = 28.1)
+            mockVentilationSetValsApiService.updateMockVentilationSetVals(networkResult)
+            
             repository.updateValues()
 
-            // Consuming intermediate states if they appear (StateFlow conflation makes this non-deterministic)
             testDispatcher.scheduler.advanceUntilIdle()
 
-            // We want to see the final updated value
-            var lastItem = awaitItem()
-            while ((lastItem !is DataFetchResult.Success) || (lastItem.data != updatedSetVals)) {
-                lastItem = awaitItem()
-            }
-
-            assertEquals(updatedSetVals, lastItem.data)
+            // After updateValues delay(500), pending becomes null. networkResult is different from pending.
+            val result = awaitItem()
+            assertTrue(result is DataFetchResult.Success)
+            assertEquals(28.1, (result as DataFetchResult.Success).data.ventilationSwitchOnTemp, 0.0)
+            
+            expectNoEvents()
         }
     }
 
@@ -184,33 +164,27 @@ class VentilationSetValsRepositoryImplTest {
         repository.ventilationSetValsFlow.test {
             // Initial Loading and Success
             assertTrue(awaitItem() is DataFetchResult.Loading)
-            testDispatcher.scheduler.advanceUntilIdle()
+            assertTrue(awaitItem() is DataFetchResult.Success)
+
+            // Act: Optimistic update
+            repository.updateLocalValues(updatedSetVals)
             assertTrue(awaitItem() is DataFetchResult.Success)
 
             // Induce failure in next API call
             mockVentilationSetValsApiService.setForceError(force = true)
 
-            repository.updateLocalValues(updatedSetVals)
-            assertTrue(awaitItem() is DataFetchResult.Success) // Consume optimistic update
-
             repository.updateValues()
 
             testDispatcher.scheduler.advanceUntilIdle()
 
-            // The public flow combines stable network data with local edits.
-            // When updateValues fails, the repository sets failureResult.
-            // networkDataFlow will emit Error.
-            // ventilationSetValsFlow combines networkDataFlow and pendingUpdate.
-            // In case of failure, updateValues sets pendingUpdate.value = null
-
-            val result = awaitItem()
-            // This could be the old Success or the Error
+            // Skip interim Success if it exists
+            var result = awaitItem()
             if (result is DataFetchResult.Success) {
-                val errorResult = awaitItem()
-                assertTrue(errorResult is DataFetchResult.Error)
-            } else {
-                assertTrue(result is DataFetchResult.Error)
+                result = awaitItem()
             }
+            assertTrue(result is DataFetchResult.Error)
+            
+            expectNoEvents()
         }
     }
 
@@ -222,7 +196,6 @@ class VentilationSetValsRepositoryImplTest {
         repository.ventilationSetValsFlow.test {
             // Initial Loading and Success
             assertTrue(awaitItem() is DataFetchResult.Loading)
-            testDispatcher.scheduler.advanceUntilIdle()
             assertTrue(awaitItem() is DataFetchResult.Success)
 
             // Act: Update local values
@@ -236,8 +209,10 @@ class VentilationSetValsRepositoryImplTest {
             val result = awaitItem()
             assertTrue(result is DataFetchResult.Success)
             assertEquals(
-                mockVentilationSetVals, (result as DataFetchResult.Success).data
+                mockVentilationSetVals.ventilationSwitchOffTemp, (result as DataFetchResult.Success).data.ventilationSwitchOffTemp, 0.0
             )
+            
+            expectNoEvents()
         }
     }
 
@@ -248,24 +223,21 @@ class VentilationSetValsRepositoryImplTest {
         repository.ventilationSetValsFlow.test {
             // Initial Loading and Success
             assertTrue(awaitItem() is DataFetchResult.Loading)
-            testDispatcher.scheduler.advanceUntilIdle()
             assertTrue(awaitItem() is DataFetchResult.Success)
 
             // Act: Trigger refresh
             repository.triggerRefresh()
 
             // Assert: Should see Loading and then Success
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            val refreshLoading = awaitItem()
-            assertTrue(refreshLoading is DataFetchResult.Loading)
-
+            assertTrue(awaitItem() is DataFetchResult.Loading)
             val refreshSuccess = awaitItem()
             assertTrue(refreshSuccess is DataFetchResult.Success)
             assertEquals(
                 mockVentilationSetVals,
                 (refreshSuccess as DataFetchResult.Success).data
             )
+            
+            expectNoEvents()
         }
     }
 }

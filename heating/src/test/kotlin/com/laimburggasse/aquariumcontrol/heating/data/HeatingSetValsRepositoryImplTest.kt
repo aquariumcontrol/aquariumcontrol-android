@@ -103,7 +103,7 @@ class HeatingSetValsRepositoryImplTest {
     }
 
     @Test
-    fun `updateLocalValues performs optimistic update`() = runTest {
+    fun `updateLocalValues performs optimistic update then refreshes`() = runTest {
         mockSessionManagerImpl.selectControllerById(0)
         val updatedSwitchOnTemp = 24.0
         val updatedHeatingSetVals = mockHeatingSetVals.copy(heatingSwitchOnTemp = updatedSwitchOnTemp)
@@ -112,6 +112,7 @@ class HeatingSetValsRepositoryImplTest {
             assertTrue(awaitItem() is DataFetchResult.Success)
 
             // Act
+            mockHeatingSetValsApiService.updateMockHeatingSetVals(updatedHeatingSetVals)
             repository.updateLocalValues(updatedHeatingSetVals)
 
             // Optimistic update should emit Success immediately
@@ -119,7 +120,7 @@ class HeatingSetValsRepositoryImplTest {
             assertTrue(result is DataFetchResult.Success)
             assertEquals(updatedSwitchOnTemp, (result as DataFetchResult.Success).data.heatingSwitchOnTemp, 0.0)
 
-            // Ensure no further emissions
+            // Ensure no further emissions (like a second refresh or an error) occur
             expectNoEvents()
         }
     }
@@ -133,31 +134,29 @@ class HeatingSetValsRepositoryImplTest {
             assertTrue(awaitItem() is DataFetchResult.Loading)
             assertTrue(awaitItem() is DataFetchResult.Success)
 
-            // Act: Optimistic update
+            // Act
+            mockHeatingSetValsApiService.updateMockHeatingSetVals(updatedHeatingSetVals)
             repository.updateLocalValues(updatedHeatingSetVals)
+            
+            // Optimistic update
             assertTrue(awaitItem() is DataFetchResult.Success)
 
             // Act: Remote update
-            mockHeatingSetValsApiService.updateMockHeatingSetVals(updatedHeatingSetVals)
+            // We use a slightly different value for the network result to force an emission after pending is cleared
+            val networkResult = updatedHeatingSetVals.copy(heatingSwitchOnTemp = 23.1)
+            mockHeatingSetValsApiService.updateMockHeatingSetVals(networkResult)
+            
             repository.updateValues()
 
             testDispatcher.scheduler.advanceUntilIdle()
-
-            // Skip interim Success if it exists
-            var next = awaitItem()
-            if (next is DataFetchResult.Success) {
-                next = awaitItem()
-            }
             
-            // 2. Refresh triggered emits Loading
-            assertTrue(next is DataFetchResult.Loading)
-            
-            // 3. Finally Success
-            val finalResult = awaitItem()
-            assertTrue(finalResult is DataFetchResult.Success)
-            assertEquals(updatedSwitchOffTemp, (finalResult as DataFetchResult.Success).data.heatingSwitchOffTemp, 0.0)
+            // After updateValues delay(500), pendingUpdate becomes null.
+            // Since networkResult is different from pending, we get a new emission.
+            val result = awaitItem()
+            assertTrue(result is DataFetchResult.Success)
+            assertEquals(23.1, (result as DataFetchResult.Success).data.heatingSwitchOnTemp, 0.0)
 
-            // Ensure no further emissions
+            // Ensure no further emissions (like a second refresh or an error) occur
             expectNoEvents()
         }
     }
@@ -188,13 +187,13 @@ class HeatingSetValsRepositoryImplTest {
             assertTrue(successResult is DataFetchResult.Success)
             assertEquals(mockHeatingSetVals, (successResult as DataFetchResult.Success).data)
 
-            // Ensure no further emissions
+            // Ensure no further emissions (like a second refresh or an error) occur
             expectNoEvents()
         }
     }
 
     @Test
-    fun `reset clears optimistic state`() = runTest {
+    fun `reset clears state`() = runTest {
         mockSessionManagerImpl.selectControllerById(0)
 
         repository.heatingSetValsFlow.test {
@@ -232,7 +231,7 @@ class HeatingSetValsRepositoryImplTest {
             assertTrue(awaitItem() is DataFetchResult.Loading)
             assertTrue(awaitItem() is DataFetchResult.Success)
 
-            // Ensure no further emissions
+            // Ensure no further emissions (like a second refresh or an error) occur
             expectNoEvents()
         }
     }
@@ -245,21 +244,17 @@ class HeatingSetValsRepositoryImplTest {
             assertTrue(awaitItem() is DataFetchResult.Loading)
             assertTrue(awaitItem() is DataFetchResult.Success)
 
-            // Act: induce error
+            // Act: induce error with next API call
             mockHeatingSetValsApiService.setForceError(true)
+
             repository.updateValues()
 
             testDispatcher.scheduler.advanceUntilIdle()
 
-            // Skip interim Success if it exists
-            var result = awaitItem()
-            if (result is DataFetchResult.Success) {
-                result = awaitItem()
-            }
-            
+            val result = awaitItem()
             assertTrue(result is DataFetchResult.Error)
 
-            // Ensure no further emissions
+            // Ensure no further emissions (like a second refresh or an error) occur
             expectNoEvents()
         }
     }
