@@ -1,0 +1,77 @@
+digraph HeatingModuleAndroid {
+    node [shape=box, fontname="Helvetica"];
+    rankdir=TB;
+    compound=true;
+
+    // --- Tier 1: Android UI Layer (Jetpack Compose) ---
+    subgraph cluster_AndroidUI {
+        label = "Android Presentation Layer (Compose)";
+        style = dashed;
+        color = blue;
+
+        HeatingScreen [label="HeatingScreen\n(Main Hub)"];
+        
+        subgraph cluster_Composables {
+            label = "UI Components";
+            style = dotted;
+            HeatingControlView [label="HeatingControlView\n(Setpoint Editor)"];
+            HeatingStatsView [label="HeatingStatsView\n(Charts & Tables)"];
+        }
+    }
+
+    // --- Tier 2: Android ViewModel Layer ---
+    subgraph cluster_AndroidViewModels {
+        label = "ViewModel Layer (Lifecycle)";
+        style = dashed;
+        color = green;
+
+        HeatingProfilesViewModel [label="HeatingProfilesViewModel\n(Control State)"];
+        HeatingStatsViewModel [label="HeatingStatsViewModel\n(Stats State)"];
+    }
+
+    // --- Tier 3: Shared KMP Domain Layer ---
+    subgraph cluster_SharedDomain {
+        label = "Shared Domain Layer (Kotlin KMP)";
+        style = dashed;
+        color = orange;
+
+        HeatingSetValsRepository [label="<<interface>>\nHeatingSetValsRepository"];
+        HeatingStatsRepository [label="<<interface>>\nHeatingStatsRepository"];
+        
+        HeatingSetVals [label="<<entity>>\nHeatingSetVals"];
+        HeatingStatsEntry [label="<<entity>>\nHeatingStatsEntry"];
+    }
+
+    // --- Tier 4: Shared KMP Data Layer ---
+    subgraph cluster_SharedData {
+        label = "Shared Data Layer (Ktor)";
+        style = dashed;
+        color = red;
+
+        HeatingSetValsRepositoryImpl [label="HeatingSetValsRepositoryImpl\n(Debounced Sync)"];
+        HeatingStatsRepositoryImpl [label="HeatingStatsRepositoryImpl\n(Background Mapping)"];
+
+        HeatingSetValsApiService [label="<<interface>>\nHeatingSetValsApiService"];
+        HeatingStatsApiService [label="<<interface>>\nHeatingStatsApiService"];
+    }
+
+    // Relationships: UI to ViewModels
+    HeatingScreen -> {HeatingProfilesViewModel HeatingStatsViewModel} [label="observes"];
+    HeatingScreen -> {HeatingControlView HeatingStatsView} [label="uses"];
+
+    // Relationships: ViewModels to Repositories
+    HeatingProfilesViewModel -> HeatingSetValsRepository [label="calls"];
+    HeatingStatsViewModel -> HeatingStatsRepository [label="calls"];
+
+    // Relationships: Repository Implementations
+    HeatingSetValsRepositoryImpl -> HeatingSetValsRepository [label="implements", style=dotted];
+    HeatingStatsRepositoryImpl -> HeatingStatsRepository [label="implements", style=dotted];
+
+    // Relationships: Data Sources
+    HeatingSetValsRepositoryImpl -> HeatingSetValsApiService [label="fetches from"];
+    HeatingStatsRepositoryImpl -> HeatingStatsApiService [label="fetches from"];
+
+    // Relationships: Models
+    HeatingSetValsRepository -> HeatingSetVals [label="exposes"];
+    HeatingStatsRepository -> HeatingStatsEntry [label="exposes"];
+}

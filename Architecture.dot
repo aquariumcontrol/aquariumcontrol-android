@@ -1,0 +1,84 @@
+digraph AndroidAppArchitecture {
+    node [shape=box, fontname="Helvetica"];
+    rankdir=TB;
+    compound=true;
+
+    // --- Tier 1: UI Layer (Jetpack Compose) ---
+    subgraph cluster_UI {
+        label = "UI Layer (Compose)";
+        style = dashed;
+        color = blue;
+
+        MainActivity [label="MainActivity\n(Entry Point)"];
+        NavHost [label="NavHost\n(Jetpack Navigation)"];
+        
+        subgraph cluster_Screens {
+            label = "Feature Screens";
+            style = dotted;
+            Screens [label="Summary | Heating | Info | Balling | Feed\nRefill | Schedule | Timedata | Controller", shape=record];
+        }
+    }
+
+    // --- Tier 2: ViewModel Layer (Android Lifecycle) ---
+    subgraph cluster_ViewModels {
+        label = "ViewModel Layer";
+        style = dashed;
+        color = green;
+
+        ViewModels [label="*ViewModels\n(Manage UI State & Side Effects)"];
+    }
+
+    // --- Tier 3: Shared KMP Domain Layer ---
+    subgraph cluster_SharedDomain {
+        label = "Shared Domain Layer (KMP)";
+        style = dashed;
+        color = orange;
+
+        Repositories [label="*Repository Interfaces\n(Business Contracts)"];
+        SessionManager [label="SessionManager\n(Auth & Selection Context)"];
+        DomainModels [label="Domain Entities\n(DTOs / KMP Models)"];
+    }
+
+    // --- Tier 4: Shared KMP Data Layer ---
+    subgraph cluster_SharedData {
+        label = "Shared Data Layer (Infrastructure)";
+        style = dashed;
+        color = red;
+
+        RepoImpls [label="*Repository Implementations"];
+        
+        subgraph cluster_Persistence {
+            label = "Persistent Storage";
+            style = dotted;
+            Room [label="Room Database\n(Controller & History Logs)"];
+            DataStore [label="DataStore\n(App Preferences)"];
+        }
+
+        subgraph cluster_Network {
+            label = "Networking";
+            style = dotted;
+            Ktor [label="Ktor HttpClient\n(REST API)"];
+        }
+    }
+
+    // --- DI ---
+    DI [label="kotlin-inject\n(Dependency Injection)", color=purple, style=bold];
+
+    // Relationships
+    MainActivity -> NavHost [label="hosts"];
+    NavHost -> Screens [label="navigates between"];
+    Screens -> ViewModels [label="observe state"];
+    ViewModels -> Repositories [label="invoke logic"];
+    ViewModels -> SessionManager [label="query context"];
+    
+    RepoImpls -> Repositories [label="implement", style=dotted];
+    RepoImpls -> DomainModels [label="produce/consume"];
+    
+    RepoImpls -> Room [label="reads/writes history"];
+    RepoImpls -> Ktor [label="fetches real-time data"];
+    
+    SessionManager -> DataStore [label="persists selection"];
+    SessionManager -> Room [label="loads profile info"];
+
+    DI -> {MainActivity NavHost ViewModels RepoImpls} [label="provides", style=dotted, color=purple];
+}

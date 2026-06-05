@@ -1,0 +1,83 @@
+digraph RefillModuleAndroid {
+    node [shape=box, fontname="Helvetica"];
+    rankdir=TB;
+    compound=true;
+
+    // --- Tier 1: Android UI Layer (Jetpack Compose) ---
+    subgraph cluster_AndroidUI {
+        label = "Android Presentation Layer (Compose)";
+        style = dashed;
+        color = blue;
+
+        RefillScreen [label="RefillScreen\n(Main Hub)"];
+        RefillHistoryScreen [label="RefillHistoryScreen\n(History Log)"];
+        
+        subgraph cluster_Composables {
+            label = "UI Components";
+            style = dotted;
+            RefillStateComp [label="RefillStateComposable"];
+            HistoryEntryComp [label="RefillHistoryLogEntryComposable"];
+        }
+    }
+
+    // --- Tier 2: Android ViewModel Layer ---
+    subgraph cluster_AndroidViewModels {
+        label = "ViewModel Layer (Lifecycle)";
+        style = dashed;
+        color = green;
+
+        RefillViewModel [label="RefillViewModel\n(State: RefillStateUiState)"];
+        RefillHistoryViewModel [label="RefillHistoryViewModel\n(Paging: RefillHistoryLogEntry)"];
+    }
+
+    // --- Tier 3: Shared KMP Domain Layer ---
+    subgraph cluster_SharedDomain {
+        label = "Shared Domain Layer (Kotlin KMP)";
+        style = dashed;
+        color = orange;
+
+        RefillRepository [label="<<interface>>\nRefillRepository"];
+        RefillHistoryRepository [label="<<interface>>\nRefillHistoryRepository"];
+        
+        RefillState [label="<<enum>>\nRefillState"];
+        RefillHistoryLogEntry [label="<<entity>>\nRefillHistoryLogEntry"];
+    }
+
+    // --- Tier 4: Shared KMP Data Layer ---
+    subgraph cluster_SharedData {
+        label = "Shared Data Layer (Ktor & Room)";
+        style = dashed;
+        color = red;
+
+        RefillRepositoryImpl [label="RefillRepositoryImpl"];
+        RefillHistoryRepositoryImpl [label="RefillHistoryRepositoryImpl"];
+
+        RefillStateApiService [label="<<interface>>\nRefillStateApiService"];
+        RefillHistoryApiService [label="<<interface>>\nRefillHistoryApiService"];
+        RefillHistoryDao [label="<<interface>>\nRefillHistoryDao\n(Room)"];
+    }
+
+    // Relationships: UI to ViewModels
+    RefillScreen -> RefillViewModel [label="observes"];
+    RefillHistoryScreen -> RefillHistoryViewModel [label="observes"];
+
+    RefillScreen -> RefillStateComp [label="uses"];
+    RefillHistoryScreen -> HistoryEntryComp [label="uses"];
+
+    // Relationships: ViewModels to Repositories
+    RefillViewModel -> RefillRepository [label="calls"];
+    RefillHistoryViewModel -> RefillHistoryRepository [label="calls"];
+
+    // Relationships: Repository Implementations
+    RefillRepositoryImpl -> RefillRepository [label="implements", style=dotted];
+    RefillHistoryRepositoryImpl -> RefillHistoryRepository [label="implements", style=dotted];
+
+    // Relationships: Data Sources
+    RefillRepositoryImpl -> RefillStateApiService [label="fetches from"];
+    RefillHistoryRepositoryImpl -> RefillHistoryApiService [label="fetches from"];
+    RefillHistoryRepositoryImpl -> RefillHistoryDao [label="persists to"];
+
+    // Relationships: Models
+    RefillRepository -> RefillState [label="exposes"];
+    RefillHistoryRepository -> RefillHistoryLogEntry [label="exposes"];
+}

@@ -1,0 +1,74 @@
+digraph ControllerModuleAndroid {
+    node [shape=box, fontname="Helvetica"];
+    rankdir=TB;
+    compound=true;
+
+    // --- Tier 1: Android UI Layer (Jetpack Compose) ---
+    subgraph cluster_AndroidUI {
+        label = "Android Presentation Layer (Compose)";
+        style = dashed;
+        color = blue;
+
+        ControllerSelectionScreen [label="ControllerSelectionScreen\n(Profile List)"];
+        ControllerAddScreen [label="ControllerAddScreen\n(Creator)"];
+        ControllerEditScreen [label="ControllerEditScreen\n(Editor)"];
+        
+        subgraph cluster_Composables {
+            label = "UI Components";
+            style = dotted;
+            ControllerProfileItem [label="ControllerProfileComposable"];
+            HostnamePortFields [label="HostnamePortNumberComposable"];
+            UserPassFields [label="UsernamePasswordComposable"];
+        }
+    }
+
+    // --- Tier 2: Android ViewModel Layer ---
+    subgraph cluster_AndroidViewModels {
+        label = "ViewModel Layer (Lifecycle)";
+        style = dashed;
+        color = green;
+
+        ControllerSelectionViewModel [label="ControllerSelectionViewModel\n(Reactive Countdown)"];
+        ControllerAddViewModel [label="ControllerAddViewModel\n(Creation State)"];
+        ControllerEditViewModel [label="ControllerEditViewModel\n(Edit State)"];
+    }
+
+    // --- Tier 3: Shared KMP Domain Layer ---
+    subgraph cluster_SharedDomain {
+        label = "Shared Domain Layer (Kotlin KMP)";
+        style = dashed;
+        color = orange;
+
+        SessionManager [label="<<interface>>\nSessionManager\n(Active Selection)"];
+        ControllerProfile [label="<<entity>>\nControllerProfile\n(Entity)"];
+        
+        Validation [label="ControllerPropertyChecks.kt\n(Validation Logic)"];
+    }
+
+    // --- Tier 4: Shared KMP Data Layer ---
+    subgraph cluster_SharedData {
+        label = "Shared Data Layer (Room)";
+        style = dashed;
+        color = red;
+
+        ControllerProfileDao [label="<<interface>>\nControllerProfileDao\n(Room)"];
+    }
+
+    // Relationships: UI to ViewModels
+    ControllerSelectionScreen -> ControllerSelectionViewModel [label="observes"];
+    ControllerAddScreen -> ControllerAddViewModel [label="observes"];
+    ControllerEditScreen -> ControllerEditViewModel [label="observes"];
+
+    ControllerSelectionScreen -> ControllerProfileItem [label="uses"];
+    ControllerAddScreen -> {HostnamePortFields UserPassFields} [label="uses"];
+    ControllerEditScreen -> {HostnamePortFields UserPassFields} [label="uses"];
+
+    // Relationships: ViewModels to Repositories/Managers
+    ControllerSelectionViewModel -> {ControllerProfileDao SessionManager} [label="calls"];
+    ControllerAddViewModel -> {ControllerProfileDao Validation} [label="calls"];
+    ControllerEditViewModel -> {ControllerProfileDao Validation} [label="calls"];
+
+    // Relationships: Data Sources
+    ControllerProfileDao -> ControllerProfile [label="manages"];
+    SessionManager -> ControllerProfile [label="holds selected"];
+}

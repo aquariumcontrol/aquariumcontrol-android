@@ -1,0 +1,79 @@
+digraph TimedataModuleAndroid {
+    node [shape=box, fontname="Helvetica"];
+    rankdir=TB;
+    compound=true;
+
+    // --- Tier 1: Android UI Layer (Jetpack Compose) ---
+    subgraph cluster_AndroidUI {
+        label = "Android Presentation Layer (Compose)";
+        style = dashed;
+        color = blue;
+
+        TimeDataScreen [label="TimeDataScreen\n(Telemetry Hub)"];
+        
+        subgraph cluster_Composables {
+            label = "Specialized Charts";
+            style = dotted;
+            TempChart [label="TimeDataTemperatureChartComposable"];
+            PHChart [label="TimeDatapHChartComposable"];
+            HumChart [label="TimeDataHumidityChartComposable"];
+            LevelChart [label="TimeDataMainTankLevelChartComposable"];
+            ActuatorChart [label="TimeDataActuatorChartComposable"];
+            CondChart [label="TimeDataConductivityChartComposable"];
+        }
+    }
+
+    // --- Tier 2: Android ViewModel Layer ---
+    subgraph cluster_AndroidViewModels {
+        label = "ViewModel Layer (Lifecycle)";
+        style = dashed;
+        color = green;
+
+        TimeDataViewModel [label="TimeDataViewModel\n(State: TimeDataUiState)"];
+    }
+
+    // --- Tier 3: Shared KMP Domain Layer ---
+    subgraph cluster_SharedDomain {
+        label = "Shared Domain Layer (Kotlin KMP)";
+        style = dashed;
+        color = orange;
+
+        TimeDataRepository [label="<<interface>>\nTimeDataRepository"];
+        TimeDataSample [label="<<entity>>\nTimeDataSample\n(Telemetry Model)"];
+    }
+
+    // --- Tier 4: Shared KMP Data Layer ---
+    subgraph cluster_SharedData {
+        label = "Shared Data Layer (Ktor)";
+        style = dashed;
+        color = red;
+
+        TimeDataRepositoryImpl [label="TimeDataRepositoryImpl"];
+        TimeDataApiService [label="<<interface>>\nTimeDataApiService"];
+        TimeDataReader [label="TimeDataReader\n(Telemetry Parser)"];
+    }
+
+    // Relationships: UI to ViewModel
+    TimeDataScreen -> TimeDataViewModel [label="observes"];
+    TimeDataScreen -> {
+        TempChart 
+        PHChart 
+        HumChart 
+        LevelChart 
+        ActuatorChart 
+        CondChart
+    } [label="uses"];
+
+    // Relationships: ViewModel to Repository
+    TimeDataViewModel -> TimeDataRepository [label="calls"];
+
+    // Relationships: Repository Implementations
+    TimeDataRepositoryImpl -> TimeDataRepository [label="implements", style=dotted];
+
+    // Relationships: Data Sources
+    TimeDataRepositoryImpl -> TimeDataApiService [label="fetches from"];
+    TimeDataRepositoryImpl -> TimeDataReader [label="uses"];
+
+    // Relationships: Models
+    TimeDataRepository -> TimeDataSample [label="exposes"];
+}

@@ -1,0 +1,96 @@
+digraph FeedModuleAndroid {
+    node [shape=box, fontname="Helvetica"];
+    rankdir=TB;
+    compound=true;
+
+    // --- Tier 1: Android UI Layer (Jetpack Compose) ---
+    subgraph cluster_AndroidUI {
+        label = "Android Presentation Layer (Compose)";
+        style = dashed;
+        color = blue;
+
+        FeedScreen [label="FeedScreen\n(Main Hub)"];
+        FeedProfileEditScreen [label="FeedProfileEditScreen\n(Editor)"];
+        FeedHistoryScreen [label="FeedHistoryScreen\n(History Log)"];
+        FeedScheduleCreateNewEntryScreen [label="FeedScheduleCreateNewEntryScreen"];
+        
+        subgraph cluster_Composables {
+            label = "UI Components";
+            style = dotted;
+            ProfileSelection [label="FeedProfileSelectionComposable"];
+            ScheduleSelection [label="FeedScheduleSelectionComposable"];
+            ChartVisualizer [label="FeedProfileChartView (KMP compatible)"];
+        }
+    }
+
+    // --- Tier 2: Android ViewModel Layer ---
+    subgraph cluster_AndroidViewModels {
+        label = "ViewModel Layer (Lifecycle)";
+        style = dashed;
+        color = green;
+
+        FeedProfilesViewModel [label="FeedProfilesViewModel\n(State: FeedProfilesUiState)"];
+        FeedProfileEditViewModel [label="FeedProfileEditViewModel\n(State: FeedProfileEditUiState)"];
+        FeedScheduleViewModel [label="FeedScheduleViewModel\n(State: FeedScheduleSelectionUiState)"];
+        FeedHistoryViewModel [label="FeedHistoryViewModel\n(Paging: FeedHistoryLogEntry)"];
+    }
+
+    // --- Tier 3: Shared KMP Domain Layer ---
+    subgraph cluster_SharedDomain {
+        label = "Shared Domain Layer (Kotlin KMP)";
+        style = dashed;
+        color = orange;
+
+        FeedProfilesRepository [label="<<interface>>\nFeedProfilesRepository"];
+        FeedScheduleRepository [label="<<interface>>\nFeedScheduleRepository"];
+        FeedHistoryRepository [label="<<interface>>\nFeedHistoryRepository"];
+        
+        FeedProfile [label="<<entity>>\nFeedProfile"];
+        FeedScheduleEntry [label="<<entity>>\nFeedScheduleEntry"];
+        FeedHistoryLogEntry [label="<<entity>>\nFeedHistoryLogEntry"];
+    }
+
+    // --- Tier 4: Shared KMP Data Layer ---
+    subgraph cluster_SharedData {
+        label = "Shared Data Layer (Ktor & Room)";
+        style = dashed;
+        color = red;
+
+        FeedProfilesRepositoryImpl [label="FeedProfilesRepositoryImpl"];
+        FeedScheduleRepositoryImpl [label="FeedScheduleRepositoryImpl"];
+        FeedHistoryRepositoryImpl [label="FeedHistoryRepositoryImpl"];
+
+        FeedProfileApiService [label="<<interface>>\nFeedProfileApiService"];
+        FeedScheduleEntryApiService [label="<<interface>>\nFeedScheduleEntryApiService"];
+        FeedHistoryDao [label="<<interface>>\nFeedHistoryDao"];
+    }
+
+    // Relationships: UI to ViewModels
+    FeedScreen -> {FeedProfilesViewModel FeedScheduleViewModel} [label="observes"];
+    FeedProfileEditScreen -> FeedProfileEditViewModel [label="observes"];
+    FeedHistoryScreen -> FeedHistoryViewModel [label="observes"];
+
+    FeedScreen -> {ProfileSelection ScheduleSelection} [label="uses"];
+    FeedProfileEditScreen -> ChartVisualizer [label="uses"];
+
+    // Relationships: ViewModels to Repositories
+    FeedProfilesViewModel -> FeedProfilesRepository [label="calls"];
+    FeedProfileEditViewModel -> FeedProfilesRepository [label="calls"];
+    FeedScheduleViewModel -> FeedScheduleRepository [label="calls"];
+    FeedHistoryViewModel -> FeedHistoryRepository [label="calls"];
+
+    // Relationships: Repository Implementations
+    FeedProfilesRepositoryImpl -> FeedProfilesRepository [label="implements", style=dotted];
+    FeedScheduleRepositoryImpl -> FeedScheduleRepository [label="implements", style=dotted];
+    FeedHistoryRepositoryImpl -> FeedHistoryRepository [label="implements", style=dotted];
+
+    // Relationships: Data Sources
+    FeedProfilesRepositoryImpl -> FeedProfileApiService [label="fetches from"];
+    FeedScheduleRepositoryImpl -> FeedScheduleEntryApiService [label="fetches from"];
+    FeedHistoryRepositoryImpl -> FeedHistoryDao [label="persists to"];
+
+    // Relationships: Models
+    FeedProfilesRepository -> FeedProfile [label="exposes"];
+    FeedScheduleRepository -> FeedScheduleEntry [label="exposes"];
+    FeedHistoryRepository -> FeedHistoryLogEntry [label="exposes"];
+}

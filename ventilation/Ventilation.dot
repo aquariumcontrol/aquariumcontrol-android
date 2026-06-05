@@ -1,0 +1,76 @@
+digraph VentilationModuleAndroid {
+    node [shape=box, fontname="Helvetica"];
+    rankdir=TB;
+    compound=true;
+
+    // --- Tier 1: Android UI Layer (Jetpack Compose) ---
+    subgraph cluster_AndroidUI {
+        label = "Android Presentation Layer (Compose)";
+        style = dashed;
+        color = blue;
+
+        VentilationScreen [label="VentilationScreen\n(Home Overview)"];
+        
+        subgraph cluster_Composables {
+            label = "UI Components";
+            style = dotted;
+            RangeSliderPortrait [label="VentilationRangeSliderTextFieldsPortraitComposable"];
+            RangeSliderLandscape [label="VentilationRangeSliderTextFieldsLandscapeComposable"];
+            ActionButtons [label="VentilationButtonsComposable"];
+        }
+    }
+
+    // --- Tier 2: Android ViewModel Layer ---
+    subgraph cluster_AndroidViewModels {
+        label = "ViewModel Layer (Lifecycle)";
+        style = dashed;
+        color = green;
+
+        VentilationSetValsViewModel [label="VentilationSetValsViewModel\n(State: VentilationSetValsUiState)"];
+    }
+
+    // --- Tier 3: Shared KMP Domain Layer ---
+    subgraph cluster_SharedDomain {
+        label = "Shared Domain Layer (Kotlin KMP)";
+        style = dashed;
+        color = orange;
+
+        VentilationSetValsRepository [label="<<interface>>\nVentilationSetValsRepository"];
+        VentilationSetVals [label="<<entity>>\nVentilationSetVals\n(Control Limits)"];
+        
+        SanityCheck [label="VentilationSetValsSanityCheck.kt\n(Validation)"];
+    }
+
+    // --- Tier 4: Shared KMP Data Layer ---
+    subgraph cluster_SharedData {
+        label = "Shared Data Layer (Ktor)";
+        style = dashed;
+        color = red;
+
+        VentilationSetValsRepositoryImpl [label="VentilationSetValsRepositoryImpl"];
+        VentilationSetValsApiService [label="<<interface>>\nVentilationSetValsApiService"];
+        VentilationSetValsReader [label="VentilationSetValsReader\n(Parser)"];
+    }
+
+    // Relationships: UI to ViewModel
+    VentilationScreen -> VentilationSetValsViewModel [label="observes"];
+    VentilationScreen -> {
+        RangeSliderPortrait 
+        RangeSliderLandscape 
+        ActionButtons
+    } [label="uses"];
+
+    // Relationships: ViewModel to Repository
+    VentilationSetValsViewModel -> VentilationSetValsRepository [label="calls"];
+
+    // Relationships: Repository Implementations
+    VentilationSetValsRepositoryImpl -> VentilationSetValsRepository [label="implements", style=dotted];
+
+    // Relationships: Data Sources
+    VentilationSetValsRepositoryImpl -> VentilationSetValsApiService [label="fetches from"];
+    VentilationSetValsRepositoryImpl -> VentilationSetValsReader [label="uses"];
+    VentilationSetValsRepositoryImpl -> SanityCheck [label="validates via"];
+
+    // Relationships: Models
+    VentilationSetValsRepository -> VentilationSetVals [label="exposes"];
+}

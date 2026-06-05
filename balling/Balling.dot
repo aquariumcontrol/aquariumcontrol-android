@@ -1,0 +1,89 @@
+digraph BallingModuleAndroid {
+    node [shape=box, fontname="Helvetica"];
+    rankdir=TB;
+    compound=true;
+
+    // --- Tier 1: Android UI Layer (Jetpack Compose) ---
+    subgraph cluster_AndroidUI {
+        label = "Android Presentation Layer (Compose)";
+        style = dashed;
+        color = blue;
+
+        BallingScreen [label="BallingScreen\n(Dosing Overview)"];
+        BallingProfileEditScreen [label="BallingProfileEditScreen\n(Editor)"];
+        BallingHistoryScreen [label="BallingHistoryScreen\n(History Log)"];
+        
+        subgraph cluster_Composables {
+            label = "UI Components";
+            style = dotted;
+            BallingProfileSummary [label="BallingProfileSummaryComposable"];
+            BallingEditFields [label="BallingProfileEditTextFieldSlider"];
+            HistoryEntry [label="BallingHistoryLogEntryComposable"];
+        }
+    }
+
+    // --- Tier 2: Android ViewModel Layer ---
+    subgraph cluster_AndroidViewModels {
+        label = "ViewModel Layer (Lifecycle)";
+        style = dashed;
+        color = green;
+
+        BallingProfilesViewModel [label="BallingProfilesViewModel\n(State: BallingProfilesUiState)"];
+        BallingProfileEditViewModel [label="BallingProfileEditViewModel\n(State: BallingProfileEditUiState)"];
+        BallingHistoryViewModel [label="BallingHistoryViewModel\n(Paging: BallingHistoryLogEntry)"];
+    }
+
+    // --- Tier 3: Shared KMP Domain Layer ---
+    subgraph cluster_SharedDomain {
+        label = "Shared Domain Layer (Kotlin KMP)";
+        style = dashed;
+        color = orange;
+
+        BallingProfilesRepository [label="<<interface>>\nBallingProfilesRepository"];
+        BallingHistoryRepository [label="<<interface>>\nBallingHistoryRepository"];
+        
+        BallingProfile [label="<<entity>>\nBallingProfile"];
+        BallingHistoryLogEntry [label="<<entity>>\nBallingHistoryLogEntry"];
+    }
+
+    // --- Tier 4: Shared KMP Data Layer ---
+    subgraph cluster_SharedData {
+        label = "Shared Data Layer (Ktor & Room)";
+        style = dashed;
+        color = red;
+
+        BallingProfilesRepositoryImpl [label="BallingProfilesRepositoryImpl"];
+        BallingHistoryRepositoryImpl [label="BallingHistoryRepositoryImpl"];
+
+        BallingProfileApiService [label="<<interface>>\nBallingProfileApiService\n(Ktor)"];
+        BallingHistoryApiService [label="<<interface>>\nBallingHistoryApiService\n(Ktor)"];
+        BallingHistoryDao [label="<<interface>>\nBallingHistoryDao\n(Room)"];
+    }
+
+    // Relationships: UI to ViewModels
+    BallingScreen -> BallingProfilesViewModel [label="observes"];
+    BallingProfileEditScreen -> BallingProfileEditViewModel [label="observes"];
+    BallingHistoryScreen -> BallingHistoryViewModel [label="observes"];
+
+    BallingScreen -> BallingProfileSummary [label="uses"];
+    BallingProfileEditScreen -> BallingEditFields [label="uses"];
+    BallingHistoryScreen -> HistoryEntry [label="uses"];
+
+    // Relationships: ViewModels to Repositories
+    BallingProfilesViewModel -> BallingProfilesRepository [label="calls"];
+    BallingProfileEditViewModel -> BallingProfilesRepository [label="calls"];
+    BallingHistoryViewModel -> BallingHistoryRepository [label="calls"];
+
+    // Relationships: Repository Implementations
+    BallingProfilesRepositoryImpl -> BallingProfilesRepository [label="implements", style=dotted];
+    BallingHistoryRepositoryImpl -> BallingHistoryRepository [label="implements", style=dotted];
+
+    // Relationships: Data Sources
+    BallingProfilesRepositoryImpl -> BallingProfileApiService [label="fetches from"];
+    BallingHistoryRepositoryImpl -> BallingHistoryApiService [label="fetches from"];
+    BallingHistoryRepositoryImpl -> BallingHistoryDao [label="persists to"];
+
+    // Relationships: Models
+    BallingProfilesRepository -> BallingProfile [label="exposes"];
+    BallingHistoryRepository -> BallingHistoryLogEntry [label="exposes"];
+}
