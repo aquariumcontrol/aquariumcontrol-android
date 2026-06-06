@@ -22,19 +22,15 @@
 
 package com.laimburggasse.aquariumcontrol.balling.preview
 
-import com.laimburggasse.aquariumcontrol.balling.presentation.components.BallingPreviewData
 import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData
 
-object BallingPreviewDataImpl: BallingPreviewData {
-    override val mockBallingProfile = BallingMockData.mockBallingProfile
-    override val mockBallingProfileEditUiState = BallingMockData.mockBallingProfileEditUiState
-    override val mockBallingProfile1 = BallingMockData.mockBallingProfile1
-    override val mockBallingProfile2 = BallingMockData.mockBallingProfile2
-    override val mockBallingProfiles = BallingMockData.mockBallingProfiles
-    override val mockBallingProfilesUiStateSuccess = BallingMockData.mockBallingProfilesUiStateSuccess
-    override val mockBallingProfilesUiStateError = BallingMockData.mockBallingProfilesUiStateError
-    override val mockBallingProfilesUiStateLoading = BallingMockData.mockBallingProfilesUiStateLoading
-    override val mockBallingProfilesUiStateEmpty = BallingMockData.mockBallingProfilesUiStateEmpty
-    override val mockBallingHistoryLogEntries = BallingMockData.mockBallingHistoryLogEntries
-    override val mockBallingEvent = BallingMockData.mockBallingEvent
+object BallingPreviewDataImpl {
+    val mockBallingProfile = BallingMockData.mockBallingProfile
+    val mockBallingProfileEditUiState = BallingMockData.mockBallingProfileEditUiState
+    val mockBallingProfilesUiStateSuccess = BallingMockData.mockBallingProfilesUiStateSuccess
+    val mockBallingProfilesUiStateError = BallingMockData.mockBallingProfilesUiStateError
+    val mockBallingProfilesUiStateLoading = BallingMockData.mockBallingProfilesUiStateLoading
+    val mockBallingProfilesUiStateEmpty = BallingMockData.mockBallingProfilesUiStateEmpty
+    val mockBallingHistoryLogEntries = BallingMockData.mockBallingHistoryLogEntries
+    val mockBallingEvent = BallingMockData.mockBallingEvent
 }

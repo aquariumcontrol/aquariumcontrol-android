@@ -27,8 +27,15 @@ import com.laimburggasse.aquariumcontrol.balling.domain.repository.BallingHistor
 import com.laimburggasse.aquariumcontrol.common.presentation.HistoryViewModel
 import me.tatarka.inject.annotations.Inject
 
+/**
+ * ViewModel for the Balling history screen.
+ * Extends [HistoryViewModel] to provide paged access to Balling dosing logs.
+ *
+ * @param repository The repository responsible for fetching Balling history data.
+ */
 class BallingHistoryViewModel @Inject constructor(
     repository: BallingHistoryRepository
 ) : HistoryViewModel<BallingHistoryLogEntry>(repository) {
+        /** The reactive flow of paged Balling history log entries. */
     val ballingHistoryFlow = historyFlow
 }

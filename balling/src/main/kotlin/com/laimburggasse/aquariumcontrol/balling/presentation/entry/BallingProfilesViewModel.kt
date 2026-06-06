@@ -33,10 +33,17 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
+/**
+ * ViewModel for the Balling profiles overview screen.
+ * Responsible for observing the dosing profiles and exposing the corresponding UI state.
+ *
+ * @property ballingProfilesRepository The repository for fetching and refreshing Balling profiles.
+ */
 class BallingProfilesViewModel @Inject constructor(
     private val ballingProfilesRepository: BallingProfilesRepository
 ): ViewModel() {
 
+    /** The reactive UI state for the Balling profiles list, derived from the repository flow. */
     val ballingProfilesUiState: StateFlow<BallingProfilesUiState> = ballingProfilesRepository.ballingProfiles
         .map { result ->
             when (result) {
@@ -56,6 +63,10 @@ class BallingProfilesViewModel @Inject constructor(
             initialValue = BallingProfilesUiState.Loading // The UI starts in a loading state
         )
 
+   
+    /**
+     * Triggers a manual refresh of the Balling profiles from the remote source.
+     */
    fun onRefresh() {
         viewModelScope.launch {
             ballingProfilesRepository.triggerRefresh()

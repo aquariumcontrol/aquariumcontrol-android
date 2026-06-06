@@ -28,7 +28,7 @@ import com.laimburggasse.aquariumcontrol.balling.presentation.components.Balling
 import com.laimburggasse.aquariumcontrol.balling.presentation.edit.BallingProfileEditUiState
 import com.laimburggasse.aquariumcontrol.balling.presentation.entry.BallingProfilesUiState
 
-object BallingPreviewDataImpl: BallingPreviewData {
+object BallingPreviewDataImpl {
     override val mockBallingProfile = BallingProfile(
         pumpId = 0,
         volume = 0.0,
