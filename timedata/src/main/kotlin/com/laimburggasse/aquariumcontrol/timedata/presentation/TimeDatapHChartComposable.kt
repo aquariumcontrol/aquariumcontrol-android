@@ -38,7 +38,7 @@ import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.LineData
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
-import com.laimburggasse.aquariumcontrol.timedata.preview.TimeDataPreviewDataImpl.mockTimeDataSets
+import com.laimburggasse.aquariumcontrol.timedata.preview.TimeDataPreviewData.mockTimeDataSets
 
 @Composable
 fun TimeDatapHChartComposable(

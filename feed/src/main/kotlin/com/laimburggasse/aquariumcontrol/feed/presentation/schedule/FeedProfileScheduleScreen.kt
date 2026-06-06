@@ -59,7 +59,7 @@ import com.laimburggasse.aquariumcontrol.feed.R
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.presentation.navigation.FeedNavigationEvent
-import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedProfileForScheduleScreen
+import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewData.mockFeedProfileForScheduleScreen
 import java.util.Calendar
 import java.util.Locale
 import androidx.compose.ui.platform.LocalLocale

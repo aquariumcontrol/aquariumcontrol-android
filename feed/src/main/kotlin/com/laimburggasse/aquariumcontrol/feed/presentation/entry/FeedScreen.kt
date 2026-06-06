@@ -47,10 +47,10 @@ import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineCompo
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.R
 import com.laimburggasse.aquariumcontrol.feed.presentation.navigation.FeedNavigationEvent
-import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedProfilesUiStateError
-import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedProfilesUiStateSuccess
-import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedScheduleSelectionUiStateError
-import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedScheduleSelectionUiStateSuccess
+import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewData.mockFeedProfilesUiStateError
+import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewData.mockFeedProfilesUiStateSuccess
+import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewData.mockFeedScheduleSelectionUiStateError
+import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewData.mockFeedScheduleSelectionUiStateSuccess
 
 @Composable
 fun FeedScreen(

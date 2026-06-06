@@ -38,7 +38,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.laimburggasse.aquariumcontrol.balling.preview.BallingPreviewDataImpl.mockBallingEvent
+import com.laimburggasse.aquariumcontrol.balling.preview.BallingPreviewData.mockBallingEvent
 import com.laimburggasse.aquariumcontrol.balling.R
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
 import java.text.SimpleDateFormat

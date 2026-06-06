@@ -41,8 +41,8 @@ import com.laimburggasse.aquariumcontrol.common.presentation.NumericDoubleOutlin
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.feed.R
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
-import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedProfile
-import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedProfileEditNumericMenuItem
+import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewData.mockFeedProfile
+import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewData.mockFeedProfileEditNumericMenuItem
 
 @Composable
 fun FeedProfileEditMenuItemDurationComposable(

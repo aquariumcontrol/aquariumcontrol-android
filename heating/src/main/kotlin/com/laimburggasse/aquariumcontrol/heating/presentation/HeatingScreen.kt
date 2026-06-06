@@ -54,8 +54,8 @@ import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoute
 import com.laimburggasse.aquariumcontrol.heating.R
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
-import com.laimburggasse.aquariumcontrol.heating.preview.HeatingPreviewDataImpl.mockHeatingSetValsUiState
-import com.laimburggasse.aquariumcontrol.heating.preview.HeatingPreviewDataImpl.mockHeatingStatsUiState
+import com.laimburggasse.aquariumcontrol.heating.preview.HeatingPreviewData.mockHeatingSetValsUiState
+import com.laimburggasse.aquariumcontrol.heating.preview.HeatingPreviewData.mockHeatingStatsUiState
 
 @Composable
 fun HeatingScreen(

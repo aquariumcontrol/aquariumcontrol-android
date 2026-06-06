@@ -56,7 +56,7 @@ import com.laimburggasse.aquariumcontrol.common.presentation.RoundRefreshButtonC
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.heating.R
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
-import com.laimburggasse.aquariumcontrol.heating.preview.HeatingPreviewDataImpl.mockHeatingStatsData
+import com.laimburggasse.aquariumcontrol.heating.preview.HeatingPreviewData.mockHeatingStatsData
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

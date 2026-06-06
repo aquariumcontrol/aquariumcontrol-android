@@ -20,11 +20,11 @@
  * SOFTWARE.
  */
 
-package com.laimburggasse.aquariumcontrol.ventilation.preview
+package com.laimburggasse.aquariumcontrol.schedule.preview
 
-import com.laimburggasse.aquariumcontrol.ventilation.testing.VentilationMockData
+import com.laimburggasse.aquariumcontrol.schedule.testing.ScheduleMockData
 
-object VentilationPreviewDataImpl {
-    val mockVentilationSetValsUiStateSuccess = VentilationMockData.mockVentilationSetValsUiStateSuccess
-    val mockVentilationSetValsUiStateError = VentilationMockData.mockVentilationSetValsUiStateError
+object SchedulePreviewData {
+    val mockScheduleUiStateSuccess = ScheduleMockData.mockScheduleUiStateSuccess
+    val mockScheduleUiStateError = ScheduleMockData.mockScheduleUiStateError
 }

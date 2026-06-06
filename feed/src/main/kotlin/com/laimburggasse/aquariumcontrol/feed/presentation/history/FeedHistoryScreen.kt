@@ -35,7 +35,7 @@ import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.R
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
-import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedHistoryLogEntries
+import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewData.mockFeedHistoryLogEntries
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 

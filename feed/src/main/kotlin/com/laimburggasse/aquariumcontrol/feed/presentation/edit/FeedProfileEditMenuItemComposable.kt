@@ -42,9 +42,9 @@ import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.feed.R
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
-import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedProfile
-import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedProfileEditNumericMenuItem
-import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockInitialExpandedItemIdsEmpty
+import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewData.mockFeedProfile
+import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewData.mockFeedProfileEditNumericMenuItem
+import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewData.mockInitialExpandedItemIdsEmpty
 
 @Composable
 fun FeedProfileEditMenuItemComposable(

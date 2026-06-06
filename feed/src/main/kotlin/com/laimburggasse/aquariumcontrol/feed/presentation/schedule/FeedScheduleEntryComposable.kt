@@ -49,7 +49,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
-import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedScheduleEntry
+import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewData.mockFeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.R
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 import java.text.SimpleDateFormat

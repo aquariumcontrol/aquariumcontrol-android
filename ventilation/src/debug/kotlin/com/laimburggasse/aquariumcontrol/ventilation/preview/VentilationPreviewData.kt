@@ -20,11 +20,11 @@
  * SOFTWARE.
  */
 
-package com.laimburggasse.aquariumcontrol.refill.preview
+package com.laimburggasse.aquariumcontrol.ventilation.preview
 
-import com.laimburggasse.aquariumcontrol.refill.testing.RefillMockData
+import com.laimburggasse.aquariumcontrol.ventilation.testing.VentilationMockData
 
-object RefillPreviewDataImpl {
-    val mockEvent = RefillMockData.mockEvent
-    val mockRefillHistoryLogEntries = RefillMockData.mockRefillHistoryLogEntries
+object VentilationPreviewData {
+    val mockVentilationSetValsUiStateSuccess = VentilationMockData.mockVentilationSetValsUiStateSuccess
+    val mockVentilationSetValsUiStateError = VentilationMockData.mockVentilationSetValsUiStateError
 }

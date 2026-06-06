@@ -53,9 +53,9 @@ import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineCompo
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.summary.R
 import com.laimburggasse.aquariumcontrol.summary.domain.model.SummaryData
-import com.laimburggasse.aquariumcontrol.summary.preview.SummaryPreviewDataImpl.mockControllerProfile
-import com.laimburggasse.aquariumcontrol.summary.preview.SummaryPreviewDataImpl.mockSummaryUiStateError
-import com.laimburggasse.aquariumcontrol.summary.preview.SummaryPreviewDataImpl.mockSummaryUiStateSuccess
+import com.laimburggasse.aquariumcontrol.summary.preview.SummaryPreviewData.mockControllerProfile
+import com.laimburggasse.aquariumcontrol.summary.preview.SummaryPreviewData.mockSummaryUiStateError
+import com.laimburggasse.aquariumcontrol.summary.preview.SummaryPreviewData.mockSummaryUiStateSuccess
 
 @Composable
 fun SummaryScreen(

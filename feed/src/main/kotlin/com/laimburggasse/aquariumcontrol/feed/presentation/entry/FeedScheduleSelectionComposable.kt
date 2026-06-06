@@ -48,8 +48,8 @@ import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.presentation.navigation.FeedNavigationEvent
 import com.laimburggasse.aquariumcontrol.feed.presentation.schedule.FeedScheduleEntryComposable
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
-import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedScheduleSelectionUiStateEmpty
-import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedScheduleSelectionUiStateSuccess
+import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewData.mockFeedScheduleSelectionUiStateEmpty
+import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewData.mockFeedScheduleSelectionUiStateSuccess
 
 @Composable
 fun FeedScheduleSelectionComposable(

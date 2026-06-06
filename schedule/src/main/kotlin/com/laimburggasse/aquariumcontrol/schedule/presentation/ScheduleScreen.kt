@@ -56,8 +56,8 @@ import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineCompo
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.schedule.R
 import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntries
-import com.laimburggasse.aquariumcontrol.schedule.preview.SchedulePreviewDataImpl.mockScheduleUiStateError
-import com.laimburggasse.aquariumcontrol.schedule.preview.SchedulePreviewDataImpl.mockScheduleUiStateSuccess
+import com.laimburggasse.aquariumcontrol.schedule.preview.SchedulePreviewData.mockScheduleUiStateError
+import com.laimburggasse.aquariumcontrol.schedule.preview.SchedulePreviewData.mockScheduleUiStateSuccess
 
 @Composable
 fun ScheduleScreen(

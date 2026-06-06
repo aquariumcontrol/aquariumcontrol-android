@@ -20,13 +20,12 @@
  * SOFTWARE.
  */
 
-package com.laimburggasse.aquariumcontrol.controller.preview
+package com.laimburggasse.aquariumcontrol.heating.preview
 
-import com.laimburggasse.aquariumcontrol.controller.testing.ControllerMockData
+import com.laimburggasse.aquariumcontrol.heating.testing.HeatingMockData
 
-object ControllerPreviewDataImpl {
-    val mockControllerState = ControllerMockData.mockControllerState
-    val mockControllerEditState = ControllerMockData.mockControllerEditState
-    val mockControllerProfile1 = ControllerMockData.mockControllerProfile1
-    val mockControllerProfileList = ControllerMockData.mockControllerProfileList
+object HeatingPreviewData {
+    val mockHeatingStatsData = HeatingMockData.mockHeatingStatsData
+    val mockHeatingStatsUiState = HeatingMockData.mockHeatingStatsUiState
+    val mockHeatingSetValsUiState = HeatingMockData.mockHeatingSetValsUiState
 }

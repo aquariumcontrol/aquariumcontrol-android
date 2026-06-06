@@ -50,7 +50,7 @@ import androidx.compose.ui.unit.sp
 import com.laimburggasse.aquariumcontrol.balling.R
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
 import com.laimburggasse.aquariumcontrol.balling.presentation.components.BallingProfileSummaryComposable
-import com.laimburggasse.aquariumcontrol.balling.preview.BallingPreviewDataImpl.mockBallingProfileEditUiState
+import com.laimburggasse.aquariumcontrol.balling.preview.BallingPreviewData.mockBallingProfileEditUiState
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes

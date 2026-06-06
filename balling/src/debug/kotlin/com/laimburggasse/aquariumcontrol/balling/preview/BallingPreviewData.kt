@@ -20,12 +20,17 @@
  * SOFTWARE.
  */
 
-package com.laimburggasse.aquariumcontrol.heating.preview
+package com.laimburggasse.aquariumcontrol.balling.preview
 
-import com.laimburggasse.aquariumcontrol.heating.testing.HeatingMockData
+import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData
 
-object HeatingPreviewDataImpl {
-    val mockHeatingStatsData = HeatingMockData.mockHeatingStatsData
-    val mockHeatingStatsUiState = HeatingMockData.mockHeatingStatsUiState
-    val mockHeatingSetValsUiState = HeatingMockData.mockHeatingSetValsUiState
+object BallingPreviewData {
+    val mockBallingProfile = BallingMockData.mockBallingProfile
+    val mockBallingProfileEditUiState = BallingMockData.mockBallingProfileEditUiState
+    val mockBallingProfilesUiStateSuccess = BallingMockData.mockBallingProfilesUiStateSuccess
+    val mockBallingProfilesUiStateError = BallingMockData.mockBallingProfilesUiStateError
+    val mockBallingProfilesUiStateLoading = BallingMockData.mockBallingProfilesUiStateLoading
+    val mockBallingProfilesUiStateEmpty = BallingMockData.mockBallingProfilesUiStateEmpty
+    val mockBallingHistoryLogEntries = BallingMockData.mockBallingHistoryLogEntries
+    val mockBallingEvent = BallingMockData.mockBallingEvent
 }

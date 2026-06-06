@@ -39,8 +39,8 @@ import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.feed.R
-import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedProfileEditUiStateFailure
-import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewDataImpl.mockFeedProfileEditUiStateSuccess
+import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewData.mockFeedProfileEditUiStateFailure
+import com.laimburggasse.aquariumcontrol.feed.preview.FeedPreviewData.mockFeedProfileEditUiStateSuccess
 
 @Composable
 fun FeedProfileEditScreen(

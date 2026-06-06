@@ -50,8 +50,8 @@ import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.ventilation.R
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
-import com.laimburggasse.aquariumcontrol.ventilation.preview.VentilationPreviewDataImpl.mockVentilationSetValsUiStateError
-import com.laimburggasse.aquariumcontrol.ventilation.preview.VentilationPreviewDataImpl.mockVentilationSetValsUiStateSuccess
+import com.laimburggasse.aquariumcontrol.ventilation.preview.VentilationPreviewData.mockVentilationSetValsUiStateError
+import com.laimburggasse.aquariumcontrol.ventilation.preview.VentilationPreviewData.mockVentilationSetValsUiStateSuccess
 import com.laimburggasse.aquariumcontrol.ventilation.domain.model.VentilationSetVals
 
 @Composable

@@ -20,17 +20,16 @@
  * SOFTWARE.
  */
 
-package com.laimburggasse.aquariumcontrol.balling.preview
+package com.laimburggasse.aquariumcontrol.timedata.preview
 
-import com.laimburggasse.aquariumcontrol.balling.testing.BallingMockData
+import android.os.Build
+import androidx.annotation.RequiresApi
+import com.laimburggasse.aquariumcontrol.timedata.testing.TimeDataMockData
 
-object BallingPreviewDataImpl {
-    val mockBallingProfile = BallingMockData.mockBallingProfile
-    val mockBallingProfileEditUiState = BallingMockData.mockBallingProfileEditUiState
-    val mockBallingProfilesUiStateSuccess = BallingMockData.mockBallingProfilesUiStateSuccess
-    val mockBallingProfilesUiStateError = BallingMockData.mockBallingProfilesUiStateError
-    val mockBallingProfilesUiStateLoading = BallingMockData.mockBallingProfilesUiStateLoading
-    val mockBallingProfilesUiStateEmpty = BallingMockData.mockBallingProfilesUiStateEmpty
-    val mockBallingHistoryLogEntries = BallingMockData.mockBallingHistoryLogEntries
-    val mockBallingEvent = BallingMockData.mockBallingEvent
+@RequiresApi(Build.VERSION_CODES.O)
+object TimeDataPreviewData {
+    val mockTimeDataSets = TimeDataMockData.mockTimeDataSets
+    val mockTimeDataUiStateSuccess = TimeDataMockData.mockTimeDataUiStateSuccess
+    val mockTimeDataUiStateError = TimeDataMockData.mockTimeDataUiStateError
+    val mockTimeDataUiStateEmpty = TimeDataMockData.mockTimeDataUiStateEmpty
 }

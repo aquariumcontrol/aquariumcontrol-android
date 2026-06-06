@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.summary.R
 import com.laimburggasse.aquariumcontrol.summary.domain.model.SummaryData
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
-import com.laimburggasse.aquariumcontrol.summary.preview.SummaryPreviewDataImpl.mockSummaryData
+import com.laimburggasse.aquariumcontrol.summary.preview.SummaryPreviewData.mockSummaryData
 
 @Composable
 fun SummaryAmbientComposable(summaryData: SummaryData) {

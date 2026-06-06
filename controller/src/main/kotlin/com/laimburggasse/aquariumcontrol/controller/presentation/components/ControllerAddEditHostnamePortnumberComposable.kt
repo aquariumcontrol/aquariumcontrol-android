@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import com.laimburggasse.aquariumcontrol.controller.R
 import com.laimburggasse.aquariumcontrol.common.presentation.NumericIntOutlinedTextFieldComposable
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
-import com.laimburggasse.aquariumcontrol.controller.preview.ControllerPreviewDataImpl.mockControllerState
+import com.laimburggasse.aquariumcontrol.controller.preview.ControllerPreviewData.mockControllerState
 
 @Composable
 fun ControllerAddEditHostnamePortnumberComposable(

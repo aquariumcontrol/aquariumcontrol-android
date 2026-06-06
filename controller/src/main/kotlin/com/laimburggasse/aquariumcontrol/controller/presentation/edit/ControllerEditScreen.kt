@@ -55,7 +55,7 @@ import com.laimburggasse.aquariumcontrol.controller.presentation.components.Cont
 import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiState
 import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUsernamePasswordComposable
 import com.laimburggasse.aquariumcontrol.controller.presentation.navigation.ControllerNavigationEvent
-import com.laimburggasse.aquariumcontrol.controller.preview.ControllerPreviewDataImpl.mockControllerEditState
+import com.laimburggasse.aquariumcontrol.controller.preview.ControllerPreviewData.mockControllerEditState
 
 @Composable
 fun ControllerEditScreen(

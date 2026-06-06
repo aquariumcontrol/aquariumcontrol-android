@@ -53,7 +53,7 @@ import com.laimburggasse.aquariumcontrol.controller.R
 import com.laimburggasse.aquariumcontrol.controller.presentation.navigation.ControllerNavigationEvent
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
-import com.laimburggasse.aquariumcontrol.controller.preview.ControllerPreviewDataImpl.mockControllerProfile1
+import com.laimburggasse.aquariumcontrol.controller.preview.ControllerPreviewData.mockControllerProfile1
 
 @Composable
 fun ControllerProfileComposable(

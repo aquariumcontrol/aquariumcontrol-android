@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.refill.R
-import com.laimburggasse.aquariumcontrol.refill.preview.RefillPreviewDataImpl.mockEvent
+import com.laimburggasse.aquariumcontrol.refill.preview.RefillPreviewData.mockEvent
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
 import java.text.SimpleDateFormat
 import java.util.Date

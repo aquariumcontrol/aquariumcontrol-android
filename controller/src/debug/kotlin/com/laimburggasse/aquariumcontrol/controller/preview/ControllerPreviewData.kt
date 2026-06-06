@@ -20,11 +20,13 @@
  * SOFTWARE.
  */
 
-package com.laimburggasse.aquariumcontrol.schedule.preview
+package com.laimburggasse.aquariumcontrol.controller.preview
 
-import com.laimburggasse.aquariumcontrol.schedule.testing.ScheduleMockData
+import com.laimburggasse.aquariumcontrol.controller.testing.ControllerMockData
 
-object SchedulePreviewDataImpl {
-    val mockScheduleUiStateSuccess = ScheduleMockData.mockScheduleUiStateSuccess
-    val mockScheduleUiStateError = ScheduleMockData.mockScheduleUiStateError
+object ControllerPreviewData {
+    val mockControllerState = ControllerMockData.mockControllerState
+    val mockControllerEditState = ControllerMockData.mockControllerEditState
+    val mockControllerProfile1 = ControllerMockData.mockControllerProfile1
+    val mockControllerProfileList = ControllerMockData.mockControllerProfileList
 }

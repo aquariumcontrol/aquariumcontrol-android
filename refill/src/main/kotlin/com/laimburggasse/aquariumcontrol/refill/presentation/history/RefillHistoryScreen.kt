@@ -35,7 +35,7 @@ import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.refill.R
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
-import com.laimburggasse.aquariumcontrol.refill.preview.RefillPreviewDataImpl.mockRefillHistoryLogEntries
+import com.laimburggasse.aquariumcontrol.refill.preview.RefillPreviewData.mockRefillHistoryLogEntries
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 

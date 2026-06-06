@@ -56,7 +56,7 @@ import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineCompo
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.controller.R
 import com.laimburggasse.aquariumcontrol.controller.presentation.navigation.ControllerNavigationEvent
-import com.laimburggasse.aquariumcontrol.controller.preview.ControllerPreviewDataImpl.mockControllerProfileList
+import com.laimburggasse.aquariumcontrol.controller.preview.ControllerPreviewData.mockControllerProfileList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

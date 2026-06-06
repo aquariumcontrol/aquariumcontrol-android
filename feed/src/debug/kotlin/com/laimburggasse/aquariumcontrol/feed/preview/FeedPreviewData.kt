@@ -24,7 +24,7 @@ package com.laimburggasse.aquariumcontrol.feed.preview
 
 import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData
 
-object FeedPreviewDataImpl {
+object FeedPreviewData {
     val mockChartData = FeedMockData.mockChartData
     val mockInitialExpandedItemIds = FeedMockData.mockInitialExpandedItemIds
     val mockInitialExpandedItemIdsEmpty = FeedMockData.mockInitialExpandedItemIdsEmpty

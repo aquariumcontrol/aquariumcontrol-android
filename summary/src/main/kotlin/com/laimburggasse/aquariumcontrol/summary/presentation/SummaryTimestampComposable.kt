@@ -44,7 +44,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
-import com.laimburggasse.aquariumcontrol.summary.preview.SummaryPreviewDataImpl.mockSummaryData
+import com.laimburggasse.aquariumcontrol.summary.preview.SummaryPreviewData.mockSummaryData
 
 @Composable
 fun SummaryTimestampComposable(summaryData: SummaryData) {

@@ -53,9 +53,9 @@ import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ScreenHeadlineComposable
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
 import com.laimburggasse.aquariumcontrol.timedata.R
-import com.laimburggasse.aquariumcontrol.timedata.preview.TimeDataPreviewDataImpl.mockTimeDataUiStateEmpty
-import com.laimburggasse.aquariumcontrol.timedata.preview.TimeDataPreviewDataImpl.mockTimeDataUiStateError
-import com.laimburggasse.aquariumcontrol.timedata.preview.TimeDataPreviewDataImpl.mockTimeDataUiStateSuccess
+import com.laimburggasse.aquariumcontrol.timedata.preview.TimeDataPreviewData.mockTimeDataUiStateEmpty
+import com.laimburggasse.aquariumcontrol.timedata.preview.TimeDataPreviewData.mockTimeDataUiStateError
+import com.laimburggasse.aquariumcontrol.timedata.preview.TimeDataPreviewData.mockTimeDataUiStateSuccess
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable

@@ -32,7 +32,7 @@ import androidx.paging.LoadStates
 import androidx.paging.PagingData
 import com.laimburggasse.aquariumcontrol.balling.R
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
-import com.laimburggasse.aquariumcontrol.balling.preview.BallingPreviewDataImpl.mockBallingHistoryLogEntries
+import com.laimburggasse.aquariumcontrol.balling.preview.BallingPreviewData.mockBallingHistoryLogEntries
 import com.laimburggasse.aquariumcontrol.common.presentation.GenericHistoryScreen
 import com.laimburggasse.aquariumcontrol.common.presentation.MainScaffold
 import com.laimburggasse.aquariumcontrol.common.presentation.ViewNavigationRoutes
