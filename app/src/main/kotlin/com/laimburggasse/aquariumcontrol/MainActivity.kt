@@ -105,11 +105,24 @@ import com.laimburggasse.aquariumcontrol.ventilation.presentation.VentilationScr
 import com.laimburggasse.aquariumcontrol.ventilation.presentation.VentilationSetValsUiState
 import com.laimburggasse.aquariumcontrol.ventilation.presentation.VentilationSetValsViewModel
 
+/**
+ * The main activity of the application, responsible for setting up the navigation host and
+ * initializing the global session state.
+ */
 @Suppress("UNCHECKED_CAST")
 class MainActivity : ComponentActivity() {
 
+
+    /**
+     * The global session manager responsible for tracking the active controller profile.
+     */
     lateinit var sessionManager: SessionManager
 
+    
+    /**
+     * Called when the activity is pausing. Persists the ID of the default controller profile
+     * to SharedPreferences for retrieval during the next app startup.
+     */
     override fun onPause() {
         super.onPause()
         if (sessionManager.defaultControllerProfileId.value != null) {
@@ -127,6 +140,14 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+
+    /**
+     * Called when the activity is starting. Initializes the dependency injection component,
+     * sets up the session manager, and configures the Jetpack Compose navigation host.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously
+     * being shut down, this Bundle contains the most recently supplied data. Otherwise, it is null.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sessionManager = (application as AquariumControlApplication).appComponent.sessionManager

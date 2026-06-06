@@ -30,21 +30,49 @@ package com.laimburggasse.aquariumcontrol
  import kotlinx.coroutines.delay
  import kotlinx.coroutines.isActive
  import kotlinx.coroutines.launch
+ import kotlin.time.Duration.Companion.minutes
 
- class AquariumControlApplication : Application() {
+/**
+ * Custom [Application] class for the AquariumControl app.
+ * Responsible for initializing the dependency injection component and starting global background tasks.
+ */
+class AquariumControlApplication : Application() {
 
+     
+    /**
+     * The root dependency injection component for the application.
+     */
      lateinit var appComponent: AppComponent
 
+     
+    /**
+     * A [CoroutineScope] tied to the application lifecycle.
+     */
      private val applicationScope: CoroutineScope by lazy { appComponent.provideApplicationScope() }
 
+     
+    /**
+     * The repository responsible for fetching and providing summary data.
+     */
      private val summaryRepository: SummaryRepository by lazy { appComponent.summaryRepository }
 
+     
+    /**
+     * Called when the application is starting, before any activity, service, or receiver objects (excluding content providers) have been created.
+     * Initializes the [appComponent] and starts the summary synchronization task.
+     */
      override fun onCreate() {
          super.onCreate()
          appComponent = AppComponent::class.create(this)
          startSummarySyncTask()
      }
 
+     
+    /**
+     * Starts a background task that periodically fetches summary data from the controller.
+     * The task runs as long as the application is active.
+     * This retrieves the timestamp of the server which is then used for certain API calls.
+     */
      private fun startSummarySyncTask() {
          applicationScope.launch {
              while (isActive) {
@@ -53,7 +81,7 @@ package com.laimburggasse.aquariumcontrol
                  } catch (_: Exception) {
                      // Log error if necessary
                  }
-                 delay(5 * 60 * 1000) // 5 minutes
+                 delay(5.minutes)
              }
          }
      }
