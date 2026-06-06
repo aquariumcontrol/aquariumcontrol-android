@@ -22,8 +22,6 @@
 
 package com.laimburggasse.aquariumcontrol.ventilation.data.remote
 
-
-
 import com.laimburggasse.aquariumcontrol.common.util.Logger
 
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
@@ -31,7 +29,15 @@ import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.ventilation.domain.model.VentilationSetVals
 import com.laimburggasse.aquariumcontrol.common.util.Base64
 
-
+/**
+ * Reader utility responsible for fetching ventilation temperature setpoints from the remote API.
+ *
+ * @property logger Utility for recording non-fatal exceptions.
+ * @property apiService The network service used to execute the request.
+ * @property url The fully qualified endpoint URL.
+ * @param username Authentication username.
+ * @param password Authentication password.
+ */
 class VentilationSetValsReader (
     private val logger: Logger,
     private val apiService: VentilationSetValsApiService,
@@ -39,9 +45,14 @@ class VentilationSetValsReader (
     username: String,
     password: String
 ) {
-    // This class reads the ventilation set values from the server using a GET request.
+    /** The pre-calculated Basic Authentication header value used for API requests. */
     private val authHeaderValue: String = "Basic " + Base64.encode("$username:$password".encodeToByteArray())
 
+    /**
+     * Executes the network request to fetch ventilation setpoints.
+     *
+     * @return A [DataFetchResult] containing the list of [VentilationSetVals] or an error state.
+     */
     suspend fun readVentilationSetVals(): DataFetchResult<List<VentilationSetVals>> {
         return try {
             val decodedData = apiService.getVentilationSetVals(

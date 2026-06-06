@@ -22,7 +22,6 @@
 
 package com.laimburggasse.aquariumcontrol.heating.data.repository
 
-import com.laimburggasse.aquariumcontrol.common.util.Logger
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
@@ -33,6 +32,7 @@ import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.common.domain.model.SetValsSanityCheckResult
 import com.laimburggasse.aquariumcontrol.common.util.Base64
+import com.laimburggasse.aquariumcontrol.common.util.Logger
 import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingSetValsApiService
 import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingSetValsReader
 import com.laimburggasse.aquariumcontrol.heating.domain.heatingSetValsSanityCheck
@@ -50,9 +50,9 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Implementation of [HeatingSetValsRepository] for managing heating setpoints.
@@ -200,7 +200,7 @@ open class HeatingSetValsRepositoryImpl @Inject constructor(
             val port = sessionManager.getControllerPort()
 
             val url = "http://" + controllerAddress + ":" + port + WebApiUrls.HEATING_UPDATE_SET_VALS
-            val authHeader = "Basic " + Base64.encode((user + ":" + password).encodeToByteArray())
+            val authHeader = "Basic " + Base64.encode(("$user:$password").encodeToByteArray())
 
             val postParams = mapOf(
                 WebApiParams.HEATING_SWITCH_ON_TEMPERATURE to currentValues.heatingSwitchOnTemp.toString(),
@@ -220,7 +220,7 @@ open class HeatingSetValsRepositoryImpl @Inject constructor(
                 failureResult.value = null
                 refreshTrigger.emit(value = Unit)
                 // Wait for the next network success before clearing pendingUpdate to avoid flicker
-                kotlinx.coroutines.delay(500) // Small delay to let the network fetch start
+                kotlinx.coroutines.delay(500.milliseconds) // Small delay to let the network fetch start
                 pendingUpdate.value = null
             } else {
                 pendingUpdate.value = null

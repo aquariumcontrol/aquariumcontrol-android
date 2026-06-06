@@ -26,6 +26,12 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * Domain model representing the temperature thresholds for surface ventilation.
+ *
+ * @property ventilationSwitchOffTemp The temperature at which ventilation should turn OFF.
+ * @property ventilationSwitchOnTemp The temperature at which ventilation should turn ON.
+ */
 @Serializable
 data class VentilationSetVals(
     @SerialName(WebApiParams.VENTILATION_SWITCH_OFF_TEMPERATURE)

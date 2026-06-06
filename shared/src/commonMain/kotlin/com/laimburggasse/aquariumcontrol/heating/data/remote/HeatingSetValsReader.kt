@@ -48,6 +48,7 @@ class HeatingSetValsReader (
     username: String,
     password: String
 ) {
+    /** The pre-calculated Basic Authentication header value used for API requests. */
     private val authHeaderValue: String = "Basic " + Base64.encode("$username:$password".encodeToByteArray())
 
     /**

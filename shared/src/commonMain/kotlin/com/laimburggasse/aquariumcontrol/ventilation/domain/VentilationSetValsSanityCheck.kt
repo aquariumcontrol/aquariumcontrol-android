@@ -26,6 +26,14 @@ import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.model.SetValsSanityCheckResult
 import com.laimburggasse.aquariumcontrol.ventilation.domain.model.VentilationSetVals
 
+/**
+ * Performs a sanity check on ventilation setpoint values.
+ * Verifies that temperatures are within the allowed range (20-30°C) and that
+ * the switch-on temperature is strictly greater than the switch-off temperature.
+ *
+ * @param ventilationSetVals The setpoints to validate.
+ * @return A [SetValsSanityCheckResult] indicating success or the specific error type.
+ */
 fun ventilationSetValsSanityCheck(ventilationSetVals: VentilationSetVals):
         SetValsSanityCheckResult<Unit> {
     val ventilationSetValInterval: ClosedFloatingPointRange<Double> = 20.0..30.0
