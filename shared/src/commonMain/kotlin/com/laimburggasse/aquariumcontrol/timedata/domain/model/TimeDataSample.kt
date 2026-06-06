@@ -22,6 +22,23 @@
 
 package com.laimburggasse.aquariumcontrol.timedata.domain.model
 
+/**
+ * Domain model representing a single point-in-time telemetry sample.
+ *
+ * @property timestamp Time of the sample in epoch milliseconds.
+ * @property temperature Water temperature.
+ * @property temperatureFiltered Smoothed water temperature.
+ * @property pH Water pH level.
+ * @property pHFiltered Smoothed water pH level.
+ * @property conductivity Water conductivity.
+ * @property conductivityFiltered Smoothed water conductivity.
+ * @property refillInProgress Status of the refill actuator.
+ * @property mainTankLevelSwitchStatus Status of the water level switch.
+ * @property surfaceVentilation Status of the ventilation actuator.
+ * @property ambientTemperature Ambient room temperature.
+ * @property ambientHumidity Ambient room humidity.
+ * @property heater Status of the water heater actuator.
+ */
 data class TimeDataSample(
     val timestamp: Long,
     val temperature: Double,
@@ -37,6 +54,11 @@ data class TimeDataSample(
     val ambientHumidity: Double,
     val heater: Int
 ) {
+    /**
+     * Converts the [timestamp] from milliseconds to seconds.
+     *
+     * @return The timestamp in seconds.
+     */
     fun timeSeconds(): Long {
         return timestamp / 1000
     }

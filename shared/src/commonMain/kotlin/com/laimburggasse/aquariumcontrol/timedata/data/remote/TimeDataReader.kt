@@ -32,6 +32,15 @@ import com.laimburggasse.aquariumcontrol.timedata.data.remote.dto.TimeDataString
 import com.laimburggasse.aquariumcontrol.common.util.Base64
 
 
+/**
+ * Reader utility responsible for fetching historical telemetry samples from the remote API.
+ *
+ * @property logger Utility for recording exceptions.
+ * @property apiService The network service for telemetry data.
+ * @property url The fully qualified endpoint URL.
+ * @param username Authentication username.
+ * @param password Authentication password.
+ */
 class TimeDataReader (
     private val logger: Logger,
     private val apiService: TimeDataApiService,
@@ -39,9 +48,15 @@ class TimeDataReader (
     username: String,
     password: String
 ) {
-    // This class reads the time series from the server using a GET request.
+    /** The pre-calculated Basic Authentication header value. */
     private val authHeaderValue: String = "Basic " + Base64.encode("$username:$password".encodeToByteArray())
 
+    /**
+     * Executes the network request to fetch the telemetry time series.
+     * Validates that the response size is within allowed limits.
+     *
+     * @return A [DataFetchResult] containing the list of parsed telemetry DTOs.
+     */
     suspend fun readTimeDataSeries(): DataFetchResult<List<TimeDataStringSample>> {
         return try {
             val decodedData = apiService.getTimeData(

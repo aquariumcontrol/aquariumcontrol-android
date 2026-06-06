@@ -50,6 +50,16 @@ import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 
+/**
+ * Implementation of [TimeDataRepository] for managing aquarium telemetry data.
+ * Provides a reactive stream of historical sensor and actuator samples.
+ *
+ * @property logger Utility for recording exceptions.
+ * @property sessionManager Manager providing the active controller profile.
+ * @property apiService Network service for telemetry retrieval.
+ * @property repositoryScope Coroutine scope for reactive flow management.
+ * @property context Dispatcher provider for IO operations.
+ */
 open class TimeDataRepositoryImpl @Inject constructor(
     private val logger: Logger,
     private val sessionManager: SessionManager,
@@ -57,9 +67,14 @@ open class TimeDataRepositoryImpl @Inject constructor(
     private val repositoryScope: CoroutineScope,
     private val context: IoDispatcher
 ): TimeDataRepository {
+    /** Internal trigger used to manually refresh the telemetry data. */
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
 
     @OptIn(ExperimentalCoroutinesApi::class)
+    /**
+     * Reactive state flow emitting the list of telemetry samples.
+     * Automatically re-fetches when the selected controller profile changes.
+     */
     override val timeDataSamples: Flow<DataFetchResult<List<TimeDataSample>>> =
         combine(
             flow = sessionManager.selectedControllerProfile,
@@ -118,7 +133,7 @@ open class TimeDataRepositoryImpl @Inject constructor(
         )
 
     /**
-     * Public function to allow the ViewModel to trigger a manual refresh (e.g., for pull-to-refresh).
+     * Manually triggers a re-fetch of the telemetry data from the server.
      */
     override suspend fun triggerRefresh() {
         refreshTrigger.emit(value = Unit)
