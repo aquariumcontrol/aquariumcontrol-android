@@ -37,10 +37,19 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
+/**
+ * ViewModel for the Heating control screen.
+ * Handles the state, validation, and updating of the heating temperature setpoints.
+ *
+ * @property heatingSetValsRepository The repository for managing heating setpoint values.
+ */
 class HeatingSetValsViewModel @Inject constructor(
     private var heatingSetValsRepository: HeatingSetValsRepository,
 ) : ViewModel() {
+    /** Reactive state indicating if the currently entered heating setpoints are mathematically valid. */
     val heatingSetValsValid = MutableStateFlow<Boolean?>(value = true)
+
+    /** The reactive UI state for the heating controls, mapped from the repository flow. */
     val heatingSetValsUiState: StateFlow<HeatingSetValsUiState> = heatingSetValsRepository.heatingSetValsFlow
         .map { result ->
             when (result) {
@@ -62,6 +71,13 @@ class HeatingSetValsViewModel @Inject constructor(
             initialValue = HeatingSetValsUiState.Loading // The UI starts in a loading state
         )
 
+    
+    /**
+     * Updates the local optimistic state when the entire temperature range changes.
+     *
+     * @param start The new switch-on temperature (lower bound).
+     * @param end The new switch-off temperature (upper bound).
+     */
     private val onRangeChanged: (Float, Float) -> Unit = { start, end ->
         heatingSetValsRepository.updateLocalValues(
             HeatingSetVals(
@@ -72,6 +88,12 @@ class HeatingSetValsViewModel @Inject constructor(
 
     }
 
+    
+    /**
+     * Updates the local optimistic state for the lower (switch-on) temperature.
+     *
+     * @param value The new switch-on temperature.
+     */
     private fun onLowerValueChanged(value: Float) {
         val uiState: HeatingSetValsUiState = heatingSetValsUiState.value
         if (uiState is HeatingSetValsUiState.Success) {
@@ -80,6 +102,12 @@ class HeatingSetValsViewModel @Inject constructor(
         }
     }
 
+    
+    /**
+     * Updates the local optimistic state for the upper (switch-off) temperature.
+     *
+     * @param value The new switch-off temperature.
+     */
     private fun onUpperValueChanged(value: Float) {
         val uiState: HeatingSetValsUiState = heatingSetValsUiState.value
         if (uiState is HeatingSetValsUiState.Success) {
@@ -88,16 +116,30 @@ class HeatingSetValsViewModel @Inject constructor(
         }
     }
 
+    
+    /**
+     * Discards any unsaved local modifications and reverts the UI to the last known server state.
+     */
     private fun resetValues() {
         heatingSetValsRepository.reset()
     }
 
+    
+    /**
+     * Commits the current local optimistic modifications to the remote server via the repository.
+     */
     private fun updateValues() {
         viewModelScope.launch {
             heatingSetValsRepository.updateValues()
         }
     }
 
+    
+    /**
+     * Central event handler for all UI interactions on the heating control screen.
+     *
+     * @param event The specific [HeatingSetValsUiEvent] to process.
+     */
     fun onHeatingSetValsEvent(event: HeatingSetValsUiEvent) {
         when (event) {
             is HeatingSetValsUiEvent.ChangeLowerValue -> {

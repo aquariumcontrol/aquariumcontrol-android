@@ -33,9 +33,16 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
+/**
+ * ViewModel for the Heating statistical data screen.
+ * Responsible for observing heating telemetry logs and exposing the reactive UI state.
+ *
+ * @property heatingStatsRepository The repository for fetching and refreshing heating statistics.
+ */
 class HeatingStatsViewModel @Inject constructor(
     private val heatingStatsRepository: HeatingStatsRepository
 ): ViewModel() {
+    /** The reactive UI state for the heating statistics charts, derived from the repository flow. */
     val heatingStatsUiState: StateFlow<HeatingStatsUiState> = heatingStatsRepository.heatingStatsFlow
         .map { result ->
             when(result) {
@@ -51,6 +58,12 @@ class HeatingStatsViewModel @Inject constructor(
             initialValue = HeatingStatsUiState.Loading
         )
 
+    
+    /**
+     * Central event handler for UI interactions on the heating statistics screen.
+     *
+     * @param event The specific [HeatingStatsUiEvent] to process (e.g., Refresh).
+     */
     fun onHeatingStatsEvent(event: HeatingStatsUiEvent) {
         when(event) {
             is HeatingStatsUiEvent.Refresh-> {

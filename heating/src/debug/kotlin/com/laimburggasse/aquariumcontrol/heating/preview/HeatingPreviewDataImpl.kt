@@ -22,12 +22,10 @@
 
 package com.laimburggasse.aquariumcontrol.heating.preview
 
-import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingPreviewData
 import com.laimburggasse.aquariumcontrol.heating.testing.HeatingMockData
 
-object HeatingPreviewDataImpl: HeatingPreviewData {
-    override val mockHeatingStatsData = HeatingMockData.mockHeatingStatsData
-    override val mockHeatingStatsUiState = HeatingMockData.mockHeatingStatsUiState
-    override val mockHeatingSetVals = HeatingMockData.mockHeatingSetVals
-    override val mockHeatingSetValsUiState = HeatingMockData.mockHeatingSetValsUiState
+object HeatingPreviewDataImpl {
+    val mockHeatingStatsData = HeatingMockData.mockHeatingStatsData
+    val mockHeatingStatsUiState = HeatingMockData.mockHeatingStatsUiState
+    val mockHeatingSetValsUiState = HeatingMockData.mockHeatingSetValsUiState
 }
