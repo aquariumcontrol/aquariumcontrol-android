@@ -31,12 +31,29 @@ import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillHistoryR
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
+/**
+ * Implementation of [RefillHistoryRepository] for fetching refill history logs.
+ * Inherits generic paging logic from [HistoryRepositoryImpl].
+ *
+ * @param sessionManager The manager for active session state.
+ * @param pager The Pager instance used for loading paged history data.
+ */
 open class RefillHistoryRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
     pager: Pager<Int, RefillHistoryLogEntry>
 ) : HistoryRepositoryImpl<RefillHistoryLogEntry>(sessionManager, pager), RefillHistoryRepository {
 
+    /**
+     * A flow of paged refill history log entries.
+     */
     override val refillHistoryEventFlow: Flow<PagingData<RefillHistoryLogEntry>> = historyEventFlow
 
+    /**
+     * Fetches refill history entries for a specific date.
+     * Currently, it returns an empty list as date-specific fetching is not implemented.
+     *
+     * @param date The date in epoch milliseconds.
+     * @return A list of [RefillHistoryLogEntry] for the given date.
+     */
     override suspend fun getHistory(date: Long): List<RefillHistoryLogEntry> = emptyList()
 }

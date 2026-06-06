@@ -32,6 +32,15 @@ import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillState
 import com.laimburggasse.aquariumcontrol.common.util.Base64
 
 
+/**
+ * Reader utility responsible for fetching the current refill system state from the remote API.
+ *
+ * @property logger A utility for recording non-fatal exceptions.
+ * @property apiService The network service for executing the refill state request.
+ * @property url The fully qualified URL endpoint for state retrieval.
+ * @param username The username for basic authentication.
+ * @param password The password for basic authentication.
+ */
 class RefillStateReader (
     private val logger: Logger,
     private val apiService: RefillStateApiService,
@@ -41,6 +50,11 @@ class RefillStateReader (
 ) {
     private val authHeaderValue: String = "Basic " + Base64.encode("$username:$password".encodeToByteArray())
 
+    /**
+     * Executes the network request to fetch the current refill state.
+     *
+     * @return A [DataFetchResult] containing the parsed [RefillState] or an error state.
+     */
     suspend fun readRefillState(): DataFetchResult<RefillState> {
         return try {
             val response = apiService.loadRefillState(

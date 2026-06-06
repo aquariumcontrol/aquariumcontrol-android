@@ -8,7 +8,6 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryRemoteMediato
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
-import com.laimburggasse.aquariumcontrol.refill.data.local.RefillHistoryDao
 import com.laimburggasse.aquariumcontrol.refill.data.remote.KtorRefillHistoryApiService
 import com.laimburggasse.aquariumcontrol.refill.data.remote.KtorRefillStateApiService
 import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillHistoryApiService
@@ -37,10 +36,6 @@ interface RefillDataModule {
     @Provides
     @ApplicationScope
     fun bindRefillHistoryRepository(impl: RefillHistoryRepositoryImpl): RefillHistoryRepository = impl
-
-    @Provides
-    @ApplicationScope
-    fun provideRefillHistoryDao(database: AquariumDatabase): RefillHistoryDao = database.refillHistoryDao()
 
     @Provides
     @ApplicationScope

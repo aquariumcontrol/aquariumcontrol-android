@@ -53,6 +53,16 @@ import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 
+/**
+ * Implementation of [RefillRepository] for managing the aquarium refill system.
+ * Handles state observation and dispatching control commands (Start, Stop, Reset).
+ *
+ * @property logger A utility for recording exceptions.
+ * @property sessionManager The manager providing the currently selected controller.
+ * @property apiService The network service for refill control.
+ * @property repositoryScope The coroutine scope tied to the repository\'s lifecycle.
+ * @property context The dispatcher provider for IO operations.
+ */
 open class RefillRepositoryImpl @Inject constructor(
     private val logger: Logger,
     private val sessionManager: SessionManager,
@@ -60,9 +70,13 @@ open class RefillRepositoryImpl @Inject constructor(
     private val repositoryScope: CoroutineScope,
     private val context: IoDispatcher
 ): RefillRepository {
-    // Trigger for manual refreshes (e.g., pull-to-refresh)
+    /** Internal shared flow used to trigger a re-fetch of the refill state. */
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
+
+    /** Internal mutable flow for emitting error messages from failed commands. */
     private val _errorEvents = MutableSharedFlow<String>()
+
+    /** Flow emitting error messages from failed command requests. */
     override val errorEvents = _errorEvents.asSharedFlow()
 
     /**
@@ -111,18 +125,32 @@ open class RefillRepositoryImpl @Inject constructor(
                 initialValue = DataFetchResult.Loading
             )
 
+        /**
+     * Sends a request to the controller to start the automatic refill process.
+     */
     override suspend fun sendStartRequest() {
         executeRequest(apiUrl = WebApiUrls.REFILL_CONTROL_START)
     }
 
+        /**
+     * Sends a request to the controller to stop any active refill process.
+     */
     override suspend fun sendStopRequest() {
         executeRequest(apiUrl = WebApiUrls.REFILL_CONTROL_STOP)
     }
 
+        /**
+     * Sends a request to the controller to reset any active refill system errors.
+     */
     override suspend fun sendResetRequest() {
         executeRequest(apiUrl = WebApiUrls.REFILL_CONTROL_RESET)
     }
 
+        /**
+     * Executes a POST request to a specific refill control endpoint.
+     *
+     * @param apiUrl The specific API endpoint path to call.
+     */
     private fun executeRequest(apiUrl: String) {
         val user = sessionManager.getControllerUser() ?: ""
         val password = sessionManager.getControllerPassword() ?: ""

@@ -6,6 +6,13 @@ import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEnt
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * Data Transfer Object (DTO) for parsing refill history log entries from the remote API.
+ *
+ * @property timestamp The raw string representation of the event time from the server.
+ * @property duration The duration of the refill event in seconds.
+ * @property volume The volume of water added during the refill event in liters.
+ */
 @Serializable
 data class RefillHistoryLogEntryDto(
     @SerialName(value = WebApiParams.TIMESTAMP)
@@ -15,6 +22,12 @@ data class RefillHistoryLogEntryDto(
     @SerialName(value = WebApiParams.REFILL_VOLUME)
     val volume: Double
 ) {
+    /**
+     * Converts this DTO into a domain-level [RefillHistoryLogEntry].
+     * Parses the string timestamp into epoch milliseconds using [DateTimeUtil].
+     *
+     * @return A domain model representation of the refill history log entry.
+     */
     fun toRefillHistoryLogEntry(): RefillHistoryLogEntry {
         
         val timestampMillis = try {

@@ -26,18 +26,24 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * Represents the various operational states of the aquarium refill system.
+ */
 @Serializable
 enum class RefillState {
     @SerialName(WebApiParams.ACTIVE)
+    /** The system is currently performing or monitoring a refill operation. */
     ACTIVE,
 
     @SerialName(WebApiParams.STOPPED)
+    /** The refill system is currently disabled or idle. */
     STOPPED,
 
     @SerialName(WebApiParams.ERROR)
+    /** The refill system is in an error state (e.g., timeout or sensor failure). */
     ERROR,
 
-    // Fallback state if API is not returning a valid value
     @SerialName(WebApiParams.UNKNOWN)
+    /** Fallback state when the current mode cannot be determined. */
     UNKNOWN;
 }

@@ -29,6 +29,13 @@ import com.laimburggasse.aquariumcontrol.common.domain.BaseHistoryLogEntry
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * Room Entity and Domain model representing a single water refill event.
+ *
+ * @property timestamp The primary key, representing the time of the event in epoch milliseconds.
+ * @property duration The duration of the refill event in seconds.
+ * @property volume The volume of water added during the refill event in liters.
+ */
 @Entity(tableName = "REFILL_LOG")
 @Serializable
 data class RefillHistoryLogEntry(

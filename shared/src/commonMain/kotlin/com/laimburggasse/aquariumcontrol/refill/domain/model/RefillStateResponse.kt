@@ -26,6 +26,11 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * Domain model representing the response containing the current refill system state.
+ *
+ * @property state The [RefillState] returned by the controller.
+ */
 @Serializable
 data class RefillStateResponse(
     @SerialName(WebApiParams.REFILL_CONTROL_STATE_LABEL)
