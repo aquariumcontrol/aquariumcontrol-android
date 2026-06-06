@@ -24,13 +24,12 @@ package com.laimburggasse.aquariumcontrol.timedata.preview
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataPreviewData
 import com.laimburggasse.aquariumcontrol.timedata.testing.TimeDataMockData
 
 @RequiresApi(Build.VERSION_CODES.O)
-object TimeDataPreviewDataImpl: TimeDataPreviewData {
-    override val mockTimeDataSets = TimeDataMockData.mockTimeDataSets
-    override val mockTimeDataUiStateSuccess = TimeDataMockData.mockTimeDataUiStateSuccess
-    override val mockTimeDataUiStateError = TimeDataMockData.mockTimeDataUiStateError
-    override val mockTimeDataUiStateEmpty = TimeDataMockData.mockTimeDataUiStateEmpty
+object TimeDataPreviewDataImpl {
+    val mockTimeDataSets = TimeDataMockData.mockTimeDataSets
+    val mockTimeDataUiStateSuccess = TimeDataMockData.mockTimeDataUiStateSuccess
+    val mockTimeDataUiStateError = TimeDataMockData.mockTimeDataUiStateError
+    val mockTimeDataUiStateEmpty = TimeDataMockData.mockTimeDataUiStateEmpty
 }

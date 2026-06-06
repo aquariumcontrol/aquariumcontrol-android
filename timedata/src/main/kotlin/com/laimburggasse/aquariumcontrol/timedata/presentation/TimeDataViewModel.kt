@@ -33,9 +33,16 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
+/**
+ * ViewModel for the Time Data (Telemetry) screen.
+ * Responsible for observing real-time sensor and actuator telemetry and exposing it as UI state for charting.
+ *
+ * @property timeDataRepository The repository for fetching and refreshing time data samples.
+ */
 class TimeDataViewModel @Inject constructor(
     private val timeDataRepository: TimeDataRepository
 ) : ViewModel() {
+    /** The reactive UI state for the telemetry charts, derived from the repository flow. */
     val timeDataUiState: StateFlow<TimeDataUiState> = timeDataRepository.timeDataSamples
         .map { result ->
             when (result) {
@@ -56,6 +63,11 @@ class TimeDataViewModel @Inject constructor(
         )
 
 
+    /**
+     * Central event handler for UI interactions on the time data screen.
+     *
+     * @param event The specific [TimeDataUiEvent] to process (e.g., Refresh).
+     */
     fun onTimeDataEvent(event: TimeDataUiEvent) {
         when (event) {
             is TimeDataUiEvent.Refresh -> {
