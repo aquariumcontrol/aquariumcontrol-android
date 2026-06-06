@@ -1,6 +1,7 @@
 package com.laimburggasse.aquariumcontrol.common.util
 
 import kotlinx.datetime.*
+import kotlin.time.Instant
 
 object DateTimeUtil {
     private val systemTz = TimeZone.currentSystemDefault()
