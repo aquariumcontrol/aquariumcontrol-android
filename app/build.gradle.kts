@@ -25,7 +25,7 @@ plugins {
     alias(libs.plugins.screenshot)
     alias(libs.plugins.aboutLibraries)
     alias(libs.plugins.mikepenz.aboutlibraries.android)
-    id("org.jetbrains.kotlin.plugin.compose") version "2.3.21"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.4.0"
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp") version "2.3.7"
     // Required for Firebase Crashlytics:
