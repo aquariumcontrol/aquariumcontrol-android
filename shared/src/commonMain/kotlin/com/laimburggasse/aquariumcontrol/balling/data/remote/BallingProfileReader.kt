@@ -28,6 +28,13 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.util.Base64
 
+/**
+ * Utility class for reading Balling dosing profiles from a remote API.
+ *
+ * @property logger A utility for recording non-fatal exceptions.
+ * @property apiService The Ktor-based API service for executing network requests.
+ * @property url The fully qualified URL endpoint to fetch profiles from.
+ */
 class BallingProfileReader (
     private val logger: Logger,
     private val apiService: BallingProfileApiService,
@@ -38,6 +45,12 @@ class BallingProfileReader (
     // This class reads the Balling profiles from the server using a GET request.
     private val authHeaderValue: String = "Basic " + Base64.encode("$username:$password".encodeToByteArray())
 
+    /**
+     * Executes the network request to fetch Balling profiles.
+     * Decodes the response and ensures the number of entries does not exceed the allowed maximum.
+     *
+     * @return A [DataFetchResult] containing the parsed list of [BallingProfile]s, or an error state.
+     */
     suspend fun readBallingProfiles(): DataFetchResult<List<BallingProfile>> {
         return try {
             val decodedData = apiService.getBallingProfiles(

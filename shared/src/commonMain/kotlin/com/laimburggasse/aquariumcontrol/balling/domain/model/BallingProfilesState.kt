@@ -24,6 +24,13 @@ package com.laimburggasse.aquariumcontrol.balling.domain.model
 
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 
+/**
+ * State container for the Balling profiles repository.
+ * Holds optimistic updates and network failure results.
+ *
+ * @property pendingUpdate An optimistic [BallingProfile] modification pending server confirmation. Null if no update is pending.
+ * @property failureResult A [DataFetchResult.Error] if the last operation failed, or null if successful.
+ */
 data class BallingProfilesState(
     val pendingUpdate: BallingProfile? = null,
     val failureResult: DataFetchResult.Error? = null

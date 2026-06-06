@@ -43,6 +43,16 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
+/**
+ * Implementation of [BallingProfilesRepository].
+ * Handles the retrieval, optimistic updating, and remote synchronization of Balling profiles.
+ *
+ * @property logger A utility for recording exceptions.
+ * @property sessionManager The session manager providing the currently selected controller.
+ * @property apiService The network service for Balling profiles.
+ * @property repositoryScope The coroutine scope tied to the repository's lifecycle.
+ * @property ioDispatcher The dispatcher for blocking IO operations.
+ */
 @ApplicationScope
 open class BallingProfilesRepositoryImpl @Inject constructor(
     private val logger: Logger,
@@ -54,6 +64,10 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
     private val localState = MutableStateFlow(BallingProfilesState())
 
+    /**
+     * The reactive state flow emitting the current fetch state and list of [BallingProfile]s.
+     * Combines network fetch results with any pending optimistic updates.
+     */
     @OptIn(ExperimentalCoroutinesApi::class)
     override val ballingProfiles: StateFlow<DataFetchResult<List<BallingProfile>>> =
         combine<ControllerProfile?, Unit, BallingProfilesState, Pair<ControllerProfile?, BallingProfilesState>>(
@@ -93,6 +107,11 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
             }
         }.stateIn(scope = repositoryScope, started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), initialValue = DataFetchResult.Loading)
 
+    /**
+     * Sends an updated Balling profile to the remote server and manages local optimistic state.
+     *
+     * @param ballingProfile The updated profile containing the new dosing volume.
+     */
     override suspend fun updateBallingProfile(ballingProfile: BallingProfile) {
         localState.update { it.copy(pendingUpdate = ballingProfile) }
         val controllerAddress = sessionManager.getControllerAddress()
@@ -125,6 +144,10 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
         }
     }
 
+    /**
+     * Forces a refresh of the Balling profiles from the network.
+     * Clears any existing error state before triggering the refresh.
+     */
     override suspend fun triggerRefresh() {
         if (localState.value.failureResult != null) {
             localState.update { it.copy(failureResult = null) }

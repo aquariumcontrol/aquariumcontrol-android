@@ -26,9 +26,15 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * Domain model representing a Balling dosing profile configuration.
+ *
+ * @property pumpId The unique identifier for the dosing pump.
+ * @property volume The configured dosing volume in milliliters. This value can be modified.
+ * @property label The descriptive name of the dosing profile (e.g., "KH", "Ca").
+ */
 @Serializable
 data class BallingProfile(
-    // This class represents a Balling dosing profile.
     @SerialName(value = WebApiParams.PUMP_ID)
     val pumpId: Int,
     @SerialName(value = WebApiParams.DOSING_VOLUME)

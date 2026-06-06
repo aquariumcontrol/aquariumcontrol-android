@@ -6,6 +6,14 @@ import com.laimburggasse.aquariumcontrol.common.util.DateTimeUtil
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * Data Transfer Object (DTO) for parsing Balling history log entries from the remote API.
+ *
+ * @property timestamp The raw string representation of the log entry's time.
+ * @property pumpId The unique identifier of the dosing pump.
+ * @property volume The volume dosed in milliliters.
+ * @property label A descriptive label for the fluid being dosed (e.g., "Calcium").
+ */
 @Serializable
 data class BallingHistoryLogEntryDto(
     @SerialName(value = WebApiParams.TIMESTAMP)
@@ -17,6 +25,12 @@ data class BallingHistoryLogEntryDto(
     @SerialName(value = WebApiParams.LABEL)
     val label: String
 ) {
+    /**
+     * Converts this DTO into a domain-level [BallingHistoryLogEntry].
+     * Parses the string timestamp into epoch milliseconds using [DateTimeUtil].
+     *
+     * @return A domain model representation of the history log entry.
+     */
     fun toBallingHistoryLogEntry(): BallingHistoryLogEntry {
         
         val timestampMillis = try {

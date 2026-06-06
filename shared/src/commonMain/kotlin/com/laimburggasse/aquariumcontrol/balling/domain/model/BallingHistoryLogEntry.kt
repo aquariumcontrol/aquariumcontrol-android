@@ -29,10 +29,18 @@ import kotlinx.serialization.Serializable
 import androidx.room.PrimaryKey
 import com.laimburggasse.aquariumcontrol.common.domain.BaseHistoryLogEntry
 
+/**
+ * Room Entity and Domain model representing a single Balling dosing event.
+ * Stored in the "BALLING_LOG" table.
+ *
+ * @property timestamp The primary key, representing the time of the event in epoch milliseconds.
+ * @property pumpId The identifier of the pump that performed the dosing.
+ * @property volume The volume of fluid dosed, in milliliters.
+ * @property label A descriptive label for the fluid (e.g., "Calcium").
+ */
 @Entity(tableName = "BALLING_LOG")
 @Serializable
 data class BallingHistoryLogEntry(
-    // This data class represents a Balling dosing event.
     @PrimaryKey
     @SerialName(value = WebApiParams.TIMESTAMP)
     override val timestamp: Long,

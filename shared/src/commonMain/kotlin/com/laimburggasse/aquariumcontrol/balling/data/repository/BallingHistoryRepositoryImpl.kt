@@ -31,12 +31,29 @@ import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
+/**
+ * Implementation of [BallingHistoryRepository] for fetching Balling history logs.
+ * Inherits generic paging logic from [HistoryRepositoryImpl].
+ *
+ * @param sessionManager The manager for active session state.
+ * @param pager The Pager instance used for loading paged history data.
+ */
 open class BallingHistoryRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
     pager: Pager<Int, BallingHistoryLogEntry>
 ) : HistoryRepositoryImpl<BallingHistoryLogEntry>(sessionManager, pager), BallingHistoryRepository {
 
+    /**
+     * A flow of paged Balling dosing history events.
+     */
     override val ballingHistoryDosingEventFlow: Flow<PagingData<BallingHistoryLogEntry>> = historyEventFlow
 
+    /**
+     * Fetches history entries for a specific date.
+     * Currently returns an empty list as date-specific fetching is not implemented.
+     *
+     * @param date The date in epoch milliseconds.
+     * @return A list of [BallingHistoryLogEntry] for the given date.
+     */
     override suspend fun getHistory(date: Long): List<BallingHistoryLogEntry> = emptyList()
 }
