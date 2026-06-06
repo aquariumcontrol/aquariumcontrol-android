@@ -27,6 +27,7 @@ import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.common.data.local.ControllerProfileDao
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiEvent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
@@ -37,12 +38,18 @@ import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
+/**
+ * ViewModel for the Controller profile selection screen.
+ * Handles the retrieval and manual/automatic selection of the profile
+ *
+ * @property dao The Data Access Object for database operations on controller profiles.
+ * @property sessionManager The manager for global session state and profile selection.
+ */
 class ControllerSelectionViewModel @Inject constructor(
     private val dao: ControllerProfileDao,
     private val sessionManager: SessionManager
 ) : ViewModel() {
-    // This class represents the view model for the controller screen.
-    // Initialize with an empty list or a loading state if preferred
+    /** The list of available controller profiles retrieved from the database. */
     val controllerProfiles: StateFlow<List<ControllerProfile>> =
         dao.getAllControllerProfiles()
             .stateIn(
@@ -100,6 +107,12 @@ class ControllerSelectionViewModel @Inject constructor(
         initialValue = 0.0f // The countdown starts at 0% progress
     )
 
+    /**
+     * Central event handler for all UI interactions on the controller selection screen.
+     * Manages input selection and deletion of profiles as well as automatic navigation
+     *
+     * @param event The specific [ControllerSelectionUiEvent] to process.
+     */
     fun onEvent(event: ControllerSelectionUiEvent) {
         when (event) {
             is ControllerSelectionUiEvent.DeleteControllerSelectionProfile -> {

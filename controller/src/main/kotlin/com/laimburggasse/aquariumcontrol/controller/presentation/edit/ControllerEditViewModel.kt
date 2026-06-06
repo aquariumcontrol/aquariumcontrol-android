@@ -22,16 +22,15 @@
 
 package com.laimburggasse.aquariumcontrol.controller.presentation.edit
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
-import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.data.local.ControllerProfileDao
-import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiEvent
-import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiState
+import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
+import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.controller.domain.isHostName
 import com.laimburggasse.aquariumcontrol.controller.domain.isValidPortNumber
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiEvent
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -40,13 +39,21 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
+/**
+ * ViewModel for the Controller profile editing screen.
+ * Handles the retrieval, modification, and persistence of an existing controller profile.
+ *
+ * @property dao The Data Access Object for database operations on controller profiles.
+ * @property sessionManager The manager for global session state and profile selection.
+ */
 class ControllerEditViewModel @Inject constructor(
     private val dao: ControllerProfileDao,
     private val sessionManager: SessionManager
 ) : ViewModel() {
-    // This class represents the view model for the controller edit screen.
-
+    /** Internal mutable state flow for the editing screen. */
     private val _state = MutableStateFlow(value = ControllerAddEditUiState())
+
+    /** Public read-only UI state observed by the view. */
     val state: StateFlow<ControllerAddEditUiState> = _state
         .stateIn(
             viewModelScope,
@@ -54,6 +61,12 @@ class ControllerEditViewModel @Inject constructor(
             initialValue = ControllerAddEditUiState()
         )
 
+    
+    /**
+     * Loads the controller profile data from the database for the given ID and updates the state.
+     *
+     * @param id The unique identifier of the controller profile to edit.
+     */
     fun setControllerProfileId(id: Long) {
         if (id == -1L) return
         viewModelScope.launch {
@@ -73,6 +86,13 @@ class ControllerEditViewModel @Inject constructor(
         }
     }
 
+    
+    /**
+     * Central event handler for all UI interactions on the controller edit screen.
+     * Manages input updates, profile persistence, and default profile settings.
+     *
+     * @param event The specific [ControllerAddEditUiEvent] to process.
+     */
     fun onEvent(event: ControllerAddEditUiEvent) {
         when (event) {
             is ControllerAddEditUiEvent.UpdateControllerProfile -> {

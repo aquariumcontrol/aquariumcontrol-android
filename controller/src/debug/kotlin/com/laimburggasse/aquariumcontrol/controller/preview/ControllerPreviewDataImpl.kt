@@ -23,12 +23,10 @@
 package com.laimburggasse.aquariumcontrol.controller.preview
 
 import com.laimburggasse.aquariumcontrol.controller.testing.ControllerMockData
-import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerPreviewData
 
-object ControllerPreviewDataImpl: ControllerPreviewData {
-    override val mockControllerState = ControllerMockData.mockControllerState
-    override val mockControllerEditState = ControllerMockData.mockControllerEditState
-    override val mockControllerProfile1 = ControllerMockData.mockControllerProfile1
-    override val mockControllerProfile2 = ControllerMockData.mockControllerProfile2
-    override val mockControllerProfileList = ControllerMockData.mockControllerProfileList
+object ControllerPreviewDataImpl {
+    val mockControllerState = ControllerMockData.mockControllerState
+    val mockControllerEditState = ControllerMockData.mockControllerEditState
+    val mockControllerProfile1 = ControllerMockData.mockControllerProfile1
+    val mockControllerProfileList = ControllerMockData.mockControllerProfileList
 }

@@ -37,13 +37,28 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
+/**
+ * ViewModel for the Controller creation screen.
+ * Handles the state and logic for configuring a new aquarium controller profile.
+ *
+ * @property dao The Data Access Object for persisting controller profiles.
+ */
 class ControllerAddViewModel @Inject constructor(
     private val dao: ControllerProfileDao,
 ): ViewModel() {
+    /** The internal mutable state for the controller creation screen. */
     private val _state = MutableStateFlow(value = ControllerAddEditUiState())
 
+    /** The public read-only UI state for the controller creation screen. */
     val state: StateFlow<ControllerAddEditUiState> = _state.asStateFlow()
 
+    
+    /**
+     * Persists a new controller profile to the local database.
+     *
+     * @param event The specific [ControllerAddEditUiEvent] that triggered the addition.
+     * @param onAddComplete A callback invoked once the profile has been successfully saved.
+     */
     fun addControllerProfile(event: ControllerAddEditUiEvent, onAddComplete: () -> Unit) {
         when (event) {
             is ControllerAddEditUiEvent.AddControllerProfile -> {
@@ -66,6 +81,13 @@ class ControllerAddViewModel @Inject constructor(
         }
     }
 
+    
+    /**
+     * Central event handler for UI interactions on the controller creation screen.
+     * Validates and updates the screen state based on user input.
+     *
+     * @param event The specific [ControllerAddEditUiEvent] to handle.
+     */
     fun onEvent(event: ControllerAddEditUiEvent) {
         when (event) {
             is ControllerAddEditUiEvent.SetControllerProfileName -> {
