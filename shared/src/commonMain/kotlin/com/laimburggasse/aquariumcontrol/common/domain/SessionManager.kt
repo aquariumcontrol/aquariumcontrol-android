@@ -22,8 +22,6 @@
 
 package com.laimburggasse.aquariumcontrol.common.domain
 
-import androidx.datastore.core.DataStore
-
 import kotlinx.coroutines.flow.StateFlow
 
 interface SessionManager {

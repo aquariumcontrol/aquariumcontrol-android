@@ -27,11 +27,21 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import com.laimburggasse.aquariumcontrol.common.util.DateTimeUtil
 
+/**
+ * Data Transfer Object (DTO) for parsing timestamp objects from the remote API.
+ *
+ * @property timestampString The raw string representation of the timestamp from the API.
+ */
 @Serializable
 data class TimestampJsonObject(
     @SerialName(value = WebApiParams.TIMESTAMP)
     val timestampString: String = ""
 ) {
+    /**
+     * Converts the [timestampString] into epoch milliseconds.
+     *
+     * @return The timestamp in epoch milliseconds, or 0L if parsing fails.
+     */
     fun transformToTimestamp(): Long {
         
         return DateTimeUtil.parseApiTimestamp(timestampString)

@@ -27,15 +27,3 @@ import me.tatarka.inject.annotations.*
 @Scope
 @Retention(value = AnnotationRetention.RUNTIME)
 annotation class ApplicationScope
-
-@Target(AnnotationTarget.TYPE, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.VALUE_PARAMETER)
-@Retention(AnnotationRetention.BINARY)
-annotation class BallingHistoryService
-
-@Target(AnnotationTarget.TYPE, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.VALUE_PARAMETER)
-@Retention(AnnotationRetention.BINARY)
-annotation class FeedHistoryService
-
-@Target(AnnotationTarget.TYPE, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.VALUE_PARAMETER)
-@Retention(AnnotationRetention.BINARY)
-annotation class RefillHistoryService

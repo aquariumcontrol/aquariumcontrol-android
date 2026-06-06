@@ -28,7 +28,6 @@ object GlobalConstants {
     const val NO_DEFAULT_ID = -1L
 
     const val MAX_HISTORY_LOG_ENTRIES = 5000
-    const val MAX_SCHEDULE_ENTRIES = 5000
     const val MAX_PROFILE_ENTRIES = 500
     const val MAX_TIME_DATA_SAMPLES = 10000
     const val MAX_STATS_ENTRIES = 2000
@@ -58,9 +57,7 @@ object GlobalConstants {
     const val LABEL_UNIT_ON = "ON"
     const val LABEL_UNIT_OFF = "OFF"
     const val LABEL_UNIT_PERCENT = " %"
-    const val ERR_MSG_PROFILE_ID_NOT_PROVIDED = "Profile ID not provided."
     const val ERR_MSG_SERVER_RESPONDED_TOO_MANY_ENTRIES = "Server responded with too many entries."
-    const val ERR_MSG_SERVER_RESPONDED_ERR_CODE = "Server responded with error code: "
     const val ERR_MSG_UNEXPECTED_ERR_DURING_PREP = "An unexpected error occurred during preparation of server communication: "
     const val ERR_MSG_NO_CONTROLLER_SELECTED = "No controller selected."
     const val ERR_MSG_LOADING_HEATING_STATS_FAILED = "Loading heating stats data failed."
@@ -70,7 +67,6 @@ object GlobalConstants {
     const val ERR_MSG_UPDATING_FEED_SCHEDULE_ENTRY_FAILED = "Updating feed schedule entry failed."
     const val ERR_MSG_ADDING_FEED_SCHEDULE_ENTRY_FAILED = "Adding feed schedule entry failed."
     const val ERR_MSG_DELETING_FEED_SCHEDULE_ENTRY_FAILED = "Deleting feed schedule entry failed."
-    const val ERR_MSG_EMPTY_RESPONSE = "Server responded with empty body."
     const val ERR_MSG_COULD_NOT_ADD_FEED_PROFILE = "Could not add the feed profile."
     const val ERR_MSG_COULD_NOT_DELETE_FEED_PROFILE = "Could not delete the feed profile."
     const val ERR_MSG_LOADING_FEED_SCHEDULE_ENTRIES_FAILED = "Loading feed schedule entries failed."

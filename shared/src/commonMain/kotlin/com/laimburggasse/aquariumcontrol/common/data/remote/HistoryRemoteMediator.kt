@@ -36,6 +36,19 @@ import com.laimburggasse.aquariumcontrol.common.util.Base64
 import kotlinx.datetime.*
 import kotlin.time.Clock
 
+/**
+ * A Paging Library [RemoteMediator] that orchestrates the loading of history data from
+ * the network into a local Room database. It handles incremental loading of historical
+ * events by day.
+ *
+ * @param T The type of the history log entry, extending [BaseHistoryLogEntry].
+ * @property database The Room database instance.
+ * @property dao The Data Access Object for history logs.
+ * @property apiService The network service for fetching history.
+ * @property sessionManager The manager for active session state.
+ * @property loadEventsUrlPath The endpoint path for loading history events.
+ * @property loadFirstEventUrlPath The endpoint path for identifying the start of the history log.
+ */
 @OptIn(ExperimentalPagingApi::class)
 class HistoryRemoteMediator<T : BaseHistoryLogEntry>(
     private val database: RoomDatabase,
@@ -45,10 +58,21 @@ class HistoryRemoteMediator<T : BaseHistoryLogEntry>(
     private val loadEventsUrlPath: String,
     private val loadFirstEventUrlPath: String
 ) : RemoteMediator<Int, T>() {
+    /** Cached timestamp of the first ever log entry on the server. */
     private var historyLogStart: Long? = null
+
+    /** The controller profile used for the current loading session. */
     private var serverUsed: ControllerProfile? = null
+
+    /** Constant for milliseconds in a single day. */
     private val msInDay = 86_400_000L // milliseconds in one day
 
+    /**
+     * Calculates the current date normalized to the start of the day.
+     * Uses server time if available, otherwise falls back to system local time.
+     *
+     * @return The normalized start-of-day timestamp in epoch milliseconds.
+     */
     private fun getCurrentDate(): Long {
         val serverTime = sessionManager.serverTimestamp.value
 
@@ -61,10 +85,24 @@ class HistoryRemoteMediator<T : BaseHistoryLogEntry>(
         }
     }
 
+    /**
+     * Subtracts 24 hours from the given timestamp.
+     *
+     * @param current The reference timestamp.
+     * @return The timestamp exactly one day prior.
+     */
     private fun getYesterdaysDate(current: Long): Long {
         return current - msInDay
     }
 
+    /**
+     * Main entry point for the Paging library to request more data.
+     * Fetches historical events from the API and persists them to the local database.
+     *
+     * @param loadType The type of load (REFRESH, APPEND, PREPEND).
+     * @param state The current paging state.
+     * @return A [MediatorResult] indicating success or error.
+     */
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, T>

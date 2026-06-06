@@ -1,10 +1,19 @@
 package com.laimburggasse.aquariumcontrol.common.util
 
+/**
+ * Custom common implementation of Base64 encoding and decoding for cross-platform usage.
+ */
 object Base64 {
     private const val ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 
     private const val EQUALCHAR = '='
 
+    /**
+     * Decodes a Base64 encoded string into a byte array.
+     *
+     * @param input The Base64 string to decode.
+     * @return A [ByteArray] containing the decoded data.
+     */
     fun decode(input: String): ByteArray {
         val cleaned = input.filter { it in ALPHABET || it == EQUALCHAR }
         val bytes = mutableListOf<Byte>()
@@ -33,8 +42,12 @@ object Base64 {
         return result
     }
 
-    fun decodeToString(input: String): String = decode(input).decodeToString()
-
+    /**
+     * Encodes a byte array into a Base64 string.
+     *
+     * @param input The data to encode.
+     * @return A Base64 representation of the input data.
+     */
     fun encode(input: ByteArray): String {
         val result = StringBuilder()
         var i = 0

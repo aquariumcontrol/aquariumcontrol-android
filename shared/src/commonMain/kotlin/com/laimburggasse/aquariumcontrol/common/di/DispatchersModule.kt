@@ -25,20 +25,10 @@ package com.laimburggasse.aquariumcontrol.common.di
 import com.laimburggasse.aquariumcontrol.common.util.DispatcherIO
 
 import me.tatarka.inject.annotations.Provides
-import kotlinx.coroutines.Dispatchers
 
 
 interface DispatchersModule {
-
-    @Provides
-    @ApplicationScope
-    fun providesDefaultDispatcher(): DefaultDispatcher = DefaultDispatcher(Dispatchers.Default)
-
     @Provides
     @ApplicationScope
     fun providesIoDispatcher(): IoDispatcher = IoDispatcher(DispatcherIO)
-
-    @Provides
-    @ApplicationScope
-    fun providesMainDispatcher(): MainDispatcher = MainDispatcher(Dispatchers.Main)
 }
