@@ -32,6 +32,15 @@ import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleString
 import com.laimburggasse.aquariumcontrol.common.util.Base64
 
 
+/**
+ * Reader utility responsible for fetching the complete actuator schedule from the remote server.
+ *
+ * @property logger Utility for recording exceptions.
+ * @property apiService The network service for schedule retrieval.
+ * @property url The fully qualified endpoint URL.
+ * @param username Authentication username.
+ * @param password Authentication password.
+ */
 class ScheduleEntryReader (
     private val logger: Logger,
     private val apiService: ScheduleApiService,
@@ -39,9 +48,13 @@ class ScheduleEntryReader (
     username: String,
     password: String
 ) {
-    // This class reads the schedule set values from the server using a GET request
-    // These are later converted into one instance of ScheduleSetVals
     private val authHeaderValue: String = "Basic " + Base64.encode("$username:$password".encodeToByteArray())
+    /**
+     * Executes the network request to fetch all schedule entries.
+     * Validates that the response size is within allowed limits.
+     *
+     * @return A [DataFetchResult] containing the list of parsed schedule DTOs.
+     */
     suspend fun readScheduleEntryList(): DataFetchResult<List<ScheduleStringEntry>> {
         return try {
             val decodedData = apiService.getScheduleData(
@@ -60,7 +73,6 @@ class ScheduleEntryReader (
             }
         } catch (exception: Exception) { // recording exception in crashlytics
             logger.recordException(exception)
-            // Retrofit routes JSON mapping errors and network timeouts here
             DataFetchResult.Error(
                 exception = exception,
                 errorMessage = GlobalConstants.ERR_MSG_UNEXPECTED_ERR_DURING_PREP + exception.message

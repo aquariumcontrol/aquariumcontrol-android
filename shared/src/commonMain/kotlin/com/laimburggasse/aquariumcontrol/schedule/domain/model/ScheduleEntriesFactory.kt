@@ -25,12 +25,21 @@ package com.laimburggasse.aquariumcontrol.schedule.domain.model
 import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleEntry
 import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleType
 
+/**
+ * Factory class responsible for aggregating a list of individual [ScheduleEntry] items
+ * into a single unified [ScheduleEntries] domain model.
+ *
+ * @property scheduleEntryList The list of individual actuator entries to aggregate.
+ */
 class ScheduleEntriesFactory (
     private val scheduleEntryList: List<ScheduleEntry>
 ) {
-    // This class creates an instance of ScheduleSetVals
-    // Different from the other factory classes, this one shall provide multiple instances.
-
+    /**
+     * Orchestrates the aggregation of entries into the final [ScheduleEntries] object.
+     * Handles mapping individual actuator keys to their respective properties.
+     *
+     * @return A complete [ScheduleEntries] instance.
+     */
     fun create(): ScheduleEntries {
         // initialize with default values
         var ballingStartTime = 0f

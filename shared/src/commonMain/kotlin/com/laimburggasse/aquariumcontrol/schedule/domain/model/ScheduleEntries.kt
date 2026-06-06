@@ -24,6 +24,26 @@ package com.laimburggasse.aquariumcontrol.schedule.domain.model
 
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 
+/**
+ * Domain model container that aggregates schedule settings for all actuator types.
+ *
+ * @property ballingStartTime Start time for Balling schedule.
+ * @property ballingStopTime Stop time for Balling schedule.
+ * @property ballingLimitationActive Enforcement flag for Balling.
+ * @property ballingScheduleLoaded Fetch status for Balling.
+ * @property refillStartTime Start time for Refill schedule.
+ * @property refillStopTime Stop time for Refill schedule.
+ * @property refillLimitationActive Enforcement flag for Refill.
+ * @property refillScheduleLoaded Fetch status for Refill.
+ * @property ventilationStartTime Start time for Ventilation schedule.
+ * @property ventilationStopTime Stop time for Ventilation schedule.
+ * @property ventilationLimitationActive Enforcement flag for Ventilation.
+ * @property ventilationScheduleLoaded Fetch status for Ventilation.
+ * @property heatingStartTime Start time for Heating schedule.
+ * @property heatingStopTime Stop time for Heating schedule.
+ * @property heatingLimitationActive Enforcement flag for Heating.
+ * @property heatingScheduleLoaded Fetch status for Heating.
+ */
 data class ScheduleEntries(
     var ballingStartTime: Float,
     var ballingStopTime: Float,
@@ -48,6 +68,11 @@ data class ScheduleEntries(
         return "${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}"
     }
 
+    /**
+     * Generates a map of query parameters representing all actuator schedules for the API.
+     *
+     * @return A map of formatted time and status parameters.
+     */
     fun getApiParams(): Map<String, String> {
         return mapOf(
             WebApiParams.SCHEDULE_BALLING_START_TIME to formatTime(value = ballingStartTime),

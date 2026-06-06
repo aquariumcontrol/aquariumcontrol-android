@@ -5,6 +5,15 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.datetime.LocalTime
 
+/**
+ * Data Transfer Object (DTO) for parsing schedule entries from the remote API.
+ * Uses string types for times as received from the server.
+ *
+ * @property scheduleType The raw identifier for the actuator category.
+ * @property startTime The raw start time string (e.g., "08:00:00").
+ * @property stopTime The raw stop time string (e.g., "22:00:00").
+ * @property isLimitationActive Integer flag (0 or 1) indicating if the limitation is enabled.
+ */
 @Serializable
 data class ScheduleStringEntry (
     @SerialName(WebApiParams.SCHEDULE_TYPE) var scheduleType: String,
@@ -21,6 +30,12 @@ data class ScheduleStringEntry (
         }
     }
 
+    /**
+     * Converts this DTO into a domain-level [ScheduleEntry].
+     * Parses the time strings into decimal float values.
+     *
+     * @return A domain model representation of the schedule entry.
+     */
     fun transformToSetVal(): ScheduleEntry {
         val newEntry = ScheduleEntry(
             scheduleType = scheduleType,

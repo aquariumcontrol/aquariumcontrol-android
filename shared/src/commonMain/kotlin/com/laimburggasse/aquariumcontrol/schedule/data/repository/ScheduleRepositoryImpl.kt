@@ -58,8 +58,17 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
+/**
+ * Implementation of [ScheduleRepository] for managing global actuator schedules.
+ * Handles fetching, optimistic updates, and multi-actuator synchronization.
+ *
+ * @property logger Utility for recording exceptions.
+ * @property sessionManager Manager providing the active controller profile.
+ * @property apiService Network service for schedule management.
+ * @property repositoryScope Coroutine scope for reactive flows.
+ * @property context Dispatcher provider for IO operations.
+ */
 @ApplicationScope
-
 open class ScheduleRepositoryImpl @Inject constructor(
     private val logger: Logger,
     private val sessionManager: SessionManager,
@@ -67,13 +76,19 @@ open class ScheduleRepositoryImpl @Inject constructor(
     private val repositoryScope: CoroutineScope,
     private val context: IoDispatcher
 ): ScheduleRepository {
-    // Triggers for manual refreshes and a holder for optimistic local updates.
+    /** Internal trigger flow for manually refreshing the schedule data. */
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
+
+    /** Internal state flow holding optimistic local modifications pending server confirmation. */
     private val pendingUpdate = MutableStateFlow<ScheduleEntries?>(value = null)
 
-    // A flow to hold the failure value
+    /** Internal flow holding the last network or validation error, used to trigger retry logic. */
     private val failureResult = MutableStateFlow<DataFetchResult.Error?>(value = null)
 
+    /**
+     * Internal reactive flow that performs the actual network fetch.
+     * Reacts to controller changes, manual refreshes, and failure resets.
+     */
     @OptIn(ExperimentalCoroutinesApi::class)
     private val networkFlow: StateFlow<DataFetchResult<ScheduleEntries>> = combine(
         flow = sessionManager.selectedControllerProfile,
@@ -114,7 +129,10 @@ open class ScheduleRepositoryImpl @Inject constructor(
         initialValue = DataFetchResult.Loading
     )
 
-    // The final UI state combines the network data with any local (optimistic) updates.
+    /**
+     * Reactive state flow emitting the current combined schedule for all actuators.
+     * Integrates network results with pending local modifications.
+     */
     override val scheduleFlow: StateFlow<DataFetchResult<ScheduleEntries>> = combine(
         flow = networkFlow,
         flow2 = pendingUpdate
@@ -133,14 +151,16 @@ open class ScheduleRepositoryImpl @Inject constructor(
     )
 
     /**
-     * Applies an optimistic update to the local state without committing to the server.
+     * Updates the local optimistic state of the entire schedule.
+     *
+     * @param newScheduleEntries The new schedule state to display immediately.
      */
     override fun updateLocalSchedule(newScheduleEntries: ScheduleEntries) {
         pendingUpdate.value = newScheduleEntries
     }
 
     /**
-     * Commits the current local values to the server.
+     * Commits all current schedule modifications to the remote server.
      */
     override suspend fun updateSchedule() {
         val controllerAddress: String? = sessionManager.getControllerAddress()
@@ -167,14 +187,19 @@ open class ScheduleRepositoryImpl @Inject constructor(
     }
 
     /**
-     * Reverts any uncommitted local changes by clearing the pending update.
-     * The public flow will automatically revert to the last successfully fetched state.
+     * Discards any unsaved local modifications and reverts to the server state.
      */
     override fun reset() {
         pendingUpdate.value = null
     }
 
-    // helper function for the flow
+    /**
+     * Internal helper to execute the network fetch and map raw DTOs into structured [ScheduleEntries].
+     *
+     * @param username The authentication username.
+     * @param password The authentication password.
+     * @return A [DataFetchResult] containing the processed [ScheduleEntries].
+     */
     open suspend fun fetchScheduleSetVals(username: String, password: String): DataFetchResult<ScheduleEntries> {
         println("ScheduleRepositoryImpl: fetchScheduleSetVals - username: ")
         return withContext(context.dispatcher) {
@@ -221,7 +246,7 @@ open class ScheduleRepositoryImpl @Inject constructor(
     }
 
     /**
-     * Triggers a manual refresh of the schedule data.
+     * Manually triggers a re-fetch of the schedule data from the server.
      */
     override suspend fun triggerRefresh() {
         // Check if the current state is a failure.
