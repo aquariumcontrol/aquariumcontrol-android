@@ -4,6 +4,22 @@ import com.laimburggasse.aquariumcontrol.common.util.DateTimeUtil
 import com.laimburggasse.aquariumcontrol.summary.domain.model.SummaryData
 import kotlinx.serialization.Serializable
 
+/**
+ * Data Transfer Object (DTO) used for parsing the complete aquarium summary state from the remote API.
+ *
+ * @property timestamp Raw string timestamp from the server.
+ * @property waterTemperature Current water temperature.
+ * @property filteredWaterTemperature Moving average or filtered water temperature.
+ * @property phValue Current pH level.
+ * @property filteredPhValue Moving average or filtered pH level.
+ * @property conductivity Current conductivity (TDS) value.
+ * @property filteredConductivity Moving average or filtered conductivity.
+ * @property tankLevelSwitchPosition Status string of the tank water level switch.
+ * @property surfaceVentilationStatus Status string of the surface ventilation actuator.
+ * @property ambientTemperature Current room temperature.
+ * @property ambientHumidity Current room humidity.
+ * @property heatingStatus Status string of the water heating actuator.
+ */
 @Serializable
 data class SummaryDataDto(
     val timestamp: String,
@@ -19,6 +35,12 @@ data class SummaryDataDto(
     val ambientHumidity: Double,
     val heatingStatus: String,
 ) {
+    /**
+     * Converts this DTO into a [SummaryData] domain model.
+     * Parses the string timestamp into epoch milliseconds.
+     *
+     * @return A domain representation of the aquarium state.
+     */
     fun toSummaryData(): SummaryData {
         
         val parsedTimestamp = try {

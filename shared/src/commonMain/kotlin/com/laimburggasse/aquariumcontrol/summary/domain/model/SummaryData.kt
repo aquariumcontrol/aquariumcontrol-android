@@ -24,9 +24,24 @@ package com.laimburggasse.aquariumcontrol.summary.domain.model
 
 import kotlinx.serialization.Serializable
 
+/**
+ * Domain model representing the complete current state of the aquarium.
+ *
+ * @property timestamp Time of the reading in epoch milliseconds.
+ * @property waterTemperature Current water temperature in Celsius.
+ * @property filteredWaterTemperature Smoothed water temperature value.
+ * @property phValue Current water pH value.
+ * @property filteredPhValue Smoothed water pH value.
+ * @property conductivity Current water conductivity.
+ * @property filteredConductivity Smoothed water conductivity.
+ * @property tankLevelSwitchPosition Descriptive status of the level switch.
+ * @property surfaceVentilationStatus Descriptive status of surface ventilation.
+ * @property ambientTemperature Current ambient room temperature.
+ * @property ambientHumidity Current ambient room humidity percentage.
+ * @property heatingStatus Descriptive status of the water heater.
+ */
 @Serializable
 data class SummaryData(
-    // This class represents the data that is displayed on the overview screen.
     val timestamp: Long,
     val waterTemperature: Double,
     val filteredWaterTemperature: Double,

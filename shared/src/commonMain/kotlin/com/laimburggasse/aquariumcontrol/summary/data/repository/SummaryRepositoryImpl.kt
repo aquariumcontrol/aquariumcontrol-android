@@ -50,15 +50,24 @@ import me.tatarka.inject.annotations.Inject
 
 @OptIn(DelicateCoroutinesApi::class)
 
+/**
+ * Implementation of [SummaryRepository] for managing aquarium summary data.
+ * Provides a reactive stream of the latest sensor and actuator states.
+ *
+ * @property logger Utility for recording exceptions.
+ * @property sessionManager Manager providing the active controller and session state.
+ * @property apiService Network service for fetching summary data.
+ * @property repositoryScope Coroutine scope for reactive flow management.
+ * @property context Dispatcher provider for IO operations.
+ */
 open class SummaryRepositoryImpl @Inject constructor(
     private val logger: Logger,
     private val sessionManager: SessionManager,
     private val apiService: SummaryDataApiService,
-    private val repositoryScope: CoroutineScope,
+    repositoryScope: CoroutineScope,
     private val context: IoDispatcher
 ): SummaryRepository {
-    // This SharedFlow doesn't hold state; it just emits a signal when we call emit().
-    // We use replay=1 so it emits the last signal to new subscribers if needed.
+    /** Internal trigger used to manually refresh the summary data. */
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
 
     /**

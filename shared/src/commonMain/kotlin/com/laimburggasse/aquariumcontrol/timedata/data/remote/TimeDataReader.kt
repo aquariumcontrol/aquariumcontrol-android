@@ -60,7 +60,6 @@ class TimeDataReader (
             }
         } catch (exception: Exception) { // recording exception in crashlytics
             logger.recordException(exception)
-            // Retrofit routes JSON mapping errors and network timeouts here
             DataFetchResult.Error(
                 exception = exception,
                 errorMessage = GlobalConstants.ERR_MSG_UNEXPECTED_ERR_DURING_PREP + exception.message

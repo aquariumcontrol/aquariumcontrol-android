@@ -32,6 +32,15 @@ import com.laimburggasse.aquariumcontrol.summary.domain.model.SummaryData
 import com.laimburggasse.aquariumcontrol.common.util.Base64
 
 
+/**
+ * Reader utility responsible for fetching and decoding the aquarium summary data.
+ *
+ * @property logger Utility for recording non-fatal exceptions.
+ * @property apiService The network service used to execute the request.
+ * @property url The fully qualified endpoint URL.
+ * @param username Authentication username.
+ * @param password Authentication password.
+ */
 class SummaryDataReader (
     private val logger: Logger,
     private val apiService: SummaryDataApiService,
@@ -39,9 +48,14 @@ class SummaryDataReader (
     username: String,
     password: String
 ) {
-    // This class reads the overview data from the server using a GET request.
+    /** The pre-calculated Basic Authentication header value used for API requests. */
     private val authHeaderValue: String = "Basic " + Base64.encode("$username:$password".encodeToByteArray())
 
+    /**
+     * Executes the network request to fetch summary data and transforms it to a domain model.
+     *
+     * @return A [DataFetchResult] containing the [SummaryData] or an error state.
+     */
     suspend fun readSummaryData(): DataFetchResult<SummaryData> {
         return try {
             val decodedData = apiService.getSummaryData(
