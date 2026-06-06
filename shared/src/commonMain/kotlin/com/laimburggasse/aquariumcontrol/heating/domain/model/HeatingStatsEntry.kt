@@ -22,6 +22,15 @@
 
 package com.laimburggasse.aquariumcontrol.heating.domain.model
 
+/**
+ * Domain model representing a single historical record of heating telemetry.
+ *
+ * @property timestamp The time of the record in epoch milliseconds.
+ * @property energy The energy consumption recorded.
+ * @property ambientTemperatureAverage The average ambient temperature recorded.
+ * @property waterTemperatureAverage The average water temperature recorded.
+ * @property heatingControlRuntime The active runtime of the heater in seconds.
+ */
 data class HeatingStatsEntry(
     val timestamp: Long,
     val energy: Double,

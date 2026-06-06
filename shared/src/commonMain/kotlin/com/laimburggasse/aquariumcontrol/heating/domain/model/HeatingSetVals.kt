@@ -26,6 +26,12 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * Domain model representing the heating control temperature thresholds.
+ *
+ * @property heatingSwitchOnTemp The temperature at which the heater should turn ON.
+ * @property heatingSwitchOffTemp The temperature at which the heater should turn OFF.
+ */
 @Serializable
 data class HeatingSetVals(
     @SerialName(value = WebApiParams.HEATING_SWITCH_ON_TEMPERATURE)

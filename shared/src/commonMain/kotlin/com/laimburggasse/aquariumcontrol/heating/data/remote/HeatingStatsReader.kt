@@ -32,6 +32,15 @@ import com.laimburggasse.aquariumcontrol.heating.data.remote.dto.HeatingStatsStr
 import com.laimburggasse.aquariumcontrol.common.util.Base64
 
 
+/**
+ * Reader utility for fetching heating statistical data from the remote API.
+ *
+ * @property logger A utility for recording exceptions.
+ * @property apiService The network service for heating telemetry.
+ * @property url The fully qualified endpoint URL.
+ * @param username Authentication username.
+ * @param password Authentication password.
+ */
 class HeatingStatsReader (
     private val logger: Logger,
     private val apiService: HeatingStatsApiService,
@@ -41,6 +50,12 @@ class HeatingStatsReader (
 ) {
     private val authHeaderValue: String = "Basic " + Base64.encode("$username:$password".encodeToByteArray())
 
+    /**
+     * Executes the network request to fetch heating statistics.
+     * Ensures the number of received entries does not exceed system limits.
+     *
+     * @return A [DataFetchResult] containing the list of DTO entries or an error.
+     */
     suspend fun readStatsEntry(): DataFetchResult<List<HeatingStatsStringEntry>> {
         return try {
             val decodedData = apiService.getHeatingStats(

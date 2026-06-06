@@ -54,6 +54,16 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
+/**
+ * Implementation of [HeatingSetValsRepository] for managing heating setpoints.
+ * Handles background fetching, optimistic UI updates, and remote synchronization.
+ *
+ * @property logger Utility for recording exceptions.
+ * @property sessionManager Manager providing the active controller profile.
+ * @property apiService Network service for heating configuration.
+ * @property repositoryScope Coroutine scope for reactive flows.
+ * @property context Dispatcher provider for IO operations.
+ */
 @ApplicationScope
 open class HeatingSetValsRepositoryImpl @Inject constructor(
     private val logger: Logger,
@@ -138,6 +148,10 @@ open class HeatingSetValsRepositoryImpl @Inject constructor(
         initialValue = DataFetchResult.Loading
     )
 
+    /**
+     * Reactive state flow emitting the current heating setpoints.
+     * Combines network data with any pending local modifications.
+     */
     override val heatingSetValsFlow: StateFlow<DataFetchResult<HeatingSetVals>> = combine(
         flow = networkDataFlow,
         flow2 = pendingUpdate
@@ -153,10 +167,19 @@ open class HeatingSetValsRepositoryImpl @Inject constructor(
         initialValue = DataFetchResult.Loading
     )
 
+    /**
+     * Performs an optimistic update of the setpoints in the local UI state.
+     *
+     * @param heatingSetVals The new setpoint values to display immediately.
+     */
     override fun updateLocalValues(heatingSetVals: HeatingSetVals) {
         pendingUpdate.value = heatingSetVals
     }
 
+    /**
+     * Commits the current optimistic setpoints to the remote server.
+     * Triggers a refresh and manages the transition between pending and server state.
+     */
     override suspend fun updateValues() {
         val currentValues: HeatingSetVals? = pendingUpdate.value ?:
             (heatingSetValsFlow.value as? DataFetchResult.Success)?.data
@@ -209,10 +232,16 @@ open class HeatingSetValsRepositoryImpl @Inject constructor(
         }
     }
 
+    /**
+     * Discards any unsaved local modifications and reverts to the server state.
+     */
     override fun reset() {
         pendingUpdate.value = null
     }
 
+    /**
+     * Manually triggers a re-fetch of the heating setpoints from the server.
+     */
     override suspend fun triggerRefresh() {
         if (failureResult.value != null) {
             failureResult.value = null

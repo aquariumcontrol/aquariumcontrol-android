@@ -32,6 +32,15 @@ import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
 import com.laimburggasse.aquariumcontrol.common.util.Base64
 
 
+/**
+ * Reader utility for fetching heating temperature setpoints from the remote API.
+ *
+ * @property logger A utility for recording exceptions.
+ * @property apiService The network service for heating configuration.
+ * @property url The fully qualified endpoint URL.
+ * @param username Authentication username.
+ * @param password Authentication password.
+ */
 class HeatingSetValsReader (
     private val logger: Logger,
     private val apiService: HeatingSetValsApiService,
@@ -41,6 +50,11 @@ class HeatingSetValsReader (
 ) {
     private val authHeaderValue: String = "Basic " + Base64.encode("$username:$password".encodeToByteArray())
 
+    /**
+     * Executes the network request to fetch heating setpoints.
+     *
+     * @return A [DataFetchResult] containing the list of [HeatingSetVals] or an error.
+     */
     suspend fun readHeatingSetVals(): DataFetchResult<List<HeatingSetVals>> {
         return try {
             val decodedData = apiService.getHeatingSetVals(

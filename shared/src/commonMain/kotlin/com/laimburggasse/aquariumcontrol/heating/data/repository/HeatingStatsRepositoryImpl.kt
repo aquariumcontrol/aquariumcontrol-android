@@ -52,8 +52,17 @@ import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 
+/**
+ * Implementation of [HeatingStatsRepository] for fetching heating telemetry.
+ * Handles data transformation and performance-based slicing on a background thread.
+ *
+ * @property apiService Network service for heating telemetry.
+ * @property repositoryScope Coroutine scope for reactive flows.
+ * @property ioDispatcher Dispatcher provider for IO operations.
+ * @param logger Utility for recording exceptions.
+ * @param sessionManager Manager providing the active controller profile.
+ */
 @ApplicationScope
-
 open class HeatingStatsRepositoryImpl @Inject constructor(
     logger: Logger,
     sessionManager: SessionManager,
@@ -65,6 +74,10 @@ open class HeatingStatsRepositoryImpl @Inject constructor(
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
 
     @OptIn(ExperimentalCoroutinesApi::class)
+    /**
+     * Reactive state flow emitting paged or sliced heating statistics.
+     * Automatically refreshes when the selected controller profile changes.
+     */
     override val heatingStatsFlow: StateFlow<DataFetchResult<List<HeatingStatsEntry>>> = combine(
         flow = sessionManager.selectedControllerProfile,
         flow2 = refreshTrigger.onStart { emit(value = Unit) } // Triggers the first fetch
@@ -120,7 +133,7 @@ open class HeatingStatsRepositoryImpl @Inject constructor(
     )
 
     /**
-     * Triggers a manual refresh of the heating stats.
+     * Manually triggers a re-fetch of the heating statistics from the server.
      */
     override suspend fun triggerRefresh() {
         refreshTrigger.emit(value = Unit)
