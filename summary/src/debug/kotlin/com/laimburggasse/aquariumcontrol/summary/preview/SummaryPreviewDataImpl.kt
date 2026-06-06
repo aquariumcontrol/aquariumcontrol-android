@@ -22,11 +22,10 @@
 
 package com.laimburggasse.aquariumcontrol.summary.preview
 
-import com.laimburggasse.aquariumcontrol.summary.presentation.SummaryPreviewData
 import com.laimburggasse.aquariumcontrol.summary.testing.SummaryMockData
-object SummaryPreviewDataImpl: SummaryPreviewData {
-    override val mockSummaryData = SummaryMockData.mockSummaryData
-    override val mockControllerProfile = SummaryMockData.mockControllerProfile
-    override val mockSummaryUiStateSuccess = SummaryMockData.mockSummaryUiStateSuccess
-    override val mockSummaryUiStateError = SummaryMockData.mockSummaryUiStateError
+object SummaryPreviewDataImpl {
+    val mockSummaryData = SummaryMockData.mockSummaryData
+    val mockControllerProfile = SummaryMockData.mockControllerProfile
+    val mockSummaryUiStateSuccess = SummaryMockData.mockSummaryUiStateSuccess
+    val mockSummaryUiStateError = SummaryMockData.mockSummaryUiStateError
 }

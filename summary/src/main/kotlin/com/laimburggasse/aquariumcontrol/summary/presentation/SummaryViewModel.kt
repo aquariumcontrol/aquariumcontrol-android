@@ -33,9 +33,16 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
+/**
+ * ViewModel for the Summary overview screen.
+ * Responsible for managing the UI state of the dashboard by observing the latest sensor and actuator data.
+ *
+ * @property summaryRepository The repository for fetching and refreshing summary data.
+ */
 class SummaryViewModel @Inject constructor(
     private val summaryRepository: SummaryRepository
 ): ViewModel() {
+    /** The reactive UI state for the summary dashboard, derived from the repository flow. */
     val summaryUiState: StateFlow<SummaryUiState> = summaryRepository.summaryData
         .map { result ->
             when (result) {
@@ -51,6 +58,9 @@ class SummaryViewModel @Inject constructor(
             initialValue = SummaryUiState.Loading
         )
 
+    /**
+     * Triggers a fetch of the latest summary data from the remote source.
+     */
     fun loadData() {
         viewModelScope.launch {
             summaryRepository.fetchSummaryData()
@@ -61,6 +71,11 @@ class SummaryViewModel @Inject constructor(
         loadData()
     }
 
+    /**
+     * Central event handler for UI interactions on the summary screen.
+     *
+     * @param event The specific [SummaryUiEvent] to process (e.g., Refresh).
+     */
     fun onSummaryEvent(event: SummaryUiEvent) {
         when (event) {
             is SummaryUiEvent.Refresh -> {
