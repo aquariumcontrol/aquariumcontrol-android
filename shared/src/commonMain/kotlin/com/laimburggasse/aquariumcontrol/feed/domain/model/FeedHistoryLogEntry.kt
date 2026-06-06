@@ -29,6 +29,14 @@ import com.laimburggasse.aquariumcontrol.common.domain.BaseHistoryLogEntry
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * Room Entity and Domain model representing a single feed event log entry.
+ *
+ * @property timestamp The primary key, representing the event time in epoch milliseconds.
+ * @property feederOnTime The duration the feeder was active.
+ * @property profileName The name of the feed profile that was executed.
+ * @property idx The unique identifier for the feed profile.
+ */
 @Entity(tableName = "FEED_LOG")
 @Serializable
 data class FeedHistoryLogEntry(

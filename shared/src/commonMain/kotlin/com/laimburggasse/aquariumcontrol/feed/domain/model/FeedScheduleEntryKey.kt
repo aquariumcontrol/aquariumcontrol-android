@@ -26,4 +26,11 @@ package com.laimburggasse.aquariumcontrol.feed.domain.model
  * A data class to act as a stable, unique identifier for a schedule entry.
  * It combines the profile ID and the exact timestamp.
  */
+/**
+ * A data class to act as a stable, unique identifier for a schedule entry.
+ * It combines the profile ID and the exact timestamp.
+ *
+ * @property profileId The ID of the scheduled profile.
+ * @property timestamp The epoch milliseconds of the scheduled time.
+ */
 data class FeedScheduleEntryKey(val profileId: Int, val timestamp: Long)

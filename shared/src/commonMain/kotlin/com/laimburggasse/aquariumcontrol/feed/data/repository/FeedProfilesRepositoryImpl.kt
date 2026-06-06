@@ -47,6 +47,16 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
+/**
+ * Implementation of [FeedProfilesRepository] for managing feed profiles.
+ * Handles the retrieval, optimistic updating, and remote synchronization of profiles.
+ *
+ * @property logger A utility for recording exceptions.
+ * @property sessionManager The session manager providing the currently selected controller.
+ * @property apiService The network service for feed profiles.
+ * @property repositoryScope The coroutine scope tied to the repository\'s lifecycle.
+ * @property ioDispatcher The dispatcher for blocking IO operations.
+ */
 @ApplicationScope
 open class FeedProfilesRepositoryImpl @Inject constructor(
     private val logger: Logger,
@@ -59,6 +69,10 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
     private val localState = MutableStateFlow(FeedProfilesState())
 
     @OptIn(ExperimentalCoroutinesApi::class)
+        /**
+     * The reactive state flow emitting the current fetch state and list of [FeedProfile]s.
+     * Combines network results with optimistic updates and pending deletions.
+     */
     override val profilesFlow: StateFlow<DataFetchResult<List<FeedProfile>>> =
         combine<ControllerProfile?, Unit, FeedProfilesState, Pair<ControllerProfile?, FeedProfilesState>>(
             flow = sessionManager.selectedControllerProfile,
@@ -111,6 +125,12 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
             }
         }.stateIn(scope = repositoryScope, started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L), initialValue = DataFetchResult.Loading)
 
+        /**
+     * Sends a request to delete a specific feed profile from the remote server.
+     * Manages local optimistic state while the request is in progress.
+     *
+     * @param feedProfile The profile to be deleted.
+     */
     override suspend fun deleteFeedProfile(feedProfile: FeedProfile) {
         val user = sessionManager.getControllerUser() ?: ""
         val password = sessionManager.getControllerPassword() ?: ""
@@ -146,6 +166,11 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
         }
     }
 
+        /**
+     * Sends a request to create a new feed profile on the remote server.
+     *
+     * @param feedProfileName The name of the new profile.
+     */
     override suspend fun addFeedProfile(feedProfileName: String) {
         val user = sessionManager.getControllerUser() ?: ""
         val password = sessionManager.getControllerPassword() ?: ""
@@ -174,16 +199,34 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
         }
     }
 
+        /**
+     * Synchronously finds a profile in the current flow by its unique ID.
+     *
+     * @param profileId The ID to search for.
+     * @return The found [FeedProfile], or null if not found or flow is not in success state.
+     */
     override fun findProfileById(profileId: Int): FeedProfile? {
         val currentData = profilesFlow.value
         return if (currentData is DataFetchResult.Success) currentData.data.find { it.profileID == profileId } else null
     }
 
+        /**
+     * Synchronously finds a profile in the current flow by its descriptive name.
+     *
+     * @param profileName The name to search for.
+     * @return The found [FeedProfile], or null if not found.
+     */
     override fun findProfileByName(profileName: String): FeedProfile? {
         val currentData = profilesFlow.value
         return if (currentData is DataFetchResult.Success) currentData.data.find { it.profileName == profileName } else null
     }
 
+        /**
+     * Sends an updated feed profile configuration to the remote server.
+     * Manages local optimistic state for the profile being modified.
+     *
+     * @param modifiedFeedProfile The profile with updated phase configurations.
+     */
     override suspend fun updateFeedProfile(modifiedFeedProfile: FeedProfile) {
         val user = sessionManager.getControllerUser() ?: ""
         val password = sessionManager.getControllerPassword() ?: ""
@@ -220,7 +263,12 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
         }
     }
 
-        override suspend fun executeFeedProfile(profileId: Int) {
+            /**
+     * Triggers the immediate execution of a specific feed profile on the controller hardware.
+     *
+     * @param profileId The ID of the profile to execute.
+     */
+    override suspend fun executeFeedProfile(profileId: Int) {
         val user = sessionManager.getControllerUser() ?: ""
         val password = sessionManager.getControllerPassword() ?: ""
         val port = sessionManager.getControllerPort()
@@ -242,6 +290,10 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
         }
     }
 
+        /**
+     * Forces a refresh of the feed profiles from the network.
+     * Clears any existing error state before triggering the refresh.
+     */
     override suspend fun triggerRefresh() {
         if (localState.value.failureResult != null) {
             localState.update { it.copy(failureResult = null) }

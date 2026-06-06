@@ -24,7 +24,19 @@ package com.laimburggasse.aquariumcontrol.feed.domain.model
 
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedProfileImport
 
+/**
+ * Mapper object for converting between feed profile DTOs and domain models.
+ */
 object FeedProfileMapper {
+        /**
+     * Maps an import DTO to a domain model while manually overriding the ID and Name.
+     * Useful when creating new profiles from templates or handling temporary objects.
+     *
+     * @param feedProfileImport The DTO to map.
+     * @param profileId The profile ID to assign.
+     * @param profileName The profile name to assign.
+     * @return A [FeedProfile] domain model.
+     */
     fun fromFeedProfileImportUpdateIdName(
         feedProfileImport: FeedProfileImport,
         profileId: Int,
@@ -35,6 +47,13 @@ object FeedProfileMapper {
         return fromFeedProfileImport(feedProfileImport)
     }
 
+        /**
+     * Maps a [FeedProfileImport] DTO into a structured [FeedProfile] domain model.
+     * Expands the flat phase properties of the DTO into the list of [FeedProfilePhase] objects.
+     *
+     * @param imp The import DTO containing flat phase properties.
+     * @return A [FeedProfile] containing a list of 20 phases (10 pairs of pause/feed).
+     */
     fun fromFeedProfileImport(imp: FeedProfileImport): FeedProfile {
         val phases = mutableListOf<FeedProfilePhase>()
 

@@ -50,6 +50,16 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Inject
 
+/**
+ * Implementation of [FeedScheduleRepository] for managing scheduled feeding events.
+ * Handles fetching, optimistic adding/updating/deleting of schedule entries.
+ *
+ * @property logger A utility for recording exceptions.
+ * @property sessionManager The session manager providing the currently selected controller.
+ * @property apiService The network service for feed schedule entries.
+ * @property repositoryScope The coroutine scope tied to the repository\'s lifecycle.
+ * @property ioDispatcher The dispatcher for blocking IO operations.
+ */
 @ApplicationScope
 open class FeedScheduleRepositoryImpl @Inject constructor(
     private val logger: Logger,
@@ -104,6 +114,10 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
         }
     }.stateIn(scope = repositoryScope, started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L), initialValue = DataFetchResult.Loading)
 
+        /**
+     * The reactive state flow emitting the current fetch state and list of [FeedScheduleEntry] items.
+     * Combines network results with optimistic additions, updates, and deletions.
+     */
     override val scheduleFlow: StateFlow<DataFetchResult<List<FeedScheduleEntry>>> = combine(
         flow = networkFlow,
         flow2 = pendingDeletions,
@@ -131,6 +145,11 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
 
     private fun formatTimestamp(millis: Long): String = DateTimeUtil.formatToApiTimestamp(millis)
 
+        /**
+     * Sends a request to delete a scheduled feed entry from the server.
+     *
+     * @param feedScheduleEntry The entry to delete.
+     */
     override suspend fun deleteFeedScheduleEntry(feedScheduleEntry: FeedScheduleEntry) {
         val keyToDelete = FeedScheduleEntryKey(profileId = feedScheduleEntry.profileId, timestamp = feedScheduleEntry.timestamp)
         if (pendingDeletions.value.contains(keyToDelete)) return
@@ -165,6 +184,14 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
         }
     }
 
+        /**
+     * Sends a request to create a new scheduled feed entry on the server.
+     *
+     * @param feedProfileId The ID of the profile to schedule.
+     * @param feedProfileName The name of the profile.
+     * @param repeatDaily Whether the schedule should repeat every day.
+     * @param timestampMillis The scheduled execution time in epoch milliseconds.
+     */
     override suspend fun addFeedScheduleEntry(
         feedProfileId: Int,
         feedProfileName: String,
@@ -205,6 +232,15 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
         }
     }
 
+        /**
+     * Sends a request to modify an existing scheduled feed entry on the server.
+     *
+     * @param feedProfileId The new profile ID to assign.
+     * @param feedProfileName The new profile name.
+     * @param repeatDaily The new daily repetition flag.
+     * @param timestampMillis The new scheduled execution time.
+     * @param millisSinceEpoch The original timestamp of the entry being updated (used for server-side identification).
+     */
     override suspend fun updateFeedScheduleEntry(
         feedProfileId: Int,
         feedProfileName: String,
@@ -248,6 +284,10 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
         }
     }
 
+        /**
+     * Forces a refresh of the scheduled feed entries from the network.
+     * Clears any existing error state before triggering the refresh.
+     */
     override suspend fun triggerRefresh() {
         if (failureResult.value != null) {
             failureResult.value = null

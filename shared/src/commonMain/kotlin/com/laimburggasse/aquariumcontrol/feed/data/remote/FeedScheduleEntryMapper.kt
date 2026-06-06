@@ -26,6 +26,11 @@ import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedScheduleEntryI
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 
 
+/**
+ * Extension function to map a list of scheduled feed entry DTOs into domain models.
+ *
+ * @return A list of [FeedScheduleEntry] domain objects.
+ */
 fun List<FeedScheduleEntryImport>.toFeedScheduleEntryList(): List<FeedScheduleEntry> {
     return this.map { it.transformToFeedScheduleEntry() }
 }

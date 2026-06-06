@@ -8,7 +8,6 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.HistoryRemoteMediato
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
-import com.laimburggasse.aquariumcontrol.feed.data.local.FeedHistoryDao
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedHistoryApiService
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedProfileApiService
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedScheduleEntryApiService
@@ -49,10 +48,6 @@ interface FeedDataModule {
     @Provides
     @ApplicationScope
     fun bindFeedHistoryRepository(impl: FeedHistoryRepositoryImpl): FeedHistoryRepository = impl
-
-    @Provides
-    @ApplicationScope
-    fun provideFeedHistoryDao(database: AquariumDatabase): FeedHistoryDao = database.feedHistoryDao()
 
     @Provides
     @ApplicationScope

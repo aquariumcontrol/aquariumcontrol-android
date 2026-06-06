@@ -24,6 +24,19 @@ package com.laimburggasse.aquariumcontrol.feed.domain.model
 
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 
+/**
+ * Domain model representing a single phase within a feed profile.
+ * Each phase defines the duration and state of various actuators (pumps, skimmer).
+ *
+ * @property duration The duration of this phase in seconds.
+ * @property skimmer True if the skimmer should be active during this phase.
+ * @property mainPump1 True if main pump 1 should be active.
+ * @property mainPump2 True if main pump 2 should be active.
+ * @property auxPump1 True if auxiliary pump 1 should be active.
+ * @property auxPump2 True if auxiliary pump 2 should be active.
+ * @property isPause True if this is a "pause" phase, false if it is a "feed" phase.
+ * @property idx The index of this phase within the profile.
+ */
 data class FeedProfilePhase(
     var duration: Double = 0.0,
     var skimmer: Boolean = false,
@@ -43,6 +56,12 @@ data class FeedProfilePhase(
         }
     }
 
+        /**
+     * Generates API parameters for this specific phase.
+     *
+     * @param idx The base index used for naming the parameters (e.g., pause01, feed01).
+     * @return A map of parameters for this phase.
+     */
     fun getFeedProfilePhaseApiCallParameters(idx: Int): Map<String, String> {
         val durationMillis: Int = (duration * 1000.0).toInt()
         return mapOf(

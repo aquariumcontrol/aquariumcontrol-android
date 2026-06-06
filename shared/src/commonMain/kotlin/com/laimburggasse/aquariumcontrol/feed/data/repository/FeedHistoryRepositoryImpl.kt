@@ -31,12 +31,29 @@ import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedHistoryRepos
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
+/**
+ * Implementation of [FeedHistoryRepository] for fetching feed history logs.
+ * Inherits generic paging logic from [HistoryRepositoryImpl].
+ *
+ * @param sessionManager The manager for active session state.
+ * @param pager The Pager instance used for loading paged history data.
+ */
 open class FeedHistoryRepositoryImpl @Inject constructor(
     sessionManager: SessionManager,
     pager: Pager<Int, FeedHistoryLogEntry>
 ) : HistoryRepositoryImpl<FeedHistoryLogEntry>(sessionManager, pager), FeedHistoryRepository {
 
+        /**
+     * A flow of paged feed history log entries.
+     */
     override val feedHistoryEventFlow: Flow<PagingData<FeedHistoryLogEntry>> = historyEventFlow
 
+        /**
+     * Fetches history entries for a specific date.
+     * Currently returns an empty list as date-specific fetching is not implemented.
+     *
+     * @param date The date in epoch milliseconds.
+     * @return A list of [FeedHistoryLogEntry] for the given date.
+     */
     override suspend fun getHistory(date: Long): List<FeedHistoryLogEntry> = emptyList()
 }

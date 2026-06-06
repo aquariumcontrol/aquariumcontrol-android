@@ -26,12 +26,18 @@ import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * Data Transfer Object (DTO) used for importing feed profiles from the remote API.
+ * Contains flat properties mapping to the multi-phase structure used by the controller hardware.
+ */
 @Serializable
 class FeedProfileImport {
     @SerialName(value = WebApiParams.PROFILE_ID)
+        /** The unique identifier of the feed profile. */
     var profileId: Int = 0
 
     @SerialName(value = WebApiParams.PROFILE_NAME)
+        /** The descriptive name of the feed profile. */
     var profileName: String = ""
 
     // Phase #1
@@ -324,6 +330,11 @@ class FeedProfileImport {
     @SerialName(value = WebApiParams.FEED + "10" + WebApiParams.AUX_PUMP2)
     var feed10AuxPump2: Int = 0
 
+        /**
+     * Helper function to log the content of the imported profile for debugging purposes.
+     *
+     * @param tag The tag to use for logging.
+     */
     fun logContent(tag: String = "FeedProfileImport") {
         val sb = StringBuilder()
         sb.append("--- $tag Content Start ---\n")

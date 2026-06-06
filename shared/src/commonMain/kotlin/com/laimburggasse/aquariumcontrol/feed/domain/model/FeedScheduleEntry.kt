@@ -24,12 +24,26 @@ package com.laimburggasse.aquariumcontrol.feed.domain.model
 
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 
+/**
+ * Domain model representing a single entry in the feed schedule.
+ *
+ * @property timestamp The scheduled execution time in epoch milliseconds.
+ * @property profileId The ID of the feed profile to be executed.
+ * @property profileName The name of the feed profile to be executed.
+ * @property isDaily True if this event should repeat every day at the same time.
+ */
 data class FeedScheduleEntry (
     var timestamp: Long, // Millis since epoch
     val profileId: Int,
     val profileName: String,
     val isDaily: Boolean
 ) {
+        /**
+     * Generates API parameters for creating a new schedule entry.
+     *
+     * @param timestampString The formatted timestamp string for the API.
+     * @return A map of query parameters.
+     */
     fun getApiParameters(timestampString: String): Map<String, String> {
         val params: MutableMap<String, String> = mutableMapOf()
         params[WebApiParams.PROFILE_ID] = profileId.toString()
@@ -39,6 +53,13 @@ data class FeedScheduleEntry (
         return params
     }
 
+        /**
+     * Generates API parameters for updating an existing schedule entry.
+     *
+     * @param timestampOldString The current formatted timestamp string on the server.
+     * @param timestampNewString The new formatted timestamp string to be set.
+     * @return A map of query parameters including the update target.
+     */
     fun getApiParametersForUpdating(timestampOldString: String, timestampNewString: String): Map<String, String> {
         val params: MutableMap<String, String> = mutableMapOf()
         params[WebApiParams.PROFILE_ID] = profileId.toString()

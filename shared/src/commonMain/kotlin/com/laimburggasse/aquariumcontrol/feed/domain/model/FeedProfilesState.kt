@@ -24,6 +24,14 @@ package com.laimburggasse.aquariumcontrol.feed.domain.model
 
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 
+/**
+ * State container for the feed profiles repository.
+ * Tracks pending operations and failure states for optimistic UI updates.
+ *
+ * @property pendingDeletions A set of profile IDs marked for deletion.
+ * @property pendingUpdates A map of profile IDs to their latest optimistic modifications.
+ * @property failureResult The last error result encountered, if any.
+ */
 data class FeedProfilesState(
     // Holds a list of profile IDs that are pending deletions (POST request triggered, local update required).
     val pendingDeletions: Set<Int> = emptySet(),

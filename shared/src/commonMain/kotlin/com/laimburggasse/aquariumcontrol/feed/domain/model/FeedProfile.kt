@@ -24,6 +24,14 @@ package com.laimburggasse.aquariumcontrol.feed.domain.model
 
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiParams
 
+/**
+ * Domain model representing a complete feed profile configuration.
+ * A profile consists of multiple phases defining actuator states over time.
+ *
+ * @property profileID The unique identifier for the feed profile.
+ * @property profileName The descriptive name of the feed profile.
+ * @property feedProfilePhases The ordered list of [FeedProfilePhase]s that make up the sequence.
+ */
 data class FeedProfile(
     val profileID: Int,
     val profileName: String,
@@ -47,6 +55,11 @@ data class FeedProfile(
         }
     )
 
+        /**
+     * Flattens the profile and its phases into a map of parameters suitable for a remote API call.
+     *
+     * @return A map of query parameters representing the full profile state.
+     */
     fun getFeedProfileApiCallParameters(): Map<String, String> {
         // This function iterates over the feed profile phases and adds all the parameters to the
         // map which is then used to form the GET part of the API call

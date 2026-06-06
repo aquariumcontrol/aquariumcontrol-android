@@ -28,6 +28,15 @@ import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * Data Transfer Object (DTO) for importing scheduled feed entries from the remote API.
+ *
+ * @property timestampString The raw string representation of the scheduled time.
+ * @property profileId The ID of the profile to be executed.
+ * @property profileName The name of the profile to be executed.
+ * @property isWeekly Flag indicating if the schedule repeats weekly (reserved for future use).
+ * @property isDaily Flag indicating if the schedule repeats daily.
+ */
 @Serializable
 data class FeedScheduleEntryImport (
     @SerialName(value = WebApiParams.TIMESTAMP)
@@ -45,6 +54,11 @@ data class FeedScheduleEntryImport (
     @SerialName(value = WebApiParams.IS_DAILY)
     val isDaily: Int = 0,
 ) {
+        /**
+     * Converts this DTO into a domain-level [FeedScheduleEntry].
+     *
+     * @return A domain model representation of the scheduled feed entry.
+     */
     fun transformToFeedScheduleEntry(): FeedScheduleEntry {
 
         return FeedScheduleEntry(

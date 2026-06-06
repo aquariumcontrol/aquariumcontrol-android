@@ -28,6 +28,15 @@ import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.util.Base64
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedScheduleEntryImport
 
+/**
+ * Reader class responsible for fetching scheduled feed entries from the remote server.
+ *
+ * @property logger A utility for recording exceptions.
+ * @property apiService The Ktor service for making network requests.
+ * @property url The fully qualified URL endpoint for schedule retrieval.
+ * @param username The username for basic authentication.
+ * @param password The password for basic authentication.
+ */
 class FeedScheduleEntryReader (
     private val logger: Logger,
     private val apiService: FeedScheduleEntryApiService,
@@ -38,6 +47,12 @@ class FeedScheduleEntryReader (
     // This class reads the Feed schedule entries from the server using a GET request.
     private val authHeaderValue: String = "Basic " + Base64.encode("$username:$password".encodeToByteArray())
 
+        /**
+     * Executes the network request to fetch scheduled feed entries.
+     * Decodes the raw response into a list of [FeedScheduleEntryImport] objects.
+     *
+     * @return A [DataFetchResult] containing the list of imported entries or an error state.
+     */
     suspend fun readFeedScheduleEntries(): DataFetchResult<List<FeedScheduleEntryImport>> {
         return try {
             val decodedData = apiService.getFeedScheduleEntries(
