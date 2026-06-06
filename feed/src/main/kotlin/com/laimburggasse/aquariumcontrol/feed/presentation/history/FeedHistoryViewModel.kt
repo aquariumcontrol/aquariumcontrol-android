@@ -27,8 +27,15 @@ import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedHistoryRepository
 import me.tatarka.inject.annotations.Inject
 
+/**
+ * ViewModel for the Feed history screen.
+ * Extends [HistoryViewModel] to provide paged access to feed event logs.
+ *
+ * @param feedHistoryRepository The repository responsible for fetching feed history data.
+ */
 class FeedHistoryViewModel @Inject constructor(
     feedHistoryRepository: FeedHistoryRepository
 ) : HistoryViewModel<FeedHistoryLogEntry>(feedHistoryRepository) {
+    /** The reactive flow of paged feed history log entries. */
     val feedHistoryFlow = historyFlow
 }

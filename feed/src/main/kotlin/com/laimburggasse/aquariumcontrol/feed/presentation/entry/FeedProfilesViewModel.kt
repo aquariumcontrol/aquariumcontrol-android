@@ -34,10 +34,17 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
+/**
+ * ViewModel for the Feed profiles overview screen.
+ * Responsible for observing the list of feed profiles and exposing the corresponding UI state.
+ *
+ * @property feedProfilesRepository The repository for managing and fetching feed profiles.
+ */
 class FeedProfilesViewModel @Inject constructor(
     val feedProfilesRepository: FeedProfilesRepository
 ) : ViewModel() {
 
+    /** The reactive UI state for the feed profiles list, derived from the repository flow. */
     val feedProfilesUiState: StateFlow<FeedProfilesUiState> = feedProfilesRepository.profilesFlow
         .map { result ->
             when (result) {
@@ -61,18 +68,34 @@ class FeedProfilesViewModel @Inject constructor(
         loadData()
     }
 
+    
+    /**
+     * Triggers a refresh of the feed profiles data from the repository.
+     */
     fun loadData() {
         viewModelScope.launch {
             feedProfilesRepository.triggerRefresh()
         }
     }
 
+    
+    /**
+     * Deletes a specific feed profile from the repository.
+     *
+     * @param feedProfile The [FeedProfile] to be deleted.
+     */
     fun deleteFeedProfile(feedProfile: FeedProfile) {
         viewModelScope.launch {
             feedProfilesRepository.deleteFeedProfile(feedProfile)
         }
     }
 
+    
+    /**
+     * Central event handler for UI interactions on the feed profiles screen.
+     *
+     * @param event The specific [FeedProfilesUiEvent] to process.
+     */
     fun onFeedProfilesUiEvent(event: FeedProfilesUiEvent) {
         when (event) {
             is FeedProfilesUiEvent.DeleteFeedProfile -> {

@@ -31,7 +31,20 @@ import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfilePhase
 import kotlin.math.abs
 
+/**
+ * Factory object responsible for generating chart data bundles from a feed profile.
+ * It transforms the sequence of feed profile phases into renderable line data sets for the UI.
+ */
 object FeedProfileChartDataFactory {
+    /**
+     * Defines the configuration and extraction logic for a single signal line on the chart.
+     *
+     * @property name The display name of the line (e.g., "Skimmer", "Main Pump 1").
+     * @property signal The enum identifier of the signal being plotted.
+     * @property getValue A lambda function to extract the active state (true/false) from a given phase.
+     * @property yAxisValueOn The Y-axis value to plot when the signal is ON.
+     * @property yAxisValueOff The Y-axis value to plot when the signal is OFF.
+     */
     private data class FeedProfileChartLineDefinition(
         val name: String,
         val signal: FeedProfileSignal,
@@ -40,6 +53,13 @@ object FeedProfileChartDataFactory {
         val yAxisValueOff: Float
     )
 
+    /**
+     * Creates a [FeedProfileChartDataBundle] containing LineData objects for each actuator signal
+     * based on the phases defined in the provided [FeedProfile].
+     *
+     * @param feedProfile The feed profile containing the phases to be visualized.
+     * @return A bundle containing the LineData for each signal and the total duration of the profile.
+     */
     fun create(feedProfile: FeedProfile): FeedProfileChartDataBundle {
         val chartLines = listOf(
             FeedProfileChartLineDefinition(

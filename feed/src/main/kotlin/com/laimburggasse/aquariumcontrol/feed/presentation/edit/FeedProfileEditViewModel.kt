@@ -22,7 +22,6 @@
 
 package com.laimburggasse.aquariumcontrol.feed.presentation.edit
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedProfile
@@ -37,14 +36,25 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
+/**
+ * ViewModel for the Feed profile editing screen.
+ * Manages the state, visual chart data, and modifications for an existing feed profile.
+ *
+ * @property feedProfilesRepository The repository providing feed profile data.
+ */
 class FeedProfileEditViewModel @Inject constructor(
     private val feedProfilesRepository: FeedProfilesRepository,
 ) : ViewModel() {
+    /** The untouched profile used as a backup for the reset functionality. */
     private var originalFeedProfile: FeedProfile = FeedProfile()
 
+    /** Internal mutable state holding the current (optimistic) profile modifications. */
     private val _feedProfileState = MutableStateFlow<FeedProfile?>(value = originalFeedProfile)
+
+    /** Internal mutable state tracking which UI menu items are expanded. */
     private val _expandedItemIds = MutableStateFlow<Set<Int>>(value = emptySet())
 
+    /** Public read-only UI state combining profile data, expanded states, and chart configurations. */
     val uiState: StateFlow<FeedProfileEditUiState> = combine(
         flow = _feedProfileState, flow2 = _expandedItemIds
     ) { feedProfile, expandedItemIds ->
@@ -72,6 +82,12 @@ class FeedProfileEditViewModel @Inject constructor(
         initialValue = FeedProfileEditUiState() // Start with a default, empty state
     )
 
+    
+    /**
+     * Initializes the ViewModel with a specific profile ID, loading it from the repository.
+     *
+     * @param profileId The ID of the feed profile to edit.
+     */
     fun setProfileId(profileId: Int) {
         viewModelScope.launch {
             // Fetch the initial FeedProfile from the repository.
@@ -89,6 +105,13 @@ class FeedProfileEditViewModel @Inject constructor(
         }
     }
 
+    
+    /**
+     * Updates the duration of a specific feed profile phase.
+     *
+     * @param id The UI menu item ID corresponding to the phase.
+     * @param duration The new duration in seconds.
+     */
     fun onDurationChange(id: Int, duration: Double) {
         val phaseId: Int = mapMenuItemIdToPhaseId(id)
 
@@ -114,6 +137,14 @@ class FeedProfileEditViewModel @Inject constructor(
         }
     }
 
+    
+    /**
+     * Updates the boolean state of a specific actuator within a phase.
+     *
+     * @param id The UI menu item ID corresponding to the phase.
+     * @param toggleButtonType The type of actuator being toggled (e.g., Skimmer, MainPump1).
+     * @param isChecked The new boolean state.
+     */
     fun onToggleStateChange(
         id: Int,
         toggleButtonType: FeedProfileEditToggleButtonType,
@@ -154,6 +185,10 @@ class FeedProfileEditViewModel @Inject constructor(
         }
     }
 
+    
+    /**
+     * Commits the current optimistic modifications to the repository.
+     */
     fun updateFeedProfile() {
         viewModelScope.launch {
             val profileToUpdate: FeedProfile? = _feedProfileState.value
@@ -163,10 +198,20 @@ class FeedProfileEditViewModel @Inject constructor(
         }
     }
 
+    
+    /**
+     * Discards any current modifications and reverts the state back to the original profile.
+     */
     fun resetFeedProfile() {
         _feedProfileState.value = originalFeedProfile
     }
 
+    
+    /**
+     * Toggles the expansion state of a specific UI menu item.
+     *
+     * @param itemId The ID of the UI element to toggle.
+     */
     fun onExpanded(itemId: Int) {
         _expandedItemIds.value = _expandedItemIds.value.let { currentIds ->
             if (itemId in currentIds) {
@@ -177,6 +222,12 @@ class FeedProfileEditViewModel @Inject constructor(
         }
     }
 
+    
+    /**
+     * Central event handler for all UI interactions on the feed profile edit screen.
+     *
+     * @param event The specific [FeedProfileEditUiEvent] to process.
+     */
     fun onFeedProfileEditUiEvent(event: FeedProfileEditUiEvent) {
         when (event) {
             is FeedProfileEditUiEvent.DurationChange -> {

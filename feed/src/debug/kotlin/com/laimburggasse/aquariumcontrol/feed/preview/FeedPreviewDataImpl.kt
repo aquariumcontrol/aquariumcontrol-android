@@ -22,28 +22,23 @@
 
 package com.laimburggasse.aquariumcontrol.feed.preview
 
-import com.laimburggasse.aquariumcontrol.feed.presentation.components.FeedPreviewData
 import com.laimburggasse.aquariumcontrol.feed.testing.FeedMockData
 
-object FeedPreviewDataImpl: FeedPreviewData {
-    override val mockFeedProfileForSimpleDisplayComposable = FeedMockData.mockFeedProfileForSimpleDisplayComposable
-    override val mockChartData = FeedMockData.mockChartData
-    override val mockInitialExpandedItemIds = FeedMockData.mockInitialExpandedItemIds
-    override val mockInitialExpandedItemIdsEmpty = FeedMockData.mockInitialExpandedItemIdsEmpty
-    override val mockFeedProfileEditNumericMenuItem = FeedMockData.mockFeedProfileEditNumericMenuItem
-    override val mockFeedProfile = FeedMockData.mockFeedProfile
-    override val mockFeedProfileEditUiStateSuccess = FeedMockData.mockFeedProfileEditUiStateSuccess
-    override val mockFeedProfileEditUiStateFailure = FeedMockData.mockFeedProfileEditUiStateFailure
-    override val mockFeedScheduleSelectionUiStateEmpty = FeedMockData.mockFeedScheduleSelectionUiStateEmpty
-    override val mockFeedProfiles = FeedMockData.mockFeedProfiles
-    override val mockFeedProfilesUiStateSuccess = FeedMockData.mockFeedProfilesUiStateSuccess
-    override val mockFeedProfilesUiStateError = FeedMockData.mockFeedProfilesUiStateError
-    override val mockFeedScheduleSelectionUiStateSuccess = FeedMockData.mockFeedScheduleSelectionUiStateSuccess
-    override val mockFeedScheduleSelectionUiStateError = FeedMockData.mockFeedScheduleSelectionUiStateError
-    override val mockEvent = FeedMockData.mockEvent
-    override val mockFeedHistoryLogEntries = FeedMockData.mockFeedHistoryLogEntries
-    override val mockFeedProfileImportForScheduleScreen = FeedMockData.mockFeedProfileImportForScheduleScreen
-    override val mockFeedProfileForScheduleScreen = FeedMockData.mockFeedProfileForScheduleScreen
-    override val mockFeedScheduleEntryImport = FeedMockData.mockFeedScheduleEntryImport
-    override val mockFeedScheduleEntry = FeedMockData.mockFeedScheduleEntry
+object FeedPreviewDataImpl {
+    val mockChartData = FeedMockData.mockChartData
+    val mockInitialExpandedItemIds = FeedMockData.mockInitialExpandedItemIds
+    val mockInitialExpandedItemIdsEmpty = FeedMockData.mockInitialExpandedItemIdsEmpty
+    val mockFeedProfileEditNumericMenuItem = FeedMockData.mockFeedProfileEditNumericMenuItem
+    val mockFeedProfile = FeedMockData.mockFeedProfile
+    val mockFeedProfileEditUiStateSuccess = FeedMockData.mockFeedProfileEditUiStateSuccess
+    val mockFeedProfileEditUiStateFailure = FeedMockData.mockFeedProfileEditUiStateFailure
+    val mockFeedScheduleSelectionUiStateEmpty = FeedMockData.mockFeedScheduleSelectionUiStateEmpty
+    val mockFeedProfilesUiStateSuccess = FeedMockData.mockFeedProfilesUiStateSuccess
+    val mockFeedProfilesUiStateError = FeedMockData.mockFeedProfilesUiStateError
+    val mockFeedScheduleSelectionUiStateSuccess = FeedMockData.mockFeedScheduleSelectionUiStateSuccess
+    val mockFeedScheduleSelectionUiStateError = FeedMockData.mockFeedScheduleSelectionUiStateError
+    val mockEvent = FeedMockData.mockEvent
+    val mockFeedHistoryLogEntries = FeedMockData.mockFeedHistoryLogEntries
+    val mockFeedProfileForScheduleScreen = FeedMockData.mockFeedProfileForScheduleScreen
+    val mockFeedScheduleEntry = FeedMockData.mockFeedScheduleEntry
 }

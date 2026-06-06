@@ -32,29 +32,60 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
+/**
+ * ViewModel for the Feed profile creation screen.
+ * Handles the state and logic for configuring and adding a new feed profile.
+ *
+ * @property feedProfilesRepository The repository for managing feed profiles.
+ */
 class FeedProfileAddViewModel @Inject constructor(
     private val feedProfilesRepository: FeedProfilesRepository
 ) : ViewModel() {
+    /** Internal mutable state for the new feed profile's name. */
     private val _feedProfileName = MutableStateFlow(value = "")
+
+    /** Internal mutable state tracking if the chosen feed profile name already exists. */
     private val _feedProfileNameExists = MutableStateFlow(value = false)
+
+    /** Public read-only state for the new feed profile's name. */
     val feedProfileName: StateFlow<String> = _feedProfileName.asStateFlow()
+
+    /** Public read-only state indicating if the currently entered profile name already exists. */
     val feedProfileNameExists: StateFlow<Boolean> = _feedProfileNameExists.asStateFlow()
 
+    /** Internal mutable UI state representing the status of the addition process. */
     private val _feedProfileAddUiState = MutableStateFlow<FeedProfileAddUiState>(
         value = FeedProfileAddUiState.Idle
     )
+
+    /** Public read-only UI state for the feed profile addition process. */
     val feedProfileAddUiState: StateFlow<FeedProfileAddUiState> = _feedProfileAddUiState.asStateFlow()
 
+    
+    /**
+     * Updates the feed profile name and checks if a profile with this name already exists.
+     *
+     * @param name The new profile name entered by the user.
+     */
     fun setFeedProfileName(name: String) {
         _feedProfileName.value = name // Update the StateFlow
         val existingFeedProfile: FeedProfile? = feedProfilesRepository.findProfileByName(profileName = name)
         _feedProfileNameExists.value = existingFeedProfile != null
     }
 
+    
+    /**
+     * Resets the UI state back to idle after a state change has been processed by the view.
+     */
     fun onStateHandled() {
         _feedProfileAddUiState.value = FeedProfileAddUiState.Idle
     }
 
+    
+    /**
+     * Initiates the process to add the new feed profile to the repository.
+     * Sets the state to Loading while the operation is in progress, and to Success upon completion.
+     */
     fun addFeedProfile() {
         if (_feedProfileAddUiState.value is FeedProfileAddUiState.Loading) return
         _feedProfileAddUiState.value = FeedProfileAddUiState.Loading
@@ -65,6 +96,12 @@ class FeedProfileAddViewModel @Inject constructor(
         }
     }
 
+    
+    /**
+     * Central event handler for all UI interactions on the feed profile addition screen.
+     *
+     * @param event The specific [FeedProfileAddUiEvent] to process.
+     */
     fun onFeedProfileAddEvent(event: FeedProfileAddUiEvent) {
         when (event) {
             is FeedProfileAddUiEvent.Add -> {
