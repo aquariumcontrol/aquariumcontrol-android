@@ -37,11 +37,19 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
+/**
+ * ViewModel for the Ventilation control screen.
+ * Handles the state, validation, and updating of the ventilation temperature thresholds.
+ *
+ * @property ventilationSetValsRepository The repository for managing ventilation setpoint values.
+ */
 class VentilationSetValsViewModel @Inject constructor(
     private val ventilationSetValsRepository: VentilationSetValsRepository
 ) : ViewModel() {
+    /** Reactive state indicating if the currently entered ventilation thresholds are mathematically valid. */
     val ventilationSetValsValid = MutableStateFlow<Boolean?>(value = true)
 
+    /** The reactive UI state for the ventilation controls, mapped from the repository flow. */
     val ventilationSetValsUiState: StateFlow<VentilationSetValsUiState> =
         ventilationSetValsRepository.ventilationSetValsFlow
         .map { result ->
@@ -64,6 +72,13 @@ class VentilationSetValsViewModel @Inject constructor(
             initialValue = VentilationSetValsUiState.Loading // The UI starts in a loading state
         )
 
+    
+    /**
+     * Updates the local optimistic state when the entire temperature range changes.
+     *
+     * @param start The new switch-off temperature (lower bound).
+     * @param end The new switch-on temperature (upper bound).
+     */
     fun onRangeChanged(start: Float, end: Float) {
         val ventilationSetVals = VentilationSetVals(
             ventilationSwitchOffTemp = start.toDouble(),
@@ -72,6 +87,12 @@ class VentilationSetValsViewModel @Inject constructor(
         ventilationSetValsRepository.updateLocalValues(ventilationSetVals)
     }
 
+    
+    /**
+     * Updates the local optimistic state for the lower (switch-off) temperature.
+     *
+     * @param value The new switch-off temperature.
+     */
     fun onLowerValueChanged(value: Float) {
         val uiState: VentilationSetValsUiState = ventilationSetValsUiState.value
         if (uiState is VentilationSetValsUiState.Success) {
@@ -80,6 +101,12 @@ class VentilationSetValsViewModel @Inject constructor(
         }
     }
 
+    
+    /**
+     * Updates the local optimistic state for the upper (switch-on) temperature.
+     *
+     * @param value The new switch-on temperature.
+     */
     fun onUpperValueChanged(value: Float) {
         val uiState: VentilationSetValsUiState = ventilationSetValsUiState.value
         if (uiState is VentilationSetValsUiState.Success) {
@@ -88,16 +115,30 @@ class VentilationSetValsViewModel @Inject constructor(
         }
     }
 
+    
+    /**
+     * Discards any unsaved local modifications and reverts the UI to the last known server state.
+     */
     fun resetValues() {
         ventilationSetValsRepository.reset()
     }
 
+    
+    /**
+     * Commits the current local optimistic modifications to the remote server via the repository.
+     */
     fun updateValues() {
         viewModelScope.launch {
             ventilationSetValsRepository.updateValues()
         }
     }
 
+    
+    /**
+     * Central event handler for all UI interactions on the ventilation control screen.
+     *
+     * @param event The specific [VentilationSetValsUiEvent] to process.
+     */
     fun onVentilationSetValsEvent(event: VentilationSetValsUiEvent) {
         when (event) {
             is VentilationSetValsUiEvent.ChangeLowerValue -> {

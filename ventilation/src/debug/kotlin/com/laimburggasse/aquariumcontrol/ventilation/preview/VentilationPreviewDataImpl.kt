@@ -22,10 +22,9 @@
 
 package com.laimburggasse.aquariumcontrol.ventilation.preview
 
-import com.laimburggasse.aquariumcontrol.ventilation.presentation.VentilationPreviewData
 import com.laimburggasse.aquariumcontrol.ventilation.testing.VentilationMockData
 
-object VentilationPreviewDataImpl: VentilationPreviewData {
-    override val mockVentilationSetValsUiStateSuccess = VentilationMockData.mockVentilationSetValsUiStateSuccess
-    override val mockVentilationSetValsUiStateError = VentilationMockData.mockVentilationSetValsUiStateError
+object VentilationPreviewDataImpl {
+    val mockVentilationSetValsUiStateSuccess = VentilationMockData.mockVentilationSetValsUiStateSuccess
+    val mockVentilationSetValsUiStateError = VentilationMockData.mockVentilationSetValsUiStateError
 }
