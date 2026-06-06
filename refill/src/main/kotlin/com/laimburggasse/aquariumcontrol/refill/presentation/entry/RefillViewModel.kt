@@ -35,10 +35,20 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
+/**
+ * ViewModel for the Refill control screen.
+ * Responsible for observing the current refill state and dispatching commands (Start/Stop/Reset) to the controller.
+ *
+ * @property refillRepository The repository for fetching state and sending refill commands.
+ */
 class RefillViewModel @Inject constructor(private val refillRepository: RefillRepository): ViewModel() {
+    /** Internal mutable flow for dispatching one-time screen events (e.g., Toasts). */
     private val _events = MutableSharedFlow<RefillScreenEvent>()
+
+    /** Public read-only flow for screen events to be consumed by the UI. */
     val events = _events.asSharedFlow()
 
+    /** The reactive UI state representing the current operational mode of the refill system. */
     val refillStateUiState: StateFlow<RefillStateUiState> = refillRepository.refillStateFlow
         .map { result ->
             when (result) {
@@ -61,24 +71,42 @@ class RefillViewModel @Inject constructor(private val refillRepository: RefillRe
         }
     }
 
+    
+    /**
+     * Sends a command to the repository to start the refill process.
+     */
     fun sendStartRequest() {
         viewModelScope.launch {
             refillRepository.sendStartRequest()
         }
     }
 
+    
+    /**
+     * Sends a command to the repository to stop the active refill process.
+     */
     fun sendStopRequest() {
         viewModelScope.launch {
             refillRepository.sendStopRequest()
         }
     }
 
+    
+    /**
+     * Sends a command to the repository to reset any active refill errors.
+     */
     fun sendResetRequest() {
         viewModelScope.launch {
             refillRepository.sendResetRequest()
         }
     }
 
+    
+    /**
+     * Central event handler for UI interactions on the refill screen.
+     *
+     * @param event The specific [RefillUiEvent] to process (e.g., Start, Stop, Reset, Refresh).
+     */
     fun onRefillEvent(event: RefillUiEvent) {
         when (event) {
             RefillUiEvent.ResetErrors -> {

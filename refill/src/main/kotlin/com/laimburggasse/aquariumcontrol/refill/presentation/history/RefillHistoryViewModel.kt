@@ -27,8 +27,15 @@ import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEnt
 import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillHistoryRepository
 import me.tatarka.inject.annotations.Inject
 
+/**
+ * ViewModel for the Refill history screen.
+ * Extends [HistoryViewModel] to provide paged access to refill event logs.
+ *
+ * @param repository The repository responsible for fetching refill history data.
+ */
 class RefillHistoryViewModel @Inject constructor(
     repository: RefillHistoryRepository
 ) : HistoryViewModel<RefillHistoryLogEntry>(repository) {
+    /** The reactive flow of paged refill history log entries. */
     val refillHistoryFlow = historyFlow
 }

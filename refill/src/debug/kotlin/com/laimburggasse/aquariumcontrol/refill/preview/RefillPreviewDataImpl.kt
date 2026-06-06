@@ -22,11 +22,9 @@
 
 package com.laimburggasse.aquariumcontrol.refill.preview
 
-import com.laimburggasse.aquariumcontrol.refill.presentation.components.RefillPreviewData
 import com.laimburggasse.aquariumcontrol.refill.testing.RefillMockData
 
-object RefillPreviewDataImpl: RefillPreviewData {
-    override val mockFixedTimestamp = RefillMockData.mockFixedTimestamp
-    override val mockEvent = RefillMockData.mockEvent
-    override val mockRefillHistoryLogEntries = RefillMockData.mockRefillHistoryLogEntries
+object RefillPreviewDataImpl {
+    val mockEvent = RefillMockData.mockEvent
+    val mockRefillHistoryLogEntries = RefillMockData.mockRefillHistoryLogEntries
 }
