@@ -49,7 +49,7 @@ interface Network {
                 level = LogLevel.INFO
             }
             install(Auth) {
-                // We'll use basic auth but we'll need to handle dynamic credentials
+                // We'll use basic auth, but we'll need to handle dynamic credentials
                 // For now, we keep it simple and provide them in the request if needed, 
                 // or use a custom provider that pulls from SessionManager.
                 // However, the current code passes them manually to every call.

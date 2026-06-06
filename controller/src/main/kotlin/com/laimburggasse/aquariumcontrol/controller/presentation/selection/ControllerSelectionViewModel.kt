@@ -24,10 +24,9 @@ package com.laimburggasse.aquariumcontrol.controller.presentation.selection
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.common.data.local.ControllerProfileDao
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
-import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiEvent
+import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted

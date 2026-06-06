@@ -3,7 +3,6 @@ package com.laimburggasse.aquariumcontrol.balling.data.di
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.*
 
-import com.laimburggasse.aquariumcontrol.balling.data.local.BallingHistoryDao
 import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingHistoryApiService
 import com.laimburggasse.aquariumcontrol.balling.data.remote.BallingProfileApiService
 import com.laimburggasse.aquariumcontrol.balling.data.remote.KtorBallingHistoryApiService
@@ -38,10 +37,6 @@ interface BallingDataModule {
     @Provides
     @ApplicationScope
     fun bindBallingHistoryRepository(impl: BallingHistoryRepositoryImpl): BallingHistoryRepository = impl
-
-    @Provides
-    @ApplicationScope
-    fun provideBallingHistoryDao(database: AquariumDatabase): BallingHistoryDao = database.ballingHistoryDao()
 
     @Provides
     @ApplicationScope

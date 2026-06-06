@@ -25,6 +25,7 @@ package com.laimburggasse.aquariumcontrol.heating.testing
 import com.laimburggasse.aquariumcontrol.heating.data.remote.HeatingSetValsApiService
 import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 class MockHeatingSetValsApiServiceImpl(
     private var mockHeatingSetVals: HeatingSetVals?
@@ -40,7 +41,7 @@ class MockHeatingSetValsApiServiceImpl(
         url: String,
         authHeader: String
     ): List<HeatingSetVals> {
-        delay(10)
+        delay(10.milliseconds)
         if (mockHeatingSetVals == null || forceError) {
             throw Exception("API error")
         }

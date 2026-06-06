@@ -26,6 +26,7 @@ import com.laimburggasse.aquariumcontrol.timedata.data.remote.TimeDataApiService
 import com.laimburggasse.aquariumcontrol.timedata.data.remote.dto.TimeDataStringSample
 import com.laimburggasse.aquariumcontrol.timedata.domain.model.TimeDataSample
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 class MockTimeDataApiServiceImpl(
     private var mockTimeDataSamples: List<TimeDataSample>?
@@ -40,7 +41,7 @@ class MockTimeDataApiServiceImpl(
         url: String,
         authHeader: String
     ): List<TimeDataStringSample> {
-        delay(10) // Small virtual delay to avoid conflation in flow
+        delay(10.milliseconds) // Small virtual delay to avoid conflation in flow
         return if (mockTimeDataSamples == null || forceError) {
             throw Exception("API ERROR")
         }

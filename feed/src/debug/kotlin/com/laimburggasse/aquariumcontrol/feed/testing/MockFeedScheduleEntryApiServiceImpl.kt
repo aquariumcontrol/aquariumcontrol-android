@@ -22,13 +22,13 @@
 
 package com.laimburggasse.aquariumcontrol.feed.testing
 
-import java.util.Locale
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedScheduleEntryApiService
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedScheduleEntryImport
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 import kotlinx.coroutines.delay
-import java.sql.Timestamp
 import java.text.SimpleDateFormat
+import java.util.Locale
+import kotlin.time.Duration.Companion.milliseconds
 
 class MockFeedScheduleEntryApiServiceImpl(
     private var mockFeedScheduleEntryImports: List<FeedScheduleEntryImport>?,
@@ -40,7 +40,7 @@ class MockFeedScheduleEntryApiServiceImpl(
         url: String,
         authHeader: String
     ): List<FeedScheduleEntryImport> {
-        delay(10) // Small virtual delay to avoid conflation in flow
+        delay(10.milliseconds) // Small virtual delay to avoid conflation in flow
         return mockFeedScheduleEntryImports ?: throw Exception("API error")
     }
 

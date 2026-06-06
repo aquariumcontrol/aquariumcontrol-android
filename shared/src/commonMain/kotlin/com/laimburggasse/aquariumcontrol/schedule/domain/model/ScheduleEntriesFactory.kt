@@ -23,7 +23,6 @@
 package com.laimburggasse.aquariumcontrol.schedule.domain.model
 
 import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleEntry
-import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleType
 
 /**
  * Factory class responsible for aggregating a list of individual [ScheduleEntry] items

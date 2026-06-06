@@ -1,12 +1,11 @@
 package com.laimburggasse.aquariumcontrol.di
 
 import android.content.Context
-import com.laimburggasse.aquariumcontrol.common.di.AndroidPlatformModule
-import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
-import com.laimburggasse.aquariumcontrol.di.SharedModule
 import com.laimburggasse.aquariumcontrol.balling.presentation.edit.BallingProfileEditViewModel
 import com.laimburggasse.aquariumcontrol.balling.presentation.entry.BallingProfilesViewModel
 import com.laimburggasse.aquariumcontrol.balling.presentation.history.BallingHistoryViewModel
+import com.laimburggasse.aquariumcontrol.common.di.AndroidPlatformModule
+import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.controller.presentation.add.ControllerAddViewModel
 import com.laimburggasse.aquariumcontrol.controller.presentation.edit.ControllerEditViewModel
@@ -21,10 +20,10 @@ import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingStatsViewMo
 import com.laimburggasse.aquariumcontrol.refill.presentation.entry.RefillViewModel
 import com.laimburggasse.aquariumcontrol.refill.presentation.history.RefillHistoryViewModel
 import com.laimburggasse.aquariumcontrol.schedule.presentation.ScheduleViewModel
+import com.laimburggasse.aquariumcontrol.summary.domain.repository.SummaryRepository
 import com.laimburggasse.aquariumcontrol.summary.presentation.SummaryViewModel
 import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataViewModel
 import com.laimburggasse.aquariumcontrol.ventilation.presentation.VentilationSetValsViewModel
-import com.laimburggasse.aquariumcontrol.summary.domain.repository.SummaryRepository
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 

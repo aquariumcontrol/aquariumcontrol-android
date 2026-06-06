@@ -5,8 +5,6 @@
     <string name="start_refill_control">Start refill control</string>
     <string name="stop_refill_control">Stop refill control</string>
     <string name="reset_errors">Reset all errors</string>
-    <string name="refill_events_last">Refill events</string>
-    <string name="loading_refill_events">Loading refill events.</string>
     <string name="no_refill_events_found">No refill events found.</string>
     <string name="sent_request_to_controller_for_starting_refill_control">Sent request to controller for starting refill control</string>
     <string name="sent_request_to_controller_for_stopping_refill_control">Sent request to controller for stopping refill control</string>

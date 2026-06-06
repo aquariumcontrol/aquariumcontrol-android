@@ -25,6 +25,7 @@ package com.laimburggasse.aquariumcontrol.ventilation.testing
 import com.laimburggasse.aquariumcontrol.ventilation.data.remote.VentilationSetValsApiService
 import com.laimburggasse.aquariumcontrol.ventilation.domain.model.VentilationSetVals
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 class MockVentilationSetValsApiServiceImpl(
     private var mockVentilationSetVals: VentilationSetVals?
@@ -40,7 +41,7 @@ class MockVentilationSetValsApiServiceImpl(
         url: String,
         authHeader: String
     ): List<VentilationSetVals> {
-        delay(10) // Small virtual delay to avoid conflation in flow
+        delay(10.milliseconds) // Small virtual delay to avoid conflation in flow
         return if (mockVentilationSetVals == null || forceError) {
             throw Exception("API error")
         }
@@ -58,10 +59,6 @@ class MockVentilationSetValsApiServiceImpl(
         authHeader: String,
         params: Map<String, String>
     ): Boolean {
-        return if (forceError) {
-            false
-        } else {
-            true
-        }
+        return !forceError
     }
 }

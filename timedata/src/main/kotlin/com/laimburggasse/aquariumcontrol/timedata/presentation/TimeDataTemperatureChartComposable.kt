@@ -40,7 +40,6 @@ import com.github.mikephil.charting.data.LineData
 import com.laimburggasse.aquariumcontrol.common.presentation.theme.AquariumControllerTheme
 import com.laimburggasse.aquariumcontrol.timedata.preview.TimeDataPreviewData.mockTimeDataSets
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TimeDataTemperatureChartComposable(
     temperatureDataSet: LineData,

@@ -129,6 +129,7 @@ dependencies {
 }
 
 val jacocoTestReport by tasks.registering(JacocoReport::class) {
+    description = "Unit test coverage measurement"
     dependsOn("testDebugUnitTest")
 
     reports {

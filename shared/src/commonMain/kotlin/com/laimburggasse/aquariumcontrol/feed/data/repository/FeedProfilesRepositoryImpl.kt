@@ -30,8 +30,8 @@ import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
-import com.laimburggasse.aquariumcontrol.common.util.Logger
 import com.laimburggasse.aquariumcontrol.common.util.Base64
+import com.laimburggasse.aquariumcontrol.common.util.Logger
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedProfileApiService
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedProfileReader
 import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedProfileImport
@@ -42,8 +42,17 @@ import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedProfilesRepo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
@@ -141,7 +150,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
             return
         }
         val url = "http://" + controllerAddress + ":" + port + WebApiUrls.FEED_DELETE_PROFILE + feedProfile.profileID
-        val authHeader = "Basic " + Base64.encode((user + ":" + password).encodeToByteArray())
+        val authHeader = "Basic " + Base64.encode(("$user:$password").encodeToByteArray())
 
         localState.update { it.copy(pendingDeletions = it.pendingDeletions + feedProfile.profileID) }
 
@@ -181,7 +190,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
             return
         }
         val url = "http://" + controllerAddress + ":" + port + WebApiUrls.FEED_PROFILE_CREATE
-        val authHeader = "Basic " + Base64.encode((user + ":" + password).encodeToByteArray())
+        val authHeader = "Basic " + Base64.encode(("$user:$password").encodeToByteArray())
 
         val requestSuccess = withContext(ioDispatcher.dispatcher) {
             try {
@@ -238,7 +247,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
         }
         val url = "http://" + controllerAddress + ":" + port + WebApiUrls.FEED_PROFILE_UPDATE
         val apiCallParameters = modifiedFeedProfile.getFeedProfileApiCallParameters()
-        val authHeader = "Basic " + Base64.encode((user + ":" + password).encodeToByteArray())
+        val authHeader = "Basic " + Base64.encode(("$user:$password").encodeToByteArray())
 
         localState.update { it.copy(pendingUpdates = it.pendingUpdates + (modifiedFeedProfile.profileID to modifiedFeedProfile)) }
 
@@ -278,7 +287,7 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
             return
         }
         val url = "http://" + controllerAddress + ":" + port + WebApiUrls.FEED_EXECUTE_PROFILE + profileId
-        val authHeader = "Basic " + Base64.encode((user + ":" + password).encodeToByteArray())
+        val authHeader = "Basic " + Base64.encode(("$user:$password").encodeToByteArray())
 
         withContext(ioDispatcher.dispatcher) {
             try {

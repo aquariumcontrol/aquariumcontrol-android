@@ -22,9 +22,6 @@
 
 package com.laimburggasse.aquariumcontrol.schedule.data.repository
 
-import com.laimburggasse.aquariumcontrol.common.util.Base64
-
-
 
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
@@ -33,6 +30,7 @@ import com.laimburggasse.aquariumcontrol.common.di.IoDispatcher
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
+import com.laimburggasse.aquariumcontrol.common.util.Base64
 import com.laimburggasse.aquariumcontrol.common.util.Logger
 import com.laimburggasse.aquariumcontrol.schedule.data.remote.ScheduleApiService
 import com.laimburggasse.aquariumcontrol.schedule.data.remote.ScheduleEntryReader
@@ -41,7 +39,6 @@ import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleString
 import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntries
 import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntriesFactory
 import com.laimburggasse.aquariumcontrol.schedule.domain.repository.ScheduleRepository
-import io.ktor.util.encodeBase64
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow

@@ -57,7 +57,6 @@ import com.laimburggasse.aquariumcontrol.timedata.preview.TimeDataPreviewData.mo
 import com.laimburggasse.aquariumcontrol.timedata.preview.TimeDataPreviewData.mockTimeDataUiStateError
 import com.laimburggasse.aquariumcontrol.timedata.preview.TimeDataPreviewData.mockTimeDataUiStateSuccess
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TimeDataScreen(
     timeDataUiState: TimeDataUiState,

@@ -5,7 +5,6 @@ import com.laimburggasse.aquariumcontrol.common.di.AppModule
 import com.laimburggasse.aquariumcontrol.common.di.CommonNetwork
 import com.laimburggasse.aquariumcontrol.common.di.DispatchersModule
 import com.laimburggasse.aquariumcontrol.common.di.Network
-import com.laimburggasse.aquariumcontrol.common.di.PlatformModule
 import com.laimburggasse.aquariumcontrol.feed.data.di.FeedDataModule
 import com.laimburggasse.aquariumcontrol.heating.data.di.HeatingDataModule
 import com.laimburggasse.aquariumcontrol.refill.data.di.RefillDataModule

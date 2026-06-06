@@ -26,6 +26,7 @@ import com.laimburggasse.aquariumcontrol.schedule.data.remote.ScheduleApiService
 import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleEntry
 import com.laimburggasse.aquariumcontrol.schedule.data.remote.dto.ScheduleStringEntry
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 class MockScheduleApiServiceImpl(
     private var mockScheduleStringEntries: List<ScheduleStringEntry>?,
@@ -43,7 +44,7 @@ class MockScheduleApiServiceImpl(
         url: String,
         authHeader: String
     ): List<ScheduleStringEntry> {
-        delay(10) // Small virtual delay to avoid conflation in flow
+        delay(10.milliseconds) // Small virtual delay to avoid conflation in flow
         return if (mockScheduleStringEntries == null || forceError) {
             throw Exception("API ERROR")
         }

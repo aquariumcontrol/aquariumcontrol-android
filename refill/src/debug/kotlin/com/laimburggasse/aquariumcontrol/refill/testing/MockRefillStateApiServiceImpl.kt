@@ -26,6 +26,7 @@ import com.laimburggasse.aquariumcontrol.refill.data.remote.RefillStateApiServic
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillState
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillStateResponse
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 class MockRefillStateApiServiceImpl(
     private var refillState: RefillState?
@@ -40,7 +41,7 @@ class MockRefillStateApiServiceImpl(
         url: String,
         authHeader: String
     ): RefillStateResponse {
-        delay(10) // Small virtual delay to avoid conflation in flow
+        delay(10.milliseconds) // Small virtual delay to avoid conflation in flow
         if (forceError) throw Exception("Mock API Error")
         return if (refillState == null) {
             RefillStateResponse(RefillState.ERROR)

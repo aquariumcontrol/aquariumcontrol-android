@@ -124,7 +124,7 @@ open class BallingProfilesRepositoryImpl @Inject constructor(
         val password = sessionManager.getControllerPassword() ?: ""
         val port = sessionManager.getControllerPort()
         val url = "http://" + controllerAddress + ":" + port + WebApiUrls.BALLING_UPDATE_SET_VALS
-        val authHeader = "Basic " + Base64.encode((user + ":" + password).encodeToByteArray())
+        val authHeader = "Basic " + Base64.encode(("$user:$password").encodeToByteArray())
         val postParams = mapOf(WebApiParams.PUMP_ID to ballingProfile.pumpId.toString(), WebApiParams.DOSING_VOLUME to ballingProfile.volume.toString())
 
         val requestSuccess = withContext(ioDispatcher.dispatcher) {

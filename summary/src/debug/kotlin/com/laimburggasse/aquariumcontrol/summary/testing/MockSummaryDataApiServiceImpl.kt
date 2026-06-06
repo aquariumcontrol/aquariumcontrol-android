@@ -29,6 +29,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 class MockSummaryDataApiServiceImpl(
     private var summaryData: SummaryData?
@@ -37,7 +38,7 @@ class MockSummaryDataApiServiceImpl(
         url: String,
         authHeader: String
     ): SummaryDataDto {
-        delay(10) // Small virtual delay to avoid conflation in flow
+        delay(10.milliseconds) // Small virtual delay to avoid conflation in flow
         val data = summaryData ?: throw Exception("API ERROR")
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
         return SummaryDataDto(

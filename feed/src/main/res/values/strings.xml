@@ -2,7 +2,6 @@
 <resources>
     <string name="feed_control">Feed Control</string>
     <string name="view_feed_events">View feed events</string>
-    <string name="feed_events_last">Feed events</string>
     <string name="feed_profile_editing">Feed profile editing</string>
     <string name="update_feed_profile">Update feed profile</string>
     <string name="duration_in_seconds">Duration in seconds</string>
@@ -37,7 +36,6 @@
     <string name="name">Name</string>
     <string name="repeat_daily_label">"Repeat daily: "</string>
     <string name="id">"ID: "</string>
-    <string name="loading_feed_events">Loading feed events.</string>
     <string name="no_feed_events_found">No feed events found.</string>
     <string name="timestamp">Timestamp</string>
     <string name="repeat_daily">Repeat Daily</string>
@@ -46,5 +44,4 @@
     <string name="no">No</string>
     <string name="edit">Edit</string>
     <string name="select_time">Select Time</string>
-    <string name="error_loading_feed_data">"Error loading Feed data: "</string>
 </resources>

@@ -22,7 +22,6 @@
 
 package com.laimburggasse.aquariumcontrol.feed.data.repository
 
-import com.laimburggasse.aquariumcontrol.common.util.Logger
 import com.laimburggasse.aquariumcontrol.common.data.remote.DataFetchResult
 import com.laimburggasse.aquariumcontrol.common.data.remote.WebApiUrls
 import com.laimburggasse.aquariumcontrol.common.di.ApplicationScope
@@ -31,23 +30,28 @@ import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
 import com.laimburggasse.aquariumcontrol.common.domain.GlobalConstants
 import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.common.util.Base64
-
+import com.laimburggasse.aquariumcontrol.common.util.DateTimeUtil
+import com.laimburggasse.aquariumcontrol.common.util.Logger
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedScheduleEntryApiService
 import com.laimburggasse.aquariumcontrol.feed.data.remote.FeedScheduleEntryReader
-import com.laimburggasse.aquariumcontrol.feed.data.remote.dto.FeedScheduleEntryImport
+import com.laimburggasse.aquariumcontrol.feed.data.remote.toFeedScheduleEntryList
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntry
 import com.laimburggasse.aquariumcontrol.feed.domain.model.FeedScheduleEntryKey
 import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedScheduleRepository
-import com.laimburggasse.aquariumcontrol.feed.data.remote.toFeedScheduleEntryList
-import com.laimburggasse.aquariumcontrol.common.util.DateTimeUtil
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Inject
 
 /**
@@ -99,8 +103,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
                 val scheduleReader = FeedScheduleEntryReader(
                     logger, apiService, url, username = controller.user, password = controller.password
                 )
-                val importResult = scheduleReader.readFeedScheduleEntries()
-                when (importResult) {
+                when (val importResult = scheduleReader.readFeedScheduleEntries()) {
                     is DataFetchResult.Success -> DataFetchResult.Success(data = importResult.data.toFeedScheduleEntryList())
                     is DataFetchResult.Error -> importResult
                     is DataFetchResult.Loading -> DataFetchResult.Error(exception = null, errorMessage = GlobalConstants.ERR_MSG_LOADING_FEED_SCHEDULE_ENTRIES_FAILED)
@@ -164,7 +167,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
             return
         }
         val url = "http://" + controllerAddress + ":" + port + WebApiUrls.FEED_SCHEDULE_DELETE_ENTRY
-        val authHeader = "Basic " + Base64.encode((user + ":" + password).encodeToByteArray())
+        val authHeader = "Basic " + Base64.encode(("$user:$password").encodeToByteArray())
         val postParams = feedScheduleEntry.getApiParameters(formatTimestamp(feedScheduleEntry.timestamp))
 
         val requestSuccess = withContext(ioDispatcher.dispatcher) {
@@ -213,7 +216,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
             return
         }
         val url = "http://" + controllerAddress + ":" + port + WebApiUrls.FEED_PROFILE_SCHEDULE_NEW
-        val authHeader = "Basic " + Base64.encode((user + ":" + password).encodeToByteArray())
+        val authHeader = "Basic " + Base64.encode(("$user:$password").encodeToByteArray())
         val apiParams = tempEntry.getApiParameters(formatTimestamp(timestampMillis))
 
         val requestSuccess = withContext(ioDispatcher.dispatcher) {
@@ -261,7 +264,7 @@ open class FeedScheduleRepositoryImpl @Inject constructor(
             return
         }
         val url = "http://" + controllerAddress + ":" + port + WebApiUrls.FEED_UPDATE_SCHEDULE
-        val authHeader = "Basic " + Base64.encode((user + ":" + password).encodeToByteArray())
+        val authHeader = "Basic " + Base64.encode(("$user:$password").encodeToByteArray())
         val postParams = modifiedEntry.getApiParametersForUpdating(
             timestampOldString = formatTimestamp(millisSinceEpoch),
             timestampNewString = formatTimestamp(timestampMillis)

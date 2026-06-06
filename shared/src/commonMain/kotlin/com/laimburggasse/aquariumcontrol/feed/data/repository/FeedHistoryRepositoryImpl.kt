@@ -50,7 +50,7 @@ open class FeedHistoryRepositoryImpl @Inject constructor(
 
         /**
      * Fetches history entries for a specific date.
-     * Currently returns an empty list as date-specific fetching is not implemented.
+     * Currently, it returns an empty list as date-specific fetching is not implemented.
      *
      * @param date The date in epoch milliseconds.
      * @return A list of [FeedHistoryLogEntry] for the given date.
