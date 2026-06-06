@@ -36,10 +36,17 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
+/**
+ * ViewModel for the Schedule screen.
+ * Responsible for managing the UI state, handling time adjustments, and synchronizing schedule limitations for actuators.
+ *
+ * @property scheduleRepository The repository providing schedule data and synchronization methods.
+ */
 class ScheduleViewModel @Inject constructor(
     private val scheduleRepository: ScheduleRepository
 ): ViewModel() {
 
+    /** The reactive UI state for the schedule screen, derived from the repository flow. */
     val scheduleUiState: StateFlow<ScheduleUiState> = scheduleRepository.scheduleFlow
         .map { result ->
             when (result) {
@@ -58,6 +65,10 @@ class ScheduleViewModel @Inject constructor(
     /**
      * Updates the start or stop time for a specific schedule type.
      * This function uses the immutable `copy()` pattern to ensure StateFlow updates.
+     *
+     * @param scheduleType The category of the schedule being modified (e.g., Heating, Balling).
+     * @param timeType Whether the start time or stop time is being adjusted.
+     * @param newTime The new time value in hours (e.g., 14.5 for 14:30).
      */
     fun onTimeChange(scheduleType: ScheduleType, timeType: TimeType, newTime: Float) {
         val currentState: ScheduleUiState = scheduleUiState.value
@@ -87,6 +98,9 @@ class ScheduleViewModel @Inject constructor(
 
     /**
      * Updates the "limitation active" status for a specific schedule type.
+     *
+     * @param scheduleType The category of the schedule being modified.
+     * @param isActive True if the schedule limitation should be active, false otherwise.
      */
     fun onLimitationActiveChange(scheduleType: ScheduleType, isActive: Boolean) {
         val currentState: ScheduleUiState = scheduleUiState.value
@@ -102,18 +116,32 @@ class ScheduleViewModel @Inject constructor(
         }
     }
 
+    
+    /**
+     * Commits the current local optimistic modifications to the remote server via the repository.
+     */
     fun updateSchedule() {
         viewModelScope.launch {
             scheduleRepository.updateSchedule()
         }
     }
 
+    
+    /**
+     * Discards any unsaved local modifications and reverts the UI to the last known server state.
+     */
     fun resetSchedule() {
         viewModelScope.launch {
             scheduleRepository.reset()
         }
     }
 
+    
+    /**
+     * Central event handler for UI interactions on the schedule screen.
+     *
+     * @param scheduleUiEvent The specific [ScheduleUiEvent] to process (e.g., Update, Reset, ChangeTime).
+     */
     fun onScheduleEvent(scheduleUiEvent: ScheduleUiEvent) {
         when (scheduleUiEvent) {
             is ScheduleUiEvent.ChangeLimitationActive -> {

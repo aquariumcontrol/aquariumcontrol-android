@@ -22,11 +22,9 @@
 
 package com.laimburggasse.aquariumcontrol.schedule.preview
 
-import com.laimburggasse.aquariumcontrol.schedule.presentation.SchedulePreviewData
 import com.laimburggasse.aquariumcontrol.schedule.testing.ScheduleMockData
 
-object SchedulePreviewDataImpl: SchedulePreviewData {
-    override val mockScheduleEntries = ScheduleMockData.mockScheduleEntries
-    override val mockScheduleUiStateSuccess = ScheduleMockData.mockScheduleUiStateSuccess
-    override val mockScheduleUiStateError = ScheduleMockData.mockScheduleUiStateError
+object SchedulePreviewDataImpl {
+    val mockScheduleUiStateSuccess = ScheduleMockData.mockScheduleUiStateSuccess
+    val mockScheduleUiStateError = ScheduleMockData.mockScheduleUiStateError
 }
