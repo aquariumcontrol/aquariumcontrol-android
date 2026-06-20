@@ -40,4 +40,10 @@ interface BallingHistoryDao : BaseHistoryDao<BallingHistoryLogEntry> {
 
     @Query( "DELETE FROM BALLING_LOG")
     override suspend fun clearAll()
+
+    @Query("DELETE FROM BALLING_LOG WHERE timestamp < :timestamp")
+    override suspend fun deleteOlderThan(timestamp: Long)
+
+    @Query("DELETE FROM BALLING_LOG WHERE timestamp >= :timestamp")
+    override suspend fun deleteNewerThanOrEqual(timestamp: Long)
 }

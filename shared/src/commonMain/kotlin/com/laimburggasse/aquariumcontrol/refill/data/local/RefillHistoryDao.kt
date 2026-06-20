@@ -40,4 +40,10 @@ interface RefillHistoryDao : BaseHistoryDao<RefillHistoryLogEntry> {
 
     @Query( "DELETE FROM REFILL_LOG")
     override suspend fun clearAll()
+
+    @Query("DELETE FROM REFILL_LOG WHERE timestamp < :timestamp")
+    override suspend fun deleteOlderThan(timestamp: Long)
+
+    @Query("DELETE FROM REFILL_LOG WHERE timestamp >= :timestamp")
+    override suspend fun deleteNewerThanOrEqual(timestamp: Long)
 }

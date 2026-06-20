@@ -21,6 +21,9 @@ import com.laimburggasse.aquariumcontrol.common.util.Logger
 import io.ktor.client.HttpClient
 import me.tatarka.inject.annotations.Provides
 
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+
 interface BallingDataModule {
     @Provides
     @ApplicationScope
@@ -44,7 +47,8 @@ interface BallingDataModule {
         logger: Logger,
         database: AquariumDatabase,
         apiService: BallingHistoryApiService,
-        sessionManager: SessionManager
+        sessionManager: SessionManager,
+        dataStore: DataStore<Preferences>
     ): HistoryRemoteMediator<BallingHistoryLogEntry> {
         return HistoryRemoteMediator(
             database = database,
@@ -52,7 +56,9 @@ interface BallingDataModule {
             apiService = apiService,
             sessionManager = sessionManager,
             loadEventsUrlPath = WebApiUrls.BALLING_LOAD_EVENTS,
-            loadFirstEventUrlPath = WebApiUrls.BALLING_LOAD_FIRST_EVENT
+            loadFirstEventUrlPath = WebApiUrls.BALLING_LOAD_FIRST_EVENT,
+            dataStore = dataStore,
+            logType = "balling"
         )
     }
 

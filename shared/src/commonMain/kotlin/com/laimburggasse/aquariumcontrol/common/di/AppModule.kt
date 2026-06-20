@@ -31,9 +31,10 @@ interface AppModule {
     fun provideSessionManager(
         dataStore: DataStore<Preferences>,
         dao: ControllerProfileDao,
-        externalScope: CoroutineScope
+        externalScope: CoroutineScope,
+        database: AquariumDatabase
     ): SessionManager {
-        return SessionManagerImpl(dataStore, dao, externalScope)
+        return SessionManagerImpl(dataStore, dao, externalScope, database)
     }
 
     @Provides

@@ -24,6 +24,9 @@ import com.laimburggasse.aquariumcontrol.feed.domain.repository.FeedScheduleRepo
 import io.ktor.client.HttpClient
 import me.tatarka.inject.annotations.Provides
 
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+
 interface FeedDataModule {
     @Provides
     @ApplicationScope
@@ -55,7 +58,8 @@ interface FeedDataModule {
         logger: com.laimburggasse.aquariumcontrol.common.util.Logger,
         database: AquariumDatabase,
         apiService: FeedHistoryApiService,
-        sessionManager: SessionManager
+        sessionManager: SessionManager,
+        dataStore: DataStore<Preferences>
     ): HistoryRemoteMediator<FeedHistoryLogEntry> {
         return HistoryRemoteMediator(
             database = database,
@@ -63,7 +67,9 @@ interface FeedDataModule {
             apiService = apiService,
             sessionManager = sessionManager,
             loadEventsUrlPath = WebApiUrls.FEED_LOAD_EVENTS,
-            loadFirstEventUrlPath = WebApiUrls.FEED_LOAD_FIRST_EVENT
+            loadFirstEventUrlPath = WebApiUrls.FEED_LOAD_FIRST_EVENT,
+            dataStore = dataStore,
+            logType = "feed"
         )
     }
 

@@ -10,6 +10,8 @@ import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import me.tatarka.inject.annotations.Inject
 
+import com.laimburggasse.aquariumcontrol.common.util.DateTimeUtil
+
 class KtorBallingHistoryApiService @Inject constructor(
     private val client: HttpClient
 ) : BallingHistoryApiService {
@@ -20,7 +22,7 @@ class KtorBallingHistoryApiService @Inject constructor(
     ): List<BallingHistoryLogEntry> {
         val dtos: List<BallingHistoryLogEntryDto> = client.get(url) {
             header("Authorization", authHeader)
-            parameter("date", date.toString())
+            parameter("date", DateTimeUtil.formatDateToApi(date))
         }.body()
         return dtos.map { it.toBallingHistoryLogEntry() }
     }

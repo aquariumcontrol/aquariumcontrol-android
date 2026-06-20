@@ -20,6 +20,9 @@ import com.laimburggasse.aquariumcontrol.refill.domain.repository.RefillReposito
 import io.ktor.client.HttpClient
 import me.tatarka.inject.annotations.Provides
 
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+
 interface RefillDataModule {
     @Provides
     @ApplicationScope
@@ -42,7 +45,8 @@ interface RefillDataModule {
     fun provideRefillHistoryRemoteMediator(
         database: AquariumDatabase,
         apiService: RefillHistoryApiService,
-        sessionManager: SessionManager
+        sessionManager: SessionManager,
+        dataStore: DataStore<Preferences>
     ): HistoryRemoteMediator<RefillHistoryLogEntry> {
         return HistoryRemoteMediator(
             database = database,
@@ -50,7 +54,9 @@ interface RefillDataModule {
             apiService = apiService,
             sessionManager = sessionManager,
             loadEventsUrlPath = WebApiUrls.REFILL_LOAD_EVENTS,
-            loadFirstEventUrlPath = WebApiUrls.REFILL_LOAD_FIRST_EVENT
+            loadFirstEventUrlPath = WebApiUrls.REFILL_LOAD_FIRST_EVENT,
+            dataStore = dataStore,
+            logType = "refill"
         )
     }
 

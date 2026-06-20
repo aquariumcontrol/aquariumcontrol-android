@@ -35,19 +35,26 @@ import com.laimburggasse.aquariumcontrol.common.domain.SessionManager
 import com.laimburggasse.aquariumcontrol.common.util.Base64
 import kotlinx.datetime.*
 import kotlin.time.Clock
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
+import kotlinx.coroutines.flow.first
 
 /**
- * A Paging Library [RemoteMediator] that orchestrates the loading of history data from
- * the network into a local Room database. It handles incremental loading of historical
- * events by day.
+ *  A Paging Library [RemoteMediator] that orchestrates the loading of history data from
+ *  the network into a local Room database. It handles incremental loading of historical
+ *  events by day.
  *
- * @param T The type of the history log entry, extending [BaseHistoryLogEntry].
- * @property database The Room database instance.
- * @property dao The Data Access Object for history logs.
- * @property apiService The network service for fetching history.
- * @property sessionManager The manager for active session state.
- * @property loadEventsUrlPath The endpoint path for loading history events.
- * @property loadFirstEventUrlPath The endpoint path for identifying the start of the history log.
+ *  @param T The type of the history log entry, extending [BaseHistoryLogEntry].
+ *  @property database The Room database instance.
+ *  @property dao The Data Access Object for history logs.
+ *  @property apiService The network service for fetching history.
+ *  @property sessionManager The manager for active session state.
+ *  @property loadEventsUrlPath The endpoint path for loading history events.
+ *  @property loadFirstEventUrlPath The endpoint path for identifying the start of the history log.
+ *  @property dataStore The DataStore instance for persistent date tracking.
+ *  @property logType The prefix/type of log for DataStore key storage.
  */
 @OptIn(ExperimentalPagingApi::class)
 class HistoryRemoteMediator<T : BaseHistoryLogEntry>(
@@ -56,7 +63,9 @@ class HistoryRemoteMediator<T : BaseHistoryLogEntry>(
     private val apiService: BaseHistoryApiService,
     private val sessionManager: SessionManager,
     private val loadEventsUrlPath: String,
-    private val loadFirstEventUrlPath: String
+    private val loadFirstEventUrlPath: String,
+    private val dataStore: DataStore<Preferences>,
+    private val logType: String
 ) : RemoteMediator<Int, T>() {
     /** Cached timestamp of the first ever log entry on the server. */
     private var historyLogStart: Long? = null
@@ -66,6 +75,9 @@ class HistoryRemoteMediator<T : BaseHistoryLogEntry>(
 
     /** Constant for milliseconds in a single day. */
     private val msInDay = 86_400_000L // milliseconds in one day
+
+    private val startDateKey = longPreferencesKey("${logType}_start_date")
+    private val endDateKey = longPreferencesKey("${logType}_end_date")
 
     /**
      * Calculates the current date normalized to the start of the day.
@@ -107,8 +119,16 @@ class HistoryRemoteMediator<T : BaseHistoryLogEntry>(
         loadType: LoadType,
         state: PagingState<Int, T>
     ): MediatorResult {
-        if (serverUsed == null || serverUsed != sessionManager.selectedControllerProfile.value) {
+        val serverChanged = serverUsed == null || serverUsed != sessionManager.selectedControllerProfile.value
+        if (serverChanged) {
             historyLogStart = null
+            dataStore.edit { preferences ->
+                preferences.remove(startDateKey)
+                preferences.remove(endDateKey)
+            }
+            database.useWriterConnection {
+                dao.clearAll()
+            }
         }
 
         return try {
@@ -147,6 +167,22 @@ class HistoryRemoteMediator<T : BaseHistoryLogEntry>(
                 }
             }
 
+            val todayStart = getCurrentDate()
+            val cutoffLimit = todayStart - 100 * msInDay
+
+            if (currentLoadKey < cutoffLimit) {
+                return MediatorResult.Success(endOfPaginationReached = true)
+            }
+
+            val prefs = dataStore.data.first()
+            val savedStartDate = prefs[startDateKey]
+            val savedEndDate = prefs[endDateKey]
+
+            if (loadType == LoadType.APPEND && savedStartDate != null && savedEndDate != null &&
+                currentLoadKey in savedStartDate..savedEndDate) {
+                return MediatorResult.Success(endOfPaginationReached = historyLogStart?.let { currentLoadKey <= it } ?: false)
+            }
+
             val dynamicUrl = if (loadEventsUrlPath.startsWith("/")) {
                 "$baseUrl$loadEventsUrlPath"
             } else {
@@ -155,30 +191,50 @@ class HistoryRemoteMediator<T : BaseHistoryLogEntry>(
 
             val allEntries = mutableListOf<T>()
             var reachedAbsoluteStart = false
+            var loopDateKey = currentLoadKey
+            var requestsMade = 0
+            val maxRequests = 10
 
-            while (allEntries.size < state.config.pageSize) {
-                val entries = apiService.getHistory(dynamicUrl, authHeader, currentLoadKey)
+            while (allEntries.size < state.config.pageSize && requestsMade < maxRequests) {
+                if (savedStartDate != null && savedEndDate != null && loopDateKey in savedStartDate..savedEndDate) {
+                    break
+                }
+                if (loopDateKey < cutoffLimit) {
+                    reachedAbsoluteStart = true
+                    break
+                }
+
+                val entries = apiService.getHistory(dynamicUrl, authHeader, loopDateKey)
+                requestsMade++
                 @Suppress("UNCHECKED_CAST")
                 allEntries.addAll(entries as List<T>)
 
                 reachedAbsoluteStart = if (historyLogStart != null) {
-                    currentLoadKey <= (historyLogStart!!)
+                    loopDateKey <= (historyLogStart!!) || loopDateKey <= cutoffLimit
                 } else {
-                    entries.isEmpty()
+                    entries.isEmpty() || loopDateKey <= cutoffLimit
                 }
 
                 if (reachedAbsoluteStart) {
                     break
                 }
 
-                currentLoadKey -= msInDay
+                loopDateKey -= msInDay
             }
 
             database.useWriterConnection {
                 if (loadType == LoadType.REFRESH) {
-                    dao.clearAll()
+                    dao.deleteNewerThanOrEqual(getCurrentDate())
                 }
                 dao.upsertAll(allEntries)
+            }
+
+            dataStore.edit { preferences ->
+                val oldestFetched = if (loopDateKey < currentLoadKey) loopDateKey + msInDay else currentLoadKey
+                val newStart = if (savedStartDate == null) oldestFetched else minOf(savedStartDate, oldestFetched)
+                val newEnd = if (savedEndDate == null) currentLoadKey else maxOf(savedEndDate, currentLoadKey)
+                preferences[startDateKey] = newStart
+                preferences[endDateKey] = newEnd
             }
 
             MediatorResult.Success(endOfPaginationReached = reachedAbsoluteStart)

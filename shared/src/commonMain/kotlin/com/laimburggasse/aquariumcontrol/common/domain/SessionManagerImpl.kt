@@ -43,6 +43,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+import com.laimburggasse.aquariumcontrol.common.data.local.AquariumDatabase
+import kotlin.time.Clock
+import kotlinx.datetime.*
+
 /**
  * Implementation of [SessionManager] responsible for managing the active controller selection
  * and tracking application-wide session state.
@@ -50,12 +54,14 @@ import kotlinx.coroutines.withContext
  * @property dataStore The DataStore instance for persisting settings.
  * @property dao The DAO for fetching controller profile details.
  * @property externalScope A coroutine scope for managing background tasks tied to the session lifetime.
+ * @property database The AquariumDatabase instance.
  */
 @Inject
 open class SessionManagerImpl(
     private val dataStore: DataStore<Preferences>,
     private val dao: ControllerProfileDao,
-    private val externalScope: CoroutineScope
+    private val externalScope: CoroutineScope,
+    private val database: AquariumDatabase
 ): SessionManager {
     /** Internal mutable flow for the currently selected controller profile. */
     private val _selectedControllerProfile = MutableStateFlow<ControllerProfile?>(value = null)
@@ -104,6 +110,36 @@ open class SessionManagerImpl(
                 _defaultControllerProfileId.value = defaultId
                 // Automatically select the default profile on startup
                 selectControllerById(defaultId)
+            }
+            runStartupCleanup()
+        }
+    }
+
+    private suspend fun runStartupCleanup() {
+        withContext(DispatcherIO) {
+            try {
+                val timestamp = serverTimestamp.first { it != null } ?: return@withContext
+                val instant = kotlinx.datetime.Instant.fromEpochMilliseconds(timestamp)
+                val today = instant.toLocalDateTime(TimeZone.currentSystemDefault()).date
+                val todayStart = today.atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+                val msInDay = 86_400_000L
+                val cutoffTimestamp = todayStart - 100 * msInDay
+
+                database.refillHistoryDao().deleteOlderThan(cutoffTimestamp)
+                database.ballingHistoryDao().deleteOlderThan(cutoffTimestamp)
+                database.feedHistoryDao().deleteOlderThan(cutoffTimestamp)
+
+                dataStore.edit { preferences ->
+                    listOf("refill", "balling", "feed").forEach { logType ->
+                        val startKey = longPreferencesKey("${logType}_start_date")
+                        val currentStart = preferences[startKey]
+                        if (currentStart != null && currentStart < cutoffTimestamp) {
+                            preferences[startKey] = cutoffTimestamp
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                // ignore
             }
         }
     }

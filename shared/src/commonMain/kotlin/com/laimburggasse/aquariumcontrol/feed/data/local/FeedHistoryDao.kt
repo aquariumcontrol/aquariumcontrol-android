@@ -40,4 +40,10 @@ interface FeedHistoryDao : BaseHistoryDao<FeedHistoryLogEntry> {
 
     @Query( "DELETE FROM FEED_LOG")
     override suspend fun clearAll()
+
+    @Query("DELETE FROM FEED_LOG WHERE timestamp < :timestamp")
+    override suspend fun deleteOlderThan(timestamp: Long)
+
+    @Query("DELETE FROM FEED_LOG WHERE timestamp >= :timestamp")
+    override suspend fun deleteNewerThanOrEqual(timestamp: Long)
 }

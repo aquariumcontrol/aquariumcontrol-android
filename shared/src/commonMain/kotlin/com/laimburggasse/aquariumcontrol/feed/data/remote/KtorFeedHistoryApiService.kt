@@ -10,13 +10,15 @@ import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import me.tatarka.inject.annotations.Inject
 
+import com.laimburggasse.aquariumcontrol.common.util.DateTimeUtil
+
 class KtorFeedHistoryApiService @Inject constructor(
     private val client: HttpClient
 ) : FeedHistoryApiService {
     override suspend fun getHistory(url: String, authHeader: String, date: Long): List<FeedHistoryLogEntry> {
         val dtos: List<FeedHistoryLogEntryDto> = client.get(url) {
             header("Authorization", authHeader)
-            parameter("date", date.toString())
+            parameter("date", DateTimeUtil.formatDateToApi(date))
         }.body()
         return dtos.map { it.toFeedHistoryLogEntry() }
     }

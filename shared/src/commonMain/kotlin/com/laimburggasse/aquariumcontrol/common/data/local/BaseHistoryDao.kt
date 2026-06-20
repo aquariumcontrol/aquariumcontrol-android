@@ -25,4 +25,6 @@ package com.laimburggasse.aquariumcontrol.common.data.local
 interface BaseHistoryDao<T : Any> {
     suspend fun upsertAll(entries: List<T>)
     suspend fun clearAll()
+    suspend fun deleteOlderThan(timestamp: Long)
+    suspend fun deleteNewerThanOrEqual(timestamp: Long)
 }

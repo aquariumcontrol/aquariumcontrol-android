@@ -51,4 +51,15 @@ object DateTimeUtil {
         val localDateTime = instant.toLocalDateTime(systemTz)
         return localDateTime.toString().replace("T", " ").substringBefore(".")
     }
+
+    /**
+     * Formats epoch milliseconds into the date string expected by the API (yyyy-MM-dd).
+     *
+     * @param epochMillis The timestamp in milliseconds.
+     * @return A string formatted as "yyyy-MM-dd".
+     */
+    fun formatDateToApi(epochMillis: Long): String {
+        val instant = kotlinx.datetime.Instant.fromEpochMilliseconds(epochMillis)
+        return instant.toLocalDateTime(systemTz).date.toString()
+    }
 }
