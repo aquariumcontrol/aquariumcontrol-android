@@ -1,0 +1,17 @@
+# Gradle & build outputs (root and all submodules: app, balling, shared, summary, etc.)
+build/
+.gradle/
+captures/
+.cxx/
+.externalNativeBuild/
+
+# Kotlin Multiplatform / Native / CInterop outputs
+*.klib
+*.knm
+konan.txt
+
+# Local environment & IDE files
+local.properties
+.idea/
+*.iml
+.DS_Store
