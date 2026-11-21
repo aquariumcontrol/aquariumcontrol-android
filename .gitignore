@@ -15,3 +15,8 @@ local.properties
 .idea/
 *.iml
 .DS_Store
+
+# Release binaries (publish via GitHub Releases instead)
+*.aab
+*.apk
+app/release/
