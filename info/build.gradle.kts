@@ -92,11 +92,10 @@ dependencies {
 
     implementation(libs.aboutlibraries.core)
     implementation(libs.aboutlibraries.compose.m3)
-    implementation(libs.mikepenz.aboutlibraries)
 
     implementation(platform(libs.firebase.bom))
-    implementation(libs.google.firebase.crashlytics)
-    implementation(libs.google.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.analytics)
 
     testImplementation(libs.junit)
 

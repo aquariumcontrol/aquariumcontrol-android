@@ -71,6 +71,7 @@ fun InfoScreen() {
         if (libs != null) {
             // Only show the Container if data is loaded
             LibrariesContainer(
+                libraries = libs,
                 modifier = Modifier.fillMaxSize(),
                 header = {
                     item {
