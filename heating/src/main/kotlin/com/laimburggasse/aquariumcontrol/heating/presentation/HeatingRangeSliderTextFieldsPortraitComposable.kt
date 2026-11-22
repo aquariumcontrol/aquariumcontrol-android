@@ -104,8 +104,8 @@ internal fun HeatingRangeSliderTextFieldsPortraitComposableDarkPreview() {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 HeatingRangeSliderTextFieldsPortraitComposable(
-                    heatingSwitchOffTemp = 23.0,
-                    heatingSwitchOnTemp = 27.0,
+                    heatingSwitchOffTemp = 27.0,
+                    heatingSwitchOnTemp = 23.0,
                     onLowerValueChanged = {},
                     onUpperValueChanged = {},
                     onSliderValueChanged = { _, _ -> },
@@ -123,8 +123,8 @@ internal fun HeatingRangeSliderTextFieldsPortraitComposableLightPreview() {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 HeatingRangeSliderTextFieldsPortraitComposable(
-                    heatingSwitchOffTemp = 23.0,
-                    heatingSwitchOnTemp = 27.0,
+                    heatingSwitchOffTemp = 27.0,
+                    heatingSwitchOnTemp = 23.0,
                     onLowerValueChanged = {},
                     onUpperValueChanged = {},
                     onSliderValueChanged = {lowerValue, upperValue -> },

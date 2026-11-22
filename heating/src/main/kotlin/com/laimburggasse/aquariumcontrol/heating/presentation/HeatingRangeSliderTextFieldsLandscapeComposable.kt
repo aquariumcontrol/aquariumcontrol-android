@@ -108,8 +108,8 @@ internal fun HeatingRangeSliderTextFieldsLandscapeComposableDarkPreview() {
     AquariumControllerTheme(darkTheme = true) {
         Surface {
             HeatingRangeSliderTextFieldsLandscapeComposable(
-                heatingSwitchOffTemp = 23.0,
-                heatingSwitchOnTemp = 27.0,
+                heatingSwitchOffTemp = 27.0,
+                heatingSwitchOnTemp = 23.0,
                 onLowerValueChanged = {},
                 onUpperValueChanged = {},
                 onSliderValueChanged = { _, _ -> },
@@ -129,8 +129,8 @@ internal fun HeatingRangeSliderTextFieldsLandscapeComposableLightPreview() {
     AquariumControllerTheme(darkTheme = false) {
         Surface {
             HeatingRangeSliderTextFieldsLandscapeComposable(
-                heatingSwitchOffTemp = 23.0,
-                heatingSwitchOnTemp = 27.0,
+                heatingSwitchOffTemp = 27.0,
+                heatingSwitchOnTemp = 23.0,
                 onLowerValueChanged = {},
                 onUpperValueChanged = {},
                 onSliderValueChanged = { _, _ -> },
