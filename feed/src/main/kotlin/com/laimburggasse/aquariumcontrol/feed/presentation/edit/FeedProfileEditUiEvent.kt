@@ -32,4 +32,5 @@ sealed interface FeedProfileEditUiEvent {
     data class ExpandChildren(val menuItemId: Int): FeedProfileEditUiEvent
     object Update: FeedProfileEditUiEvent
     object Reset: FeedProfileEditUiEvent
+    object Execute: FeedProfileEditUiEvent
 }

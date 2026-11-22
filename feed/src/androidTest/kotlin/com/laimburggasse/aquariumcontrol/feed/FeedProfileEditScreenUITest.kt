@@ -98,4 +98,32 @@ class FeedProfileEditScreenUITest {
         // Assert the callback was triggered with the expected enum value
         Assert.assertEquals(FeedProfileEditUiEvent.Reset, capturedEvent)
     }
+
+    @Test
+    fun tapping_execute_button_triggers_execute_event() {
+        var capturedEvent: FeedProfileEditUiEvent? = null
+
+        composeTestRule.setContent {
+            MainScaffold(
+                isControllerLoaded = true,
+                navigationRouteSource = ViewNavigationRoutes.feedEdit,
+                screenContent = {
+                    FeedProfileEditScreen(
+                        uiState = mockFeedProfileEditUiStateSuccess,
+                        onFeedProfileEditUiEvent = { event -> capturedEvent = event },
+                    )
+                },
+                onNavigate = {},
+                darkTheme = true
+            )
+        }
+
+        composeTestRule.waitForIdle()
+
+        val testTag = "executeFeedProfileButton"
+        composeTestRule.onNodeWithTag(testTag).assertIsEnabled()
+        composeTestRule.onNodeWithTag(testTag).performClick()
+
+        Assert.assertEquals(FeedProfileEditUiEvent.Execute, capturedEvent)
+    }
 }

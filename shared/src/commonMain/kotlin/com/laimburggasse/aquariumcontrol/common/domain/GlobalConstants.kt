@@ -75,6 +75,7 @@ object GlobalConstants {
 
     const val ERR_MSG_UPDATING_BALLING_PROFILE_FAILED = "Update of Balling profile on server failed."
     const val ERR_MSG_UPDATING_FEED_PROFILE_FAILED = "Update of feed profile on server failed."
+    const val ERR_MSG_EXECUTING_FEED_PROFILE_FAILED = "Execution of feed profile on server failed."
     const val ERR_MSG_INVALID_CONTROLLER_ADDRESS = "No valid controller address."
     const val ERR_MSG_UPDATING_SET_VALS_FAILED = "Could not update set values."
     const val ERR_MSG_LOADING_SCHEDULE_INFO_FAILED = "Failed to load schedule information."

@@ -206,6 +206,18 @@ class FeedProfileEditViewModel @Inject constructor(
         _feedProfileState.value = originalFeedProfile
     }
 
+    /**
+     * Triggers immediate execution of the currently edited feed profile on the controller hardware.
+     */
+    fun executeFeedProfile() {
+        viewModelScope.launch {
+            val profileToExecute: FeedProfile? = _feedProfileState.value
+            if (profileToExecute != null) {
+                feedProfilesRepository.executeFeedProfile(profileId = profileToExecute.profileID)
+            }
+        }
+    }
+
     
     /**
      * Toggles the expansion state of a specific UI menu item.
@@ -248,6 +260,9 @@ class FeedProfileEditViewModel @Inject constructor(
             }
             is FeedProfileEditUiEvent.Reset -> {
                 resetFeedProfile()
+            }
+            is FeedProfileEditUiEvent.Execute -> {
+                executeFeedProfile()
             }
         }
     }

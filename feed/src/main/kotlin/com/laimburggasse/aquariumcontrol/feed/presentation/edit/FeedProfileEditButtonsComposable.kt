@@ -50,19 +50,21 @@ fun FeedProfileEditButtonsComposable(
     modifier: Modifier? = Modifier,
     onFeedProfileEditUiEvent: (FeedProfileEditUiEvent) -> Unit
 ) {
-    // This composable displays the buttons for updating the feed profile.
+    // This composable displays the buttons for updating, resetting, and executing the feed profile.
     // The arrangement of the buttons follows the device orientation.
 
     val context: Context = LocalContext.current // context for Toasts
     val messageSentFeedProfileUpdateRequest = stringResource(
         R.string.sent_request_to_controller_for_updating_feed_profile
     )
+    val messageSentFeedProfileExecuteRequest = stringResource(
+        R.string.sent_request_to_controller_for_executing_feed_profile
+    )
 
     Button(
-        modifier = modifier?.then(other = Modifier
-            .fillMaxWidth()
+        modifier = (modifier ?: Modifier)
             .testTag("updateFeedProfileButton")
-            .padding(horizontal = 8.dp)) ?: Modifier,
+            .padding(horizontal = 8.dp),
         onClick = {
             onFeedProfileEditUiEvent(FeedProfileEditUiEvent.Update)
             Toast.makeText(
@@ -79,14 +81,32 @@ fun FeedProfileEditButtonsComposable(
     }
     Spacer(modifier = Modifier.width(width = 10.dp))
     Button(
-        modifier = modifier?.then(other = Modifier
-            .fillMaxWidth()
+        modifier = (modifier ?: Modifier)
             .testTag("resetFeedProfileButton")
-            .padding(horizontal = 8.dp)) ?: Modifier,
+            .padding(horizontal = 8.dp),
         onClick = { onFeedProfileEditUiEvent(FeedProfileEditUiEvent.Reset) },
     ) {
         Text(
             text = stringResource(id = R.string.reset_changes_to_feed_profile),
+            fontSize = 16.sp
+        )
+    }
+    Spacer(modifier = Modifier.width(width = 10.dp))
+    Button(
+        modifier = (modifier ?: Modifier)
+            .testTag("executeFeedProfileButton")
+            .padding(horizontal = 8.dp),
+        onClick = {
+            onFeedProfileEditUiEvent(FeedProfileEditUiEvent.Execute)
+            Toast.makeText(
+                context,
+                messageSentFeedProfileExecuteRequest,
+                Toast.LENGTH_SHORT
+            ).show()
+        },
+    ) {
+        Text(
+            text = stringResource(id = R.string.execute_feed_profile),
             fontSize = 16.sp
         )
     }

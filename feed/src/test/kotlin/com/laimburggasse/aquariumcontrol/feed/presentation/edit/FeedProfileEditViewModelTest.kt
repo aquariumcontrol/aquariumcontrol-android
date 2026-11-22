@@ -174,6 +174,27 @@ class FeedProfileEditViewModelTest {
     }
 
     @Test
+    fun `Execute event calls repository executeFeedProfile with loaded profile id`() = runTest {
+        testDispatcher.scheduler.advanceUntilIdle() // Ensure init finished
+        viewModel.onFeedProfileEditUiEvent(FeedProfileEditUiEvent.Execute)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        coVerify(exactly = 1) { repository.executeFeedProfile(10) }
+    }
+
+    @Test
+    fun `Execute event does nothing when profile is not loaded`() = runTest {
+        coEvery { repository.findProfileById(999) } returns null
+        viewModel.setProfileId(999)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.onFeedProfileEditUiEvent(FeedProfileEditUiEvent.Execute)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        coVerify(exactly = 0) { repository.executeFeedProfile(any()) }
+    }
+
+    @Test
     fun `ExpandChildren event updates expandedItemIds set`() = runTest {
         viewModel.uiState.test {
             skipItemsUntilLoaded(10)

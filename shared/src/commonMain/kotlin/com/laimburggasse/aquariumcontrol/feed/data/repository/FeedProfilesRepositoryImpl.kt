@@ -289,12 +289,22 @@ open class FeedProfilesRepositoryImpl @Inject constructor(
         val url = "http://" + controllerAddress + ":" + port + WebApiUrls.FEED_EXECUTE_PROFILE + profileId
         val authHeader = "Basic " + Base64.encode(("$user:$password").encodeToByteArray())
 
-        withContext(ioDispatcher.dispatcher) {
+        val requestSuccess = withContext(ioDispatcher.dispatcher) {
             try {
                 apiService.executeFeedProfile(url, authHeader)
             } catch (e: Exception) {
                 logger.recordException(e)
                 false
+            }
+        }
+        if (!requestSuccess) {
+            localState.update {
+                it.copy(
+                    failureResult = DataFetchResult.Error(
+                        exception = null,
+                        errorMessage = GlobalConstants.ERR_MSG_EXECUTING_FEED_PROFILE_FAILED
+                    )
+                )
             }
         }
     }

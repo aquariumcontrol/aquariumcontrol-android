@@ -4,6 +4,7 @@
     <string name="view_feed_events">View feed events</string>
     <string name="feed_profile_editing">Feed profile editing</string>
     <string name="update_feed_profile">Update feed profile</string>
+    <string name="execute_feed_profile">Execute feed profile</string>
     <string name="duration_in_seconds">Duration in seconds</string>
     <string name="reset_changes_to_feed_profile">Reset changes to feed profile</string>
     <string name="feed_log">Feed Log</string>
@@ -12,6 +13,7 @@
     <string name="feed_profile_add">Add feed profile</string>
     <string name="feed_schedule">Feed Schedule</string>
     <string name="sent_request_to_controller_for_updating_feed_profile">Sent request to controller for updating feed profile</string>
+    <string name="sent_request_to_controller_for_executing_feed_profile">Sent request to controller for executing feed profile</string>
     <string name="sent_request_to_controller_for_updating_feed_schedule">Sent request to controller for updating feed schedule</string>
     <string name="confirm_scheduling">Confirm Scheduling</string>
     <string name="scheduled_for">"Scheduled for "</string>

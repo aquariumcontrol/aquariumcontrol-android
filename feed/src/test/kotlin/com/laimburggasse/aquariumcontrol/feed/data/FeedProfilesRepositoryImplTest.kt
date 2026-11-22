@@ -206,4 +206,53 @@ class FeedProfilesRepositoryImplTest {
             cancelAndIgnoreRemainingEvents()
         }
     }
+
+    @Test
+    fun `executeFeedProfile calls api service with execute URL`() = runTest {
+        val spyApiService = spyk(mockFeedProfileApiService)
+        val repoWithSpy = FeedProfilesRepositoryImpl(
+            logger = mockk(relaxed = true),
+            sessionManager = mockSessionManagerImpl,
+            apiService = spyApiService,
+            repositoryScope = testScope,
+            ioDispatcher = IoDispatcher(testDispatcher)
+        )
+        mockSessionManagerImpl.selectControllerById(0)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        repoWithSpy.executeFeedProfile(profileId = 42)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        coVerify(exactly = 1) {
+            spyApiService.executeFeedProfile(
+                match { it.endsWith("/api.php?action=execute_feed_profile&profileId=42") },
+                any()
+            )
+        }
+    }
+
+    @Test
+    fun `executeFeedProfile failure emits Error result`() = runTest {
+        repository.profilesFlow.test {
+            assertEquals(DataFetchResult.Loading, awaitItem())
+
+            mockSessionManagerImpl.selectControllerById(0)
+            var currentItem = awaitItem()
+            while (currentItem is DataFetchResult.Loading) {
+                currentItem = awaitItem()
+            }
+            assertTrue(currentItem is DataFetchResult.Success)
+
+            mockFeedProfileApiService.setMockFeedProfiles(null)
+            repository.executeFeedProfile(mockFeedProfiles[0].profileID)
+
+            currentItem = awaitItem()
+            while (currentItem is DataFetchResult.Loading) {
+                currentItem = awaitItem()
+            }
+            assertTrue("Expected Error but got $currentItem", currentItem is DataFetchResult.Error)
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
 }
