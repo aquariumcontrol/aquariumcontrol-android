@@ -21,9 +21,9 @@
  */
 
 plugins {
-    id("com.android.kotlin.multiplatform.library")
-    id("org.jetbrains.kotlin.multiplatform")
-    id("org.jetbrains.kotlin.plugin.serialization")
+    alias(libs.plugins.androidKotlinMultiplatformLibrary)
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.androidx.room)
     alias(libs.plugins.ksp)
 }
@@ -31,7 +31,11 @@ plugins {
 kotlin {
     android {
         namespace = "com.laimburggasse.aquariumcontrol.shared"
-        compileSdk = 37
+        compileSdk {
+            version = release(37) {
+                minorApiLevel = 1
+            }
+        }
         minSdk = 26
     }
 

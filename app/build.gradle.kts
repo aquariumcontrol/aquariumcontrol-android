@@ -25,9 +25,9 @@ plugins {
     alias(libs.plugins.screenshot)
     alias(libs.plugins.aboutLibraries)
     alias(libs.plugins.mikepenz.aboutlibraries.android)
-    id("org.jetbrains.kotlin.plugin.compose") version "2.4.0"
-    id("org.jetbrains.kotlin.plugin.serialization")
-    id("com.google.devtools.ksp") version "2.3.7"
+    alias(libs.plugins.kotlinCompose)
+    alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.ksp)
     // Required for Firebase Crashlytics:
     // Google services Gradle plugin
     id("com.google.gms.google-services")
@@ -39,7 +39,11 @@ plugins {
 
 android {
     namespace = "com.laimburggasse.aquariumcontrol"
-    compileSdk = 37
+    compileSdk {
+        version = release(37) {
+            minorApiLevel = 1
+        }
+    }
 
     defaultConfig {
         applicationId = "com.laimburggasse.aquariumcontrol"

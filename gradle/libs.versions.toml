@@ -1,41 +1,41 @@
 [versions]
-agp = "9.2.1"
-coreKtx = "1.19.0"
-firebaseBom = "34.15.0"
+agp = "9.5.2"
+coreKtx = "1.19.1"
+firebaseBom = "35.2.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
-kotlinStdlibJdk8Version = "2.4.0"
+kotlin = "2.4.21"
 kotlinxCoroutinesTest = "1.11.0"
-kotlinxIoCore = "0.9.0"
-kotlinxSerializationJsonVersion = "1.11.0"
-lifecycleRuntimeCompose = "2.11.0"
-material3Android = "1.4.0"
+kotlinxIoCore = "0.9.3"
+kotlinxSerializationJsonVersion = "1.13.0"
+lifecycleRuntimeCompose = "2.11.1"
+material3Android = "1.5.0"
 materialIconsExtended = "1.7.8"
-mockk = "1.14.11"
+mockk = "1.14.12"
 mpandroidchart = "v3.1.0"
-navigationCompose = "2.9.8"
-ktor = "3.5.0"
+navigationCompose = "2.10.2"
+ktor = "3.6.1"
 kotlinInject = "0.9.0"
-symbolProcessingApi = "2.3.7"
+symbolProcessingApi = "2.3.14"
 tracingPerfettoHandshake = "1.0.1"
 junitKtx = "1.3.0"
-screenshot = "0.0.1-alpha15"
-appcompat = "1.7.1"
+screenshot = "0.0.1-alpha16"
+appcompat = "1.8.0"
 material = "1.14.0"
-room = "2.8.4"
+room = "2.8.5"
 aboutLibraries = "15.3.0"
 mikepenzAboutLibrariesPlugin = "15.3.0"
 turbine = "1.2.1"
-pagingCommon = "3.5.0"
-pagingCompose = "3.5.0"
-foundationLayout = "1.11.3"
-datastore = "1.2.1"
+pagingCommon = "3.5.3"
+pagingCompose = "3.5.3"
+foundationLayout = "1.13.0"
+datastore = "1.3.0"
 kotlinx-datetime = "0.8.0"
 
 [libraries]
-androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version = "2.6.2" }
-kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlinStdlibJdk8Version" }
+androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version = "2.7.1" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinxIoCore" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
@@ -47,9 +47,9 @@ firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version = "2.11.0" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version = "2.11.1" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version = "1.13.0" }
-androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version = "2026.06.00" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version = "2026.11.01" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
@@ -60,8 +60,8 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
-kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version = "2.4.0-*" }
-kotlin-stdlib-jdk8-v1922 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlinStdlibJdk8Version" }
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlin-stdlib-jdk8-v1922 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 kotlinx-serialization-json-v162 = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJsonVersion" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
@@ -95,7 +95,11 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 [plugins]
 androidx-room = { id = "androidx.room", version.ref = "room" }
 androidApplication = { id = "com.android.application", version.ref = "agp" }
-jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version = "2.4.0" }
+androidKotlinMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
+jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlinCompose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot"}
 ksp = { id = "com.google.devtools.ksp", version.ref = "symbolProcessingApi" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }

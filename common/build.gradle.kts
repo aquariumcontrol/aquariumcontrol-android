@@ -23,16 +23,20 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.screenshot)
-    id("org.jetbrains.kotlin.plugin.compose") version "2.4.0"
-    id("org.jetbrains.kotlin.plugin.serialization")
-    id("com.google.devtools.ksp") version "2.3.7"
+    alias(libs.plugins.kotlinCompose)
+    alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.ksp)
     }
 
 
 
 android {
     namespace = "com.laimburggasse.aquariumcontrol.common"
-    compileSdk = 37
+    compileSdk {
+        version = release(37) {
+            minorApiLevel = 1
+        }
+    }
     defaultConfig {
         minSdk = 24
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -42,9 +46,6 @@ android {
     }
     testOptions {
         //execution = "ANDROIDX_TEST_ORCHESTRATOR"
-        screenshotTests {
-            imageDifferenceThreshold = 0.0001f // 0.01%
-        }
     }
     buildTypes {
         release {
@@ -130,4 +131,12 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.analytics)
+}
+
+tasks.withType<com.android.compose.screenshot.tasks.PreviewScreenshotValidationTask>().configureEach {
+    testEngineInput.threshold.set(0.0001f) // 0.01%
+}
+
+tasks.withType<com.android.compose.screenshot.tasks.PreviewScreenshotUpdateTask>().configureEach {
+    testEngineInput.threshold.set(0.0001f) // 0.01%
 }

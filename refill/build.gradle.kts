@@ -23,9 +23,9 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.screenshot)
-    id("org.jetbrains.kotlin.plugin.compose") version "2.4.0"
-    id("org.jetbrains.kotlin.plugin.serialization")
-    id("com.google.devtools.ksp") version "2.3.7"
+    alias(libs.plugins.kotlinCompose)
+    alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.ksp)
     id("jacoco")
     }
 
@@ -33,7 +33,11 @@ plugins {
 
 android {
     namespace = "com.laimburggasse.aquariumcontrol.refill"
-    compileSdk = 37
+    compileSdk {
+        version = release(37) {
+            minorApiLevel = 1
+        }
+    }
     defaultConfig {
         minSdk = 24
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
