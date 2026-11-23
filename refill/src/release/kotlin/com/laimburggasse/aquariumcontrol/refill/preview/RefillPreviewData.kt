@@ -23,12 +23,9 @@
 package com.laimburggasse.aquariumcontrol.refill.preview
 
 import com.laimburggasse.aquariumcontrol.refill.domain.model.RefillHistoryLogEntry
-import com.laimburggasse.aquariumcontrol.refill.presentation.components.RefillPreviewData
-import java.sql.Timestamp
 
-object RefillPreviewDataImpl: RefillPreviewData {
-    override val mockFixedTimestamp = Timestamp(0)
-    override val mockEvent =
-        RefillHistoryLogEntry(timestamp = mockFixedTimestamp.toString(), duration = 0.0, volume = 0.0)
-    override val mockRefillHistoryLogEntries = emptyList<RefillHistoryLogEntry>()
+@Suppress("unused")
+object RefillPreviewData {
+    val mockEvent: RefillHistoryLogEntry get() = error("Preview only")
+    val mockRefillHistoryLogEntries: List<RefillHistoryLogEntry> get() = error("Preview only")
 }

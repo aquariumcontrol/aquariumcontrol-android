@@ -22,29 +22,10 @@
 
 package com.laimburggasse.aquariumcontrol.schedule.preview
 
-import com.laimburggasse.aquariumcontrol.schedule.domain.model.ScheduleEntries
-import com.laimburggasse.aquariumcontrol.schedule.presentation.SchedulePreviewData
 import com.laimburggasse.aquariumcontrol.schedule.presentation.ScheduleUiState
 
-object SchedulePreviewDataImpl: SchedulePreviewData {
-    override val mockScheduleEntries = ScheduleEntries(
-        ballingStartTime = 0.0F,
-        ballingStopTime = 0.0F,
-        ballingLimitationActive = false,
-        ballingScheduleLoaded = false,
-        refillStartTime = 0.0F,
-        refillStopTime = 0.0F,
-        refillLimitationActive = false,
-        refillScheduleLoaded = false,
-        ventilationStartTime = 0.0F,
-        ventilationStopTime = 0.0F,
-        ventilationLimitationActive = false,
-        ventilationScheduleLoaded = false,
-        heatingStartTime = 0.0F,
-        heatingStopTime = 0.0F,
-        heatingLimitationActive = false,
-        heatingScheduleLoaded = false
-    )
-    override val mockScheduleUiStateSuccess = ScheduleUiState.Success(scheduleEntries = mockScheduleEntries)
-    override val mockScheduleUiStateError = ScheduleUiState.Error(errorMessage = "Release build")
+@Suppress("unused")
+object SchedulePreviewData {
+    val mockScheduleUiStateSuccess: ScheduleUiState.Success get() = error("Preview only")
+    val mockScheduleUiStateError: ScheduleUiState.Error get() = error("Preview only")
 }

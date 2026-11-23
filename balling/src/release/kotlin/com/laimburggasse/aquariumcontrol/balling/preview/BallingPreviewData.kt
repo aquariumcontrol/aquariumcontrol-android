@@ -24,31 +24,17 @@ package com.laimburggasse.aquariumcontrol.balling.preview
 
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingHistoryLogEntry
 import com.laimburggasse.aquariumcontrol.balling.domain.model.BallingProfile
-import com.laimburggasse.aquariumcontrol.balling.presentation.components.BallingPreviewData
 import com.laimburggasse.aquariumcontrol.balling.presentation.edit.BallingProfileEditUiState
 import com.laimburggasse.aquariumcontrol.balling.presentation.entry.BallingProfilesUiState
 
-object BallingPreviewDataImpl {
-    override val mockBallingProfile = BallingProfile(
-        pumpId = 0,
-        volume = 0.0,
-        label = "Release build"
-    )
-    override val mockBallingProfileEditUiState = BallingProfileEditUiState.Success(mockBallingProfile)
-
-    override val mockBallingProfile1 = mockBallingProfile
-    override val mockBallingProfile2 = mockBallingProfile
-    override val mockBallingProfiles = emptyList<BallingProfile>()
-    override val mockBallingProfilesUiStateSuccess = BallingProfilesUiState.Success(mockBallingProfiles)
-    override val mockBallingProfilesUiStateError = BallingProfilesUiState.Error(errorMessage = "Release build")
-    override val mockBallingProfilesUiStateLoading = BallingProfilesUiState.Loading
-    override val mockBallingProfilesUiStateEmpty = BallingProfilesUiState.Empty
-
-    override val mockBallingHistoryLogEntries = emptyList<BallingHistoryLogEntry>()
-    override val mockBallingEvent = BallingHistoryLogEntry(
-        timestamp = "2525",
-        pumpId = 0,
-        volume = 0.0,
-        label = "Release build"
-    )
+@Suppress("unused")
+object BallingPreviewData {
+    val mockBallingProfile: BallingProfile get() = error("Preview only")
+    val mockBallingProfileEditUiState: BallingProfileEditUiState.Success get() = error("Preview only")
+    val mockBallingProfilesUiStateSuccess: BallingProfilesUiState.Success get() = error("Preview only")
+    val mockBallingProfilesUiStateError: BallingProfilesUiState.Error get() = error("Preview only")
+    val mockBallingProfilesUiStateLoading: BallingProfilesUiState.Loading get() = error("Preview only")
+    val mockBallingProfilesUiStateEmpty: BallingProfilesUiState.Empty get() = error("Preview only")
+    val mockBallingHistoryLogEntries: List<BallingHistoryLogEntry> get() = error("Preview only")
+    val mockBallingEvent: BallingHistoryLogEntry get() = error("Preview only")
 }

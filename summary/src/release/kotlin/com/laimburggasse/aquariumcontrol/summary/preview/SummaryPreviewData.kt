@@ -1,5 +1,5 @@
 /*
- *  Copyright 2025 Uwe Martin
+ *  Copyright 2026 Uwe Martin
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -20,22 +20,16 @@
  * SOFTWARE.
  */
 
-package com.laimburggasse.aquariumcontrol.heating.preview
+package com.laimburggasse.aquariumcontrol.summary.preview
 
-import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingSetVals
-import com.laimburggasse.aquariumcontrol.heating.domain.model.HeatingStatsEntry
-import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingPreviewData
-import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingSetValsUiState
-import com.laimburggasse.aquariumcontrol.heating.presentation.HeatingStatsUiState
+import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
+import com.laimburggasse.aquariumcontrol.summary.domain.model.SummaryData
+import com.laimburggasse.aquariumcontrol.summary.presentation.SummaryUiState
 
-object HeatingPreviewDataImpl: HeatingPreviewData {
-    override val mockHeatingStatsData = emptyList<HeatingStatsEntry>()
-    override val mockHeatingStatsUiState = HeatingStatsUiState.Success(
-        heatingStats = emptyList()
-    )
-    override val mockHeatingSetVals = HeatingSetVals(
-        heatingSwitchOnTemp = 0.0,
-        heatingSwitchOffTemp = 0.0
-    )
-    override val mockHeatingSetValsUiState = HeatingSetValsUiState.Success(mockHeatingSetVals)
+@Suppress("unused")
+object SummaryPreviewData {
+    val mockSummaryData: SummaryData get() = error("Preview only")
+    val mockControllerProfile: ControllerProfile get() = error("Preview only")
+    val mockSummaryUiStateSuccess: SummaryUiState.Success get() = error("Preview only")
+    val mockSummaryUiStateError: SummaryUiState.Error get() = error("Preview only")
 }

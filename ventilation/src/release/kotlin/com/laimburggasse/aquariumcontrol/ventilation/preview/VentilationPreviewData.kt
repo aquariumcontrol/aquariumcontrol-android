@@ -22,18 +22,10 @@
 
 package com.laimburggasse.aquariumcontrol.ventilation.preview
 
-import com.laimburggasse.aquariumcontrol.ventilation.domain.model.VentilationSetVals
-import com.laimburggasse.aquariumcontrol.ventilation.presentation.VentilationPreviewData
 import com.laimburggasse.aquariumcontrol.ventilation.presentation.VentilationSetValsUiState
 
-object VentilationPreviewDataImpl: VentilationPreviewData {
-    override val mockVentilationSetValsUiStateSuccess = VentilationSetValsUiState.Success(
-        ventilationSetVals = VentilationSetVals(
-            ventilationSwitchOffTemp = 0.0,
-            ventilationSwitchOnTemp = 0.0
-        )
-    )
-    override val mockVentilationSetValsUiStateError = VentilationSetValsUiState.Error(
-        errorMessage = "Release build"
-    )
+@Suppress("unused")
+object VentilationPreviewData {
+    val mockVentilationSetValsUiStateSuccess: VentilationSetValsUiState.Success get() = error("Preview only")
+    val mockVentilationSetValsUiStateError: VentilationSetValsUiState.Error get() = error("Preview only")
 }

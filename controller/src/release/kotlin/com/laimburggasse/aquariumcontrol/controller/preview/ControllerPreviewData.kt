@@ -20,30 +20,15 @@
  * SOFTWARE.
  */
 
-package com.laimburggasse.aquariumcontrol.overview.preview
+package com.laimburggasse.aquariumcontrol.controller.preview
 
 import com.laimburggasse.aquariumcontrol.common.domain.ControllerProfile
-import com.laimburggasse.aquariumcontrol.overview.domain.model.OverviewData
-import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewPreviewData
-import com.laimburggasse.aquariumcontrol.overview.presentation.OverviewUiState
+import com.laimburggasse.aquariumcontrol.controller.presentation.components.ControllerAddEditUiState
 
 @Suppress("unused")
-object SummaryPreviewDataImpl: SummaryPreviewData {
-    val mockSummaryData = SummaryData(
-        timestamp = "",
-        waterTemperature = 0.0,
-        filteredWaterTemperature = 0.0,
-        phValue = 0.0,
-        filteredPhValue = 0.0,
-        conductivity = 0.0,
-        filteredConductivity = 0.0,
-        tankLevelSwitchPosition = "",
-        surfaceVentilationStatus = "",
-        ambientTemperature = 0.0,
-        ambientHumidity = 0.0,
-        heatingStatus = ""
-    )
-    override val mockControllerProfile = ControllerProfile()
-    val mockSummaryUiStateSuccess = SummaryUiState.Success(mockSummaryData)
-    val mockSummaryUiStateError = SummaryUiState.Error(errorMessage = "Release build")
+object ControllerPreviewData {
+    val mockControllerState: ControllerAddEditUiState get() = error("Preview only")
+    val mockControllerEditState: ControllerAddEditUiState get() = error("Preview only")
+    val mockControllerProfile1: ControllerProfile get() = error("Preview only")
+    val mockControllerProfileList: List<ControllerProfile> get() = error("Preview only")
 }

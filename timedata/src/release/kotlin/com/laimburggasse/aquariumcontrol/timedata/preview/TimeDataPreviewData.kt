@@ -22,13 +22,16 @@
 
 package com.laimburggasse.aquariumcontrol.timedata.preview
 
-import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataPreviewData
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataSets
 import com.laimburggasse.aquariumcontrol.timedata.presentation.TimeDataUiState
 
-object TimeDataPreviewDataImpl: TimeDataPreviewData {
-    override val mockTimeDataSets = TimeDataSets(timeData = emptyList())
-    override val mockTimeDataUiStateSuccess = TimeDataUiState.Success(timeDataSets = mockTimeDataSets)
-    override val mockTimeDataUiStateError = TimeDataUiState.Error(errorMessage = "Release build")
-    override val mockTimeDataUiStateEmpty = TimeDataUiState.Empty
+@RequiresApi(Build.VERSION_CODES.O)
+@Suppress("unused")
+object TimeDataPreviewData {
+    val mockTimeDataSets: TimeDataSets get() = error("Preview only")
+    val mockTimeDataUiStateSuccess: TimeDataUiState.Success get() = error("Preview only")
+    val mockTimeDataUiStateError: TimeDataUiState.Error get() = error("Preview only")
+    val mockTimeDataUiStateEmpty: TimeDataUiState.Empty get() = error("Preview only")
 }
